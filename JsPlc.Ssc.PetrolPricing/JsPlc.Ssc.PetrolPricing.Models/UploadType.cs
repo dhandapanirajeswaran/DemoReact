@@ -10,7 +10,7 @@ namespace JsPlc.Ssc.PetrolPricing.Models
     public class UploadType
     {
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int Id { get; set; }
 
         [Required]
