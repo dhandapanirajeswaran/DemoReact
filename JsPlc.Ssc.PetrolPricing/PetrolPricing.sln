@@ -13,6 +13,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Service", "Service", "{9E1F
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JsPlc.Ssc.PetrolPricing.Portal", "JsPlc.Ssc.PetrolPricing.Portal\JsPlc.Ssc.PetrolPricing.Portal.csproj", "{B51925E6-4E93-4617-906D-A7E313F62826}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JsPlc.Ssc.PetrolPricing.Models", "JsPlc.Ssc.PetrolPricing.Models\JsPlc.Ssc.PetrolPricing.Models.csproj", "{B9B43A8B-6916-431D-BC1B-6595A1A0F029}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JsPlc.Ssc.PetrolPricing.Repository", "JsPlc.Ssc.PetrolPricing.Repository\JsPlc.Ssc.PetrolPricing.Repository.csproj", "{B995B495-D846-4EB5-80FB-B55B71028B94}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -23,11 +27,21 @@ Global
 		{B51925E6-4E93-4617-906D-A7E313F62826}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B51925E6-4E93-4617-906D-A7E313F62826}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B51925E6-4E93-4617-906D-A7E313F62826}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B9B43A8B-6916-431D-BC1B-6595A1A0F029}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B9B43A8B-6916-431D-BC1B-6595A1A0F029}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B9B43A8B-6916-431D-BC1B-6595A1A0F029}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B9B43A8B-6916-431D-BC1B-6595A1A0F029}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B995B495-D846-4EB5-80FB-B55B71028B94}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B995B495-D846-4EB5-80FB-B55B71028B94}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B995B495-D846-4EB5-80FB-B55B71028B94}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B995B495-D846-4EB5-80FB-B55B71028B94}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{B51925E6-4E93-4617-906D-A7E313F62826} = {7A311458-FB1C-4073-9DB9-8AA5AD01731F}
+		{B9B43A8B-6916-431D-BC1B-6595A1A0F029} = {1CFC60A2-3574-44F4-A575-77F896423A46}
+		{B995B495-D846-4EB5-80FB-B55B71028B94} = {56E4DB8F-97CF-4791-A207-C7C1390BB496}
 	EndGlobalSection
 EndGlobal
