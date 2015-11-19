@@ -1,0 +1,33 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.40629.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Model", "Model", "{1CFC60A2-3574-44F4-A575-77F896423A46}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Portal", "Portal", "{7A311458-FB1C-4073-9DB9-8AA5AD01731F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Repository", "Repository", "{56E4DB8F-97CF-4791-A207-C7C1390BB496}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Service", "Service", "{9E1F5D18-E8A0-4AD5-B17D-3A14349AC0BA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JsPlc.Ssc.PetrolPricing.Portal", "JsPlc.Ssc.PetrolPricing.Portal\JsPlc.Ssc.PetrolPricing.Portal.csproj", "{B51925E6-4E93-4617-906D-A7E313F62826}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B51925E6-4E93-4617-906D-A7E313F62826}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B51925E6-4E93-4617-906D-A7E313F62826}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B51925E6-4E93-4617-906D-A7E313F62826}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B51925E6-4E93-4617-906D-A7E313F62826}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{B51925E6-4E93-4617-906D-A7E313F62826} = {7A311458-FB1C-4073-9DB9-8AA5AD01731F}
+	EndGlobalSection
+EndGlobal
