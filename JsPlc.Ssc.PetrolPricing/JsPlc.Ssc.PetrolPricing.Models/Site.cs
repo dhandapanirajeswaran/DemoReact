@@ -48,8 +48,8 @@ namespace JsPlc.Ssc.PetrolPricing.Models
         public virtual Site Site { get; set; }
         public virtual Site Competitor { get; set; }
 
-        public int Distance { get; set; } // miles 1.42, 3.57, 2.51 etc.
-        public int DriveTime { get; set; } // mins = 6.66, 10.90, 11.93 etc.
+        public float Distance { get; set; } // miles 1.42, 3.57, 2.51 etc.
+        public float DriveTime { get; set; } // mins = 6.66, 10.90, 11.93 etc.
         public int Rank { get; set; } // 1,2,3,4 etc.
     }
 }

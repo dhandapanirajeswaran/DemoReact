@@ -46,6 +46,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ImportProcessStatus.cs" />
+    <Compile Include="DailyUploadStaging.cs" />
+    <Compile Include="QuarterlyUploadStaging.cs" />
+    <Compile Include="FuelType.cs" />
+    <Compile Include="UploadType.cs" />
+    <Compile Include="FileUpload.cs" />
     <Compile Include="Site.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
