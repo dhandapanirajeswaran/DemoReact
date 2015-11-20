@@ -1,0 +1,20 @@
+﻿
+@{
+    ViewBag.Title = "File Upload";
+}
+
+<h2>File Upload</h2>
+<p style="color:blue; font-size: larger; font-weight: bold">@ViewBag.Message</p>
+
+<div align="right">
+    <input type="button" value="New Upload" onclick="location.href='@Url.Action("Upload", "File" )'" />
+</div>
+
+<div>
+    Daily Pricing and Quarterly Files
+    <hr />
+    <span style="color:red">No files</span>
+    <hr/>
+    List of Files:
+    <table border="1" width="100%"><tr><td>Filename</td><td>Uploaded Date</td><td>Uploaded By</td><td>Status</td></tr></table>
+</div>
