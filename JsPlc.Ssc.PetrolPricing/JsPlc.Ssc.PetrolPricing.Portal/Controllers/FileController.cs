@@ -1,13 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using System.Web.Routing;
+using JsPlc.Ssc.PetrolPricing.Models;
+using JsPlc.Ssc.PetrolPricing.Models.ViewModels;
+using JsPlc.Ssc.PetrolPricing.Business;
 
 namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 {
+    [Authorize]
     public class FileController : Controller
     {
         public ActionResult Index(string msg="")
@@ -21,15 +22,21 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
         public ActionResult Upload()
         {
             ViewBag.Message = "Upload Daily/Quarterly file";
-
-            return View();
+            var model = new UploadViewModel
+            {
+                UploadTypes = new Lookup().GetUploadTypes(),
+                UploadDate = DateTime.Now
+            };
+            
+            return View(model);
         }
 
         [HttpPost]
-        public ActionResult Upload(HttpPostedFileBase file)
+        public ActionResult Upload(HttpPostedFileBase file, int uploadTypes, DateTime? uploadDate)
         {
             ViewBag.Message = "Upload Daily/Quarterly file";
             ViewBag.ErrorMessage = "";
+            var uploadDateTime = uploadDate ?? DateTime.Now;
 
             const string successMessage = "File uploaded successfully";
 
@@ -46,14 +53,26 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
                 if (fileName != null)
                 {
                     originalFileName = fileName;
-                    string savedFileName = String.Format("{1}{2}{3} {4}{5}{6}hrs - {0}", fileName, DateTime.Now.Year,
-                        DateTime.Now.Month, DateTime.Now.Day,
-                        DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second);
+                    string savedFileName = String.Format("{1} {2}hrs - {0}", fileName,
+                        uploadDateTime.ToString("yyyyMMdd"),
+                        uploadDateTime.ToString("HHmmss"));
 
                     var path = Path.Combine(Server.MapPath("~/App_Data/uploads"), savedFileName); // save file as 20151120 123045hrs - Daily pricing file - catalist.txt
                     file.SaveAs(path);
 
                     // call service to record the upload
+                    using (var filesvc = new FileService())
+                    {
+                        filesvc.NewUpload(new FileUpload
+                        {
+                            OriginalFileName = originalFileName,
+                            StoredFileName = savedFileName,
+                            UploadedBy = User.Identity.Name,
+                            StatusId = 1,
+                            UploadDateTime = uploadDateTime,
+                            UploadTypeId = uploadTypes
+                        });
+                    }
                 }
 
                 return RedirectToAction("Index", new { msg = successMessage + ":" + originalFileName });

@@ -1,4 +1,5 @@
-﻿@{
+﻿@model JsPlc.Ssc.PetrolPricing.Models.ViewModels.UploadViewModel
+@{
     ViewBag.Title = "Upload";
 }
 
@@ -10,10 +11,19 @@
 
 <form action="" method="post" enctype="multipart/form-data">
     <fieldset>
+
+        Upload Type: @Html.DropDownListFor(model => model.UploadTypes, new SelectList(
+          Model.UploadTypes, "Id", "UploadTypeName"))
+        <br />
+        Upload Date: @Html.Label(Model.UploadDate.ToLongDateString())
+        @Html.HiddenFor(model => model.UploadDate, new { name = "uploadDateTime" })
+
+        <br /><br />
+
         <legend>File upload:</legend>
         <span>Click the Choose File button to pick a file to upload</span><input type="file" name="file" id="file" />
         <label for="file"></label>
-        <hr />
+        <br/>
         <input type="submit" value="Upload" />
     </fieldset>
 </form>

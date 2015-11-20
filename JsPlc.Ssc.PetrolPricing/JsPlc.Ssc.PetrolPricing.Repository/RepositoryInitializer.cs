@@ -7,6 +7,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 {
     public class RepositoryInitializer : DropCreateDatabaseIfModelChanges<RepositoryContext>
     {
+        // TODO Somehow see doesnt run from portal
         protected override void Seed(RepositoryContext context)
         {
             // # 1=Super, 2=Unleaded, 5=Super Dis, 6=Std Dis, 7=LPG
