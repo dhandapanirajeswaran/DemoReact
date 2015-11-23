@@ -7,9 +7,26 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 {
     public class RepositoryInitializer : DropCreateDatabaseIfModelChanges<RepositoryContext>
     {
-        // TODO Somehow see doesnt run from portal
         protected override void Seed(RepositoryContext context)
         {
+            SeedRepository(context);
+            base.Seed(context);
+        }
+
+        // This is refactored out so it can be called separately as well
+        public static void SeedRepository(RepositoryContext context)
+        {
+            var appConfigSettings = new List<AppConfigSettings>
+            {
+                new AppConfigSettings{Id = 1, SettingKey = "Uploadpath", 
+                    SettingValue = @"\\A-cotufps01-p.bc.jsplc.net\userdatashare0001\Parveen.Kumar\TestPetrolUpload"},
+
+                //new AppConfigSettings{Id = 1, SettingKey = "Uploadpath", 
+                //SettingValue = ""},
+            };
+            appConfigSettings.ForEach(a => context.AppConfigSettings.Add(a));
+            context.SaveChanges();
+
             // # 1=Super, 2=Unleaded, 5=Super Dis, 6=Std Dis, 7=LPG
             var fuelTypes = new List<FuelType>{
                 new FuelType{Id=1, FuelTypeName = "Super Unleaded"},
@@ -41,15 +58,14 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
             uploadTypes.ForEach(ut => context.UploadType.Add(ut));
             context.SaveChanges();
-            
-            var sites=new List<Site>{
+
+            var sites = new List<Site>{
                 new Site{Id=1, SiteName = "JS Dummy Site1", Town = "Coventry"},
             };
 
             sites.ForEach(c => context.Sites.Add(c));
             context.SaveChanges();
-            
-            base.Seed(context);
+           
         }
     }
 }

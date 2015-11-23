@@ -25,5 +25,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         IEnumerable<FuelType> GetFuelTypes();
 
         IEnumerable<ImportProcessStatus> GetProcessStatuses();
+
+        IEnumerable<AppConfigSettings> GetAppConfigSettings();
     }
 }

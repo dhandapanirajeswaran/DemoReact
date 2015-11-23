@@ -1,0 +1,54 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.40629.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Model", "Model", "{1CFC60A2-3574-44F4-A575-77F896423A46}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Service", "Service", "{9E1F5D18-E8A0-4AD5-B17D-3A14349AC0BA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JsPlc.Ssc.PetrolPricing.Models", "JsPlc.Ssc.PetrolPricing.Models\JsPlc.Ssc.PetrolPricing.Models.csproj", "{B9B43A8B-6916-431D-BC1B-6595A1A0F029}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JsPlc.Ssc.PetrolPricing.Service", "JsPlc.Ssc.PetrolPricing.Service\JsPlc.Ssc.PetrolPricing.Service.csproj", "{90A5415E-8A42-4AAA-875B-33EEB0FC69B9}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Business", "Business", "{B907FD54-9786-4026-8386-9829AAC2CE19}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JsPlc.Ssc.PetrolPricing.Business", "JsPlc.Ssc.PetrolPricing.Business\JsPlc.Ssc.PetrolPricing.Business.csproj", "{479C4815-23D6-4710-8E67-989EEAD6A920}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Repository", "Repository", "{DDC56B64-0595-42DB-A686-BAD1FF757025}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JsPlc.Ssc.PetrolPricing.Repository", "JsPlc.Ssc.PetrolPricing.Repository\JsPlc.Ssc.PetrolPricing.Repository.csproj", "{B995B495-D846-4EB5-80FB-B55B71028B94}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B9B43A8B-6916-431D-BC1B-6595A1A0F029}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B9B43A8B-6916-431D-BC1B-6595A1A0F029}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B9B43A8B-6916-431D-BC1B-6595A1A0F029}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B9B43A8B-6916-431D-BC1B-6595A1A0F029}.Release|Any CPU.Build.0 = Release|Any CPU
+		{90A5415E-8A42-4AAA-875B-33EEB0FC69B9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{90A5415E-8A42-4AAA-875B-33EEB0FC69B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{90A5415E-8A42-4AAA-875B-33EEB0FC69B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{90A5415E-8A42-4AAA-875B-33EEB0FC69B9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{479C4815-23D6-4710-8E67-989EEAD6A920}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{479C4815-23D6-4710-8E67-989EEAD6A920}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{479C4815-23D6-4710-8E67-989EEAD6A920}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{479C4815-23D6-4710-8E67-989EEAD6A920}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B995B495-D846-4EB5-80FB-B55B71028B94}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B995B495-D846-4EB5-80FB-B55B71028B94}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B995B495-D846-4EB5-80FB-B55B71028B94}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B995B495-D846-4EB5-80FB-B55B71028B94}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{B9B43A8B-6916-431D-BC1B-6595A1A0F029} = {1CFC60A2-3574-44F4-A575-77F896423A46}
+		{90A5415E-8A42-4AAA-875B-33EEB0FC69B9} = {9E1F5D18-E8A0-4AD5-B17D-3A14349AC0BA}
+		{479C4815-23D6-4710-8E67-989EEAD6A920} = {B907FD54-9786-4026-8386-9829AAC2CE19}
+		{B995B495-D846-4EB5-80FB-B55B71028B94} = {DDC56B64-0595-42DB-A686-BAD1FF757025}
+	EndGlobalSection
+EndGlobal

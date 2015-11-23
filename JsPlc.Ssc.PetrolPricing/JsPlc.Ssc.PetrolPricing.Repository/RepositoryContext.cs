@@ -3,11 +3,13 @@ using System.Data.Entity;
 using System.Data.Entity.ModelConfiguration.Conventions;
 using System.Data.Common;
 using JsPlc.Ssc.PetrolPricing.Models;
+using JsPlc.Ssc.PetrolPricing.Models.Persistence;
 
 namespace JsPlc.Ssc.PetrolPricing.Repository
 {
     public class RepositoryContext:DbContext,IRepositoryContext
     {
+        public IDbSet<AppConfigSettings> AppConfigSettings { get; set; }
         public IDbSet<FuelType> FuelType { get; set; } // 1=Super, 2=Unleaded, 5=Super Dis, 6=Std Dis, 7=LPG
         public IDbSet<UploadType> UploadType { get; set; } // Daily, Quarterly
         public IDbSet<ImportProcessStatus> ImportProcessStatus { get; set; } // Uploaded,Processing,Success,Failed

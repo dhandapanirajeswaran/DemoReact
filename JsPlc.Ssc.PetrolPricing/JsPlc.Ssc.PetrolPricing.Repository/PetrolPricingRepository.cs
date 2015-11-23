@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity.Migrations;
+using System.Data.Entity.SqlServer;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using JsPlc.Ssc.PetrolPricing.Models;
@@ -15,6 +16,11 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
         public PetrolPricingRepository(RepositoryContext context) { _db = context; }
 
+        public IEnumerable<AppConfigSettings> GetAppConfigSettings()
+        {
+            return _db.AppConfigSettings.ToList();
+        }
+
         public IEnumerable<Site> GetSites()
         {
            return _db.Sites.OrderBy(q=>q.Id);
@@ -26,7 +32,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         }
 
         // New File Upload
-        public int NewUpload(FileUpload upload)
+        public FileUpload NewUpload(FileUpload upload)
         {
             if (upload.Status == null)
                 upload.Status = GetProcessStatuses().First();
@@ -38,7 +44,19 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             var result = _db.FileUploads.Add(upload);
             _db.SaveChanges();
 
-            return result.Id;
+            return result; // return full object back
+        }
+        public bool ExistsUpload(string storedFileName)
+        {
+            return
+                _db.FileUploads.Any(
+                    x => x.StoredFileName.Equals(storedFileName, StringComparison.CurrentCultureIgnoreCase));
+        }
+
+        public void UpdateUpload(FileUpload fileUpload)
+        {
+            _db.FileUploads.AddOrUpdate(fileUpload);
+            _db.SaveChanges();
         }
 
         public IEnumerable<UploadType> GetUploadTypes()
@@ -68,14 +86,14 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
             if (date != null)
             {
-                files = files.Where(x => x.UploadDateTime == date);
+                files = files.Where(x => SqlFunctions.DateDiff("day", x.UploadDateTime, date.Value) == 0);
             }
             if (uploadType != null)
             {
-                files = files.Where(x => x.UploadType == uploadType);
+                files = files.Where(x => x.UploadType.Id == uploadType.Id);
             }
-
-            return files;
+            var retval = files.ToArray();
+            return retval;
         }
 
         ///  Do we have any FileUploads for specified Date and UploadType

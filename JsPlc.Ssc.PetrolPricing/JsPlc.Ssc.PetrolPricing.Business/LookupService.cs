@@ -7,9 +7,9 @@ using JsPlc.Ssc.PetrolPricing.Repository;
 
 namespace JsPlc.Ssc.PetrolPricing.Business
 {
-    public class Lookup
+    public class LookupService
     {
-        public IEnumerable<UploadType> GetUploadTypes()
+        public static IEnumerable<UploadType> GetUploadTypes()
         {
             using (var db = new PetrolPricingRepository(new RepositoryContext()))
             {
@@ -17,7 +17,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
             }
         }
 
-        public IEnumerable<FuelType> GetFuelTypes()
+        public static IEnumerable<FuelType> GetFuelTypes()
         {
             using (var db = new PetrolPricingRepository(new RepositoryContext()))
             {
@@ -25,7 +25,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
             }
         }
 
-        public IEnumerable<ImportProcessStatus> GetProcessStatuses()
+        public static IEnumerable<ImportProcessStatus> GetProcessStatuses()
         {
             using (var db = new PetrolPricingRepository(new RepositoryContext()))
             {

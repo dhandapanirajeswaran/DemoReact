@@ -54,8 +54,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="RepositoryInit.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="SettingsService.cs" />
     <Compile Include="FileService.cs" />
-    <Compile Include="Lookup.cs" />
+    <Compile Include="LookupService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

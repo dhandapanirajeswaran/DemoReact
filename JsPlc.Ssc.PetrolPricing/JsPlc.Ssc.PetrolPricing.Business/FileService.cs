@@ -9,7 +9,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 {
     public class FileService : IDisposable
     {
-        public int NewUpload(FileUpload fileUpload)
+        public FileUpload NewUpload(FileUpload fileUpload)
         {
             using (var db = new PetrolPricingRepository(new RepositoryContext()))
             {
@@ -20,6 +20,30 @@ namespace JsPlc.Ssc.PetrolPricing.Business
         public void Dispose()
         {
             // do nothing for now
+        }
+
+        public void UpdateUpload(FileUpload fileUpload)
+        {
+            using (var db = new PetrolPricingRepository(new RepositoryContext()))
+            {
+                db.UpdateUpload(fileUpload);
+            }
+        }
+
+        public bool ExistsUpload(string storedFileName)
+        {
+            using (var db = new PetrolPricingRepository(new RepositoryContext()))
+            {
+                return db.ExistsUpload(storedFileName);
+            }
+        }
+
+        public IEnumerable<FileUpload> ExistingDailyUploads(DateTime uploadDateTime)
+        {
+            using (var db = new PetrolPricingRepository(new RepositoryContext()))
+            {
+                return db.GetFileUploads(uploadDateTime, new UploadType{Id = 1});
+            }
         }
     }
 }

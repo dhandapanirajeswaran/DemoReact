@@ -45,6 +45,7 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Net.Http.Formatting, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
@@ -171,6 +172,7 @@
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Facade\ServiceFacade.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -243,10 +245,6 @@
     <None Include="Readme.html" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\JsPlc.Ssc.PetrolPricing.Business\JsPlc.Ssc.PetrolPricing.Business.csproj">
-      <Project>{479c4815-23d6-4710-8e67-989eead6a920}</Project>
-      <Name>JsPlc.Ssc.PetrolPricing.Business</Name>
-    </ProjectReference>
     <ProjectReference Include="..\JsPlc.Ssc.PetrolPricing.Models\JsPlc.Ssc.PetrolPricing.Models.csproj">
       <Project>{b9b43a8b-6916-431d-bc1b-6595a1a0f029}</Project>
       <Name>JsPlc.Ssc.PetrolPricing.Models</Name>

@@ -11,6 +11,7 @@
 
 <form action="" method="post" enctype="multipart/form-data">
     <fieldset>
+        <p style="color:orange; font-size: large">@ViewBag.WarningMessage</p>
 
         Upload Type: @Html.DropDownListFor(model => model.UploadTypes, new SelectList(
           Model.UploadTypes, "Id", "UploadTypeName"))

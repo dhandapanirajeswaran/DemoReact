@@ -9,25 +9,25 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
     
     public class SitesController : BaseController
     {
-
         public SitesController() { }
 
         public SitesController(IPetrolPricingRepository repository) : base(repository) { }
 
-        [HttpGet] // api/sites/?name=some site name
-        public IHttpActionResult GetSite([FromUri]int id)
+        [HttpGet] 
+        //[Route("api/site/{id}")] // Not needed but works
+        public IHttpActionResult Get([FromUri]int id)
         {
             var site = _db.GetSite(id);
 
-             if(site==null)
+             if(site==null || site.Id == 0)
                 return NotFound();
 
             return Ok(site);
         }
         
         [HttpGet]
-        [Route("sites")] // /sites
-        public IHttpActionResult GetSites()
+        //[Route("api/sites")]
+        public IHttpActionResult Get()
         {
             var sites = _db.GetSites();
 
