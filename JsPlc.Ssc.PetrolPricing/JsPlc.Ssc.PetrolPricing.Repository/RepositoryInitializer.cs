@@ -19,9 +19,10 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         {
             var appConfigSettings = new List<AppConfigSettings>
             {
-                new AppConfigSettings{Id = 1, SettingKey = "Uploadpath", 
-                    SettingValue = @"\\A-cotufps01-p.bc.jsplc.net\userdatashare0001\Parveen.Kumar\TestPetrolUpload"},
+                // \\A-cotufps01-p.bc.jsplc.net\userdatashare0001\Parveen.Kumar\TestPetrolUpload
 
+                new AppConfigSettings{Id = 1, SettingKey = "Uploadpath", 
+                    SettingValue = @"\\feltfps0003\gengrpshare0037\Scrum Teams\000000 - Projects\122000 - Petrol Pricing\TestFileUpload"},
                 new AppConfigSettings{Id = (int)SettingsKeys.SomeOtherVal, SettingKey = SettingsKeys.SomeOtherVal.ToString(), 
                     SettingValue = ""}
 
