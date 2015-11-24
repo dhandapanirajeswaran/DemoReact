@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Data.Entity.Migrations;
 using System.Data.Entity.SqlServer;
 using System.Linq;
@@ -74,6 +75,11 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             return _db.ImportProcessStatus.ToList();
         }
 
+        public IEnumerable<FileUpload> GetFileUploads()
+        {
+            return _db.FileUploads.Include(x => x.UploadType).Include(y => y.Status);
+        }
+
         /// <summary>
         /// Get List of FileUploads, use null params for full list
         /// </summary>
@@ -82,11 +88,12 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         /// <returns></returns>
         public IEnumerable<FileUpload> GetFileUploads(DateTime? date, UploadType uploadType)
         {
-            IQueryable<FileUpload> files = _db.FileUploads;
+            IEnumerable<FileUpload> files = GetFileUploads();
 
             if (date != null)
             {
-                files = files.Where(x => SqlFunctions.DateDiff("day", x.UploadDateTime, date.Value) == 0);
+                files = files.Where(x => x.UploadDateTime.Date.Equals(date.Value.Date));
+                //SqlFunctions.DateDiff("day", x.UploadDateTime, date.Value)
             }
             if (uploadType != null)
             {

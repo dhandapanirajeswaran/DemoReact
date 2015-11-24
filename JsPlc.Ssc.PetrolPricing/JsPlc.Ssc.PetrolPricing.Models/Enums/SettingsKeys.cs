@@ -9,6 +9,6 @@ namespace JsPlc.Ssc.PetrolPricing.Models.Enums
     public enum SettingsKeys
     {
         UploadPath = 1,
-        SpmeOtherVal = 2
+        SomeOtherVal = 2
     }
 }

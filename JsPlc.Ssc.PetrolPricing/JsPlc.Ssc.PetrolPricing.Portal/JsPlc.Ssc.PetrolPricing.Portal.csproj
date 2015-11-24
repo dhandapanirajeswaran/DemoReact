@@ -233,6 +233,9 @@
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
     <Content Include="Views\File\Upload.cshtml" />
     <Content Include="Views\File\Index.cshtml" />
+    <Content Include="Views\File\ConfirmUpload.cshtml" />
+    <Content Include="Views\File\_FileUploadsList.cshtml" />
+    <Content Include="Views\File\UploadDetails.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\uploads\" />

@@ -48,6 +48,20 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
             }
         }
 
+        /// <summary>
+        /// List of File Uploads
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("api/FileUploads")]
+        public async Task<IHttpActionResult> List()
+        {
+            using (var fs = new FileService())
+            {
+                return Ok(fs.GetFileUploads().ToList());
+            }
+        }
+
         [HttpPut]
         public async Task<IHttpActionResult> Put(FileUpload fileUpload)
         {
@@ -79,7 +93,7 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
                 {
                     DateTime dt = DateTime.Parse(uploadDateTime);
                     var exists = fs.ExistingDailyUploads(dt);
-                    return Ok(exists); //  T or F
+                    return Ok(exists.ToList()); //  T or F
                 }
             }
             catch (Exception ex)

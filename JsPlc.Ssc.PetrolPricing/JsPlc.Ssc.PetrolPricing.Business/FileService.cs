@@ -42,7 +42,15 @@ namespace JsPlc.Ssc.PetrolPricing.Business
         {
             using (var db = new PetrolPricingRepository(new RepositoryContext()))
             {
-                return db.GetFileUploads(uploadDateTime, new UploadType{Id = 1});
+                return db.GetFileUploads(uploadDateTime, new UploadType{Id = 1}).ToList();
+            }
+        }
+
+        public IEnumerable<FileUpload> GetFileUploads()
+        {
+            using (var db = new PetrolPricingRepository(new RepositoryContext()))
+            {
+                return db.GetFileUploads().ToList();
             }
         }
     }

@@ -1,0 +1,58 @@
+﻿@model IEnumerable<JsPlc.Ssc.PetrolPricing.Models.FileUpload>
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.OriginalFileName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.StoredFileName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.UploadType.UploadTypeName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.UploadDateTime)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Status.Status)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.UploadedBy)
+        </th>
+        <th></th>
+    </tr>
+    @if (!Model.Any())
+    {
+        <tr>
+            <td colspan="7"><h4 style="color:maroon;">Sorry, no files uploaded yet</h4></td>
+        </tr>
+    }
+    @foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.OriginalFileName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.StoredFileName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.UploadType.UploadTypeName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.UploadDateTime)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Status.Status)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.UploadedBy)
+        </td>
+        <td>
+            @Html.ActionLink("Details", "UploadDetails", "File", new { item.Id })
+            <!-- TODO display details on same page -->
+        </td>
+    </tr>
+}
+
+</table>

@@ -1,0 +1,22 @@
+﻿@model JsPlc.Ssc.PetrolPricing.Portal.Controllers.UploadConfirmationViewModel
+@{
+    ViewBag.Title = "Confirm Daily Upload";
+}
+
+<h2>Upload</h2>
+<h3>@ViewBag.Message</h3>
+<br/>
+<span style="color:red">@ViewBag.ErrorMessage</span>
+<span style="color:green; font-size: larger">@ViewBag.SuccessMessage</span>
+
+<form action="UploadConfirmation" method="Get">
+    <p style="color:orange; font-size: large">Please confirm to upload another daily price file.</p>
+    Uploading File: @Model.OriginalFileName<br />
+
+    <input type="hidden" value="@Model.Guid" name="guidKey" />
+    <input type="submit" value="Upload" name="response" />
+    <input type="submit" value="Cancel" name="response" />
+    
+    <h3>Existing daily files:</h3>
+    @Html.Partial("_FileUploadsList", Model.ExistingFiles)
+</form>

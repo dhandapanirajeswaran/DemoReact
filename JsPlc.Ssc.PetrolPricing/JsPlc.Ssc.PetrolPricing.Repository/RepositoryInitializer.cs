@@ -2,6 +2,7 @@
 using System.Data.Entity;
 using System.Collections.Generic;
 using JsPlc.Ssc.PetrolPricing.Models;
+using JsPlc.Ssc.PetrolPricing.Models.Enums;
 
 namespace JsPlc.Ssc.PetrolPricing.Repository
 {
@@ -20,6 +21,9 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             {
                 new AppConfigSettings{Id = 1, SettingKey = "Uploadpath", 
                     SettingValue = @"\\A-cotufps01-p.bc.jsplc.net\userdatashare0001\Parveen.Kumar\TestPetrolUpload"},
+
+                new AppConfigSettings{Id = (int)SettingsKeys.SomeOtherVal, SettingKey = SettingsKeys.SomeOtherVal.ToString(), 
+                    SettingValue = ""}
 
                 //new AppConfigSettings{Id = 1, SettingKey = "Uploadpath", 
                 //SettingValue = ""},
