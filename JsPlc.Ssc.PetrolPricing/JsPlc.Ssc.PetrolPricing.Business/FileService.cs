@@ -22,14 +22,6 @@ namespace JsPlc.Ssc.PetrolPricing.Business
             // do nothing for now
         }
 
-        public void UpdateUpload(FileUpload fileUpload)
-        {
-            using (var db = new PetrolPricingRepository(new RepositoryContext()))
-            {
-                db.UpdateUpload(fileUpload);
-            }
-        }
-
         public bool ExistsUpload(string storedFileName)
         {
             using (var db = new PetrolPricingRepository(new RepositoryContext()))

@@ -24,12 +24,25 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
         public IEnumerable<Site> GetSites()
         {
-           return _db.Sites.OrderBy(q=>q.Id);
+           return _db.Sites.Include(s => s.Emails).OrderBy(q=>q.Id);
         }
 
         public Site GetSite(int id)
         {
-            return _db.Sites.FirstOrDefault(q => q.Id == id);
+            return _db.Sites.Include(s => s.Emails).FirstOrDefault(q => q.Id == id);
+        }
+        public Site NewSite(Site site)
+        {
+            var result = _db.Sites.Add(site);
+            _db.SaveChanges();
+
+            return result; // return full object back
+        }
+
+        public void UpdateSite(Site site)
+        {
+            _db.Sites.AddOrUpdate(site);
+            _db.SaveChanges();
         }
 
         // New File Upload
@@ -52,32 +65,6 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             return
                 _db.FileUploads.Any(
                     x => x.StoredFileName.Equals(storedFileName, StringComparison.CurrentCultureIgnoreCase));
-        }
-
-        public void UpdateUpload(FileUpload fileUpload)
-        {
-            _db.FileUploads.AddOrUpdate(fileUpload);
-            _db.SaveChanges();
-        }
-
-        public IEnumerable<UploadType> GetUploadTypes()
-        {
-            return _db.UploadType.ToList();
-        }
-
-        public IEnumerable<FuelType> GetFuelTypes()
-        {
-            return _db.FuelType.ToList();
-        }
-
-        public IEnumerable<ImportProcessStatus> GetProcessStatuses()
-        {
-            return _db.ImportProcessStatus.ToList();
-        }
-
-        public IEnumerable<FileUpload> GetFileUploads()
-        {
-            return _db.FileUploads.Include(x => x.UploadType).Include(y => y.Status);
         }
 
         /// <summary>
@@ -109,6 +96,28 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             var anyFilesForDate = GetFileUploads(date, uploadType);
             return anyFilesForDate.Any();
         }
+        // ############### Lookup #############
+        public IEnumerable<UploadType> GetUploadTypes()
+        {
+            return _db.UploadType.ToList();
+        }
+
+        public IEnumerable<FuelType> GetFuelTypes()
+        {
+            return _db.FuelType.ToList();
+        }
+
+        public IEnumerable<ImportProcessStatus> GetProcessStatuses()
+        {
+            return _db.ImportProcessStatus.ToList();
+        }
+
+        public IEnumerable<FileUpload> GetFileUploads()
+        {
+            return _db.FileUploads.Include(x => x.UploadType).Include(y => y.Status);
+        }
+
+    
 
         public void Dispose()
         {

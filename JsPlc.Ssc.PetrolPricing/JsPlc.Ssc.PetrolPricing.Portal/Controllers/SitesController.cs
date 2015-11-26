@@ -16,6 +16,7 @@ using JsPlc.Ssc.PetrolPricing.Models.ViewModels;
 //using JsPlc.Ssc.PetrolPricing.Business;
 using JsPlc.Ssc.PetrolPricing.Portal.Facade;
 using Microsoft.Ajax.Utilities;
+using WebGrease.Css.Extensions;
 
 namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 {
@@ -32,14 +33,6 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             var model = _serviceFacade.GetSites();
             return View(model);
         }
-        public ActionResult Prices(string msg = "")
-        {
-            // Display list of existing sites along with their status
-            ViewBag.Message = msg;
-
-            // var model = _serviceFacade.GetSites();
-            return View();
-        }
 
         public ActionResult Create()
         {
@@ -50,8 +43,34 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
         public ActionResult Create(Site site)
         {
             site.IsSainsburysSite = true; 
+            var nonBlankVals = new List<SiteEmail>();
+            site.Emails.ForEach(x =>
+            {
+                if (!x.EmailAddress.IsNullOrWhiteSpace()) nonBlankVals.Add(x);
+            });
+            site.Emails = nonBlankVals;
+
             var createdSite = _serviceFacade.NewSite(site);
-            return RedirectToAction("Index", new {msg = "Site: " + createdSite.SiteName + " created successfully"});
+            if (createdSite != null) return RedirectToAction("Index", new { msg = "Site: " + createdSite.SiteName + " created successfully" });
+
+            ViewBag.ErrorMessage = "Unable to create site.";
+            return View();
         }
+
+        public ActionResult Details(int id)
+        {
+            var model = _serviceFacade.GetSite(id);
+            return View(model);
+        }
+
+        public ActionResult Prices(string msg = "")
+        {
+            // Display list of existing sites along with their status
+            ViewBag.Message = msg;
+
+            // var model = _serviceFacade.GetSites();
+            return View();
+        }
+
     }
 }

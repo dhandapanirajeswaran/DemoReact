@@ -61,27 +61,6 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
             }
         }
 
-        [HttpPut]
-        public async Task<IHttpActionResult> Put(FileUpload fileUpload)
-        {
-            if (fileUpload == null)
-            {
-                return BadRequest("Invalid passed data: fileUpload");
-            }
-            try
-            {
-                using (var fs = _fileService)
-                {
-                    fs.UpdateUpload(fileUpload); // Update the status of an uploaded file (processing, success, failed etc)
-                    return Ok(fileUpload);
-                }
-            }
-            catch (Exception ex)
-            {
-                return new ExceptionResult(ex, this);
-            }
-        }
-
         [HttpGet]
         [Route("api/ExistingDailyUploads/{uploadDateTime}")] // yyyymmdd
         public async Task<IHttpActionResult> ExistingDailyUploads([FromUri] string uploadDateTime)

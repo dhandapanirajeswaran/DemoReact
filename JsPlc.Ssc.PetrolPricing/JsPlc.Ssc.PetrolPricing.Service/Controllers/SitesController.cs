@@ -1,6 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web.Http;
+using System.Web.Http.Results;
 using JsPlc.Ssc.PetrolPricing.Business;
 using JsPlc.Ssc.PetrolPricing.Models;
 
@@ -35,6 +38,32 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
                 return NotFound();
 
             return Ok(sites);
+        }
+
+        [HttpPost] // Create new site
+        public async Task<IHttpActionResult> Post(Site site)
+        {
+            if (site == null)
+            {
+                return BadRequest("Invalid passed data: site");
+            }
+    
+            try
+            {
+                using (var ss = _siteService)
+                {
+                    if (ss.ExistsSite(site.SiteName))
+                    {
+                        return BadRequest("Site with that name already exists. Please try again.");
+                    }
+                    var su = ss.NewSite(site);
+                    return Ok(su);
+                }
+            }
+            catch (Exception ex)
+            {
+                return new ExceptionResult(ex, this);
+            }
         }
     }
 }

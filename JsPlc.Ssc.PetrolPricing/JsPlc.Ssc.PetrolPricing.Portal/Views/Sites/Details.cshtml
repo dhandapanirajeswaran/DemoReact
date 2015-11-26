@@ -1,0 +1,138 @@
+﻿@model JsPlc.Ssc.PetrolPricing.Models.Site
+
+@{
+    ViewBag.Title = "Site Details";
+}
+
+<h2>Site Details</h2>
+
+    <hr />
+    <div class="col-md-6">
+
+        <dl class="dl-horizontal">
+
+            <dt>
+                @Html.DisplayNameFor(model => model.CatNo)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.CatNo)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Brand)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Brand)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.SiteName)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.SiteName)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Address)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Address)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Suburb)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Suburb)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Town)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Town)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.PostCode)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.PostCode)
+            </dd>
+        </dl>
+    </div>
+    <div class="col-md-6">
+
+        <dl class="dl-horizontal">
+            <dt>
+                @Html.DisplayNameFor(model => model.Company)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Company)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Ownership)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Ownership)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.StoreNo)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.StoreNo)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.PfsNo)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.PfsNo)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.IsSainsburysSite)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.IsSainsburysSite)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.IsActive)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.IsActive)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Emails)
+            </dt>
+
+            <dd>
+                @foreach (var email in Model.Emails)
+                {
+                    <a href="@("mailto:" + email.EmailAddress)">@email.EmailAddress</a>
+                    <br />
+                }
+            </dd>
+        </dl>
+    </div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }, htmlAttributes: new { onclick = "return false;" }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

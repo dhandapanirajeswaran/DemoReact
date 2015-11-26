@@ -51,11 +51,8 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
         {
             const string apiUrl = "api/Sites/";
             
-            // TODO
-            //var response = _client.Value.PostAsync(apiUrl, site, new JsonMediaTypeFormatter()).Result;
-            //var result = response.Content.ReadAsAsync<Site>().Result;
-            var response = new HttpResponseMessage(HttpStatusCode.Created);
-            var result = site;
+            var response = _client.Value.PostAsync(apiUrl, site, new JsonMediaTypeFormatter()).Result;
+            var result = response.Content.ReadAsAsync<Site>().Result;
 
             return (response.IsSuccessStatusCode) ? result : null;
         }

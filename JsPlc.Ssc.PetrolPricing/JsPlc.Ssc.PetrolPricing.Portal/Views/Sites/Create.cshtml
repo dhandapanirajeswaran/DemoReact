@@ -1,4 +1,5 @@
-﻿@model JsPlc.Ssc.PetrolPricing.Models.Site
+﻿@using JsPlc.Ssc.PetrolPricing.Models
+@model JsPlc.Ssc.PetrolPricing.Models.Site
 
 @{
     ViewBag.Title = "New Sainsburys Site";
@@ -11,9 +12,9 @@
     @Html.AntiForgeryToken()
 
     <div class="form-horizontal">
-        @*<h4>Site</h4>*@
         <hr />
 
+        <span style="color:red">@ViewBag.ErrorMessage</span>
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
         <div class="col-md-6">
@@ -64,8 +65,6 @@
                     @Html.ValidationMessageFor(model => model.Town, "", new { @class = "text-danger" })
                 </div>
             </div>
-        </div>
-        <div class="col-md-6">
 
             <div class="form-group">
                 @Html.LabelFor(model => model.PostCode, htmlAttributes: new { @class = "control-label col-md-2" })
@@ -74,6 +73,10 @@
                     @Html.ValidationMessageFor(model => model.PostCode, "", new { @class = "text-danger" })
                 </div>
             </div>
+
+        </div>
+
+        <div class="col-md-6">
 
             <div class="form-group">
                 @Html.LabelFor(model => model.Company, htmlAttributes: new { @class = "control-label col-md-2" })
@@ -113,6 +116,29 @@
             </div>
 
             <div class="form-group">
+                @Html.LabelFor(model => model.Emails, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10" id="Emails">
+                    @{
+                        var i = 0;
+                        <!-- Depending on how many emails a site has, we add elements, 3 for now -->
+                        var emails = new List<SiteEmail>
+                        {
+                            new SiteEmail {EmailAddress = ""},
+                            new SiteEmail {EmailAddress = ""},
+                            new SiteEmail {EmailAddress = ""}
+                        };
+
+                        foreach (var email in emails)
+                        {
+                            <input type="text" name=@("Emails[" + i + "].EmailAddress") class="form-control" id=@("Emails_" + i + "_EmailAddress")
+                                   value="@email.EmailAddress" />
+                            i += 1;
+                        }
+                    }
+                </div>
+            </div>
+
+            <div class="form-group">
                 @Html.LabelFor(model => model.IsActive, htmlAttributes: new { @class = "control-label col-md-2" })
                 <div class="col-md-10">
                     <div class="checkbox">
@@ -127,6 +153,7 @@
                     <input type="submit" value="Create" class="btn btn-default" />
                 </div>
             </div>
+
         </div>
     </div>
 }

@@ -7,27 +7,30 @@ using JsPlc.Ssc.PetrolPricing.Repository;
 
 namespace JsPlc.Ssc.PetrolPricing.Business
 {
-    public class SiteService : IDisposable
+    public class SiteService : BaseService
     {
-        public void Dispose()
-        {
-            // do nothing for now
-        }
+        public SiteService() { }
+
+        public SiteService(IPetrolPricingRepository repository) : base(repository) { }
 
         public IEnumerable<Site> GetSites()
         {
-            using (var db = new PetrolPricingRepository(new RepositoryContext()))
-            {
-                return db.GetSites().ToList();
-            }
+           return _db.GetSites().ToList();
         }
 
         public Site GetSite(int id)
         {
-            using (var db = new PetrolPricingRepository(new RepositoryContext()))
-            {
-                return db.GetSite(id);
-            }
+            return _db.GetSite(id);
+        }
+
+        public Site NewSite(Site site)
+        {
+            return _db.NewSite(site);
+        }
+
+        public bool ExistsSite(string siteName)
+        {
+            return _db.GetSites().Any(s => s.SiteName.Equals(siteName, StringComparison.CurrentCultureIgnoreCase));
         }
     }
 }

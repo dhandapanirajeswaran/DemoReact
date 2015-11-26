@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Data.Entity.Core.Metadata.Edm;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 
@@ -34,8 +35,8 @@ namespace JsPlc.Ssc.PetrolPricing.Models
 
         public bool IsSainsburysSite { get; set; } // defaults to false
         public bool IsActive { get; set; } // defaults to false
-
-        public virtual IEnumerable<SiteEmail> Emails { get; set; }
+        
+        public virtual ICollection<SiteEmail> Emails { get; set; }
     }
 
     public class SiteEmail
@@ -47,6 +48,8 @@ namespace JsPlc.Ssc.PetrolPricing.Models
         public string EmailAddress { get; set; }
 
         public int SiteId { get; set; }
+
+        [ForeignKey("SiteId")]
         public virtual Site Site { get; set; }
     }
 

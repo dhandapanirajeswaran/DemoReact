@@ -10,8 +10,16 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         IEnumerable<Site> GetSites();
         
         Site GetSite(int siteId);
-        
+
+        Site NewSite(Site site);
+
+        void UpdateSite(Site site);
+
         IEnumerable<FileUpload> GetFileUploads(DateTime? date, UploadType uploadType);
+
+        FileUpload NewUpload(FileUpload upload);
+        
+        bool ExistsUpload(string storedFileName);
 
         bool AnyFileUploadForDate(DateTime date, UploadType uploadType);
 
