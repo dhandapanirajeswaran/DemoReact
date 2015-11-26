@@ -138,7 +138,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             return RedirectToAction("Upload");
         }
 
-        public ActionResult UploadDetails(int id)
+        public ActionResult Details(int id)
         {
             // Return file upload details with processing steps and errors if any
 

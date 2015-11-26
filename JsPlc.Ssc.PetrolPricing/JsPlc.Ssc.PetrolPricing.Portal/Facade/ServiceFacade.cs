@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Globalization;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Formatting;
 using System.Net.Http.Headers;
 using System.Web;
+using System.Web.UI;
 using JsPlc.Ssc.PetrolPricing.Models;
 //using JsPlc.Ssc.PetrolPricing.Portal.Helpers.Extensions;
 using JsPlc.Ssc.PetrolPricing.Models.Enums;
@@ -42,6 +44,19 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             var response = _client.Value.GetAsync("api/sites/" + siteId).Result;
 
             var result = response.Content.ReadAsAsync<Site>().Result;
+            return (response.IsSuccessStatusCode) ? result : null;
+        }
+
+        public Site NewSite(Site site) 
+        {
+            const string apiUrl = "api/Sites/";
+            
+            // TODO
+            //var response = _client.Value.PostAsync(apiUrl, site, new JsonMediaTypeFormatter()).Result;
+            //var result = response.Content.ReadAsAsync<Site>().Result;
+            var response = new HttpResponseMessage(HttpStatusCode.Created);
+            var result = site;
+
             return (response.IsSuccessStatusCode) ? result : null;
         }
 

@@ -162,6 +162,8 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\ReportsController.cs" />
+    <Compile Include="Controllers\SitesController.cs" />
     <Compile Include="Controllers\FileController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
@@ -235,7 +237,13 @@
     <Content Include="Views\File\Index.cshtml" />
     <Content Include="Views\File\ConfirmUpload.cshtml" />
     <Content Include="Views\File\_FileUploadsList.cshtml" />
-    <Content Include="Views\File\UploadDetails.cshtml" />
+    <Content Include="Views\File\Details.cshtml" />
+    <Content Include="Views\Sites\_SiteList.cshtml" />
+    <Content Include="Views\Sites\Index.cshtml" />
+    <Content Include="Views\Shared\_NavLinks.cshtml" />
+    <Content Include="Views\Sites\Prices.cshtml" />
+    <Content Include="Views\Reports\Index.cshtml" />
+    <Content Include="Views\Sites\Create.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\uploads\" />

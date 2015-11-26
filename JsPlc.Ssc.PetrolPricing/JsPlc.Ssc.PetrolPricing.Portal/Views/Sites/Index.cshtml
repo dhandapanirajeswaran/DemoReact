@@ -1,0 +1,16 @@
+﻿@model IEnumerable<JsPlc.Ssc.PetrolPricing.Models.Site>
+@{
+    ViewBag.Title = "Sainsbury's Sites";
+}
+
+<h2>Site Manager</h2>
+<p style="color:blue; font-size: larger; font-weight: bold">@ViewBag.Message</p>
+
+<div align="right">
+    <input type="button" value="New Sainsbury's Site" onclick="location.href='@Url.Action("Create", "Sites" )'" />
+</div>
+<!-- Approx 300 Sinsbury's sites -->
+<div>
+    List of Sites:
+    @Html.Partial("_SiteList", Model)
+</div>

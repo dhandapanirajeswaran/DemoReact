@@ -1,0 +1,7 @@
+﻿@if (Request.IsAuthenticated)
+{
+    <li>@Html.ActionLink("Upload", "Index", "File")</li>
+    <li>@Html.ActionLink("Site Pricing", "Prices", "Sites")</li>
+    <li>@Html.ActionLink("Site Maintenance", "Index", "Sites")</li>
+    <li>@Html.ActionLink("Reports", "Index", "Reports")</li>
+}

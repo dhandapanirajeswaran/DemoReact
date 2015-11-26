@@ -70,20 +70,32 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                 new Site{SiteName = "SAINSBURYS HENDON", Town = "London", 
                     Address = "HYDE ESTATE ROAD", Suburb = "HENDON", PostCode = "NW9 6JX", Company = "J SAINSBURY PLC", 
                     Ownership = "Hypermarket", CatNo = 100, Brand = "SAINSBURYS", IsSainsburysSite = true, IsActive = true}, 
-                   // Store No = 637, PFS = 66 (can add while editing)
+                   // PFS=66, Cat=100, Store= 637
 
                 new Site{SiteName = "SAINSBURYS ALPERTON", Town = "WEMBLEY", 
                     Address = "EALING ROAD", Suburb = "ALPERTON", PostCode = "HA0 1PF", Company = "J SAINSBURY PLC", 
                     Ownership = "Hypermarket", CatNo = 1334, Brand = "SAINSBURYS", IsSainsburysSite = true, IsActive = true, StoreNo = 646},
-                   // PFS = 196 (can add/amend while editing)
+                   // PFS=196, Cat=1334, Store=646
+
+                new Site{SiteName = "SAINSBURYS FARLINGTON", Town = "PORTSMOUTH", 
+                    Address = "FITZHERBERT ROAD", Suburb = "DRAYTON", PostCode = "PO6 1RR", Company = "J SAINSBURY PLC", 
+                    Ownership = "Hypermarket", CatNo = 9144, Brand = "SAINSBURYS", IsSainsburysSite = true, IsActive = true, PfsNo = 81},
+                    // PFS=81	Cat=9144	Site=672
+
+                // ### ### ### ### ### ### 
+                // ### COMPETITORS
+                // ### ### ### ### ### ### 
+                new Site{SiteName = "TESCO HOOVER BUILDING", Town = "GREENFORD", 
+                    Address = "WESTERN AVENUE", Suburb = "PERIVALE", PostCode = "UB6 8DW", Company = "TESCO STORES LTD", 
+                    Ownership = "Hypermarket", CatNo = 1336, Brand = "TESCO", IsSainsburysSite = false, IsActive = true},
+
+                new Site{SiteName = "ASDA WATERLOOVILLE AUTOMAT", Town = "WATERLOOVILLE", 
+                    Address = "MAUREPASS WAY", Suburb = "", PostCode = "PO7 7XR", Company = "ASDA STORES PLC", 
+                    Ownership = "Hypermarket", CatNo = 26053, Brand = "ASDA", IsSainsburysSite = false, IsActive = true},
 
                 new Site{SiteName = "ASDA COLINDALE AUTOMAT", Town = "London", 
                     Address = "CAPITOL WAY", Suburb = "COLINDALE", PostCode = "NW9 0EW", Company = "ASDA STORES PLC", 
                     Ownership = "Hypermarket", CatNo = 26054, Brand = "ASDA", IsSainsburysSite = false, IsActive = true},
-
-                new Site{SiteName = "TESCO HOOVER BUILDING", Town = "GREENFORD", 
-                    Address = "WESTERN AVENUE", Suburb = "PERIVALE", PostCode = "UB6 8DW", Company = "TESCO STORES LTD", 
-                    Ownership = "Hypermarket", CatNo = 1336, Brand = "TESCO", IsSainsburysSite = false, IsActive = true},
             };
 
             //sites.ForEach(c => context.Sites.Add(c));
