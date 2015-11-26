@@ -15,6 +15,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         public IDbSet<ImportProcessStatus> ImportProcessStatus { get; set; } // Uploaded,Processing,Success,Failed
 
         public IDbSet<Site> Sites { get; set; }
+        public IDbSet<SiteEmail> SiteEmails { get; set; }
         public IDbSet<SiteToCompetitor> SiteToCompetitors { get; set; }
         public IDbSet<FileUpload> FileUploads { get; set; }
         public IDbSet<DailyUploadStaging> DailyUploadStaging { get; set; }
@@ -31,6 +32,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
             modelBuilder.Entity<SiteToCompetitor>().HasRequired(m => m.Site).WithMany().HasForeignKey(m => m.SiteId);
             modelBuilder.Entity<SiteToCompetitor>().HasRequired(m => m.Competitor).WithMany().HasForeignKey(m => m.CompetitorId);
+            modelBuilder.Entity<SiteEmail>().HasRequired(c => c.Site).WithMany().HasForeignKey(m => m.SiteId);
         }
     }
 }

@@ -13,24 +13,41 @@ namespace JsPlc.Ssc.PetrolPricing.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
+        public int? CatNo { get; set; } // Catalist no.
+        public string Brand { get; set; }
+
         [Required]
         public string SiteName { get; set; }
 
+        public string Address { get; set; }
+        public string Suburb { get; set; }
+        
         [Required]
         public string Town { get; set; }
 
-        public int? CatNo { get; set; } // Catalist no.
-        public int? StoreNo { get; set; }
-        public int? PfsNo { get; set; }
-        public string Brand { get; set; }
+        public string PostCode { get; set; }
         public string Company { get; set; }
         public string Ownership { get; set; }
-        public string Address { get; set; }
-        public string Suburb { get; set; }
-        public string PostCode { get; set; }
+
+        public int? StoreNo { get; set; }
+        public int? PfsNo { get; set; }
 
         public bool IsSainsburysSite { get; set; } // defaults to false
         public bool IsActive { get; set; } // defaults to false
+
+        public virtual IEnumerable<SiteEmail> Emails { get; set; }
+    }
+
+    public class SiteEmail
+    {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int Id { get; set; }
+
+        public string EmailAddress { get; set; }
+
+        public int SiteId { get; set; }
+        public virtual Site Site { get; set; }
     }
 
     public class SiteToCompetitor

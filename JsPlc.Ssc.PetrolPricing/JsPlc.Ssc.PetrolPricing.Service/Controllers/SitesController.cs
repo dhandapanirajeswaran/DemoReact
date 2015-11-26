@@ -36,6 +36,5 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
 
             return Ok(sites);
         }
-
     }
 }
