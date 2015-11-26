@@ -7,18 +7,12 @@ using System.Web.Http;
 using System.Web.Http.Results;
 using JsPlc.Ssc.PetrolPricing.Business;
 using JsPlc.Ssc.PetrolPricing.Models;
-using JsPlc.Ssc.PetrolPricing.Repository;
 using Newtonsoft.Json;
 
 namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
 {
     public class SettingsController : BaseController
     {
-
-        public SettingsController() { }
-
-        public SettingsController(IPetrolPricingRepository repository) : base(repository) { }
-
         [Route("api/settings/{key}")]
         public async Task<IHttpActionResult> Get(string key)
         {

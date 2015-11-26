@@ -1,28 +1,30 @@
 ﻿using System.Web.Http;
-using JsPlc.Ssc.PetrolPricing.Repository;
+using JsPlc.Ssc.PetrolPricing.Business;
 
 namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
 {
     public class BaseController : ApiController
     {
-        protected readonly IPetrolPricingRepository _db;
+        protected readonly FileService _fileService;
+        protected readonly SiteService _siteService;
 
         public BaseController()
         {
-
-            _db=new PetrolPricingRepository(new RepositoryContext());
+            _fileService = new FileService();
+            _siteService = new SiteService();
         }
 
-        public BaseController(IPetrolPricingRepository repository)
+        public BaseController(FileService fileService, SiteService siteService)
         {
-            _db = repository;
+            _fileService = fileService;
+            _siteService = siteService;
         }
 
         protected override void Dispose(bool disposing)
         {
             if (disposing)
             {
-                _db.Dispose();
+                //_db.Dispose();
             }
             base.Dispose(disposing);
         }

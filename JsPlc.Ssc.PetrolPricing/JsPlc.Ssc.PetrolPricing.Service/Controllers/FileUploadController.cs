@@ -7,7 +7,6 @@ using System.Web.Http;
 using System.Web.Http.Results;
 using JsPlc.Ssc.PetrolPricing.Business;
 using JsPlc.Ssc.PetrolPricing.Models;
-using JsPlc.Ssc.PetrolPricing.Repository;
 using Newtonsoft.Json;
 
 namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
@@ -17,7 +16,7 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
 
         public FileUploadController() { }
 
-        public FileUploadController(IPetrolPricingRepository repository) : base(repository) { }
+        public FileUploadController(FileService fileService) : base(fileService, null) { }
 
         [HttpPost] // Create new upload
         public async Task<IHttpActionResult> Post(FileUpload fileUpload)
@@ -32,7 +31,7 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
             //}
             try
             {
-                using (var fs = new FileService())
+                using (var fs = _fileService)
                 {
                     if (fs.ExistsUpload(fileUpload.StoredFileName)) // avoid creating records for same filename (user RePosting by mistake)
                     {
@@ -56,7 +55,7 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
         [Route("api/FileUploads")]
         public async Task<IHttpActionResult> List()
         {
-            using (var fs = new FileService())
+            using (var fs = _fileService)
             {
                 return Ok(fs.GetFileUploads().ToList());
             }
@@ -71,7 +70,7 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
             }
             try
             {
-                using (var fs = new FileService())
+                using (var fs = _fileService)
                 {
                     fs.UpdateUpload(fileUpload); // Update the status of an uploaded file (processing, success, failed etc)
                     return Ok(fileUpload);
@@ -89,7 +88,7 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
         {
             try
             {
-                using (var fs = new FileService())
+                using (var fs = _fileService)
                 {
                     DateTime dt = DateTime.Parse(uploadDateTime);
                     var exists = fs.ExistingDailyUploads(dt);

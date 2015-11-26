@@ -3,16 +3,11 @@ using System.Linq;
 using System.Web.Http;
 using JsPlc.Ssc.PetrolPricing.Business;
 using JsPlc.Ssc.PetrolPricing.Models;
-using JsPlc.Ssc.PetrolPricing.Repository;
 
 namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
 {
     public class LookupController : BaseController
     {
-        public LookupController() { }
-
-        public LookupController(IPetrolPricingRepository repository) : base(repository) { }
-
         [HttpGet]
         [Route("api/UploadTypes")]
         public IHttpActionResult UploadTypes()
