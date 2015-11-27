@@ -13,7 +13,7 @@ namespace JsPlc.Ssc.PetrolPricing.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
-        public int DailyUploadId { get; set; }
+        public int? DailyUploadId { get; set; }
 
         public FileUpload DailyUpload { get; set; }
 
