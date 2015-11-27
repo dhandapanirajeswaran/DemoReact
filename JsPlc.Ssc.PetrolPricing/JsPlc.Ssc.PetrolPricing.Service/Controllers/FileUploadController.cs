@@ -50,7 +50,8 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
         }
 
         /// <summary>
-        /// List of File Uploads filterable with queryString ?date=2015-11-15&uploadTypeId=1&statusId=1 (all params optional)
+        /// List of File Uploads filterable with queryString 
+        /// ?date=2015-11-15&amp;uploadTypeId=1&amp;statusId=1 (all params optional)
         /// </summary>
         /// <returns></returns>
         [HttpGet]

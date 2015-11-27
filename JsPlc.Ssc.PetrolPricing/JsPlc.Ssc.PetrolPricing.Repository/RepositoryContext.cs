@@ -21,6 +21,8 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         public IDbSet<DailyUploadStaging> DailyUploadStaging { get; set; }
         public IDbSet<QuarterlyUploadStaging> QuarterlyUploadStaging { get; set; }
 
+        public IDbSet<DailyPrice> DailyPrices { get; set; }
+
         public RepositoryContext() : base("name=PetrolPricingRepository") { }
 
         public RepositoryContext(DbConnection connection) : base(connection, true) { }

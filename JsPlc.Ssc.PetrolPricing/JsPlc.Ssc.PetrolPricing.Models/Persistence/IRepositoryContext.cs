@@ -19,5 +19,7 @@ namespace JsPlc.Ssc.PetrolPricing.Models.Persistence
 
         IDbSet<DailyUploadStaging> DailyUploadStaging { get; }
         IDbSet<QuarterlyUploadStaging> QuarterlyUploadStaging { get; }
+
+        IDbSet<DailyPrice> DailyPrices { get; set; }
     }
 }
