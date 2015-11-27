@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity.Core.Metadata.Edm;
@@ -33,6 +34,7 @@ namespace JsPlc.Ssc.PetrolPricing.Models
         public int? StoreNo { get; set; }
         public int? PfsNo { get; set; }
 
+        [DefaultValue(true)]
         public bool IsSainsburysSite { get; set; } // defaults to false
         public bool IsActive { get; set; } // defaults to false
         
@@ -45,6 +47,7 @@ namespace JsPlc.Ssc.PetrolPricing.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
+        [EmailAddress(ErrorMessage = "Invalid Email Address")]
         public string EmailAddress { get; set; }
 
         public int SiteId { get; set; }

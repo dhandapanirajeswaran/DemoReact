@@ -52,7 +52,7 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
             {
                 using (var ss = _siteService)
                 {
-                    if (ss.ExistsSite(site.SiteName))
+                    if (ss.ExistsSite(site.SiteName, site.CatNo))
                     {
                         return BadRequest("Site with that name already exists. Please try again.");
                     }
