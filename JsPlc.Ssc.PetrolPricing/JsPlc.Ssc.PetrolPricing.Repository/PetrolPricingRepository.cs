@@ -71,9 +71,10 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         /// Get List of FileUploads, use null params for full list
         /// </summary>
         /// <param name="date">Nullable date to get Files for a specific date</param>
-        /// <param name="uploadType">Optional uploadType to filter if needed</param>
+        /// <param name="uploadTypeId">Optional uploadType to filter if needed</param>
+        /// <param name="statusId">Optional statusType to filter if needed</param>
         /// <returns></returns>
-        public IEnumerable<FileUpload> GetFileUploads(DateTime? date, UploadType uploadType)
+        public IEnumerable<FileUpload> GetFileUploads(DateTime? date, int? uploadTypeId, int? statusId)
         {
             IEnumerable<FileUpload> files = GetFileUploads();
 
@@ -82,18 +83,32 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                 files = files.Where(x => x.UploadDateTime.Date.Equals(date.Value.Date));
                 //SqlFunctions.DateDiff("day", x.UploadDateTime, date.Value)
             }
-            if (uploadType != null)
+            if (uploadTypeId.HasValue)
             {
-                files = files.Where(x => x.UploadType.Id == uploadType.Id);
+                files = files.Where(x => x.UploadTypeId == uploadTypeId.Value);
+            }
+            if (statusId.HasValue)
+            {
+                files = files.Where(x => x.StatusId == statusId.Value);
             }
             var retval = files.ToArray();
             return retval;
         }
 
+        public IEnumerable<FileUpload> GetFileUploads()
+        {
+            return _db.FileUploads.Include(x => x.UploadType).Include(y => y.Status);
+        }
+
+        public FileUpload GetFileUpload(int id)
+        {
+            return _db.FileUploads.Include(x => x.UploadType).Include(y => y.Status).FirstOrDefault(x => x.Id == id);
+        }
+
         ///  Do we have any FileUploads for specified Date and UploadType
         public bool AnyFileUploadForDate(DateTime date, UploadType uploadType)
         {
-            var anyFilesForDate = GetFileUploads(date, uploadType);
+            var anyFilesForDate = GetFileUploads(date, uploadType.Id, null);
             return anyFilesForDate.Any();
         }
         // ############### Lookup #############
@@ -111,13 +126,6 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         {
             return _db.ImportProcessStatus.ToList();
         }
-
-        public IEnumerable<FileUpload> GetFileUploads()
-        {
-            return _db.FileUploads.Include(x => x.UploadType).Include(y => y.Status);
-        }
-
-    
 
         public void Dispose()
         {

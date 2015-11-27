@@ -60,7 +60,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
         // Get list of file uploads
         public IEnumerable<FileUpload> GetFileUploads(int? typeId, int? statusId) // 1 = Daily, 2 = Qtryly
         {
-            var filters = typeId.HasValue ? "typeId=" + typeId.Value  + "&" : "";
+            var filters = typeId.HasValue ? "uploadTypeId=" + typeId.Value  + "&" : "";
             filters = statusId.HasValue ? filters + "statusId=" + statusId.Value + "&": "";
 
             var apiUrl = String.IsNullOrEmpty(filters) ? "api/fileuploads/" : "api/fileuploads/?" + filters;
@@ -68,6 +68,17 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             var response = _client.Value.GetAsync(apiUrl).Result;
 
             var result = response.Content.ReadAsAsync<IEnumerable<FileUpload>>().Result;
+
+            return (response.IsSuccessStatusCode) ? result : null;
+        }
+
+        public FileUpload GetFileUpload(int id)
+        {
+            var apiUrl = "api/fileuploads/" + id;
+
+            var response = _client.Value.GetAsync(apiUrl).Result;
+
+            var result = response.Content.ReadAsAsync<FileUpload>().Result;
 
             return (response.IsSuccessStatusCode) ? result : null;
         }

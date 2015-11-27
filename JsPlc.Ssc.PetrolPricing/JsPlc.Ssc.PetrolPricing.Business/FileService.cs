@@ -7,14 +7,11 @@ using JsPlc.Ssc.PetrolPricing.Repository;
 
 namespace JsPlc.Ssc.PetrolPricing.Business
 {
-    public class FileService : IDisposable
+    public class FileService : BaseService, IDisposable
     {
         public FileUpload NewUpload(FileUpload fileUpload)
         {
-            using (var db = new PetrolPricingRepository(new RepositoryContext()))
-            {
-                return db.NewUpload(fileUpload);
-            }
+            return _db.NewUpload(fileUpload);
         }
 
         public void Dispose()
@@ -24,26 +21,23 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 
         public bool ExistsUpload(string storedFileName)
         {
-            using (var db = new PetrolPricingRepository(new RepositoryContext()))
-            {
-                return db.ExistsUpload(storedFileName);
-            }
+            return _db.ExistsUpload(storedFileName);
         }
 
         public IEnumerable<FileUpload> ExistingDailyUploads(DateTime uploadDateTime)
         {
-            using (var db = new PetrolPricingRepository(new RepositoryContext()))
-            {
-                return db.GetFileUploads(uploadDateTime, new UploadType{Id = 1}).ToList();
-            }
+            return _db.GetFileUploads(uploadDateTime, 1, null).ToList();
         }
 
-        public IEnumerable<FileUpload> GetFileUploads()
+        public IEnumerable<FileUpload> GetFileUploads(DateTime? date, int? uploadTypeId, int? statusId)
         {
-            using (var db = new PetrolPricingRepository(new RepositoryContext()))
-            {
-                return db.GetFileUploads().ToList();
-            }
+            return _db.GetFileUploads(date, uploadTypeId, statusId).ToList();
         }
+
+        public FileUpload GetFileUpload(int id)
+        {
+            return _db.GetFileUpload(id);
+        }
+
     }
 }

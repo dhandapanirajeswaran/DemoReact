@@ -15,7 +15,9 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
         void UpdateSite(Site site);
 
-        IEnumerable<FileUpload> GetFileUploads(DateTime? date, UploadType uploadType);
+        IEnumerable<FileUpload> GetFileUploads(DateTime? date, int? uploadType, int? statusId);
+
+        FileUpload GetFileUpload(int id);
 
         FileUpload NewUpload(FileUpload upload);
         
