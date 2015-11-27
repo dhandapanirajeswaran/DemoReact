@@ -16,7 +16,8 @@ namespace JsPlc.Ssc.PetrolPricing.Models
         public int QuarterlyUploadId { get; set; } 
         public FileUpload QuarterlyUpload { get; set; }
 
-        public int SainsSiteCatNo { get; set; }
+        public int SainsSiteCatNo { get; set; } // As this file does not drive the Sainsburys store master data, we only keep Sains CatNo (col 3)
+
         public int Rank { get; set; }
         public float DriveDist { get; set; }
         public float DriveTime { get; set; }
