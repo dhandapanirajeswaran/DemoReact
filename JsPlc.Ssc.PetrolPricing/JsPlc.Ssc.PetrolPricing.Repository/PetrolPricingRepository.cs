@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Data.Entity.Infrastructure;
 using System.Data.Entity.Migrations;
 using System.Data.Entity.SqlServer;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Security.Cryptography.X509Certificates;
 using JsPlc.Ssc.PetrolPricing.Models;
 
@@ -27,6 +29,11 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
            return _db.Sites.Include(s => s.Emails).OrderBy(q=>q.Id);
         }
 
+        public IEnumerable<Site> GetSitesWithPricesAndCompetitors()
+        {
+            return _db.Sites.Include(s => s.Emails).Include(x => x.Competitors).Include(x => x.Prices).OrderBy(q => q.Id);
+        }
+
         public Site GetSite(int id)
         {
             return _db.Sites.Include(s => s.Emails).FirstOrDefault(q => q.Id == id);
@@ -43,6 +50,24 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         {
             _db.Sites.AddOrUpdate(site);
             _db.SaveChanges();
+        }
+
+        // Note: We send back all competitors as listed in table based on distance (optional filter to exclude JS sites as competitors)
+        public IEnumerable<Site> GetCompetitors(int siteId, int distFrom, int distTo, bool includeSainsburysAsCompetitors = true)
+        {
+            var site = GetSite(siteId);
+
+            //var competitors = _db.SiteToCompetitors.Where(x => x.Site.Id == site.Id && x.Distance >= distFrom && x.Distance <= distTo).Select(x => x.Competitor);
+
+            IEnumerable<Site> siteCompetitors = GetSitesWithPricesAndCompetitors().Where(x => x.Id == site.Id)
+                .SelectMany(x => x.Competitors).Where(x => x.Distance >= distFrom && x.Distance <= distTo)
+                .Select(x => x.Competitor).ToList();
+
+            if (!includeSainsburysAsCompetitors) // client asks to specifically remove JS sites from competitors, then filter them out
+            {
+                siteCompetitors = siteCompetitors.Where(x => !x.IsSainsburysSite);
+            }
+            return siteCompetitors;
         }
 
         // New File Upload

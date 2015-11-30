@@ -15,6 +15,10 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
         void UpdateSite(Site site);
 
+        IEnumerable<Site> GetCompetitors(int siteId, int distFrom, int distTo, bool includeSainsburysAsCompetitors = true);
+
+        IEnumerable<Site> GetSitesWithPricesAndCompetitors();
+
         IEnumerable<FileUpload> GetFileUploads(DateTime? date, int? uploadType, int? statusId);
 
         FileUpload GetFileUpload(int id);

@@ -65,5 +65,17 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
                 return new ExceptionResult(ex, this);
             }
         }
+
+        /// <summary>
+        /// Calculates Prices for a given site as a test, later we extend it to calc prices for a given date
+        /// Updates SitePrice table with calculated Prices, returns a bool - True if any calcs done for that site, else false
+        /// Return type will have to change when calculating Prices for a given date.. Multiple sites may have multiple outcomes of price calcs (some success, some fails)
+        /// </summary>
+        /// <param name="siteId"></param>
+        /// <returns></returns>
+        public async Task<IHttpActionResult> CalcPrice(int siteId)
+        {
+            return null;
+        }
     }
 }

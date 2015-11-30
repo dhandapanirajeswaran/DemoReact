@@ -39,6 +39,10 @@ namespace JsPlc.Ssc.PetrolPricing.Models
         public bool IsActive { get; set; } // defaults to false
         
         public virtual ICollection<SiteEmail> Emails { get; set; }
+
+        public virtual ICollection<SitePrice> Prices { get; set; }
+
+        public virtual ICollection<SiteToCompetitor> Competitors { get; set; } 
     }
 
     public class SiteEmail

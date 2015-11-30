@@ -19,6 +19,11 @@ namespace JsPlc.Ssc.PetrolPricing.Business
            return _db.GetSites().ToList();
         }
 
+        public IEnumerable<Site> GetSitesWithPricesAndCompetitors()
+        {
+            return _db.GetSitesWithPricesAndCompetitors();
+        }
+
         public Site GetSite(int id)
         {
             return _db.GetSite(id);
@@ -33,6 +38,12 @@ namespace JsPlc.Ssc.PetrolPricing.Business
         {
             return _db.GetSites().Any(m => m.SiteName.Equals(siteName, StringComparison.CurrentCultureIgnoreCase) || 
                 (catNo.HasValue && m.CatNo.HasValue && m.CatNo.Value == catNo.Value));
+        }
+
+        public IEnumerable<Site> GetCompetitors(int siteId, int distFrom, int distTo, bool includeSainsburysAsCompetitors = true)
+        {
+            var competitors = _db.GetCompetitors(siteId, distFrom, distTo);
+            return competitors.ToList();
         }
     }
 }
