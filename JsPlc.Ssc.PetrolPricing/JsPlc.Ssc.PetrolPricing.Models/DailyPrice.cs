@@ -15,7 +15,7 @@ namespace JsPlc.Ssc.PetrolPricing.Models
 
         public int? DailyUploadId { get; set; }
 
-        public FileUpload DailyUpload { get; set; }
+        public FileUpload DailyUpload { get; set; } // DateOfUpload is more significant apparently, than DateOfPrice..
 
         public int CatNo { get; set; }
         public int FuelId { get; set; }

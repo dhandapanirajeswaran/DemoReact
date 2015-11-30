@@ -214,6 +214,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="ApiXmlDocument.xml" />
+    <Content Include="App_Data\PricesSetup.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Areas\HelpPage\HelpPage.css" />
     <Content Include="Content\bootstrap-theme.css" />
     <Content Include="Content\bootstrap-theme.min.css" />
@@ -276,7 +279,6 @@
     <Content Include="Scripts\jquery-1.10.2.min.map" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="App_Data\" />
     <Folder Include="bin\" />
     <Folder Include="Models\" />
   </ItemGroup>

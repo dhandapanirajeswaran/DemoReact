@@ -2,7 +2,11 @@
 using System.Data.Entity;
 using System.Collections.Generic;
 using System.Data.Entity.Migrations;
+using System.IO;
 using System.Linq;
+using System.Net.Mime;
+using System.Reflection;
+using System.Text;
 using JsPlc.Ssc.PetrolPricing.Models;
 using JsPlc.Ssc.PetrolPricing.Models.Enums;
 
@@ -65,7 +69,8 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
             uploadTypes.ForEach(ut => context.UploadType.Add(ut));
             context.SaveChanges();
-
+            
+            // TODO - Comment out after Site Imports start working
             var sites = new List<Site>{
                 new Site{SiteName = "SAINSBURYS HENDON", Town = "London", 
                     Address = "HYDE ESTATE ROAD", Suburb = "HENDON", PostCode = "NW9 6JX", Company = "J SAINSBURY PLC", 
@@ -109,6 +114,24 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             sites.ForEach(s => context.Sites.AddOrUpdate(p => p.SiteName, s));
             context.SaveChanges();
 
+            var siteEmails = new List<SiteEmail>
+            {
+                new SiteEmail
+                {
+                    EmailAddress = "Sainsburys.hendon1@sainsburys.co.uk",
+                    SiteId = sites.Single(i => i.SiteName == "SAINSBURYS HENDON").Id
+                },
+                new SiteEmail
+                {
+                    EmailAddress = "Sainsburys.hendon2@sainsburys.co.uk",
+                    SiteId = sites.Single(i => i.SiteName == "SAINSBURYS HENDON").Id
+                }
+                // no emails assigned to Sainsburys Alperton for now
+            };
+            siteEmails.ForEach(s => context.SiteEmails.AddOrUpdate(p => p.EmailAddress, s));
+            context.SaveChanges();
+
+            // TODO - Comment out after Daily Price Imports start working
             var siteToCompetitor = new List<SiteToCompetitor>
             {
                 // 100 - 26054, 1, 1.42, 6.66
@@ -169,22 +192,30 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             siteToCompetitor.ForEach(s => context.SiteToCompetitors.AddOrUpdate(p => p.SiteId, s));
             context.SaveChanges();
 
-            var siteEmails = new List<SiteEmail>
+            // Dummy FileUpload to link with Daily Prices, Dated today, TODO comment out once Daily Price Imports start working
+            var fileuploads = new List<FileUpload>
             {
-                new SiteEmail
+                new FileUpload
                 {
-                    EmailAddress = "Sainsburys.hendon1@sainsburys.co.uk",
-                    SiteId = sites.Single(i => i.SiteName == "SAINSBURYS HENDON").Id
-                },
-                new SiteEmail
-                {
-                    EmailAddress = "Sainsburys.hendon2@sainsburys.co.uk",
-                    SiteId = sites.Single(i => i.SiteName == "SAINSBURYS HENDON").Id
+                    OriginalFileName = "Daily Price file.txt",
+                    Status = importProcessStatuses.Single(x => x.Status == "Uploaded"),
+                    StoredFileName = @"\\UNC\Daily Price file.txt",
+                    UploadDateTime = DateTime.Now,
+                    UploadType = uploadTypes.Single(x => x.UploadTypeName == "Daily Price Data"),
+                    UploadedBy = "RepositoryInitializer@sainsburys.co.uk"
                 }
-                // no emails assigned to Sainsburys Alperton for now
             };
-            siteEmails.ForEach(s => context.SiteEmails.AddOrUpdate(p => p.EmailAddress, s));
+            fileuploads.ForEach(f => context.FileUploads.Add(f));
             context.SaveChanges();
+
+            // Dummy prices for the sample sites setup for testing pricing calcuation algorithms/procedures
+
+            // Setup Prices for following stores:
+            //  100 -> 26054, 1336, 99, 1751
+            //  1334 -> 26054, 1336
+
+            // MANUALLY Run the App_Data/PricesSetup.sql on SQL DB to populate dummy prices
+
         }
     }
 }
