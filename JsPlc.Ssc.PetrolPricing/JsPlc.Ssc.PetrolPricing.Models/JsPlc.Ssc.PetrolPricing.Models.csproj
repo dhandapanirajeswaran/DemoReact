@@ -55,8 +55,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AppConfigSettings.cs" />
-    <Compile Include="Common\EnsurePathEndsWithSlash.cs" />
+    <Compile Include="Common\Functions.cs" />
     <Compile Include="Constants.cs" />
+    <Compile Include="SitePrice.cs" />
+    <Compile Include="DailyPrice.cs" />
     <Compile Include="Enums\SettingsKeys.cs" />
     <Compile Include="ImportProcessStatus.cs" />
     <Compile Include="DailyUploadStaging.cs" />

@@ -36,12 +36,17 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 
         public ActionResult Create()
         {
-            return View();
+            return View(new Site());
         }
 
         [HttpPost]
         public ActionResult Create(Site site)
         {
+            if (!ModelState.IsValid)
+            {
+                ViewBag.ErrorMessage = "Please check for validation errors under each field.";
+                return View(site);
+            }
             site.IsSainsburysSite = true; 
             var nonBlankVals = new List<SiteEmail>();
             site.Emails.ForEach(x =>
@@ -53,8 +58,8 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             var createdSite = _serviceFacade.NewSite(site);
             if (createdSite != null) return RedirectToAction("Index", new { msg = "Site: " + createdSite.SiteName + " created successfully" });
 
-            ViewBag.ErrorMessage = "Unable to create site.";
-            return View();
+            ViewBag.ErrorMessage = "Unable to create site. Check if this CatNo or SiteName already exists.";
+            return View(site);
         }
 
         public ActionResult Details(int id)

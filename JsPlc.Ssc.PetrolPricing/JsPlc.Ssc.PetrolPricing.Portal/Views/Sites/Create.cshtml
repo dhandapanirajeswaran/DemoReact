@@ -7,15 +7,14 @@
 
 <h2>New Sainsburys Site</h2>
 
+<span style="color:red">@ViewBag.ErrorMessage</span>
+
 @using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
 
     <div class="form-horizontal">
         <hr />
-
-        <span style="color:red">@ViewBag.ErrorMessage</span>
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
         <div class="col-md-6">
             <div class="form-group">
@@ -110,28 +109,24 @@
                 </div>
             </div>
 
-            <div class="checkbox">
-                @Html.HiddenFor(model => model.IsSainsburysSite)
-                @Html.ValidationMessageFor(model => model.IsSainsburysSite, "", new { @class = "text-danger" })
-            </div>
-
             <div class="form-group">
                 @Html.LabelFor(model => model.Emails, htmlAttributes: new { @class = "control-label col-md-2" })
                 <div class="col-md-10" id="Emails">
                     @{
                         var i = 0;
                         <!-- Depending on how many emails a site has, we add elements, 3 for now -->
-                        var emails = new List<SiteEmail>
+                        var emails = (Model.Emails == null || !Model.Emails.Any()) ? new List<SiteEmail>
                         {
                             new SiteEmail {EmailAddress = ""},
                             new SiteEmail {EmailAddress = ""},
                             new SiteEmail {EmailAddress = ""}
-                        };
+                        } : Model.Emails;
 
                         foreach (var email in emails)
                         {
                             <input type="text" name=@("Emails[" + i + "].EmailAddress") class="form-control" id=@("Emails_" + i + "_EmailAddress")
                                    value="@email.EmailAddress" />
+                            @Html.ValidationMessage("Emails[" + i + "].EmailAddress", new {@class = "text-danger"})
                             i += 1;
                         }
                     }
@@ -150,6 +145,7 @@
 
             <div class="form-group">
                 <div class="col-md-offset-2 col-md-10">
+                    <span style="color:red">@ViewBag.ErrorMessage</span><br/>
                     <input type="submit" value="Create" class="btn btn-default" />
                 </div>
             </div>

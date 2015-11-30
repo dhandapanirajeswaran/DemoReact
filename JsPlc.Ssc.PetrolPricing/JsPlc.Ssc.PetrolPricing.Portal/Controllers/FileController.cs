@@ -141,8 +141,8 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
         public ActionResult Details(int id)
         {
             // Return file upload details with processing steps and errors if any
-
-            return View();
+            var model = _serviceFacade.GetFileUpload(id);
+            return View(model);
         }
 
         #region private methods
@@ -263,7 +263,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
         private void SetUploadAndHoldPaths()
         {
             _uploadPath = _serviceFacade.GetUploadPath();
-            _uploadPath = FileFunctions.EnsurePathEndsWithSlash(_uploadPath);
+            _uploadPath = Functions.EnsurePathEndsWithSlash(_uploadPath);
             _uploadHoldPath = String.Format("{0}{1}", _uploadPath, Constants.UploadHoldPath);
             CreateOrEnsureHoldPathExists();
         }
@@ -276,7 +276,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 
         private FileUploadStatus PersistToHoldFile()
         {
-            _uploadPath = FileFunctions.EnsurePathEndsWithSlash(_uploadPath);
+            _uploadPath = Functions.EnsurePathEndsWithSlash(_uploadPath);
             var uploadHoldPath = String.Format("{0}{1}", _uploadPath, Constants.UploadHoldPath);
             var path = Path.Combine(uploadHoldPath, _fileUpload.StoredFileName);
 

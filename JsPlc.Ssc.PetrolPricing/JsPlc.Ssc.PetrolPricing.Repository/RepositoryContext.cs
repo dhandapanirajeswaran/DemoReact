@@ -16,10 +16,14 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
         public IDbSet<Site> Sites { get; set; }
         public IDbSet<SiteEmail> SiteEmails { get; set; }
+        public IDbSet<SitePrice> SitePrices { get; set; }
+
         public IDbSet<SiteToCompetitor> SiteToCompetitors { get; set; }
         public IDbSet<FileUpload> FileUploads { get; set; }
         public IDbSet<DailyUploadStaging> DailyUploadStaging { get; set; }
         public IDbSet<QuarterlyUploadStaging> QuarterlyUploadStaging { get; set; }
+
+        public IDbSet<DailyPrice> DailyPrices { get; set; }
 
         public RepositoryContext() : base("name=PetrolPricingRepository") { }
 
@@ -30,9 +34,14 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             modelBuilder.Conventions.Remove<PluralizingTableNameConvention>();
             modelBuilder.Conventions.Remove<OneToManyCascadeDeleteConvention>();
 
+            modelBuilder.Entity<Site>().HasMany(m => m.Competitors).WithRequired(x => x.Site).HasForeignKey(x => x.SiteId);
+
             modelBuilder.Entity<SiteToCompetitor>().HasRequired(m => m.Site).WithMany().HasForeignKey(m => m.SiteId);
             modelBuilder.Entity<SiteToCompetitor>().HasRequired(m => m.Competitor).WithMany().HasForeignKey(m => m.CompetitorId);
-            modelBuilder.Entity<SiteEmail>().HasRequired(c => c.Site).WithMany().HasForeignKey(m => m.SiteId);
+
+            modelBuilder.Entity<Site>().HasMany(m => m.Emails).WithRequired(x => x.Site).HasForeignKey(x => x.SiteId);
+            modelBuilder.Entity<Site>().HasMany(m => m.Prices).WithRequired(x => x.JsSite).HasForeignKey(x => x.SiteId);
+            //modelBuilder.Entity<SiteEmail>().HasRequired(c => c.Site).WithMany(x => x.Emails).HasForeignKey(m => m.SiteId);
         }
     }
 }

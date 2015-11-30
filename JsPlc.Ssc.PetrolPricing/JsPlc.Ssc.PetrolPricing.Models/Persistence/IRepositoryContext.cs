@@ -13,10 +13,14 @@ namespace JsPlc.Ssc.PetrolPricing.Models.Persistence
 
         IDbSet<Site> Sites { get; }
         IDbSet<SiteEmail> SiteEmails { get; set; }
+        IDbSet<SitePrice> SitePrices { get; set; }
 
         IDbSet<SiteToCompetitor> SiteToCompetitors { get; }
         IDbSet<FileUpload> FileUploads { get; }
+
         IDbSet<DailyUploadStaging> DailyUploadStaging { get; }
         IDbSet<QuarterlyUploadStaging> QuarterlyUploadStaging { get; }
+
+        IDbSet<DailyPrice> DailyPrices { get; set; }
     }
 }

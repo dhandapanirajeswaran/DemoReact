@@ -2,7 +2,11 @@
 using System.Data.Entity;
 using System.Collections.Generic;
 using System.Data.Entity.Migrations;
+using System.IO;
 using System.Linq;
+using System.Net.Mime;
+using System.Reflection;
+using System.Text;
 using JsPlc.Ssc.PetrolPricing.Models;
 using JsPlc.Ssc.PetrolPricing.Models.Enums;
 
@@ -65,7 +69,8 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
             uploadTypes.ForEach(ut => context.UploadType.Add(ut));
             context.SaveChanges();
-
+            
+            // TODO - Comment out after Site Imports start working
             var sites = new List<Site>{
                 new Site{SiteName = "SAINSBURYS HENDON", Town = "London", 
                     Address = "HYDE ESTATE ROAD", Suburb = "HENDON", PostCode = "NW9 6JX", Company = "J SAINSBURY PLC", 
@@ -96,9 +101,16 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                 new Site{SiteName = "ASDA COLINDALE AUTOMAT", Town = "London", 
                     Address = "CAPITOL WAY", Suburb = "COLINDALE", PostCode = "NW9 0EW", Company = "ASDA STORES PLC", 
                     Ownership = "Hypermarket", CatNo = 26054, Brand = "ASDA", IsSainsburysSite = false, IsActive = true},
+
+                new Site{SiteName = "PARK WELSH HARP SERVICE STATION", Town = "London",
+                    Address = "THE BROADWAY", Suburb = "HENDON", PostCode = "NW9 7DN", Company = "PARK GARAGE GROUP", 
+                    Ownership = "DEALER", CatNo = 99, Brand = "BP", IsSainsburysSite = false, IsActive = true},
+
+                new Site{SiteName = "CO-OP HENDON WAY", Town = "London",
+                    Address = "WATFORD WAY", Suburb = "HENDON", PostCode = "NW4 3AQ", Company = "CO-OP GROUP", 
+                    Ownership = "DEALER", CatNo = 1751, Brand = "TEXACO", IsSainsburysSite = false, IsActive = true},
             };
 
-            //sites.ForEach(c => context.Sites.Add(c));
             sites.ForEach(s => context.Sites.AddOrUpdate(p => p.SiteName, s));
             context.SaveChanges();
 
@@ -118,6 +130,92 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             };
             siteEmails.ForEach(s => context.SiteEmails.AddOrUpdate(p => p.EmailAddress, s));
             context.SaveChanges();
+
+            // TODO - Comment out after Daily Price Imports start working
+            var siteToCompetitor = new List<SiteToCompetitor>
+            {
+                // 100 - 26054, 1, 1.42, 6.66
+                new SiteToCompetitor
+                {
+                    SiteId = sites.Single(i => i.CatNo == 100).Id,
+                    CompetitorId = sites.Single(i => i.CatNo == 26054).Id,
+                    Rank = 1,
+                    Distance = 1.42f,
+                    DriveTime = 6.66f
+                },
+                // 100 - 1336, 16, 6.50, 21.35
+                new SiteToCompetitor
+                {
+                    SiteId = sites.Single(i => i.CatNo == 100).Id,
+                    CompetitorId = sites.Single(i => i.CatNo == 1336).Id,
+                    Rank = 16,
+                    Distance = 6.50f,
+                    DriveTime = 21.35f
+                },
+                // 100 - 99, 1, 0.34, 1.54
+                new SiteToCompetitor
+                {
+                    SiteId = sites.Single(i => i.CatNo == 100).Id,
+                    CompetitorId = sites.Single(i => i.CatNo == 99).Id,
+                    Rank = 1,
+                    Distance = 0.34f,
+                    DriveTime = 1.54f
+                },
+                // 100 - 1751, 3, 1.27, 6.25
+                new SiteToCompetitor
+                {
+                    SiteId = sites.Single(i => i.CatNo == 100).Id,
+                    CompetitorId = sites.Single(i => i.CatNo == 1751).Id,
+                    Rank = 3,
+                    Distance = 1.27f,
+                    DriveTime = 6.25f
+                },
+                // 1334 - 1336, 1, 1.52, 8.01
+                new SiteToCompetitor
+                {
+                    SiteId = sites.Single(i => i.CatNo == 1334).Id,
+                    CompetitorId = sites.Single(i => i.CatNo == 1336).Id,
+                    Rank = 1,
+                    Distance = 1.52f,
+                    DriveTime = 8.01f
+                },
+                // 1334 - 26054, 16, 5.33, 20.53
+                new SiteToCompetitor
+                {
+                    SiteId = sites.Single(i => i.CatNo == 1334).Id,
+                    CompetitorId = sites.Single(i => i.CatNo == 26054).Id,
+                    Rank = 16,
+                    Distance = 5.33f,
+                    DriveTime = 20.53f
+                },
+            };
+            siteToCompetitor.ForEach(s => context.SiteToCompetitors.AddOrUpdate(p => p.SiteId, s));
+            context.SaveChanges();
+
+            // Dummy FileUpload to link with Daily Prices, Dated today, TODO comment out once Daily Price Imports start working
+            var fileuploads = new List<FileUpload>
+            {
+                new FileUpload
+                {
+                    OriginalFileName = "Daily Price file.txt",
+                    Status = importProcessStatuses.Single(x => x.Status == "Uploaded"),
+                    StoredFileName = @"\\UNC\Daily Price file.txt",
+                    UploadDateTime = DateTime.Now,
+                    UploadType = uploadTypes.Single(x => x.UploadTypeName == "Daily Price Data"),
+                    UploadedBy = "RepositoryInitializer@sainsburys.co.uk"
+                }
+            };
+            fileuploads.ForEach(f => context.FileUploads.Add(f));
+            context.SaveChanges();
+
+            // Dummy prices for the sample sites setup for testing pricing calcuation algorithms/procedures
+
+            // Setup Prices for following stores:
+            //  100 -> 26054, 1336, 99, 1751
+            //  1334 -> 26054, 1336
+
+            // MANUALLY Run the App_Data/PricesSetup.sql on SQL DB to populate dummy prices
+
         }
     }
 }

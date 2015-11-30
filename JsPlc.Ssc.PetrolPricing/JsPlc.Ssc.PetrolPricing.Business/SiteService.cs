@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 using JsPlc.Ssc.PetrolPricing.Models;
@@ -18,6 +19,11 @@ namespace JsPlc.Ssc.PetrolPricing.Business
            return _db.GetSites().ToList();
         }
 
+        public IEnumerable<Site> GetSitesWithPricesAndCompetitors()
+        {
+            return _db.GetSitesWithPricesAndCompetitors();
+        }
+
         public Site GetSite(int id)
         {
             return _db.GetSite(id);
@@ -28,6 +34,13 @@ namespace JsPlc.Ssc.PetrolPricing.Business
             return _db.NewSite(site);
         }
 
+        public bool ExistsSite(string siteName, int? catNo)
+        {
+            return _db.GetSites().Any(m => m.SiteName.Equals(siteName, StringComparison.CurrentCultureIgnoreCase) || 
+                (catNo.HasValue && m.CatNo.HasValue && m.CatNo.Value == catNo.Value));
+        }
+
+        public IEnumerable<Site> GetCompetitors(int siteId, int distFrom, int distTo, bool includeSainsburysAsCompetitors = true)
         public bool UpdateSite(Site site)
         {
            return _db.UpdateSite(site);
@@ -35,7 +48,8 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 
         public bool ExistsSite(string siteName)
         {
-            return _db.GetSites().Any(s => s.SiteName.Equals(siteName, StringComparison.CurrentCultureIgnoreCase));
+            var competitors = _db.GetCompetitors(siteId, distFrom, distTo);
+            return competitors.ToList();
         }
     }
 }
