@@ -46,10 +46,24 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             return result; // return full object back
         }
 
-        public void UpdateSite(Site site)
+        public bool UpdateSite(Site site)
         {
-            _db.Sites.AddOrUpdate(site);
-            _db.SaveChanges();
+            //_db.Sites.AddOrUpdate(site);
+            //_db.SaveChanges();
+
+            
+            _db.Entry(site).State = EntityState.Modified;
+
+            try
+            {
+                _db.SaveChanges();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+
         }
 
         // Note: We send back all competitors as listed in table based on distance (optional filter to exclude JS sites as competitors)

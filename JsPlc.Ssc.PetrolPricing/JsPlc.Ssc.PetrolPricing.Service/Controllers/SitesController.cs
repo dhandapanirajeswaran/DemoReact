@@ -66,6 +66,33 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
             }
         }
 
+
+        [HttpPut] // Edit new site
+        public async Task<IHttpActionResult> Update(Site site)
+        {
+            if (site == null)
+            {
+                return BadRequest("Invalid passed data: site");
+            }
+
+            try
+            {
+                using (var ss = _siteService)
+                {
+                    ss.UpdateSite(site);
+                    return Ok(site);
+                }
+            }
+            catch (Exception ex)
+            {
+                return new ExceptionResult(ex, this);
+            }
+        }
+
+
+
+
+
         /// <summary>
         /// Calculates Prices for a given site as a test, later we extend it to calc prices for a given date
         /// Updates SitePrice table with calculated Prices, returns a bool - True if any calcs done for that site, else false

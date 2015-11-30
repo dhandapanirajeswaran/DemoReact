@@ -40,6 +40,11 @@ namespace JsPlc.Ssc.PetrolPricing.Business
                 (catNo.HasValue && m.CatNo.HasValue && m.CatNo.Value == catNo.Value));
         }
 
+        public bool UpdateSite(Site site)
+        {
+           return _db.UpdateSite(site);
+        }
+
         public IEnumerable<SiteToCompetitor> GetCompetitors(int siteId, int distFrom, int distTo, bool includeSainsburysAsCompetitors = true)
         {
             var competitors = _db.GetCompetitors(siteId, distFrom, distTo);

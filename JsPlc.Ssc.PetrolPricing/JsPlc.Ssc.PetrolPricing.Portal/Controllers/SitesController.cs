@@ -77,5 +77,25 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             return View();
         }
 
+        public ActionResult Edit(int id)
+        {
+            var model = _serviceFacade.GetSite(id);
+            return View(model);
+        }
+
+        [HttpPost]
+        public ActionResult Edit(Site site)
+        {
+            site.IsSainsburysSite = true;
+            var nonBlankVals = new List<SiteEmail>();
+
+            var EditSite = _serviceFacade.EditSite(site);
+
+            if (EditSite != null) return RedirectToAction("Index", new { msg = "Site: " + EditSite.SiteName + " updated successfully" });
+
+            ViewBag.ErrorMessage = "Unable to create site.";
+            return View();
+        }
+
     }
 }
