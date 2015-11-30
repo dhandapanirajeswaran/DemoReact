@@ -57,6 +57,17 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             return (response.IsSuccessStatusCode) ? result : null;
         }
 
+        public Site EditSite(Site site)
+        {
+           //TODO
+           const string apiUrl = "api/Sites/";
+
+           var response = _client.Value.PutAsync(apiUrl, site, new JsonMediaTypeFormatter()).Result;
+           var result = response.Content.ReadAsAsync<Site>().Result;
+
+           return (response.IsSuccessStatusCode) ? result : null;
+        }
+
         // Get list of file uploads
         public IEnumerable<FileUpload> GetFileUploads(int? typeId, int? statusId) // 1 = Daily, 2 = Qtryly
         {
