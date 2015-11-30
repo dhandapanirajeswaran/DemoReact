@@ -13,7 +13,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
         Site NewSite(Site site);
 
-        void UpdateSite(Site site);
+        bool UpdateSite(Site site);
 
         IEnumerable<FileUpload> GetFileUploads(DateTime? date, UploadType uploadType);
 

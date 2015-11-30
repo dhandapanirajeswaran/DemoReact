@@ -28,6 +28,11 @@ namespace JsPlc.Ssc.PetrolPricing.Business
             return _db.NewSite(site);
         }
 
+        public bool UpdateSite(Site site)
+        {
+           return _db.UpdateSite(site);
+        }
+
         public bool ExistsSite(string siteName)
         {
             return _db.GetSites().Any(s => s.SiteName.Equals(siteName, StringComparison.CurrentCultureIgnoreCase));
