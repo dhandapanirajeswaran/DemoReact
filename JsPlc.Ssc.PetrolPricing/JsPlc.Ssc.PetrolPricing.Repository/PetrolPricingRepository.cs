@@ -53,7 +53,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         }
 
         // Note: We send back all competitors as listed in table based on distance (optional filter to exclude JS sites as competitors)
-        public IEnumerable<Site> GetCompetitors(int siteId, int distFrom, int distTo, bool includeSainsburysAsCompetitors = true)
+        public IEnumerable<Site> GetCompetitorSites(int siteId, int distFrom, int distTo, bool includeSainsburysAsCompetitors = true)
         {
             var site = GetSite(siteId);
 
@@ -70,6 +70,20 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             return siteCompetitors;
         }
 
+        public IEnumerable<SiteToCompetitor> GetCompetitors(int siteId, int distFrom, int distTo, bool includeSainsburysAsCompetitors = true)
+        {
+            var site = GetSite(siteId);
+
+            IEnumerable<SiteToCompetitor> siteCompetitors = GetSitesWithPricesAndCompetitors().Where(x => x.Id == site.Id)
+                .SelectMany(x => x.Competitors).Where(x => x.Distance >= distFrom && x.Distance <= distTo)
+                .ToList();
+
+            if (!includeSainsburysAsCompetitors) 
+            {
+                siteCompetitors = siteCompetitors.Where(x => !x.Competitor.IsSainsburysSite);
+            }
+            return siteCompetitors;
+        }
         // New File Upload
         public FileUpload NewUpload(FileUpload upload)
         {

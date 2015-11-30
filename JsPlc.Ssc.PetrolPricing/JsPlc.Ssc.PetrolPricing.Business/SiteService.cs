@@ -40,7 +40,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
                 (catNo.HasValue && m.CatNo.HasValue && m.CatNo.Value == catNo.Value));
         }
 
-        public IEnumerable<Site> GetCompetitors(int siteId, int distFrom, int distTo, bool includeSainsburysAsCompetitors = true)
+        public IEnumerable<SiteToCompetitor> GetCompetitors(int siteId, int distFrom, int distTo, bool includeSainsburysAsCompetitors = true)
         {
             var competitors = _db.GetCompetitors(siteId, distFrom, distTo);
             return competitors.ToList();
