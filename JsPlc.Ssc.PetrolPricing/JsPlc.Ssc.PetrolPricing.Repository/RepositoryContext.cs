@@ -16,6 +16,8 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
         public IDbSet<Site> Sites { get; set; }
         public IDbSet<SiteEmail> SiteEmails { get; set; }
+        public IDbSet<SitePrice> SitePrices { get; set; }
+
         public IDbSet<SiteToCompetitor> SiteToCompetitors { get; set; }
         public IDbSet<FileUpload> FileUploads { get; set; }
         public IDbSet<DailyUploadStaging> DailyUploadStaging { get; set; }
