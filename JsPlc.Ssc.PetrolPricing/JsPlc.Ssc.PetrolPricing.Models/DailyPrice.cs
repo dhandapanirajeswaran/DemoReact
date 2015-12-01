@@ -23,4 +23,11 @@ namespace JsPlc.Ssc.PetrolPricing.Models
         public DateTime DateOfPrice { get; set; }
         public int ModalPrice { get; set; }
     }
+
+    public class CheapestCompetitor
+    {
+        public SiteToCompetitor CompetitorWithDistance { get; set; }
+        public DailyPrice DailyPrice { get; set; } // Specific product price
+    }
+
 }

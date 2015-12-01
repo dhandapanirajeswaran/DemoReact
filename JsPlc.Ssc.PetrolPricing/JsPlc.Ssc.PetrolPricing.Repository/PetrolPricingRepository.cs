@@ -7,6 +7,7 @@ using System.Data.Entity.SqlServer;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Security.Cryptography.X509Certificates;
+using System.Threading.Tasks;
 using JsPlc.Ssc.PetrolPricing.Models;
 
 namespace JsPlc.Ssc.PetrolPricing.Repository
@@ -31,13 +32,37 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
         public IEnumerable<Site> GetSitesWithPricesAndCompetitors()
         {
-            return _db.Sites.Include(s => s.Emails).Include(x => x.Competitors).Include(x => x.Prices).OrderBy(q => q.Id);
+            return _db.Sites
+                .Include(s => s.Emails)
+                .Include(x => x.Competitors)
+                .Include(x => x.Prices)
+                .Where(x => x.IsActive)
+                .OrderBy(q => q.Id);
+        }
+
+        /// <summary>
+        /// Gets a list of DailyPrices for the list of Competitors for the specified fuel
+        /// </summary>
+        /// <param name="competitorCatNos"></param>
+        /// <param name="fuelId"></param>
+        /// <param name="usingPricesforDate"></param>
+        /// <returns></returns>
+        public IEnumerable<DailyPrice> GetDailyPricesForFuelByCompetitors(IEnumerable<int> competitorCatNos, int fuelId, DateTime usingPricesforDate)
+        {
+            return _db.DailyPrices.Where(x => competitorCatNos.Contains(x.CatNo) &&
+                                       x.FuelId == fuelId &&
+                                       x.DailyUpload.UploadDateTime.Date == usingPricesforDate.Date).ToList();
         }
 
         public Site GetSite(int id)
         {
             return _db.Sites.Include(s => s.Emails).FirstOrDefault(q => q.Id == id);
         }
+        public Site GetSiteByCatNo(int catNo)
+        {
+            return _db.Sites.FirstOrDefault(q => q.CatNo.HasValue && q.CatNo.Value == catNo);
+        }
+
         public Site NewSite(Site site)
         {
             var result = _db.Sites.Add(site);

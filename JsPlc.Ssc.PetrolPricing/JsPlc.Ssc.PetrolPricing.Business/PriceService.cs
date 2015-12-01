@@ -9,42 +9,119 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 {
     public class PriceService : BaseService
     {
-        // As per flow diagram 30 Nov 2015
-        public IEnumerable<SitePrice> CalcPrice(int siteId, DateTime? usingPricesforDate)
+        private readonly bool _includeJsSitesAsCompetitors = false;
+
+        public PriceService()
+        {
+            
+        }
+        public PriceService(bool includeJsSitesAsCompetitors)
+        {
+            _includeJsSitesAsCompetitors = includeJsSitesAsCompetitors;
+        }
+
+        /// <summary>
+        /// Calculate price of a Fuel for a Given JS Site based on Pricing Rules
+        ///  As per flow diagram 30 Nov 2015
+        /// </summary>
+        /// <param name="siteId"></param>
+        /// <param name="fuelId"></param>
+        /// <param name="usingPricesforDate"></param>
+        /// <returns></returns>
+        public SitePrice CalcPrice(int siteId, int fuelId, DateTime? usingPricesforDate = null)
         {
             if (!usingPricesforDate.HasValue) usingPricesforDate = DateTime.Now; // Uses dailyPrices of competitors Upload date matching this date
 
-            var sitePrices = new List<SitePrice>();
             var site = _db.GetSite(siteId);
+            if (site == null) return null;
+
+            // APPLY PRICING RULES:
 
             // 0-2 miles
-            List<SiteToCompetitor> competitorsZeroToTwoMiles = _db.GetCompetitors(siteId, 0, 2, false).ToList(); // Only Non-JS competitors (2nd arg false)
-            if (competitorsZeroToTwoMiles.Any())
+            var cheapestCompetitor = GetCheapestPriceUsingParams(siteId, 0, 2, fuelId,
+                usingPricesforDate.Value, 0, _includeJsSitesAsCompetitors);
+            // 2-3 miles
+            if (!cheapestCompetitor.HasValue)
+                cheapestCompetitor = GetCheapestPriceUsingParams(siteId, 2, 3, fuelId,
+                usingPricesforDate.Value, 1, _includeJsSitesAsCompetitors);
+            // 3-5 miles
+            if (!cheapestCompetitor.HasValue)
+                cheapestCompetitor = GetCheapestPriceUsingParams(siteId, 3, 5, fuelId,
+                usingPricesforDate.Value, 2, _includeJsSitesAsCompetitors);
+            // 5-10 miles
+            if (!cheapestCompetitor.HasValue)
+                cheapestCompetitor = GetCheapestPriceUsingParams(siteId, 5, 10, fuelId,
+                usingPricesforDate.Value, 3, _includeJsSitesAsCompetitors);
+
+            if (!cheapestCompetitor.HasValue) return null;
+
+            var competitor = cheapestCompetitor.Value.Key;
+            var markup = cheapestCompetitor.Value.Value;
+            return new SitePrice
             {
-                //List<int, int> competitorPrices = GetCheapestCompetitor(competitorsZeroToTwoMiles, usingPricesforDate);
-
-                //KeyValuePair<int, int> cheapestPrice = competitorsZeroToTwoMiles.Sort(
-                //    (competitor, toCompetitor) => competitor.Competitor.Prices);
-                //;
-            }
-
-            return sitePrices;
+                SiteId = siteId,
+                JsSite = site,
+                DateOfPrice = competitor.DailyPrice.DateOfPrice,
+                SuggestedPrice = competitor.DailyPrice.ModalPrice + markup
+            };
         }
 
-        // Returns a list of Competitor sites, 
-        private List<KeyValuePair<Site, DailyPrice>> GetCheapestCompetitor(List<SiteToCompetitor> competitorsZeroToTwoMiles, DateTime? usingPricesforDate)
+        /// <summary>
+        /// 1. Find competitors within distance criteria
+        /// 2. If none found returns null
+        /// 3. Else Find 
+        /// </summary>
+        /// <param name="siteId"></param>
+        /// <param name="distFrom"></param>
+        /// <param name="distTo"></param>
+        /// <param name="fuelId"></param>
+        /// <param name="usingPricesForDate"></param>
+        /// <param name="markup"></param>
+        /// <param name="includeJsSiteAsComp"></param>
+        /// <returns></returns>
+        private KeyValuePair<CheapestCompetitor, int>? GetCheapestPriceUsingParams(
+            int siteId, int distFrom, int distTo, int fuelId, 
+            DateTime usingPricesForDate, int markup, bool includeJsSiteAsComp = false)
         {
-            return null;
-            //var dailyPrices = _db.GetDailyPricesFor
+            var competitorsXtoYmiles = _db.GetCompetitors(siteId, distFrom, distTo, includeJsSiteAsComp).ToList(); // Only Non-JS competitors (2nd arg false)
+            if (!competitorsXtoYmiles.Any()) return null;
+
+            var cheapestCompetitor = GetCheapestCompetitor(competitorsXtoYmiles, fuelId, usingPricesForDate);
+
+            return (cheapestCompetitor != null)
+                ? (KeyValuePair<CheapestCompetitor, int>?)
+                    new KeyValuePair<CheapestCompetitor, int>(cheapestCompetitor, markup)
+                : null;
         }
 
-        private class DailyPricesComparisonList
+        // Returns the cheapest competitor
+        private CheapestCompetitor GetCheapestCompetitor(List<SiteToCompetitor> competitors, int fuelId,
+            DateTime usingPricesforDate)
         {
-            public Site JSSite { get; set; }
-            public Site Competitor { get; set; }
-            public SiteToCompetitor CompetitorDistanceInfo { get; set; }
-            public DailyPrice DailyPrice { get; set; }
+            var competitorCatNos = competitors.Where(x => x.Competitor.CatNo.HasValue)
+                .Select(x => x.Competitor.CatNo.Value);
+
+            var dailyPricesForFuelByCompetitors = GetDailyPricesForFuelByCompetitors(competitorCatNos, fuelId,
+                usingPricesforDate);
+
+            var pricesForFuelByCompetitors = dailyPricesForFuelByCompetitors as IList<DailyPrice> ?? dailyPricesForFuelByCompetitors.ToList();
+            if (!pricesForFuelByCompetitors.Any()) return null;
+
+            // Sort asc and pick first (i.e. cheapest)
+            var cheapestPrice = pricesForFuelByCompetitors.OrderBy(x => x.ModalPrice).First();
+            var competitor = competitors.First(x => x.Competitor.CatNo == cheapestPrice.CatNo);
+
+            return new CheapestCompetitor
+            {
+                CompetitorWithDistance = competitor, 
+                DailyPrice = cheapestPrice
+            };
         }
 
+        private IEnumerable<DailyPrice> GetDailyPricesForFuelByCompetitors(IEnumerable<int> competitorCatNos, int fuelId, 
+            DateTime usingPricesforDate)
+        {
+            return _db.GetDailyPricesForFuelByCompetitors(competitorCatNos, fuelId, usingPricesforDate);
+        }
     }
 }

@@ -13,7 +13,7 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
     {
         public SitesController() { }
 
-        public SitesController(SiteService siteService) : base(null, siteService) { }
+        public SitesController(SiteService siteService) : base(null, siteService, null) { }
 
         [HttpGet] 
         //[Route("api/site/{id}")] // Not needed but works
@@ -89,20 +89,22 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
             }
         }
 
-
-
-
-
         /// <summary>
-        /// Calculates Prices for a given site as a test, later we extend it to calc prices for a given date
-        /// Updates SitePrice table with calculated Prices, returns a bool - True if any calcs done for that site, else false
-        /// Return type will have to change when calculating Prices for a given date.. Multiple sites may have multiple outcomes of price calcs (some success, some fails)
+        /// Calculates Prices for a given site (as per Catalist upload of today) as a test, 
+        /// 
+        /// Later we extend it to:
+        /// 1. Calc prices for a given date
+        /// 2. Updates SitePrice table with calculated Prices, returns a bool - True if any calcs done for that site, else false
+        /// 3. Return type will have to change when calculating Prices for a given date.. Multiple sites may have multiple outcomes of price calcs (some success, some fails)
         /// </summary>
         /// <param name="siteId"></param>
         /// <returns></returns>
         public async Task<IHttpActionResult> CalcPrice(int siteId)
         {
-            return null;
+            // returns a SitePrice object, maybe later we call this for multiple fuels of the site
+            // var sitePrices = new List<SitePrice>();
+
+            return Ok(_priceService.CalcPrice(siteId, 1));
         }
     }
 }

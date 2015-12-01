@@ -20,8 +20,10 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
         public IDbSet<SiteToCompetitor> SiteToCompetitors { get; set; }
         public IDbSet<FileUpload> FileUploads { get; set; }
+
         public IDbSet<DailyUploadStaging> DailyUploadStaging { get; set; }
         public IDbSet<QuarterlyUploadStaging> QuarterlyUploadStaging { get; set; }
+        public IDbSet<ImportProcessError> ImportProcessErrors { get; set; }
 
         public IDbSet<DailyPrice> DailyPrices { get; set; }
 
@@ -42,6 +44,11 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             modelBuilder.Entity<Site>().HasMany(m => m.Emails).WithRequired(x => x.Site).HasForeignKey(x => x.SiteId);
             modelBuilder.Entity<Site>().HasMany(m => m.Prices).WithRequired(x => x.JsSite).HasForeignKey(x => x.SiteId);
             //modelBuilder.Entity<SiteEmail>().HasRequired(c => c.Site).WithMany(x => x.Emails).HasForeignKey(m => m.SiteId);
+
+            modelBuilder.Entity<FileUpload>()
+                .HasMany(x => x.ImportProcessErrors)
+                .WithRequired(x => x.Upload)
+                .HasForeignKey(x => x.UploadId);
         }
     }
 }
