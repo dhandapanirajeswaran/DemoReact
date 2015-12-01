@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Http;
@@ -104,12 +105,13 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
         public async Task<IHttpActionResult> CalcPrice(int siteId)
         {
             // returns a SitePrice object, maybe later we call this for multiple fuels of the site
-            // var sitePrices = new List<SitePrice>();
 
-            var Nov30PriceOfUnleaded = _priceService.CalcPrice(siteId, 2, DateTime.Parse("2015-11-30")); // We have 30 Nov prices
-            var Dec1stPriceOfUnleaded = _priceService.CalcPrice(siteId, 2, DateTime.Parse("2015-12-01")); // We dont have any 1st Dec prices
+            // Test for 30 Nov prices as we have a dummy set of these setup
+            // We dont have any 1st Dec prices
+            SitePrice price = _priceService.CalcPrice(1, 2, DateTime.Parse("2015-11-30"));
+            price = _priceService.CalcPrice(1, 6, DateTime.Parse("2015-11-30"));
 
-            return Ok(Nov30PriceOfUnleaded);
+            return Ok(price);
         }
     }
 }

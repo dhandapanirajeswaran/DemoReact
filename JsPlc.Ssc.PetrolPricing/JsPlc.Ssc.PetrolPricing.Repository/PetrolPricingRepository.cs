@@ -49,6 +49,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         /// <returns></returns>
         public IEnumerable<DailyPrice> GetDailyPricesForFuelByCompetitors(IEnumerable<int> competitorCatNos, int fuelId, DateTime usingPricesforDate)
         {
+            // If multiple uploads, needs to be handled here, but we assume one for now.
             IEnumerable<DailyPrice> dailyPrices = _db.DailyPrices.Include(x => x.DailyUpload);
 
             return dailyPrices.Where(x => competitorCatNos.Contains(x.CatNo) &&
