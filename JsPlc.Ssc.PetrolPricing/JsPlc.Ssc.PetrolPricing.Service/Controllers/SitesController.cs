@@ -99,12 +99,15 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
         /// </summary>
         /// <param name="siteId"></param>
         /// <returns></returns>
+        [HttpGet]
+        [Route("api/Sites/CalcPrice/{siteId}")]
         public async Task<IHttpActionResult> CalcPrice(int siteId)
         {
             // returns a SitePrice object, maybe later we call this for multiple fuels of the site
             // var sitePrices = new List<SitePrice>();
+            var price = _priceService.CalcPrice(siteId, 1);
 
-            return Ok(_priceService.CalcPrice(siteId, 1));
+            return Ok(price);
         }
     }
 }
