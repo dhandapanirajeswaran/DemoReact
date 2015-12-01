@@ -9,7 +9,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 {
     public class PriceService : BaseService
     {
-        private readonly bool _includeJsSitesAsCompetitors = false;
+        private readonly bool _includeJsSitesAsCompetitors; // false by default (excludes JS sites)
 
         public PriceService()
         {
@@ -35,22 +35,26 @@ namespace JsPlc.Ssc.PetrolPricing.Business
             var site = _db.GetSite(siteId);
             if (site == null) return null;
 
-            // APPLY PRICING RULES:
+            // APPLY PRICING RULES: based on drivetime (see Market Comparison sheet)
+            // If 0-5 mins away – match to minimum competitor
+            // If 5-10 mins away – add 1p to minimum competitor 
+            // If 10-15 mins away – add 2p to minimum competitor
+            // If 15-20 mins away – add 3p to the minimum competitor
 
-            // 0-2 miles
-            var cheapestCompetitor = GetCheapestPriceUsingParams(siteId, 0, 2, fuelId,
+            // 0-5 min
+            var cheapestCompetitor = GetCheapestPriceUsingParams(siteId, 0, 5, fuelId,
                 usingPricesforDate.Value, 0, _includeJsSitesAsCompetitors);
-            // 2-3 miles
-            if (!cheapestCompetitor.HasValue)
-                cheapestCompetitor = GetCheapestPriceUsingParams(siteId, 2, 3, fuelId,
-                usingPricesforDate.Value, 1, _includeJsSitesAsCompetitors);
-            // 3-5 miles
-            if (!cheapestCompetitor.HasValue)
-                cheapestCompetitor = GetCheapestPriceUsingParams(siteId, 3, 5, fuelId,
-                usingPricesforDate.Value, 2, _includeJsSitesAsCompetitors);
-            // 5-10 miles
+            // 5-10 min
             if (!cheapestCompetitor.HasValue)
                 cheapestCompetitor = GetCheapestPriceUsingParams(siteId, 5, 10, fuelId,
+                usingPricesforDate.Value, 1, _includeJsSitesAsCompetitors);
+            // 10-15 min
+            if (!cheapestCompetitor.HasValue)
+                cheapestCompetitor = GetCheapestPriceUsingParams(siteId, 10, 15, fuelId,
+                usingPricesforDate.Value, 2, _includeJsSitesAsCompetitors);
+            // 15-20 min
+            if (!cheapestCompetitor.HasValue)
+                cheapestCompetitor = GetCheapestPriceUsingParams(siteId, 15, 20, fuelId,
                 usingPricesforDate.Value, 3, _includeJsSitesAsCompetitors);
 
             if (!cheapestCompetitor.HasValue) return null;
@@ -68,23 +72,23 @@ namespace JsPlc.Ssc.PetrolPricing.Business
         }
 
         /// <summary>
-        /// 1. Find competitors within distance criteria
+        /// 1. Find competitors within drivetime criteria
         /// 2. If none found returns null
         /// 3. Else Find 
         /// </summary>
         /// <param name="siteId"></param>
-        /// <param name="distFrom"></param>
-        /// <param name="distTo"></param>
+        /// <param name="driveTimeFrom"></param>
+        /// <param name="driveTimeTo"></param>
         /// <param name="fuelId"></param>
         /// <param name="usingPricesForDate"></param>
         /// <param name="markup"></param>
         /// <param name="includeJsSiteAsComp"></param>
         /// <returns></returns>
         private KeyValuePair<CheapestCompetitor, int>? GetCheapestPriceUsingParams(
-            int siteId, int distFrom, int distTo, int fuelId, 
+            int siteId, int driveTimeFrom, int driveTimeTo, int fuelId, 
             DateTime usingPricesForDate, int markup, bool includeJsSiteAsComp = false)
         {
-            var competitorsXtoYmiles = _db.GetCompetitors(siteId, distFrom, distTo, includeJsSiteAsComp).ToList(); // Only Non-JS competitors (2nd arg false)
+            var competitorsXtoYmiles = _db.GetCompetitors(siteId, driveTimeFrom, driveTimeTo, includeJsSiteAsComp).ToList(); // Only Non-JS competitors (2nd arg false)
             if (!competitorsXtoYmiles.Any()) return null;
 
             var cheapestCompetitor = GetCheapestCompetitor(competitorsXtoYmiles, fuelId, usingPricesForDate);

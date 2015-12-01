@@ -94,30 +94,20 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
         }
 
-        // Note: We send back all competitors as listed in table based on distance (optional filter to exclude JS sites as competitors)
-        public IEnumerable<Site> GetCompetitorSites(int siteId, int distFrom, int distTo, bool includeSainsburysAsCompetitors = true)
-        {
-            var site = GetSite(siteId);
-
-            //var competitors = _db.SiteToCompetitors.Where(x => x.Site.Id == site.Id && x.Distance >= distFrom && x.Distance <= distTo).Select(x => x.Competitor);
-
-            IEnumerable<Site> siteCompetitors = GetSitesWithPricesAndCompetitors().Where(x => x.Id == site.Id)
-                .SelectMany(x => x.Competitors).Where(x => x.Distance >= distFrom && x.Distance <= distTo)
-                .Select(x => x.Competitor).ToList();
-
-            if (!includeSainsburysAsCompetitors) // client asks to specifically remove JS sites from competitors, then filter them out
-            {
-                siteCompetitors = siteCompetitors.Where(x => !x.IsSainsburysSite);
-            }
-            return siteCompetitors;
-        }
-
-        public IEnumerable<SiteToCompetitor> GetCompetitors(int siteId, int distFrom, int distTo, bool includeSainsburysAsCompetitors = true)
+        /// <summary>
+        /// Get competitors based on drivetime criteria
+        /// </summary>
+        /// <param name="siteId"></param>
+        /// <param name="driveTimeFrom"></param>
+        /// <param name="driveTimeTo"></param>
+        /// <param name="includeSainsburysAsCompetitors"></param>
+        /// <returns></returns>
+        public IEnumerable<SiteToCompetitor> GetCompetitors(int siteId, int driveTimeFrom, int driveTimeTo, bool includeSainsburysAsCompetitors = true)
         {
             var site = GetSite(siteId);
 
             IEnumerable<SiteToCompetitor> siteCompetitors = GetSitesWithPricesAndCompetitors().Where(x => x.Id == site.Id)
-                .SelectMany(x => x.Competitors).Where(x => x.Distance >= distFrom && x.Distance <= distTo)
+                .SelectMany(x => x.Competitors).Where(x => x.DriveTime >= driveTimeFrom && x.DriveTime <= driveTimeTo)
                 .ToList();
 
             if (!includeSainsburysAsCompetitors) 
@@ -126,6 +116,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             }
             return siteCompetitors;
         }
+
         // New File Upload
         public FileUpload NewUpload(FileUpload upload)
         {

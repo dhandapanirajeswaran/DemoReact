@@ -16,9 +16,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
         bool UpdateSite(Site site);
 
-        IEnumerable<Site> GetCompetitorSites(int siteId, int distFrom, int distTo, bool includeSainsburysAsCompetitors = true);
-
-        IEnumerable<SiteToCompetitor> GetCompetitors(int siteId, int distFrom, int distTo, bool includeSainsburysAsCompetitors = true);
+        IEnumerable<SiteToCompetitor> GetCompetitors(int siteId, int driveTimeFrom, int driveTimeTo, bool includeSainsburysAsCompetitors = true);
 
         IEnumerable<Site> GetSitesWithPricesAndCompetitors();
 
