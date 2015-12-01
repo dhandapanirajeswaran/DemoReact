@@ -118,7 +118,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 
             return new CheapestCompetitor
             {
-                CompetitorWithDistance = competitor, 
+                CompetitorWithDriveTime = competitor, 
                 DailyPrice = cheapestPrice
             };
         }

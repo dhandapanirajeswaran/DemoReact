@@ -26,7 +26,7 @@ namespace JsPlc.Ssc.PetrolPricing.Models
 
     public class CheapestCompetitor
     {
-        public SiteToCompetitor CompetitorWithDistance { get; set; }
+        public SiteToCompetitor CompetitorWithDriveTime { get; set; }
         public DailyPrice DailyPrice { get; set; } // Specific product price
     }
 
