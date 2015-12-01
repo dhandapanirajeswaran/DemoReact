@@ -200,7 +200,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                     OriginalFileName = "Daily Price file.txt",
                     Status = importProcessStatuses.Single(x => x.Status == "Uploaded"),
                     StoredFileName = @"\\UNC\Daily Price file.txt",
-                    UploadDateTime = DateTime.Now,
+                    UploadDateTime = DateTime.Parse("2015-11-30"),
                     UploadType = uploadTypes.Single(x => x.UploadTypeName == "Daily Price Data"),
                     UploadedBy = "RepositoryInitializer@sainsburys.co.uk"
                 }

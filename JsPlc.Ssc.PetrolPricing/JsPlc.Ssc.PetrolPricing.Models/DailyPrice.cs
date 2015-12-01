@@ -20,7 +20,7 @@ namespace JsPlc.Ssc.PetrolPricing.Models
         public int CatNo { get; set; }
         public int FuelId { get; set; }
         public int AllStarMerchantNo { get; set; }
-        public DateTime DateOfPrice { get; set; }
+        public DateTime DateOfPrice { get; set; } // As per Catalist file, not significant
         public int ModalPrice { get; set; }
     }
 

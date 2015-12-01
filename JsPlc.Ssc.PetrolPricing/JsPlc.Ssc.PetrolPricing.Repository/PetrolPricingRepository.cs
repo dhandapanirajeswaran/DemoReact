@@ -49,9 +49,11 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         /// <returns></returns>
         public IEnumerable<DailyPrice> GetDailyPricesForFuelByCompetitors(IEnumerable<int> competitorCatNos, int fuelId, DateTime usingPricesforDate)
         {
-            return _db.DailyPrices.Where(x => competitorCatNos.Contains(x.CatNo) &&
+            IEnumerable<DailyPrice> dailyPrices = _db.DailyPrices.Include(x => x.DailyUpload);
+
+            return dailyPrices.Where(x => competitorCatNos.Contains(x.CatNo) &&
                                        x.FuelId == fuelId &&
-                                       x.DailyUpload.UploadDateTime.Date == usingPricesforDate.Date).ToList();
+                                       x.DailyUpload.UploadDateTime.Date.Equals(usingPricesforDate.Date)).ToList();
         }
 
         public Site GetSite(int id)

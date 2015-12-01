@@ -105,9 +105,11 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
         {
             // returns a SitePrice object, maybe later we call this for multiple fuels of the site
             // var sitePrices = new List<SitePrice>();
-            var price = _priceService.CalcPrice(siteId, 1);
 
-            return Ok(price);
+            var Nov30PriceOfUnleaded = _priceService.CalcPrice(siteId, 2, DateTime.Parse("2015-11-30")); // We have 30 Nov prices
+            var Dec1stPriceOfUnleaded = _priceService.CalcPrice(siteId, 2, DateTime.Parse("2015-12-01")); // We dont have any 1st Dec prices
+
+            return Ok(Nov30PriceOfUnleaded);
         }
     }
 }
