@@ -504,14 +504,13 @@
         <member name="M:JsPlc.Ssc.PetrolPricing.Service.Controllers.SitesController.CalcPrice(System.Int32)">
             <summary>
             Calculates Prices for a given site (as per Catalist upload of today) as a test, 
-            
             Later we extend it to:
             1. Calc prices for a given date
             2. Updates SitePrice table with calculated Prices, returns a bool - True if any calcs done for that site, else false
             3. Return type will have to change when calculating Prices for a given date.. Multiple sites may have multiple outcomes of price calcs (some success, some fails)
             </summary>
             <param name="siteId"></param>
-            <returns></returns>
+            <returns>SitePrice</returns>
         </member>
     </members>
 </doc>

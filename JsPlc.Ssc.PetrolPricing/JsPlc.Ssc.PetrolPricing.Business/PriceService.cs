@@ -66,7 +66,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
                 SiteId = siteId,
                 JsSite = site,
                 DateOfPrice = competitor.DailyPrice.DateOfPrice,
-                SuggestedPrice = competitor.DailyPrice.ModalPrice + markup,
+                SuggestedPrice = competitor.DailyPrice.ModalPrice + markup * 10, // since modalPrice is held in pence*10 (Catalist format)
                 DateOfCalc = DateTime.Now.Date // Only date component
             };
         }
