@@ -45,6 +45,8 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             modelBuilder.Entity<Site>().HasMany(m => m.Prices).WithRequired(x => x.JsSite).HasForeignKey(x => x.SiteId);
             //modelBuilder.Entity<SiteEmail>().HasRequired(c => c.Site).WithMany(x => x.Emails).HasForeignKey(m => m.SiteId);
 
+            modelBuilder.Entity<DailyPrice>().HasRequired(m => m.FuelType).WithMany().HasForeignKey(x => x.FuelTypeId);
+
             modelBuilder.Entity<FileUpload>()
                 .HasMany(x => x.ImportProcessErrors)
                 .WithRequired(x => x.Upload)

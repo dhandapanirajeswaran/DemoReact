@@ -14,11 +14,13 @@ namespace JsPlc.Ssc.PetrolPricing.Models
         public int Id { get; set; }
 
         public int? DailyUploadId { get; set; }
-
-        public FileUpload DailyUpload { get; set; } // DateOfUpload is more significant apparently, than DateOfPrice..
+        public FileUpload DailyUpload { get; set; } // DateOfUpload is more significant, apparently, than DateOfPrice..
 
         public int CatNo { get; set; }
-        public int FuelId { get; set; }
+
+        public int FuelTypeId { get; set; }
+        public FuelType FuelType { get; set; }
+        
         public int AllStarMerchantNo { get; set; }
         public DateTime DateOfPrice { get; set; } // As per Catalist file, not significant
         public int ModalPrice { get; set; }

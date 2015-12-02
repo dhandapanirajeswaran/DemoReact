@@ -53,7 +53,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             IEnumerable<DailyPrice> dailyPrices = _db.DailyPrices.Include(x => x.DailyUpload);
 
             return dailyPrices.Where(x => competitorCatNos.Contains(x.CatNo) &&
-                                       x.FuelId == fuelId &&
+                                       x.FuelTypeId == fuelId &&
                                        x.DailyUpload.UploadDateTime.Date.Equals(usingPricesforDate.Date)).ToList();
         }
 
