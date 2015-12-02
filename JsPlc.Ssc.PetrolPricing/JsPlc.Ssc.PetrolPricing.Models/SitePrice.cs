@@ -17,7 +17,7 @@ namespace JsPlc.Ssc.PetrolPricing.Models
         public Site JsSite { get; set; } // JSSite
 
         public int FuelTypeId { get; set; }
-        public FuelType FuelIdType { get; set; } // FuelType
+        public FuelType FuelType { get; set; } // FuelType
 
         public DateTime DateOfCalc { get; set; } // DateOfCalculation (when was this calculated)
         public DateTime DateOfPrice { get; set; } // DateOfPrice (from DailyPrice - as per UploadDateTime), we dont use Dates specified in Catalist info

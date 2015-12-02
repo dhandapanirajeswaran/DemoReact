@@ -501,7 +501,7 @@
             <param name="uploadDateTime"></param>
             <returns></returns>
         </member>
-        <member name="M:JsPlc.Ssc.PetrolPricing.Service.Controllers.SitesController.CalcPrice(System.Int32)">
+        <member name="M:JsPlc.Ssc.PetrolPricing.Service.Controllers.SitesController.CalcPrice(System.Int32,System.Int32)">
             <summary>
             Calculates Prices for a given site (as per Catalist upload of today) as a test, 
             Later we extend it to:
@@ -510,6 +510,7 @@
             3. Return type will have to change when calculating Prices for a given date.. Multiple sites may have multiple outcomes of price calcs (some success, some fails)
             </summary>
             <param name="siteId"></param>
+            <param name="fuelId"></param>
             <returns>SitePrice</returns>
         </member>
     </members>
