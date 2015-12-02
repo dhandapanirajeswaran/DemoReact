@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Http;
@@ -13,7 +14,7 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
     {
         public SitesController() { }
 
-        public SitesController(SiteService siteService) : base(null, siteService) { }
+        public SitesController(SiteService siteService) : base(null, siteService, null) { }
 
         [HttpGet] 
         //[Route("api/site/{id}")] // Not needed but works
@@ -89,20 +90,32 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
             }
         }
 
-
-
-
-
         /// <summary>
-        /// Calculates Prices for a given site as a test, later we extend it to calc prices for a given date
-        /// Updates SitePrice table with calculated Prices, returns a bool - True if any calcs done for that site, else false
-        /// Return type will have to change when calculating Prices for a given date.. Multiple sites may have multiple outcomes of price calcs (some success, some fails)
+        /// Calculates Prices for a given site (as per Catalist upload of today) as a test, 
+        /// Later we extend it to:
+        /// 1. Calc prices for a given date
+        /// 2. Updates SitePrice table with calculated Prices, returns a bool - True if any calcs done for that site, else false
+        /// 3. Return type will have to change when calculating Prices for a given date.. Multiple sites may have multiple outcomes of price calcs (some success, some fails)
         /// </summary>
         /// <param name="siteId"></param>
-        /// <returns></returns>
+        /// <returns>SitePrice</returns>
+        [HttpGet]
+        [Route("api/Sites/CalcPrice/{siteId}")]
         public async Task<IHttpActionResult> CalcPrice(int siteId)
         {
-            return null;
+            // returns a SitePrice object, maybe later we call this for multiple fuels of the site
+
+            // Test for 30 Nov prices as we have a dummy set of these setup
+            // We dont have any 1st Dec prices
+            SitePrice price = null;
+
+            price = _priceService.CalcPrice(1, 2, DateTime.Parse("2015-11-30")); // Unleaded
+            price = _priceService.CalcPrice(1, 6, DateTime.Parse("2015-11-30")); // Diesel
+
+            price = _priceService.CalcPrice(2, 2, DateTime.Parse("2015-11-30")); // Unleaded
+            price = _priceService.CalcPrice(2, 6, DateTime.Parse("2015-11-30")); // Diesel
+
+            return Ok(price);
         }
     }
 }

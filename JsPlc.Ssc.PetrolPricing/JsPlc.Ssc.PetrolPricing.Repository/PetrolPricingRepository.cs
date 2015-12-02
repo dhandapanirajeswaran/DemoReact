@@ -7,6 +7,7 @@ using System.Data.Entity.SqlServer;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Security.Cryptography.X509Certificates;
+using System.Threading.Tasks;
 using JsPlc.Ssc.PetrolPricing.Models;
 
 namespace JsPlc.Ssc.PetrolPricing.Repository
@@ -31,13 +32,40 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
         public IEnumerable<Site> GetSitesWithPricesAndCompetitors()
         {
-            return _db.Sites.Include(s => s.Emails).Include(x => x.Competitors).Include(x => x.Prices).OrderBy(q => q.Id);
+            return _db.Sites
+                .Include(s => s.Emails)
+                .Include(x => x.Competitors)
+                .Include(x => x.Prices)
+                .Where(x => x.IsActive)
+                .OrderBy(q => q.Id);
+        }
+
+        /// <summary>
+        /// Gets a list of DailyPrices for the list of Competitors for the specified fuel
+        /// </summary>
+        /// <param name="competitorCatNos"></param>
+        /// <param name="fuelId"></param>
+        /// <param name="usingPricesforDate"></param>
+        /// <returns></returns>
+        public IEnumerable<DailyPrice> GetDailyPricesForFuelByCompetitors(IEnumerable<int> competitorCatNos, int fuelId, DateTime usingPricesforDate)
+        {
+            // If multiple uploads, needs to be handled here, but we assume one for now.
+            IEnumerable<DailyPrice> dailyPrices = _db.DailyPrices.Include(x => x.DailyUpload);
+
+            return dailyPrices.Where(x => competitorCatNos.Contains(x.CatNo) &&
+                                       x.FuelTypeId == fuelId &&
+                                       x.DailyUpload.UploadDateTime.Date.Equals(usingPricesforDate.Date)).ToList();
         }
 
         public Site GetSite(int id)
         {
             return _db.Sites.Include(s => s.Emails).FirstOrDefault(q => q.Id == id);
         }
+        public Site GetSiteByCatNo(int catNo)
+        {
+            return _db.Sites.FirstOrDefault(q => q.CatNo.HasValue && q.CatNo.Value == catNo);
+        }
+
         public Site NewSite(Site site)
         {
             var result = _db.Sites.Add(site);
@@ -66,20 +94,25 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
         }
 
-        // Note: We send back all competitors as listed in table based on distance (optional filter to exclude JS sites as competitors)
-        public IEnumerable<Site> GetCompetitors(int siteId, int distFrom, int distTo, bool includeSainsburysAsCompetitors = true)
+        /// <summary>
+        /// Get competitors based on drivetime criteria
+        /// </summary>
+        /// <param name="siteId"></param>
+        /// <param name="driveTimeFrom"></param>
+        /// <param name="driveTimeTo"></param>
+        /// <param name="includeSainsburysAsCompetitors"></param>
+        /// <returns></returns>
+        public IEnumerable<SiteToCompetitor> GetCompetitors(int siteId, int driveTimeFrom, int driveTimeTo, bool includeSainsburysAsCompetitors = true)
         {
             var site = GetSite(siteId);
 
-            //var competitors = _db.SiteToCompetitors.Where(x => x.Site.Id == site.Id && x.Distance >= distFrom && x.Distance <= distTo).Select(x => x.Competitor);
+            IEnumerable<SiteToCompetitor> siteCompetitors = GetSitesWithPricesAndCompetitors().Where(x => x.Id == site.Id)
+                .SelectMany(x => x.Competitors).Where(x => x.DriveTime >= driveTimeFrom && x.DriveTime <= driveTimeTo)
+                .ToList();
 
-            IEnumerable<Site> siteCompetitors = GetSitesWithPricesAndCompetitors().Where(x => x.Id == site.Id)
-                .SelectMany(x => x.Competitors).Where(x => x.Distance >= distFrom && x.Distance <= distTo)
-                .Select(x => x.Competitor).ToList();
-
-            if (!includeSainsburysAsCompetitors) // client asks to specifically remove JS sites from competitors, then filter them out
+            if (!includeSainsburysAsCompetitors) 
             {
-                siteCompetitors = siteCompetitors.Where(x => !x.IsSainsburysSite);
+                siteCompetitors = siteCompetitors.Where(x => !x.Competitor.IsSainsburysSite);
             }
             return siteCompetitors;
         }

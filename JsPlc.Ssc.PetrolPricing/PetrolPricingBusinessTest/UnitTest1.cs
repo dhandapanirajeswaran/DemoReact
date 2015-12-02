@@ -33,6 +33,7 @@ namespace PetrolPricingBusinessTest
         public void GetSiteWithCompetitors()
         {
             var sites = _siteService.GetCompetitors(1, 0, 5, true);
+            sites = _siteService.GetCompetitors(2, 5, 10, true);
         }
 
         [TestCleanup]

@@ -35,5 +35,7 @@ namespace JsPlc.Ssc.PetrolPricing.Models
 
         [Required]
         public string UploadedBy { get; set; } // Emailaddr/Username of Uploader
+
+        public virtual ICollection<ImportProcessError> ImportProcessErrors { get; set; }
     }
 }

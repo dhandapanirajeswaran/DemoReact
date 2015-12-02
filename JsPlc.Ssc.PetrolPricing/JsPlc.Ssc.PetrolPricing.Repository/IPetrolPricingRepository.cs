@@ -10,14 +10,17 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         IEnumerable<Site> GetSites();
         
         Site GetSite(int siteId);
+        Site GetSiteByCatNo(int catNo);
 
         Site NewSite(Site site);
 
         bool UpdateSite(Site site);
 
-        IEnumerable<Site> GetCompetitors(int siteId, int distFrom, int distTo, bool includeSainsburysAsCompetitors = true);
+        IEnumerable<SiteToCompetitor> GetCompetitors(int siteId, int driveTimeFrom, int driveTimeTo, bool includeSainsburysAsCompetitors = true);
 
         IEnumerable<Site> GetSitesWithPricesAndCompetitors();
+
+        IEnumerable<DailyPrice> GetDailyPricesForFuelByCompetitors(IEnumerable<int> competitorCatNos, int fuelId, DateTime usingUploadDate);
 
         IEnumerable<FileUpload> GetFileUploads(DateTime? date, int? uploadType, int? statusId);
 

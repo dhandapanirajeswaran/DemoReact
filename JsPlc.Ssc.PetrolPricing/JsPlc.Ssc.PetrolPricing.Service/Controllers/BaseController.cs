@@ -7,17 +7,20 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
     {
         protected readonly FileService _fileService;
         protected readonly SiteService _siteService;
+        protected readonly PriceService _priceService;
 
         public BaseController()
         {
             _fileService = new FileService();
             _siteService = new SiteService();
+            _priceService = new PriceService();
         }
 
-        public BaseController(FileService fileService, SiteService siteService)
+        public BaseController(FileService fileService, SiteService siteService, PriceService priceService)
         {
             _fileService = fileService;
             _siteService = siteService;
+            _priceService = priceService;
         }
 
         protected override void Dispose(bool disposing)

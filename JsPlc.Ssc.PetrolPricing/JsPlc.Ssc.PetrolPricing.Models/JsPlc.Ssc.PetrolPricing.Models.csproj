@@ -57,6 +57,7 @@
     <Compile Include="AppConfigSettings.cs" />
     <Compile Include="Common\Functions.cs" />
     <Compile Include="Constants.cs" />
+    <Compile Include="ImportProcessError.cs" />
     <Compile Include="SitePrice.cs" />
     <Compile Include="DailyPrice.cs" />
     <Compile Include="Enums\SettingsKeys.cs" />

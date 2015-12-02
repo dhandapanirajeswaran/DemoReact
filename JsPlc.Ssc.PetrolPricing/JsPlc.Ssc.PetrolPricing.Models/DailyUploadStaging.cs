@@ -17,7 +17,7 @@ namespace JsPlc.Ssc.PetrolPricing.Models
         public FileUpload DailyUpload { get; set; }
 
         public int CatNo { get; set; }
-        public int FuelId { get; set; }
+        public int FuelTypeId { get; set; } // No FK in this, just a dump of the data.. 
         public int AllStarMerchantNo { get; set; }
         public int ModalPrice { get; set; }
     }

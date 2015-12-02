@@ -45,9 +45,9 @@ namespace JsPlc.Ssc.PetrolPricing.Business
            return _db.UpdateSite(site);
         }
 
-        public IEnumerable<Site> GetCompetitors(int siteId, int distFrom, int distTo, bool includeSainsburysAsCompetitors = true)
+        public IEnumerable<SiteToCompetitor> GetCompetitors(int siteId, int driveTimeFrom, int driveTimeTo, bool includeSainsburysAsCompetitors = true)
         {
-            var competitors = _db.GetCompetitors(siteId, distFrom, distTo);
+            var competitors = _db.GetCompetitors(siteId, driveTimeFrom, driveTimeTo);
             return competitors.ToList();
         }
     }

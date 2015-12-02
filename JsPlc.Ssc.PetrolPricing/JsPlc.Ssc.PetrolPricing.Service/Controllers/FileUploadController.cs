@@ -18,7 +18,7 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
 
         public FileUploadController() { }
 
-        public FileUploadController(FileService fileService) : base(fileService, null) { }
+        public FileUploadController(FileService fileService) : base(fileService, null, null) { }
 
         [HttpPost] // Create new upload
         public async Task<IHttpActionResult> Post(FileUpload fileUpload)
@@ -85,6 +85,11 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
             }
         }
 
+        /// <summary>
+        /// List of Uploads for a given date param
+        /// </summary>
+        /// <param name="uploadDateTime"></param>
+        /// <returns></returns>
         [HttpGet]
         [Route("api/ExistingDailyUploads/{uploadDateTime}")] // yyyymmdd
         public async Task<IHttpActionResult> ExistingDailyUploads([FromUri] string uploadDateTime)

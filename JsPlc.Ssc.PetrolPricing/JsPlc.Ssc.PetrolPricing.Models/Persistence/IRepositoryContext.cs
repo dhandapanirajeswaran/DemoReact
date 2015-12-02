@@ -17,6 +17,7 @@ namespace JsPlc.Ssc.PetrolPricing.Models.Persistence
 
         IDbSet<SiteToCompetitor> SiteToCompetitors { get; }
         IDbSet<FileUpload> FileUploads { get; }
+        IDbSet<ImportProcessError> ImportProcessErrors { get; set; }
 
         IDbSet<DailyUploadStaging> DailyUploadStaging { get; }
         IDbSet<QuarterlyUploadStaging> QuarterlyUploadStaging { get; }
