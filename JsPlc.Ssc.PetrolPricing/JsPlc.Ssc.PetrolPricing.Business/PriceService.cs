@@ -35,11 +35,12 @@ namespace JsPlc.Ssc.PetrolPricing.Business
             var site = _db.GetSite(siteId);
             if (site == null) return null;
 
-            // APPLY PRICING RULES: based on drivetime (see Market Comparison sheet)
+            // APPLY PRICING RULES: based on drivetime (see Market Comparison sheet) as per meeting 02Dec2015 @ 13:00
             // If 0-5 mins away – match to minimum competitor
             // If 5-10 mins away – add 1p to minimum competitor 
             // If 10-15 mins away – add 2p to minimum competitor
             // If 15-20 mins away – add 3p to the minimum competitor
+            // If 20-25 mins away – add 4p to the minimum competitor price
 
             // 0-5 min
             var cheapestCompetitor = GetCheapestPriceUsingParams(siteId, 0, 5, fuelId,
@@ -56,6 +57,10 @@ namespace JsPlc.Ssc.PetrolPricing.Business
             if (!cheapestCompetitor.HasValue)
                 cheapestCompetitor = GetCheapestPriceUsingParams(siteId, 15, 20, fuelId,
                 usingPricesforDate.Value, 3, _includeJsSitesAsCompetitors);
+            // 20-25 min
+            if (!cheapestCompetitor.HasValue)
+                cheapestCompetitor = GetCheapestPriceUsingParams(siteId, 20, 25, fuelId,
+                usingPricesforDate.Value, 4, _includeJsSitesAsCompetitors);
 
             if (!cheapestCompetitor.HasValue) return null;
 
