@@ -11,7 +11,11 @@ namespace JsPlc.Ssc.PetrolPricing.Business
     {
         public FileUpload NewUpload(FileUpload fileUpload)
         {
-            return _db.NewUpload(fileUpload);
+            FileUpload newUpload = _db.NewUpload(fileUpload);
+
+            UpdateDailyPrice();
+
+            return newUpload;
         }
 
         public void Dispose()
@@ -37,6 +41,13 @@ namespace JsPlc.Ssc.PetrolPricing.Business
         public FileUpload GetFileUpload(int id)
         {
             return _db.GetFileUpload(id);
+        }
+
+        private bool UpdateDailyPrice()
+        {
+            //IEnumerable<FileUpload> ListOfFiles = GetFileUploads(null, null, null);
+
+            //return true;
         }
 
     }
