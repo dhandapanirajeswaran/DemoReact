@@ -1,4 +1,5 @@
-﻿@model IEnumerable<JsPlc.Ssc.PetrolPricing.Models.FileUpload>
+﻿@using System.Globalization
+@model IEnumerable<JsPlc.Ssc.PetrolPricing.Models.FileUpload>
 
 <table class="table">
     <tr>
@@ -49,7 +50,7 @@
             @Html.DisplayFor(modelItem => item.UploadedBy)
         </td>
         <td>
-            @Html.ActionLink("Details", "Details", new { id= item.Id.ToString() })
+            @Html.ActionLink("Details", "Details", new { id= item.Id.ToString(CultureInfo.InvariantCulture) })
             <!-- TODO display details on same page -->
         </td>
     </tr>

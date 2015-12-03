@@ -79,7 +79,8 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             //_db.Sites.AddOrUpdate(site);
             //_db.SaveChanges();
 
-            
+            // TODO Email edits and deletes are not impacting DB yet
+
             _db.Entry(site).State = EntityState.Modified;
 
             try

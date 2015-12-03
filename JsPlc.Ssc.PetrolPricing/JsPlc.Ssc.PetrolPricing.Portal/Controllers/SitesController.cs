@@ -123,8 +123,23 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
         [System.Web.Mvc.HttpPost]
         public ActionResult Edit(Site site)
         {
+            // TODO Email edits and deletes are not impacting DB yet
+            if (!ModelState.IsValid)
+            {
+                ViewBag.ErrorMessage = "Please check for validation errors under each field.";
+                return View(site);
+            }
             site.IsSainsburysSite = true;
             var nonBlankVals = new List<SiteEmail>();
+            site.Emails.ForEach(x =>
+            {
+                if (!x.EmailAddress.IsNullOrWhiteSpace())
+                {
+                    x.SiteId = site.Id;
+                    nonBlankVals.Add(x);
+                }
+            });
+            site.Emails = nonBlankVals;
 
             var editSite = _serviceFacade.EditSite(site);
 
