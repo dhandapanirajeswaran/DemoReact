@@ -7,6 +7,8 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Formatting;
 using System.Net.Http.Headers;
+using System.Text;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.UI;
 using JsPlc.Ssc.PetrolPricing.Models;
@@ -155,6 +157,33 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             return (response.IsSuccessStatusCode) ? result : null;
         }
 
+        // TRULY Async static method
+        public async Task<HttpResponseMessage> RunAsync(string siteViewJson, HttpMethod method)
+        {
+            using (var client = new HttpClient())
+            {
+                client.DefaultRequestHeaders.Accept.Clear();
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                var serviceUrl = String.Format("{0}api/Sites", ConfigurationManager.AppSettings["ServicesBaseUrl"]);
+
+                var request = new HttpRequestMessage(method, serviceUrl)
+                {
+                    Content = new StringContent(siteViewJson,
+                        Encoding.UTF8,
+                        "application/json")
+                };
+
+                var response = await client.SendAsync(request)
+                    .ContinueWith(responseTask =>
+                    {
+                        Console.WriteLine("Response: {0}", responseTask.Result);
+                        return responseTask.Result;
+                    });
+
+                return !response.IsSuccessStatusCode ? new HttpResponseMessage { StatusCode = HttpStatusCode.NotImplemented } : response;
+            }
+        }
         public void Dispose()
         {
             _client = null;
