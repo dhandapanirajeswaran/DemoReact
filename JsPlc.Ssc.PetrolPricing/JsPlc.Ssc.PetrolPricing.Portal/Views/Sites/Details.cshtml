@@ -6,133 +6,137 @@
 
 <h2>Site Details</h2>
 
-    <hr />
-    <div class="col-md-6">
+<hr />
+<div class="col-md-6">
 
-        <dl class="dl-horizontal">
+    <dl class="dl-horizontal">
 
-            <dt>
-                @Html.DisplayNameFor(model => model.CatNo)
-            </dt>
+        <dt>
+            @Html.DisplayNameFor(model => model.CatNo)
+        </dt>
 
-            <dd>
-                @Html.DisplayFor(model => model.CatNo)
-            </dd>
+        <dd>
+            @Html.DisplayFor(model => model.CatNo)
+        </dd>
 
-            <dt>
-                @Html.DisplayNameFor(model => model.Brand)
-            </dt>
+        <dt>
+            @Html.DisplayNameFor(model => model.Brand)
+        </dt>
 
-            <dd>
-                @Html.DisplayFor(model => model.Brand)
-            </dd>
+        <dd>
+            @Html.DisplayFor(model => model.Brand)
+        </dd>
 
-            <dt>
-                @Html.DisplayNameFor(model => model.SiteName)
-            </dt>
+        <dt>
+            @Html.DisplayNameFor(model => model.SiteName)
+        </dt>
 
-            <dd>
-                @Html.DisplayFor(model => model.SiteName)
-            </dd>
+        <dd>
+            @Html.DisplayFor(model => model.SiteName)
+        </dd>
 
-            <dt>
-                @Html.DisplayNameFor(model => model.Address)
-            </dt>
+        <dt>
+            @Html.DisplayNameFor(model => model.Address)
+        </dt>
 
-            <dd>
-                @Html.DisplayFor(model => model.Address)
-            </dd>
+        <dd>
+            @Html.DisplayFor(model => model.Address)
+        </dd>
 
-            <dt>
-                @Html.DisplayNameFor(model => model.Suburb)
-            </dt>
+        <dt>
+            @Html.DisplayNameFor(model => model.Suburb)
+        </dt>
 
-            <dd>
-                @Html.DisplayFor(model => model.Suburb)
-            </dd>
+        <dd>
+            @Html.DisplayFor(model => model.Suburb)
+        </dd>
 
-            <dt>
-                @Html.DisplayNameFor(model => model.Town)
-            </dt>
+        <dt>
+            @Html.DisplayNameFor(model => model.Town)
+        </dt>
 
-            <dd>
-                @Html.DisplayFor(model => model.Town)
-            </dd>
+        <dd>
+            @Html.DisplayFor(model => model.Town)
+        </dd>
 
-            <dt>
-                @Html.DisplayNameFor(model => model.PostCode)
-            </dt>
+        <dt>
+            @Html.DisplayNameFor(model => model.PostCode)
+        </dt>
 
-            <dd>
-                @Html.DisplayFor(model => model.PostCode)
-            </dd>
-        </dl>
-    </div>
-    <div class="col-md-6">
+        <dd>
+            @Html.DisplayFor(model => model.PostCode)
+        </dd>
+    </dl>
+</div>
+<div class="col-md-6">
 
-        <dl class="dl-horizontal">
-            <dt>
-                @Html.DisplayNameFor(model => model.Company)
-            </dt>
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Company)
+        </dt>
 
-            <dd>
-                @Html.DisplayFor(model => model.Company)
-            </dd>
+        <dd>
+            @Html.DisplayFor(model => model.Company)
+        </dd>
 
-            <dt>
-                @Html.DisplayNameFor(model => model.Ownership)
-            </dt>
+        <dt>
+            @Html.DisplayNameFor(model => model.Ownership)
+        </dt>
 
-            <dd>
-                @Html.DisplayFor(model => model.Ownership)
-            </dd>
+        <dd>
+            @Html.DisplayFor(model => model.Ownership)
+        </dd>
 
-            <dt>
-                @Html.DisplayNameFor(model => model.StoreNo)
-            </dt>
+        <dt>
+            @Html.DisplayNameFor(model => model.StoreNo)
+        </dt>
 
-            <dd>
-                @Html.DisplayFor(model => model.StoreNo)
-            </dd>
+        <dd>
+            @Html.DisplayFor(model => model.StoreNo)
+        </dd>
 
-            <dt>
-                @Html.DisplayNameFor(model => model.PfsNo)
-            </dt>
+        <dt>
+            @Html.DisplayNameFor(model => model.PfsNo)
+        </dt>
 
-            <dd>
-                @Html.DisplayFor(model => model.PfsNo)
-            </dd>
+        <dd>
+            @Html.DisplayFor(model => model.PfsNo)
+        </dd>
 
-            <dt>
-                @Html.DisplayNameFor(model => model.IsSainsburysSite)
-            </dt>
+        <dt>
+            @Html.DisplayNameFor(model => model.IsSainsburysSite)
+        </dt>
 
-            <dd>
-                @Html.DisplayFor(model => model.IsSainsburysSite)
-            </dd>
+        <dd>
+            @Html.DisplayFor(model => model.IsSainsburysSite)
+        </dd>
 
-            <dt>
-                @Html.DisplayNameFor(model => model.IsActive)
-            </dt>
+        <dt>
+            @Html.DisplayNameFor(model => model.IsActive)
+        </dt>
 
-            <dd>
-                @Html.DisplayFor(model => model.IsActive)
-            </dd>
+        <dd>
+            @Html.DisplayFor(model => model.IsActive)
+        </dd>
 
-            <dt>
-                @Html.DisplayNameFor(model => model.Emails)
-            </dt>
+        <dt>
+            @Html.DisplayNameFor(model => model.Emails)
+        </dt>
 
-            <dd>
-                @foreach (var email in Model.Emails)
+        <dd>
+            @foreach (var email in Model.Emails)
                 {
-                    <a href="@("mailto:" + email.EmailAddress)">@email.EmailAddress</a>
-                    <br />
+                <a href="@("mailto:" + email.EmailAddress)">@email.EmailAddress</a>
+                <br />
                 }
-            </dd>
-        </dl>
-    </div>
+        </dd>
+    </dl>
+</div>
 <p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }, htmlAttributes: new { onclick = "return false;" }) |
+    @if (Model.IsSainsburysSite)
+    {
+        @Html.ActionLink("Edit", "Edit", new { id = Model.Id })
+        @:|
+    }
     @Html.ActionLink("Back to List", "Index")
 </p>

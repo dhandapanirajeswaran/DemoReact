@@ -98,10 +98,11 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
         /// 3. Return type will have to change when calculating Prices for a given date.. Multiple sites may have multiple outcomes of price calcs (some success, some fails)
         /// </summary>
         /// <param name="siteId"></param>
+        /// <param name="fuelId"></param>
         /// <returns>SitePrice</returns>
         [HttpGet]
-        [Route("api/Sites/CalcPrice/{siteId}")]
-        public async Task<IHttpActionResult> CalcPrice(int siteId)
+        [Route("api/Sites/CalcPrice/")]
+        public async Task<IHttpActionResult> CalcPrice([FromUri]int siteId, [FromUri] int fuelId)
         {
             // returns a SitePrice object, maybe later we call this for multiple fuels of the site
 
@@ -109,13 +110,9 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
             // We dont have any 1st Dec prices
             SitePrice price = null;
 
-            price = _priceService.CalcPrice(1, 2, DateTime.Parse("2015-11-30")); // Unleaded
-            price = _priceService.CalcPrice(1, 6, DateTime.Parse("2015-11-30")); // Diesel
-
-            price = _priceService.CalcPrice(2, 2, DateTime.Parse("2015-11-30")); // Unleaded
-            price = _priceService.CalcPrice(2, 6, DateTime.Parse("2015-11-30")); // Diesel
-
+            price = _priceService.CalcPrice(siteId, fuelId, DateTime.Parse("2015-11-30")); // Unleaded
             return Ok(price);
         }
+
     }
 }

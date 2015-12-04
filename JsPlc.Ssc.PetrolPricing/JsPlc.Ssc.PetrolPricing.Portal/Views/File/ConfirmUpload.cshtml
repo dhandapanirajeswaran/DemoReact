@@ -8,15 +8,17 @@
 <br/>
 <span style="color:red">@ViewBag.ErrorMessage</span>
 <span style="color:green; font-size: larger">@ViewBag.SuccessMessage</span>
-
-<form action="UploadConfirmation" method="Get">
+@using(Html.BeginForm("UploadConfirmation", "File", FormMethod.Get))
+{
     <p style="color:orange; font-size: large">Please confirm to upload another daily price file.</p>
-    Uploading File: @Model.OriginalFileName<br />
+    <span>Uploading File: </span>@Model.OriginalFileName
+        <br />
 
     <input type="hidden" value="@Model.Guid" name="guidKey" />
-    <input type="submit" value="Upload" name="response" />
-    <input type="submit" value="Cancel" name="response" />
+    <input type="submit" value="Upload" name="response" class="btn btn-primary btn-danger" />
+    <input type="submit" value="Cancel" name="response" class="btn btn-primary" />
     
     <h3>Existing daily files:</h3>
     @Html.Partial("_FileUploadsList", Model.ExistingFiles)
-</form>
+@*</form>*@
+}

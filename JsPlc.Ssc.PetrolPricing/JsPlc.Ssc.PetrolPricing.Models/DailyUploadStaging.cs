@@ -20,5 +20,7 @@ namespace JsPlc.Ssc.PetrolPricing.Models
         public int FuelTypeId { get; set; } // No FK in this, just a dump of the data.. 
         public int AllStarMerchantNo { get; set; }
         public int ModalPrice { get; set; }
+        
+        // We dont store Dates given in Catalist daily file. Upload date is considered the date of price of those sites
     }
 }
