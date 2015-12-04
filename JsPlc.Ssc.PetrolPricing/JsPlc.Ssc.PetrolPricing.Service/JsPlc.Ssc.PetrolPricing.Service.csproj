@@ -249,6 +249,7 @@
     <Content Include="Areas\HelpPage\Views\Help\Api.cshtml" />
     <None Include="Properties\PublishProfiles\Local-Debug.pubxml" />
     <None Include="Properties\PublishProfiles\Local-Release.pubxml" />
+    <None Include="Properties\PublishProfiles\Petrol Pricing Service Build.pubxml" />
     <None Include="Properties\PublishProfiles\PetrolPublishService.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />

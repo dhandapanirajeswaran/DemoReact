@@ -1,11 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Data.Entity.Infrastructure;
 using System.Data.Entity.Migrations;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Permissions;
 using JsPlc.Ssc.PetrolPricing.Models;
+
+using System.Data.Entity.Validation;
+using System.Diagnostics;
 
 namespace JsPlc.Ssc.PetrolPricing.Repository
 {
@@ -89,6 +93,42 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
         }
 
+        public bool NewDailyPrices(List<DailyPrice> DailyPriceList)
+        {
+            //_db.Configuration.AutoDetectChangesEnabled = false;
+
+            try
+            {
+                foreach (DailyPrice dailyPrice in DailyPriceList)
+                {
+                    _db.DailyPrices.Add(dailyPrice); 
+                }
+                
+                _db.SaveChanges();
+
+                return true;
+            }
+            catch(DbUpdateException e)
+            {
+                //TODO loop over event exceptiob
+                return false;
+            }
+            catch (DbEntityValidationException dbEx)
+            {
+                foreach (var validationErrors in dbEx.EntityValidationErrors)
+                {
+                    foreach (var validationError in validationErrors.ValidationErrors)
+                    {
+                        Trace.TraceInformation("Property: {0} Error: {1}",
+                                                validationError.PropertyName,
+                                                validationError.ErrorMessage);
+                    }
+                }
+                return false;
+            }
+
+        }
+
         private void UpdateSiteEmails(Site site)
         {
             var siteEmailIds = site.Emails.Select(x => x.Id).ToList();
@@ -111,6 +151,9 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             }
         }
 
+           
+      
+
         /// <summary>
         /// Get competitors based on drivetime criteria
         /// </summary>
@@ -127,7 +170,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                 .SelectMany(x => x.Competitors).Where(x => x.DriveTime >= driveTimeFrom && x.DriveTime <= driveTimeTo)
                 .ToList();
 
-            if (!includeSainsburysAsCompetitors)
+            if (!includeSainsburysAsCompetitors) 
             {
                 siteCompetitors = siteCompetitors.Where(x => !x.Competitor.IsSainsburysSite);
             }
