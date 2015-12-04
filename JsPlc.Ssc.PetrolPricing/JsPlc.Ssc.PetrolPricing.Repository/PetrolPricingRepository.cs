@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
-using System.Data.Entity.Infrastructure;
 using System.Data.Entity.Migrations;
-using System.Data.Entity.SqlServer;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Security.Cryptography.X509Certificates;
-using System.Threading.Tasks;
+using System.Security.Permissions;
 using JsPlc.Ssc.PetrolPricing.Models;
 
 namespace JsPlc.Ssc.PetrolPricing.Repository
@@ -27,7 +24,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
         public IEnumerable<Site> GetSites()
         {
-           return _db.Sites.Include(s => s.Emails).OrderBy(q=>q.Id);
+            return _db.Sites.Include(s => s.Emails).OrderBy(q => q.Id);
         }
 
         public IEnumerable<Site> GetSitesWithPricesAndCompetitors()
@@ -76,16 +73,13 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
         public bool UpdateSite(Site site)
         {
-            //_db.Sites.AddOrUpdate(site);
-            //_db.SaveChanges();
-
-            // TODO Email edits and deletes are not impacting DB yet
-
-            _db.Entry(site).State = EntityState.Modified;
-
             try
             {
+                _db.Sites.Attach(site);
+                UpdateSiteEmails(site);
+                _db.Entry(site).State = EntityState.Modified;
                 _db.SaveChanges();
+
                 return true;
             }
             catch
@@ -93,6 +87,28 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                 return false;
             }
 
+        }
+
+        private void UpdateSiteEmails(Site site)
+        {
+            var siteEmailIds = site.Emails.Select(x => x.Id).ToList();
+
+            var siteOrig = GetSite(site.Id);
+            if (siteOrig.Emails.Any())
+            {
+                var deletedEmails = siteOrig.Emails.Where(x => !siteEmailIds.Contains(x.Id)).ToList();
+                foreach (var delEmail in deletedEmails)
+                {
+                    _db.Entry(delEmail).State = EntityState.Deleted;
+                }
+            }
+            var siteEmails = site.Emails.ToList();
+
+            foreach (var email in siteEmails)
+            {
+                if (email.Id == 0) _db.Entry(email).State = EntityState.Added;
+                if (email.Id != 0) _db.Entry(email).State = EntityState.Modified;
+            }
         }
 
         /// <summary>
@@ -111,7 +127,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                 .SelectMany(x => x.Competitors).Where(x => x.DriveTime >= driveTimeFrom && x.DriveTime <= driveTimeTo)
                 .ToList();
 
-            if (!includeSainsburysAsCompetitors) 
+            if (!includeSainsburysAsCompetitors)
             {
                 siteCompetitors = siteCompetitors.Where(x => !x.Competitor.IsSainsburysSite);
             }

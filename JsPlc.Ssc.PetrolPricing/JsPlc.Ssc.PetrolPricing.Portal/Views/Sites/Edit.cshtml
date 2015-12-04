@@ -123,9 +123,9 @@
                             new SiteEmail {EmailAddress = "", Id = 0}
                         } : Model.Emails;
 
-                        for (var x = 0; x < 3 - emails.Count; x++)
+                        while(emails.Count<3)
                         {
-                            emails.Add(new SiteEmail {EmailAddress = ""});
+                            emails.Add(new SiteEmail {EmailAddress = "", Id = 0});
                         }
 
                         foreach (var email in emails)
