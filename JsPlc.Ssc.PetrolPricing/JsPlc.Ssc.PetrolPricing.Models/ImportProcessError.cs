@@ -6,7 +6,7 @@ namespace JsPlc.Ssc.PetrolPricing.Models
     public class ImportProcessError
     {
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
         // Log is for this upload

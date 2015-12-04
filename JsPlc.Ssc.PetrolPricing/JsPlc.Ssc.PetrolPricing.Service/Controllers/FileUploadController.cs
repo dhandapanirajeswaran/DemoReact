@@ -118,7 +118,7 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
             {
                 using (var fs = _fileService)
                 {
-                    return Ok(fs.UpdateDailyPrice(fs.GetFileUploads(null, null, null)));
+                    return Ok(fs.UpdateDailyPrice(fs.GetFileUploads(null, null, 1)));//Status = uploaded files only
                 }
             }
             catch (Exception ex)

@@ -30,7 +30,6 @@ namespace JsPlc.Ssc.PetrolPricing.Models
 
         public int StatusId { get; set; }
 
-        [Required]
         public ImportProcessStatus Status { get; set; }
 
         [Required]

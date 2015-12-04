@@ -30,7 +30,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
         public IEnumerable<Site> GetSites()
         {
-           return _db.Sites.Include(s => s.Emails).OrderBy(q=>q.Id);
+            return _db.Sites.Include(s => s.Emails).OrderBy(q => q.Id);
         }
 
         public IEnumerable<Site> GetSitesWithPricesAndCompetitors()
@@ -64,6 +64,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         {
             return _db.Sites.Include(s => s.Emails).FirstOrDefault(q => q.Id == id);
         }
+
         public Site GetSiteByCatNo(int catNo)
         {
             return _db.Sites.FirstOrDefault(q => q.CatNo.HasValue && q.CatNo.Value == catNo);
@@ -98,44 +99,83 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
         }
 
-        public bool NewDailyPrices(List<DailyPrice> DailyPriceList)
+        public bool NewDailyPrices(List<DailyPrice> DailyPriceList, FileUpload FileDetails)
         {
             //_db.Configuration.AutoDetectChangesEnabled = false;
 
-            try
+            using (var tx = _db.Database.BeginTransaction())
             {
-                foreach (DailyPrice dailyPrice in DailyPriceList)
+                try
                 {
-                    _db.DailyPrices.Add(dailyPrice); 
-                }
-                
-                _db.SaveChanges();
-
-                return true;
-            }
-            catch(DbUpdateException e)
-            {
-                //TODO loop over event exceptiob
-                return false;
-            }
-            catch (DbEntityValidationException dbEx)
-            {
-                foreach (var validationErrors in dbEx.EntityValidationErrors)
-                {
-                    foreach (var validationError in validationErrors.ValidationErrors)
+                    //LogImportError(FileDetails); this works
+                    foreach (DailyPrice dailyPrice in DailyPriceList)
                     {
-                        Trace.TraceInformation("Property: {0} Error: {1}",
-                                                validationError.PropertyName,
-                                                validationError.ErrorMessage);
+                        _db.DailyPrices.Add(dailyPrice);
                     }
+
+                    _db.SaveChanges();
+
+                    tx.Commit();
+                    return true;
                 }
-                return false;
+                catch (DbUpdateException e)
+                {
+                    tx.Rollback();
+                    foreach (var dbUpdateException in e.Entries)
+                    {
+                        LogImportError(FileDetails);
+                    }
+
+
+                    return false;
+                }
+                catch (DbEntityValidationException dbEx)
+                {
+                    tx.Rollback();
+                    foreach (var validationErrors in dbEx.EntityValidationErrors)
+                    {
+                        foreach (var validationError in validationErrors.ValidationErrors)
+                        {
+                            Trace.TraceInformation("Property: {0} Error: {1}",
+                                                    validationError.PropertyName,
+                                                    validationError.ErrorMessage);
+                        }
+                    }
+                    return false;
+                }
             }
-            
         }
 
-           
-      
+        private void LogImportError(FileUpload FileDetails)
+        {
+            using (var db = new RepositoryContext(_db.Database.Connection))
+            {
+                ImportProcessError importProcessErrors = new ImportProcessError();
+
+                importProcessErrors.UploadId = FileDetails.Id;
+                //importProcessErrors.Upload = FileDetails;
+
+                importProcessErrors.ErrorMessage = "error";
+                importProcessErrors.RowOrLineNumber = 0;
+
+                db.ImportProcessErrors.Add(importProcessErrors);
+                db.SaveChanges();
+            }
+        }
+
+        public bool UpdateImportProcessStatus(FileUpload fileUpload)
+        {
+            try
+            {
+                _db.Entry(fileUpload).State = EntityState.Modified;
+                _db.SaveChanges();
+                return true;
+            }
+            catch (DbUpdateException e)
+            {
+                return false;
+            }
+        }
 
         /// <summary>
         /// Get competitors based on drivetime criteria
@@ -153,7 +193,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                 .SelectMany(x => x.Competitors).Where(x => x.DriveTime >= driveTimeFrom && x.DriveTime <= driveTimeTo)
                 .ToList();
 
-            if (!includeSainsburysAsCompetitors) 
+            if (!includeSainsburysAsCompetitors)
             {
                 siteCompetitors = siteCompetitors.Where(x => !x.Competitor.IsSainsburysSite);
             }
@@ -175,6 +215,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
             return result; // return full object back
         }
+
         public bool ExistsUpload(string storedFileName)
         {
             return
