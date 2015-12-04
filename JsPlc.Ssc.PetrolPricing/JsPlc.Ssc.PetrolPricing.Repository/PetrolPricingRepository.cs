@@ -7,7 +7,7 @@ using System.Data.Entity.SqlServer;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Security.Cryptography.X509Certificates;
-using System.Threading.Tasks;
+using System.Security.Permissions;
 using JsPlc.Ssc.PetrolPricing.Models;
 
 using System.Data.Entity.Validation;
@@ -30,7 +30,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
         public IEnumerable<Site> GetSites()
         {
-            return _db.Sites.Include(s => s.Emails).OrderBy(q => q.Id);
+           return _db.Sites.Include(s => s.Emails).OrderBy(q=>q.Id);
         }
 
         public IEnumerable<Site> GetSitesWithPricesAndCompetitors()
@@ -89,7 +89,11 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
             try
             {
+                _db.Sites.Attach(site);
+                UpdateSiteEmails(site);
+                _db.Entry(site).State = EntityState.Modified;
                 _db.SaveChanges();
+
                 return true;
             }
             catch
@@ -146,6 +150,27 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             }
         }
 
+        private void UpdateSiteEmails(Site site)
+        {
+            var siteEmailIds = site.Emails.Select(x => x.Id).ToList();
+
+            var siteOrig = GetSite(site.Id);
+            if (siteOrig.Emails.Any())
+            {
+                var deletedEmails = siteOrig.Emails.Where(x => !siteEmailIds.Contains(x.Id)).ToList();
+                foreach (var delEmail in deletedEmails)
+                {
+                    _db.Entry(delEmail).State = EntityState.Deleted;
+                }
+            }
+            var siteEmails = site.Emails.ToList();
+
+            foreach (var email in siteEmails)
+            {
+                if (email.Id == 0) _db.Entry(email).State = EntityState.Added;
+                if (email.Id != 0) _db.Entry(email).State = EntityState.Modified;
+            }
+        }
         private void LogImportError(FileUpload FileDetails)
         {
             using (var db = new RepositoryContext(_db.Database.Connection))
@@ -154,10 +179,10 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
                 importProcessErrors.UploadId = FileDetails.Id;
                 //importProcessErrors.Upload = FileDetails;
-
+           
                 importProcessErrors.ErrorMessage = "error";
                 importProcessErrors.RowOrLineNumber = 0;
-
+      
                 db.ImportProcessErrors.Add(importProcessErrors);
                 db.SaveChanges();
             }
@@ -193,7 +218,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                 .SelectMany(x => x.Competitors).Where(x => x.DriveTime >= driveTimeFrom && x.DriveTime <= driveTimeTo)
                 .ToList();
 
-            if (!includeSainsburysAsCompetitors)
+            if (!includeSainsburysAsCompetitors) 
             {
                 siteCompetitors = siteCompetitors.Where(x => !x.Competitor.IsSainsburysSite);
             }

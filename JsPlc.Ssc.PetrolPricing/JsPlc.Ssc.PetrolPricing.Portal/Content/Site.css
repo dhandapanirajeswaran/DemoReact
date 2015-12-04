@@ -67,21 +67,6 @@ div, span, h1, h2, h3, h4, h5, h6 {
 .right {
     float: right;
 }
-.speechBubble {
-    background-image: url('Images/speach_bubble_blue_ncs.PNG');
-    background-repeat: no-repeat;
-    background-size:contain;
-    width: 250px;
-    height: 380px;
-    padding: 20px;
-    padding-top:5px;
-    color: white;
-}
-.speechBubble .subtitleText {
-    font-size: 18px;
-    color: #04ACCF;
-   
-}
 /* Right side cyan bar on Welcome page */
 .infoBar {
     background-color: #02ABCA;
@@ -221,10 +206,10 @@ border-radius: 0px;
 .nav > li > a {
 position: relative;
 display: block;
-padding-top: 12px;
+padding-top: 15px;
 padding-bottom: 12px;
 font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
-font-size:80%;
+font-size:100%;
 
 }
 
@@ -235,17 +220,17 @@ font-size:80%;
 /* The following rule clipped the menu opton in sm view*/
 /*.nav {margin-left:-25px;}*/
 
-.breadcrumb {margin-bottom:0px;}
+.breadcrumb {margin-bottom:0;}
 
 
 
 
 
 
-.link-footer {color:#ffffff;}
+.link-footer {color:#d8d2d2;}
 .link-footer > h4 {font-size:80%;}
 
-.footerlinks {list-style:none;padding:0px;margin:0px;}
+.footerlinks {list-style:none;padding:0;margin:0;}
 .footerlinks li a{color:#ffffff;}
 .footerlinks li a:hover{ color:#EF6600;text-decoration: none;}
 
