@@ -108,5 +108,24 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
                 return new ExceptionResult(ex, this);
             }
         }
+
+        [HttpGet] // Proccess files in upload list 
+        [Route("api/ProccessAllUploadedFiles")]
+        public async Task<IHttpActionResult> ProccessAllUploadedFiles()
+        {
+
+            try
+            {
+                using (var fs = _fileService)
+                {
+                    return Ok(fs.UpdateDailyPrice(fs.GetFileUploads(null, null, null)));
+                }
+            }
+            catch (Exception ex)
+            {
+                return new ExceptionResult(ex, this);
+            }
+           
+        }
     }
 }
