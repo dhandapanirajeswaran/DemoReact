@@ -114,5 +114,14 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
             return Ok(price);
         }
 
+
+        [HttpGet]
+        [Route("api/Sites/details/")]
+        public async Task<IHttpActionResult> GetSitesWithPricesAndCompetitors()
+        {
+            var sites =  _siteService.GetSitesWithPricesAndCompetitors();
+            return Ok(sites);
+        }
+
     }
 }
