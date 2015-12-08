@@ -140,7 +140,7 @@ div, span, h1, h2, h3, h4, h5, h6 {
 }
 .threeiconContainer {
     margin:0; margin-top: 0;
-    xbackground-color: #20a9cb;
+    background-color: #20a9cb;
     padding: 0;
 }
 .liWelcome {
@@ -285,15 +285,15 @@ font-size:100%;
 .myPageContainer { }
 .fuelHeaderGroup {
     color: darkblue;
-    background-color: cyan;
-    margin-left: 40px;
+    background-color:#ffffff;
+  margin-left: 40px;
 }
 
 .dateHeaderLabel {}
 .competitors {}
 .competitorTable {
-    background-color: lemonchiffon;
-    margin-left: 14px;
+    background-color:#eeeeee;
+   
 }
 .competitorTable th{
     
@@ -305,4 +305,17 @@ font-size:100%;
     height: 6px;
     border: 0;
     box-shadow: inset 0 12px 12px -12px brown;
+}
+
+
+.tblHighlight {background-color:#d0d0d0;}
+
+.panel-group .panel-heading a:after {
+  content: '-';
+  position: absolute;
+  right: 20px;
+  top:5px;
+}
+.panel-group .panel-heading a.collapsed:after {
+  content: '+';
 }
