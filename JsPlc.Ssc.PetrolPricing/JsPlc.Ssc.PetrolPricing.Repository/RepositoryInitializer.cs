@@ -193,12 +193,13 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             context.SaveChanges();
 
             // Dummy FileUpload to link with Daily Prices, Dated today, TODO comment out once Daily Price Imports start working
+            // Assume Succes-ful import as we have hardCoded dailyPrices for this hardcoded Upload
             var fileuploads = new List<FileUpload>
             {
                 new FileUpload
                 {
                     OriginalFileName = "Daily Price file.txt",
-                    Status = importProcessStatuses.Single(x => x.Status == "Uploaded"),
+                    Status = importProcessStatuses.Single(x => x.Status == "Success"),
                     StoredFileName = @"\\UNC\Daily Price file.txt",
                     UploadDateTime = DateTime.Parse("2015-11-30"),
                     UploadType = uploadTypes.Single(x => x.UploadTypeName == "Daily Price Data"),
