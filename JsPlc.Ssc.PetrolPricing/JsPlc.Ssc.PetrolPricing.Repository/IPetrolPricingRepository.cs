@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using JsPlc.Ssc.PetrolPricing.Models;
+using JsPlc.Ssc.PetrolPricing.Models.ViewModels;
 
 namespace JsPlc.Ssc.PetrolPricing.Repository
 {
@@ -22,6 +23,9 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         IEnumerable<SiteToCompetitor> GetCompetitors(int siteId, int driveTimeFrom, int driveTimeTo, bool includeSainsburysAsCompetitors = true);
 
         IEnumerable<Site> GetSitesWithPricesAndCompetitors();
+
+        IEnumerable<SitePriceViewModel> GetSitesWithPrices(DateTime forDate, int siteNo = 0, int pageNo = 1,
+            int pageSize = Constants.PricePageSize);
 
         IEnumerable<DailyPrice> GetDailyPricesForFuelByCompetitors(IEnumerable<int> competitorCatNos, int fuelId, DateTime usingUploadDate);
 

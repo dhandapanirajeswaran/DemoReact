@@ -114,7 +114,7 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
             return Ok(price);
         }
 
-
+        // Not used yet.
         [HttpGet]
         [Route("api/Sites/details/")]
         public async Task<IHttpActionResult> GetSitesWithPricesAndCompetitors()

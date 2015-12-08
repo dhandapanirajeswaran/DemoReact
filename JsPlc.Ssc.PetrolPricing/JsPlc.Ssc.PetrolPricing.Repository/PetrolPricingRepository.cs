@@ -1,17 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.Data.Entity.Migrations;
 using System.Data.Entity.SqlServer;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Runtime.CompilerServices;
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Permissions;
 using JsPlc.Ssc.PetrolPricing.Models;
 
 using System.Data.Entity.Validation;
 using System.Diagnostics;
+using JsPlc.Ssc.PetrolPricing.Models.ViewModels;
 
 namespace JsPlc.Ssc.PetrolPricing.Repository
 {
@@ -30,7 +34,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
         public IEnumerable<Site> GetSites()
         {
-           return _db.Sites.Include(s => s.Emails).OrderBy(q=>q.Id);
+            return _db.Sites.Include(s => s.Emails).OrderBy(q => q.Id);
         }
 
         public IEnumerable<Site> GetSitesWithPricesAndCompetitors()
@@ -41,6 +45,101 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                 .Include(x => x.Prices)
                 .Where(x => x.IsActive)
                 .OrderBy(q => q.Id);
+        }
+
+        public IEnumerable<SitePriceViewModel> GetSitesWithPrices(DateTime forDate, int siteNo = 0, int pageNo = 1, int pageSize = Constants.PricePageSize)
+        {
+            // call spGetSitePrices for
+            var retval = CallSitePriceSproc(forDate, siteNo, pageNo, pageSize);
+
+            return retval;
+        }
+
+        public List<SitePriceViewModel> CallSitePriceSproc(DateTime forDate, int siteId = 0, int pageNo = 1, int pageSize = Constants.PricePageSize)
+        {
+            //@siteId int,
+            //@forDate DateTime,
+            //@skipRecs int,
+            //@takeRecs int
+
+            var siteIdParam = new SqlParameter("@siteId", SqlDbType.Int)
+            {
+                Value = siteId
+            };
+            var forDateParam = new SqlParameter("@forDate", SqlDbType.DateTime)
+            {
+                Value = forDate
+            };
+            var skipRecsParam = new SqlParameter("@skipRecs", SqlDbType.DateTime)
+            {
+                Value = (pageNo-1) * pageSize
+            };
+            var takeRecsParam = new SqlParameter("@takeRecs", SqlDbType.DateTime)
+            {
+                Value = pageSize
+            };
+            // any other params here
+
+            var sqlParams = new List<SqlParameter>
+            {
+                siteIdParam, forDateParam, skipRecsParam, takeRecsParam
+            };
+            const string spName = "dbo.spGetSitePrices";
+            // Test in SQL:     Exec dbo.spGetSitePrices 0, '2015-11-30'
+            // Output is sorted by siteId so all Fuels for a site appear together
+    
+            using (var connection = new SqlConnection(_db.Database.Connection.ConnectionString))
+            {
+                using (var command = new SqlCommand(spName, connection))
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Parameters.AddRange(sqlParams.ToArray());
+
+                    connection.Open();
+
+                    var reader = command.ExecuteReader();
+                    var pgTable = new DataTable();
+                    pgTable.Load(reader);
+                    
+                    var lastSiteId = -1;
+                    SitePriceViewModel sitePriceRow = null;
+
+                    var dbList = new List<SitePriceViewModel>();
+                   
+                    foreach (DataRow pgRow in pgTable.Rows)
+                    {
+                        var loopSiteId = (int)pgRow["siteId"];
+                        if (loopSiteId != lastSiteId)
+                        {
+                            sitePriceRow = new SitePriceViewModel();
+                            dbList.Add(sitePriceRow);
+                            lastSiteId = loopSiteId;
+                        }
+                        if (sitePriceRow == null) continue;
+
+                        sitePriceRow.SiteId = (int) pgRow["SiteId"];
+                        sitePriceRow.CatNo = Convert.IsDBNull(pgRow["CatNo"]) ? null : (int?)pgRow["CatNo"]; // ToNullable<int> or ToNullable<double>
+                        sitePriceRow.StoreName = (string)pgRow["SiteName"];
+                        sitePriceRow.Address = (string)pgRow["Address"];
+                        // any other fields for UI extract here
+
+                        sitePriceRow.FuelPrices = sitePriceRow.FuelPrices ?? new List<FuelPriceViewModel>();
+                        if (!Convert.IsDBNull(pgRow["FuelTypeId"]))
+                        {
+                            sitePriceRow.FuelPrices.Add(new FuelPriceViewModel
+                            {
+                                FuelTypeId = (int)pgRow["FuelTypeId"],
+                                Price = (int?)pgRow["SuggestedPrice"],
+                                OverridePrice = (int?)pgRow["OverriddenPrice"],
+                                YesterdaysPrice = Convert.IsDBNull(pgRow["OverriddenPriceYest"]) ?
+                                    (int?)pgRow["SuggestedPriceYest"]
+                                    : (int?)pgRow["OverriddenPriceYest"]
+                            });
+                        }
+                    }
+                    return dbList;
+                }
+            }
         }
 
         /// <summary>
@@ -137,7 +236,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                 }
                 catch (DbEntityValidationException dbEx)
                 {
-                    
+
                     tx.Rollback();
                     foreach (var validationErrors in dbEx.EntityValidationErrors)
                     {
@@ -189,7 +288,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                 {
                     importProcessErrors.RowOrLineNumber = int.Parse(LineNumber.ToString());
                 }
-      
+
                 db.ImportProcessErrors.Add(importProcessErrors);
                 db.SaveChanges();
             }
@@ -218,7 +317,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                 .SelectMany(x => x.Competitors).Where(x => x.DriveTime >= driveTimeFrom && x.DriveTime <= driveTimeTo)
                 .ToList();
 
-            if (!includeSainsburysAsCompetitors) 
+            if (!includeSainsburysAsCompetitors)
             {
                 siteCompetitors = siteCompetitors.Where(x => !x.Competitor.IsSainsburysSite);
             }

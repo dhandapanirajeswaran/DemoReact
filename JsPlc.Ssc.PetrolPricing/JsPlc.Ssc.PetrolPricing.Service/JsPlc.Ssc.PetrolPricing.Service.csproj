@@ -230,6 +230,12 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="ApiXmlDocument.xml" />
+    <Content Include="App_Data\spGetCompetitorPrices.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="App_Data\spGetSitePrices.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="App_Data\PricesSetup.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

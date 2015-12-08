@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 using JsPlc.Ssc.PetrolPricing.Models;
+using JsPlc.Ssc.PetrolPricing.Models.ViewModels;
 using JsPlc.Ssc.PetrolPricing.Repository;
 
 namespace JsPlc.Ssc.PetrolPricing.Business
