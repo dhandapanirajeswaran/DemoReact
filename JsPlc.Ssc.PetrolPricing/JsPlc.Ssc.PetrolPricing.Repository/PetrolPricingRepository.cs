@@ -103,9 +103,10 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
         }
 
-        public bool NewDailyPrices(List<DailyPrice> DailyPriceList, FileUpload FileDetails)
+        public bool NewDailyPrices(List<DailyPrice> DailyPriceList, FileUpload FileDetails, int StartingLineNumber)
         {
             //_db.Configuration.AutoDetectChangesEnabled = false;
+            //int startingLineNumber = StartingLineNumber
 
             using (var tx = _db.Database.BeginTransaction())
             {
@@ -114,6 +115,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                     //LogImportError(FileDetails); this works
                     foreach (DailyPrice dailyPrice in DailyPriceList)
                     {
+                        //startingLineNumber++;
                         _db.DailyPrices.Add(dailyPrice);
                     }
 
@@ -124,17 +126,18 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                 }
                 catch (DbUpdateException e)
                 {
+
                     tx.Rollback();
                     foreach (var dbUpdateException in e.Entries)
                     {
-                        LogImportError(FileDetails);
+                        LogImportError(FileDetails, "Failed to save", null);
                     }
-
 
                     return false;
                 }
                 catch (DbEntityValidationException dbEx)
                 {
+                    
                     tx.Rollback();
                     foreach (var validationErrors in dbEx.EntityValidationErrors)
                     {
@@ -145,6 +148,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                                                     validationError.ErrorMessage);
                         }
                     }
+
                     return false;
                 }
             }
@@ -171,35 +175,31 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                 if (email.Id != 0) _db.Entry(email).State = EntityState.Modified;
             }
         }
-        private void LogImportError(FileUpload FileDetails)
+
+        public void LogImportError(FileUpload fileDetails, string errorMessage, int? LineNumber)
         {
             using (var db = new RepositoryContext(_db.Database.Connection))
             {
                 ImportProcessError importProcessErrors = new ImportProcessError();
 
-                importProcessErrors.UploadId = FileDetails.Id;
-                //importProcessErrors.Upload = FileDetails;
-           
-                importProcessErrors.ErrorMessage = "error";
-                importProcessErrors.RowOrLineNumber = 0;
+                importProcessErrors.UploadId = fileDetails.Id;
+                importProcessErrors.ErrorMessage = errorMessage;
+
+                if (LineNumber != null)
+                {
+                    importProcessErrors.RowOrLineNumber = int.Parse(LineNumber.ToString());
+                }
       
                 db.ImportProcessErrors.Add(importProcessErrors);
                 db.SaveChanges();
             }
         }
 
-        public bool UpdateImportProcessStatus(FileUpload fileUpload)
+        public void UpdateImportProcessStatus(FileUpload FileUpload, int StatusId)
         {
-            try
-            {
-                _db.Entry(fileUpload).State = EntityState.Modified;
-                _db.SaveChanges();
-                return true;
-            }
-            catch (DbUpdateException e)
-            {
-                return false;
-            }
+            FileUpload.StatusId = StatusId;
+            _db.Entry(FileUpload).State = EntityState.Modified;
+            _db.SaveChanges();
         }
 
         /// <summary>

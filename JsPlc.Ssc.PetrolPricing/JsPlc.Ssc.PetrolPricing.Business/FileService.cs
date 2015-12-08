@@ -48,33 +48,42 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 
         public bool UpdateDailyPrice(IEnumerable<FileUpload> ListOfFiles)
         {
+        
             foreach (FileUpload aFile in ListOfFiles)
             {
-
-                UpdateImportProcessStatus(aFile, 5);//Processing 5
-
                 string line;
-                StreamReader file = new StreamReader(aFile.StoredFileName.ToString());
-
+                int lineNumber = 0;
+                List<bool> importStatus = new List<bool>();
                 List<DailyPrice> ListOfDailyPricePrices = new List<DailyPrice>();
+
+                _db.UpdateImportProcessStatus(aFile, 5);//Processing 5
+                StreamReader file = new StreamReader(aFile.StoredFileName.ToString());
 
                 while ((line = file.ReadLine()) != null)
                 {
-                    ListOfDailyPricePrices.Add(DailyLineValues(line, aFile));
+                    lineNumber ++;
+                    ListOfDailyPricePrices.Add(ParseDailyLineValues(line, lineNumber, aFile));
 
                     if (ListOfDailyPricePrices.Count == 100)
                     {
-                        _db.NewDailyPrices(ListOfDailyPricePrices, aFile);
+                        importStatus.Add(_db.NewDailyPrices(ListOfDailyPricePrices, aFile, lineNumber));
                         ListOfDailyPricePrices.Clear();
                     }
                 }
                 if (ListOfDailyPricePrices.Any())
                 {
-                    _db.NewDailyPrices(ListOfDailyPricePrices, aFile);
+                    importStatus.Add(_db.NewDailyPrices(ListOfDailyPricePrices, aFile, lineNumber));
                     ListOfDailyPricePrices.Clear();
                 }
 
-                UpdateImportProcessStatus(aFile, 10);//Success 10
+                if (importStatus.All(c => c == true))
+                {
+                    _db.UpdateImportProcessStatus(aFile, 10);//Success 10
+                }
+                else
+                {
+                    _db.UpdateImportProcessStatus(aFile, 15);//Failed 15
+                }
 
                 file.Close();
 
@@ -83,27 +92,32 @@ namespace JsPlc.Ssc.PetrolPricing.Business
             return true;
         }
 
-        private DailyPrice DailyLineValues(string lineValues, FileUpload aFile)
+        private DailyPrice ParseDailyLineValues(string lineValues, int LineNumber, FileUpload aFile)
         {
-            string[] words = lineValues.Split(',');
             DailyPrice theDailyPrice = new DailyPrice();
 
-            theDailyPrice.DailyUpload = aFile;
-            theDailyPrice.CatNo = int.Parse(words[0]);
-            theDailyPrice.FuelTypeId = int.Parse(words[1]);
-            theDailyPrice.AllStarMerchantNo = int.Parse(words[2]);
-            theDailyPrice.DateOfPrice = DateTime.Parse("11/11/2015");//DateTime.Parse(words[3]);
-            theDailyPrice.ModalPrice = int.Parse(words[10]);
+            try
+            {
+                string[] words = lineValues.Split(',');
 
+                theDailyPrice.DailyUpload = aFile;
+                theDailyPrice.CatNo = int.Parse(words[0]);
+                theDailyPrice.FuelTypeId = int.Parse(words[1]);
+                theDailyPrice.AllStarMerchantNo = int.Parse(words[2]);
+                theDailyPrice.ModalPrice = int.Parse(words[10]);
+                theDailyPrice.DateOfPrice = DateTime.Parse(words[3].Substring(6, 2) + "/" + words[3].Substring(4, 2) + "/" + words[3].Substring(0, 4));
+            }
+            catch 
+            {
+                _db.LogImportError(aFile, "Unable to Parse line", LineNumber);
+            }
+           
             return theDailyPrice;
+
+           
         }
 
-        private bool UpdateImportProcessStatus(FileUpload aFile, int statusId)
-       {
-            aFile.StatusId = statusId;
-            _db.UpdateImportProcessStatus(aFile);
-            return true;
-        }
+       
 
 
 

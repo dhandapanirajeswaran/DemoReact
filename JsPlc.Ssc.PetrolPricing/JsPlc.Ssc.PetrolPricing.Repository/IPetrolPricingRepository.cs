@@ -17,7 +17,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
         bool UpdateSite(Site site);
 
-        bool NewDailyPrices(List<DailyPrice> DailyPriceList, FileUpload FileDetails);
+        bool NewDailyPrices(List<DailyPrice> dailyPriceList, FileUpload fileDetails, int startingLineNumber);
 
         IEnumerable<SiteToCompetitor> GetCompetitors(int siteId, int driveTimeFrom, int driveTimeTo, bool includeSainsburysAsCompetitors = true);
 
@@ -25,7 +25,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
         IEnumerable<DailyPrice> GetDailyPricesForFuelByCompetitors(IEnumerable<int> competitorCatNos, int fuelId, DateTime usingUploadDate);
 
-        bool UpdateImportProcessStatus(FileUpload importProcessStatus);
+        void UpdateImportProcessStatus(FileUpload importProcessStatus, int StatusId);
 
         IEnumerable<FileUpload> GetFileUploads(DateTime? date, int? uploadType, int? statusId);
 
@@ -37,7 +37,10 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
         bool AnyFileUploadForDate(DateTime date, UploadType uploadType);
 
+        void LogImportError(FileUpload fileDetails, string errorMessage, int? lineNumber);
+
         void Dispose();
+
     }
 
     public interface IPetrolPricingRepositoryLookup

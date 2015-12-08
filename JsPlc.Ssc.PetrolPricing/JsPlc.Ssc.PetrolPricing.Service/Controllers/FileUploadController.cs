@@ -109,9 +109,9 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
             }
         }
 
-        [HttpGet] // Proccess files in upload list 
-        [Route("api/ProccessAllUploadedFiles")]
-        public async Task<IHttpActionResult> ProccessAllUploadedFiles()
+        [HttpGet] // Process files in upload list 
+        [Route("api/ProcessAllUploadedFiles")]
+        public async Task<IHttpActionResult> ProcessAllUploadedFiles()
         {
 
             try
