@@ -123,5 +123,20 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
             return Ok(sites);
         }
 
+        /// <summary>
+        /// Gets a list of SitePriceViewModel for SitePricing tab main data
+        /// </summary>
+        /// <param name="forDate"></param>
+        /// <param name="siteNo"></param>
+        /// <param name="pageNo"></param>
+        /// <param name="pageSize"></param>
+        /// <returns>List of SitePriceViewModel</returns>
+        [HttpGet]
+        [Route("api/Sites/prices/")]
+        public async Task<IHttpActionResult> GetSitesWithPrices(DateTime forDate, int siteNo = 0, int pageNo = 1, int pageSize = Constants.PricePageSize)
+        {
+            var siteWithPrices = _siteService.GetSitesWithPrices(forDate, siteNo, pageNo, pageSize);
+            return Ok(siteWithPrices.ToList());
+        }
     }
 }

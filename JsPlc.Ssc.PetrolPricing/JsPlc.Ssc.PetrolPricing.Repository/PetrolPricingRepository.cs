@@ -49,13 +49,20 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
         public IEnumerable<SitePriceViewModel> GetSitesWithPrices(DateTime forDate, int siteNo = 0, int pageNo = 1, int pageSize = Constants.PricePageSize)
         {
-            // call spGetSitePrices for
+            // for 
             var retval = CallSitePriceSproc(forDate, siteNo, pageNo, pageSize);
 
             return retval;
         }
-
-        public List<SitePriceViewModel> CallSitePriceSproc(DateTime forDate, int siteId = 0, int pageNo = 1, int pageSize = Constants.PricePageSize)
+        /// <summary>
+        /// Calls spGetSitePrices to get site prices view
+        /// </summary>
+        /// <param name="forDate">Default to today's date</param>
+        /// <param name="siteId">[Optional] Specific siteId, defaults to 0 for all sites</param>
+        /// <param name="pageNo">[Optional] Defaults to Page 1, or specify a page no.</param>
+        /// <param name="pageSize">[Optional] Defaults to Pagesize as per constant, or specify a page size</param>
+        /// <returns>List of SitePriceViewModel (with overridable price as an input price by user)</returns>
+        private IEnumerable<SitePriceViewModel> CallSitePriceSproc(DateTime forDate, int siteId = 0, int pageNo = 1, int pageSize = Constants.PricePageSize)
         {
             //@siteId int,
             //@forDate DateTime,
