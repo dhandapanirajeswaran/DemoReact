@@ -240,6 +240,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Areas\HelpPage\HelpPage.css" />
+    <Content Include="bin\ApiXmlDocument.xml" />
     <Content Include="Content\bootstrap-theme.css" />
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
@@ -275,7 +276,6 @@
     <Content Include="Areas\HelpPage\Views\Help\Api.cshtml" />
     <None Include="Properties\PublishProfiles\Local-Debug.pubxml" />
     <None Include="Properties\PublishProfiles\Local-Release.pubxml" />
-    <None Include="Properties\PublishProfiles\Petrol Pricing Service Build.pubxml" />
     <None Include="Properties\PublishProfiles\PetrolPublishService.pubxml" />
     <None Include="Scripts\jquery-2.1.4.intellisense.js" />
     <Content Include="Scripts\bootstrap.js" />
@@ -306,7 +306,6 @@
     <Content Include="Views\Shared\_Layout.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="bin\" />
     <Folder Include="Models\" />
   </ItemGroup>
   <ItemGroup>

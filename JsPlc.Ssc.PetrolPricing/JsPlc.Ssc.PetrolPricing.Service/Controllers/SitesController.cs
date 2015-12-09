@@ -1,10 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Diagnostics;
 using System.Linq;
+using System.Net;
+using System.Net.Mail;
 using System.Threading.Tasks;
+using System.Web.Configuration;
 using System.Web.Http;
 using System.Web.Http.Results;
+using System.Web.Mvc;
 using JsPlc.Ssc.PetrolPricing.Business;
 using JsPlc.Ssc.PetrolPricing.Models;
 
@@ -16,7 +21,7 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
 
         public SitesController(SiteService siteService) : base(null, siteService, null) { }
 
-        [HttpGet] 
+        [System.Web.Http.HttpGet] 
         //[Route("api/site/{id}")] // Not needed but works
         public IHttpActionResult Get([FromUri]int id)
         {
@@ -29,7 +34,7 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
             return Ok(site);
         }
         
-        [HttpGet]
+        [System.Web.Http.HttpGet]
         //[Route("api/sites")]
         public IHttpActionResult Get()
         {
@@ -41,7 +46,7 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
             return Ok(sites);
         }
 
-        [HttpPost] // Create new site
+        [System.Web.Http.HttpPost] // Create new site
         public async Task<IHttpActionResult> Post(Site site)
         {
             if (site == null)
@@ -68,7 +73,7 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
         }
 
 
-        [HttpPut] // Edit new site
+        [System.Web.Http.HttpPut] // Edit new site
         public async Task<IHttpActionResult> Update(Site site)
         {
             if (site == null)
@@ -100,8 +105,8 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
         /// <param name="siteId"></param>
         /// <param name="fuelId"></param>
         /// <returns>SitePrice</returns>
-        [HttpGet]
-        [Route("api/Sites/CalcPrice/")]
+        [System.Web.Http.HttpGet]
+        [System.Web.Http.Route("api/Sites/CalcPrice/")]
         public async Task<IHttpActionResult> CalcPrice([FromUri]int siteId, [FromUri] int fuelId)
         {
             // returns a SitePrice object, maybe later we call this for multiple fuels of the site
@@ -115,9 +120,9 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
         }
 
         // Not used yet.
-        [HttpGet]
-        [Route("api/Sites/details/")]
-        public async Task<IHttpActionResult> GetSitesWithPricesAndCompetitors()
+        [System.Web.Http.HttpGet]
+        [System.Web.Http.Route("api/Sites/details/")]
+        public IHttpActionResult GetSitesWithPricesAndCompetitors()
         {
             var sites =  _siteService.GetSitesWithPricesAndCompetitors();
             return Ok(sites);
@@ -131,12 +136,51 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
         /// <param name="pageNo"></param>
         /// <param name="pageSize"></param>
         /// <returns>List of SitePriceViewModel</returns>
-        [HttpGet]
-        [Route("api/Sites/prices/")]
-        public async Task<IHttpActionResult> GetSitesWithPrices(DateTime forDate, int siteNo = 0, int pageNo = 1, int pageSize = Constants.PricePageSize)
+        [System.Web.Http.HttpGet]
+        [System.Web.Http.Route("api/Sites/prices/")]
+        public IHttpActionResult GetSitesWithPrices(DateTime forDate, int siteNo = 0, int pageNo = 1, int pageSize = Constants.PricePageSize)
         {
             var siteWithPrices = _siteService.GetSitesWithPrices(forDate, siteNo, pageNo, pageSize);
             return Ok(siteWithPrices.ToList());
+        }
+
+        [System.Web.Http.HttpGet]
+        [System.Web.Http.Route("api/TestSendMail")]
+        public IHttpActionResult TestSendMail()
+        {
+            string result;
+
+            //Using an SMTP client with the specified host name and port.
+            using (var client = EmailService.CreateSmtpClient())
+            {
+                const string mailFrom = ""; // "akiaip5@gmail.com";
+                const string mailTo = ""; //"akiaip5@gmail.com";
+                const string mailSubject = "Hello, Test Email from Gmail SMTP 587";
+                const string mailBody = "<h1>Hello, This is a <span syle='color: red'>Test Email from Smtp</span> from C# code</h1>";
+
+                // Send the email. 
+                try
+                {
+                    Debug.WriteLine("TestSendMail: Attempting to send an email through the Amazon SES SMTP interface...");
+                    var mailMsg = new MailMessage(mailFrom, mailTo) { 
+                        IsBodyHtml = true, 
+                        Subject = mailSubject,
+                        Body = mailBody,
+                        };
+                    client.Send(mailMsg);
+                    //client.Send(mailFrom, mailTo, mailSubject, mailBody);
+                    result = "TestSendMail: Email sent!";
+                    Debug.WriteLine("TestSendMail: Email sent!");
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine("TestSendMail: The email was not sent.");
+                    var innerMsg = (ex.InnerException != null) ? ex.InnerException.Message : "";
+                    result = "TestSendMail: Error message: " + ex.Message + innerMsg;
+                    Debug.WriteLine(result);
+                }
+            }
+            return Ok(result);
         }
     }
 }

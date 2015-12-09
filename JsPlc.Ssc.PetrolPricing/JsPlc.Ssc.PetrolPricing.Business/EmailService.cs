@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -28,40 +29,41 @@ namespace JsPlc.Ssc.PetrolPricing.Business
                 foreach (Site site in listSites)
                 {
                     //one email built per sites for multiple user in site email list
-                    string emailBody = BuildEmail(site, endTradeDate);
+                    var emailBody = BuildEmail(site, endTradeDate);
 
-                    string emailSubject = ConfigurationManager.AppSettings["emailSubject"];
-                    string emailFrom = ConfigurationManager.AppSettings["emailFrom"];
+                    var emailSubject = ConfigurationManager.AppSettings["emailSubject"];
+                    var emailFrom = ConfigurationManager.AppSettings["emailFrom"];
 
-                    foreach (SiteEmail email in site.Emails)
+                    foreach (var email in site.Emails)
                     {
-                        using (var smtp = new SmtpClient(ConfigurationManager.AppSettings["smtpServer"], int.Parse(ConfigurationManager.AppSettings["smtpPort"])))
+                        // using (var smtp = new SmtpClient(ConfigurationManager.AppSettings["smtpServer"], int.Parse(ConfigurationManager.AppSettings["smtpPort"])))
+
+                        using (var smtpClient = CreateSmtpClient())
                         {
                             try
                             {
-                                MailMessage message = new MailMessage();
+                                var message = new MailMessage();
                                 message.From = new MailAddress(email.EmailAddress, emailFrom);
                                 message.Subject = site.SiteName + " - " + emailSubject;
                                 message.Body = emailBody;
                                 message.BodyEncoding = Encoding.ASCII;
                                 message.IsBodyHtml = true;
 
-                                smtp.Credentials = new NetworkCredential(ConfigurationManager.AppSettings["smtpUserName"], ConfigurationManager.AppSettings["smtpPassword"]);
-                                smtp.EnableSsl = true;
-                                smtp.Send(message);
+                                smtpClient.Send(message);
                             }
                             catch 
                             {
-                                RecordEmailsSentToSites();//FAIL - Not Send
+                                RecordEmailsSentToSites("Fail", email.EmailAddress); //FAIL - Not Send
                             }
                         }
 
-                        RecordEmailsSentToSites();//Succsess - Sent 
+                        RecordEmailsSentToSites("Success", email.EmailAddress);//Success - Sent 
                     }
                 }
             }
             catch
             {
+                RecordEmailsSentToSites("Fail", ""); //FAIL - Could Not Send
                 return false;
             }
 
@@ -70,7 +72,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 
         private string BuildEmail(Site site, DateTime endTradeDate)
         {
-            EmailSiteData emailForSite = new EmailSiteData();
+            var emailForSite = new EmailSiteData();
 
             emailForSite = EmailSetValues(site, emailForSite, endTradeDate);
             emailForSite.emailBody = EmailGetLayout();
@@ -97,7 +99,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 
             sb.Append("<tr><td><strong>Product</strong></td><td><strong>New Price</strong></td></tr>");
             sb.Append("<tr><td>Unleaded</td><td>kUnleadedPrice</td></tr>");
-            sb.Append("<tr><td>Super (if applicable)</td><td>kSuperPrice</td></tr>");
+            sb.Append("<tr><td>LPG (if applicable)</td><td>kLpgPrice</td></tr>");
             sb.Append("<tr><td>Diesel</td><td>kDieselPrice</td></tr>");
 
             sb.Append("</table>");
@@ -127,16 +129,15 @@ namespace JsPlc.Ssc.PetrolPricing.Business
              {
                 if(sp.FuelType.FuelTypeName == "Unleaded" )
                 {
-                    emailForSite.priceUnleaded = sp.SuggestedPrice;
-                    
+                    emailForSite.priceUnleaded = (sp.OverriddenPrice == 0) ? sp.SuggestedPrice : sp.OverriddenPrice;
                 }
-                if(sp.FuelType.FuelTypeName == "Super Unleaded")
+                if(sp.FuelType.FuelTypeName == "LPG")
                 {
-                     emailForSite.priceSuper = sp.SuggestedPrice;
+                    emailForSite.priceLpg = (sp.OverriddenPrice == 0) ? sp.SuggestedPrice : sp.OverriddenPrice;
                 }
                 if(sp.FuelType.FuelTypeName == "Diesel")
                 {
-                    emailForSite.priceDiesel = sp.SuggestedPrice;
+                    emailForSite.priceDiesel = (sp.OverriddenPrice == 0) ? sp.SuggestedPrice : sp.OverriddenPrice;
                 }
              }
 
@@ -145,24 +146,81 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 
         private string EmailReplaceTemplateKeys(EmailSiteData EmailForSite)
         {
-
             string xxx = "";//changeDate.DayOfWeek.ToString() + " " + changeDate.Month.ToString(), + " " + changeDate.Year.ToString();
 
             string emailBody = EmailForSite.emailBody;
 
-            emailBody.Replace("kSiteName", EmailForSite.siteName);
-            emailBody.Replace("kStartDateMonthYear", EmailForSite.changeDate.ToString());
-            emailBody.Replace("kUnleadedPrice", EmailForSite.priceUnleaded.ToString());
-            emailBody.Replace("kSuperPrice", EmailForSite.priceSuper.ToString());
-            emailBody.Replace("kDieselPrice", EmailForSite.priceDiesel.ToString());
+            emailBody = emailBody.Replace("kSiteName", EmailForSite.siteName);
+            emailBody = emailBody.Replace("kStartDateMonthYear", EmailForSite.changeDate.ToString(CultureInfo.InvariantCulture));
+            emailBody = emailBody.Replace("kUnleadedPrice", (EmailForSite.priceUnleaded / 10).ToString(CultureInfo.InvariantCulture));
+            emailBody = emailBody.Replace("kLpgPrice", (EmailForSite.priceLpg / 10).ToString(CultureInfo.InvariantCulture));
+            emailBody = emailBody.Replace("kDieselPrice", (EmailForSite.priceDiesel / 10).ToString(CultureInfo.InvariantCulture));
 
             return EmailForSite.emailBody = emailBody;
         }
 
         //TODO Log to Audit Table
-        private void RecordEmailsSentToSites()
+        private void RecordEmailsSentToSites(string statusCode, string address)
         {
+            try
+            {
+                // Code to record email success/failure (TODO what level of audit details needed ??)
+            }
+            catch (Exception)
+            {
+                // suppress Audit errors for now
+            }
         
+        }
+
+        /// <summary>
+        /// Creates an SMTP Client based on AppSettings Keys
+        /// </summary>
+        /// <returns></returns>
+        public static SmtpClient CreateSmtpClient()
+        {
+            // Localhost, Gmail, AWS
+            var mailHostSelector = ConfigurationManager.AppSettings["mailHostSelector"];
+            var client = new SmtpClient();
+            switch (mailHostSelector.ToUpper())
+            {
+                case "LOCALHOST":
+                {
+                    // Mail Delivery working on a VM box: 
+                    // Server localhost:25, (.eml) email appears in MailRoot/Drop
+                    // Smtp Server Domains = Alias domain = gmail.com
+                    // UseDefaultCredentials = true; EnableSsl = false; 
+                    client.Host = "localhost";
+                    client.Port = 25;
+                    client.EnableSsl = false;
+                    client.UseDefaultCredentials = true;
+                }
+                break;
+                case "GMAIL":
+                {
+                    client.Host = "smtp.gmail.com";
+                    client.Port = 587; // 25 or 465 (with SSL) and port 587 (with TLS)
+                    client.EnableSsl = true;
+                    client.UseDefaultCredentials = true;
+                    client.Credentials = new NetworkCredential(
+                        userName: "akiaip5@gmail.com", 
+                        password: "AmDoy02X");
+                }
+                break;
+                case "AWS":
+                {
+                    //private const string smtpIAMUsername = "ses-smtp-user.20151202-103633"; // not needed 
+                    client.Host = "email-smtp.eu-west-1.amazonaws.com";
+                    client.Port = 587; //  25, 587, or 2587
+                    client.EnableSsl = true;
+                    client.UseDefaultCredentials = true;
+                    client.Credentials = new NetworkCredential(
+                        userName: "AKIAIP5MYCP3ETOHJ73A", 
+                        password: "AmDoy02X/bZc5EBMh8AJiOsc6iyodxnN2K7F4epLl3Vt");
+                }
+                break;
+            }
+            return client;
         }
 
        
@@ -174,7 +232,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
         public string emailBody { get; set; }
         public DateTime changeDate { get; set; }
         public decimal priceUnleaded { get; set; }
-        public decimal priceSuper { get; set; }
+        public decimal priceLpg { get; set; }
         public decimal priceDiesel { get; set; }
     }
 
