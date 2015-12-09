@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 using JsPlc.Ssc.PetrolPricing.Models;
+using JsPlc.Ssc.PetrolPricing.Models.ViewModels;
 using JsPlc.Ssc.PetrolPricing.Repository;
 
 namespace JsPlc.Ssc.PetrolPricing.Business
@@ -22,6 +23,11 @@ namespace JsPlc.Ssc.PetrolPricing.Business
         public IEnumerable<Site> GetSitesWithPricesAndCompetitors()
         {
             return _db.GetSitesWithPricesAndCompetitors();
+        }
+
+        public IEnumerable<SitePriceViewModel> GetSitesWithPrices(DateTime forDate, int siteNo = 0, int pageNo = 1, int pageSize = Constants.PricePageSize)
+        {
+            return _db.GetSitesWithPrices(forDate, siteNo, pageNo, pageSize);
         }
 
         public Site GetSite(int id)
