@@ -88,6 +88,8 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             var apiUrl = String.IsNullOrEmpty(filters) ? "api/SitePrices/" : "api/SitePrices/?" + filters;
             var response = _client.Value.GetAsync(apiUrl).Result;
 
+            // TODO if response.Content.Headers.ToString().Contains("Content-Type: application/json") do ReadAsync
+
             var result = response.Content.ReadAsAsync<IEnumerable<SitePriceViewModel>>().Result;
             return (response.IsSuccessStatusCode) ? result : null;
         }
