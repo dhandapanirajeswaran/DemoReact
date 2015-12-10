@@ -87,33 +87,48 @@ namespace JsPlc.Ssc.PetrolPricing.Business
         {
             foreach (FileUpload aFile in listOfFiles)
             {
-                string line;
-                int lineNumber = 0;
-                List<bool> importStatus = new List<bool>();
-                List<DailyPrice> listOfDailyPricePrices = new List<DailyPrice>();
-
                 _db.UpdateImportProcessStatus(aFile, 5);//Processing 5
-                StreamReader file = new StreamReader(aFile.StoredFileName.ToString(CultureInfo.InvariantCulture));
-
-                while ((line = file.ReadLine()) != null)
+                try
                 {
-                    lineNumber ++;
-                    listOfDailyPricePrices.Add(ParseDailyLineValues(line, lineNumber, aFile));
+                    string line;
+                    int lineNumber = 0;
+                    List<bool> importStatus = new List<bool>();
+                    List<DailyPrice> listOfDailyPricePrices = new List<DailyPrice>();
+                    var storedFilePath = SettingsService.GetUploadPath();
+                    var filePathAndName = Path.Combine(storedFilePath, aFile.StoredFileName);
+                    //filePathAndName = ""; // FORCES Error
 
-                    if (listOfDailyPricePrices.Count != 100) continue;
+                    var file = new StreamReader(filePathAndName.ToString(CultureInfo.InvariantCulture));
+                    bool success = true;
+                    while ((line = file.ReadLine()) != null)
+                    {
+                        lineNumber++;
+                        listOfDailyPricePrices.Add(ParseDailyLineValues(line, lineNumber, aFile));
 
-                    importStatus.Add(_db.NewDailyPrices(listOfDailyPricePrices, aFile, lineNumber));
-                    listOfDailyPricePrices.Clear();
+                        if (listOfDailyPricePrices.Count != 1000) continue;
+
+                        success = _db.NewDailyPrices(listOfDailyPricePrices, aFile, lineNumber);
+                        
+                        importStatus.Add(success);
+                        listOfDailyPricePrices.Clear();
+
+                        if (!success) break;
+                    }
+                    if (listOfDailyPricePrices.Any() && success)
+                    {
+                        importStatus.Add(_db.NewDailyPrices(listOfDailyPricePrices, aFile, lineNumber));
+                        listOfDailyPricePrices.Clear();
+                    }
+                    aFile.StatusId = importStatus.All(c => c) ? 10 : 15;
+                    _db.UpdateImportProcessStatus(aFile, aFile.StatusId);
+
+                    file.Close();
                 }
-                if (listOfDailyPricePrices.Any())
+                catch (Exception ex)
                 {
-                    importStatus.Add(_db.NewDailyPrices(listOfDailyPricePrices, aFile, lineNumber));
-                    listOfDailyPricePrices.Clear();
+                    _db.LogImportError(aFile, ex.Message, null);
+                    _db.UpdateImportProcessStatus(aFile, 15);
                 }
-
-                _db.UpdateImportProcessStatus(aFile, importStatus.All(c => c) ? 10 : 15);
-
-                file.Close();
             }
             return listOfFiles;
         }

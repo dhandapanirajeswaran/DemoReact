@@ -42,8 +42,9 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             if (!forDate.HasValue) forDate = DateTime.Now;
             return _context.Sites
                 .Include(x => x.Emails)
-                .Include(x => x.Prices.Where(p => p.DateOfCalc.Equals(forDate)))
-                .Where(x => x.IsActive);
+                .Include(x => x.Prices)
+                .Where(x => x.IsActive)
+                .Where(x => x.Prices.All(p => p.DateOfCalc.Equals(forDate)));
         }
 
         public IEnumerable<Site> GetSitesWithPricesAndCompetitors()
@@ -241,7 +242,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         {
             //_db.Configuration.AutoDetectChangesEnabled = false;
             //int startingLineNumber = StartingLineNumber
-
+            int addingEntryLineNo = startingLineNumber;
             using (var tx = _context.Database.BeginTransaction())
             {
                 try
@@ -251,6 +252,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                     {
                         //startingLineNumber++;
                         _context.DailyPrices.Add(dailyPrice);
+                        addingEntryLineNo += 1;
                     }
 
                     _context.SaveChanges();
@@ -262,28 +264,32 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                 {
 
                     tx.Rollback();
+                    
                     foreach (var dbUpdateException in e.Entries)
                     {
                         // TODO as per dbUpdateException log error for that entry which failed
-                        LogImportError(fileDetails, "Failed to save", null);
+                        var dailyPrice = dbUpdateException.Entity as DailyPrice ?? new DailyPrice();
+                        LogImportError(fileDetails, String.Format("Failed to save price:{0},{1},{2},{3},{4}",
+                            dailyPrice.CatNo, dailyPrice.FuelTypeId, dailyPrice.AllStarMerchantNo, dailyPrice.DateOfPrice, dailyPrice.ModalPrice)
+                            , startingLineNumber);
+                        dbUpdateException.State = EntityState.Unchanged;
                     }
 
                     return false;
                 }
                 catch (DbEntityValidationException dbEx)
                 {
-
                     tx.Rollback();
                     foreach (var validationErrors in dbEx.EntityValidationErrors)
                     {
                         foreach (var validationError in validationErrors.ValidationErrors)
                         {
-                            Trace.TraceInformation("Property: {0} Error: {1}",
-                                                    validationError.PropertyName,
-                                                    validationError.ErrorMessage);
+                            LogImportError(fileDetails, "DbEntityValidationException occured:" + validationError.ErrorMessage +
+                                "," + validationError.PropertyName, addingEntryLineNo);
+                            
+                            Trace.TraceInformation("Property: {0} Error: {1}", validationError.PropertyName, validationError.ErrorMessage);
                         }
                     }
-
                     return false;
                 }
             }
@@ -333,33 +339,33 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             return existingPriceRecord;
         }
 
-        public void LogImportError(FileUpload fileDetails, string errorMessage, int? lineNumber)
+        public void LogImportError(FileUpload fileDetails, string errorMessage = "", int? lineNumber = 0)
         {
-            using (var db = new RepositoryContext(_context.Database.Connection))
+            var db = new RepositoryContext(_context.Database.Connection);
+            ImportProcessError importProcessErrors = new ImportProcessError();
+
+            importProcessErrors.UploadId = fileDetails.Id;
+            importProcessErrors.ErrorMessage = errorMessage;
+
+            if (lineNumber != null)
             {
-                ImportProcessError importProcessErrors = new ImportProcessError();
-
-                importProcessErrors.UploadId = fileDetails.Id;
-                importProcessErrors.ErrorMessage = errorMessage;
-
-                if (lineNumber != null)
-                {
-                    importProcessErrors.RowOrLineNumber = int.Parse(lineNumber.ToString());
-                }
-
-                db.ImportProcessErrors.Add(importProcessErrors);
-                db.SaveChanges();
+                importProcessErrors.RowOrLineNumber = int.Parse(lineNumber.ToString());
             }
+
+            db.ImportProcessErrors.Add(importProcessErrors);
+            db.SaveChanges();
         }
 
         public void UpdateImportProcessStatus(FileUpload fileUpload, int statusId)
         {
-            using (var db = new RepositoryContext(_context.Database.Connection))
-            {
-                fileUpload.StatusId = statusId;
-                db.Entry(fileUpload).State = EntityState.Modified;
-                db.SaveChanges();
-            }
+            var db = new RepositoryContext(_context.Database.Connection);
+            var fu = db.FileUploads.FirstOrDefault(x => x.Id == fileUpload.Id);
+            if (fu == null) return;
+            _context.Database.ExecuteSqlCommand("Update FileUpload Set StatusId = " + statusId + " where Id = " +
+                                                fileUpload.Id);
+            //fu.StatusId = statusId;
+            //db.Entry(fu).State = EntityState.Modified;
+            //db.SaveChanges();
         }
 
         /// <summary>
