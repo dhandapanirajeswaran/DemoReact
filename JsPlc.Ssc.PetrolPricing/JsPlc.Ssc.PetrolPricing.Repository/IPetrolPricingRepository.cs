@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using JsPlc.Ssc.PetrolPricing.Models;
 using JsPlc.Ssc.PetrolPricing.Models.ViewModels;
 
@@ -27,6 +28,8 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         IEnumerable<SitePriceViewModel> GetSitesWithPrices(DateTime forDate, int siteId = 0, int pageNo = 1,
             int pageSize = Constants.PricePageSize);
 
+        IQueryable<Site> GetSitesIncludePrices(DateTime? forDate = null);
+
         IEnumerable<DailyPrice> GetDailyPricesForFuelByCompetitors(IEnumerable<int> competitorCatNos, int fuelId, DateTime usingUploadDate);
 
         void UpdateImportProcessStatus(FileUpload fileUpload, int statusId);
@@ -45,6 +48,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
         void Dispose();
 
+        SitePrice AddOrUpdateSitePriceRecord(SitePrice calculatedSitePrice);
     }
 
     public interface IPetrolPricingRepositoryLookup

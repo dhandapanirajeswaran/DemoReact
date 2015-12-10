@@ -16,9 +16,45 @@ namespace JsPlc.Ssc.PetrolPricing.Business
         {
             FileUpload newUpload = _db.NewUpload(fileUpload);
 
-            UpdateDailyPrice(GetFileUploads(null, null, 1));
+            var processedFiles = UpdateDailyPrice(GetFileUploads(newUpload.UploadDateTime, newUpload.UploadTypeId, 1).ToList());
+            var fileUploads = processedFiles as IList<FileUpload> ?? processedFiles.ToList();
+            if (fileUploads.Any())
+            {
+                CalcSitePrices(fileUploads);
+            }
 
             return newUpload;
+        }
+
+        /// <summary>
+        /// Calculate prices for files Uploaded today and in a Success state. No retrosprctive calc, No future calc
+        /// </summary>
+        /// <param name="processedFiles"></param>
+        private void CalcSitePrices(IEnumerable<FileUpload> processedFiles)
+        {
+            var priceService = new PriceService();
+            var siteService = new SiteService(_db);
+            var forDate = DateTime.Now;
+
+            var sites = _db.GetSitesIncludePrices();
+            var fuels = LookupService.GetFuelTypes().ToList();
+
+            foreach (var processedFile in processedFiles)
+            {
+                // Only ones Uploaded today and successfully processed files
+                if (processedFile.UploadDateTime.Equals(forDate) && processedFile.Status.Id == 10) 
+                {
+                    foreach (var site in sites)
+                    {
+                        var tmpSite = site;
+                        foreach (var fuel in fuels.ToList())
+                        {
+                            var calculatedSitePrice = priceService.CalcPrice(site.Id, fuel.Id);
+                            var updatedPrice = _db.AddOrUpdateSitePriceRecord(calculatedSitePrice);
+                        }
+                    }
+                }
+            }
         }
 
         public void Dispose()
@@ -47,7 +83,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
             return _db.GetFileUpload(id);
         }
 
-        public bool UpdateDailyPrice(IEnumerable<FileUpload> listOfFiles)
+        public IEnumerable<FileUpload> UpdateDailyPrice(List<FileUpload> listOfFiles)
         {
             foreach (FileUpload aFile in listOfFiles)
             {
@@ -78,10 +114,8 @@ namespace JsPlc.Ssc.PetrolPricing.Business
                 _db.UpdateImportProcessStatus(aFile, importStatus.All(c => c) ? 10 : 15);
 
                 file.Close();
-
-
             }
-            return true;
+            return listOfFiles;
         }
 
         private DailyPrice ParseDailyLineValues(string lineValues, int lineNumber, FileUpload aFile)

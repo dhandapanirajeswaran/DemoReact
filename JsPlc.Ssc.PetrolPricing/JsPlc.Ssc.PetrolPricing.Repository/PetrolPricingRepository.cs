@@ -21,25 +21,34 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 {
     public class PetrolPricingRepository : IPetrolPricingRepositoryLookup, IPetrolPricingRepository, IDisposable
     {
-        private readonly RepositoryContext _db;
+        private readonly RepositoryContext _context;
 
         public PetrolPricingRepository() { }
 
-        public PetrolPricingRepository(RepositoryContext context) { _db = context; }
+        public PetrolPricingRepository(RepositoryContext context) { _context = context; }
 
         public IEnumerable<AppConfigSettings> GetAppConfigSettings()
         {
-            return _db.AppConfigSettings.ToList();
+            return _context.AppConfigSettings.ToList();
         }
 
         public IEnumerable<Site> GetSites()
         {
-            return _db.Sites.Include(s => s.Emails).OrderBy(q => q.Id);
+            return _context.Sites.Include(s => s.Emails).OrderBy(q => q.Id);
+        }
+
+        public IQueryable<Site> GetSitesIncludePrices(DateTime? forDate = null)
+        {
+            if (!forDate.HasValue) forDate = DateTime.Now;
+            return _context.Sites
+                .Include(x => x.Emails)
+                .Include(x => x.Prices.Where(p => p.DateOfCalc.Equals(forDate)))
+                .Where(x => x.IsActive);
         }
 
         public IEnumerable<Site> GetSitesWithPricesAndCompetitors()
         {
-            return _db.Sites
+            return _context.Sites
                 .Include(s => s.Emails)
                 .Include(x => x.Competitors)
                 .Include(x => x.Prices)
@@ -95,7 +104,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             // Test in SQL:     Exec dbo.spGetSitePrices 0, '2015-11-30'
             // Output is sorted by siteId so all Fuels for a site appear together
     
-            using (var connection = new SqlConnection(_db.Database.Connection.ConnectionString))
+            using (var connection = new SqlConnection(_context.Database.Connection.ConnectionString))
             {
                 using (var command = new SqlCommand(spName, connection))
                 {
@@ -159,7 +168,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         public IEnumerable<DailyPrice> GetDailyPricesForFuelByCompetitors(IEnumerable<int> competitorCatNos, int fuelId, DateTime usingPricesforDate)
         {
             // If multiple uploads, needs to be handled here, but we assume one for now.
-            IEnumerable<DailyPrice> dailyPrices = _db.DailyPrices.Include(x => x.DailyUpload);
+            IEnumerable<DailyPrice> dailyPrices = _context.DailyPrices.Include(x => x.DailyUpload);
 
             return dailyPrices.Where(x => competitorCatNos.Contains(x.CatNo) &&
                                        x.FuelTypeId == fuelId &&
@@ -168,18 +177,18 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
         public Site GetSite(int id)
         {
-            return _db.Sites.Include(s => s.Emails).FirstOrDefault(q => q.Id == id);
+            return _context.Sites.Include(s => s.Emails).FirstOrDefault(q => q.Id == id);
         }
 
         public Site GetSiteByCatNo(int catNo)
         {
-            return _db.Sites.FirstOrDefault(q => q.CatNo.HasValue && q.CatNo.Value == catNo);
+            return _context.Sites.FirstOrDefault(q => q.CatNo.HasValue && q.CatNo.Value == catNo);
         }
 
         public Site NewSite(Site site)
         {
-            var result = _db.Sites.Add(site);
-            _db.SaveChanges();
+            var result = _context.Sites.Add(site);
+            _context.SaveChanges();
 
             return result; // return full object back
         }
@@ -191,14 +200,14 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
             // TODO Email edits and deletes are not impacting DB yet
 
-            _db.Entry(site).State = EntityState.Modified;
+            _context.Entry(site).State = EntityState.Modified;
 
             try
             {
-                _db.Sites.Attach(site);
+                _context.Sites.Attach(site);
                 UpdateSiteEmails(site);
-                _db.Entry(site).State = EntityState.Modified;
-                _db.SaveChanges();
+                _context.Entry(site).State = EntityState.Modified;
+                _context.SaveChanges();
 
                 return true;
             }
@@ -214,7 +223,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             //_db.Configuration.AutoDetectChangesEnabled = false;
             //int startingLineNumber = StartingLineNumber
 
-            using (var tx = _db.Database.BeginTransaction())
+            using (var tx = _context.Database.BeginTransaction())
             {
                 try
                 {
@@ -222,10 +231,10 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                     foreach (DailyPrice dailyPrice in dailyPriceList)
                     {
                         //startingLineNumber++;
-                        _db.DailyPrices.Add(dailyPrice);
+                        _context.DailyPrices.Add(dailyPrice);
                     }
 
-                    _db.SaveChanges();
+                    _context.SaveChanges();
 
                     tx.Commit();
                     return true;
@@ -271,21 +280,43 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                 var deletedEmails = siteOrig.Emails.Where(x => !siteEmailIds.Contains(x.Id)).ToList();
                 foreach (var delEmail in deletedEmails)
                 {
-                    _db.Entry(delEmail).State = EntityState.Deleted;
+                    _context.Entry(delEmail).State = EntityState.Deleted;
                 }
             }
             var siteEmails = site.Emails.ToList();
 
             foreach (var email in siteEmails)
             {
-                if (email.Id == 0) _db.Entry(email).State = EntityState.Added;
-                if (email.Id != 0) _db.Entry(email).State = EntityState.Modified;
+                if (email.Id == 0) _context.Entry(email).State = EntityState.Added;
+                if (email.Id != 0) _context.Entry(email).State = EntityState.Modified;
             }
+        }
+
+        // TODO - yet to be tested
+        public SitePrice AddOrUpdateSitePriceRecord(SitePrice calculatedSitePrice)
+        {
+            // Find the Site Price record for a Given Site, Fuel and Date
+            var existingPriceRecord = _context.SitePrices.FirstOrDefault(
+                x => x.SiteId == calculatedSitePrice.SiteId 
+                    && x.FuelTypeId == calculatedSitePrice.FuelTypeId 
+                    && x.DateOfCalc.Date.Equals(calculatedSitePrice.DateOfCalc.Date));
+
+            if (existingPriceRecord == null)
+            {
+                _context.SitePrices.Add(calculatedSitePrice);
+            }
+            else
+            {
+                existingPriceRecord.SuggestedPrice = calculatedSitePrice.SuggestedPrice;
+                _context.Entry(existingPriceRecord).State = EntityState.Modified;
+            }
+            _context.SaveChanges();
+            return existingPriceRecord;
         }
 
         public void LogImportError(FileUpload fileDetails, string errorMessage, int? lineNumber)
         {
-            using (var db = new RepositoryContext(_db.Database.Connection))
+            using (var db = new RepositoryContext(_context.Database.Connection))
             {
                 ImportProcessError importProcessErrors = new ImportProcessError();
 
@@ -304,7 +335,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
         public void UpdateImportProcessStatus(FileUpload fileUpload, int statusId)
         {
-            using (var db = new RepositoryContext(_db.Database.Connection))
+            using (var db = new RepositoryContext(_context.Database.Connection))
             {
                 fileUpload.StatusId = statusId;
                 db.Entry(fileUpload).State = EntityState.Modified;
@@ -345,8 +376,8 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                 upload.UploadType = GetUploadTypes().FirstOrDefault(x => x.Id == upload.UploadTypeId);
             }
 
-            var result = _db.FileUploads.Add(upload);
-            _db.SaveChanges();
+            var result = _context.FileUploads.Add(upload);
+            _context.SaveChanges();
 
             return result; // return full object back
         }
@@ -354,7 +385,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         public bool ExistsUpload(string storedFileName)
         {
             return
-                _db.FileUploads.Any(
+                _context.FileUploads.Any(
                     x => x.StoredFileName.Equals(storedFileName, StringComparison.CurrentCultureIgnoreCase));
         }
 
@@ -388,12 +419,12 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
         public IEnumerable<FileUpload> GetFileUploads()
         {
-            return _db.FileUploads.Include(x => x.UploadType).Include(y => y.Status);
+            return _context.FileUploads.Include(x => x.UploadType).Include(y => y.Status);
         }
 
         public FileUpload GetFileUpload(int id)
         {
-            return _db.FileUploads.Include(x => x.UploadType).Include(y => y.Status).FirstOrDefault(x => x.Id == id);
+            return _context.FileUploads.Include(x => x.UploadType).Include(y => y.Status).FirstOrDefault(x => x.Id == id);
         }
 
         ///  Do we have any FileUploads for specified Date and UploadType
@@ -405,22 +436,22 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         // ############### Lookup #############
         public IEnumerable<UploadType> GetUploadTypes()
         {
-            return _db.UploadType.ToList();
+            return _context.UploadType.ToList();
         }
 
         public IEnumerable<FuelType> GetFuelTypes()
         {
-            return _db.FuelType.ToList();
+            return _context.FuelType.ToList();
         }
 
         public IEnumerable<ImportProcessStatus> GetProcessStatuses()
         {
-            return _db.ImportProcessStatus.ToList();
+            return _context.ImportProcessStatus.ToList();
         }
 
         public void Dispose()
         {
-            _db.Dispose();
+            _context.Dispose();
         }
     }
 }

@@ -108,24 +108,30 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
                 return new ExceptionResult(ex, this);
             }
         }
-
+        
+        /// <summary>
+        /// Processes all uploaded Files to import them into the DailyPrices table
+        /// Todo parameterize this based on: 
+        /// </summary>
+        /// <param name="forDate">Optional DateTime - so we can process all files of a specific Date</param>
+        /// <param name="fileId">Optional FileId - so we can process one specific file</param>
+        /// <param name="fileTypeId"></param>
+        /// <returns></returns>
         [HttpGet] // Process files in upload list 
         [Route("api/ProcessAllUploadedFiles")]
-        public async Task<IHttpActionResult> ProcessAllUploadedFiles()
+        public async Task<IHttpActionResult> ProcessAllUploadedFiles(DateTime? forDate=null, int fileId=0, int fileTypeId=0)
         {
-
             try
             {
                 using (var fs = _fileService)
                 {
-                    return Ok(fs.UpdateDailyPrice(fs.GetFileUploads(null, null, 1)));//Status = uploaded files only
+                    return Ok(fs.UpdateDailyPrice(fs.GetFileUploads(forDate, fileTypeId, 1).ToList())); //Status = "uploaded" files only
                 }
             }
             catch (Exception ex)
             {
                 return new ExceptionResult(ex, this);
             }
-           
         }
     }
 }

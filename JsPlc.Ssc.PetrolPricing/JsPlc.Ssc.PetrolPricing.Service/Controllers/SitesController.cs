@@ -119,7 +119,10 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
             return Ok(price);
         }
 
-        // Not used yet.
+        /// <summary>
+        ///  Not used yet, churns out a lot of data
+        /// </summary>
+        /// <returns></returns>
         [System.Web.Http.HttpGet]
         [System.Web.Http.Route("api/SiteDetails/")]
         public IHttpActionResult GetSitesWithPricesAndCompetitors()
