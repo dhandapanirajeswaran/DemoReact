@@ -6,6 +6,7 @@ using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Script.Services;
 using JsPlc.Ssc.PetrolPricing.Models;
+using JsPlc.Ssc.PetrolPricing.Models.ViewModels;
 using JsPlc.Ssc.PetrolPricing.Portal.Facade;
 using JsPlc.Ssc.PetrolPricing.Portal.Helper.Extensions;
 using Microsoft.Ajax.Utilities;
@@ -104,14 +105,19 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             var model = _serviceFacade.GetSite(id);
             return View(model);
         }
-
+        /// <summary>
+        /// Works on List of SitePriceViewModel to build core page
+        /// </summary>
+        /// <param name="msg"></param>
+        /// <returns></returns>
         public ActionResult Prices(string msg = "")
         {
             // Display list of existing sites along with their status
             ViewBag.Message = msg;
+            IEnumerable<SitePriceViewModel> model = _serviceFacade.GetSitePrices();
+            // NOTE: The prices are still in 4 digit format (do price/10 for display)
 
-            // var model = _serviceFacade.GetSites();
-            return View();
+            return View(model);
         }
 
         public ActionResult Edit(int id)

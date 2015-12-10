@@ -24,7 +24,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
         IEnumerable<Site> GetSitesWithPricesAndCompetitors();
 
-        IEnumerable<SitePriceViewModel> GetSitesWithPrices(DateTime forDate, int siteNo = 0, int pageNo = 1,
+        IEnumerable<SitePriceViewModel> GetSitesWithPrices(DateTime forDate, int siteId = 0, int pageNo = 1,
             int pageSize = Constants.PricePageSize);
 
         IEnumerable<DailyPrice> GetDailyPricesForFuelByCompetitors(IEnumerable<int> competitorCatNos, int fuelId, DateTime usingUploadDate);

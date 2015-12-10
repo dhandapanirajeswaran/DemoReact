@@ -25,9 +25,9 @@ namespace JsPlc.Ssc.PetrolPricing.Business
             return _db.GetSitesWithPricesAndCompetitors();
         }
 
-        public IEnumerable<SitePriceViewModel> GetSitesWithPrices(DateTime forDate, int siteNo = 0, int pageNo = 1, int pageSize = Constants.PricePageSize)
+        public IEnumerable<SitePriceViewModel> GetSitesWithPrices(DateTime forDate, int siteId = 0, int pageNo = 1, int pageSize = Constants.PricePageSize)
         {
-            return _db.GetSitesWithPrices(forDate, siteNo, pageNo, pageSize);
+            return _db.GetSitesWithPrices(forDate, siteId, pageNo, pageSize);
         }
 
         public Site GetSite(int id)
