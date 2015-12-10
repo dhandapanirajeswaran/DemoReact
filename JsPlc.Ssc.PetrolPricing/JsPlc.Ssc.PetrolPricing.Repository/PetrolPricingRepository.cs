@@ -47,10 +47,10 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                 .OrderBy(q => q.Id);
         }
 
-        public IEnumerable<SitePriceViewModel> GetSitesWithPrices(DateTime forDate, int siteNo = 0, int pageNo = 1, int pageSize = Constants.PricePageSize)
+        public IEnumerable<SitePriceViewModel> GetSitesWithPrices(DateTime forDate, int siteId = 0, int pageNo = 1, int pageSize = Constants.PricePageSize)
         {
             // for 
-            var retval = CallSitePriceSproc(forDate, siteNo, pageNo, pageSize);
+            var retval = CallSitePriceSproc(forDate, siteId, pageNo, pageSize);
 
             return retval;
         }

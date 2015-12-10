@@ -131,16 +131,17 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
         /// <summary>
         /// Gets a list of SitePriceViewModel for SitePricing tab main data
         /// </summary>
-        /// <param name="forDate"></param>
-        /// <param name="siteNo"></param>
-        /// <param name="pageNo"></param>
-        /// <param name="pageSize"></param>
+        /// <param name="forDate">Optional - Date of Calc/Viewing</param>
+        /// <param name="siteId">Optional - Specific SiteId or 0 for all Sites</param>
+        /// <param name="pageNo">Optional - Viewing PageNo</param>
+        /// <param name="pageSize">Optional - PageSize, set large value (e.g. 1000) to get all sites</param>
         /// <returns>List of SitePriceViewModel</returns>
         [System.Web.Http.HttpGet]
         [System.Web.Http.Route("api/Sites/prices/")]
-        public IHttpActionResult GetSitesWithPrices(DateTime forDate, int siteNo = 0, int pageNo = 1, int pageSize = Constants.PricePageSize)
+        public IHttpActionResult GetSitesWithPrices(DateTime? forDate, int siteId = 0, int pageNo = 1, int pageSize = Constants.PricePageSize)
         {
-            var siteWithPrices = _siteService.GetSitesWithPrices(forDate, siteNo, pageNo, pageSize);
+            if (!forDate.HasValue) forDate = DateTime.Now;
+            var siteWithPrices = _siteService.GetSitesWithPrices(forDate.Value, siteId, pageNo, pageSize);
             return Ok(siteWithPrices.ToList());
         }
 
@@ -153,8 +154,8 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
             //Using an SMTP client with the specified host name and port.
             using (var client = EmailService.CreateSmtpClient())
             {
-                const string mailFrom = ""; // "akiaip5@gmail.com";
-                const string mailTo = ""; //"akiaip5@gmail.com";
+                string mailFrom = ConfigurationManager.AppSettings["emailFrom"]; // "akiaip5@gmail.com";
+                const string mailTo = "somesiteEmail@sainsburys.co.uk"; //"akiaip5@gmail.com";
                 const string mailSubject = "Hello, Test Email from Gmail SMTP 587";
                 const string mailBody = "<h1>Hello, This is a <span syle='color: red'>Test Email from Smtp</span> from C# code</h1>";
 

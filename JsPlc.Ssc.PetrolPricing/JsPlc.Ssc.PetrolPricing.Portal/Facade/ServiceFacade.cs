@@ -14,6 +14,7 @@ using System.Web.UI;
 using JsPlc.Ssc.PetrolPricing.Models;
 //using JsPlc.Ssc.PetrolPricing.Portal.Helpers.Extensions;
 using JsPlc.Ssc.PetrolPricing.Models.Enums;
+using JsPlc.Ssc.PetrolPricing.Models.ViewModels;
 using Newtonsoft.Json;
 
 namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
@@ -68,6 +69,19 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
            var result = response.Content.ReadAsAsync<Site>().Result;
 
            return (response.IsSuccessStatusCode) ? result : null;
+        }
+
+        /// <summary>
+        /// List of SitePriceViewModel for Site Pricing View
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<SitePriceViewModel> GetSitePrices()
+        {
+            // Optional params(defaults) - forDate (Date of Calc/Viewing today), siteId (0 for all sites), pageNo(1), PageSize(20)
+            var response = _client.Value.GetAsync("api/sites/prices").Result;
+
+            var result = response.Content.ReadAsAsync<IEnumerable<SitePriceViewModel>>().Result;
+            return (response.IsSuccessStatusCode) ? result : null;
         }
 
         // Get list of file uploads
