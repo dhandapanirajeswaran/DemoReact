@@ -7,6 +7,7 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Formatting;
 using System.Net.Http.Headers;
+using System.Security.Permissions;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
@@ -75,10 +76,17 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
         /// List of SitePriceViewModel for Site Pricing View
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<SitePriceViewModel> GetSitePrices()
+        public IEnumerable<SitePriceViewModel> GetSitePrices(DateTime? forDate=null, int siteId=0, int pageNo=1, 
+                int pageSize=Constants.PricePageSize)
         {
             // Optional params(defaults) - forDate (Date of Calc/Viewing today), siteId (0 for all sites), pageNo(1), PageSize(20)
-            var response = _client.Value.GetAsync("api/sites/prices").Result;
+            string filters = (forDate.HasValue) ? "forDate=" + forDate.Value.ToString("yyyy-MM-dd") + "&" : "";
+            filters = filters + "siteId=" + siteId + "&";
+            filters = filters + "pageNo=" + pageNo + "&";
+            filters = filters + "pageSize=" + pageSize + "&";
+
+            var apiUrl = String.IsNullOrEmpty(filters) ? "api/SitePrices/" : "api/SitePrices/?" + filters;
+            var response = _client.Value.GetAsync(apiUrl).Result;
 
             var result = response.Content.ReadAsAsync<IEnumerable<SitePriceViewModel>>().Result;
             return (response.IsSuccessStatusCode) ? result : null;

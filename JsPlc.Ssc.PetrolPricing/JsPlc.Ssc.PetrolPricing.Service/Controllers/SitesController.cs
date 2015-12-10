@@ -106,7 +106,7 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
         /// <param name="fuelId"></param>
         /// <returns>SitePrice</returns>
         [System.Web.Http.HttpGet]
-        [System.Web.Http.Route("api/Sites/CalcPrice/")]
+        [System.Web.Http.Route("api/CalcPrice/")]
         public async Task<IHttpActionResult> CalcPrice([FromUri]int siteId, [FromUri] int fuelId)
         {
             // returns a SitePrice object, maybe later we call this for multiple fuels of the site
@@ -121,7 +121,7 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
 
         // Not used yet.
         [System.Web.Http.HttpGet]
-        [System.Web.Http.Route("api/Sites/details/")]
+        [System.Web.Http.Route("api/SiteDetails/")]
         public IHttpActionResult GetSitesWithPricesAndCompetitors()
         {
             var sites =  _siteService.GetSitesWithPricesAndCompetitors();
@@ -130,6 +130,8 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
 
         /// <summary>
         /// Gets a list of SitePriceViewModel for SitePricing tab main data
+        /// Test Url: api/SitePrices?forDate=2015-11-30&siteId=1 
+        /// or api/SitePrices
         /// </summary>
         /// <param name="forDate">Optional - Date of Calc/Viewing</param>
         /// <param name="siteId">Optional - Specific SiteId or 0 for all Sites</param>
@@ -137,8 +139,9 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
         /// <param name="pageSize">Optional - PageSize, set large value (e.g. 1000) to get all sites</param>
         /// <returns>List of SitePriceViewModel</returns>
         [System.Web.Http.HttpGet]
-        [System.Web.Http.Route("api/Sites/prices/")]
-        public IHttpActionResult GetSitesWithPrices(DateTime? forDate, int siteId = 0, int pageNo = 1, int pageSize = Constants.PricePageSize)
+        [System.Web.Http.Route("api/SitePrices")]
+        public IHttpActionResult GetSitesWithPrices([FromUri] DateTime? forDate=null,
+            [FromUri]int siteId = 0, [FromUri]int pageNo = 1, [FromUri]int pageSize = Constants.PricePageSize)
         {
             if (!forDate.HasValue) forDate = DateTime.Now;
             var siteWithPrices = _siteService.GetSitesWithPrices(forDate.Value, siteId, pageNo, pageSize);

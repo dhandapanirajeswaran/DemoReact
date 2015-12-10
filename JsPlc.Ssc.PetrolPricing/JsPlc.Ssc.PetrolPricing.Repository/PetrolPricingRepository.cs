@@ -77,11 +77,11 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             {
                 Value = forDate
             };
-            var skipRecsParam = new SqlParameter("@skipRecs", SqlDbType.DateTime)
+            var skipRecsParam = new SqlParameter("@skipRecs", SqlDbType.Int)
             {
                 Value = (pageNo-1) * pageSize
             };
-            var takeRecsParam = new SqlParameter("@takeRecs", SqlDbType.DateTime)
+            var takeRecsParam = new SqlParameter("@takeRecs", SqlDbType.Int)
             {
                 Value = pageSize
             };
