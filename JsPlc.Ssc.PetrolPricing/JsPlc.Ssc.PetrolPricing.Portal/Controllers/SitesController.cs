@@ -54,6 +54,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 
             var jsonData = sitesViewModelsWithPrices != null ? (object)sitesViewModelsWithPrices : "Error";
             // TODO NOTE: The prices are still in 4 digit format (do price/10 for display)
+            // -- Uses SitePrice table, hence no prices until populated (using CalcPrice calls)
 
             var jsonResult = new JsonResult
             {
@@ -114,9 +115,10 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
         {
             // Display list of existing sites along with their status
             ViewBag.Message = msg;
-            //IEnumerable<SitePriceViewModel> sitesViewModelsWithPrices = _serviceFacade.GetSitePrices(forDate, siteId, pageNo, pageSize);
+            var sitesViewModelsWithPrices = _serviceFacade.GetSitePrices();
+            // return empty list but never null
 
-            return View();
+            return View(sitesViewModelsWithPrices);
         }
 
         public ActionResult Edit(int id)

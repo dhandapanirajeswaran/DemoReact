@@ -54,7 +54,7 @@
                     <h4 class="modal-title" id="myModalLabel">Send Email to ALL Sites</h4>
                 </div>
                 <div class="modal-body">
-                    <p>Are you sure you wan to email <strong>ALL</strong> Sites their daily price update</p>
+                    <p>Are you sure you want to email <strong>ALL</strong> Sites their daily price update</p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
@@ -107,219 +107,131 @@
                     </tr>
                 </thead>
                 <tbody data-bind="with: dataModel, visible: dataAvailable">
-                    <!-- Within a foreach JSStores loop -->
-                    <!-- JS Store DataRows -->
+    <!-- Within a foreach JSStores loop -->
+    <!-- JS Store DataRows -->
 
-                    <tr class="panel-heading" role="tab" id="headingOne">
-                        <td>
-                            <a role="button" data-toggle="collapse" data-parent="#accordion" href="#CollapseCompetitorsForSite102"><i class="fa fa-plus-square-o"></i></a>
-                        </td>
-                        <td><span data-bind="text: StoreNo">102</span></td>
-                        <td><span><a href="#" data-toggle="modal" data-target="#emailSite" type="button"><i class="fa fa-envelope-o"></i></a></span></td>
-                        <td><span data-bind="text: StoreName">Sainsburys Hendon</span></td>
-                        <td><span data-bind="text: CatNo"></span>100</td>
-                        <td><span data-bind="text: PFSNo"></span>99</td>
+    <!-- Next site TODO Amend this once knockout foreach is in place -->
+    @{
+        var sites = Model;
+        var sitePriceViewModels = sites as IList<SitePriceViewModel> ?? sites.ToList();
+        var hasData = sites != null && sitePriceViewModels.Any();
+    }
+    @if (hasData)
+    {
+        foreach (SitePriceViewModel site in sitePriceViewModels)
+        {
+            <tr class="panel-heading" role="tab" id='@("Heading" + site.SiteId)'>
+                <td>
+                    <a role="button" data-toggle="collapse" data-parent="#accordion" href='@("#CollapseCompetitorsforsite" + site.SiteId)'><i class="fa fa-plus-square-o"></i></a>
+                </td>
+                <td><span data-bind="text: StoreNo">@site.StoreNo</span></td>
+                <td><span><a href="#" data-toggle="modal" data-target="#emailSite"><i class="fa fa-envelope-o"></i></a></span></td>
+                <td><span data-bind="text: StoreName">@site.StoreName</span></td>
+                <td><span data-bind="text: CatNo"></span>@site.CatNo</td>
+                <td><span data-bind="text: PFSNo"></span>@site.PfsNo</td>
 
-                        <td>
-                            <span data-bind="text: FuelPriceToday">108.9</span>
-                        </td>
-                        <td>
-                            <i class="fa fa-arrow-circle-o-down" style="color:red;font-size:100%;"></i>&nbsp;<span data-bind="text: FuelPriceTomorrowAutoCalc">107.9</span>
-                            <input type="text" data-bind="value: FuelPriceTomorrowOverridden" class="txtPrice" />
-                        <td>
-                            <span data-bind="text: FuelPriceToday">108.9</span>
+                <td>
+                    <span data-bind="text: FuelPriceToday">108.9</span>
+                </td>
+                <td>
+                <i class="fa fa-arrow-circle-o-down" style="color: red; font-size: 100%;"></i>&nbsp;<span data-bind="text: FuelPriceTomorrowAutoCalc">107.9</span>
+                <input type="text" data-bind="value: FuelPriceTomorrowOverridden" class="txtPrice" />
+                <td>
+                    <span data-bind="text: FuelPriceToday">108.9</span>
 
-                        </td>
-                        <td>
-                            <i class="fa fa-arrow-circle-o-down" style="color:red;font-size:100%;"></i>&nbsp;<span data-bind="text: FuelPriceTomorrowAutoCalc">107.9</span>
-                            <input type="text" data-bind="value: FuelPriceTomorrowOverridden" class="txtPrice" />
-                        </td>
-                        <td>
-                            <span data-bind="text: FuelPriceToday">108.9</span>
-                        </td>
-                        <td>
-                            <i class="fa fa-arrow-circle-o-down" style="color:red;font-size:100%;"></i>&nbsp;<span data-bind="text: FuelPriceTomorrowAutoCalc">107.9</span>
-                            <input type="text" data-bind="value: FuelPriceTomorrowOverridden" class="txtPrice" />
-                        </td>
-                    </tr>
-                    <tr id="CollapseCompetitorsForSite102" class="panel-collapse collapse" role="tabpanel">
-                        <td colspan="12" align="right">
-                            <!-- Competitors table -->
-                            <table class="competitorTable table-striped table-hover">
-                                <thead>
-                                    <tr rowspan="2">
-                                        <th><span>Brand</span></th>
-                                        <th><span>Marker</span></th>
-                                        <th><span>Drive-Time</span></th>
-                                        <th><span>Cat No.</span></th>
+                </td>
+                <td>
+                    <i class="fa fa-arrow-circle-o-down" style="color: red; font-size: 100%;"></i>&nbsp;<span data-bind="text: FuelPriceTomorrowAutoCalc">107.9</span>
+                    <input type="text" data-bind="value: FuelPriceTomorrowOverridden" class="txtPrice" />
+                </td>
+                <td>
+                    <span data-bind="text: FuelPriceToday">108.9</span>
+                </td>
+                <td>
+                    <i class="fa fa-arrow-circle-o-down" style="color: red; font-size: 100%;"></i>&nbsp;<span data-bind="text: FuelPriceTomorrowAutoCalc">107.9</span>
+                    <input type="text" data-bind="value: FuelPriceTomorrowOverridden" class="txtPrice" />
+                </td>
+            </tr>
+            <tr id='@("CollapseCompetitorsforsite" + site.SiteId)' class="panel-collapse collapse" role="tabpanel">
 
-                                        <th colspan="2" class="tblHighlight"><span class="fuelHeaderGroup">&nbsp;Unleaded&nbsp;</span></th>
-                                        <th colspan="2"><span class="fuelHeaderGroup">&nbsp;Diesel&nbsp;</span></th>
-                                        <th colspan="2" class="tblHighlight"><span class="fuelHeaderGroup">&nbsp;LPG&nbsp;</span></th>
-                                    </tr>
-                                    <tr>
-                                        <th colspan="4"></th>
-                                        <th class="tblHighlight"><span>Yesterday</span></th>
-                                        <th class="tblHighlight"><span>Today</span></th>
-                                        <th><span>Yesterday</span></th>
-                                        <th><span>Today</span></th>
-                                        <th class="tblHighlight"><span>Yesterday</span></th>
-                                        <th class="tblHighlight"><span>Today</span></th>
+                <td colspan="12" xalign="right">
+                    <!-- Competitors table -->
+                    <table class="competitorTable table-striped table-hover">
+                        <thead>
+                            <tr rowspan="2">
+                                <th><span>Brand</span></th>
+                                <th><span>Marker</span></th>
+                                <th><span>Drive-Time</span></th>
+                                <th><span>Cat No.</span></th>
 
-                                    </tr>
-                                </thead>
-                                <tbody data-bind="with: competitors, visible: hasCompetitors">
-                                    <!-- Within a foreach CompStores loop -->
-                                    <!-- Comp Store DataRows -->
-                                    <tr>
-                                        <td><span data-bind="text: Brand">Asda</span></td>
-                                        <td><span data-bind="text: CompetitorStoreName">Asda Compton</span></td>
-                                        <td><span data-bind="text: DriveTime"></span>2.45min</td>
-                                        <td><span data-bind="text: CatNo"></span>1336</td>
+                                <th colspan="2" class="tblHighlight"><span class="fuelHeaderGroup">&nbsp;Unleaded&nbsp;</span></th>
+                                <th colspan="2"><span class="fuelHeaderGroup">&nbsp;Diesel&nbsp;</span></th>
+                                <th colspan="2" class="tblHighlight"><span class="fuelHeaderGroup">&nbsp;LPG&nbsp;</span></th>
+                            </tr>
+                            <tr>
+                                <th colspan="4"></th>
+                                <th class="tblHighlight"><span>Yesterday</span></th>
+                                <th class="tblHighlight"><span>Today</span></th>
+                                <th><span>Yesterday</span></th>
+                                <th><span>Today</span></th>
+                                <th class="tblHighlight"><span>Yesterday</span></th>
+                                <th class="tblHighlight"><span>Today</span></th>
 
-                                        <td class="tblHighlight"><span data-bind="text: FuelPriceYesterday">109.9</span></td>
-                                        <td class="tblHighlight"><i class="fa fa-arrow-circle-o-down" style="color:red;font-size:100%;"></i><span data-bind="text: FuelPriceToday">107.9</span></td>
+                            </tr>
+                        </thead>
+                        <tbody data-bind="with: competitors, visible: hasCompetitors">
+                            <!-- Within a foreach CompStores loop -->
+                            <!-- Comp Store DataRows -->
+                            <tr>
+                                <td><span data-bind="text: Brand">Asda</span></td>
+                                <td><span data-bind="text: CompetitorStoreName">Asda Compton</span></td>
+                                <td><span data-bind="text: DriveTime"></span>2.45min</td>
+                                <td><span data-bind="text: CatNo"></span>1336</td>
 
-                                        <td><span data-bind="text: FuelPriceYesterday">108.9</span></td>
-                                        <td><i class="fa fa-arrow-circle-o-down" style="color:red;font-size:100%;"></i><span data-bind="text: FuelPriceToday">106.9</span></td>
+                                <td class="tblHighlight"><span data-bind="text: FuelPriceYesterday">109.9</span></td>
+                                <td class="tblHighlight"><i class="fa fa-arrow-circle-o-down" style="color: red; font-size: 100%;"></i>&nbsp;<span data-bind="text: FuelPriceToday">107.9</span></td>
 
-                                        <td class="tblHighlight"><span data-bind="text: FuelPriceYesterday">108.9</span></td>
-                                        <td class="tblHighlight"><i class="fa fa-arrow-circle-o-down" style="color:red;font-size:100%;"></i><span data-bind="text: FuelPriceToday">106.9</span></td>
+                                <td><span data-bind="text: FuelPriceYesterday">108.9</span></td>
+                                <td><i class="fa fa-arrow-circle-o-down" style="color: red; font-size: 100%;"></i>&nbsp;<span data-bind="text: FuelPriceToday">106.9</span></td>
 
-                                    </tr>
-                                    <tr>
-                                        <td><span data-bind="text: Brand">Tesco</span></td>
-                                        <td><span data-bind="text: CompetitorStoreName">Tesco Green Park</span></td>
-                                        <td><span data-bind="text: DriveTime"></span>4.10min</td>
-                                        <td><span data-bind="text: CatNo"></span>1336</td>
+                                <td class="tblHighlight"><span data-bind="text: FuelPriceYesterday">108.9</span></td>
+                                <td class="tblHighlight"><i class="fa fa-arrow-circle-o-down" style="color: red; font-size: 100%;"></i>&nbsp;<span data-bind="text: FuelPriceToday">106.9</span></td>
 
-                                        <td class="tblHighlight"><span data-bind="text: FuelPriceYesterday">109.9</span></td>
-                                        <td class="tblHighlight"><i class="fa fa-arrow-circle-o-down" style="color:red;font-size:100%;"></i><span data-bind="text: FuelPriceToday">107.9</span></td>
+                            </tr>
+                            <tr>
+                                <td><span data-bind="text: Brand">Tesco</span></td>
+                                <td><span data-bind="text: CompetitorStoreName">Tesco Green Park</span></td>
+                                <td><span data-bind="text: DriveTime"></span>4.10min</td>
+                                <td><span data-bind="text: CatNo"></span>1336</td>
 
-                                        <td><span data-bind="text: FuelPriceYesterday">108.9</span></td>
-                                        <td><i class="fa fa-arrow-circle-o-down" style="color:red;font-size:100%;"></i><span data-bind="text: FuelPriceToday">106.9</span></td>
+                                <td class="tblHighlight"><span data-bind="text: FuelPriceYesterday">109.9</span></td>
+                                <td class="tblHighlight"><i class="fa fa-arrow-circle-o-down" style="color: red; font-size: 100%;"></i><span data-bind="text: FuelPriceToday">107.9</span></td>
 
-                                        <td class="tblHighlight"><span data-bind="text: FuelPriceYesterday">108.9</span></td>
-                                        <td class="tblHighlight"><i class="fa fa-arrow-circle-o-down" style="color:red;font-size:100%;"></i><span data-bind="text: FuelPriceToday">106.9</span></td>
+                                <td><span data-bind="text: FuelPriceYesterday">108.9</span></td>
+                                <td><i class="fa fa-arrow-circle-o-down" style="color: red; font-size: 100%;"></i><span data-bind="text: FuelPriceToday">106.9</span></td>
 
-                                    </tr>
-                                </tbody>
-                                <tbody data-bind="visible: false" style="visibility: hidden; display: none">
-                                    <tr>
-                                        <td colspan="10" class="noSiteData">Sorry, no site data available</td>
-                                    </tr>
-                                </tbody>
+                                <td class="tblHighlight"><span data-bind="text: FuelPriceYesterday">108.9</span></td>
+                                <td class="tblHighlight"><i class="fa fa-arrow-circle-o-down" style="color: red; font-size: 100%;"></i><span data-bind="text: FuelPriceToday">106.9</span></td>
 
-                            </table>
-                        </td>
-                    </tr>
+                            </tr>
+                        </tbody>
+                        <tbody data-bind="visible: false" style="visibility: hidden; display: none">
+                            <tr>
+                                <td colspan="10" class="noSiteData">Sorry, no site data available</td>
+                            </tr>
+                        </tbody>
 
-                    <!-- Next site TODO Remove this once knockout foreach is in place -->
-                    <tr class="panel-heading" role="tab" id="headingTwo">
-                        <td>
-                            <a role="button" data-toggle="collapse" data-parent="#accordion" href="#CollapseCompetitorsforsite202"><i class="fa fa-plus-square-o"></i></a>
-                        </td>
-                        <td><span data-bind="text: StoreNo">202</span></td>
-                        <td><span><a href="#" data-toggle="modal" data-target="#emailSite"><i class="fa fa-envelope-o"></i></a></span></td>
-                        <td><span data-bind="text: StoreName">Sainsburys Hendon</span></td>
-                        <td><span data-bind="text: CatNo"></span>200</td>
-                        <td><span data-bind="text: PFSNo"></span>199</td>
-
-                        <td>
-                            <span data-bind="text: FuelPriceToday">108.9</span>
-                        </td>
-                        <td>
-                            <i class="fa fa-arrow-circle-o-down" style="color:red;font-size:100%;"></i>&nbsp;<span data-bind="text: FuelPriceTomorrowAutoCalc">107.9</span>
-                            <input type="text" data-bind="value: FuelPriceTomorrowOverridden" class="txtPrice" />
-                        <td>
-                            <span data-bind="text: FuelPriceToday">108.9</span>
-
-                        </td>
-                        <td>
-                            <i class="fa fa-arrow-circle-o-down" style="color:red;font-size:100%;"></i>&nbsp;<span data-bind="text: FuelPriceTomorrowAutoCalc">107.9</span>
-                            <input type="text" data-bind="value: FuelPriceTomorrowOverridden" class="txtPrice" />
-                        </td>
-                        <td>
-                            <span data-bind="text: FuelPriceToday">108.9</span>
-                        </td>
-                        <td>
-                            <i class="fa fa-arrow-circle-o-down" style="color:red;font-size:100%;"></i>&nbsp;<span data-bind="text: FuelPriceTomorrowAutoCalc">107.9</span>
-                            <input type="text" data-bind="value: FuelPriceTomorrowOverridden" class="txtPrice" />
-                        </td>
-                    </tr>
-                    <tr id="CollapseCompetitorsforsite202" class="panel-collapse collapse" role="tabpanel">
-
-                        <td colspan="12" xalign="right">
-                            <!-- Competitors table -->
-                            <table class="competitorTable table-striped table-hover">
-                                <thead>
-                                    <tr rowspan="2">
-                                        <th><span>Brand</span></th>
-                                        <th><span>Marker</span></th>
-                                        <th><span>Drive-Time</span></th>
-                                        <th><span>Cat No.</span></th>
-
-                                        <th colspan="2" class="tblHighlight"><span class="fuelHeaderGroup">&nbsp;Unleaded&nbsp;</span></th>
-                                        <th colspan="2"><span class="fuelHeaderGroup">&nbsp;Diesel&nbsp;</span></th>
-                                        <th colspan="2" class="tblHighlight"><span class="fuelHeaderGroup">&nbsp;LPG&nbsp;</span></th>
-                                    </tr>
-                                    <tr>
-                                        <th colspan="4"></th>
-                                        <th class="tblHighlight"><span>Yesterday</span></th>
-                                        <th class="tblHighlight"><span>Today</span></th>
-                                        <th><span>Yesterday</span></th>
-                                        <th><span>Today</span></th>
-                                        <th class="tblHighlight"><span>Yesterday</span></th>
-                                        <th class="tblHighlight"><span>Today</span></th>
-
-                                    </tr>
-                                </thead>
-                                <tbody data-bind="with: competitors, visible: hasCompetitors">
-                                    <!-- Within a foreach CompStores loop -->
-                                    <!-- Comp Store DataRows -->
-                                    <tr>
-                                        <td><span data-bind="text: Brand">Asda</span></td>
-                                        <td><span data-bind="text: CompetitorStoreName">Asda Compton</span></td>
-                                        <td><span data-bind="text: DriveTime"></span>2.45min</td>
-                                        <td><span data-bind="text: CatNo"></span>1336</td>
-
-                                        <td class="tblHighlight"><span data-bind="text: FuelPriceYesterday">109.9</span></td>
-                                        <td class="tblHighlight"><i class="fa fa-arrow-circle-o-down" style="color:red;font-size:100%;"></i>&nbsp;<span data-bind="text: FuelPriceToday">107.9</span></td>
-
-                                        <td><span data-bind="text: FuelPriceYesterday">108.9</span></td>
-                                        <td><i class="fa fa-arrow-circle-o-down" style="color:red;font-size:100%;"></i>&nbsp;<span data-bind="text: FuelPriceToday">106.9</span></td>
-
-                                        <td class="tblHighlight"><span data-bind="text: FuelPriceYesterday">108.9</span></td>
-                                        <td class="tblHighlight"><i class="fa fa-arrow-circle-o-down" style="color:red;font-size:100%;"></i>&nbsp;<span data-bind="text: FuelPriceToday">106.9</span></td>
-
-                                    </tr>
-                                    <tr>
-                                        <td><span data-bind="text: Brand">Tesco</span></td>
-                                        <td><span data-bind="text: CompetitorStoreName">Tesco Green Park</span></td>
-                                        <td><span data-bind="text: DriveTime"></span>4.10min</td>
-                                        <td><span data-bind="text: CatNo"></span>1336</td>
-
-                                        <td class="tblHighlight"><span data-bind="text: FuelPriceYesterday">109.9</span></td>
-                                        <td class="tblHighlight"><i class="fa fa-arrow-circle-o-down" style="color:red;font-size:100%;"></i><span data-bind="text: FuelPriceToday">107.9</span></td>
-
-                                        <td><span data-bind="text: FuelPriceYesterday">108.9</span></td>
-                                        <td><i class="fa fa-arrow-circle-o-down" style="color:red;font-size:100%;"></i><span data-bind="text: FuelPriceToday">106.9</span></td>
-
-                                        <td class="tblHighlight"><span data-bind="text: FuelPriceYesterday">108.9</span></td>
-                                        <td class="tblHighlight"><i class="fa fa-arrow-circle-o-down" style="color:red;font-size:100%;"></i><span data-bind="text: FuelPriceToday">106.9</span></td>
-
-                                    </tr>
-                                </tbody>
-                                <tbody data-bind="visible: false" style="visibility: hidden; display: none">
-                                    <tr>
-                                        <td colspan="10" class="noSiteData">Sorry, no site data available</td>
-                                    </tr>
-                                </tbody>
-
-                            </table>
-                        </td>
-                    </tr>
-
+                    </table>
+                </td>
+            </tr>
+        }
+    }
+    else
+    {
+        <tr>
+            <td colspan="10" class="noSiteData">Sorry, no site data available</td>
+        </tr>
+    }
                 </tbody>
                 <tbody data-bind="visible: !dataAvailable" style="visibility: hidden; display: none">
                     <tr>
