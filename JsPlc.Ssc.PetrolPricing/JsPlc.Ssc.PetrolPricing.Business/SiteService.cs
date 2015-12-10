@@ -40,6 +40,11 @@ namespace JsPlc.Ssc.PetrolPricing.Business
             return _db.NewSite(site);
         }
 
+        public SitePriceViewModel GetSiteAndPrices(int siteId, DateTime date)
+        {
+            return _db.GetASiteWithPrices(siteId, date);
+        }
+
         public bool ExistsSite(string siteName, int? catNo)
         {
             return _db.GetSites().Any(m => m.SiteName.Equals(siteName, StringComparison.CurrentCultureIgnoreCase) || 

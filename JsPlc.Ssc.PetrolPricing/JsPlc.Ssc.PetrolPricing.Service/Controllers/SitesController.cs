@@ -189,5 +189,29 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
             }
             return Ok(result);
         }
+
+        [System.Web.Http.HttpGet]
+        [System.Web.Http.Route("api/emailSite")]
+        public IHttpActionResult EmailSite(int siteId, DateTime endTradeDate)
+        {
+                Site site = new Site();
+                site = _siteService.GetSite(siteId);//TODO Needs  to also have emails and prices
+
+
+            //SitePriceViewModel _siteService.GetSitesWithPrices(siteId, endTradeDate)
+
+                //Adding sample data for prices and emails for the moment. REMOVE
+                SiteEmail emailsForSite = new SiteEmail();
+                emailsForSite.EmailAddress = "steven.farkas@sainsburys.co.uk";
+                site.Emails.Add(emailsForSite);
+
+
+                List<Site> ListOfSites = new  List<Site>();
+                ListOfSites.Add(site);
+
+                _emailService.SendEmail(ListOfSites, endTradeDate);
+
+                return Ok();
+        }
     }
 }

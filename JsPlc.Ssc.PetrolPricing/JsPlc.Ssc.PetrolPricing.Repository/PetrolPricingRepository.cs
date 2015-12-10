@@ -63,6 +63,24 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
             return retval;
         }
+
+        public SitePriceViewModel GetASiteWithPrices(int siteId, DateTime forDate)
+        {
+            var listSitePlusPrice = CallSitePriceSproc(forDate, siteId, 1, 1);
+
+            //sitePlusPrice = listSitePlusPrice.Where(x => x.SiteId == siteId);
+            SitePriceViewModel sitePlusPrice = new SitePriceViewModel();
+            foreach(SitePriceViewModel xxx in listSitePlusPrice)
+            {
+                if (xxx.SiteId == siteId)
+                {
+                    sitePlusPrice = xxx;
+                }
+            }
+
+            return sitePlusPrice;
+        }
+
         /// <summary>
         /// Calls spGetSitePrices to get site prices view
         /// </summary>
@@ -179,6 +197,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         {
             return _context.Sites.Include(s => s.Emails).FirstOrDefault(q => q.Id == id);
         }
+
 
         public Site GetSiteByCatNo(int catNo)
         {

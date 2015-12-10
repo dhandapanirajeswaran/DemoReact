@@ -42,9 +42,11 @@ namespace JsPlc.Ssc.PetrolPricing.Business
                         {
                             try
                             {
+
                                 var message = new MailMessage();
                                 message.From = new MailAddress(email.EmailAddress, emailFrom);
                                 message.Subject = site.SiteName + " - " + emailSubject;
+                                message.To.Add(email.EmailAddress);
                                 message.Body = emailBody;
                                 message.BodyEncoding = Encoding.ASCII;
                                 message.IsBodyHtml = true;
