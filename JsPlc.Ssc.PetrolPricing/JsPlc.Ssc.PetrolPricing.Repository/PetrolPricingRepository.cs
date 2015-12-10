@@ -209,7 +209,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
         }
 
-        public bool NewDailyPrices(List<DailyPrice> DailyPriceList, FileUpload FileDetails, int StartingLineNumber)
+        public bool NewDailyPrices(List<DailyPrice> dailyPriceList, FileUpload fileDetails, int startingLineNumber)
         {
             //_db.Configuration.AutoDetectChangesEnabled = false;
             //int startingLineNumber = StartingLineNumber
@@ -219,7 +219,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                 try
                 {
                     //LogImportError(FileDetails); this works
-                    foreach (DailyPrice dailyPrice in DailyPriceList)
+                    foreach (DailyPrice dailyPrice in dailyPriceList)
                     {
                         //startingLineNumber++;
                         _db.DailyPrices.Add(dailyPrice);
@@ -236,7 +236,8 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                     tx.Rollback();
                     foreach (var dbUpdateException in e.Entries)
                     {
-                        LogImportError(FileDetails, "Failed to save", null);
+                        // TODO as per dbUpdateException log error for that entry which failed
+                        LogImportError(fileDetails, "Failed to save", null);
                     }
 
                     return false;
@@ -282,7 +283,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             }
         }
 
-        public void LogImportError(FileUpload fileDetails, string errorMessage, int? LineNumber)
+        public void LogImportError(FileUpload fileDetails, string errorMessage, int? lineNumber)
         {
             using (var db = new RepositoryContext(_db.Database.Connection))
             {
@@ -291,9 +292,9 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                 importProcessErrors.UploadId = fileDetails.Id;
                 importProcessErrors.ErrorMessage = errorMessage;
 
-                if (LineNumber != null)
+                if (lineNumber != null)
                 {
-                    importProcessErrors.RowOrLineNumber = int.Parse(LineNumber.ToString());
+                    importProcessErrors.RowOrLineNumber = int.Parse(lineNumber.ToString());
                 }
 
                 db.ImportProcessErrors.Add(importProcessErrors);
@@ -301,11 +302,14 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             }
         }
 
-        public void UpdateImportProcessStatus(FileUpload FileUpload, int StatusId)
+        public void UpdateImportProcessStatus(FileUpload fileUpload, int statusId)
         {
-            FileUpload.StatusId = StatusId;
-            _db.Entry(FileUpload).State = EntityState.Modified;
-            _db.SaveChanges();
+            using (var db = new RepositoryContext(_db.Database.Connection))
+            {
+                fileUpload.StatusId = statusId;
+                db.Entry(fileUpload).State = EntityState.Modified;
+                db.SaveChanges();
+            }
         }
 
         /// <summary>

@@ -29,7 +29,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
         IEnumerable<DailyPrice> GetDailyPricesForFuelByCompetitors(IEnumerable<int> competitorCatNos, int fuelId, DateTime usingUploadDate);
 
-        void UpdateImportProcessStatus(FileUpload importProcessStatus, int StatusId);
+        void UpdateImportProcessStatus(FileUpload fileUpload, int statusId);
 
         IEnumerable<FileUpload> GetFileUploads(DateTime? date, int? uploadType, int? statusId);
 
