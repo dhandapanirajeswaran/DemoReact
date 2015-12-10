@@ -103,7 +103,11 @@ namespace JsPlc.Ssc.PetrolPricing.Business
                     while ((line = file.ReadLine()) != null)
                     {
                         lineNumber++;
-                        listOfDailyPricePrices.Add(ParseDailyLineValues(line, lineNumber, aFile));
+                        var dp = ParseDailyLineValues(line, lineNumber, aFile);
+                        if (dp == null)
+                        { success = false; importStatus.Add(false); break; }
+
+                        listOfDailyPricePrices.Add(dp);
 
                         if (listOfDailyPricePrices.Count != 1000) continue;
 
@@ -151,6 +155,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
             catch 
             {
                 _db.LogImportError(aFile, "Unable to Parse line", lineNumber);
+                return null;
             }
            
             return theDailyPrice;

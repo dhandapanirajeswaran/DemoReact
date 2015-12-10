@@ -372,6 +372,7 @@
     <Content Include="Views\Sites\Create.cshtml" />
     <Content Include="Views\Sites\Details.cshtml" />
     <Content Include="Views\Sites\Edit.cshtml" />
+    <Content Include="Views\File\_ImportErrors.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\uploads\" />

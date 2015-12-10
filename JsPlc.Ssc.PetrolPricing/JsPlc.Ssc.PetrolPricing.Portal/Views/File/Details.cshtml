@@ -60,6 +60,13 @@
 
     </dl>
 </div>
+
 <p>
     @Html.ActionLink("Back to List", "Index")
 </p>
+@if (Model.StatusId == 15 && Model.ImportProcessErrors.Any())
+{
+    <div>
+        @Html.Partial("_ImportErrors", Model.ImportProcessErrors)
+    </div>
+}
