@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -20,6 +21,8 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
     {
         private readonly ServiceFacade _serviceFacade = new ServiceFacade();
 
+        // AJAX Methods
+
         // BOILERPLATE Code Only - not functional
         [System.Web.Mvc.HttpPost]
         public async Task<JsonResult> PostSiteForm([FromBody] Site siteView)
@@ -30,8 +33,8 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
                 var response = await _serviceFacade.RunAsync(siteViewJson, HttpMethod.Post);
                 if (!response.IsSuccessStatusCode) return response.ToJsonResult(null, null, "ApiFail");
 
-                var meetingUrl = response.Headers.Location;
-                return response.ToJsonResult(meetingUrl.AbsoluteUri, null, "ApiSuccess");
+                var siteUrl = response.Headers.Location;
+                return response.ToJsonResult(siteUrl.AbsoluteUri, null, "ApiSuccess");
             }
             var errArray = this.GetUiErrorList();
             var badRequestResponse = new HttpResponseMessage
@@ -42,18 +45,16 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             return badRequestResponse.ToJsonResult(null, errArray, "UIValidationErrors");
         }
 
-        // AJAX Callable
-        // BOILERPLATE Code Only - not functional
         [ScriptMethod(UseHttpGet = true)]
-        public JsonResult GetLinkForm(int siteId)
+        public JsonResult GetSitesWithPricesJson(DateTime? forDate=null, int siteId=0, int pageNo=1, 
+                int pageSize=Constants.PricePageSize)
         {
-            // POST scenarios use : JsonConvert.SerializeObject(meetingView);
+            // POST scenarios use : JsonConvert.SerializeObject(siteView);
+            IEnumerable<SitePriceViewModel> sitesViewModelsWithPrices = _serviceFacade.GetSitePrices(forDate, siteId, pageNo, pageSize);
 
-            var facade = _serviceFacade;
-
-            var site = facade.GetSite(siteId);
-
-            var jsonData = site != null ? (object) site : "Error";
+            var jsonData = sitesViewModelsWithPrices != null ? (object)sitesViewModelsWithPrices : "Error";
+            // TODO NOTE: The prices are still in 4 digit format (do price/10 for display)
+            // -- Uses SitePrice table, hence no prices until populated (using CalcPrice calls)
 
             var jsonResult = new JsonResult
             {
@@ -114,10 +115,10 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
         {
             // Display list of existing sites along with their status
             ViewBag.Message = msg;
-            IEnumerable<SitePriceViewModel> model = _serviceFacade.GetSitePrices();
-            // NOTE: The prices are still in 4 digit format (do price/10 for display)
+            var sitesViewModelsWithPrices = _serviceFacade.GetSitePrices();
+            // return empty list but never null
 
-            return View(model);
+            return View(sitesViewModelsWithPrices);
         }
 
         public ActionResult Edit(int id)
@@ -129,7 +130,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
         [System.Web.Mvc.HttpPost]
         public ActionResult Edit(Site site)
         {
-            // TODO Email edits and deletes are not impacting DB yet
+            // TODO Email edits fail on VM, MediaType Formatter error when text/html returned from api.
             if (!ModelState.IsValid)
             {
                 ViewBag.ErrorMessage = "Please check for validation errors under each field.";
