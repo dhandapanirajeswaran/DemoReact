@@ -72,6 +72,21 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
            return (response.IsSuccessStatusCode) ? result : null;
         }
 
+        //TODO feed in real data from price grid
+        public void EmailUpdatedPricesToSite()
+        {
+
+            var response = _client.Value.GetAsync("api/emailSite?siteId=1&endTradeDate=11/12/2015").Result;
+           
+        }
+
+        //TODO feed in real data from price grid
+        public void EmailUpdatedPricesToAllSite(int siteId, DateTime dateOfUpdate)
+        {
+            
+        }
+
+
         /// <summary>
         /// List of SitePriceViewModel for Site Pricing View
         /// </summary>

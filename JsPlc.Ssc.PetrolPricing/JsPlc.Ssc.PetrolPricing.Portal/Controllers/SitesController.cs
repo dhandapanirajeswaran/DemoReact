@@ -121,6 +121,18 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             return View(sitesViewModelsWithPrices);
         }
 
+        [System.Web.Mvc.HttpPost]
+        public ActionResult Prices()
+        {
+            _serviceFacade.EmailUpdatedPricesToSite();
+
+            var sitesViewModelsWithPrices = _serviceFacade.GetSitePrices();
+            // return empty list but never null
+
+            return View(sitesViewModelsWithPrices);
+
+        }
+
         public ActionResult Edit(int id)
         {
             var model = _serviceFacade.GetSite(id);
