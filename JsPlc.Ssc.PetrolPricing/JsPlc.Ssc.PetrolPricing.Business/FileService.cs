@@ -96,7 +96,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
                     int lineNumber = 0;
                     List<bool> importStatus = new List<bool>();
                     List<DailyPrice> listOfDailyPricePrices = new List<DailyPrice>();
-                    filePathAndName = ""; // FORCES Error
+                    //filePathAndName = ""; // FORCES Error
 
                     var file = new StreamReader(filePathAndName.ToString(CultureInfo.InvariantCulture));
                     bool success = true;
