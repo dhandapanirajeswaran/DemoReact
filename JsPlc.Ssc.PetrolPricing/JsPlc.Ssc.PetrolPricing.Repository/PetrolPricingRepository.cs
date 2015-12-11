@@ -12,11 +12,13 @@ using System.Runtime.CompilerServices;
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Permissions;
 using System.Transactions;
+using EntityFramework.Utilities;
 using JsPlc.Ssc.PetrolPricing.Models;
 
 using System.Data.Entity.Validation;
 using System.Diagnostics;
 using JsPlc.Ssc.PetrolPricing.Models.ViewModels;
+using EntityState = System.Data.Entity.EntityState;
 
 namespace JsPlc.Ssc.PetrolPricing.Repository
 {
@@ -272,7 +274,6 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
                         foreach (var dbUpdateException in e.Entries)
                         {
-                            // TODO as per dbUpdateException log error for that entry which failed
                             var dailyPrice = dbUpdateException.Entity as DailyPrice ?? new DailyPrice();
                             LogImportError(fileDetails, String.Format("Failed to save price:{0},{1},{2},{3},{4}",
                                 dailyPrice.CatNo, dailyPrice.FuelTypeId, dailyPrice.AllStarMerchantNo,
@@ -326,28 +327,59 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             }
         }
 
-        // TODO - yet to be tested
+        /// <summary>
+        /// Delete all DailyImport records of older uploads of today
+        /// ONLY call this on successful import of at least one file of ofDate
+        /// Reason - To keep DailyPrice table lean. Otherwise CalcPrice will take a long time to troll through a HUGE table
+        /// </summary>
+        /// <param name="ofdate"></param>
+        /// <param name="uploadId"></param>
+        public void DeleteRecordsForOlderImportsOfDate(DateTime ofdate, int uploadId)
+        {
+            var db = new RepositoryContext(_context.Database.Connection);
+            var deleteCmd = String.Format("Delete from DailyPrice Where DailyUploadId in " +
+                                          "  (Select Id from FileUpload Where DateDiff(d, UploadDateTime, '{0}') = 0 and Id <> {1})",
+                                            ofdate.ToString("yyyy-MM-dd"), uploadId);
+            db.Database.ExecuteSqlCommand(deleteCmd);
+        }
+       
+        
         public SitePrice AddOrUpdateSitePriceRecord(SitePrice calculatedSitePrice)
         {
+            //var db = new RepositoryContext(_context.Database.Connection);
             // Find the Site Price record for a Given Site, Fuel and Date
-            var existingPriceRecord = _context.SitePrices.FirstOrDefault(
+            var priceRecords = _context.SitePrices.AsNoTracking().Where(
                 x => x.SiteId == calculatedSitePrice.SiteId 
-                    && x.FuelTypeId == calculatedSitePrice.FuelTypeId 
-                    && x.DateOfCalc.Date.Equals(calculatedSitePrice.DateOfCalc.Date));
+                    && x.FuelTypeId == calculatedSitePrice.FuelTypeId).ToList();
+            var existingPriceRecord = priceRecords.FirstOrDefault(x => x.DateOfCalc.Date.Equals(calculatedSitePrice.DateOfCalc.Date));
 
             if (existingPriceRecord == null)
             {
-                _context.SitePrices.Add(calculatedSitePrice);
+                //_context.Entry(calculatedSitePrice).State = EntityState.Detached;
+                //_context.SitePrices.Attach(calculatedSitePrice);
+                _context.Entry(calculatedSitePrice).State = EntityState.Added;
+                _context.SaveChanges();
+                return calculatedSitePrice;
             }
-            else
+            //_context.AttachAndModify(new SitePrice { Id = existingPriceRecord.Id }).Set(x => x.SuggestedPrice, calculatedSitePrice.SuggestedPrice);
+            var db = new RepositoryContext(_context.Database.Connection);
             {
+                db.Entry(existingPriceRecord).State = EntityState.Modified;
+                //calculatedSitePrice.SuggestedPrice = 1089;
                 existingPriceRecord.SuggestedPrice = calculatedSitePrice.SuggestedPrice;
-                _context.Entry(existingPriceRecord).State = EntityState.Modified;
+                existingPriceRecord.DateOfCalc = calculatedSitePrice.DateOfCalc;
+                existingPriceRecord.DateOfPrice = calculatedSitePrice.DateOfPrice;
+                db.SaveChanges();
+                return existingPriceRecord;
             }
-            _context.SaveChanges();
-            return existingPriceRecord;
         }
 
+        /// <summary>
+        /// Generic method to Log an import error for the running import of FileUpload for both Daily and Quarterly files
+        /// </summary>
+        /// <param name="fileDetails"></param>
+        /// <param name="errorMessage"></param>
+        /// <param name="lineNumber"></param>
         public void LogImportError(FileUpload fileDetails, string errorMessage = "", int? lineNumber = 0)
         {
             var db = new RepositoryContext(_context.Database.Connection);
@@ -365,10 +397,15 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             db.SaveChanges();
         }
 
+        /// <summary>
+        /// Updated the FileUpload status as specified by param StatusId
+        /// </summary>
+        /// <param name="fileUpload">The fileUpload object whose status is to be updated</param>
+        /// <param name="statusId">Status to set for the uploaded file</param>
         public void UpdateImportProcessStatus(FileUpload fileUpload, int statusId)
         {
             var db = new RepositoryContext(_context.Database.Connection);
-            var fu = db.FileUploads.FirstOrDefault(x => x.Id == fileUpload.Id);
+            var fu = db.FileUploads.AsNoTracking().FirstOrDefault(x => x.Id == fileUpload.Id);
             if (fu == null) return;
             _context.Database.ExecuteSqlCommand("Update FileUpload Set StatusId = " + statusId + " where Id = " +
                                                 fileUpload.Id);

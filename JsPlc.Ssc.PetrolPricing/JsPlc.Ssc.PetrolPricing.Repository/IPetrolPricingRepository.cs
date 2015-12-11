@@ -32,7 +32,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
         IQueryable<Site> GetSitesIncludePrices(DateTime? forDate = null);
 
-        IEnumerable<DailyPrice> GetDailyPricesForFuelByCompetitors(IEnumerable<int> competitorCatNos, int fuelId, DateTime usingUploadDate);
+        IEnumerable<DailyPrice> GetDailyPricesForFuelByCompetitors(IEnumerable<int> competitorCatNos, int fuelId, DateTime usingPricesForDate);
 
         void UpdateImportProcessStatus(FileUpload fileUpload, int statusId);
 
@@ -51,6 +51,9 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         void Dispose();
 
         SitePrice AddOrUpdateSitePriceRecord(SitePrice calculatedSitePrice);
+
+        // Reason - To keep DailyPrice table lean. Otherwise CalcPrice will take a long time to troll through a HUGE table
+        void DeleteRecordsForOlderImportsOfDate(DateTime ofDate, int uploadId);
     }
 
     public interface IPetrolPricingRepositoryLookup

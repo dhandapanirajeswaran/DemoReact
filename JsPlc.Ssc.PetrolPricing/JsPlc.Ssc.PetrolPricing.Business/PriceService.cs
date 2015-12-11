@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Design;
+using System.Data.Entity;
 using System.Linq;
 using System.Runtime.Remoting.Messaging;
 using JsPlc.Ssc.PetrolPricing.Models;
@@ -21,12 +22,53 @@ namespace JsPlc.Ssc.PetrolPricing.Business
         }
 
         /// <summary>
+        /// Pickup success status files and pick the latest file and run calc with that
+        /// </summary>
+        /// <param name="forDate"></param>
+        public void DoCalcPrices(DateTime? forDate)
+        {
+            if (!forDate.HasValue) forDate = DateTime.Now;
+            // Only ones Uploaded today and successfully processed files
+            var processedFiles =  _db.GetFileUploads(forDate, 1, 10).ToList(); // 1 = DailyFile, 10 = Success
+            if (processedFiles.Any())
+            {
+                CalcSitePrices(processedFiles);
+            }
+        }
+
+        /// <summary>
+        /// Calculate prices for files Uploaded today and in a Success state. No retrosprctive calc, No future calc
+        /// </summary>
+        /// <param name="processedFiles"></param>
+        private void CalcSitePrices(IEnumerable<FileUpload> processedFiles)
+        {
+            var priceService = new PriceService();
+            var siteService = new SiteService(_db);
+            var forDate = DateTime.Now;
+
+            var sites = _db.GetSites().AsQueryable().AsNoTracking();
+            var fuels = LookupService.GetFuelTypes().AsQueryable().AsNoTracking().ToList();
+
+            foreach (var processedFile in processedFiles)
+            {
+                foreach (var site in sites)
+                {
+                    var tmpSite = site;
+                    foreach (var fuel in fuels.ToList())
+                    {
+                        var calculatedSitePrice = priceService.CalcPrice(site.Id, fuel.Id);
+                    }
+                }
+            }
+        }
+        /// <summary>
         /// Calculate price of a Fuel for a Given JS Site based on Pricing Rules
         ///  As per flow diagram 30 Nov 2015
+        /// Normally we use Prices for Date on which method is RUN, but we can force it to use any other days DP file (simulation testing)
         /// </summary>
         /// <param name="siteId"></param>
         /// <param name="fuelId"></param>
-        /// <param name="usingPricesforDate"></param>
+        /// <param name="usingPricesforDate">Optional - If not specified, uses todays date</param>
         /// <returns></returns>
         public SitePrice CalcPrice(int siteId, int fuelId, DateTime? usingPricesforDate = null)
         {
@@ -66,14 +108,19 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 
             var competitor = cheapestCompetitor.Value.Key;
             var markup = cheapestCompetitor.Value.Value;
-            return new SitePrice
+
+            var retval = new SitePrice
             {
                 SiteId = siteId,
                 JsSite = site,
+                FuelTypeId = fuelId,
                 DateOfPrice = competitor.DailyPrice.DateOfPrice,
+                UploadId = competitor.DailyPrice.DailyUploadId, // If we can provide traceability to calc file, then why not
                 SuggestedPrice = competitor.DailyPrice.ModalPrice + markup * 10, // since modalPrice is held in pence*10 (Catalist format)
                 DateOfCalc = DateTime.Now.Date // Only date component
             };
+            var updatedPrice = _db.AddOrUpdateSitePriceRecord(retval); // This is done in caller.
+            return updatedPrice;
         }
 
         /// <summary>
