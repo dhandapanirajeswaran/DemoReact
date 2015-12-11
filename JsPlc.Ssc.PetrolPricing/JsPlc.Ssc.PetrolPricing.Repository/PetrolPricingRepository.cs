@@ -11,6 +11,7 @@ using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Permissions;
+using System.Transactions;
 using JsPlc.Ssc.PetrolPricing.Models;
 
 using System.Data.Entity.Validation;
@@ -240,57 +241,65 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
         public bool NewDailyPrices(List<DailyPrice> dailyPriceList, FileUpload fileDetails, int startingLineNumber)
         {
-            //_db.Configuration.AutoDetectChangesEnabled = false;
-            //int startingLineNumber = StartingLineNumber
             int addingEntryLineNo = startingLineNumber;
-            using (var tx = _context.Database.BeginTransaction())
+
+            using (var newDbContext = new RepositoryContext(new SqlConnection(_context.Database.Connection.ConnectionString)))
             {
-                try
+                using (var tx = newDbContext.Database.BeginTransaction())
                 {
-                    //LogImportError(FileDetails); this works
-                    foreach (DailyPrice dailyPrice in dailyPriceList)
+                    newDbContext.Configuration.AutoDetectChangesEnabled = false;
+                    try
                     {
-                        //startingLineNumber++;
-                        _context.DailyPrices.Add(dailyPrice);
-                        addingEntryLineNo += 1;
-                    }
-
-                    _context.SaveChanges();
-
-                    tx.Commit();
-                    return true;
-                }
-                catch (DbUpdateException e)
-                {
-
-                    tx.Rollback();
-                    
-                    foreach (var dbUpdateException in e.Entries)
-                    {
-                        // TODO as per dbUpdateException log error for that entry which failed
-                        var dailyPrice = dbUpdateException.Entity as DailyPrice ?? new DailyPrice();
-                        LogImportError(fileDetails, String.Format("Failed to save price:{0},{1},{2},{3},{4}",
-                            dailyPrice.CatNo, dailyPrice.FuelTypeId, dailyPrice.AllStarMerchantNo, dailyPrice.DateOfPrice, dailyPrice.ModalPrice)
-                            , startingLineNumber);
-                        dbUpdateException.State = EntityState.Unchanged;
-                    }
-
-                    return false;
-                }
-                catch (DbEntityValidationException dbEx)
-                {
-                    tx.Rollback();
-                    foreach (var validationErrors in dbEx.EntityValidationErrors)
-                    {
-                        foreach (var validationError in validationErrors.ValidationErrors)
+                        foreach (DailyPrice dailyPrice in dailyPriceList)
                         {
-                            LogImportError(fileDetails, "DbEntityValidationException occured:" + validationError.ErrorMessage +
-                                "," + validationError.PropertyName, addingEntryLineNo);
-                            
-                            Trace.TraceInformation("Property: {0} Error: {1}", validationError.PropertyName, validationError.ErrorMessage);
+                            if (dailyPrice.DailyUpload != null) dailyPrice.DailyUploadId = dailyPrice.DailyUpload.Id;
+                            dailyPrice.DailyUpload = null;
+                            dailyPrice.FuelType = null;
+                           
+                            newDbContext.DailyPrices.Add(dailyPrice);
+                            addingEntryLineNo += 1;
                         }
+
+                        newDbContext.SaveChanges();
+
+                        tx.Commit();
+                        return true;
                     }
-                    return false;
+                    catch (DbUpdateException e)
+                    {
+
+                        tx.Rollback();
+
+                        foreach (var dbUpdateException in e.Entries)
+                        {
+                            // TODO as per dbUpdateException log error for that entry which failed
+                            var dailyPrice = dbUpdateException.Entity as DailyPrice ?? new DailyPrice();
+                            LogImportError(fileDetails, String.Format("Failed to save price:{0},{1},{2},{3},{4}",
+                                dailyPrice.CatNo, dailyPrice.FuelTypeId, dailyPrice.AllStarMerchantNo,
+                                dailyPrice.DateOfPrice, dailyPrice.ModalPrice)
+                                , startingLineNumber);
+                            dbUpdateException.State = EntityState.Unchanged;
+                        }
+
+                        return false;
+                    }
+                    catch (DbEntityValidationException dbEx)
+                    {
+                        tx.Rollback();
+                        foreach (var validationErrors in dbEx.EntityValidationErrors)
+                        {
+                            foreach (var validationError in validationErrors.ValidationErrors)
+                            {
+                                LogImportError(fileDetails,
+                                    "DbEntityValidationException occured:" + validationError.ErrorMessage +
+                                    "," + validationError.PropertyName, addingEntryLineNo);
+
+                                Trace.TraceInformation("Property: {0} Error: {1}", validationError.PropertyName,
+                                    validationError.ErrorMessage);
+                            }
+                        }
+                        return false;
+                    }
                 }
             }
         }

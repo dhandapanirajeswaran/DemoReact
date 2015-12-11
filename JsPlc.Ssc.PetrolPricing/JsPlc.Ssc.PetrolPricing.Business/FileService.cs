@@ -88,15 +88,15 @@ namespace JsPlc.Ssc.PetrolPricing.Business
             foreach (FileUpload aFile in listOfFiles)
             {
                 _db.UpdateImportProcessStatus(aFile, 5);//Processing 5
+                var storedFilePath = SettingsService.GetUploadPath();
+                var filePathAndName = Path.Combine(storedFilePath, aFile.StoredFileName);
                 try
                 {
                     string line;
                     int lineNumber = 0;
                     List<bool> importStatus = new List<bool>();
                     List<DailyPrice> listOfDailyPricePrices = new List<DailyPrice>();
-                    var storedFilePath = SettingsService.GetUploadPath();
-                    var filePathAndName = Path.Combine(storedFilePath, aFile.StoredFileName);
-                    //filePathAndName = ""; // FORCES Error
+                    filePathAndName = ""; // FORCES Error
 
                     var file = new StreamReader(filePathAndName.ToString(CultureInfo.InvariantCulture));
                     bool success = true;
@@ -130,7 +130,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
                 }
                 catch (Exception ex)
                 {
-                    _db.LogImportError(aFile, ex.Message, null);
+                    _db.LogImportError(aFile, ex.Message + "filePath=" + filePathAndName, null);
                     _db.UpdateImportProcessStatus(aFile, 15);
                 }
             }
@@ -157,15 +157,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
                 _db.LogImportError(aFile, "Unable to Parse line", lineNumber);
                 return null;
             }
-           
             return theDailyPrice;
-
-           
         }
-
-       
-
-
-
     }
 }
