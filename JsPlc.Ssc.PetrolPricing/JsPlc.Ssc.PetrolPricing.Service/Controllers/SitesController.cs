@@ -12,6 +12,7 @@ using System.Web.Http.Results;
 using System.Web.Mvc;
 using JsPlc.Ssc.PetrolPricing.Business;
 using JsPlc.Ssc.PetrolPricing.Models;
+using JsPlc.Ssc.PetrolPricing.Models.ViewModels;
 
 namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
 {
@@ -206,10 +207,7 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
                 Site site = new Site();
                 site = _siteService.GetSite(siteId);//TODO Needs  to also have emails and prices
 
-
-            //SitePriceViewModel _siteService.GetSitesWithPrices(siteId, endTradeDate)
-
-                //Adding sample data for prices and emails for the moment. REMOVE
+                //REMOVE Adding sample data for prices and emails for the moment. 
                 SiteEmail emailsForSite = new SiteEmail();
                 emailsForSite.EmailAddress = "steven.farkas@sainsburys.co.uk";
                 site.Emails.Add(emailsForSite);

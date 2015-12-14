@@ -202,7 +202,6 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             return _context.Sites.Include(s => s.Emails).FirstOrDefault(q => q.Id == id);
         }
 
-
         public Site GetSiteByCatNo(int catNo)
         {
             return _context.Sites.FirstOrDefault(q => q.CatNo.HasValue && q.CatNo.Value == catNo);
@@ -370,13 +369,13 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         }
 
         /// <summary>
-        /// Mark file status = Failed for any imports/calcs exceeeding 5 min
+        /// Mark file status = Aborted for any imports/calcs exceeeding 5 min (TODO eval as we go along, maybe need two diff values)
         /// </summary>
         public void FailHangedFileUploadOrCalcs()
         {
-            _context.Database.ExecuteSqlCommand("Update FileUpload Set StatusId = 15 Where " +
+            _context.Database.ExecuteSqlCommand("Update FileUpload Set StatusId = 16 Where " +
                                                 "StatusId = 5 and DateDiff(MINUTE, UploadDateTime, GetDate()) >= 5");
-            _context.Database.ExecuteSqlCommand("Update FileUpload Set StatusId = 12 Where " +
+            _context.Database.ExecuteSqlCommand("Update FileUpload Set StatusId = 17 Where " +
                                                 "StatusId = 11 and DateDiff(MINUTE, UploadDateTime, GetDate()) >= 5");
         }
 

@@ -1,5 +1,5 @@
 ﻿CREATE PROCEDURE dbo.spGetSitePrices
-    @siteId int,
+	@siteId int,
 	@forDate DateTime,
 	@skipRecs int,
 	@takeRecs int
@@ -50,7 +50,7 @@ Select  DateDiff(day, @anotherDt, @thedate) -- (gives 2nd param - 1st param)
 )
 ,sitesWithPrices As -- JS Site and Prices information
 (
-    SELECT s.Id as siteId, s.CatNo, 
+	SELECT s.Id as siteId, s.CatNo, 
 		s.SiteName, s.Address, s.Suburb, s.Town,  
 		s.IsSainsburysSite, s.Brand, s.Company, s.Ownership,
 
@@ -73,3 +73,4 @@ Select  DateDiff(day, @anotherDt, @thedate) -- (gives 2nd param - 1st param)
 )
 Select * from sitesWithPrices 
 Order By SiteId
+

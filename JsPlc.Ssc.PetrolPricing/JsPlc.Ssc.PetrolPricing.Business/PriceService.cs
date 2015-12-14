@@ -50,6 +50,8 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 
                 try
                 {
+                    _db.FailHangedFileUploadOrCalcs(); // Fail any calcs taking over 5 mins..
+
                     _db.UpdateImportProcessStatus(dpFile, 11); //Calculating 6
 
                     var taskData = new CalcTaskData {ForDate = forDate.Value, FileUpload = dpFile};

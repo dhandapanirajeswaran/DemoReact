@@ -145,5 +145,17 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
                 return new ExceptionResult(ex, this);
             }
         }
+
+        [HttpGet] // Process files in upload list 
+        [Route("api/ProcessQuarterlyFile")]
+        public async Task<IHttpActionResult> ProcessQuarterlyFile()
+        {
+            using (var fs = _fileService)
+            {
+                return Ok(fs.ProcessQuarterlyFile());
+            }
+        
+        }
+
     }
 }
