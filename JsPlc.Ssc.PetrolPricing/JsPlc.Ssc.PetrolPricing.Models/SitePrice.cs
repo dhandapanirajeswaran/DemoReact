@@ -22,6 +22,8 @@ namespace JsPlc.Ssc.PetrolPricing.Models
         public DateTime DateOfCalc { get; set; } // DateOfCalculation (when was this calculated)
         public DateTime DateOfPrice { get; set; } // DateOfPrice (from DailyPrice - as per UploadDateTime), we dont use Dates specified in Catalist info
 
+        public int? UploadId { get; set; } // Which uploadId did this price come from
+
         public DateTime? EffDate { get; set; } // Price Effective From (normally next day)
         
         // UI Concern: Don't use this Entity directly as VM for View since it holds Raw values.. View needs Pence values

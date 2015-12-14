@@ -102,21 +102,30 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
         /// 1. Calc prices for a given date
         /// 2. Updates SitePrice table with calculated Prices, returns a bool - True if any calcs done for that site, else false
         /// 3. Return type will have to change when calculating Prices for a given date.. Multiple sites may have multiple outcomes of price calcs (some success, some fails)
+        /// -- Can kickoff for all sites
         /// </summary>
         /// <param name="siteId"></param>
         /// <param name="fuelId"></param>
+        /// <param name="forDate"></param>
         /// <returns>SitePrice</returns>
         [System.Web.Http.HttpGet]
         [System.Web.Http.Route("api/CalcPrice/")]
-        public async Task<IHttpActionResult> CalcPrice([FromUri]int siteId, [FromUri] int fuelId)
+        public async Task<IHttpActionResult> CalcPrice([FromUri]int siteId=0, [FromUri] int fuelId=0, DateTime? forDate = null)
         {
             // returns a SitePrice object, maybe later we call this for multiple fuels of the site
 
             // Test for 30 Nov prices as we have a dummy set of these setup
             // We dont have any 1st Dec prices
             SitePrice price = null;
-
-            price = _priceService.CalcPrice(siteId, fuelId, DateTime.Parse("2015-11-30")); // Unleaded
+            if (!forDate.HasValue) forDate = DateTime.Now; // DateTime.Parse("2015-11-30")
+            if (fuelId !=0 && siteId != 0)
+            {
+                price = _priceService.CalcPrice(siteId, fuelId, forDate.Value); // Unleaded
+            }
+            else
+            {
+               var result = await _priceService.DoCalcDailyPrices(forDate); // multiple sites
+            }
             return Ok(price);
         }
 

@@ -110,22 +110,34 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
         }
         
         /// <summary>
-        /// Processes all uploaded Files to import them into the DailyPrices table
-        /// Todo parameterize this based on: 
+        /// Generic method to kickoff Proesssing of any given DP or QT file
+        /// Processes uploaded File to:
+        /// - import them into the DailyPrices/Sites table
+        /// - kickoff calc
         /// </summary>
         /// <param name="forDate">Optional DateTime - so we can process all files of a specific Date</param>
         /// <param name="fileId">Optional FileId - so we can process one specific file</param>
         /// <param name="fileTypeId"></param>
         /// <returns></returns>
         [HttpGet] // Process files in upload list 
-        [Route("api/ProcessAllUploadedFiles")]
-        public async Task<IHttpActionResult> ProcessAllUploadedFiles(DateTime? forDate=null, int fileId=0, int fileTypeId=0)
+        [Route("api/ProcessUploadedFile")]
+        public async Task<IHttpActionResult> ProcessUploadedFile(DateTime? forDate=null, int fileId=0, int fileTypeId=0)
         {
             try
             {
                 using (var fs = _fileService)
                 {
-                    return Ok(fs.UpdateDailyPrice(fs.GetFileUploads(forDate, fileTypeId, 1).ToList())); //Status = "uploaded" files only
+                    var uploadedFiles = fs.GetFileUploads(forDate, fileTypeId, 1).ToList();
+                        //Status = 1 "uploaded" files only
+                    switch (fileTypeId)
+                    {
+                        case 1:
+                            return Ok(fs.ProcessDailyPrice(uploadedFiles));
+                        case 2:
+                            return Ok(fs.ProcessQuarterlyFile(uploadedFiles));
+                        default:
+                            throw new ApplicationException("Invalid file type specified");
+                    }
                 }
             }
             catch (Exception ex)

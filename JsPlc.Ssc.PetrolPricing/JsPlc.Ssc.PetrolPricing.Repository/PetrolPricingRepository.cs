@@ -12,11 +12,14 @@ using System.Runtime.CompilerServices;
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Permissions;
 using System.Transactions;
+using EntityFramework.Utilities;
 using JsPlc.Ssc.PetrolPricing.Models;
 
 using System.Data.Entity.Validation;
 using System.Diagnostics;
+using JsPlc.Ssc.PetrolPricing.Models.Common;
 using JsPlc.Ssc.PetrolPricing.Models.ViewModels;
+using EntityState = System.Data.Entity.EntityState;
 
 namespace JsPlc.Ssc.PetrolPricing.Repository
 {
@@ -165,11 +168,10 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                             sitePriceRow.FuelPrices.Add(new FuelPriceViewModel
                             {
                                 FuelTypeId = (int)pgRow["FuelTypeId"],
-                                Price = (int?)pgRow["SuggestedPrice"],
-                                OverridePrice = (int?)pgRow["OverriddenPrice"],
-                                YesterdaysPrice = Convert.IsDBNull(pgRow["OverriddenPriceYest"]) ?
-                                    (int?)pgRow["SuggestedPriceYest"]
-                                    : (int?)pgRow["OverriddenPriceYest"]
+                                Price = pgRow["SuggestedPrice"].ToString().ToNullable<int>(),
+                                OverridePrice = pgRow["OverriddenPrice"].ToString().ToNullable<int>(),
+                                YesterdaysPrice = pgRow["OverriddenPriceYest"].ToString().ToNullable<int>() ?? 
+                                        pgRow["SuggestedPriceYest"].ToString().ToNullable<int>()                                
                             });
                         }
                     }
@@ -271,7 +273,6 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
                         foreach (var dbUpdateException in e.Entries)
                         {
-                            // TODO as per dbUpdateException log error for that entry which failed
                             var dailyPrice = dbUpdateException.Entity as DailyPrice ?? new DailyPrice();
                             LogImportError(fileDetails, String.Format("Failed to save price:{0},{1},{2},{3},{4}",
                                 dailyPrice.CatNo, dailyPrice.FuelTypeId, dailyPrice.AllStarMerchantNo,
@@ -325,28 +326,92 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             }
         }
 
-        // TODO - yet to be tested
+        /// <summary>
+        /// Delete all DailyImport records of older uploads of today
+        /// ONLY call this on successful import of at least one file of ofDate
+        /// Reason - To keep DailyPrice table lean. Otherwise CalcPrice will take a long time to troll through a HUGE table
+        /// </summary>
+        /// <param name="ofdate"></param>
+        /// <param name="uploadId"></param>
+        public void DeleteRecordsForOlderImportsOfDate(DateTime ofdate, int uploadId)
+        {
+            var db = new RepositoryContext(_context.Database.Connection);
+            var deleteCmd = String.Format("Delete from DailyPrice Where DailyUploadId in " +
+                                          "  (Select Id from FileUpload Where DateDiff(d, UploadDateTime, '{0}') = 0 and Id <> {1})",
+                                            ofdate.ToString("yyyy-MM-dd"), uploadId);
+            db.Database.ExecuteSqlCommand(deleteCmd);
+        }
+
+        public bool AnyDailyPricesForFuelOnDate(int fuelId, DateTime usingPricesforDate)
+        {
+            var list1 = _context.DailyPrices.Include(x => x.DailyUpload).Where(x => x.FuelTypeId.Equals(fuelId)).ToList();
+            var list2 = list1.Any(x => x.DailyUpload.UploadDateTime.Date.Equals(usingPricesforDate.Date));
+            return list1.Any() && list2;
+        }
+
+        /// <summary>
+        /// Gets the FileUpload available for Calc/ReCalc 
+        /// i.e those which has been imported to DailyPrice either Successfully (or CalcFailed previously to allow rerun)
+        /// </summary>
+        /// <param name="forDate"></param>
+        /// <returns>Returns null if none available</returns>
+        public FileUpload GetDailyFileAvailableForCalc(DateTime forDate)
+        {
+            // Inline sql as date comparison fails in Linq
+            var uploadIds = _context.Database.SqlQuery<int>(
+                    String.Format("Select distinct fu.Id from FileUpload fu, DailyPrice dp Where fu.Id = dp.DailyUploadId " +
+                                  " and fu.UploadTypeId = 1" +
+                                  " and DateDiff(d, UploadDateTime, '{0}') = 0 and fu.StatusId in (10, 12)", 
+                    forDate.ToString("yyyy-MM-dd"))).ToArray();
+
+            var fileUploads = _context.FileUploads.Where(x => uploadIds.Contains(x.Id));
+            return fileUploads.Any() ? fileUploads.FirstOrDefault() : null;
+        }
+
+        public FileUpload GetDailyFileWithCalcRunningForDate(DateTime forDate)
+        {
+            var calcUploads = _context.FileUploads.Where(x => x.StatusId == 11 && x.StatusId == 1);
+            if (!calcUploads.Any()) return null;
+
+            var calcFileRunningForDate = calcUploads.ToList().FirstOrDefault(x => x.UploadDateTime.Date.Equals(forDate.Date));
+            return calcFileRunningForDate; // could be null
+        }
+
         public SitePrice AddOrUpdateSitePriceRecord(SitePrice calculatedSitePrice)
         {
-            // Find the Site Price record for a Given Site, Fuel and Date
-            var existingPriceRecord = _context.SitePrices.FirstOrDefault(
+            var priceRecords = _context.SitePrices.AsNoTracking().Where(
                 x => x.SiteId == calculatedSitePrice.SiteId 
-                    && x.FuelTypeId == calculatedSitePrice.FuelTypeId 
-                    && x.DateOfCalc.Date.Equals(calculatedSitePrice.DateOfCalc.Date));
+                    && x.FuelTypeId == calculatedSitePrice.FuelTypeId).ToList();
+            var existingPriceRecord = priceRecords.FirstOrDefault(x => x.DateOfCalc.Date.Equals(calculatedSitePrice.DateOfCalc.Date));
 
             if (existingPriceRecord == null)
             {
-                _context.SitePrices.Add(calculatedSitePrice);
+                calculatedSitePrice.JsSite = null;
+                //_context.Entry(calculatedSitePrice).State = EntityState.Detached;
+                //_context.SitePrices.Attach(calculatedSitePrice);
+                _context.Entry(calculatedSitePrice).State = EntityState.Added;
+                _context.SaveChanges();
+                return calculatedSitePrice;
             }
-            else
+            //_context.AttachAndModify(new SitePrice { Id = existingPriceRecord.Id }).Set(x => x.SuggestedPrice, calculatedSitePrice.SuggestedPrice);
+            var db = new RepositoryContext(_context.Database.Connection);
             {
+                db.Entry(existingPriceRecord).State = EntityState.Modified;
                 existingPriceRecord.SuggestedPrice = calculatedSitePrice.SuggestedPrice;
-                _context.Entry(existingPriceRecord).State = EntityState.Modified;
+                existingPriceRecord.DateOfCalc = calculatedSitePrice.DateOfCalc;
+                existingPriceRecord.DateOfPrice = calculatedSitePrice.DateOfPrice;
+                existingPriceRecord.UploadId = calculatedSitePrice.UploadId;
+                db.SaveChanges();
+                return existingPriceRecord;
             }
-            _context.SaveChanges();
-            return existingPriceRecord;
         }
 
+        /// <summary>
+        /// Generic method to Log an import error for the running import of FileUpload for both Daily and Quarterly files
+        /// </summary>
+        /// <param name="fileDetails"></param>
+        /// <param name="errorMessage"></param>
+        /// <param name="lineNumber"></param>
         public void LogImportError(FileUpload fileDetails, string errorMessage = "", int? lineNumber = 0)
         {
             var db = new RepositoryContext(_context.Database.Connection);
@@ -364,10 +429,15 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             db.SaveChanges();
         }
 
+        /// <summary>
+        /// Updated the FileUpload status as specified by param StatusId
+        /// </summary>
+        /// <param name="fileUpload">The fileUpload object whose status is to be updated</param>
+        /// <param name="statusId">Status to set for the uploaded file</param>
         public void UpdateImportProcessStatus(FileUpload fileUpload, int statusId)
         {
             var db = new RepositoryContext(_context.Database.Connection);
-            var fu = db.FileUploads.FirstOrDefault(x => x.Id == fileUpload.Id);
+            var fu = db.FileUploads.AsNoTracking().FirstOrDefault(x => x.Id == fileUpload.Id);
             if (fu == null) return;
             _context.Database.ExecuteSqlCommand("Update FileUpload Set StatusId = " + statusId + " where Id = " +
                                                 fileUpload.Id);

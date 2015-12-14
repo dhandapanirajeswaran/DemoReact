@@ -1,5 +1,7 @@
 ﻿using System;
+using System.IO;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Globalization;
 using System.Linq;
 using System.Web;
@@ -8,6 +10,7 @@ using System.Text;
 
 using JsPlc.Ssc.PetrolPricing.Models;
 using JsPlc.Ssc.PetrolPricing.Repository;
+using Newtonsoft.Json.Serialization;
 
 using Excel = Microsoft.Office.Interop.Excel;
 
@@ -19,49 +22,28 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 {
     public class FileService : BaseService, IDisposable
     {
+        private readonly PriceService _priceService = new PriceService();
+
         public FileUpload NewUpload(FileUpload fileUpload)
         {
             FileUpload newUpload = _db.NewUpload(fileUpload);
 
-            var processedFiles = UpdateDailyPrice(GetFileUploads(newUpload.UploadDateTime, newUpload.UploadTypeId, 1).ToList());
-            var fileUploads = processedFiles as IList<FileUpload> ?? processedFiles.ToList();
-            if (fileUploads.Any())
+            IEnumerable<FileUpload> processedFiles;
+            const int uploadedStatus = 1;
+            
+            // TODO - Use a fire and forget approach here
+            switch (newUpload.UploadTypeId)
             {
-                CalcSitePrices(fileUploads);
+                case 1: processedFiles = ProcessDailyPrice(GetFileUploads(newUpload.UploadDateTime, newUpload.UploadTypeId, uploadedStatus).ToList());
+                    _priceService.DoCalcDailyPrices(fileUpload.UploadDateTime);
+                    break;
+                case 2: processedFiles = ProcessQuarterlyFile(GetFileUploads(newUpload.UploadDateTime, newUpload.UploadTypeId, uploadedStatus).ToList());
+                    // TODO what happens when we have new Quarterly file uploaded, do we calc prices
+                    //_priceService.DoCalcPrices(fileUpload.UploadDateTime);
+                    break;
+                default: throw new ApplicationException("Not a valid File Type to import:" + newUpload.UploadTypeId);
             }
-
             return newUpload;
-        }
-
-        /// <summary>
-        /// Calculate prices for files Uploaded today and in a Success state. No retrosprctive calc, No future calc
-        /// </summary>
-        /// <param name="processedFiles"></param>
-        private void CalcSitePrices(IEnumerable<FileUpload> processedFiles)
-        {
-            var priceService = new PriceService();
-            var siteService = new SiteService(_db);
-            var forDate = DateTime.Now;
-
-            var sites = _db.GetSitesIncludePrices();
-            var fuels = LookupService.GetFuelTypes().ToList();
-
-            foreach (var processedFile in processedFiles)
-            {
-                // Only ones Uploaded today and successfully processed files
-                if (processedFile.UploadDateTime.Equals(forDate) && processedFile.Status.Id == 10) 
-                {
-                    foreach (var site in sites)
-                    {
-                        var tmpSite = site;
-                        foreach (var fuel in fuels.ToList())
-                        {
-                            var calculatedSitePrice = priceService.CalcPrice(site.Id, fuel.Id);
-                            var updatedPrice = _db.AddOrUpdateSitePriceRecord(calculatedSitePrice);
-                        }
-                    }
-                }
-            }
         }
 
         public void Dispose()
@@ -90,9 +72,20 @@ namespace JsPlc.Ssc.PetrolPricing.Business
             return _db.GetFileUpload(id);
         }
 
-        //Process Daily Files
-        public IEnumerable<FileUpload> UpdateDailyPrice(List<FileUpload> listOfFiles)
+        /// <summary>
+        /// Reads uploaded files one by one and imports them to DailyPrices table
+        /// - Picks files with Status 1 = Uploaded
+        /// - Sets status 5 = Processing, Reads thru file and adds records to DP,
+        /// - Sets FileUpload status to 10 Success or 15 if any error at all
+        /// - NEW DeleteRecordsForOlderImportsOfDate (yet to test)
+        /// TODO: ideally we should stop at the first successful file since we should only process the latest files first
+        /// </summary>
+        /// <param name="listOfFiles"></param>
+        /// <returns></returns>
+        public IEnumerable<FileUpload> ProcessDailyPrice(List<FileUpload> listOfFiles)
         {
+            listOfFiles = listOfFiles.OrderByDescending(x => x.UploadDateTime).ToList(); // start processing with the most recent file first
+
             foreach (FileUpload aFile in listOfFiles)
             {
                 _db.UpdateImportProcessStatus(aFile, 5);//Processing 5
@@ -104,7 +97,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
                     int lineNumber = 0;
                     List<bool> importStatus = new List<bool>();
                     List<DailyPrice> listOfDailyPricePrices = new List<DailyPrice>();
-                    filePathAndName = ""; // FORCES Error
+                    //filePathAndName = ""; // FORCES Error
 
                     var file = new StreamReader(filePathAndName.ToString(CultureInfo.InvariantCulture));
                     bool success = true;
@@ -134,7 +127,16 @@ namespace JsPlc.Ssc.PetrolPricing.Business
                     aFile.StatusId = importStatus.All(c => c) ? 10 : 15;
                     _db.UpdateImportProcessStatus(aFile, aFile.StatusId);
 
+                    // If the latest upload imports successfully 
                     file.Close();
+
+                    if (aFile.StatusId == 10)
+                    {
+                        // We clear out the dailyPrices for older imports and keep ONLY Latest set of DailyPrices
+                        // Reason - To keep DailyPrice table lean. Otherwise CalcPrice will take a long time to troll through a HUGE table
+                        _db.DeleteRecordsForOlderImportsOfDate(DateTime.Now, aFile.Id);
+                        // TODO Switch to exit loop on first successful import.
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -145,6 +147,19 @@ namespace JsPlc.Ssc.PetrolPricing.Business
             return listOfFiles;
         }
 
+        public IEnumerable<FileUpload> ProcessQuarterlyFile(List<FileUpload> uploadedFiles)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Parses the CSV line to make a DailyPrice object
+        /// - Logs error if parsing fails
+        /// </summary>
+        /// <param name="lineValues"></param>
+        /// <param name="lineNumber"></param>
+        /// <param name="aFile"></param>
+        /// <returns>DailyPrice or null</returns>
         private DailyPrice ParseDailyLineValues(string lineValues, int lineNumber, FileUpload aFile)
         {
             DailyPrice theDailyPrice = new DailyPrice();
