@@ -51,9 +51,38 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         void Dispose();
 
         SitePrice AddOrUpdateSitePriceRecord(SitePrice calculatedSitePrice);
-
-        // Reason - To keep DailyPrice table lean. Otherwise CalcPrice will take a long time to troll through a HUGE table
+      
+        /// <summary>
+        /// Reason - To keep DailyPrice table lean. Otherwise CalcPrice will take a long time to troll through a HUGE table
+        /// Clear criteria = Where date = today and fileId <> the successful Id (afile.Id)
+        /// </summary>
+        /// <param name="ofDate"></param>
+        /// <param name="uploadId"></param>
         void DeleteRecordsForOlderImportsOfDate(DateTime ofDate, int uploadId);
+
+        /// <summary>
+        /// Do we have any daily prices for a given fuelId on the date
+        /// </summary>
+        /// <param name="fuelId"></param>
+        /// <param name="usingPricesforDate"></param>
+        /// <returns></returns>
+        bool AnyDailyPricesForFuelOnDate(int fuelId, DateTime usingPricesforDate);
+
+
+        /// <summary>
+        /// Gets the FileUpload available for Calc/ReCalc 
+        /// i.e those which has been imported to DailyPrice either Successfully (or CalcFailed previously to allow rerun)
+        /// </summary>
+        /// <param name="forDate"></param>
+        /// <returns>Returns null if none available</returns>
+        FileUpload GetDailyFileAvailableForCalc(DateTime forDate);
+
+        /// <summary>
+        /// Any file in status Calculating
+        /// </summary>
+        /// <param name="forDate">Date concerned</param>
+        /// <returns>FileUpload</returns>
+        FileUpload GetDailyFileWithCalcRunningForDate(DateTime forDate);
     }
 
     public interface IPetrolPricingRepositoryLookup

@@ -109,7 +109,7 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
         /// <returns>SitePrice</returns>
         [System.Web.Http.HttpGet]
         [System.Web.Http.Route("api/CalcPrice/")]
-        public async Task<IHttpActionResult> CalcPrice([FromUri]int? siteId=0, [FromUri] int? fuelId=0, DateTime? forDate = null)
+        public async Task<IHttpActionResult> CalcPrice([FromUri]int siteId=0, [FromUri] int fuelId=0, DateTime? forDate = null)
         {
             // returns a SitePrice object, maybe later we call this for multiple fuels of the site
 
@@ -119,11 +119,11 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
             if (!forDate.HasValue) forDate = DateTime.Now; // DateTime.Parse("2015-11-30")
             if (fuelId !=0 && siteId != 0)
             {
-                price = _priceService.CalcPrice(siteId.Value, fuelId.Value, forDate.Value); // Unleaded
+                price = _priceService.CalcPrice(siteId, fuelId, forDate.Value); // Unleaded
             }
             else
             {
-                _priceService.DoCalcPrices(forDate);
+               var result = await _priceService.DoCalcDailyPrices(forDate); // multiple sites
             }
             return Ok(price);
         }

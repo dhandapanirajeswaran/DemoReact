@@ -42,6 +42,9 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             var fuelTypes = new List<FuelType>{
                 new FuelType{Id=1, FuelTypeName = "Super Unleaded"},
                 new FuelType{Id=2, FuelTypeName = "Unleaded"},
+                // TODO update when query clarified with Izzy. So far we might see these fuelCodes in Catalist so included it, so that imports carry on
+                new FuelType{Id=3, FuelTypeName = "Unknown1"}, // TODO
+                new FuelType{Id=4, FuelTypeName = "Unknown2"}, // TODO
                 new FuelType{Id=5, FuelTypeName = "Super Diesel"},
                 new FuelType{Id=6, FuelTypeName = "Diesel"},
                 new FuelType{Id=7, FuelTypeName = "LPG"},
@@ -52,10 +55,12 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
             // # Uploaded,Processing,Success,Failed (given gaps so if we want to introduce other status in between
             var importProcessStatuses = new List<ImportProcessStatus>{
-                new ImportProcessStatus{Id=1, Status = "Uploaded"},
-                new ImportProcessStatus{Id=5, Status = "Processing"},
-                new ImportProcessStatus{Id=10, Status = "Success"},
-                new ImportProcessStatus{Id=15, Status = "Failed"},
+                new ImportProcessStatus{Id=1, Status = "Uploaded"}, // only in FileSystem, not in table
+                new ImportProcessStatus{Id=5, Status = "Processing"}, // Importing to DP Table
+                new ImportProcessStatus{Id=10, Status = "Success"}, // Imported to DP, Usable for recalc
+                new ImportProcessStatus{Id=11, Status = "Calculating"}, // Populating SitePrice using DP
+                new ImportProcessStatus{Id=12, Status = "CalcFailed"}, // Populating SP failed, Usable for recalc
+                new ImportProcessStatus{Id=15, Status = "Failed"}, // Importing to DP failed
             };
 
             importProcessStatuses.ForEach(ips => context.ImportProcessStatus.Add(ips));

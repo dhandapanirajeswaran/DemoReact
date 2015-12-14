@@ -17,6 +17,7 @@ using JsPlc.Ssc.PetrolPricing.Models;
 
 using System.Data.Entity.Validation;
 using System.Diagnostics;
+using JsPlc.Ssc.PetrolPricing.Models.Common;
 using JsPlc.Ssc.PetrolPricing.Models.ViewModels;
 using EntityState = System.Data.Entity.EntityState;
 
@@ -167,11 +168,10 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                             sitePriceRow.FuelPrices.Add(new FuelPriceViewModel
                             {
                                 FuelTypeId = (int)pgRow["FuelTypeId"],
-                                Price = (int?)pgRow["SuggestedPrice"],
-                                OverridePrice = (int?)pgRow["OverriddenPrice"],
-                                YesterdaysPrice = Convert.IsDBNull(pgRow["OverriddenPriceYest"]) ?
-                                    (int?)pgRow["SuggestedPriceYest"]
-                                    : (int?)pgRow["OverriddenPriceYest"]
+                                Price = pgRow["SuggestedPrice"].ToString().ToNullable<int>(),
+                                OverridePrice = pgRow["OverriddenPrice"].ToString().ToNullable<int>(),
+                                YesterdaysPrice = pgRow["OverriddenPriceYest"].ToString().ToNullable<int>() ?? 
+                                        pgRow["SuggestedPriceYest"].ToString().ToNullable<int>()                                
                             });
                         }
                     }
@@ -342,12 +342,44 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                                             ofdate.ToString("yyyy-MM-dd"), uploadId);
             db.Database.ExecuteSqlCommand(deleteCmd);
         }
-       
-        
+
+        public bool AnyDailyPricesForFuelOnDate(int fuelId, DateTime usingPricesforDate)
+        {
+            var list1 = _context.DailyPrices.Include(x => x.DailyUpload).Where(x => x.FuelTypeId.Equals(fuelId)).ToList();
+            var list2 = list1.Any(x => x.DailyUpload.UploadDateTime.Date.Equals(usingPricesforDate.Date));
+            return list1.Any() && list2;
+        }
+
+        /// <summary>
+        /// Gets the FileUpload available for Calc/ReCalc 
+        /// i.e those which has been imported to DailyPrice either Successfully (or CalcFailed previously to allow rerun)
+        /// </summary>
+        /// <param name="forDate"></param>
+        /// <returns>Returns null if none available</returns>
+        public FileUpload GetDailyFileAvailableForCalc(DateTime forDate)
+        {
+            // Inline sql as date comparison fails in Linq
+            var uploadIds = _context.Database.SqlQuery<int>(
+                    String.Format("Select distinct fu.Id from FileUpload fu, DailyPrice dp Where fu.Id = dp.DailyUploadId " +
+                                  " and fu.UploadTypeId = 1" +
+                                  " and DateDiff(d, UploadDateTime, '{0}') = 0 and fu.StatusId in (10, 12)", 
+                    forDate.ToString("yyyy-MM-dd"))).ToArray();
+
+            var fileUploads = _context.FileUploads.Where(x => uploadIds.Contains(x.Id));
+            return fileUploads.Any() ? fileUploads.FirstOrDefault() : null;
+        }
+
+        public FileUpload GetDailyFileWithCalcRunningForDate(DateTime forDate)
+        {
+            var calcUploads = _context.FileUploads.Where(x => x.StatusId == 11 && x.StatusId == 1);
+            if (!calcUploads.Any()) return null;
+
+            var calcFileRunningForDate = calcUploads.ToList().FirstOrDefault(x => x.UploadDateTime.Date.Equals(forDate.Date));
+            return calcFileRunningForDate; // could be null
+        }
+
         public SitePrice AddOrUpdateSitePriceRecord(SitePrice calculatedSitePrice)
         {
-            //var db = new RepositoryContext(_context.Database.Connection);
-            // Find the Site Price record for a Given Site, Fuel and Date
             var priceRecords = _context.SitePrices.AsNoTracking().Where(
                 x => x.SiteId == calculatedSitePrice.SiteId 
                     && x.FuelTypeId == calculatedSitePrice.FuelTypeId).ToList();
@@ -355,6 +387,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
             if (existingPriceRecord == null)
             {
+                calculatedSitePrice.JsSite = null;
                 //_context.Entry(calculatedSitePrice).State = EntityState.Detached;
                 //_context.SitePrices.Attach(calculatedSitePrice);
                 _context.Entry(calculatedSitePrice).State = EntityState.Added;
@@ -365,10 +398,10 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             var db = new RepositoryContext(_context.Database.Connection);
             {
                 db.Entry(existingPriceRecord).State = EntityState.Modified;
-                //calculatedSitePrice.SuggestedPrice = 1089;
                 existingPriceRecord.SuggestedPrice = calculatedSitePrice.SuggestedPrice;
                 existingPriceRecord.DateOfCalc = calculatedSitePrice.DateOfCalc;
                 existingPriceRecord.DateOfPrice = calculatedSitePrice.DateOfPrice;
+                existingPriceRecord.UploadId = calculatedSitePrice.UploadId;
                 db.SaveChanges();
                 return existingPriceRecord;
             }

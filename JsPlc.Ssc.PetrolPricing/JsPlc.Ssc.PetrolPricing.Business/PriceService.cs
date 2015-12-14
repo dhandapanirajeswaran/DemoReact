@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.Design;
 using System.Data.Entity;
+using System.Diagnostics;
 using System.Linq;
-using System.Runtime.Remoting.Messaging;
+using System.Threading;
+using System.Threading.Tasks;
 using JsPlc.Ssc.PetrolPricing.Models;
 
 namespace JsPlc.Ssc.PetrolPricing.Business
@@ -14,7 +15,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 
         public PriceService()
         {
-            
+
         }
         public PriceService(bool includeJsSitesAsCompetitors)
         {
@@ -22,47 +23,98 @@ namespace JsPlc.Ssc.PetrolPricing.Business
         }
 
         /// <summary>
-        /// Pickup success status files and pick the latest file and run calc with that
+        /// Pickup latest upload file with success/CalcFailed status and run calc with that
+        /// This is purely for use indication. 
+        /// The CalcPrice relies on the DailyPrice table not a specific file param.
+        /// To protect against multiple runs of Calc simultaneously - 
+        ///     Checks if calc is running and Throws exception if already calc is running and tell you the uploadId. 
         /// </summary>
         /// <param name="forDate"></param>
-        public void DoCalcPrices(DateTime? forDate)
+        public async Task<bool> DoCalcDailyPrices(DateTime? forDate)
         {
             if (!forDate.HasValue) forDate = DateTime.Now;
             // Only ones Uploaded today and successfully processed files
-            var processedFiles =  _db.GetFileUploads(forDate, 1, 10).ToList(); // 1 = DailyFile, 10 = Success
-            if (processedFiles.Any())
+            //var processedFiles = _db.GetFileUploads(forDate, 1, 10).ToList(); // 1 = DailyFile, 10 = Success
+            //if (processedFiles.Any())
             {
-                CalcSitePrices(processedFiles);
+                // Pick file with Status Success or CalcFailed & Update status to Calculating
+                var dpFile = _db.GetDailyFileAvailableForCalc(forDate.Value);
+                var calcRunningFile = _db.GetDailyFileWithCalcRunningForDate(forDate.Value);
+
+                if (calcRunningFile != null)
+                    throw new ApplicationException(
+                        "Calculation already running, please wait until that completes. UploadId:" + calcRunningFile.Id);
+                if (dpFile == null)
+                    throw new ApplicationException(
+                        "No file available for calc, please provide a new Daily Price upload.");
+
+                try
+                {
+                    _db.UpdateImportProcessStatus(dpFile, 11); //Calculating 6
+
+                    var taskData = new CalcTaskData {ForDate = forDate.Value, FileUpload = dpFile};
+
+                    // LONG Running Task - Fire and Forget
+                    Task t = new Task(() => DoCalcAsync(taskData));
+                    t.Start();
+                    Debug.WriteLine("Calculation fired...");
+                    Trace.WriteLine("Calculation fired... for fileID:" + dpFile.Id);
+                }
+                catch (Exception)
+                {
+                    _db.UpdateImportProcessStatus(dpFile, 12);
+                        //CalcFailed  (we intentionally use the same success status since we might wanna kickoff the calc again using same successful staus files)
+                }
+            }
+            return true;
+        }
+
+        private async Task DoCalcAsync(CalcTaskData calcTaskData)
+        {
+            try
+            {
+                bool result = await Task.FromResult(CalcAllSitePrices(calcTaskData.ForDate));
+                _db.UpdateImportProcessStatus(calcTaskData.FileUpload, result ? 10 : 12);
+                //Success 10 (we intentionally use the same success status since we might wanna kickoff the calc again using same successful staus files)
+            }
+            catch (Exception)
+            {
+                _db.UpdateImportProcessStatus(calcTaskData.FileUpload, 12);
             }
         }
 
         /// <summary>
-        /// Calculate prices for files Uploaded today and in a Success state. No retrosprctive calc, No future calc
+        /// Calculate prices for files Uploaded today and in a Success state. 
+        /// No retrospective calc, No future calc
         /// </summary>
-        /// <param name="processedFiles"></param>
-        private void CalcSitePrices(IEnumerable<FileUpload> processedFiles)
+        ///// <param name="processedFiles">This param is not required as the DP has only 1 price SET for a given day</param>
+        /// <param name="forDate">Optional - use prices of these dates</param>
+        private bool CalcAllSitePrices(DateTime? forDate = null)
         {
+            // SIMULATE a long running task
+            Thread.Sleep(10000);
+
             var priceService = new PriceService();
-            var siteService = new SiteService(_db);
-            var forDate = DateTime.Now;
+            if(!forDate.HasValue) forDate = DateTime.Now;
 
             var sites = _db.GetSites().AsQueryable().AsNoTracking();
             var fuels = LookupService.GetFuelTypes().AsQueryable().AsNoTracking().ToList();
 
-            foreach (var processedFile in processedFiles)
+            foreach (var site in sites)
             {
-                foreach (var site in sites)
+                var tmpSite = site;
+                foreach (var fuel in fuels.ToList())
                 {
-                    var tmpSite = site;
-                    foreach (var fuel in fuels.ToList())
-                    {
-                        var calculatedSitePrice = priceService.CalcPrice(site.Id, fuel.Id);
-                    }
+                    Debug.WriteLine("Calculation started ... for site:" + site.Id);
+                    var calculatedSitePrice = priceService.CalcPrice(tmpSite.Id, fuel.Id, forDate);
+                    // AddOrUpdate doesnt work here, only works within the CalcPrice method, Ughh EF!!
+                    //if (calculatedSitePrice != null) { var updatedPrice = _db.AddOrUpdateSitePriceRecord(tmpSite, calculatedSitePrice);} 
                 }
             }
+            return true;
         }
         /// <summary>
-        /// Calculate price of a Fuel for a Given JS Site based on Pricing Rules
+        /// Calculate price of a Fuel for a Given JS Site based on Pricing Rules and updates DB
         ///  As per flow diagram 30 Nov 2015
         /// Normally we use Prices for Date on which method is RUN, but we can force it to use any other days DP file (simulation testing)
         /// </summary>
@@ -75,8 +127,9 @@ namespace JsPlc.Ssc.PetrolPricing.Business
             if (!usingPricesforDate.HasValue) usingPricesforDate = DateTime.Now; // Uses dailyPrices of competitors Upload date matching this date
 
             var site = _db.GetSite(siteId);
-            if (site == null) return null;
-
+            if (site == null || !site.CatNo.HasValue) return null;
+            if (!_db.AnyDailyPricesForFuelOnDate(fuelId, usingPricesforDate.Value))
+                return null;
             // APPLY PRICING RULES: based on drivetime (see Market Comparison sheet) as per meeting 02Dec2015 @ 13:00
             // If 0-5 mins away – match to minimum competitor
             // If 5-10 mins away – add 1p to minimum competitor 
@@ -109,24 +162,24 @@ namespace JsPlc.Ssc.PetrolPricing.Business
             var competitor = cheapestCompetitor.Value.Key;
             var markup = cheapestCompetitor.Value.Value;
 
-            var retval = new SitePrice
+            var cheapestPrice = new SitePrice
             {
                 SiteId = siteId,
-                JsSite = site,
+                //JsSite = site,
                 FuelTypeId = fuelId,
                 DateOfPrice = competitor.DailyPrice.DateOfPrice,
                 UploadId = competitor.DailyPrice.DailyUploadId, // If we can provide traceability to calc file, then why not
                 SuggestedPrice = competitor.DailyPrice.ModalPrice + markup * 10, // since modalPrice is held in pence*10 (Catalist format)
-                DateOfCalc = DateTime.Now.Date // Only date component
+                DateOfCalc = usingPricesforDate.Value.Date // Only date component
             };
-            var updatedPrice = _db.AddOrUpdateSitePriceRecord(retval); // This is done in caller.
-            return updatedPrice;
+            // Ideally this should be done in caller.
+            var retval = _db.AddOrUpdateSitePriceRecord(cheapestPrice); 
+            return cheapestPrice;
         }
 
         /// <summary>
         /// 1. Find competitors within drivetime criteria
         /// 2. If none found returns null
-        /// 3. Else Find 
         /// </summary>
         /// <param name="siteId"></param>
         /// <param name="driveTimeFrom"></param>
@@ -135,9 +188,9 @@ namespace JsPlc.Ssc.PetrolPricing.Business
         /// <param name="usingPricesForDate"></param>
         /// <param name="markup"></param>
         /// <param name="includeJsSiteAsComp"></param>
-        /// <returns></returns>
+        /// <returns>Pair = Competitor, Markup(input param outputted)</returns>
         private KeyValuePair<CheapestCompetitor, int>? GetCheapestPriceUsingParams(
-            int siteId, int driveTimeFrom, int driveTimeTo, int fuelId, 
+            int siteId, int driveTimeFrom, int driveTimeTo, int fuelId,
             DateTime usingPricesForDate, int markup, bool includeJsSiteAsComp = false)
         {
             var competitorsXtoYmiles = _db.GetCompetitors(siteId, driveTimeFrom, driveTimeTo, includeJsSiteAsComp).ToList(); // Only Non-JS competitors (2nd arg false)
@@ -170,15 +223,22 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 
             return new CheapestCompetitor
             {
-                CompetitorWithDriveTime = competitor, 
+                CompetitorWithDriveTime = competitor,
                 DailyPrice = cheapestPrice
             };
         }
 
-        private IEnumerable<DailyPrice> GetDailyPricesForFuelByCompetitors(IEnumerable<int> competitorCatNos, int fuelId, 
+        private IEnumerable<DailyPrice> GetDailyPricesForFuelByCompetitors(IEnumerable<int> competitorCatNos, int fuelId,
             DateTime usingPricesforDate)
         {
             return _db.GetDailyPricesForFuelByCompetitors(competitorCatNos, fuelId, usingPricesforDate);
         }
     }
+
+    internal class CalcTaskData
+    {
+        public DateTime ForDate { get; set; }
+        public FileUpload FileUpload { get; set; }
+    }
+
 }

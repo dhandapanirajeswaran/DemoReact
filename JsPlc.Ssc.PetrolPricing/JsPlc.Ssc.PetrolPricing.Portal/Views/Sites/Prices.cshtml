@@ -131,27 +131,42 @@
                 <td><span data-bind="text: StoreName">@site.StoreName</span></td>
                 <td><span data-bind="text: CatNo"></span>@site.CatNo</td>
                 <td><span data-bind="text: PFSNo"></span>@site.PfsNo</td>
-
+                @{
+                    var fuelPrices = site.FuelPrices;
+                    float unleadedTomo=0, unleadedOver=0, unleadedToday = 0;
+                    if (fuelPrices != null && fuelPrices.Any())
+                    {
+                        var fp = fuelPrices.FirstOrDefault(x => x.FuelTypeId == 2);
+                        if (fp != null)
+                        {
+                            unleadedTomo = fp.Price ?? 0;
+                            unleadedOver = fp.OverridePrice ?? 0;
+                            unleadedToday = fp.YesterdaysPrice ?? 0;
+                        }
+                    }
+                }
                 <td>
-                    <span data-bind="text: FuelPriceToday">108.9</span>
+                    <span data-bind="text: FuelPriceToday">@(unleadedToday/10)</span>
                 </td>
                 <td>
-                <i class="fa fa-arrow-circle-o-down" style="color: red; font-size: 100%;"></i>&nbsp;<span data-bind="text: FuelPriceTomorrowAutoCalc">107.9</span>
-                <input type="text" data-bind="value: FuelPriceTomorrowOverridden" class="txtPrice" />
+                    <i class="fa fa-arrow-circle-o-down" style="color: red; font-size: 100%;"></i>
+                    &nbsp;<span data-bind="text: FuelPriceTomorrowAutoCalc">@unleadedTomo</span>
+                    <input type="text" data-bind="value: FuelPriceTomorrowOverridden" class="txtPrice" value="@unleadedOver/10" />
                 <td>
-                    <span data-bind="text: FuelPriceToday">108.9</span>
-
+                    <span data-bind="text: FuelPriceToday">@unleadedToday</span>
                 </td>
                 <td>
-                    <i class="fa fa-arrow-circle-o-down" style="color: red; font-size: 100%;"></i>&nbsp;<span data-bind="text: FuelPriceTomorrowAutoCalc">107.9</span>
-                    <input type="text" data-bind="value: FuelPriceTomorrowOverridden" class="txtPrice" />
+                    <i class="fa fa-arrow-circle-o-down" style="color: red; font-size: 100%;"></i>
+                    &nbsp;<span data-bind="text: FuelPriceTomorrowAutoCalc">@unleadedTomo</span>
+                    <input type="text" data-bind="value: FuelPriceTomorrowOverridden" class="txtPrice" value="@unleadedOver" />
                 </td>
                 <td>
-                    <span data-bind="text: FuelPriceToday">108.9</span>
+                    <span data-bind="text: FuelPriceToday">@unleadedToday</span>
                 </td>
                 <td>
-                    <i class="fa fa-arrow-circle-o-down" style="color: red; font-size: 100%;"></i>&nbsp;<span data-bind="text: FuelPriceTomorrowAutoCalc">107.9</span>
-                    <input type="text" data-bind="value: FuelPriceTomorrowOverridden" class="txtPrice" />
+                    <i class="fa fa-arrow-circle-o-down" style="color: red; font-size: 100%;"></i>
+                    &nbsp;<span data-bind="text: FuelPriceTomorrowAutoCalc">@unleadedTomo</span>
+                    <input type="text" data-bind="value: FuelPriceTomorrowOverridden" class="txtPrice" value="@unleadedOver" />
                 </td>
             </tr>
             <tr id='@("CollapseCompetitorsforsite" + site.SiteId)' class="panel-collapse collapse" role="tabpanel">

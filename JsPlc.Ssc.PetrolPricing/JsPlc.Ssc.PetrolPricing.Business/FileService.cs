@@ -1,20 +1,19 @@
 ﻿using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Globalization;
 using System.Linq;
-using System.Web;
 using JsPlc.Ssc.PetrolPricing.Models;
 using JsPlc.Ssc.PetrolPricing.Repository;
-
-using System.IO;
 using Newtonsoft.Json.Serialization;
 
 namespace JsPlc.Ssc.PetrolPricing.Business
 {
     public class FileService : BaseService, IDisposable
     {
-        private PriceService _priceService = new PriceService();
+        private readonly PriceService _priceService = new PriceService();
+
         public FileUpload NewUpload(FileUpload fileUpload)
         {
             FileUpload newUpload = _db.NewUpload(fileUpload);
@@ -26,7 +25,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
             switch (newUpload.UploadTypeId)
             {
                 case 1: processedFiles = ProcessDailyPrice(GetFileUploads(newUpload.UploadDateTime, newUpload.UploadTypeId, uploadedStatus).ToList());
-                    _priceService.DoCalcPrices(fileUpload.UploadDateTime);
+                    _priceService.DoCalcDailyPrices(fileUpload.UploadDateTime);
                     break;
                 case 2: processedFiles = ProcessQuarterlyFile(GetFileUploads(newUpload.UploadDateTime, newUpload.UploadTypeId, uploadedStatus).ToList());
                     // TODO what happens when we have new Quarterly file uploaded, do we calc prices
@@ -75,7 +74,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
         /// <returns></returns>
         public IEnumerable<FileUpload> ProcessDailyPrice(List<FileUpload> listOfFiles)
         {
-            listOfFiles = listOfFiles.OrderByDescending(x => x.UploadDateTime).ToList(); // start processing with te most recent file first
+            listOfFiles = listOfFiles.OrderByDescending(x => x.UploadDateTime).ToList(); // start processing with the most recent file first
 
             foreach (FileUpload aFile in listOfFiles)
             {
@@ -119,14 +118,15 @@ namespace JsPlc.Ssc.PetrolPricing.Business
                     _db.UpdateImportProcessStatus(aFile, aFile.StatusId);
 
                     // If the latest upload imports successfully 
+                    file.Close();
 
                     if (aFile.StatusId == 10)
                     {
-                        // TODO we should clear out the dailyPrices for older imports and keep ONLY Latest set of DailyPrices (untested)
+                        // We clear out the dailyPrices for older imports and keep ONLY Latest set of DailyPrices
                         // Reason - To keep DailyPrice table lean. Otherwise CalcPrice will take a long time to troll through a HUGE table
-                        _db.DeleteRecordsForOlderImportsOfDate(DateTime.Now, aFile.Id); // Where date = today and fileId <> the successful Id (afile.Id)
+                        _db.DeleteRecordsForOlderImportsOfDate(DateTime.Now, aFile.Id);
+                        // TODO Switch to exit loop on first successful import.
                     }
-                    file.Close();
                 }
                 catch (Exception ex)
                 {
