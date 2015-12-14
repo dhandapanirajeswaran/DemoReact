@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Globalization;
 using System.Linq;
+using System.Threading.Tasks;
 using JsPlc.Ssc.PetrolPricing.Models;
 using JsPlc.Ssc.PetrolPricing.Repository;
 using Newtonsoft.Json.Serialization;
@@ -14,18 +15,18 @@ namespace JsPlc.Ssc.PetrolPricing.Business
     {
         private readonly PriceService _priceService = new PriceService();
 
-        public FileUpload NewUpload(FileUpload fileUpload)
+        public async Task<FileUpload> NewUpload(FileUpload fileUpload)
         {
             FileUpload newUpload = _db.NewUpload(fileUpload);
 
             IEnumerable<FileUpload> processedFiles;
             const int uploadedStatus = 1;
             
-            // TODO - Use a fire and forget approach here
+            // Use a fire and forget approach
             switch (newUpload.UploadTypeId)
             {
                 case 1: processedFiles = ProcessDailyPrice(GetFileUploads(newUpload.UploadDateTime, newUpload.UploadTypeId, uploadedStatus).ToList());
-                    _priceService.DoCalcDailyPrices(fileUpload.UploadDateTime);
+                    await _priceService.DoCalcDailyPrices(fileUpload.UploadDateTime); // dont await this.. let it run in background..
                     break;
                 case 2: processedFiles = ProcessQuarterlyFile(GetFileUploads(newUpload.UploadDateTime, newUpload.UploadTypeId, uploadedStatus).ToList());
                     // TODO what happens when we have new Quarterly file uploaded, do we calc prices

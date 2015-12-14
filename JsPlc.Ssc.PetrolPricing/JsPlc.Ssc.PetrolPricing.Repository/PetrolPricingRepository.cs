@@ -369,6 +369,17 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             return fileUploads.Any() ? fileUploads.FirstOrDefault() : null;
         }
 
+        /// <summary>
+        /// Mark file status = Failed for any imports/calcs exceeeding 5 min
+        /// </summary>
+        public void FailHangedFileUploadOrCalcs()
+        {
+            _context.Database.ExecuteSqlCommand("Update FileUpload Set StatusId = 15 Where " +
+                                                "StatusId = 5 and DateDiff(MINUTE, UploadDateTime, GetDate()) >= 5");
+            _context.Database.ExecuteSqlCommand("Update FileUpload Set StatusId = 12 Where " +
+                                                "StatusId = 11 and DateDiff(MINUTE, UploadDateTime, GetDate()) >= 5");
+        }
+
         public FileUpload GetDailyFileWithCalcRunningForDate(DateTime forDate)
         {
             var calcUploads = _context.FileUploads.Where(x => x.StatusId == 11 && x.StatusId == 1);

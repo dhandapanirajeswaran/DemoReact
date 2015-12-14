@@ -48,6 +48,11 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
         void LogImportError(FileUpload fileDetails, string errorMessage, int? lineNumber);
 
+        /// <summary>
+        /// Mark file status = Failed for any imports/calcs exceeeding 5 min
+        /// </summary>
+        void FailHangedFileUploadOrCalcs();
+
         void Dispose();
 
         SitePrice AddOrUpdateSitePriceRecord(SitePrice calculatedSitePrice);

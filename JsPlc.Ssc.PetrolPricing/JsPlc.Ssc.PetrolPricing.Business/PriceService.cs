@@ -66,6 +66,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
                         //CalcFailed  (we intentionally use the same success status since we might wanna kickoff the calc again using same successful staus files)
                 }
             }
+            await Task.FromResult(0);
             return true;
         }
 
