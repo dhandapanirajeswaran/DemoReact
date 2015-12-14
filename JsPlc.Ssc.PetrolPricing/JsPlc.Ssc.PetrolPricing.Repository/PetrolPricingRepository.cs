@@ -200,7 +200,6 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             return _context.Sites.Include(s => s.Emails).FirstOrDefault(q => q.Id == id);
         }
 
-
         public Site GetSiteByCatNo(int catNo)
         {
             return _context.Sites.FirstOrDefault(q => q.CatNo.HasValue && q.CatNo.Value == catNo);
