@@ -72,6 +72,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
             return true;
         }
 
+        // LONG Running Task (also updates status within it)
         private async Task DoCalcAsync(CalcTaskData calcTaskData)
         {
             try
@@ -94,8 +95,8 @@ namespace JsPlc.Ssc.PetrolPricing.Business
         /// <param name="forDate">Optional - use prices of these dates</param>
         private bool CalcAllSitePrices(DateTime? forDate = null)
         {
-            // SIMULATE a long running task
-            Thread.Sleep(10000);
+            // SIMULATE a long running task (TODO remove delay simulation)
+            Task.Delay(5000);
 
             var priceService = new PriceService();
             if(!forDate.HasValue) forDate = DateTime.Now;
