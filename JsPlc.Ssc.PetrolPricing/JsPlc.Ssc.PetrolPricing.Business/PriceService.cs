@@ -52,7 +52,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
                 {
                     _db.FailHangedFileUploadOrCalcs(); // Fail any calcs taking over 5 mins..
 
-                    _db.UpdateImportProcessStatus(dpFile, 11); //Calculating 6
+                    _db.UpdateImportProcessStatus(11, dpFile); //Calculating 6
 
                     var taskData = new CalcTaskData {ForDate = forDate.Value, FileUpload = dpFile};
 
@@ -64,8 +64,8 @@ namespace JsPlc.Ssc.PetrolPricing.Business
                 }
                 catch (Exception)
                 {
-                    _db.UpdateImportProcessStatus(dpFile, 12);
-                        //CalcFailed  (we intentionally use the same success status since we might wanna kickoff the calc again using same successful staus files)
+                    _db.UpdateImportProcessStatus(12, dpFile);
+                        //CalcFailed
                 }
             }
             await Task.FromResult(0);
@@ -78,12 +78,12 @@ namespace JsPlc.Ssc.PetrolPricing.Business
             try
             {
                 bool result = await Task.FromResult(CalcAllSitePrices(calcTaskData.ForDate));
-                _db.UpdateImportProcessStatus(calcTaskData.FileUpload, result ? 10 : 12);
+                _db.UpdateImportProcessStatus(result ? 10 : 12, calcTaskData.FileUpload);
                 //Success 10 (we intentionally use the same success status since we might wanna kickoff the calc again using same successful staus files)
             }
             catch (Exception)
             {
-                _db.UpdateImportProcessStatus(calcTaskData.FileUpload, 12);
+                _db.UpdateImportProcessStatus(12, calcTaskData.FileUpload);
             }
         }
 

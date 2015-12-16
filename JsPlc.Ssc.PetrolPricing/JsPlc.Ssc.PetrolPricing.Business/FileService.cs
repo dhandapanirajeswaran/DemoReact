@@ -89,7 +89,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 
             foreach (FileUpload aFile in listOfFiles)
             {
-                _db.UpdateImportProcessStatus(aFile, 5);//Processing 5
+                _db.UpdateImportProcessStatus(5, aFile);//Processing 5
                 var storedFilePath = SettingsService.GetUploadPath();
                 var filePathAndName = Path.Combine(storedFilePath, aFile.StoredFileName);
                 try
@@ -126,7 +126,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
                         listOfDailyPricePrices.Clear();
                     }
                     aFile.StatusId = importStatus.All(c => c) ? 10 : 15;
-                    _db.UpdateImportProcessStatus(aFile, aFile.StatusId);
+                    _db.UpdateImportProcessStatus(aFile.StatusId, aFile);
 
                     // If the latest upload imports successfully 
                     file.Close();
@@ -142,7 +142,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
                 catch (Exception ex)
                 {
                     _db.LogImportError(aFile, ex.Message + "filePath=" + filePathAndName, null);
-                    _db.UpdateImportProcessStatus(aFile, 15);
+                    _db.UpdateImportProcessStatus(15, aFile);
                 }
             }
             return listOfFiles;

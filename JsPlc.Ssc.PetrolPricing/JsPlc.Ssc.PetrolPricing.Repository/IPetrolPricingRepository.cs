@@ -34,7 +34,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
         IEnumerable<DailyPrice> GetDailyPricesForFuelByCompetitors(IEnumerable<int> competitorCatNos, int fuelId, DateTime usingPricesForDate);
 
-        void UpdateImportProcessStatus(FileUpload fileUpload, int statusId);
+        void UpdateImportProcessStatus(int statusId, FileUpload fileUpload);
 
         IEnumerable<FileUpload> GetFileUploads(DateTime? date, int? uploadType, int? statusId);
 

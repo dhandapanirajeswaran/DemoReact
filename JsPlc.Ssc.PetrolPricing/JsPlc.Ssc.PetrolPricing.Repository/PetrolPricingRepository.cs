@@ -223,8 +223,6 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             //_db.Sites.AddOrUpdate(site);
             //_db.SaveChanges();
 
-            // TODO Email edits and deletes are not impacting DB yet
-
             _context.Entry(site).State = EntityState.Modified;
 
             try
@@ -354,7 +352,8 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
         /// <summary>
         /// Gets the FileUpload available for Calc/ReCalc 
-        /// i.e those which has been imported to DailyPrice either Successfully (or CalcFailed previously to allow rerun)
+        /// i.e those which has been imported to DailyPrice either Successfully OR 
+        /// (ImportAborted or CalcAborted previously to allow rerun)
         /// </summary>
         /// <param name="forDate"></param>
         /// <returns>Returns null if none available</returns>
@@ -364,7 +363,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             var uploadIds = _context.Database.SqlQuery<int>(
                     String.Format("Select distinct fu.Id from FileUpload fu, DailyPrice dp Where fu.Id = dp.DailyUploadId " +
                                   " and fu.UploadTypeId = 1" +
-                                  " and DateDiff(d, UploadDateTime, '{0}') = 0 and fu.StatusId in (10, 12)", 
+                                  " and DateDiff(d, UploadDateTime, '{0}') = 0 and fu.StatusId in (10, 16, 17)", 
                     forDate.ToString("yyyy-MM-dd"))).ToArray();
 
             var fileUploads = _context.FileUploads.Where(x => uploadIds.Contains(x.Id));
@@ -448,7 +447,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         /// </summary>
         /// <param name="fileUpload">The fileUpload object whose status is to be updated</param>
         /// <param name="statusId">Status to set for the uploaded file</param>
-        public void UpdateImportProcessStatus(FileUpload fileUpload, int statusId)
+        public void UpdateImportProcessStatus(int statusId, FileUpload fileUpload)
         {
             var db = new RepositoryContext(_context.Database.Connection);
             var fu = db.FileUploads.AsNoTracking().FirstOrDefault(x => x.Id == fileUpload.Id);
