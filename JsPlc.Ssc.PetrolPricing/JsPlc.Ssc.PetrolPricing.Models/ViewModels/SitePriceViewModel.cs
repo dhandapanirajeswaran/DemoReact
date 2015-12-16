@@ -25,10 +25,12 @@ namespace JsPlc.Ssc.PetrolPricing.Models.ViewModels
     {
         public int FuelTypeId { get; set; }
 
-        public int? Price { get; set; } // from db
+        // Tomorrow's Prices
+        public int? AutoPrice { get; set; } // from db
         public int? OverridePrice { get; set; } // from db & user input (only used for JS Sites)
 
-        public int? YesterdaysPrice { get; set; } // from db
+        // Todays's Prices
+        public int? TodayPrice { get; set; } // from db
     }
 
 }

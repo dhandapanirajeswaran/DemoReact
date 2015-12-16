@@ -168,10 +168,13 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                             sitePriceRow.FuelPrices.Add(new FuelPriceViewModel
                             {
                                 FuelTypeId = (int)pgRow["FuelTypeId"],
-                                Price = pgRow["SuggestedPrice"].ToString().ToNullable<int>(),
-                                OverridePrice = pgRow["OverriddenPrice"].ToString().ToNullable<int>(),
-                                YesterdaysPrice = pgRow["OverriddenPriceYest"].ToString().ToNullable<int>() ?? 
-                                        pgRow["SuggestedPriceYest"].ToString().ToNullable<int>()                                
+                                // Tomorrow's prices
+                                AutoPrice = (int)pgRow["SuggestedPrice"],
+                                OverridePrice = (int)pgRow["OverriddenPrice"],
+
+                                // Today's prices (whatever was calculated yesterday OR last)
+                                TodayPrice = ((int)pgRow["OverriddenPriceToday"] == 0) ?
+                                                (int)pgRow["SuggestedPriceToday"] : (int)pgRow["OverriddenPriceToday"]
                             });
                         }
                     }

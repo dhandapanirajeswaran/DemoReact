@@ -40,11 +40,11 @@ Select  DateDiff(day, @anotherDt, @thedate) -- (gives 2nd param - 1st param)
 	Offset @skipRecs ROWS
 	Fetch Next @takeRecs ROWS ONLY
 )
-,todaysPrices as
+,tomorrowsPrices as
 (
 	Select * from sitePrices Where DateDiff(day, DateOfCalc, @forDate) = 0
 )
-,yesterdaysPrices as
+,todaysPrices as
 (
 	Select * from sitePrices Where DateDiff(day, DateOfCalc, @forDate) = 1
 )
@@ -54,21 +54,21 @@ Select  DateDiff(day, @anotherDt, @thedate) -- (gives 2nd param - 1st param)
 		s.SiteName, s.Address, s.Suburb, s.Town,  
 		s.IsSainsburysSite, s.Brand, s.Company, s.Ownership,
 
-		todaysPrices.FuelTypeId, todaysPrices.FuelTypeName, 
-		todaysPrices.DateOfCalc, todaysPrices.DateOfPrice, 
-		todaysPrices.SuggestedPrice, todaysPrices.OverriddenPrice,
+		tomorrowsPrices.FuelTypeId, tomorrowsPrices.FuelTypeName, 
+		tomorrowsPrices.DateOfCalc, tomorrowsPrices.DateOfPrice, 
+		tomorrowsPrices.SuggestedPrice, tomorrowsPrices.OverriddenPrice,
 
-		yesterdaysPrices.DateOfCalc DateOfCalcYest, yesterdaysPrices.DateOfPrice DateOfPriceYest, 
-		yesterdaysPrices.SuggestedPrice SuggestedPriceYest, yesterdaysPrices.OverriddenPrice OverriddenPriceYest
+		todaysPrices.DateOfCalc DateOfCalcForTodaysPrice, todaysPrices.DateOfPrice DateOfPriceForTodaysPrice, 
+		todaysPrices.SuggestedPrice SuggestedPriceToday, todaysPrices.OverriddenPrice OverriddenPriceToday
 	FROM 
 	Sites s 
+		Left outer join tomorrowsPrices
+			On s.Id = tomorrowsPrices.SiteId
 		Left outer join todaysPrices
 			On s.Id = todaysPrices.SiteId
-		Left outer join yesterdaysPrices
-			On s.Id = yesterdaysPrices.SiteId
 	Where 
-		(todaysPrices.DateOfCalc is null OR DateDiff(day, todaysPrices.DateOfCalc, @forDate) = 0)
-		AND (yesterdaysPrices.DateOfCalc is null OR DateDiff(day, yesterdaysPrices.DateOfCalc, @forDate) = 1)
+		(tomorrowsPrices.DateOfCalc is null OR DateDiff(day, tomorrowsPrices.DateOfCalc, @forDate) = 0)
+		AND (todaysPrices.DateOfCalc is null OR DateDiff(day, todaysPrices.DateOfCalc, @forDate) = 1)
 		AND s.IsSainsburysSite = 1
 )
 Select * from sitesWithPrices 

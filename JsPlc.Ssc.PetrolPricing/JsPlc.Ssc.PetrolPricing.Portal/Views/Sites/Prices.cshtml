@@ -1,7 +1,4 @@
-﻿@using JsPlc.Ssc.PetrolPricing.Models
-@using JsPlc.Ssc.PetrolPricing.Models.ViewModels
-@model IEnumerable<SitePriceViewModel>
-@{
+﻿@{
     ViewBag.Title = "Site Prices";
 }
 <!-- Modal -->
@@ -39,7 +36,7 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
                     <!--<button type="submit" class="btn btn-default">Email Site</button>-->
-            
+
                     <input type="submit" class="btn btn-default" value="Email Site" />
                 </div>
             </div>
@@ -69,17 +66,31 @@
 
 <h2>Site Prices</h2>
 
+<!-- knockout binds here -->
 <div class="container" id="petrolpricingpage">
-
-    <!-- knockout binds here -->
     <div id="msgs"></div>
     <!-- Submit disabled, all work done thru ajax calls -->
     <form id="myform" method="post" data-bind="submit: savePetrolPricingForm" xclass="input-group-sm" onsubmit="return false;">
-
         <div style="width:100%;text-align:right;margin-top:-20px;">
             <button type="button" class="btn btn-default" data-toggle="modal" data-target="#emailAllSites">Email all &nbsp;<i class="fa fa-envelope-o"></i></button>
         </div>
-        <span>Market Comparison: Sainsburys's prices and Competitors</span>
+        <span>Market Comparison: Sainsburys's prices and Competitors</span><br />
+        <hr />
+        <div class="row">
+            <div class="col-md-10">
+                <div class="col-md-2"><b>Select Date:</b></div>
+                <div class="col-md-2 left">
+                    <input type="text" id="viewingDate" class="datepicker form-control"
+                           style="background-color: #ececec; width: 100px" name="viewingDate" width="200" 
+                           data-bind="value: $root.InitDate"/>
+                </div>
+                <div class="col-md-2 left"><button type="submit" class="btn btn-default" data-bind="click: loadNewDateData">Go</button></div>
+            </div>
+            <div class="col-md-2 right">
+                <button type="submit" class="btn btn-default" data-bind="click: savePetrolPricingForm, visible: $root.ShowSaveButton">Save Prices</button>
+            </div>
+        </div>
+        <hr />
         <div class="table-responsive">
             <table class="table table-striped table-hover" id="accordion">
                 <!-- HEADINGS -->
@@ -108,149 +119,39 @@
                         <th><span>Tomorrow</span></th>
                     </tr>
                 </thead>
-                <tbody data-bind="with: dataModel, visible: dataAvailable">
-    <!-- Within a foreach JSStores loop -->
-    <!-- JS Store DataRows -->
+                <tbody data-bind="with: dataModel">
+                    <!-- JS Store DataRows -->
+                    <!-- ko foreach: sites -->
+                    <tr class="panel-heading" role="tab" data-bind="id:'Heading' + SiteId">
+                        <td>
+                            <a role="button" data-toggle="collapse" data-parent="#accordion" data-bind="href: '#CollapseCompetitorsforsite' + SiteId"><i class="fa fa-plus-square-o"></i></a>
+                        </td>
+                        <td><span data-bind="text: StoreNo"></span></td>
+                        <td><span><a href="#" data-toggle="modal" data-target="#emailSite"><i class="fa fa-envelope-o"></i></a></span></td>
+                        <td><span data-bind="text: StoreName"></span></td>
+                        <td><span data-bind="text: CatNo"></span></td>
+                        <td><span data-bind="text: PfsNo"></span></td>
 
-    <!-- Next site TODO Amend this once knockout foreach is in place -->
-    @{
-        var sites = Model;
-        var sitePriceViewModels = sites as IList<SitePriceViewModel> ?? sites.ToList();
-        var hasData = sites != null && sitePriceViewModels.Any();
-    }
-    @if (hasData)
-    {
-        foreach (SitePriceViewModel site in sitePriceViewModels)
-        {
-            <tr class="panel-heading" role="tab" id='@("Heading" + site.SiteId)'>
-                <td>
-                    <a role="button" data-toggle="collapse" data-parent="#accordion" href='@("#CollapseCompetitorsforsite" + site.SiteId)'><i class="fa fa-plus-square-o"></i></a>
-                </td>
-                <td><span data-bind="text: StoreNo">@site.StoreNo</span></td>
-                <td><span><a href="#" data-toggle="modal" data-target="#emailSite"><i class="fa fa-envelope-o"></i></a></span></td>
-                <td><span data-bind="text: StoreName">@site.StoreName</span></td>
-                <td><span data-bind="text: CatNo"></span>@site.CatNo</td>
-                <td><span data-bind="text: PFSNo"></span>@site.PfsNo</td>
-                @{
-                    var fuelPrices = site.FuelPrices;
-                    float unleadedTomo=0, unleadedOver=0, unleadedToday = 0;
-                    if (fuelPrices != null && fuelPrices.Any())
-                    {
-                        var fp = fuelPrices.FirstOrDefault(x => x.FuelTypeId == 2);
-                        if (fp != null)
-                        {
-                            unleadedTomo = fp.Price ?? 0;
-                            unleadedOver = fp.OverridePrice ?? 0;
-                            unleadedToday = fp.YesterdaysPrice ?? 0;
-                        }
-                    }
-                }
-                <td>
-                    <span data-bind="text: FuelPriceToday">@(unleadedToday/10)</span>
-                </td>
-                <td>
-                    <i class="fa fa-arrow-circle-o-down" style="color: red; font-size: 100%;"></i>
-                    &nbsp;<span data-bind="text: FuelPriceTomorrowAutoCalc">@unleadedTomo</span>
-                    <input type="text" data-bind="value: FuelPriceTomorrowOverridden" class="txtPrice" value="@unleadedOver/10" />
-                <td>
-                    <span data-bind="text: FuelPriceToday">@unleadedToday</span>
-                </td>
-                <td>
-                    <i class="fa fa-arrow-circle-o-down" style="color: red; font-size: 100%;"></i>
-                    &nbsp;<span data-bind="text: FuelPriceTomorrowAutoCalc">@unleadedTomo</span>
-                    <input type="text" data-bind="value: FuelPriceTomorrowOverridden" class="txtPrice" value="@unleadedOver" />
-                </td>
-                <td>
-                    <span data-bind="text: FuelPriceToday">@unleadedToday</span>
-                </td>
-                <td>
-                    <i class="fa fa-arrow-circle-o-down" style="color: red; font-size: 100%;"></i>
-                    &nbsp;<span data-bind="text: FuelPriceTomorrowAutoCalc">@unleadedTomo</span>
-                    <input type="text" data-bind="value: FuelPriceTomorrowOverridden" class="txtPrice" value="@unleadedOver" />
-                </td>
-            </tr>
-            <tr id='@("CollapseCompetitorsforsite" + site.SiteId)' class="panel-collapse collapse" role="tabpanel">
-
-                <td colspan="12" xalign="right">
-                    <!-- Competitors table -->
-                    <table class="competitorTable table-striped table-hover">
-                        <thead>
-                            <tr rowspan="2">
-                                <th><span>Brand</span></th>
-                                <th><span>Marker</span></th>
-                                <th><span>Drive-Time</span></th>
-                                <th><span>Cat No.</span></th>
-
-                                <th colspan="2" class="tblHighlight"><span class="fuelHeaderGroup">&nbsp;Unleaded&nbsp;</span></th>
-                                <th colspan="2"><span class="fuelHeaderGroup">&nbsp;Diesel&nbsp;</span></th>
-                                <th colspan="2" class="tblHighlight"><span class="fuelHeaderGroup">&nbsp;LPG&nbsp;</span></th>
-                            </tr>
-                            <tr>
-                                <th colspan="4"></th>
-                                <th class="tblHighlight"><span>Yesterday</span></th>
-                                <th class="tblHighlight"><span>Today</span></th>
-                                <th><span>Yesterday</span></th>
-                                <th><span>Today</span></th>
-                                <th class="tblHighlight"><span>Yesterday</span></th>
-                                <th class="tblHighlight"><span>Today</span></th>
-
-                            </tr>
-                        </thead>
-                        <tbody data-bind="with: competitors, visible: hasCompetitors">
-                            <!-- Within a foreach CompStores loop -->
-                            <!-- Comp Store DataRows -->
-                            <tr>
-                                <td><span data-bind="text: Brand">Asda</span></td>
-                                <td><span data-bind="text: CompetitorStoreName">Asda Compton</span></td>
-                                <td><span data-bind="text: DriveTime"></span>2.45min</td>
-                                <td><span data-bind="text: CatNo"></span>1336</td>
-
-                                <td class="tblHighlight"><span data-bind="text: FuelPriceYesterday">109.9</span></td>
-                                <td class="tblHighlight"><i class="fa fa-arrow-circle-o-down" style="color: red; font-size: 100%;"></i>&nbsp;<span data-bind="text: FuelPriceToday">107.9</span></td>
-
-                                <td><span data-bind="text: FuelPriceYesterday">108.9</span></td>
-                                <td><i class="fa fa-arrow-circle-o-down" style="color: red; font-size: 100%;"></i>&nbsp;<span data-bind="text: FuelPriceToday">106.9</span></td>
-
-                                <td class="tblHighlight"><span data-bind="text: FuelPriceYesterday">108.9</span></td>
-                                <td class="tblHighlight"><i class="fa fa-arrow-circle-o-down" style="color: red; font-size: 100%;"></i>&nbsp;<span data-bind="text: FuelPriceToday">106.9</span></td>
-
-                            </tr>
-                            <tr>
-                                <td><span data-bind="text: Brand">Tesco</span></td>
-                                <td><span data-bind="text: CompetitorStoreName">Tesco Green Park</span></td>
-                                <td><span data-bind="text: DriveTime"></span>4.10min</td>
-                                <td><span data-bind="text: CatNo"></span>1336</td>
-
-                                <td class="tblHighlight"><span data-bind="text: FuelPriceYesterday">109.9</span></td>
-                                <td class="tblHighlight"><i class="fa fa-arrow-circle-o-down" style="color: red; font-size: 100%;"></i><span data-bind="text: FuelPriceToday">107.9</span></td>
-
-                                <td><span data-bind="text: FuelPriceYesterday">108.9</span></td>
-                                <td><i class="fa fa-arrow-circle-o-down" style="color: red; font-size: 100%;"></i><span data-bind="text: FuelPriceToday">106.9</span></td>
-
-                                <td class="tblHighlight"><span data-bind="text: FuelPriceYesterday">108.9</span></td>
-                                <td class="tblHighlight"><i class="fa fa-arrow-circle-o-down" style="color: red; font-size: 100%;"></i><span data-bind="text: FuelPriceToday">106.9</span></td>
-
-                            </tr>
-                        </tbody>
-                        <tbody data-bind="visible: false" style="visibility: hidden; display: none">
-                            <tr>
-                                <td colspan="10" class="noSiteData">Sorry, no site data available</td>
-                            </tr>
-                        </tbody>
-
-                    </table>
-                </td>
-            </tr>
-        }
-    }
-    else
-    {
-        <tr>
-            <td colspan="10" class="noSiteData">Sorry, no site data available</td>
-        </tr>
-    }
+                        <!-- ko foreach: FuelPricesToDisplay -->
+                        <!-- ko if: siteSupportsFuel -->
+                        <td>
+                            <span data-bind="text: FuelPrice.TodayPrice"></span>
+                        </td>
+                        <td>
+                            <i class="fa fa-arrow-circle-o-down" style="color: red; font-size: 100%;"></i>
+                            &nbsp;<span data-bind="text: FuelPrice.AutoPrice"></span>
+                            <input type="text" data-bind="value: FuelPrice.OverridePrice, id: ($parent.SiteId + '-' + FuelPrice.FuelTypeId + '-overridePrice')" class="txtPrice" />
+                            <!-- note: override prices can be extracted using $('#SiteId-FueldTypeId-overridePrice') -->
+                        </td>
+                        <!-- /ko -->
+                        <!-- ko if: !siteSupportsFuel -->
+                        <td colspan="2">n/a</td>
+                        <!-- /ko -->
+                        <!-- /ko -->
+                    </tr>
+                    <!-- /ko -->
                 </tbody>
-                <tbody data-bind="visible: !dataAvailable" style="visibility: hidden; display: none">
+                <tbody data-bind="cvisible: !$root.dataAvailable" style="visibility: hidden; display: none">
                     <tr>
                         <td colspan="10" class="noSiteData">Sorry, no site data available</td>
                     </tr>
@@ -263,6 +164,5 @@
 <br />
 
 <script type="text/javascript">
-    require(["SitePricing"]); // TODO Uncomment to fireup calls to get/send data
+    require(["SitePricing"]);
 </script>
-

@@ -196,6 +196,17 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             return (response.IsSuccessStatusCode) ? result : null;
         }
 
+        /// <summary>
+        /// Save site Price overrides back to backend
+        /// </summary>
+        /// <param name="sitePriceViewModel"></param>
+        public async Task<List<SitePriceViewModel>> UpdateSitePricesAsync(List<SitePriceViewModel> sitePriceViewModel)
+        {
+            //TODO PUT to Api
+            await Task.FromResult(0);
+            return sitePriceViewModel;
+        }
+
         // TRULY Async static method
         public async Task<HttpResponseMessage> RunAsync(string siteViewJson, HttpMethod method)
         {
@@ -227,6 +238,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
         {
             _client = null;
         }
- 
+
+
     }
 }
