@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data.Entity;
 using System.Diagnostics;
 using System.Linq;
@@ -50,7 +51,10 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 
                 try
                 {
-                    _db.FailHangedFileUploadOrCalcs(); // Fail any calcs taking over 5 mins..
+                    // Fail any calcs taking over 1 or 2 mins..
+                    _db.FailHangedFileUploadOrCalcs(
+                        Convert.ToInt32(SettingsService.GetSetting("DailyImportTimeoutMin")), // config 1 minutes
+                        Convert.ToInt32(SettingsService.GetSetting("DailyCalcTimeoutMin")));  // config 5 minutes
 
                     _db.UpdateImportProcessStatus(11, dpFile); //Calculating 6
 

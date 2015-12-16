@@ -51,7 +51,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         /// <summary>
         /// Mark file status = Failed for any imports/calcs exceeeding 5 min
         /// </summary>
-        void FailHangedFileUploadOrCalcs();
+        void FailHangedFileUploadOrCalcs(int importTimeout, int calcTimeout);
 
         void Dispose();
 

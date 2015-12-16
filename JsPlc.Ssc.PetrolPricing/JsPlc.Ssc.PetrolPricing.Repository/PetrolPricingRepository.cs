@@ -165,16 +165,22 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                         sitePriceRow.FuelPrices = sitePriceRow.FuelPrices ?? new List<FuelPriceViewModel>();
                         if (!Convert.IsDBNull(pgRow["FuelTypeId"]))
                         {
+                            var AutoPrice = pgRow["SuggestedPrice"].ToString().ToNullable<int>();
+                            var OverridePrice = pgRow["OverriddenPrice"].ToString().ToNullable<int>();
+                            var OverriddenPriceToday = pgRow["OverriddenPriceToday"].ToString().ToNullable<int>();
+                            var SuggestedPriceToday = pgRow["SuggestedPriceToday"].ToString().ToNullable<int>();
+                            var TodayPrice = (OverriddenPriceToday.HasValue && OverriddenPriceToday.Value != 0) 
+                                        ? OverriddenPriceToday.Value
+                                        : (SuggestedPriceToday.HasValue) ? SuggestedPriceToday.Value : 0;
                             sitePriceRow.FuelPrices.Add(new FuelPriceViewModel
                             {
                                 FuelTypeId = (int)pgRow["FuelTypeId"],
                                 // Tomorrow's prices
-                                AutoPrice = (int)pgRow["SuggestedPrice"],
-                                OverridePrice = (int)pgRow["OverriddenPrice"],
+                                AutoPrice = (!AutoPrice.HasValue) ? 0: AutoPrice.Value,
+                                OverridePrice = (!OverridePrice.HasValue) ? 0 : OverridePrice.Value,
 
                                 // Today's prices (whatever was calculated yesterday OR last)
-                                TodayPrice = ((int)pgRow["OverriddenPriceToday"] == 0) ?
-                                                (int)pgRow["SuggestedPriceToday"] : (int)pgRow["OverriddenPriceToday"]
+                                TodayPrice = TodayPrice
                             });
                         }
                     }
@@ -373,12 +379,12 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         /// <summary>
         /// Mark file status = Aborted for any imports/calcs exceeeding 5 min (TODO eval as we go along, maybe need two diff values)
         /// </summary>
-        public void FailHangedFileUploadOrCalcs()
+        public void FailHangedFileUploadOrCalcs(int importTimeout, int calcTimeout)
         {
             _context.Database.ExecuteSqlCommand("Update FileUpload Set StatusId = 16 Where " +
-                                                "StatusId = 5 and DateDiff(MINUTE, UploadDateTime, GetDate()) >= 5");
+                                                "StatusId = 5 and DateDiff(MINUTE, UploadDateTime, GetDate()) >= " + importTimeout);
             _context.Database.ExecuteSqlCommand("Update FileUpload Set StatusId = 17 Where " +
-                                                "StatusId = 11 and DateDiff(MINUTE, UploadDateTime, GetDate()) >= 5");
+                                                "StatusId = 11 and DateDiff(MINUTE, UploadDateTime, GetDate()) >= " + calcTimeout);
         }
 
         public FileUpload GetDailyFileWithCalcRunningForDate(DateTime forDate)
