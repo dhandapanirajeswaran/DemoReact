@@ -25,7 +25,15 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
         IEnumerable<SiteToCompetitor> GetCompetitors(int siteId, int driveTimeFrom, int driveTimeTo, bool includeSainsburysAsCompetitors = true);
 
-        IEnumerable<Site> GetSitesWithPricesAndCompetitors();
+        /// <summary>
+        /// Useful for emailing
+        /// </summary>
+        /// <param name="fromPriceDate">optional</param>
+        /// <param name="toPriceDate">optional</param>
+        /// <returns></returns>
+        IEnumerable<Site> GetSitesWithEmailsAndPrices(DateTime? fromPriceDate = null, DateTime? toPriceDate = null);
+        
+        IEnumerable<Site> GetSitesWithCompetitors();
 
         IEnumerable<SitePriceViewModel> GetSitesWithPrices(DateTime forDate, int siteId = 0, int pageNo = 1,
             int pageSize = Constants.PricePageSize);

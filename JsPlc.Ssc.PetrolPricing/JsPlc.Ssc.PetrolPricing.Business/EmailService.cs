@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Eventing.Reader;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -21,7 +22,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
             // do nothing for now
         }
 
-        //send email to users providied in EmailService list
+        //send email to users provided in EmailService list
         public bool SendEmail(IEnumerable<Site> listSites, DateTime endTradeDate)
         {
             try
@@ -29,24 +30,27 @@ namespace JsPlc.Ssc.PetrolPricing.Business
                 foreach (Site site in listSites)
                 {
                     //one email built per sites for multiple user in site email list
-                    var emailBody = BuildEmail(site, endTradeDate);
-
+                    var emailBody = BuildEmailBody(site, endTradeDate);
+                    if (String.IsNullOrEmpty(emailBody)) continue;
+                    
                     var emailSubject = ConfigurationManager.AppSettings["emailSubject"];
                     var emailFrom = ConfigurationManager.AppSettings["emailFrom"];
 
-                    foreach (var email in site.Emails)
+                    foreach (var email in site.Emails.Where(x => !string.IsNullOrEmpty(x.EmailAddress)))
                     {
                         // using (var smtp = new SmtpClient(ConfigurationManager.AppSettings["smtpServer"], int.Parse(ConfigurationManager.AppSettings["smtpPort"])))
-
                         using (var smtpClient = CreateSmtpClient())
                         {
                             try
                             {
+                                var emailTo = !String.IsNullOrEmpty(SettingsService.GetSetting("emailTo"))
+                                    ? SettingsService.GetSetting("emailTo")
+                                    : email.EmailAddress;
 
                                 var message = new MailMessage();
                                 message.From = new MailAddress(email.EmailAddress, emailFrom);
                                 message.Subject = site.SiteName + " - " + emailSubject;
-                                message.To.Add(email.EmailAddress);
+                                message.To.Add(emailTo);
                                 message.Body = emailBody;
                                 message.BodyEncoding = Encoding.ASCII;
                                 message.IsBodyHtml = true;
@@ -72,11 +76,14 @@ namespace JsPlc.Ssc.PetrolPricing.Business
             return true;
         }
 
-        private string BuildEmail(Site site, DateTime endTradeDate)
+        public static string BuildEmailBody(Site site, DateTime endTradeDate)
         {
             var emailForSite = new EmailSiteData();
 
             emailForSite = EmailSetValues(site, emailForSite, endTradeDate);
+
+            if (emailForSite == null || !emailForSite.atLeastOnePriceAvailable) return "";
+
             emailForSite.emailBody = EmailGetLayout();
             emailForSite.emailBody = EmailReplaceTemplateKeys(emailForSite);
 
@@ -84,7 +91,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
         }
 
         //Below helper methods used by build email. 
-        private string EmailGetLayout()
+        private static string EmailGetLayout()
         {
             StringBuilder sb = new StringBuilder();
 
@@ -122,47 +129,75 @@ namespace JsPlc.Ssc.PetrolPricing.Business
             return sb.ToString();
         }
 
-        private EmailSiteData EmailSetValues(Site site, EmailSiteData emailForSite, DateTime endTradeDate)
+        /// <summary>
+        /// Get SitePrice data for email, returns null if not found
+        /// </summary>
+        /// <param name="site"></param>
+        /// <param name="emailForSite"></param>
+        /// <param name="endTradeDate"></param>
+        /// <returns></returns>
+        private static EmailSiteData EmailSetValues(Site site, EmailSiteData emailForSite, DateTime endTradeDate)
         {
             emailForSite.siteName = site.SiteName;
             emailForSite.changeDate = endTradeDate;
-           
-             foreach(SitePrice sp in site.Prices)
-             {
-                if(sp.FuelType.FuelTypeName == "Unleaded" )
+            var pricesWithDateCalcAsEndTradeDate = new List<SitePrice>();
+            if (site.Prices!= null && site.Prices.Any())
+            {
+                pricesWithDateCalcAsEndTradeDate = site.Prices.Where(x => x.DateOfCalc.Date.Equals(endTradeDate.Date)).ToList();
+            }
+
+            if (!pricesWithDateCalcAsEndTradeDate.Any())
+            {
+                emailForSite.atLeastOnePriceAvailable = false;
+                return emailForSite;
+            }
+
+            var atLeastOne = false;
+            foreach (SitePrice sp in pricesWithDateCalcAsEndTradeDate)
+            {
+                if (sp.FuelTypeId==2) // unleaded
                 {
                     emailForSite.priceUnleaded = (sp.OverriddenPrice == 0) ? sp.SuggestedPrice : sp.OverriddenPrice;
+                    atLeastOne = true;
                 }
-                if(sp.FuelType.FuelTypeName == "LPG")
+                if (sp.FuelTypeId == 7) // lpg
                 {
                     emailForSite.priceLpg = (sp.OverriddenPrice == 0) ? sp.SuggestedPrice : sp.OverriddenPrice;
+                    atLeastOne = true;
                 }
-                if(sp.FuelType.FuelTypeName == "Diesel")
+                if (sp.FuelTypeId == 6) // diesel
                 {
                     emailForSite.priceDiesel = (sp.OverriddenPrice == 0) ? sp.SuggestedPrice : sp.OverriddenPrice;
+                    atLeastOne = true;
                 }
-             }
-
-             return emailForSite;
+                
+            }
+            emailForSite.atLeastOnePriceAvailable = atLeastOne;
+            return emailForSite;
         }
 
-        private string EmailReplaceTemplateKeys(EmailSiteData EmailForSite)
+        private static string EmailReplaceTemplateKeys(EmailSiteData emailForSite)
         {
             string xxx = "";//changeDate.DayOfWeek.ToString() + " " + changeDate.Month.ToString(), + " " + changeDate.Year.ToString();
 
-            string emailBody = EmailForSite.emailBody;
+            string emailBody = emailForSite.emailBody;
 
-            emailBody = emailBody.Replace("kSiteName", EmailForSite.siteName);
-            emailBody = emailBody.Replace("kStartDateMonthYear", EmailForSite.changeDate.ToString(CultureInfo.InvariantCulture));
-            emailBody = emailBody.Replace("kUnleadedPrice", (EmailForSite.priceUnleaded / 10).ToString(CultureInfo.InvariantCulture));
-            emailBody = emailBody.Replace("kLpgPrice", (EmailForSite.priceLpg / 10).ToString(CultureInfo.InvariantCulture));
-            emailBody = emailBody.Replace("kDieselPrice", (EmailForSite.priceDiesel / 10).ToString(CultureInfo.InvariantCulture));
+            emailBody = emailBody.Replace("kSiteName", emailForSite.siteName);
+            emailBody = emailBody.Replace("kStartDateMonthYear", emailForSite.changeDate.ToString("dd MMM yyyy", CultureInfo.InvariantCulture));
+            emailBody = emailBody.Replace("kUnleadedPrice", GetPriceFormattedPriceForEmail(emailForSite.priceUnleaded));
+            emailBody = emailBody.Replace("kLpgPrice", GetPriceFormattedPriceForEmail(emailForSite.priceLpg)); // (priceLpg / 10).ToString("###.0", CultureInfo.InvariantCulture));
+            emailBody = emailBody.Replace("kDieselPrice", GetPriceFormattedPriceForEmail(emailForSite.priceDiesel)); // / 10).ToString("###.0", CultureInfo.InvariantCulture));
 
-            return EmailForSite.emailBody = emailBody;
+            return emailForSite.emailBody = emailBody;
+        }
+
+        private static string GetPriceFormattedPriceForEmail(decimal price)
+        {
+            return (price == 0) ? Constants.EmailPriceReplacementStringForZero : (price/10).ToString("####.0");
         }
 
         //TODO Log to Audit Table
-        private void RecordEmailsSentToSites(string statusCode, string address)
+        private void RecordEmailsSentToSites(string statusCode, string address, string reasonForFailure= "")
         {
             try
             {
@@ -236,6 +271,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
         public decimal priceUnleaded { get; set; }
         public decimal priceLpg { get; set; }
         public decimal priceDiesel { get; set; }
+        public bool atLeastOnePriceAvailable { get; set; }
     }
 
     

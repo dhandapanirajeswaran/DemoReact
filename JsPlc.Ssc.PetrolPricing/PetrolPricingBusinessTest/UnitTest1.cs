@@ -17,6 +17,8 @@ namespace PetrolPricingBusinessTest
             "Data Source=.;Initial Catalog=PetrolPricingRepository;Integrated Security=True;MultipleActiveResultSets=true";
 
         private SiteService _siteService;
+        private RepositoryContext _context;
+        private PetrolPricingRepository _repository;
 
         [TestInitialize]
         public void TestInit()
@@ -24,9 +26,10 @@ namespace PetrolPricingBusinessTest
             DbConnection dbConnection = SqlClientFactory.Instance.CreateConnection();
             dbConnection.ConnectionString = dbConnString;
 
-            var repositoryContext = new RepositoryContext(dbConnection);
+            _context = new RepositoryContext(dbConnection);
+            _repository = new PetrolPricingRepository(_context);
 
-            _siteService = new SiteService(new PetrolPricingRepository(repositoryContext));
+            _siteService = new SiteService();
         }
 
         [TestMethod]
@@ -34,6 +37,12 @@ namespace PetrolPricingBusinessTest
         {
             var sites = _siteService.GetCompetitors(1, 0, 5, true);
             sites = _siteService.GetCompetitors(2, 5, 10, true);
+        }
+
+        [TestMethod]
+        public void GetSitesPricesInDateRange()
+        {
+            var siteWithPricesInDateRange = _repository.GetSitesWithEmailsAndPrices(DateTime.Now, DateTime.Now);
         }
 
         [TestCleanup]

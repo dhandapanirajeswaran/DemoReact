@@ -11,6 +11,7 @@ using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Permissions;
+using System.Threading.Tasks;
 using System.Transactions;
 using EntityFramework.Utilities;
 using JsPlc.Ssc.PetrolPricing.Models;
@@ -19,6 +20,7 @@ using System.Data.Entity.Validation;
 using System.Diagnostics;
 using JsPlc.Ssc.PetrolPricing.Models.Common;
 using JsPlc.Ssc.PetrolPricing.Models.ViewModels;
+using MoreLinq;
 using EntityState = System.Data.Entity.EntityState;
 
 namespace JsPlc.Ssc.PetrolPricing.Repository
@@ -51,19 +53,60 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                 .Where(x => x.Prices.All(p => p.DateOfCalc.Equals(forDate)));
         }
 
-        public IEnumerable<Site> GetSitesWithPricesAndCompetitors()
+        public IEnumerable<Site> GetSitesWithCompetitors()
         {
-            return _context.Sites
-                .Include(s => s.Emails)
+            var retval = _context.Sites
                 .Include(x => x.Competitors)
-                .Include(x => x.Prices)
                 .Where(x => x.IsActive)
-                .OrderBy(q => q.Id);
+                .OrderBy(q => q.Id).ToList();
+            return retval;
+        }
+
+        // Useful for emailing
+        public IEnumerable<Site> GetSitesWithEmailsAndPrices(DateTime? fromPriceDate=null, DateTime? toPriceDate=null)
+        {
+            if (!fromPriceDate.HasValue) fromPriceDate = DateTime.Now.AddDays(-3);
+            if (!toPriceDate.HasValue) toPriceDate = DateTime.Now.AddDays(3);
+
+            var sites = new List<Site>();
+
+            var retval = _context.Sites
+                .Include(s => s.Emails)
+                .Where(x => x.IsActive && x.IsSainsburysSite)
+                .OrderBy(q => q.Id).ToList();
+
+            int daysBetweenFromAndTo = Convert.ToInt32((toPriceDate.Value - fromPriceDate.Value).TotalDays);
+            var rangedDatePrices = _context.SitePrices.Select(x => new
+            {
+                DiffFromDays = DbFunctions.DiffDays(fromPriceDate.Value, x.DateOfCalc),
+                DiffToDays = DbFunctions.DiffDays(x.DateOfCalc, toPriceDate.Value),
+                FromDate = fromPriceDate.Value,
+                DateOfCalc = x.DateOfCalc,
+                ToDate = toPriceDate.Value,
+                Price = x
+            }).Where(x => x.DiffFromDays >=0 && x.DiffToDays <= daysBetweenFromAndTo);
+
+            IQueryable<SitePrice> pricesForAllSitesBetweenDates = from f in rangedDatePrices
+                                                                  select f.Price;
+
+            var getPricesForSite = new Func<int, List<SitePrice>>(i =>  
+                pricesForAllSitesBetweenDates.Where(p => p.SiteId == i).ToList());
+
+            //List<SitePrice> pricesForSite = getPricesForSite(2); // sample
+
+            foreach (var site in retval)
+            {
+                _context.Entry(site).State = EntityState.Detached;
+                var prices = getPricesForSite(site.Id);
+                site.Prices = new List<SitePrice>();
+                site.Prices = prices;
+                sites.Add(site);
+            }
+            return sites;
         }
 
         public IEnumerable<SitePriceViewModel> GetSitesWithPrices(DateTime forDate, int siteId = 0, int pageNo = 1, int pageSize = Constants.PricePageSize)
         {
-            // for 
             var retval = CallSitePriceSproc(forDate, siteId, pageNo, pageSize);
 
             return retval;
@@ -477,7 +520,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         {
             var site = GetSite(siteId);
 
-            IEnumerable<SiteToCompetitor> siteCompetitors = GetSitesWithPricesAndCompetitors().Where(x => x.Id == site.Id)
+            IEnumerable<SiteToCompetitor> siteCompetitors = GetSitesWithCompetitors().Where(x => x.Id == site.Id)
                 .SelectMany(x => x.Competitors).Where(x => x.DriveTime >= driveTimeFrom && x.DriveTime <= driveTimeTo)
                 .ToList();
 

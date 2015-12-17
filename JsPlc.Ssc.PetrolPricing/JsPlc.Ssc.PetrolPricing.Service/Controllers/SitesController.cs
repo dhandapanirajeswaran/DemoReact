@@ -4,8 +4,11 @@ using System.Configuration;
 using System.Diagnostics;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Net.Mail;
 using System.Threading.Tasks;
+using System.Web;
 using System.Web.Configuration;
 using System.Web.Http;
 using System.Web.Http.Results;
@@ -135,9 +138,9 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
         /// <returns></returns>
         [System.Web.Http.HttpGet]
         [System.Web.Http.Route("api/SiteDetails/")]
-        public IHttpActionResult GetSitesWithPricesAndCompetitors()
+        public IHttpActionResult GetSitesWithEmailsAndPrices()
         {
-            var sites =  _siteService.GetSitesWithPricesAndCompetitors();
+            var sites = _siteService.GetSitesWithEmailsAndPrices();
             return Ok(sites);
         }
 
@@ -201,24 +204,76 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
         }
 
         [System.Web.Http.HttpGet]
-        [System.Web.Http.Route("api/emailSite")]
-        public IHttpActionResult EmailSite(int siteId, DateTime endTradeDate)
+        [System.Web.Http.Route("api/emailSites")]
+        public IHttpActionResult EmailSites(int siteId = 0, DateTime? endTradeDate = null)
         {
-                Site site = new Site();
-                site = _siteService.GetSite(siteId);//TODO Needs  to also have emails and prices
+            //Site site = new Site();
+            if (endTradeDate == null) endTradeDate = DateTime.Now;
 
-                //REMOVE Adding sample data for prices and emails for the moment. 
-                SiteEmail emailsForSite = new SiteEmail();
-                emailsForSite.EmailAddress = "steven.farkas@sainsburys.co.uk";
-                site.Emails.Add(emailsForSite);
+            var listOfSites = new List<Site>();
+
+            //REMOVE Adding sample data for prices and emails for the moment. 
+            //SiteEmail emailsForSite = new SiteEmail();
+            //emailsForSite.EmailAddress = "steven.farkas@sainsburys.co.uk";
+            //site.Emails.Add(emailsForSite);
+
+            if (siteId != 0)
+            {
+                var site = _siteService.GetSitesWithEmailsAndPrices().FirstOrDefault(x => x.Id == siteId);
+                if (site != null) listOfSites.Add(site);
+            }
+            else
+            {
+                listOfSites = _siteService.GetSitesWithEmailsAndPrices().ToList();
+            }
+            if (listOfSites.Any())
+            {
+                _emailService.SendEmail(listOfSites, endTradeDate.Value);
+            }
+
+            return Ok();
+        }
 
 
-                List<Site> ListOfSites = new  List<Site>();
-                ListOfSites.Add(site);
+        /// <summary>
+        /// Test email body replacement values
+        /// </summary>
+        /// <param name="siteId"></param>
+        /// <param name="endTradeDate"></param>
+        /// <returns></returns>
+        [System.Web.Http.HttpGet]
+        [System.Web.Http.Route("api/ShowEmailBody")]
+        public HttpResponseMessage ShowSitesEmailBody(int siteId = 0, DateTime? endTradeDate = null)
+        {
+            if (endTradeDate == null) endTradeDate = DateTime.Now;
 
-                _emailService.SendEmail(ListOfSites, endTradeDate);
+            var listOfSites = new List<Site>();
+            var emailBodies = new List<string>();
+            
+            if (siteId != 0)
+            {
+                var site = _siteService.GetSitesWithEmailsAndPrices().FirstOrDefault(x => x.Id == siteId);
+                if (site != null) listOfSites.Add(site);
+            }
+            else
+            {
+                listOfSites = _siteService.GetSitesWithEmailsAndPrices().ToList();
+            }
+            if (listOfSites.Any())
+            {
+                emailBodies.AddRange(listOfSites.Select(site => EmailService.BuildEmailBody(site, endTradeDate.Value)));
+            }
+            var htmlListOfEmails = String.Join("<hr>", emailBodies);
+            var listOfHtmlEmail = new ContentResult()
+            {
+                ContentType = "text/html",
+                Content = htmlListOfEmails
+            };
 
-                return Ok();
+            var response = new HttpResponseMessage();
+            response.Content = new StringContent(htmlListOfEmails);
+            response.Content.Headers.ContentType = new MediaTypeHeaderValue("text/html");
+            return response;
         }
     }
 }
