@@ -1,0 +1,12 @@
+﻿@model string
+@{
+    ViewBag.Title = "ReInitDb";
+}
+
+<h2>ReInitDb</h2>
+Result = @ViewBag.Message
+<pre>
+<a href="Admin/ReInitDb?option=FULLREBUILD">** Full Wipe and Rebuild</a>
+<a href="Admin/ReInitDb?option=CONFIGKEYSONLY">Wipe and Repopulate config keys</a>
+<a href="Admin/ReInitDb?option=SPROCSONLY">Wipe and Recreate sprocs</a>
+</pre>
