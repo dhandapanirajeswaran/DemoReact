@@ -9,11 +9,14 @@ using System.IO;
 using System.Linq;
 using System.Net.Mime;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Runtime.Remoting.Channels;
 using System.Text;
 using EntityFramework.Utilities;
 using JsPlc.Ssc.PetrolPricing.Models;
 using JsPlc.Ssc.PetrolPricing.Models.Enums;
+using MoreLinq;
+using EntityState = System.Data.Entity.EntityState;
 
 namespace JsPlc.Ssc.PetrolPricing.Repository
 {
@@ -24,6 +27,27 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             SeedRepository(context);
             base.Seed(context);
         }
+
+        /// <summary>
+        /// Deletes and reloads AppSettings keys/values
+        /// </summary>
+        /// <param name="context"></param>
+        public static void ReInitConfigKeys(RepositoryContext context)
+        {
+            context.AppConfigSettings.ForEach(x => context.Entry(x).State = EntityState.Deleted);
+            context.SaveChanges();
+            DbInitConfigKeys(context);
+        }
+
+        /// <summary>
+        /// Deletes and reloads AppSettings keys/values
+        /// </summary>
+        /// <param name="context"></param>
+        public static void ReInitSprocs(RepositoryContext context)
+        {
+            RunDbScripts(context, ScriptFolderType.DropCreateSprocs);
+        }
+
 
         // This is refactored out so it can be called separately as well
         public static void SeedRepository(RepositoryContext context)
@@ -39,6 +63,8 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             DbInitUploadTypes(context);
 
             SetupDummyData(context);
+
+            ReInitSprocs(context);
 
             RunDbScripts(context, ScriptFolderType.PostSeedScripts);
         }
@@ -305,7 +331,8 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
     {
         DbWipeScripts =1,
         DummyDataScripts =2,
-        PostSeedScripts =3
+        PostSeedScripts =3,
+        DropCreateSprocs = 4
     }
 
 }
