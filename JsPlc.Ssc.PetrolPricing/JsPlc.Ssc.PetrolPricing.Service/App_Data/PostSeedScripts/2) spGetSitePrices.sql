@@ -6,7 +6,7 @@
 AS
 
 --Declare @siteId int = 0
---Declare @forDate DateTime = '2015-12-16'
+--Declare @forDate DateTime = '2015-12-18'
 --Declare @skipRecs int = 0
 --Declare @takeRecs int = 20
 
@@ -51,6 +51,16 @@ else set @todayPriceDate = @lastPriceDate
    from sites s, DailyPrice dp, FuelType ft
    Where s.CatNo = dp.CatNo and dp.FuelTypeId = ft.Id
 ) -- select * from siteFuels
+,sitesWithFuels as
+(
+	Select s.Id as SiteId, s.CatNo, s.SiteName, s.Address, s.Suburb, s.Town,  
+		s.IsSainsburysSite, s.Brand, s.Company, s.Ownership,
+		sf.FuelTypeId, sf.FuelTypeName
+	From 
+		[Site] s 
+			Inner Join siteFuels sf
+				On s.Id = sf.SiteId
+) -- select * from sitesWithFuels
 ,sitePrices as
 (
 	Select 
@@ -71,25 +81,27 @@ else set @todayPriceDate = @lastPriceDate
 ) -- Select * from todaysPrices
 ,sitesWithPrices As -- JS Site and Prices information
 (
-	SELECT s.Id as siteId, s.CatNo, 
-		s.SiteName, s.Address, s.Suburb, s.Town,  
-		s.IsSainsburysSite, s.Brand, s.Company, s.Ownership,
+	SELECT swf.SiteId, swf.CatNo,
+		swf.SiteName, swf.Address, swf.Suburb, swf.Town,  
+		swf.IsSainsburysSite, swf.Brand, swf.Company, swf.Ownership,
+		swf.FuelTypeId, swf.FuelTypeName,
 
-		--tomorrowsPrices.FuelTypeId, tomorrowsPrices.FuelTypeName, 
-		tomorrowsPrices.DateOfCalc, tomorrowsPrices.DateOfPrice, 
-		tomorrowsPrices.SuggestedPrice, tomorrowsPrices.OverriddenPrice,
+		tomp.DateOfCalc, tomp.DateOfPrice, 
+		tomp.SuggestedPrice, tomp.OverriddenPrice,
 
-		todaysPrices.DateOfCalc DateOfCalcForTodaysPrice, todaysPrices.DateOfPrice DateOfPriceForTodaysPrice, 
-		todaysPrices.SuggestedPrice SuggestedPriceToday, todaysPrices.OverriddenPrice OverriddenPriceToday
+		todp.DateOfCalc DateOfCalcForTodaysPrice, todp.DateOfPrice DateOfPriceForTodaysPrice, 
+		todp.SuggestedPrice SuggestedPriceToday, todp.OverriddenPrice OverriddenPriceToday
 	FROM 
-	Sites s
-		Left join tomorrowsPrices
-			On s.Id = tomorrowsPrices.SiteId
-		Left join todaysPrices
-			On s.Id = todaysPrices.SiteId
+	sitesWithFuels swf
+		Left join tomorrowsPrices as tomp
+			On swf.SiteId = tomp.SiteId
+			And tomp.FuelTypeId = swf.FuelTypeId
+		Left join todaysPrices as todp
+			On swf.SiteId = todp.SiteId
+			And todp.FuelTypeId = swf.FuelTypeId
 	Where 
-		(tomorrowsPrices.DateOfCalc is null OR DateDiff(day, tomorrowsPrices.DateOfCalc, @forDate) = 0)
-		AND (todaysPrices.DateOfCalc is null OR DateDiff(day, todaysPrices.DateOfCalc, @todayPriceDate) = 0)
+		(tomp.DateOfCalc is null OR DateDiff(day, tomp.DateOfCalc, @forDate) = 0)
+		AND (todp.DateOfCalc is null OR DateDiff(day, todp.DateOfCalc, @todayPriceDate) = 0)
 )
 Select * from sitesWithPrices 
 Order By SiteId
