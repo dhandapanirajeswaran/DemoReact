@@ -25,6 +25,11 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
         IEnumerable<SiteToCompetitor> GetCompetitors(int siteId, int driveTimeFrom, int driveTimeTo, bool includeSainsburysAsCompetitors = true);
 
+        SiteToCompetitor LookupSiteAndCompetitor(int siteCatNo, int competitorCatNo);
+        
+        bool UpdateSiteToCompFromQuarterlyData(List<CatalistQuarterly> SiteCatalistData); // IMPORT method to SiteToComp
+
+        //IEnumerable<Site> GetSitesWithPricesAndCompetitors();
         /// <summary>
         /// Useful for emailing
         /// </summary>
@@ -96,6 +101,8 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         /// <param name="forDate">Date concerned</param>
         /// <returns>FileUpload</returns>
         FileUpload GetDailyFileWithCalcRunningForDate(DateTime forDate);
+
+        bool UpdateCatalistQuarterlyData(List<CatalistQuarterly> CatalistQuarterlyData, FileUpload fileDetails, bool isSainsburys);
     }
 
     public interface IPetrolPricingRepositoryLookup

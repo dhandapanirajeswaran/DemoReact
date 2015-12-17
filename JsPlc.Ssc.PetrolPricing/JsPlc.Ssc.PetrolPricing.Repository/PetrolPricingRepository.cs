@@ -354,6 +354,113 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             }
         }
 
+        public bool UpdateCatalistQuarterlyData(List<CatalistQuarterly> siteCatalistData, FileUpload fileDetails, bool isSainsburys)
+        {
+            int addingEntryLineNo = 0;
+            int savetrigger = 0;
+
+            using (var newDbContext = new RepositoryContext(new SqlConnection(_context.Database.Connection.ConnectionString)))
+            {
+                using (var tx = newDbContext.Database.BeginTransaction())
+                {
+                    newDbContext.Configuration.AutoDetectChangesEnabled = false;
+
+                    try
+                    {
+                        foreach (CatalistQuarterly CA in siteCatalistData)
+                        {
+                            
+                            Site site = new Site();
+
+                            site.CatNo = Convert.ToInt32(CA.CatNo);
+
+                            var result = newDbContext.Sites.SingleOrDefault(x => x.CatNo == site.CatNo);
+
+                            if (result != null)
+                            {
+                                newDbContext.Entry(result).State = EntityState.Modified;
+
+                                result.CatNo = Convert.ToInt32(CA.CatNo);
+                                result.SiteName = CA.SiteName;
+                                result.Town = CA.Town;
+
+                                result.Brand = CA.Brand;
+                                result.Address = CA.Address;
+                                result.Suburb = CA.Suburb;
+                                result.PostCode = CA.Postcode;
+                                result.Ownership = CA.Ownership;
+
+                                if (CA.Brand == "SAINSBURYS")
+                                {
+                                    result.IsSainsburysSite = true;
+                                }
+                            }
+                            else
+                            {
+                                site.SiteName = CA.SiteName;
+                                site.Town = CA.Town;
+
+                                site.Brand = CA.Brand;
+                                site.Address = CA.Address;
+                                site.Suburb = CA.Suburb;
+                                site.PostCode = CA.Postcode;
+                                site.Ownership = CA.Ownership;
+
+                                if (CA.Brand == "SAINSBURYS")
+                                {
+                                  site.IsSainsburysSite = true;
+                                }
+                               
+                                newDbContext.Sites.Add(site);
+                            }
+                           
+                            addingEntryLineNo += 1;
+                        }
+
+                        newDbContext.SaveChanges();
+
+                        tx.Commit();
+                        return true;
+                    }
+                    catch (DbUpdateException e)
+                    {
+
+                        tx.Rollback();
+
+                        foreach (var dbUpdateException in e.Entries)
+                        {
+                            var dailyPrice = dbUpdateException.Entity as DailyPrice ?? new DailyPrice();
+                            LogImportError(fileDetails, String.Format("Failed to save price:{0},{1},{2},{3},{4}",
+                                dailyPrice.CatNo, dailyPrice.FuelTypeId, dailyPrice.AllStarMerchantNo,
+                                dailyPrice.DateOfPrice, dailyPrice.ModalPrice)
+                                , addingEntryLineNo);
+                            dbUpdateException.State = EntityState.Unchanged;
+                        }
+
+                        return false;
+                    }
+                    catch (DbEntityValidationException dbEx)
+                    {
+                        tx.Rollback();
+                        foreach (var validationErrors in dbEx.EntityValidationErrors)
+                        {
+                            foreach (var validationError in validationErrors.ValidationErrors)
+                            {
+                                LogImportError(fileDetails,
+                                    "DbEntityValidationException occured:" + validationError.ErrorMessage +
+                                    "," + validationError.PropertyName, addingEntryLineNo);
+
+                                Trace.TraceInformation("Property: {0} Error: {1}", validationError.PropertyName,
+                                    validationError.ErrorMessage);
+                            }
+                        }
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+
         private void UpdateSiteEmails(Site site)
         {
             var siteEmailIds = site.Emails.Select(x => x.Id).ToList();
@@ -508,6 +615,66 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             //db.SaveChanges();
         }
 
+        public bool UpdateSiteToCompFromQuarterlyData(List<CatalistQuarterly> SiteCatalistData)
+        {
+            try
+            {
+                foreach (var row in SiteCatalistData)
+                {
+                    var siteCatNo = Convert.ToInt32(row.SiteCatNo);
+                    var catNo = Convert.ToInt32(row.CatNo);
+                    var rank = Convert.ToInt32(row.Rank);
+
+                    float distance;
+                    float.TryParse(row.DriveDistanceMiles.ToString(), out distance);
+
+                    float driveTime;
+                    float.TryParse(row.DriveTimeMins.ToString(), out driveTime);
+
+                    var site = GetSiteByCatNo(siteCatNo);
+                    var competitor = GetSiteByCatNo(catNo);
+                    if (site == null || competitor == null) continue; // we havent added the CatNos fully yet. Revisit Pass1
+
+                    var siteToCompInDb = LookupSiteAndCompetitor(siteCatNo, catNo);
+
+                    // Not found SiteToComp
+                    if (siteToCompInDb == null)
+                    {
+                        var newSiteToComp = new SiteToCompetitor
+                        {
+                            SiteId = site.Id,
+                            CompetitorId = competitor.Id,
+                            Distance = distance,
+                            DriveTime = driveTime,
+                            Rank = rank
+                        };
+                        _context.SiteToCompetitors.Add(newSiteToComp);
+                        _context.Entry(newSiteToComp).State = EntityState.Added;
+                        _context.SaveChanges();
+                    }
+                    else
+                    {
+                        siteToCompInDb.Rank = rank;
+                        siteToCompInDb.Distance = distance;
+                        siteToCompInDb.DriveTime = driveTime;
+                        _context.Entry(siteToCompInDb).State = EntityState.Modified;
+                        _context.SaveChanges();
+                    }
+                }
+            }
+            catch{
+                // if we want to change file status etc
+                // log which row failed in ImportProcessErrors
+                return false;
+            }
+            return true;
+        }
+        public SiteToCompetitor LookupSiteAndCompetitor(int siteCatNo, int competitorCatNo)
+        {
+            return _context.SiteToCompetitors.FirstOrDefault(x => 
+                    x.Site.CatNo.HasValue && x.Site.CatNo.Value == siteCatNo 
+                &&  x.Competitor.CatNo.HasValue && x.Competitor.CatNo.Value == competitorCatNo);
+        }
         /// <summary>
         /// Get competitors based on drivetime criteria
         /// </summary>
