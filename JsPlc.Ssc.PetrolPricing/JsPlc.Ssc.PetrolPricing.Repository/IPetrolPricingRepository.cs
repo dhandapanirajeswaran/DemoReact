@@ -38,7 +38,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
         IEnumerable<DailyPrice> GetDailyPricesForFuelByCompetitors(IEnumerable<int> competitorCatNos, int fuelId, DateTime usingPricesForDate);
 
-        void UpdateImportProcessStatus(FileUpload fileUpload, int statusId);
+        void UpdateImportProcessStatus(int statusId, FileUpload fileUpload);
 
         IEnumerable<FileUpload> GetFileUploads(DateTime? date, int? uploadType, int? statusId);
 
@@ -51,6 +51,11 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         bool AnyFileUploadForDate(DateTime date, UploadType uploadType);
 
         void LogImportError(FileUpload fileDetails, string errorMessage, int? lineNumber);
+
+        /// <summary>
+        /// Mark file status = Failed for any imports/calcs exceeeding 5 min
+        /// </summary>
+        void FailHangedFileUploadOrCalcs(int importTimeout, int calcTimeout);
 
         void Dispose();
 

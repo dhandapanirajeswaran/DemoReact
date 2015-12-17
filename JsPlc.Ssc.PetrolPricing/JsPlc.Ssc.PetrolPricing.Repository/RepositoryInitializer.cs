@@ -1,12 +1,17 @@
 ﻿using System;
+using System.Configuration;
+using System.Data;
 using System.Data.Entity;
 using System.Collections.Generic;
 using System.Data.Entity.Migrations;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.Mime;
 using System.Reflection;
+using System.Runtime.Remoting.Channels;
 using System.Text;
+using EntityFramework.Utilities;
 using JsPlc.Ssc.PetrolPricing.Models;
 using JsPlc.Ssc.PetrolPricing.Models.Enums;
 
@@ -23,58 +28,29 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         // This is refactored out so it can be called separately as well
         public static void SeedRepository(RepositoryContext context)
         {
-            var appConfigSettings = new List<AppConfigSettings>
-            {
-                // \\A-cotufps01-p.bc.jsplc.net\userdatashare0001\Parveen.Kumar\TestPetrolUpload
+            RunDbScripts(context, ScriptFolderType.DbWipeScripts);
 
-                new AppConfigSettings{Id = 1, SettingKey = "Uploadpath", 
-                    SettingValue = @"\\feltfps0003\gengrpshare0037\Scrum Teams\000000 - Projects\122000 - Petrol Pricing\TestFileUpload"},
-                new AppConfigSettings{Id = (int)SettingsKeys.SomeOtherVal, SettingKey = SettingsKeys.SomeOtherVal.ToString(), 
-                    SettingValue = ""}
+            DbInitConfigKeys(context);
 
-                //new AppConfigSettings{Id = 1, SettingKey = "Uploadpath", 
-                //SettingValue = ""},
-            };
-            appConfigSettings.ForEach(a => context.AppConfigSettings.Add(a));
-            context.SaveChanges();
+            DbInitFuelTypes(context);
 
-            // # 1=Super, 2=Unleaded, 5=Super Dis, 6=Std Dis, 7=LPG
-            var fuelTypes = new List<FuelType>{
-                new FuelType{Id=1, FuelTypeName = "Super Unleaded"},
-                new FuelType{Id=2, FuelTypeName = "Unleaded"},
-                // TODO update when query clarified with Izzy. So far we might see these fuelCodes in Catalist so included it, so that imports carry on
-                new FuelType{Id=3, FuelTypeName = "Unknown1"}, // TODO
-                new FuelType{Id=4, FuelTypeName = "Unknown2"}, // TODO
-                new FuelType{Id=5, FuelTypeName = "Super Diesel"},
-                new FuelType{Id=6, FuelTypeName = "Diesel"},
-                new FuelType{Id=7, FuelTypeName = "LPG"},
-            };
+            DbInitImportProcessStatus(context);
 
-            fuelTypes.ForEach(f => context.FuelType.Add(f));
-            context.SaveChanges();
+            DbInitUploadTypes(context);
 
-            // # Uploaded,Processing,Success,Failed (given gaps so if we want to introduce other status in between
-            var importProcessStatuses = new List<ImportProcessStatus>{
-                new ImportProcessStatus{Id=1, Status = "Uploaded"}, // only in FileSystem, not in table
-                new ImportProcessStatus{Id=5, Status = "Processing"}, // Importing to DP Table
-                new ImportProcessStatus{Id=10, Status = "Success"}, // Imported to DP, Usable for recalc
-                new ImportProcessStatus{Id=11, Status = "Calculating"}, // Populating SitePrice using DP
-                new ImportProcessStatus{Id=12, Status = "CalcFailed"}, // Populating SP failed, Usable for recalc
-                new ImportProcessStatus{Id=15, Status = "Failed"}, // Importing to DP failed
-            };
+            SetupDummyData(context);
 
-            importProcessStatuses.ForEach(ips => context.ImportProcessStatus.Add(ips));
-            context.SaveChanges();
+            RunDbScripts(context, ScriptFolderType.PostSeedScripts);
+        }
 
-            // # Daily, Quarterly
-            var uploadTypes = new List<UploadType>{
-                new UploadType{Id=1, UploadTypeName = "Daily Price Data"},
-                new UploadType{Id=2, UploadTypeName = "Quarterly Site Data"},
-            };
+        private static void SetupDummyData(RepositoryContext context)
+        {
+            DbInitDummyProjectData(context);
+            RunDbScripts(context, ScriptFolderType.DummyDataScripts);
+        }
 
-            uploadTypes.ForEach(ut => context.UploadType.Add(ut));
-            context.SaveChanges();
-            
+        private static void DbInitDummyProjectData(RepositoryContext context)
+        {
             // TODO - Comment out after Site Imports start working
             var sites = new List<Site>{
                 new Site{SiteName = "SAINSBURYS HENDON", Town = "London", 
@@ -197,6 +173,9 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             siteToCompetitor.ForEach(s => context.SiteToCompetitors.AddOrUpdate(p => p.SiteId, s));
             context.SaveChanges();
 
+            var importProcessStatuses = context.ImportProcessStatus.ToList();
+            var uploadTypes = context.UploadType.ToList();
+
             // Dummy FileUpload to link with Daily Prices, Dated today, TODO comment out once Daily Price Imports start working
             // Assume Succes-ful import as we have hardCoded dailyPrices for this hardcoded Upload
             var fileuploads = new List<FileUpload>
@@ -213,15 +192,120 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             };
             fileuploads.ForEach(f => context.FileUploads.Add(f));
             context.SaveChanges();
+        }
 
-            // Dummy prices for the sample sites setup for testing pricing calcuation algorithms/procedures
+        private static void DbInitUploadTypes(RepositoryContext context)
+        {
+            // # Daily, Quarterly
+            var uploadTypes = new List<UploadType>{
+                new UploadType{Id=1, UploadTypeName = "Daily Price Data"},
+                new UploadType{Id=2, UploadTypeName = "Quarterly Site Data"},
+            };
 
-            // Setup Prices for following stores:
-            //  100 -> 26054, 1336, 99, 1751
-            //  1334 -> 26054, 1336
+            uploadTypes.ForEach(ut => context.UploadType.Add(ut));
+            context.SaveChanges();
+        }
 
-            // MANUALLY Run the App_Data/PricesSetup.sql on SQL DB to populate dummy prices
+        private static void DbInitImportProcessStatus(RepositoryContext context)
+        {
+            // # Uploaded,Processing,Success,Failed (given gaps so if we want to introduce other status in between
+            var importProcessStatuses = new List<ImportProcessStatus>{
+                new ImportProcessStatus{Id=1, Status = "Uploaded"}, // only in FileSystem, not in table
+                new ImportProcessStatus{Id=5, Status = "Processing"}, // Importing to DP Table
+                new ImportProcessStatus{Id=10, Status = "Success"}, // Imported to DP, Usable for recalc
+                new ImportProcessStatus{Id=11, Status = "Calculating"}, // Populating SitePrice using DP
+                new ImportProcessStatus{Id=12, Status = "CalcFailed"}, // Populating SP failed, Usable for recalc
+                new ImportProcessStatus{Id=15, Status = "Failed"}, // Importing to DP failed
+                new ImportProcessStatus{Id=16, Status = "ImportAborted"}, // Import or Calc timeout, Usable for recalc
+                new ImportProcessStatus{Id=17, Status = "CalcAborted"}, // Import or Calc timeout, Usable for recalc
+            };
 
+            importProcessStatuses.ForEach(ips => context.ImportProcessStatus.Add(ips));
+            context.SaveChanges();
+        }
+
+        private static void DbInitFuelTypes(RepositoryContext context)
+        {
+            // # 1=Super, 2=Unleaded, 5=Super Dis, 6=Std Dis, 7=LPG
+            var fuelTypes = new List<FuelType>{
+                new FuelType{Id=1, FuelTypeName = "Super Unleaded"},
+                new FuelType{Id=2, FuelTypeName = "Unleaded"},
+                // TODO update when query clarified with Izzy. So far we might see these fuelCodes in Catalist so included it, so that imports carry on
+                new FuelType{Id=3, FuelTypeName = "Unknown1"}, // TODO
+                new FuelType{Id=4, FuelTypeName = "Unknown2"}, // TODO
+                new FuelType{Id=5, FuelTypeName = "Super Diesel"},
+                new FuelType{Id=6, FuelTypeName = "Diesel"},
+                new FuelType{Id=7, FuelTypeName = "LPG"},
+            };
+
+            fuelTypes.ForEach(f => context.FuelType.Add(f));
+            context.SaveChanges();
+        }
+
+        private static void DbInitConfigKeys(RepositoryContext context)
+        {
+            var configSettingKeys = ConfigurationManager.AppSettings.AllKeys;
+
+            int id = 1;
+            var appConfigSettings = new List<AppConfigSettings>();
+            foreach (var key in configSettingKeys)
+            {
+                appConfigSettings.Add(new AppConfigSettings
+                {
+                    Id = id,
+                    SettingKey = key,
+                    SettingValue = ConfigurationManager.AppSettings[key]
+                });
+                id += 1;
+            }
+            appConfigSettings.ForEach(a => context.AppConfigSettings.Add(a));
+            context.SaveChanges();
+        }
+
+        /// <summary>
+        /// Runs all sql scripts stored in the specified folder.
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="scriptFolderType"></param>
+        private static void RunDbScripts(RepositoryContext context, ScriptFolderType scriptFolderType)
+        {
+            var appDataFolderPath = AppDomain.CurrentDomain.GetData("DataDirectory").ToString();
+            
+            var scriptFolderPath = Path.Combine(appDataFolderPath, scriptFolderType.ToString());
+            foreach (string filePath in Directory.EnumerateFiles(scriptFolderPath, "*.sql").OrderBy(x => x))
+            {
+                Debug.WriteLine("Script found:" + filePath);
+                var scriptPath = Path.Combine(appDataFolderPath, filePath);
+
+                string sqlScript = File.ReadAllText(scriptPath);
+                var conn = context.Database.Connection;
+                try
+                {
+                    conn.Open();
+                    var cmd = conn.CreateCommand();
+                    cmd.CommandText = sqlScript;
+                    cmd.CommandType = CommandType.Text;
+
+                    //var x = context.Database.ExecuteSqlCommand(sqlScript);
+                    cmd.ExecuteNonQuery();
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception("Script failed:" + sqlScript + "---" + ex.Message + ex.StackTrace, ex);
+                }
+                finally
+                {
+                    conn.Close();
+                }
+            }
         }
     }
+
+    public enum ScriptFolderType
+    {
+        DbWipeScripts =1,
+        DummyDataScripts =2,
+        PostSeedScripts =3
+    }
+
 }

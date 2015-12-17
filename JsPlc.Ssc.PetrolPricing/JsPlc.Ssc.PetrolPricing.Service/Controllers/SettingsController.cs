@@ -7,6 +7,7 @@ using System.Web.Http;
 using System.Web.Http.Results;
 using JsPlc.Ssc.PetrolPricing.Business;
 using JsPlc.Ssc.PetrolPricing.Models;
+using JsPlc.Ssc.PetrolPricing.Repository;
 using Newtonsoft.Json;
 
 namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
@@ -29,6 +30,18 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
             {
                 return new ExceptionResult(ex, this);
             }
+        }
+
+        /// <summary>
+        /// ReSeed the DB with settings etc, drop n re-create sprocs
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("api/ReInitDb")]
+        public async Task<IHttpActionResult> ReInitDb()
+        {
+            RepositoryInitializer.SeedRepository(new RepositoryContext());
+            return await Task.FromResult(Ok("Success"));
         }
     }
 }

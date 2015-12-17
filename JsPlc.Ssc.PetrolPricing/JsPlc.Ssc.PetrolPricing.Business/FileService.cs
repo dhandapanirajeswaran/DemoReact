@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Globalization;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
 using System.Data;
 using System.Text;
@@ -25,18 +26,18 @@ namespace JsPlc.Ssc.PetrolPricing.Business
     {
         private readonly PriceService _priceService = new PriceService();
 
-        public FileUpload NewUpload(FileUpload fileUpload)
+        public async Task<FileUpload> NewUpload(FileUpload fileUpload)
         {
             FileUpload newUpload = _db.NewUpload(fileUpload);
 
             IEnumerable<FileUpload> processedFiles;
             const int uploadedStatus = 1;
             
-            // TODO - Use a fire and forget approach here
+            // Use a fire and forget approach
             switch (newUpload.UploadTypeId)
             {
                 case 1: processedFiles = ProcessDailyPrice(GetFileUploads(newUpload.UploadDateTime, newUpload.UploadTypeId, uploadedStatus).ToList());
-                    _priceService.DoCalcDailyPrices(fileUpload.UploadDateTime);
+                    await _priceService.DoCalcDailyPrices(fileUpload.UploadDateTime); // dont await this.. let it run in background..
                     break;
                 case 2: processedFiles = ProcessQuarterlyFile(GetFileUploads(newUpload.UploadDateTime, newUpload.UploadTypeId, uploadedStatus).ToList());
                     // TODO what happens when we have new Quarterly file uploaded, do we calc prices
@@ -89,7 +90,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 
             foreach (FileUpload aFile in listOfFiles)
             {
-                _db.UpdateImportProcessStatus(aFile, 5);//Processing 5
+                _db.UpdateImportProcessStatus(5, aFile);//Processing 5
                 var storedFilePath = SettingsService.GetUploadPath();
                 var filePathAndName = Path.Combine(storedFilePath, aFile.StoredFileName);
                 try
@@ -126,7 +127,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
                         listOfDailyPricePrices.Clear();
                     }
                     aFile.StatusId = importStatus.All(c => c) ? 10 : 15;
-                    _db.UpdateImportProcessStatus(aFile, aFile.StatusId);
+                    _db.UpdateImportProcessStatus(aFile.StatusId, aFile);
 
                     // If the latest upload imports successfully 
                     file.Close();
@@ -136,13 +137,13 @@ namespace JsPlc.Ssc.PetrolPricing.Business
                         // We clear out the dailyPrices for older imports and keep ONLY Latest set of DailyPrices
                         // Reason - To keep DailyPrice table lean. Otherwise CalcPrice will take a long time to troll through a HUGE table
                         _db.DeleteRecordsForOlderImportsOfDate(DateTime.Now, aFile.Id);
-                        // TODO Switch to exit loop on first successful import.
+                        // TODO Introduce switch to exit loop on first successful import. (not a requirement)
                     }
                 }
                 catch (Exception ex)
                 {
                     _db.LogImportError(aFile, ex.Message + "filePath=" + filePathAndName, null);
-                    _db.UpdateImportProcessStatus(aFile, 15);
+                    _db.UpdateImportProcessStatus(15, aFile);
                 }
             }
             return listOfFiles;
@@ -270,7 +271,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
                     _db.LogImportError(aFile, "Unable to add/parse line from Catalist Quarterly File - line " + rowCount, rowCount);
                     
                 }
-            }
+    }
 
 
 

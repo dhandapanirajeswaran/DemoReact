@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -23,18 +24,15 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 
         // AJAX Methods
 
-        // BOILERPLATE Code Only - not functional
+        // Coded Only - TODO wire up the postback to backend
         [System.Web.Mvc.HttpPost]
-        public async Task<JsonResult> PostSiteForm([FromBody] Site siteView)
+        public async Task<JsonResult> PutPriceOverride([FromBody] List<SitePriceViewModel> sitePricesView)
         {
             if (ModelState.IsValid)
             {
-                var siteViewJson = JsonConvert.SerializeObject(siteView);
-                var response = await _serviceFacade.RunAsync(siteViewJson, HttpMethod.Post);
-                if (!response.IsSuccessStatusCode) return response.ToJsonResult(null, null, "ApiFail");
-
-                var siteUrl = response.Headers.Location;
-                return response.ToJsonResult(siteUrl.AbsoluteUri, null, "ApiSuccess");
+                var response = await _serviceFacade.UpdateSitePricesAsync(sitePricesView);
+                return !response.Any() ? new HttpResponseMessage(HttpStatusCode.BadRequest).ToJsonResult(null, null, "ApiFail") : 
+                    new HttpResponseMessage(HttpStatusCode.OK).ToJsonResult(response, null, "ApiSuccess");
             }
             var errArray = this.GetUiErrorList();
             var badRequestResponse = new HttpResponseMessage
@@ -46,15 +44,18 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
         }
 
         [ScriptMethod(UseHttpGet = true)]
-        public JsonResult GetSitesWithPricesJson(DateTime? forDate=null, int siteId=0, int pageNo=1, 
+        public JsonResult GetSitesWithPricesJson(string date=null, int siteId=0, int pageNo=1, 
                 int pageSize=Constants.PricePageSize)
         {
+            DateTime forDate;
+            if (!DateTime.TryParse(date, out forDate)) forDate = DateTime.Now;
             // POST scenarios use : JsonConvert.SerializeObject(siteView);
             IEnumerable<SitePriceViewModel> sitesViewModelsWithPrices = _serviceFacade.GetSitePrices(forDate, siteId, pageNo, pageSize);
+            //sitesViewModelsWithPrices = null; // Force error
 
             var jsonData = sitesViewModelsWithPrices != null ? (object)sitesViewModelsWithPrices : "Error";
-            // TODO NOTE: The prices are still in 4 digit format (do price/10 for display)
-            // -- Uses SitePrice table, hence no prices until populated (using CalcPrice calls)
+            // NOTE: The prices are still in 4 digit format (do price/10 for display)
+            // -- Uses SitePrice table, shows no prices until populated (using CalcPrice calls)
 
             var jsonResult = new JsonResult
             {
@@ -115,22 +116,23 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
         {
             // Display list of existing sites along with their status
             ViewBag.Message = msg;
-            var sitesViewModelsWithPrices = _serviceFacade.GetSitePrices();
+            //var sitesViewModelsWithPrices = _serviceFacade.GetSitePrices();
             // return empty list but never null
 
-            return View(sitesViewModelsWithPrices);
+            return View("Prices"); // Razor based view
         }
+
 
         [System.Web.Mvc.HttpPost]
         public ActionResult Prices()
         {
-            _serviceFacade.EmailUpdatedPricesToSite();
+            //_serviceFacade.EmailUpdatedPricesToSite();
 
             var sitesViewModelsWithPrices = _serviceFacade.GetSitePrices();
             // return empty list but never null
 
-            return View(sitesViewModelsWithPrices);
-
+            //return View(sitesViewModelsWithPrices);
+            return View("Prices");
         }
 
         public ActionResult Edit(int id)
@@ -142,7 +144,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
         [System.Web.Mvc.HttpPost]
         public ActionResult Edit(Site site)
         {
-            // TODO Email edits fail on VM, MediaType Formatter error when text/html returned from api.
+            // TODO Somehow email edits fail on VM, MediaType Formatter error when text/html returned from api.
             if (!ModelState.IsValid)
             {
                 ViewBag.ErrorMessage = "Please check for validation errors under each field.";

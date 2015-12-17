@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data.Entity;
 using System.Diagnostics;
 using System.Linq;
@@ -50,7 +51,12 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 
                 try
                 {
-                    _db.UpdateImportProcessStatus(dpFile, 11); //Calculating 6
+                    // Fail any calcs taking over 1 or 2 mins..
+                    _db.FailHangedFileUploadOrCalcs(
+                        Convert.ToInt32(SettingsService.GetSetting("DailyImportTimeoutMin")), // config 1 minutes
+                        Convert.ToInt32(SettingsService.GetSetting("DailyCalcTimeoutMin")));  // config 5 minutes
+
+                    _db.UpdateImportProcessStatus(11, dpFile); //Calculating 6
 
                     var taskData = new CalcTaskData {ForDate = forDate.Value, FileUpload = dpFile};
 
@@ -62,24 +68,26 @@ namespace JsPlc.Ssc.PetrolPricing.Business
                 }
                 catch (Exception)
                 {
-                    _db.UpdateImportProcessStatus(dpFile, 12);
-                        //CalcFailed  (we intentionally use the same success status since we might wanna kickoff the calc again using same successful staus files)
+                    _db.UpdateImportProcessStatus(12, dpFile);
+                        //CalcFailed
                 }
             }
+            await Task.FromResult(0);
             return true;
         }
 
+        // LONG Running Task (also updates status within it)
         private async Task DoCalcAsync(CalcTaskData calcTaskData)
         {
             try
             {
                 bool result = await Task.FromResult(CalcAllSitePrices(calcTaskData.ForDate));
-                _db.UpdateImportProcessStatus(calcTaskData.FileUpload, result ? 10 : 12);
+                _db.UpdateImportProcessStatus(result ? 10 : 12, calcTaskData.FileUpload);
                 //Success 10 (we intentionally use the same success status since we might wanna kickoff the calc again using same successful staus files)
             }
             catch (Exception)
             {
-                _db.UpdateImportProcessStatus(calcTaskData.FileUpload, 12);
+                _db.UpdateImportProcessStatus(12, calcTaskData.FileUpload);
             }
         }
 
@@ -91,8 +99,8 @@ namespace JsPlc.Ssc.PetrolPricing.Business
         /// <param name="forDate">Optional - use prices of these dates</param>
         private bool CalcAllSitePrices(DateTime? forDate = null)
         {
-            // SIMULATE a long running task
-            Thread.Sleep(10000);
+            // SIMULATE a long running task (TODO remove delay simulation)
+            Task.Delay(5000);
 
             var priceService = new PriceService();
             if(!forDate.HasValue) forDate = DateTime.Now;

@@ -165,13 +165,22 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                         sitePriceRow.FuelPrices = sitePriceRow.FuelPrices ?? new List<FuelPriceViewModel>();
                         if (!Convert.IsDBNull(pgRow["FuelTypeId"]))
                         {
+                            var AutoPrice = pgRow["SuggestedPrice"].ToString().ToNullable<int>();
+                            var OverridePrice = pgRow["OverriddenPrice"].ToString().ToNullable<int>();
+                            var OverriddenPriceToday = pgRow["OverriddenPriceToday"].ToString().ToNullable<int>();
+                            var SuggestedPriceToday = pgRow["SuggestedPriceToday"].ToString().ToNullable<int>();
+                            var TodayPrice = (OverriddenPriceToday.HasValue && OverriddenPriceToday.Value != 0) 
+                                        ? OverriddenPriceToday.Value
+                                        : (SuggestedPriceToday.HasValue) ? SuggestedPriceToday.Value : 0;
                             sitePriceRow.FuelPrices.Add(new FuelPriceViewModel
                             {
                                 FuelTypeId = (int)pgRow["FuelTypeId"],
-                                Price = pgRow["SuggestedPrice"].ToString().ToNullable<int>(),
-                                OverridePrice = pgRow["OverriddenPrice"].ToString().ToNullable<int>(),
-                                YesterdaysPrice = pgRow["OverriddenPriceYest"].ToString().ToNullable<int>() ?? 
-                                        pgRow["SuggestedPriceYest"].ToString().ToNullable<int>()                                
+                                // Tomorrow's prices
+                                AutoPrice = (!AutoPrice.HasValue) ? 0: AutoPrice.Value,
+                                OverridePrice = (!OverridePrice.HasValue) ? 0 : OverridePrice.Value,
+
+                                // Today's prices (whatever was calculated yesterday OR last)
+                                TodayPrice = TodayPrice
                             });
                         }
                     }
@@ -219,8 +228,6 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         {
             //_db.Sites.AddOrUpdate(site);
             //_db.SaveChanges();
-
-            // TODO Email edits and deletes are not impacting DB yet
 
             _context.Entry(site).State = EntityState.Modified;
 
@@ -458,7 +465,8 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
         /// <summary>
         /// Gets the FileUpload available for Calc/ReCalc 
-        /// i.e those which has been imported to DailyPrice either Successfully (or CalcFailed previously to allow rerun)
+        /// i.e those which has been imported to DailyPrice either Successfully OR 
+        /// (ImportAborted or CalcAborted previously to allow rerun)
         /// </summary>
         /// <param name="forDate"></param>
         /// <returns>Returns null if none available</returns>
@@ -468,11 +476,22 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             var uploadIds = _context.Database.SqlQuery<int>(
                     String.Format("Select distinct fu.Id from FileUpload fu, DailyPrice dp Where fu.Id = dp.DailyUploadId " +
                                   " and fu.UploadTypeId = 1" +
-                                  " and DateDiff(d, UploadDateTime, '{0}') = 0 and fu.StatusId in (10, 12)", 
+                                  " and DateDiff(d, UploadDateTime, '{0}') = 0 and fu.StatusId in (10, 16, 17)", 
                     forDate.ToString("yyyy-MM-dd"))).ToArray();
 
             var fileUploads = _context.FileUploads.Where(x => uploadIds.Contains(x.Id));
             return fileUploads.Any() ? fileUploads.FirstOrDefault() : null;
+        }
+
+        /// <summary>
+        /// Mark file status = Aborted for any imports/calcs exceeeding 5 min (TODO eval as we go along, maybe need two diff values)
+        /// </summary>
+        public void FailHangedFileUploadOrCalcs(int importTimeout, int calcTimeout)
+        {
+            _context.Database.ExecuteSqlCommand("Update FileUpload Set StatusId = 16 Where " +
+                                                "StatusId = 5 and DateDiff(MINUTE, UploadDateTime, GetDate()) >= " + importTimeout);
+            _context.Database.ExecuteSqlCommand("Update FileUpload Set StatusId = 17 Where " +
+                                                "StatusId = 11 and DateDiff(MINUTE, UploadDateTime, GetDate()) >= " + calcTimeout);
         }
 
         public FileUpload GetDailyFileWithCalcRunningForDate(DateTime forDate)
@@ -541,7 +560,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         /// </summary>
         /// <param name="fileUpload">The fileUpload object whose status is to be updated</param>
         /// <param name="statusId">Status to set for the uploaded file</param>
-        public void UpdateImportProcessStatus(FileUpload fileUpload, int statusId)
+        public void UpdateImportProcessStatus(int statusId, FileUpload fileUpload)
         {
             var db = new RepositoryContext(_context.Database.Connection);
             var fu = db.FileUploads.AsNoTracking().FirstOrDefault(x => x.Id == fileUpload.Id);
