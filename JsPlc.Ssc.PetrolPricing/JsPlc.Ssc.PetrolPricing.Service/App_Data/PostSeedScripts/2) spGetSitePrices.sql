@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE dbo.spGetSitePrices
+﻿CREATE PROCEDURE [dbo].[spGetSitePrices]
 	@siteId int,
 	@forDate DateTime,
 	@skipRecs int,
@@ -6,9 +6,9 @@
 AS
 
 --Declare @siteId int = 0
---Declare @forDate DateTime = '2015-11-30'
---Declare @skipRecs int = 1
---Declare @takeRecs int = 2
+--Declare @forDate DateTime = '2015-12-16'
+--Declare @skipRecs int = 0
+--Declare @takeRecs int = 20
 
 /* Testbed for Day Of Week, DateAdd calc
 Declare @thedate DateTime = '2015-12-08' -- Tue 
@@ -23,53 +23,73 @@ Select  DateDiff(day, @anotherDt, @thedate) -- (gives 2nd param - 1st param)
 
 -- If today is 08 Dec 2015:
 -- And if we want Competitor Prices of yesterday, we look at DailyPrice UploadDateTime = 08 Dec 2015
+Declare @lookBackDays int = 25
 
-;With sitePrices as
-(
-	Select sp.siteId, sp.FuelTypeId, sp.DateOfCalc, sp.DateOfPrice, sp.EffDate, 
-	sp.SuggestedPrice, sp.OverriddenPrice, ft.FuelTypeName
-	FROM SitePrice sp, FuelType ft
-	Where sp.FuelTypeId = ft.Id
-)
-,sites as
+Declare @todayPriceDate DateTime, @lastPriceDate DateTime = null
+Set @lastPriceDate = (Select Distinct Top 1 DateOfCalc
+						from SitePrice 
+						where DateDiff(day, DateOfCalc, @forDate) Between 1 and @lookBackDays -- go 25 days back at most for eff.
+						Order By DateOfCalc Desc)
+
+if (@lastPriceDate is null) Set @todayPriceDate = DateAdd(day, -1, @forDate)
+else set @todayPriceDate = @lastPriceDate
+--Select @todayPriceDate
+
+;With sites as
 (
 	Select *
 	FROM Site s
 	Where (@siteId = 0 OR s.Id = @siteId)
+			AND s.IsSainsburysSite = 1
 	Order By Id
 	Offset @skipRecs ROWS
 	Fetch Next @takeRecs ROWS ONLY
-)
+) -- select * from sites
+,siteFuels as
+(
+   Select Distinct s.Id as SiteId, dp.FuelTypeId, ft.FuelTypeName
+   from sites s, DailyPrice dp, FuelType ft
+   Where s.CatNo = dp.CatNo and dp.FuelTypeId = ft.Id
+) -- select * from siteFuels
+,sitePrices as
+(
+	Select 
+		sf.SiteId, sf.FuelTypeId, sf.FuelTypeName, 
+
+		sp.DateOfCalc, sp.DateOfPrice, sp.EffDate,
+		sp.SuggestedPrice, sp.OverriddenPrice
+	FROM siteFuels sf Left Join SitePrice sp
+		On sf.FuelTypeId = sp.FuelTypeId And sf.SiteId = sp.SiteId
+) -- Select * from sitePrices
 ,tomorrowsPrices as
 (
 	Select * from sitePrices Where DateDiff(day, DateOfCalc, @forDate) = 0
-)
-,todaysPrices as
+) -- Select * from tomorrowsPrices
+,todaysPrices as -- treat lastPriceDate as todaysPrice
 (
-	Select * from sitePrices Where DateDiff(day, DateOfCalc, @forDate) = 1
-)
+	Select * from sitePrices Where DateDiff(day, DateOfCalc, @todayPriceDate) = 0
+) -- Select * from todaysPrices
 ,sitesWithPrices As -- JS Site and Prices information
 (
 	SELECT s.Id as siteId, s.CatNo, 
 		s.SiteName, s.Address, s.Suburb, s.Town,  
 		s.IsSainsburysSite, s.Brand, s.Company, s.Ownership,
 
-		tomorrowsPrices.FuelTypeId, tomorrowsPrices.FuelTypeName, 
+		--tomorrowsPrices.FuelTypeId, tomorrowsPrices.FuelTypeName, 
 		tomorrowsPrices.DateOfCalc, tomorrowsPrices.DateOfPrice, 
 		tomorrowsPrices.SuggestedPrice, tomorrowsPrices.OverriddenPrice,
 
 		todaysPrices.DateOfCalc DateOfCalcForTodaysPrice, todaysPrices.DateOfPrice DateOfPriceForTodaysPrice, 
 		todaysPrices.SuggestedPrice SuggestedPriceToday, todaysPrices.OverriddenPrice OverriddenPriceToday
 	FROM 
-	Sites s 
-		Left outer join tomorrowsPrices
+	Sites s
+		Left join tomorrowsPrices
 			On s.Id = tomorrowsPrices.SiteId
-		Left outer join todaysPrices
+		Left join todaysPrices
 			On s.Id = todaysPrices.SiteId
 	Where 
 		(tomorrowsPrices.DateOfCalc is null OR DateDiff(day, tomorrowsPrices.DateOfCalc, @forDate) = 0)
-		AND (todaysPrices.DateOfCalc is null OR DateDiff(day, todaysPrices.DateOfCalc, @forDate) = 1)
-		AND s.IsSainsburysSite = 1
+		AND (todaysPrices.DateOfCalc is null OR DateDiff(day, todaysPrices.DateOfCalc, @todayPriceDate) = 0)
 )
 Select * from sitesWithPrices 
 Order By SiteId
