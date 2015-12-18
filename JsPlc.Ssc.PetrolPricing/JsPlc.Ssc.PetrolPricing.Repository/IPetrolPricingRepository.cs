@@ -23,6 +23,14 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
         bool NewDailyPrices(List<DailyPrice> dailyPriceList, FileUpload fileDetails, int startingLineNumber);
 
+        /// <summary>
+        /// Useful for SiteMaint screen
+        /// </summary>
+        /// <param name="siteId"></param>
+        /// <param name="driveTimeFrom"></param>
+        /// <param name="driveTimeTo"></param>
+        /// <param name="includeSainsburysAsCompetitors"></param>
+        /// <returns></returns>
         IEnumerable<SiteToCompetitor> GetCompetitors(int siteId, int driveTimeFrom, int driveTimeTo, bool includeSainsburysAsCompetitors = true);
 
         SiteToCompetitor LookupSiteAndCompetitor(int siteCatNo, int competitorCatNo);
@@ -40,7 +48,26 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         
         IEnumerable<Site> GetSitesWithCompetitors();
 
+        /// <summary>
+        /// Useful for pricing screen
+        /// </summary>
+        /// <param name="forDate"></param>
+        /// <param name="siteId"></param>
+        /// <param name="pageNo"></param>
+        /// <param name="pageSize"></param>
+        /// <returns></returns>
         IEnumerable<SitePriceViewModel> GetSitesWithPrices(DateTime forDate, int siteId = 0, int pageNo = 1,
+            int pageSize = Constants.PricePageSize);
+
+        /// <summary>
+        /// Useful for pricing screen
+        /// </summary>
+        /// <param name="forDate"></param>
+        /// <param name="siteId"></param>
+        /// <param name="pageNo"></param>
+        /// <param name="pageSize"></param>
+        /// <returns></returns>
+        IEnumerable<SitePriceViewModel> GetCompetitorsWithPrices(DateTime forDate, int siteId = 0, int pageNo = 1,
             int pageSize = Constants.PricePageSize);
 
         IQueryable<Site> GetSitesIncludePrices(DateTime? forDate = null);

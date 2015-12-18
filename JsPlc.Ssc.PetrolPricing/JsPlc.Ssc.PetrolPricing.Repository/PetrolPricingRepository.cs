@@ -112,6 +112,13 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             return retval;
         }
 
+        public IEnumerable<SitePriceViewModel> GetCompetitorsWithPrices(DateTime forDate, int siteId = 0, int pageNo = 1, int pageSize = Constants.PricePageSize)
+        {
+            var retval = CallCompetitorsWithPriceSproc(forDate, siteId, pageNo, pageSize);
+
+            return retval;
+        }
+
         public SitePriceViewModel GetASiteWithPrices(int siteId, DateTime forDate)
         {
             var listSitePlusPrice = CallSitePriceSproc(forDate, siteId, 1, 1);
@@ -243,11 +250,6 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         private IEnumerable<SitePriceViewModel> CallCompetitorsWithPriceSproc(DateTime forDate, int siteId = 0, int pageNo = 1, int pageSize = Constants.PricePageSize)
         {
             // TODO wireup params from sproc to a new DTO
-            //@siteId int,
-            //@forDate DateTime,
-            //@skipRecs int,
-            //@takeRecs int
-
             var siteIdParam = new SqlParameter("@siteId", SqlDbType.Int)
             {
                 Value = siteId
@@ -256,6 +258,8 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             {
                 Value = forDate
             };
+
+            // NOTE: Below paging params are for JSSite(s), not for competitors (we get all competitors for the specified sites resultset)
             var skipRecsParam = new SqlParameter("@skipRecs", SqlDbType.Int)
             {
                 Value = (pageNo - 1) * pageSize
@@ -270,8 +274,8 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             {
                 siteIdParam, forDateParam, skipRecsParam, takeRecsParam
             };
-            const string spName = "dbo.spGetSitePrices";
-            // Test in SQL:     Exec dbo.spGetSitePrices 0, '2015-11-30'
+            const string spName = "dbo.spGetCompetitorPrices";
+            // Test in SQL:     Exec dbo.[spGetCompetitorPrices] 0, '2015-11-30', 
             // Output is sorted by siteId so all Fuels for a site appear together
 
             using (var connection = new SqlConnection(_context.Database.Connection.ConnectionString))
@@ -287,7 +291,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                     var pgTable = new DataTable();
                     pgTable.Load(reader);
 
-                    var lastSiteId = -1;
+                    var lastSiteId = -1; 
                     SitePriceViewModel sitePriceRow = null;
 
                     var dbList = new List<SitePriceViewModel>();
@@ -303,31 +307,35 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                         }
                         if (sitePriceRow == null) continue;
 
-                        sitePriceRow.SiteId = (int)pgRow["SiteId"];
+                        sitePriceRow.SiteId = (int)pgRow["SiteId"]; // CompetitorId
+                        sitePriceRow.JsSiteId = (int)pgRow["JsSiteId"]; 
                         sitePriceRow.CatNo = Convert.IsDBNull(pgRow["CatNo"]) ? null : (int?)pgRow["CatNo"]; // ToNullable<int> or ToNullable<double>
                         sitePriceRow.StoreName = (string)pgRow["SiteName"];
                         sitePriceRow.Address = (string)pgRow["Address"];
+
+                        sitePriceRow.DriveTime = pgRow["DriveTime"].ToString().ToNullable<float>();
+                        sitePriceRow.Distance = pgRow["Distance"].ToString().ToNullable<float>();
                         // any other fields for UI extract here
 
                         sitePriceRow.FuelPrices = sitePriceRow.FuelPrices ?? new List<FuelPriceViewModel>();
                         if (!Convert.IsDBNull(pgRow["FuelTypeId"]))
                         {
-                            var AutoPrice = pgRow["SuggestedPrice"].ToString().ToNullable<int>();
-                            var OverridePrice = pgRow["OverriddenPrice"].ToString().ToNullable<int>();
-                            var OverriddenPriceToday = pgRow["OverriddenPriceToday"].ToString().ToNullable<int>();
-                            var SuggestedPriceToday = pgRow["SuggestedPriceToday"].ToString().ToNullable<int>();
-                            var TodayPrice = (OverriddenPriceToday.HasValue && OverriddenPriceToday.Value != 0)
-                                        ? OverriddenPriceToday.Value
-                                        : (SuggestedPriceToday.HasValue) ? SuggestedPriceToday.Value : 0;
+                            //var AutoPrice = pgRow["SuggestedPrice"].ToString().ToNullable<int>();
+                            //var OverridePrice = pgRow["OverriddenPrice"].ToString().ToNullable<int>();
+                            var TodayPrice = pgRow["ModalPrice"].ToString().ToNullable<int>();
+                            var YestPrice = pgRow["ModalPriceYest"].ToString().ToNullable<int>();
                             sitePriceRow.FuelPrices.Add(new FuelPriceViewModel
                             {
                                 FuelTypeId = (int)pgRow["FuelTypeId"],
-                                // Tomorrow's prices
-                                AutoPrice = (!AutoPrice.HasValue) ? 0 : AutoPrice.Value,
-                                OverridePrice = (!OverridePrice.HasValue) ? 0 : OverridePrice.Value,
+                                //// Tomorrow's prices
+                                //AutoPrice = (!AutoPrice.HasValue) ? 0 : AutoPrice.Value,
+                                //OverridePrice = (!OverridePrice.HasValue) ? 0 : OverridePrice.Value,
 
                                 // Today's prices (whatever was calculated yesterday OR last)
-                                TodayPrice = TodayPrice
+                                TodayPrice = TodayPrice,
+
+                                // Today's prices (whatever was calculated yesterday OR last)
+                                YestPrice= YestPrice
                             });
                         }
                     }
