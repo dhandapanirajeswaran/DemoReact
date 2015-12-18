@@ -40,7 +40,7 @@ else set @todayPriceDate = @lastPriceDate
 	Select *
 	FROM Site s
 	Where (@siteId = 0 OR s.Id = @siteId)
-			AND s.IsSainsburysSite = 1
+			AND s.IsSainsburysSite = 1 AND s.IsActive = 1 
 	Order By Id
 	Offset @skipRecs ROWS
 	Fetch Next @takeRecs ROWS ONLY

@@ -238,16 +238,16 @@
     <Content Include="App_Data\DBWipeScripts\1%29 DbWipeScript.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="App_Data\PostSeedScripts\1%29 Drop spGetSitePrices.sql">
+    <Content Include="App_Data\DropCreateSprocs\1%29 Drop spGetSitePrices.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="App_Data\PostSeedScripts\3%29 Drop spGetCompetitorPrices.sql">
+    <Content Include="App_Data\DropCreateSprocs\2%29 spGetSitePrices.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="App_Data\PostSeedScripts\4%29 spGetCompetitorPrices.sql">
+    <Content Include="App_Data\DropCreateSprocs\3%29 Drop spGetCompetitorPrices.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="App_Data\PostSeedScripts\2%29 spGetSitePrices.sql">
+    <Content Include="App_Data\DropCreateSprocs\4%29 spGetCompetitorPrices.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="App_Data\DummyDataScripts\1%29 PricesSetup.sql">
@@ -319,6 +319,7 @@
     <Content Include="Views\Shared\_Layout.cshtml" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="App_Data\PostSeedScripts\" />
     <Folder Include="bin\" />
     <Folder Include="Models\" />
   </ItemGroup>

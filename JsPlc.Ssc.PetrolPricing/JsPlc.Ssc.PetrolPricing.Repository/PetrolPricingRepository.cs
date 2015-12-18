@@ -112,6 +112,13 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             return retval;
         }
 
+        public IEnumerable<SitePriceViewModel> GetCompetitorsWithPrices(DateTime forDate, int siteId = 0, int pageNo = 1, int pageSize = Constants.PricePageSize)
+        {
+            var retval = CallCompetitorsWithPriceSproc(forDate, siteId, pageNo, pageSize);
+
+            return retval;
+        }
+
         public SitePriceViewModel GetASiteWithPrices(int siteId, DateTime forDate)
         {
             var listSitePlusPrice = CallSitePriceSproc(forDate, siteId, 1, 1);
@@ -224,6 +231,111 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
                                 // Today's prices (whatever was calculated yesterday OR last)
                                 TodayPrice = TodayPrice
+                            });
+                        }
+                    }
+                    return dbList;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Calls [spGetCompetitorPrices] to get competitors prices view
+        /// </summary>
+        /// <param name="forDate">Default to today's date</param>
+        /// <param name="siteId">[Optional] Specific siteId, defaults to 0 for all sites</param>
+        /// <param name="pageNo">[Optional] Defaults to Page 1, or specify a page no.</param>
+        /// <param name="pageSize">[Optional] Defaults to Pagesize as per constant, or specify a page size</param>
+        /// <returns>List of SitePriceViewModel (with overridable price as an input price by user)</returns>
+        private IEnumerable<SitePriceViewModel> CallCompetitorsWithPriceSproc(DateTime forDate, int siteId = 0, int pageNo = 1, int pageSize = Constants.PricePageSize)
+        {
+            // TODO wireup params from sproc to a new DTO
+            var siteIdParam = new SqlParameter("@siteId", SqlDbType.Int)
+            {
+                Value = siteId
+            };
+            var forDateParam = new SqlParameter("@forDate", SqlDbType.DateTime)
+            {
+                Value = forDate
+            };
+
+            // NOTE: Below paging params are for JSSite(s), not for competitors (we get all competitors for the specified sites resultset)
+            var skipRecsParam = new SqlParameter("@skipRecs", SqlDbType.Int)
+            {
+                Value = (pageNo - 1) * pageSize
+            };
+            var takeRecsParam = new SqlParameter("@takeRecs", SqlDbType.Int)
+            {
+                Value = pageSize
+            };
+            // any other params here
+
+            var sqlParams = new List<SqlParameter>
+            {
+                siteIdParam, forDateParam, skipRecsParam, takeRecsParam
+            };
+            const string spName = "dbo.spGetCompetitorPrices";
+            // Test in SQL:     Exec dbo.[spGetCompetitorPrices] 0, '2015-11-30', 
+            // Output is sorted by siteId so all Fuels for a site appear together
+
+            using (var connection = new SqlConnection(_context.Database.Connection.ConnectionString))
+            {
+                using (var command = new SqlCommand(spName, connection))
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Parameters.AddRange(sqlParams.ToArray());
+
+                    connection.Open();
+
+                    var reader = command.ExecuteReader();
+                    var pgTable = new DataTable();
+                    pgTable.Load(reader);
+
+                    var lastSiteId = -1; 
+                    SitePriceViewModel sitePriceRow = null;
+
+                    var dbList = new List<SitePriceViewModel>();
+
+                    foreach (DataRow pgRow in pgTable.Rows)
+                    {
+                        var loopSiteId = (int)pgRow["siteId"];
+                        if (loopSiteId != lastSiteId)
+                        {
+                            sitePriceRow = new SitePriceViewModel();
+                            dbList.Add(sitePriceRow);
+                            lastSiteId = loopSiteId;
+                        }
+                        if (sitePriceRow == null) continue;
+
+                        sitePriceRow.SiteId = (int)pgRow["SiteId"]; // CompetitorId
+                        sitePriceRow.JsSiteId = (int)pgRow["JsSiteId"]; 
+                        sitePriceRow.CatNo = Convert.IsDBNull(pgRow["CatNo"]) ? null : (int?)pgRow["CatNo"]; // ToNullable<int> or ToNullable<double>
+                        sitePriceRow.StoreName = (string)pgRow["SiteName"];
+                        sitePriceRow.Address = (string)pgRow["Address"];
+
+                        sitePriceRow.DriveTime = pgRow["DriveTime"].ToString().ToNullable<float>();
+                        sitePriceRow.Distance = pgRow["Distance"].ToString().ToNullable<float>();
+                        // any other fields for UI extract here
+
+                        sitePriceRow.FuelPrices = sitePriceRow.FuelPrices ?? new List<FuelPriceViewModel>();
+                        if (!Convert.IsDBNull(pgRow["FuelTypeId"]))
+                        {
+                            //var AutoPrice = pgRow["SuggestedPrice"].ToString().ToNullable<int>();
+                            //var OverridePrice = pgRow["OverriddenPrice"].ToString().ToNullable<int>();
+                            var TodayPrice = pgRow["ModalPrice"].ToString().ToNullable<int>();
+                            var YestPrice = pgRow["ModalPriceYest"].ToString().ToNullable<int>();
+                            sitePriceRow.FuelPrices.Add(new FuelPriceViewModel
+                            {
+                                FuelTypeId = (int)pgRow["FuelTypeId"],
+                                //// Tomorrow's prices
+                                //AutoPrice = (!AutoPrice.HasValue) ? 0 : AutoPrice.Value,
+                                //OverridePrice = (!OverridePrice.HasValue) ? 0 : OverridePrice.Value,
+
+                                // Today's prices (whatever was calculated yesterday OR last)
+                                TodayPrice = TodayPrice,
+
+                                // Today's prices (whatever was calculated yesterday OR last)
+                                YestPrice= YestPrice
                             });
                         }
                     }

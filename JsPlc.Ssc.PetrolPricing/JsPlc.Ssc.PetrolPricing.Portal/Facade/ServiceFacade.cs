@@ -196,6 +196,17 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             return (response.IsSuccessStatusCode) ? result : null;
         }
 
+
+        public string ReInitDb(string option = "")
+        {
+            var apiUrl = "api/ReInitDb?buildOptions=" + option;
+
+            var response = _client.Value.GetAsync(apiUrl).Result;
+
+            var result = response.Content.ReadAsStringAsync().Result;
+            
+            return result; //(response.IsSuccessStatusCode) ? result : null;
+        }
         /// <summary>
         /// Save site Price overrides back to backend
         /// </summary>
