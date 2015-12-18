@@ -14,7 +14,7 @@ using JsPlc.Ssc.PetrolPricing.Models.ViewModels;
 using JsPlc.Ssc.PetrolPricing.Repository;
 using Newtonsoft.Json.Serialization;
 
-using Excel = Microsoft.Office.Interop.Excel;
+using System.Data.OleDb;
 
 
 
@@ -149,10 +149,11 @@ namespace JsPlc.Ssc.PetrolPricing.Business
             return listOfFiles;
         }
 
-        public IEnumerable<FileUpload> ProcessQuarterlyFile(List<FileUpload> uploadedFiles)
-        {
-            throw new NotImplementedException();
-        }
+        //public IEnumerable<FileUpload> ProcessQuarterlyFile(List<FileUpload> uploadedFiles)
+        //{
+        //    //throw new NotImplementedException();
+           
+        //}
 
         /// <summary>
         /// Parses the CSV line to make a DailyPrice object
@@ -187,215 +188,261 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 
         //Process Quarterly File//////////////////////////////////////////////////////////////////////////////////////
 
-        public bool ProcessQuarterlyFile()
+        public IEnumerable<FileUpload> ProcessQuarterlyFile(List<FileUpload> uploadedFiles)
         {
-            //start test
-            FileUpload aFile = new FileUpload();
-            aFile.Id = 1;
-            aFile.OriginalFileName = "C:/Temp/20151126 163800hrs - Catalist quarterly data.xlsx";
-            //end test
 
-            //process Quarterly data
-            return GetQuarterlyData(aFile);
+           
+                foreach (FileUpload aFile in uploadedFiles)
+                {
+                    updateSitesFromCatalistQuarterly(aFile);
+                }
+
+            return uploadedFiles;
 
         }
 
-        //private bool SaveQuarterlyData(List<CatalistQuarterly> CatalistQuarterlyData, FileUpload aFile)
-        //{
+        private bool updateSitesFromCatalistQuarterly(FileUpload aFile)
+        {
+                bool siteSuccess = false;
+                bool infoSuccess = false;
+                List<CatalistQuarterly> allSites = new List<CatalistQuarterly>();
+                List<CatalistQuarterly> allUniqueSites = new List<CatalistQuarterly>();
 
-        //    _db.UpdateImportProcessStatus(aFile, 5);//Processing 5
+                //Get data from excel and parse to gen list
+                allSites = ProccessSiteData(aFile, GetQuarterlyData(aFile));
 
-        //    var storedFilePath = SettingsService.GetUploadPath();
-        //    var filePathAndName = Path.Combine(storedFilePath, aFile.StoredFileName);
+                //TODO Get all Unique Sites 
+                //allUniqueSites.Select(CatNo => CatNo.First()).ToList();
+                //allUniqueSites = allSites.Remove(Site => Site.CatNo).ToList();
+                //allUniqueSites.GroupBy(x => x.CatNo).Select(y => y.First());
+                //allUniqueSites = allSites;
 
-        //    try
-        //    {
-                
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _db.LogImportError(aFile, ex.Message + "filePath=" + filePathAndName, null);
-        //        _db.UpdateImportProcessStatus(aFile, 15);
-        //        return false;
-        //    }
-         
+                allUniqueSites = allSites.GroupBy(Site => Site.CatNo)
+                 .Select(CatNo => CatNo.First())
+                 .ToList();
 
-        //    return true;
-        //}
+                _db.UpdateImportProcessStatus(5, aFile);//Processing 5
+
+                //Updates or Add Sites
+                if (!_db.UpdateCatalistQuarterlyData(allUniqueSites, aFile, false))
+                {
+                    _db.UpdateImportProcessStatus(15, aFile);//failed 15
+                }
+                else { siteSuccess = true; }
+
+                //Updates or Add Competitior info
+                if (!_db.UpdateSiteToCompFromQuarterlyData(allSites))
+                {
+                    _db.UpdateImportProcessStatus(15, aFile);//failed 15
+                    
+                }
+                else { infoSuccess = true; }
+
+                if (infoSuccess && siteSuccess)
+                {
+                    _db.UpdateImportProcessStatus(10, aFile);//ok 10
+                }
+               
+
+                return true;
+        }
 
 
-        private bool ProccessSiteData(Excel.Range Range, FileUpload aFile)
-        { 
-        
-            Excel.Range range = Range;
-            int rowCount = 0;
-   
-            List<CatalistQuarterly> siteCatalistData = new List<CatalistQuarterly>();
-
-
-            //starting from 2 to avoid headings held in row 1
-            for (rowCount = 2; rowCount <= range.Rows.Count; rowCount++)
+        private DataTable GetQuarterlyData(FileUpload aFile)
+        {
+            DataTable data = new DataTable();
+            try
             {
+                var storedFilePath = SettingsService.GetUploadPath();
+                var filePathAndName = Path.Combine(storedFilePath, aFile.StoredFileName);
+
+                //REMOVE
+                //var filePathAndName = "C:/Temp/20151126 163800hrs - Catalist quarterly data.xlsx";
+
+                var connectionString = string.Format("Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + filePathAndName + ";Extended Properties='Excel 12.0 Xml;HDR=YES'");
+                
+                var adapter = new OleDbDataAdapter("SELECT * FROM [Quarterly TA Analysis V2 2015$]", connectionString);
+                var ds = new DataSet();
+
+                adapter.Fill(ds, "x");
+
+                data = ds.Tables[0];
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error: Failed to create a database connection. \n{0}", ex.Message);
+               
+            }
+
+
+            return data;
+        }
+
+
+
+        private List<CatalistQuarterly> ProccessSiteData(FileUpload aFile, DataTable QuarterlyData)
+        {
+            List<CatalistQuarterly> siteCatalistData = new List<CatalistQuarterly>();
+            int rowCount = 0;
+            //starting from 2 to avoid headings held in row 1
+            foreach (DataRow row in QuarterlyData.Rows)
+            {
+                rowCount++;
+
                 try
                 {
                     CatalistQuarterly site = new CatalistQuarterly();
 
                     //Sainsburys Store
-                    site.MasterSiteName = (range.Cells[rowCount, 1] as Excel.Range).Value2;
-                    site.SiteTown = (range.Cells[rowCount, 2] as Excel.Range).Value2;
-                    site.SiteCatNo = (range.Cells[rowCount, 3] as Excel.Range).Value2;
-
-                    //Competitiors Store
-                    site.CatNo = (range.Cells[rowCount, 7] as Excel.Range).Value2;
-                    site.Brand = (range.Cells[rowCount, 8] as Excel.Range).Value2;
-
-
-                    site.SiteName = (range.Cells[rowCount, 9] as Excel.Range).Value2;
-                    site.Address = (range.Cells[rowCount, 10] as Excel.Range).Value2;
-                    site.Suburb = (range.Cells[rowCount, 11] as Excel.Range).Value2;
-                    site.Town = (range.Cells[rowCount, 12] as Excel.Range).Value2;
-                    site.Postcode = (range.Cells[rowCount, 13] as Excel.Range).Value2;
-                    site.CompanyName = (range.Cells[rowCount, 14] as Excel.Range).Value2;
-                    site.Ownership = (range.Cells[rowCount, 15] as Excel.Range).Value2;
+                    site.MasterSiteName = row[0].ToString();
+                    site.SiteTown = row[1].ToString();
+                    site.SiteCatNo = double.Parse(row[2].ToString());
 
                     //Site to competitor
-                    site.Rank = (range.Cells[rowCount, 4] as Excel.Range).Value2;
-                    site.DriveDistanceMiles = (range.Cells[rowCount, 5] as Excel.Range).Value2;
-                    site.DriveTimeMins = (range.Cells[rowCount, 6] as Excel.Range).Value2;
+                    site.Rank = double.Parse(row[3].ToString());
+                    site.DriveDistanceMiles = double.Parse(row[4].ToString());
+                    site.DriveTimeMins = double.Parse(row[5].ToString());
+
+                    //Competitiors Store
+                    site.CatNo = double.Parse(row[6].ToString());
+                    site.Brand = row[7].ToString();
+                    site.SiteName = row[8].ToString();
+                    site.Address = row[9].ToString();
+                    site.Suburb = row[10].ToString();
+                    site.Town = row[11].ToString();
+                    site.Postcode = row[12].ToString();
+                    site.CompanyName = row[13].ToString();
+                    site.Ownership = row[14].ToString();
 
                     siteCatalistData.Add(site);
-
                 }
                 catch
                 {
-                    _db.LogImportError(aFile, "Unable to add/parse line from Catalist Quarterly File - line " + rowCount, rowCount);
-                    
+                    //TOD Reimplement
+                    //_db.LogImportError(aFile, "Unable to add/parse line from Catalist Quarterly File - line " + rowCount, rowCount);
+                    continue;
                 }
-    }
+            }
+
+            return siteCatalistData;
+        }
+
+        //old using Microsoft.Office.Interop.Excel;
+        //private bool ProccessSiteData(Excel.Range Range, FileUpload aFile)
+        //{ 
+        
+        //    Excel.Range range = Range;
+        //    int rowCount = 0;
+   
+        //    List<CatalistQuarterly> siteCatalistData = new List<CatalistQuarterly>();
+
+
+        //    //starting from 2 to avoid headings held in row 1
+        //    for (rowCount = 2; rowCount <= range.Rows.Count; rowCount++)
+        //    {
+        //        try
+        //        {
+        //            CatalistQuarterly site = new CatalistQuarterly();
+
+        //            //Sainsburys Store
+        //            site.MasterSiteName = (range.Cells[rowCount, 1] as Excel.Range).Value2;
+        //            site.SiteTown = (range.Cells[rowCount, 2] as Excel.Range).Value2;
+        //            site.SiteCatNo = (range.Cells[rowCount, 3] as Excel.Range).Value2;
+
+        //            //Competitiors Store
+        //            site.CatNo = (range.Cells[rowCount, 7] as Excel.Range).Value2;
+        //            site.Brand = (range.Cells[rowCount, 8] as Excel.Range).Value2;
+
+
+        //            site.SiteName = (range.Cells[rowCount, 9] as Excel.Range).Value2;
+        //            site.Address = (range.Cells[rowCount, 10] as Excel.Range).Value2;
+        //            site.Suburb = (range.Cells[rowCount, 11] as Excel.Range).Value2;
+        //            site.Town = (range.Cells[rowCount, 12] as Excel.Range).Value2;
+        //            site.Postcode = (range.Cells[rowCount, 13] as Excel.Range).Value2;
+        //            site.CompanyName = (range.Cells[rowCount, 14] as Excel.Range).Value2;
+        //            site.Ownership = (range.Cells[rowCount, 15] as Excel.Range).Value2;
+
+        //            //Site to competitor
+        //            site.Rank = (range.Cells[rowCount, 4] as Excel.Range).Value2;
+        //            site.DriveDistanceMiles = (range.Cells[rowCount, 5] as Excel.Range).Value2;
+        //            site.DriveTimeMins = (range.Cells[rowCount, 6] as Excel.Range).Value2;
+
+        //            siteCatalistData.Add(site);
+
+        //        }
+        //        catch
+        //        {
+        //            _db.LogImportError(aFile, "Unable to add/parse line from Catalist Quarterly File - line " + rowCount, rowCount);
+                    
+        //        }
+        //    }
 
 
 
-            List<CatalistQuarterly> allUniqueSites = new List<CatalistQuarterly>();
+        //    List<CatalistQuarterly> allUniqueSites = new List<CatalistQuarterly>();
 
-            allUniqueSites = siteCatalistData.GroupBy(Site => Site.CatNo)
-                  .Select(CatNo => CatNo.First())
-                  .ToList();
+        //    allUniqueSites = siteCatalistData.GroupBy(Site => Site.CatNo)
+        //          .Select(CatNo => CatNo.First())
+        //          .ToList();
 
-            //Udates or Adds Sites from cat file
-            _db.UpdateCatalistQuarterlyData(allUniqueSites, aFile, false);
+        //    //Udates or Adds Sites from cat file
+        //    _db.UpdateCatalistQuarterlyData(allUniqueSites, aFile, false);
 
-            UpdateSiteToCompetitiorData(siteCatalistData);
+        //    UpdateSiteToCompetitiorData(siteCatalistData);
            
 
 
-            return true;
+        //    return true;
 
-        }
+        //}
 
-        private void UpdateSiteToCompetitiorData (List<CatalistQuarterly> SiteCatalistData)
-        {
-
-            _db.UpdateSiteToCompFromQuarterlyData(SiteCatalistData);
+       
             
-            //List<CatalistQuarterly> siteCatalistData = new List<CatalistQuarterly>();
-            //List<CatalistQuarterly> sainsburysSites = new List<CatalistQuarterly>();
+       
 
-            //siteCatalistData = SiteCatalistData;
+        //private bool GetQuarterlyData(FileUpload aFile)
+        //{
 
-            ////get all Sainsburys Sites from list
-            //sainsburysSites = siteCatalistData.GroupBy(Site => Site.SiteCatNo)
-            //.Select(SiteCatNo => SiteCatNo.First())
-            //.ToList();
+        //    bool success;
+        //    Excel.Application xlApp;
+        //    Excel.Workbook xlWorkBook;
+        //    Excel.Worksheet xlWorkSheet;
+        //    Excel.Range range;
 
-            //foreach (CatalistQuarterly site in sainsburysSites)
-            //{
-            //    List<CatalistQuarterly> ListOfCompetitorsForSainsburysSite = new List<CatalistQuarterly>();
+        //    xlApp = new Excel.Application();
+        //    xlWorkBook = xlApp.Workbooks.Open(aFile.OriginalFileName, 0, true, 5, "", "", true, Microsoft.Office.Interop.Excel.XlPlatform.xlWindows, "\t", false, false, 0, true, 1, 0);
+        //    xlWorkSheet = (Excel.Worksheet)xlWorkBook.Worksheets.get_Item(1);
 
-            //    //Get Competitors for this Sainsburys site
-            //    ListOfCompetitorsForSainsburysSite = siteCatalistData.GroupBy(Site => Site.SiteCatNo)
-            //     .Select(SiteCatNo => site.CatNo)
-            //     .ToList();
+        //    range = xlWorkSheet.UsedRange;
+        //    success = ProccessSiteData(range, aFile);
 
-            //    List<SiteToCompetitor> ListOfCompetitor = new List<SiteToCompetitor>();
-
-            //    //Compilers List of Sites To Competitor data for a Sainsburys site
-            //    foreach(CatalistQuarterly Competitor in ListOfCompetitorsForSainsburysSite)
-            //    {
-            //        try
-            //        {
-            //            SiteToCompetitor siteToCompetitor = new SiteToCompetitor();
-
-            //            //siteToCompetitor.Id = "";
-            //            //siteToCompetitor.SiteId = "";
-            //            //siteToCompetitor.CompetitorId = "";
-
-            //            siteToCompetitor.Rank = int.Parse(Competitor.Rank.ToString());
-            //            siteToCompetitor.DriveTime = float.Parse(Competitor.DriveTimeMins.ToString());
-            //            siteToCompetitor.Distance = float.Parse(Competitor.DriveDistanceMiles.ToString());
-
-
-            //            ListOfCompetitor.Add(siteToCompetitor);
-            //        }
-            //        catch
-            //        {
-            //            //TODO unable to added competitiors
-            //        }
-            //    }
-
-            //    //AddUpdateSiteToCompetitor
-
-            //    //add or update Competitor info
-
-            //}
-
-
-            //_db.UpdateCatalistQuarterlyData(SainsburysSites, aFile, true);
-        }
-
-
-        private bool GetQuarterlyData(FileUpload aFile)
-        {
-            
-
-            Excel.Application xlApp;
-            Excel.Workbook xlWorkBook;
-            Excel.Worksheet xlWorkSheet;
-            Excel.Range range;
-
-            xlApp = new Excel.Application();
-            xlWorkBook = xlApp.Workbooks.Open(aFile.OriginalFileName, 0, true, 5, "", "", true, Microsoft.Office.Interop.Excel.XlPlatform.xlWindows, "\t", false, false, 0, true, 1, 0);
-            xlWorkSheet = (Excel.Worksheet)xlWorkBook.Worksheets.get_Item(1);
-
-            range = xlWorkSheet.UsedRange;
-            ProccessSiteData(range, aFile);
-
-            xlWorkBook.Close(true, null, null);
-            xlApp.Quit();
+        //    xlWorkBook.Close(true, null, null);
+        //    xlApp.Quit();
            
-            releaseObject(xlWorkSheet);
-            releaseObject(xlWorkBook);
-            releaseObject(xlApp);
+        //    releaseObject(xlWorkSheet);
+        //    releaseObject(xlWorkBook);
+        //    releaseObject(xlApp);
 
-            return true;
-        }
+        //    return success;
+        //}
 
-        private void releaseObject(object obj)
-        {
-            try
-            {
-                System.Runtime.InteropServices.Marshal.ReleaseComObject(obj);
-                obj = null;
-            }
-            catch (Exception ex)
-            {
-                obj = null;
-                // MessageBox.Show("Unable to release the Object " + ex.ToString());
-            }
-            finally
-            {
-                GC.Collect();
-            }
-        } 
+        //private void releaseObject(object obj)
+        //{
+        //    try
+        //    {
+        //        System.Runtime.InteropServices.Marshal.ReleaseComObject(obj);
+        //        obj = null;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        obj = null;
+        //        // MessageBox.Show("Unable to release the Object " + ex.ToString());
+        //    }
+        //    finally
+        //    {
+        //        GC.Collect();
+        //    }
+        //} 
 
         
         
