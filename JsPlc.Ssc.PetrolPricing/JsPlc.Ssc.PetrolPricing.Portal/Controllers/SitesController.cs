@@ -45,13 +45,30 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 
         [ScriptMethod(UseHttpGet = true)]
         public JsonResult GetSitesWithPricesJson(string date=null, int siteId=0, int pageNo=1, 
-                int pageSize=Constants.PricePageSize)
+                int pageSize=Constants.PricePageSize, int getCompetitor=0)
         {
             DateTime forDate;
             if (!DateTime.TryParse(date, out forDate)) forDate = DateTime.Now;
             // POST scenarios use : JsonConvert.SerializeObject(siteView);
-            IEnumerable<SitePriceViewModel> sitesViewModelsWithPrices = _serviceFacade.GetSitePrices(forDate, siteId, pageNo, pageSize);
+            IEnumerable<SitePriceViewModel> sitesViewModelsWithPrices = (getCompetitor != 1)
+                ? _serviceFacade.GetSitePrices(forDate, siteId, pageNo, pageSize)
+                : _serviceFacade.GetCompetitorsWithPrices(forDate, siteId, pageNo, pageSize);
             //sitesViewModelsWithPrices = null; // Force error
+
+            if (sitesViewModelsWithPrices != null)
+            {
+                sitesViewModelsWithPrices.ForEach(model =>
+                {
+                    var competitors = _serviceFacade.GetCompetitorsWithPrices(forDate, model.SiteId, pageNo, pageSize);
+                    model.hasCompetitors = false;
+                    model.competitors = new List<SitePriceViewModel>();
+                    var compList = competitors as List<SitePriceViewModel> ?? competitors.ToList();
+
+                    if (!compList.Any()) return;
+                    model.hasCompetitors = true;
+                    model.competitors = compList;
+                });
+            }
 
             var jsonData = sitesViewModelsWithPrices != null ? (object)sitesViewModelsWithPrices : "Error";
             // NOTE: The prices are still in 4 digit format (do price/10 for display)
@@ -70,7 +87,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             // Display list of existing sites along with their status
             ViewBag.Message = msg;
 
-            var model = _serviceFacade.GetSites();
+            var model = _serviceFacade.GetSites().Where(x => x.IsSainsburysSite);
             return View(model);
         }
 
@@ -128,7 +145,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
         {
             //_serviceFacade.EmailUpdatedPricesToSite();
 
-            var sitesViewModelsWithPrices = _serviceFacade.GetSitePrices();
+            //var sitesViewModelsWithPrices = _serviceFacade.GetSitePrices();
             // return empty list but never null
 
             //return View(sitesViewModelsWithPrices);

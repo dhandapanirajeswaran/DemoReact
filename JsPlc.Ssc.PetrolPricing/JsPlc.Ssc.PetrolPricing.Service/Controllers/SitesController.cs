@@ -146,7 +146,7 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
 
         /// <summary>
         /// Gets a list of SitePriceViewModel for SitePricing tab main data
-        /// Test Url: api/SitePrices?forDate=2015-11-30&siteId=1 
+        /// Test Url: api/SitePrices?forDate=2015-11-30&amp;siteId=1 
         /// or api/SitePrices
         /// </summary>
         /// <param name="forDate">Optional - Date of Calc/Viewing</param>
@@ -160,7 +160,27 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
             [FromUri]int siteId = 0, [FromUri]int pageNo = 1, [FromUri]int pageSize = Constants.PricePageSize)
         {
             if (!forDate.HasValue) forDate = DateTime.Now;
-            var siteWithPrices = _siteService.GetSitesWithPrices(forDate.Value, siteId, pageNo, pageSize);
+            IEnumerable<SitePriceViewModel> siteWithPrices = _siteService.GetSitesWithPrices(forDate.Value, siteId, pageNo, pageSize);
+            return Ok(siteWithPrices.ToList());
+        }
+
+        /// <summary>
+        /// Gets a list of SitePriceViewModel for SitePricing tab collapsible data
+        /// Test Url: api/CompetitorPrices?forDate=2015-12-17&amp;siteId=1 
+        /// or api/SitePrices
+        /// </summary>
+        /// <param name="forDate">Optional - Date of Calc/Viewing</param>
+        /// <param name="siteId">Optional - Specific SiteId or 0 for all Sites</param>
+        /// <param name="pageNo">Optional - Viewing PageNo</param>
+        /// <param name="pageSize">Optional - PageSize, set large value (e.g. 1000) to get all sites</param>
+        /// <returns>List of SitePriceViewModel</returns>
+        [System.Web.Http.HttpGet]
+        [System.Web.Http.Route("api/CompetitorPrices")]
+        public IHttpActionResult GetCompetitorsWithPrices([FromUri] DateTime? forDate = null,
+            [FromUri]int siteId = 0, [FromUri]int pageNo = 1, [FromUri]int pageSize = Constants.PricePageSize)
+        {
+            if (!forDate.HasValue) forDate = DateTime.Now;
+            IEnumerable<SitePriceViewModel> siteWithPrices = _siteService.GetCompetitorsWithPrices(forDate.Value, siteId, pageNo, pageSize);
             return Ok(siteWithPrices.ToList());
         }
 
@@ -236,7 +256,7 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
 
 
         /// <summary>
-        /// Test email body replacement values
+        /// Test email body replacement values, usable for UI click to get full email Html with prices
         /// </summary>
         /// <param name="siteId"></param>
         /// <param name="endTradeDate"></param>

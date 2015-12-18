@@ -72,12 +72,14 @@
     <!-- Submit disabled, all work done thru ajax calls -->
     <form id="myform" method="post" data-bind="submit: savePetrolPricingForm" xclass="input-group-sm" onsubmit="return false;">
         <div style="width:100%;text-align:right;margin-top:-20px;">
+            <!-- EMAIL all Button -->
             <button type="button" class="btn btn-default" data-toggle="modal" data-target="#emailAllSites">Email all &nbsp;<i class="fa fa-envelope-o"></i></button>
         </div>
         <span>Market Comparison: Sainsburys's prices and Competitors</span><br />
         <hr />
         <div class="row">
             <div class="col-md-9">
+                <!-- Date Picker -->
                 <div class="col-md-2"><b>Select Date:</b></div>
                 <div class="col-md-2 left">
                     <input type="text" id="viewingDate" class="datepicker form-control"
@@ -123,9 +125,9 @@
                 <tbody data-bind="with: dataModel">
                     <!-- JS Store DataRows -->
                     <!-- ko foreach: sites -->
-                    <tr class="panel-heading" role="tab" data-bind="id:'Heading' + SiteId">
+                    <tr class="panel-heading" role="tab" data-bind="id:('Heading' + SiteId)">
                         <td>
-                            <a role="button" data-toggle="collapse" data-parent="#accordion" data-bind="href: '#CollapseCompetitorsforsite' + SiteId"><i class="fa fa-plus-square-o"></i></a>
+                            <a role="button" data-toggle="collapse" data-parent="#accordion" data-bind="attr:{href:('#CollapseCompetitorsforsite' + SiteId)}"><i class="fa fa-plus-square-o"></i></a>
                         </td>
                         <td><span data-bind="text: StoreNo"></span></td>
                         <td><span><a href="#" data-toggle="modal" data-target="#emailSite"><i class="fa fa-envelope-o"></i></a></span></td>
@@ -150,6 +152,65 @@
                         <td colspan="2">n/a</td>
                         <!-- /ko -->
                         <!-- /ko -->
+                    </tr>
+                    <tr data-bind="attr:{id: ('CollapseCompetitorsforsite' + SiteId)}" class="panel-collapse collapse" role="tabpanel">
+                        <td colspan="12" xalign="right" style="background-color: grey">
+                            <table class="competitorTable table-striped table-hover">
+                                <thead>
+                                    <tr rowspan="2">
+                                        <th><span>Brand</span></th>
+                                        <th><span>Marker</span></th>
+                                        <th><span>Drive-Time</span></th>
+                                        <th><span>Cat No.</span></th>
+
+                                        <th colspan="2" class="tblHighlight">
+                                            <span class="fuelHeaderGroup">&nbsp;Unleaded&nbsp;</span>
+                                        </th>
+                                        <th colspan="2"><span class="fuelHeaderGroup">&nbsp;Diesel&nbsp;</span></th>
+                                        <th colspan="2" class="tblHighlight"><span class="fuelHeaderGroup">&nbsp;LPG&nbsp;</span></th>
+                                    </tr>
+                                    <tr>
+                                        <th colspan="4"></th>
+                                        <th class="tblHighlight"><span>Yesterday</span></th>
+                                        <th class="tblHighlight"><span>Today</span></th>
+                                        <th><span>Yesterday</span></th>
+                                        <th><span>Today</span></th>
+                                        <th class="tblHighlight"><span>Yesterday</span></th>
+                                        <th class="tblHighlight"><span>Today</span></th>
+
+                                    </tr>
+                                </thead>
+                                <!-- ko if: hasCompetitors -->
+                                <tbody>
+                                    <!-- ko foreach: competitors -->
+                                    <tr>
+                                        <td><span data-bind="text: Brand"></span></td>
+                                        <td><span data-bind="text: StoreName"></span></td>
+                                        <td><span data-bind="text: DriveTime"></span></td>
+                                        <td><span data-bind="text: CatNo"></span></td>
+
+                                        <!-- ko foreach: FuelPricesToDisplay -->
+                                        <!-- ko if: siteSupportsFuel -->
+                                            <td><span data-bind="text: FuelPrice.YestPrice"></span></td>
+                                            <td class="tblHighlight"><span data-bind="text: FuelPrice.TodayPrice"></span></td>
+                                        <!-- /ko -->
+                                        <!-- ko if: !siteSupportsFuel -->
+                                        <td colspan="2">n/a</td>
+                                        <!-- /ko -->
+                                        <!-- /ko -->
+                                    </tr>
+                                    <!-- /ko -->
+                                </tbody>
+                                <!-- /ko -->
+                                <!-- ko if: !hasCompetitors -->
+                                <tbody data-bind="visible: (!hasCompetitors)" xstyle="visibility: hidden; display: none">
+                                    <tr>
+                                        <td colspan="10" class="noSiteData">Sorry, no competitors available</td>
+                                    </tr>
+                                </tbody>
+                                <!-- /ko -->
+                            </table>
+                        </td>
                     </tr>
                     <!-- /ko -->
                 </tbody>

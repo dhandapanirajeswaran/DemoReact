@@ -311,6 +311,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                         sitePriceRow.JsSiteId = (int)pgRow["JsSiteId"]; 
                         sitePriceRow.CatNo = Convert.IsDBNull(pgRow["CatNo"]) ? null : (int?)pgRow["CatNo"]; // ToNullable<int> or ToNullable<double>
                         sitePriceRow.StoreName = (string)pgRow["SiteName"];
+                        sitePriceRow.Brand = (string)pgRow["Brand"];
                         sitePriceRow.Address = (string)pgRow["Address"];
 
                         sitePriceRow.DriveTime = pgRow["DriveTime"].ToString().ToNullable<float>();

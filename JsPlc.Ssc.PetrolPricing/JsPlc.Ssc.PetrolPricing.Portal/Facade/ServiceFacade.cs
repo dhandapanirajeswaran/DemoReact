@@ -91,8 +91,8 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
         /// List of SitePriceViewModel for Site Pricing View
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<SitePriceViewModel> GetSitePrices(DateTime? forDate=null, int siteId=0, int pageNo=1, 
-                int pageSize=Constants.PricePageSize)
+        public IEnumerable<SitePriceViewModel> GetSitePrices(DateTime? forDate=null, int siteId=0, int pageNo=1,
+                int pageSize = Constants.PricePageSize, string apiName = "SitePrices")
         {
             // Optional params(defaults) - forDate (Date of Calc/Viewing today), siteId (0 for all sites), pageNo(1), PageSize(20)
             string filters = (forDate.HasValue) ? "forDate=" + forDate.Value.ToString("yyyy-MM-dd") + "&" : "";
@@ -100,13 +100,27 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             filters = filters + "pageNo=" + pageNo + "&";
             filters = filters + "pageSize=" + pageSize + "&";
 
-            var apiUrl = String.IsNullOrEmpty(filters) ? "api/SitePrices/" : "api/SitePrices/?" + filters;
+            var apiUrl = String.IsNullOrEmpty(filters) ? String.Format("api/{0}/", apiName) : String.Format("api/{0}/?{1}", apiName, filters);
             var response = _client.Value.GetAsync(apiUrl).Result;
 
             // TODO if response.Content.Headers.ToString().Contains("Content-Type: application/json") do ReadAsync
 
             var result = response.Content.ReadAsAsync<IEnumerable<SitePriceViewModel>>().Result;
             return (response.IsSuccessStatusCode) ? result : null;
+        }
+
+        /// <summary>
+        /// Gets competitors prices for Pricing screen
+        /// </summary>
+        /// <param name="forDate">optional, default to today</param>
+        /// <param name="siteId">optional siteId, defaults to all sites</param>
+        /// <param name="pageNo"></param>
+        /// <param name="pageSize"></param>
+        /// <returns></returns>
+        public IEnumerable<SitePriceViewModel> GetCompetitorsWithPrices(DateTime? forDate = null, int siteId = 0, int pageNo = 1,
+            int pageSize = Constants.PricePageSize)
+        {
+            return GetSitePrices(forDate, siteId, pageNo, Constants.PricePageSize, apiName: "CompetitorPrices");
         }
 
         // Get list of file uploads
