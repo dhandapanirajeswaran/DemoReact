@@ -496,7 +496,6 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                                 result.CatNo = Convert.ToInt32(CA.CatNo);
                                 result.SiteName = CA.SiteName;
                                 result.Town = CA.Town;
-
                                 result.Brand = CA.Brand;
                                 result.Address = CA.Address;
                                 result.Suburb = CA.Suburb;
@@ -512,7 +511,6 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                             {
                                 site.SiteName = CA.SiteName;
                                 site.Town = CA.Town;
-
                                 site.Brand = CA.Brand;
                                 site.Address = CA.Address;
                                 site.Suburb = CA.Suburb;

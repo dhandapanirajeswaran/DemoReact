@@ -150,11 +150,19 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
         [Route("api/ProcessQuarterlyFile")]
         public async Task<IHttpActionResult> ProcessQuarterlyFile()
         {
+            //FOR TESTING
+            List<FileUpload> aFileList = new List<FileUpload>();
+            FileUpload aFile = new FileUpload();
+            aFile.Id = 1;
+            aFile.StoredFileName = "C:/Temp/20151126 163800hrs - Catalist quarterly data.xlsx";
+            aFileList.Add(aFile);
+            //END TEST
+
             using (var fs = _fileService)
             {
-                return Ok(fs.ProcessQuarterlyFile());
+                return Ok(fs.ProcessQuarterlyFile(aFileList));
             }
-        
+
         }
 
     }
