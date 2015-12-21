@@ -232,6 +232,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
                     Task t = new Task(() => ProcessQuarterlyBatch(aFile, rows, count));
                     t.Start();
                     t.Wait();
+                    
 
                     Debug.WriteLine("Batch of quarterly size:" + Constants.QuarterlyFileRowsBatchSize + " took: " + sw.ElapsedMilliseconds/1000 + " secs");
                     sw.Reset();
@@ -239,6 +240,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
                     batchRows = new List<DataRow>();
                     rowcount = 0;
                     batchCount += 1;
+                    if (batchCount >= 1) return true; // only process 1 batches
                 }
                 batchRows.Add(row);
                 rowcount += 1;

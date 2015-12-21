@@ -15,9 +15,14 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 
         public SiteService(IPetrolPricingRepository repository) : base(repository) { }
 
+        public IEnumerable<Site> GetJsSites()
+        {
+           return _db.GetJsSites().ToList().Take(Constants.SitesPageSize);
+        }
+
         public IEnumerable<Site> GetSites()
         {
-           return _db.GetSites().ToList();
+            return _db.GetSites().ToList();
         }
 
         public IEnumerable<Site> GetSitesWithEmailsAndPrices(DateTime? forDate=null)

@@ -11,8 +11,10 @@ namespace JsPlc.Ssc.PetrolPricing.Models
         public const string UploadHoldPath = "Hold";
         public const string UploadSuccessMessageWithFormat = "File uploaded successfully: {0}";
 
-        public const int PricePageSize = 50;
-        public const int QuarterlyFileRowsBatchSize = 1000;
+        public const int SitesPageSize = 350;
+
+        public const int PricePageSize = 350;
+        public const int QuarterlyFileRowsBatchSize = 2000;
         public const string EmailPriceReplacementStringForZero = "N/a";
     }
 }

@@ -38,6 +38,14 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             return _context.AppConfigSettings.ToList();
         }
 
+        public IEnumerable<Site> GetJsSites()
+        {
+            return _context.Sites
+                //.Include(s => s.Emails)
+                .Where(s => s.IsSainsburysSite)
+                .OrderBy(q => q.Id).ToArray();
+        }
+
         public IEnumerable<Site> GetSites()
         {
             return _context.Sites

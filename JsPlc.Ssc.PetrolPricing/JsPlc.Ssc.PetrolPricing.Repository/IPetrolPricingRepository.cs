@@ -10,6 +10,8 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
     {
         
         IEnumerable<Site> GetSites();
+
+        IEnumerable<Site> GetJsSites();
         
         Site GetSite(int siteId);
 

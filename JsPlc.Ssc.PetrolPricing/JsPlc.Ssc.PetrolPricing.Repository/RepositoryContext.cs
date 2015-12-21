@@ -33,6 +33,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
+            Configuration.LazyLoadingEnabled = true; // we want to control loading of child entities
             modelBuilder.Conventions.Remove<PluralizingTableNameConvention>();
             modelBuilder.Conventions.Remove<OneToManyCascadeDeleteConvention>();
 

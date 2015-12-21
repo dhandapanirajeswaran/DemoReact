@@ -30,5 +30,8 @@ namespace JsPlc.Ssc.PetrolPricing.Models
         public string PostCode { get; set; }
         public string Company { get; set; }
         public string Ownership { get; set; }
+
+        public bool AddSiteRow { get; set; } // Planned use by Sproc for updating or adding to Site table (if 1, we call Add to Site)
+        public bool AddSiteToCompRow { get; set; } // Planned use by Sproc for updating or adding to SiteToComp table (if 1, we add to SiteToComp)
     }
 }

@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics;
+using System.IdentityModel.Configuration;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Net.Mail;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Configuration;
@@ -15,7 +17,9 @@ using System.Web.Http.Results;
 using System.Web.Mvc;
 using JsPlc.Ssc.PetrolPricing.Business;
 using JsPlc.Ssc.PetrolPricing.Models;
+using JsPlc.Ssc.PetrolPricing.Models.Common;
 using JsPlc.Ssc.PetrolPricing.Models.ViewModels;
+using WebGrease.Css.Extensions;
 
 namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
 {
@@ -29,7 +33,6 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
         //[Route("api/site/{id}")] // Not needed but works
         public IHttpActionResult Get([FromUri]int id)
         {
-
             var site = _siteService.GetSite(id);
 
              if(site==null || site.Id == 0)
@@ -42,12 +45,31 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
         //[Route("api/sites")]
         public IHttpActionResult Get()
         {
-            var sites = _siteService.GetSites();
+            var sites = _siteService.GetJsSites();
+            var sitesVm = new List<SiteViewModel>();
 
+            sites.ForEach(x => sitesVm.Add(new SiteViewModel
+            {
+                Id = x.Id,
+                Address = x.Address,
+                Brand = x.Brand,
+                CatNo = x.CatNo,
+                Company = x.Company,
+                Emails = x.Emails.ToList().ToSiteEmailViewModelList(),
+                IsActive = x.IsActive,
+                IsSainsburysSite = x.IsSainsburysSite,
+                Ownership = x.Ownership,
+                PfsNo = x.PfsNo,
+                PostCode = x.PostCode,
+                SiteName = x.SiteName,
+                StoreNo = x.StoreNo,
+                Suburb = x.Suburb,
+                Town = x.Town
+            }));
             if (sites == null)
                 return NotFound();
 
-            return Ok(sites);
+            return Ok(sitesVm);
         }
 
         [System.Web.Http.HttpPost] // Create new site
