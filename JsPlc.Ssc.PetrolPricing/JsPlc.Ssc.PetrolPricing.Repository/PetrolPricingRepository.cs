@@ -477,7 +477,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
             using (var newDbContext = new RepositoryContext(new SqlConnection(_context.Database.Connection.ConnectionString)))
             {
-                using (var tx = newDbContext.Database.BeginTransaction())
+                using (var tx = newDbContext.Database.BeginTransaction()) // TODO, refactor this massive transaction.. 
                 {
                     newDbContext.Configuration.AutoDetectChangesEnabled = false;
 
@@ -485,7 +485,11 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                     {
                         foreach (CatalistQuarterly CA in siteCatalistData)
                         {
-                            
+                            //if (addingEntryLineNo > 1000)
+                            //{
+                            //    newDbContext.SaveChanges();
+                            //    //tx.Commit();
+                            //}
                             Site site = new Site();
 
                             site.CatNo = Convert.ToInt32(CA.CatNo);
@@ -503,6 +507,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                                 result.Address = CA.Address;
                                 result.Suburb = CA.Suburb;
                                 result.PostCode = CA.Postcode;
+                                result.Company = CA.CompanyName;
                                 result.Ownership = CA.Ownership;
 
                                 if (CA.Brand == "SAINSBURYS")
@@ -512,6 +517,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                             }
                             else
                             {
+                                site.CatNo = Convert.ToInt32(CA.CatNo);
                                 site.SiteName = CA.SiteName;
                                 site.Town = CA.Town;
                                 site.Brand = CA.Brand;
@@ -519,6 +525,8 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                                 site.Suburb = CA.Suburb;
                                 site.PostCode = CA.Postcode;
                                 site.Ownership = CA.Ownership;
+                                site.Company = CA.CompanyName;
+                                site.IsActive = true;
 
                                 if (CA.Brand == "SAINSBURYS")
                                 {
@@ -733,6 +741,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         {
             try
             {
+                int rowCount = 0;
                 foreach (var row in SiteCatalistData)
                 {
                     var siteCatNo = Convert.ToInt32(row.SiteCatNo);
@@ -764,7 +773,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                         };
                         _context.SiteToCompetitors.Add(newSiteToComp);
                         _context.Entry(newSiteToComp).State = EntityState.Added;
-                        _context.SaveChanges();
+                        //_context.SaveChanges();
                     }
                     else
                     {
@@ -772,8 +781,19 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                         siteToCompInDb.Distance = distance;
                         siteToCompInDb.DriveTime = driveTime;
                         _context.Entry(siteToCompInDb).State = EntityState.Modified;
-                        _context.SaveChanges();
+                        //_context.SaveChanges();
                     }
+
+                    if (rowCount > Constants.QuarterlyFileRowsBatchSize)
+                    {
+                        _context.SaveChanges();
+                        rowCount = 0;
+                    }
+                    rowCount += 1;
+                }
+                if (rowCount >= 1)
+                {
+                    _context.SaveChanges();
                 }
             }
             catch{
@@ -859,7 +879,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             {
                 files = files.Where(x => x.StatusId == statusId.Value);
             }
-            var retval = files.ToArray();
+            var retval = files.OrderByDescending(x => x.UploadDateTime).ToArray();
             return retval;
         }
 

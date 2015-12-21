@@ -238,6 +238,12 @@
     <Content Include="App_Data\DBWipeScripts\1%29 DbWipeScript.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="App_Data\DropCreateIndexes\2%29 CreateAllIndexes.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="App_Data\DropCreateIndexes\1%29 DropAllIndexes.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="App_Data\DropCreateSprocs\1%29 Drop spGetSitePrices.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

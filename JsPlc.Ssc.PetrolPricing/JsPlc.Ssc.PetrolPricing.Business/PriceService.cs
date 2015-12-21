@@ -100,7 +100,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
         private bool CalcAllSitePrices(DateTime? forDate = null)
         {
             // SIMULATE a long running task (TODO remove delay simulation)
-            Task.Delay(5000);
+            Task.Delay(1000);
 
             var priceService = new PriceService();
             if(!forDate.HasValue) forDate = DateTime.Now;

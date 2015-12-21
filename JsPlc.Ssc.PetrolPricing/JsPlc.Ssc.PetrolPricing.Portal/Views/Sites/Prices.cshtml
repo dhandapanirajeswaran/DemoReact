@@ -127,7 +127,8 @@
                     <!-- ko foreach: sites -->
                     <tr class="panel-heading" role="tab" data-bind="id:('Heading' + SiteId)">
                         <td>
-                            <a role="button" data-toggle="collapse" data-parent="#accordion" data-bind="attr:{href:('#CollapseCompetitorsforsite' + SiteId)}"><i class="fa fa-plus-square-o"></i></a>
+                            <a role="button" data-toggle="collapse" data-parent="#accordion"
+                               data-bind="attr:{href:('#CollapseCompetitorsforsite' + SiteId)}, click: getCompetitorDataClick"><i class="fa fa-plus-square-o"></i></a>
                         </td>
                         <td><span data-bind="text: StoreNo"></span></td>
                         <td><span><a href="#" data-toggle="modal" data-target="#emailSite"><i class="fa fa-envelope-o"></i></a></span></td>
@@ -153,7 +154,7 @@
                         <!-- /ko -->
                         <!-- /ko -->
                     </tr>
-                    <tr data-bind="attr:{id: ('CollapseCompetitorsforsite' + SiteId)}" class="panel-collapse collapse" role="tabpanel">
+                    <tr data-bind="attr:{id: ('AjaxCollapseCompetitorsforsite' + SiteId)}" class="panel-collapse collapse" role="tabpanel">
                         <td colspan="12" xalign="right" style="background-color: grey">
                             <table class="competitorTable table-striped table-hover">
                                 <thead>

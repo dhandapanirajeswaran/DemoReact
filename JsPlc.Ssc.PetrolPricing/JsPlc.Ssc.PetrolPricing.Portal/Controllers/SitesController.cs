@@ -56,21 +56,21 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             //sitesViewModelsWithPrices = null; // Force error
 
             // eager load comps
-            if (sitesViewModelsWithPrices != null)
-            {
-                sitesViewModelsWithPrices.ForEach(model =>
-                {
-                    var competitors = _serviceFacade.GetCompetitorsWithPrices(forDate, model.SiteId, pageNo, pageSize);
-                    model.hasCompetitors = false;
-                    model.competitors = new List<SitePriceViewModel>();
-                    var compList = competitors as List<SitePriceViewModel> ?? competitors.ToList();
+            //if (sitesViewModelsWithPrices != null)
+            //{
+            //    sitesViewModelsWithPrices.ForEach(model =>
+            //    {
+            //        var competitors = _serviceFacade.GetCompetitorsWithPrices(forDate, model.SiteId, pageNo, pageSize);
+            //        model.hasCompetitors = false;
+            //        model.competitors = new List<SitePriceViewModel>();
+            //        var compList = competitors as List<SitePriceViewModel> ?? competitors.ToList();
 
-                    if (!compList.Any()) return;
-                    model.hasCompetitors = true;
-                    compList = compList.OrderBy(x => x.DriveTime).ToList();
-                    model.competitors = compList;
-                });
-            }
+            //        if (!compList.Any()) return;
+            //        model.hasCompetitors = true;
+            //        compList = compList.OrderBy(x => x.DriveTime).ToList();
+            //        model.competitors = compList;
+            //    });
+            //}
 
             var jsonData = sitesViewModelsWithPrices != null ? (object)sitesViewModelsWithPrices : "Error";
             // NOTE: The prices are still in 4 digit format (do price/10 for display)

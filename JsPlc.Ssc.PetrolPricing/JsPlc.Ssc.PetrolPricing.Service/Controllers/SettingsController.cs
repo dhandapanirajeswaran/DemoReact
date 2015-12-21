@@ -34,9 +34,9 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
         }
 
         /// <summary>
-        /// ReSeed the DB with settings etc, drop n re-create sprocs 
+        /// ReSeed the DB with settings etc, drop n re-create sprocs - FULLREBUILD, CONFIGKEYSONLY, SPROCSONLY, INDEXESONLY
         /// </summary>
-        /// <param name="buildOptions">FULLREBUILD, CONFIGKEYSONLY, SPROCSONLY</param>
+        /// <param name="buildOptions">FULLREBUILD, CONFIGKEYSONLY, SPROCSONLY, INDEXESONLY</param>
         /// <returns></returns>
         [HttpGet]
         [Route("api/ReInitDb")]
@@ -51,6 +51,8 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
                     case "CONFIGKEYSONLY": RepositoryInitializer.ReInitConfigKeys(new RepositoryContext());
                         break;
                     case "SPROCSONLY": RepositoryInitializer.ReInitSprocs(new RepositoryContext());
+                        break;
+                    case "INDEXESONLY": RepositoryInitializer.ReInitIndexes(new RepositoryContext());
                         break;
                     default:
                         throw new Exception("forcing an exception");

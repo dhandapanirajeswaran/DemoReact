@@ -40,7 +40,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         }
 
         /// <summary>
-        /// Deletes and reloads AppSettings keys/values
+        /// Deletes and recreates sprocs
         /// </summary>
         /// <param name="context"></param>
         public static void ReInitSprocs(RepositoryContext context)
@@ -48,6 +48,14 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             RunDbScripts(context, ScriptFolderType.DropCreateSprocs);
         }
 
+        /// <summary>
+        /// Deletes and recreates indexes
+        /// </summary>
+        /// <param name="context"></param>
+        public static void ReInitIndexes(RepositoryContext context)
+        {
+            RunDbScripts(context, ScriptFolderType.DropCreateIndexes);
+        }
 
         // This is refactored out so it can be called separately as well
         public static void SeedRepository(RepositoryContext context)
@@ -332,7 +340,8 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         DbWipeScripts =1,
         DummyDataScripts =2,
         PostSeedScripts =3,
-        DropCreateSprocs = 4
+        DropCreateSprocs = 4,
+        DropCreateIndexes = 5
     }
 
 }
