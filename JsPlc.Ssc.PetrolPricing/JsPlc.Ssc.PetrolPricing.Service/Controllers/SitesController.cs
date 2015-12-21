@@ -33,12 +33,15 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
         //[Route("api/site/{id}")] // Not needed but works
         public IHttpActionResult Get([FromUri]int id)
         {
-            var site = _siteService.GetSite(id);
+            var sites = _siteService.GetJsSites();
+            IEnumerable<Site> site = sites.Where(x => x.Id == id);
 
-             if(site==null || site.Id == 0)
+            var siteArr = site as Site[] ?? site.ToArray();
+            if(!siteArr.Any())
                 return NotFound();
+            List<SiteViewModel> sitesVm = siteArr.ToList().ToSiteViewModelList();
 
-            return Ok(site);
+            return Ok(sitesVm.FirstOrDefault());
         }
         
         [System.Web.Http.HttpGet]
@@ -46,28 +49,10 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
         public IHttpActionResult Get()
         {
             var sites = _siteService.GetJsSites();
-            var sitesVm = new List<SiteViewModel>();
-
-            sites.ForEach(x => sitesVm.Add(new SiteViewModel
-            {
-                Id = x.Id,
-                Address = x.Address,
-                Brand = x.Brand,
-                CatNo = x.CatNo,
-                Company = x.Company,
-                Emails = x.Emails.ToList().ToSiteEmailViewModelList(),
-                IsActive = x.IsActive,
-                IsSainsburysSite = x.IsSainsburysSite,
-                Ownership = x.Ownership,
-                PfsNo = x.PfsNo,
-                PostCode = x.PostCode,
-                SiteName = x.SiteName,
-                StoreNo = x.StoreNo,
-                Suburb = x.Suburb,
-                Town = x.Town
-            }));
-            if (sites == null)
+            var sitesList = sites as Site[] ?? sites.ToArray();
+            if (sites == null || !sitesList.Any())
                 return NotFound();
+            List<SiteViewModel> sitesVm = sitesList.ToList().ToSiteViewModelList();
 
             return Ok(sitesVm);
         }

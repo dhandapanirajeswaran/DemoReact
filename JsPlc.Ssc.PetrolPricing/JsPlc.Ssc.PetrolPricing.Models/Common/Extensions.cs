@@ -20,5 +20,28 @@ namespace JsPlc.Ssc.PetrolPricing.Models.Common
             return retval.ToList();
         }
 
+        public static List<SiteViewModel> ToSiteViewModelList(this List<Site> sites)
+        {
+            var sitesVm = new List<SiteViewModel>();
+            sites.ForEach(x => sitesVm.Add(new SiteViewModel
+            {
+                Id = x.Id,
+                Address = x.Address,
+                Brand = x.Brand,
+                CatNo = x.CatNo,
+                Company = x.Company,
+                Emails = x.Emails.ToList().ToSiteEmailViewModelList(),
+                IsActive = x.IsActive,
+                IsSainsburysSite = x.IsSainsburysSite,
+                Ownership = x.Ownership,
+                PfsNo = x.PfsNo,
+                PostCode = x.PostCode,
+                SiteName = x.SiteName,
+                StoreNo = x.StoreNo,
+                Suburb = x.Suburb,
+                Town = x.Town
+            }));
+            return sitesVm;
+        }
     }
 }
