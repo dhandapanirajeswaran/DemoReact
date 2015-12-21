@@ -39,7 +39,10 @@ namespace JsPlc.Ssc.PetrolPricing.Business
                 case 1: processedFiles = ProcessDailyPrice(GetFileUploads(newUpload.UploadDateTime, newUpload.UploadTypeId, uploadedStatus).ToList());
                     await _priceService.DoCalcDailyPrices(fileUpload.UploadDateTime); // dont await this.. let it run in background..
                     break;
-                case 2: processedFiles = ProcessQuarterlyFile(GetFileUploads(newUpload.UploadDateTime, newUpload.UploadTypeId, uploadedStatus).ToList());
+                case 2: // LONG Running Task - Fire and Forget
+                    Task t = new Task(() => 
+                        ProcessQuarterlyFile(GetFileUploads(newUpload.UploadDateTime, newUpload.UploadTypeId, uploadedStatus).ToList()));
+                        t.Start();
                     // TODO what happens when we have new Quarterly file uploaded, do we calc prices
                     //_priceService.DoCalcPrices(fileUpload.UploadDateTime);
                     break;
@@ -288,7 +291,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
             foreach (DataRow row in QuarterlyData.Rows)
             {
                 rowCount++;
-
+                if (rowCount > 500) break; // TODO remove processing limit.
                 try
                 {
                     CatalistQuarterly site = new CatalistQuarterly();

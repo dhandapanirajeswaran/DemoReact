@@ -52,9 +52,10 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             // POST scenarios use : JsonConvert.SerializeObject(siteView);
             IEnumerable<SitePriceViewModel> sitesViewModelsWithPrices = (getCompetitor != 1)
                 ? _serviceFacade.GetSitePrices(forDate, siteId, pageNo, pageSize)
-                : _serviceFacade.GetCompetitorsWithPrices(forDate, siteId, pageNo, pageSize);
+                : _serviceFacade.GetCompetitorsWithPrices(forDate, siteId, pageNo, pageSize); // for getting comps by ajax, not used yet
             //sitesViewModelsWithPrices = null; // Force error
 
+            // eager load comps
             if (sitesViewModelsWithPrices != null)
             {
                 sitesViewModelsWithPrices.ForEach(model =>
@@ -66,6 +67,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 
                     if (!compList.Any()) return;
                     model.hasCompetitors = true;
+                    compList = compList.OrderBy(x => x.DriveTime).ToList();
                     model.competitors = compList;
                 });
             }

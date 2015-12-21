@@ -70,6 +70,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         IEnumerable<SitePriceViewModel> GetCompetitorsWithPrices(DateTime forDate, int siteId = 0, int pageNo = 1,
             int pageSize = Constants.PricePageSize);
 
+        // unsafe to use , see impl.
         IQueryable<Site> GetSitesIncludePrices(DateTime? forDate = null);
 
         IEnumerable<DailyPrice> GetDailyPricesForFuelByCompetitors(IEnumerable<int> competitorCatNos, int fuelId, DateTime usingPricesForDate);

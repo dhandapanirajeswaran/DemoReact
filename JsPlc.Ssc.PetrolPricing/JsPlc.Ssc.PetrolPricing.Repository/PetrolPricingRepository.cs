@@ -40,9 +40,12 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
         public IEnumerable<Site> GetSites()
         {
-            return _context.Sites.Include(s => s.Emails).OrderBy(q => q.Id);
+            return _context.Sites
+                .Include(s => s.Emails)
+                .OrderBy(q => q.Id);
         }
 
+        // Not safe to use without date clause subsetting Prices, else we might get a ton of price data
         public IQueryable<Site> GetSitesIncludePrices(DateTime? forDate = null)
         {
             if (!forDate.HasValue) forDate = DateTime.Now;
@@ -340,7 +343,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                             });
                         }
                     }
-                    return dbList;
+                    return dbList; // .OrderBy(x => x.JsSiteId).ThenBy(x => x.SiteId).ThenBy(x => x.DriveTime); // TODO ordering doesnt work, hmmm...
                 }
             }
         }

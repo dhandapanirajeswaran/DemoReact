@@ -45,7 +45,7 @@ Set @phhYestDate = (Select Distinct Top 1 UploadDateTime
 if (@phhYestDate is null) Set @yestPriceDate = DateAdd(day, -2, @forDate) -- by default go back 2 days
 else set @yestPriceDate = @phhYestDate
 
-Select @todayPriceDate, @yestPriceDate
+--Select @todayPriceDate, @yestPriceDate
 
 ;With sites as
 (
@@ -169,5 +169,5 @@ Select @todayPriceDate, @yestPriceDate
 )
 Select *
 from CompetitorsPrices
-Order By JsSiteId, SiteId, DriveTime, Rank
+Order By JsSiteId, SiteId, Rank, DriveTime
 
