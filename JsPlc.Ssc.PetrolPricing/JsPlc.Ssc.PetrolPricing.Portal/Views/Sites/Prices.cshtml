@@ -181,6 +181,13 @@
 
                                     </tr>
                                 </thead>
+                                <!-- ko if: loadingCompetitors -->
+                                <tbody>
+                                    <tr>
+                                        <td colspan="10" class="noSiteData">loading... please wait</td>
+                                    </tr>
+                                </tbody>
+                                <!-- /ko  -->
                                 <!-- ko if: hasCompetitors -->
                                 <tbody>
                                     <!-- ko foreach: competitors -->
@@ -204,12 +211,12 @@
                                 </tbody>
                                 <!-- /ko -->
                                 <!-- ko if: !hasCompetitors -->
-                                <tbody data-bind="visible: (!hasCompetitors)" xstyle="visibility: hidden; display: none">
+                                <tbody>
                                     <tr>
                                         <td colspan="10" class="noSiteData">Sorry, no competitors available</td>
                                     </tr>
                                 </tbody>
-                                <!-- /ko -->
+                                <!-- /ko  -->
                             </table>
                         </td>
                     </tr>

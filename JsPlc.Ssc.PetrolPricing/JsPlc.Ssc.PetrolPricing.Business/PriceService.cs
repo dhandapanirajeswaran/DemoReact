@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Data.Entity;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -107,18 +108,21 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 
             var sites = _db.GetSites().AsQueryable().AsNoTracking();
             var fuels = LookupService.GetFuelTypes().AsQueryable().AsNoTracking().ToList();
-
+            //var taskArray = new List<Task>();
             foreach (var site in sites)
             {
                 var tmpSite = site;
                 foreach (var fuel in fuels.ToList())
                 {
                     Debug.WriteLine("Calculation started ... for site:" + site.Id);
-                    var calculatedSitePrice = priceService.CalcPrice(tmpSite.Id, fuel.Id, forDate);
+                    FuelType fuel1 = fuel;
+                    priceService.CalcPrice(tmpSite.Id, fuel1.Id, forDate);
+                    //var calculatedSitePrice = priceService.CalcPrice(tmpSite.Id, fuel.Id, forDate);
                     // AddOrUpdate doesnt work here, only works within the CalcPrice method, Ughh EF!!
                     //if (calculatedSitePrice != null) { var updatedPrice = _db.AddOrUpdateSitePriceRecord(tmpSite, calculatedSitePrice);} 
                 }
             }
+            //Task.WaitAll(taskArray.ToArray());
             return true;
         }
         /// <summary>

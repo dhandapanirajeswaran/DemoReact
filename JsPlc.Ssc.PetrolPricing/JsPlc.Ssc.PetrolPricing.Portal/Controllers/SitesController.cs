@@ -55,6 +55,8 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
                 : _serviceFacade.GetCompetitorsWithPrices(forDate, siteId, pageNo, pageSize); // for getting comps by ajax, not used yet
             //sitesViewModelsWithPrices = null; // Force error
 
+            if (getCompetitor == 1)
+                sitesViewModelsWithPrices = sitesViewModelsWithPrices.OrderBy(x => x.DriveTime).ToList();
             // eager load comps
             //if (sitesViewModelsWithPrices != null)
             //{
