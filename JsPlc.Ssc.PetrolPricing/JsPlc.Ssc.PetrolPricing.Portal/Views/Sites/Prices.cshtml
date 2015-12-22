@@ -101,7 +101,6 @@
                     <!-- 11 column layout -->
                     <tr rowspan="2" style="background-color: silver">
                         <th colspan="1"><span>#</span></th>
-
                         <th><span>Store No.</span></th>
                         <th><span></span></th>
                         <th><span>Store Name</span></th>
@@ -110,10 +109,11 @@
 
                         <th colspan="2"><span class="fuelHeaderGroup">&nbsp;Unleaded&nbsp;</span></th>
                         <th colspan="2"><span class="fuelHeaderGroup">&nbsp;Diesel&nbsp;</span></th>
-                        <th colspan="2"><span class="fuelHeaderGroup">&nbsp;LPG&nbsp;</span></th>
+                        <th colspan="2"><span class="fuelHeaderGroup">&nbsp;Super Unleaded&nbsp;</span></th>
                     </tr>
-                    <tr>
+                    <tr><!-- 12 column layout -->
                         <th colspan="6"></th>
+
                         <th><span>Today</span></th>
                         <th><span>Tomorrow</span></th>
                         <th><span>Today</span></th>
@@ -142,11 +142,18 @@
                             <span data-bind="text: FuelPrice.TodayPrice"></span>
                         </td>
                         <td>
-                            <i class="fa fa-arrow-circle-o-down" style="color: red; font-size: 100%;"></i>
                             &nbsp;<span data-bind="text: FuelPrice.AutoPrice"></span>
                             <input type="text" data-bind="value: FuelPrice.OverridePrice,
-                                id: ($parent.SiteId + '-' + FuelPrice.FuelTypeId + '-overridePrice'), event:{keyup: FuelPrice.changeProp}" class="txtPrice" />
+                                id: ($parent.SiteId + '-' + FuelPrice.FuelTypeId + '-overridePrice'), event:{keyup: changeProp}" class="txtPrice" />
                             <!-- note: override prices can be extracted using $('#SiteId-FueldTypeId-overridePrice') -->
+                            <i data-bind="attr: {
+                                    class: (!UpDownValue() || UpDownValue() == 0 || UpDownValue() == '-') ? 'fa fa-arrow-circle-o-right'
+                                            : (UpDownValue() <= 0.1) ? 'fa fa-arrow-circle-o-down': 'fa fa-arrow-circle-o-up',
+                                    style: (!UpDownValue() || UpDownValue() == 0 || UpDownValue() == '-') ? 'color: grey'
+                                            : (UpDownValue() <= 0.1) ? 'color: red': 'color: green',
+                                            }"></i>
+                            &nbsp;<span data-bind="text: (!UpDownValue() || UpDownValue() == 0 || UpDownValue() == '-') ? '-' : 
+                                                           (UpDownValue()/10)"></span>
                         </td>
                         <!-- /ko -->
                         <!-- ko if: !siteSupportsFuel -->
@@ -168,7 +175,7 @@
                                             <span class="fuelHeaderGroup">&nbsp;Unleaded&nbsp;</span>
                                         </th>
                                         <th colspan="2"><span class="fuelHeaderGroup">&nbsp;Diesel&nbsp;</span></th>
-                                        <th colspan="2" class="tblHighlight"><span class="fuelHeaderGroup">&nbsp;LPG&nbsp;</span></th>
+                                        <th colspan="2" class="tblHighlight"><span class="fuelHeaderGroup">&nbsp;Super Unleaded&nbsp;</span></th>
                                     </tr>
                                     <tr>
                                         <th colspan="4"></th>
@@ -224,7 +231,7 @@
                 </tbody>
                 <tbody data-bind="cvisible: !$root.dataAvailable" style="visibility: hidden; display: none">
                     <tr>
-                        <td colspan="10" class="noSiteData">Sorry, no site data available</td>
+                        <td colspan="12" class="noSiteData">Sorry, no site data available</td>
                     </tr>
                 </tbody>
             </table>
