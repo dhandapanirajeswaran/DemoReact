@@ -131,7 +131,7 @@ else set @yestPriceDate = @phhYestDate
 		Left Join dailyPriceWithUploadDates dudt -- might be a null set 
 			On cf.CatNo = dudt.CompCatNo And cf.FuelTypeId = dudt.FuelTypeId
 	Where 1=1
-		And dudt.StatusId = 10 -- success files only
+		And dudt.StatusId in (10, 11) -- success files only
 ) -- Select * from dailyPricesComp
 ,todaysPrices as
 (
