@@ -13,13 +13,13 @@
                 <div class="modal-body">
                     <h1>FAO Store/duty manager - URGENT FUEL PRICE CHANGE</h1>
                     <p>Queries to the Trading Hotline using Option 1 Trading, Option 2 Grocery and Option 8 Petrol and Kiosk </p>
-                    <h2>kSiteName</h2>
-                    <p><strong>Petrol price changes, effective end of trade kStartDateMonthYear</strong></p>
+                    <h2><span id="kSiteName"></span></h2>
+                    <p><strong>Petrol price changes, effective end of trade <span id="kStartDateMonthYear"></span></strong></p>
                     <table>
                         <tr><td><strong>Product</strong></td><td><strong>New Price</strong></td></tr>
-                        <tr><td>Unleaded</td><td>kUnleadedPrice</td></tr>
-                        <tr><td>Super (if applicable)</td><td>kSuperPrice</td></tr>
-                        <tr><td>Diesel</td><td>kDieselPrice</td></tr>
+                        <tr><td>Unleaded</td><td><span id="kUnleadedPrice"></span></td></tr>
+                        <tr><td>Super (if applicable)</td><td><span id="kSuperPrice"></span></td></tr>
+                        <tr><td>Diesel</td><td><span id="kDieselPrice"></span></td></tr>
                     </table>
                     <br />
                     <ul>
@@ -131,7 +131,7 @@
                                data-bind="attr:{href:('#CollapseCompetitorsforsite' + SiteId)}, click: getCompetitorDataClick"><i class="fa fa-plus-square-o"></i></a>
                         </td>
                         <td><span data-bind="text: StoreNo"></span></td>
-                        <td><span><a href="#" data-toggle="modal" data-target="#emailSite"><i class="fa fa-envelope-o"></i></a></span></td>
+                        <td><span><a href="#" data-toggle="modal" data-target="#emailSite" data-bind="click: bindEmailTemplate"><i class="fa fa-envelope-o"></i></a></span></td>
                         <td><span data-bind="text: StoreName"></span></td>
                         <td><span data-bind="text: CatNo"></span></td>
                         <td><span data-bind="text: PfsNo"></span></td>
