@@ -52,27 +52,13 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             // POST scenarios use : JsonConvert.SerializeObject(siteView);
             IEnumerable<SitePriceViewModel> sitesViewModelsWithPrices = (getCompetitor != 1)
                 ? _serviceFacade.GetSitePrices(forDate, siteId, pageNo, pageSize)
-                : _serviceFacade.GetCompetitorsWithPrices(forDate, siteId, pageNo, pageSize); // for getting comps by ajax, not used yet
-            //sitesViewModelsWithPrices = null; // Force error
+                : _serviceFacade.GetCompetitorsWithPrices(forDate, siteId, pageNo, pageSize); // for getting comps by ajax
 
             if (getCompetitor == 1)
+            {
                 sitesViewModelsWithPrices = sitesViewModelsWithPrices.OrderBy(x => x.DriveTime).ToList();
-            // eager load comps
-            //if (sitesViewModelsWithPrices != null)
-            //{
-            //    sitesViewModelsWithPrices.ForEach(model =>
-            //    {
-            //        var competitors = _serviceFacade.GetCompetitorsWithPrices(forDate, model.SiteId, pageNo, pageSize);
-            //        model.hasCompetitors = false;
-            //        model.competitors = new List<SitePriceViewModel>();
-            //        var compList = competitors as List<SitePriceViewModel> ?? competitors.ToList();
-
-            //        if (!compList.Any()) return;
-            //        model.hasCompetitors = true;
-            //        compList = compList.OrderBy(x => x.DriveTime).ToList();
-            //        model.competitors = compList;
-            //    });
-            //}
+                //sitesViewModelsWithPrices = null; // Force error, should show no competitors
+            }
 
             var jsonData = sitesViewModelsWithPrices != null ? (object)sitesViewModelsWithPrices : "Error";
             // NOTE: The prices are still in 4 digit format (do price/10 for display)

@@ -181,15 +181,19 @@
 
                                     </tr>
                                 </thead>
-                                <!-- ko if: loadingCompetitors -->
                                 <tbody>
+                                    <!-- ko if: loadingCompetitors() -->
                                     <tr>
                                         <td colspan="10" class="noSiteData">loading... please wait</td>
                                     </tr>
-                                </tbody>
-                                <!-- /ko  -->
-                                <!-- ko if: hasCompetitors -->
-                                <tbody>
+                                    <!-- /ko -->
+                                    <!-- ko if: !loadingCompetitors() -->
+                                    <!-- ko if: !hasCompetitors() -->
+                                    <tr>
+                                        <td colspan="10" class="noSiteData">Sorry, no competitors available</td>
+                                    </tr>
+                                    <!-- /ko -->
+                                    <!-- ko if: hasCompetitors() -->
                                     <!-- ko foreach: competitors -->
                                     <tr>
                                         <td><span data-bind="text: Brand"></span></td>
@@ -199,8 +203,8 @@
 
                                         <!-- ko foreach: FuelPricesToDisplay -->
                                         <!-- ko if: siteSupportsFuel -->
-                                            <td><span data-bind="text: FuelPrice.YestPrice"></span></td>
-                                            <td class="tblHighlight"><span data-bind="text: FuelPrice.TodayPrice"></span></td>
+                                        <td><span data-bind="text: FuelPrice.YestPrice"></span></td>
+                                        <td class="tblHighlight"><span data-bind="text: FuelPrice.TodayPrice"></span></td>
                                         <!-- /ko -->
                                         <!-- ko if: !siteSupportsFuel -->
                                         <td colspan="2">n/a</td>
@@ -208,15 +212,11 @@
                                         <!-- /ko -->
                                     </tr>
                                     <!-- /ko -->
+
+                                    <!-- /ko -->
+
+                                    <!-- /ko -->
                                 </tbody>
-                                <!-- /ko -->
-                                <!-- ko if: !hasCompetitors -->
-                                <tbody>
-                                    <tr>
-                                        <td colspan="10" class="noSiteData">Sorry, no competitors available</td>
-                                    </tr>
-                                </tbody>
-                                <!-- /ko  -->
                             </table>
                         </td>
                     </tr>
