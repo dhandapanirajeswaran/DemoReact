@@ -2,67 +2,67 @@
     ViewBag.Title = "Site Prices";
 }
 <!-- Modal -->
-<form id="myform" method="post" action="sites/prices">
-    <div class="modal fade" id="emailSite" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title" id="myModalLabel">Send Email</h4>
-                </div>
-                <div class="modal-body">
-                    <h1>FAO Store/duty manager - URGENT FUEL PRICE CHANGE</h1>
-                    <p>Queries to the Trading Hotline using Option 1 Trading, Option 2 Grocery and Option 8 Petrol and Kiosk </p>
-                    <h2><span id="kSiteName"></span></h2>
-                    <p><strong>Petrol price changes, effective end of trade <span id="kStartDateMonthYear"></span></strong></p>
-                    <table>
-                        <tr><td><strong>Product</strong></td><td><strong>New Price</strong></td></tr>
-                        <tr><td>Unleaded</td><td><span id="kUnleadedPrice"></span></td></tr>
-                        <tr><td>Super (if applicable)</td><td><span id="kSuperPrice"></span></td></tr>
-                        <tr><td>Diesel</td><td><span id="kDieselPrice"></span></td></tr>
-                    </table>
-                    <br />
-                    <ul>
-                        <li>All fuel price changes must be actioned at the end of trade only</li>
-                        <li>Colleague actioning the price change must ensure the changes have applied on the pumps, enter the time of the change and then sign as confirmation before filing this message at the PFS</li>
-                        <li>Ensure you enter the new prices correctly into REPOS e.g. If the price is 129.90ppl, then enter 129.90 in the new price field (make sure there are no fuel sales outstanding on the REPOS system or pumps before making the price change, <strong>ALL</strong> working pumps <strong>MUST</strong> be left <strong>ON</strong> and nozzle placed in the pump holders)</li>
-                        <li>You are reminded that only fuel price changes sent to you by email should be actioned. Please ignore REPOS price change reports.</li>
-                    </ul>
-                    <h3>24 hour sites</h3>
-                    <ul>
-                        <li>Action the price change in conjunction with the REPOS EOD routine between midnight and 2am. Colleague actioning the price change must ensure that the changes have applied on the pumps, enter the time of the change and then sign as confirmation before filing this message at the PFS.</li>
-                    </ul>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-                    <!--<button type="submit" class="btn btn-default">Email Site</button>-->
+@*<form id="myform" method="post" action="sites/prices">*@
+<div class="modal fade" id="emailSite" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Send Email</h4>
+            </div>
+            <div class="modal-body">
+                <h1>FAO Store/duty manager - URGENT FUEL PRICE CHANGE</h1>
+                <p>Queries to the Trading Hotline using Option 1 Trading, Option 2 Grocery and Option 8 Petrol and Kiosk </p>
+                <h2><span id="kSiteName"></span></h2>
+                <p><strong>Petrol price changes, effective end of trade <span id="kStartDateMonthYear"></span></strong></p>
+                <table>
+                    <tr><td><strong>Product</strong></td><td><strong>New Price</strong></td></tr>
+                    <tr><td>Unleaded</td><td><span id="kUnleadedPrice"></span></td></tr>
+                    <tr><td>Super (if applicable)</td><td><span id="kSuperPrice"></span></td></tr>
+                    <tr><td>Diesel</td><td><span id="kDieselPrice"></span></td></tr>
+                </table>
+                <br />
+                <ul>
+                    <li>All fuel price changes must be actioned at the end of trade only</li>
+                    <li>Colleague actioning the price change must ensure the changes have applied on the pumps, enter the time of the change and then sign as confirmation before filing this message at the PFS</li>
+                    <li>Ensure you enter the new prices correctly into REPOS e.g. If the price is 129.90ppl, then enter 129.90 in the new price field (make sure there are no fuel sales outstanding on the REPOS system or pumps before making the price change, <strong>ALL</strong> working pumps <strong>MUST</strong> be left <strong>ON</strong> and nozzle placed in the pump holders)</li>
+                    <li>You are reminded that only fuel price changes sent to you by email should be actioned. Please ignore REPOS price change reports.</li>
+                </ul>
+                <h3>24 hour sites</h3>
+                <ul>
+                    <li>Action the price change in conjunction with the REPOS EOD routine between midnight and 2am. Colleague actioning the price change must ensure that the changes have applied on the pumps, enter the time of the change and then sign as confirmation before filing this message at the PFS.</li>
+                </ul>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                <!--<button type="submit" class="btn btn-default">Email Site</button>-->
 
-                    <input type="submit" class="btn btn-default" value="Email Site" />
-                </div>
+                <input type="submit" class="btn btn-default" value="Email Site" id="EmailSiteButton" />
             </div>
         </div>
     </div>
-</form>
+</div>
+@*</form>*@
 
-<form id="myform" method="post" action="emailAllSites">
-    <div class="modal fade" id="emailAllSites" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title" id="myModalLabel">Send Email to ALL Sites</h4>
-                </div>
-                <div class="modal-body">
-                    <p>Are you sure you want to email <strong>ALL</strong> Sites their daily price update</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-default">Email All Sites</button>
-                </div>
+@*<form id="myform" method="post" action="emailAllSites">*@
+<div class="modal fade" id="emailAllSites" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Send Email to ALL Sites</h4>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to email <strong>ALL</strong> Sites their daily price update</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                <button type="submit" class="btn btn-default">Email All Sites</button>
             </div>
         </div>
     </div>
-</form>
+</div>
+@*</form>*@
 
 <h2>Site Prices</h2>
 
@@ -71,11 +71,15 @@
     <div id="msgs"></div>
     <!-- Submit disabled, all work done thru ajax calls -->
     <form id="myform" method="post" data-bind="submit: savePetrolPricingForm" xclass="input-group-sm" onsubmit="return false;">
-        <div style="width:100%;text-align:right;margin-top:-20px;">
-            <!-- EMAIL all Button -->
-            <button type="button" class="btn btn-default" data-toggle="modal" data-target="#emailAllSites">Email all &nbsp;<i class="fa fa-envelope-o"></i></button>
+        <div class="row">
+            <div class="col-md-9 left"><span>Market Comparison: Sainsburys's prices and Competitors</span></div>
+            <div class="col-md-3 right">
+                <div xstyle="width:100%;text-align:right;margin-top:-20px;">
+                    <!-- EMAIL all Button -->
+                    <button type="button" class="btn btn-default" data-toggle="modal" data-target="#emailAllSites" data-bind="visible: !$root.ViewingHistorical()">Email all &nbsp;<i class="fa fa-envelope-o"></i></button>
+                </div>
+            </div>
         </div>
-        <span>Market Comparison: Sainsburys's prices and Competitors</span><br />
         <hr />
         <div class="row">
             <div class="col-md-9">
@@ -83,14 +87,14 @@
                 <div class="col-md-2"><b>Select Date:</b></div>
                 <div class="col-md-2 left">
                     <input type="text" id="viewingDate" class="datepicker form-control"
-                           style="background-color: #ececec; width: 100px" name="viewingDate" width="200" 
-                           data-bind="value: $root.InitDate"/>
+                           style="background-color: #ececec; width: 100px" name="viewingDate" width="200"
+                           data-bind="value: $root.InitDate" />
                 </div>
                 <div class="col-md-2 left"><button type="submit" class="btn btn-default" data-bind="click: loadNewDateData">Go</button></div>
             </div>
             <div class="col-md-3 right">
-                <button type="submit" class="btn btn-default" data-bind="click: savePetrolPricingForm, visible: $root.ShowSaveButton">Save Prices</button>
-                <div id="unSavedChangesMsg" data-bind="visible: $root.HasUnsavedChanges" style="color: brown; font-size: larger">You have unsaved changes</div>
+                <button type="submit" class="btn btn-default" data-bind="click: savePetrolPricingForm, visible: !$root.ViewingHistorical()">Save Prices</button>
+                <div id="unSavedChangesMsg" data-bind="visible: $root.HasUnsavedChanges() && !$root.ViewingHistorical()" style="color: brown; font-size: larger">You have unsaved changes</div>
             </div>
         </div>
         <hr />
@@ -111,7 +115,8 @@
                         <th colspan="2"><span class="fuelHeaderGroup">&nbsp;Diesel&nbsp;</span></th>
                         <th colspan="2"><span class="fuelHeaderGroup">&nbsp;Super Unleaded&nbsp;</span></th>
                     </tr>
-                    <tr><!-- 12 column layout -->
+                    <tr>
+                        <!-- 12 column layout -->
                         <th colspan="6"></th>
 
                         <th><span>Today</span></th>
@@ -143,7 +148,7 @@
                         </td>
                         <td>
                             &nbsp;<span data-bind="text: FuelPrice.AutoPrice"></span>
-                            <input type="text" data-bind="value: FuelPrice.OverridePrice,
+                            <input type="text" data-bind="value: FuelPrice.OverridePrice, visible: !$root.ViewingHistorical(),
                                 id: ($parent.SiteId + '-' + FuelPrice.FuelTypeId + '-overridePrice'), event:{keyup: changeProp}" class="txtPrice" />
                             <!-- note: override prices can be extracted using $('#SiteId-FueldTypeId-overridePrice') -->
                             <i data-bind="attr: {
@@ -152,7 +157,7 @@
                                     style: (!UpDownValue() || UpDownValue() == 0 || UpDownValue() == '-') ? 'color: grey'
                                             : (UpDownValue() <= 0.1) ? 'color: red': 'color: green',
                                             }"></i>
-                            &nbsp;<span data-bind="text: (!UpDownValue() || UpDownValue() == 0 || UpDownValue() == '-') ? '-' : 
+                            &nbsp;<span data-bind="text: (!UpDownValue() || UpDownValue() == 0 || UpDownValue() == '-') ? '-' :
                                                            (UpDownValue()/10)"></span>
                         </td>
                         <!-- /ko -->
@@ -219,9 +224,7 @@
                                         <!-- /ko -->
                                     </tr>
                                     <!-- /ko -->
-
                                     <!-- /ko -->
-
                                     <!-- /ko -->
                                 </tbody>
                             </table>
