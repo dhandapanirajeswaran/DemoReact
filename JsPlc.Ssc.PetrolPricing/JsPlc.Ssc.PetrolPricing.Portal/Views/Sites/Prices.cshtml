@@ -70,7 +70,7 @@
 <div class="container" id="petrolpricingpage">
     <div id="msgs"></div>
     <!-- Submit disabled, all work done thru ajax calls -->
-    <form id="myform" method="post" data-bind="submit: savePetrolPricingForm" xclass="input-group-sm" onsubmit="return false;">
+    <form id="myform" method="post" data-bind="submit: savePetrolPricingForm" xclass="input-group-sm" action="sites/PostPrices" onsubmit="return false;">
         <div class="row">
             <div class="col-md-9 left"><span>Market Comparison: Sainsburys's prices and Competitors</span></div>
             <div class="col-md-3 right">
@@ -93,7 +93,7 @@
                 <div class="col-md-2 left"><button type="submit" class="btn btn-default" data-bind="click: loadNewDateData">Go</button></div>
             </div>
             <div class="col-md-3 right">
-                <button type="submit" class="btn btn-default" data-bind="click: savePetrolPricingForm, visible: !$root.ViewingHistorical()">Save Prices</button>
+                <button type="button" class="btn btn-default" data-bind="click: savePetrolPricingForm, visible: !$root.ViewingHistorical()">Save Prices</button>
                 <div id="unSavedChangesMsg" data-bind="visible: $root.HasUnsavedChanges() && !$root.ViewingHistorical()" style="color: brown; font-size: larger">You have unsaved changes</div>
             </div>
         </div>

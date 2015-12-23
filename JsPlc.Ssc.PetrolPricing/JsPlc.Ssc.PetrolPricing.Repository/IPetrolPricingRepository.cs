@@ -136,6 +136,13 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         bool UpdateCatalistQuarterlyData(List<CatalistQuarterly> CatalistQuarterlyData, FileUpload fileDetails, bool isSainsburys);
 
         Task<int> CreateMissingSuperUnleadedFromUnleaded(DateTime forDate, int markup, int siteId = 0);
+
+        /// <summary>
+        /// Only updates OverridePrice value
+        /// </summary>
+        /// <param name="prices"></param>
+        /// <param name="forDate"></param>
+        Task<int> SaveOverridePricesAsync(List<SitePrice> prices, DateTime? forDate = null);
     }
 
     public interface IPetrolPricingRepositoryLookup

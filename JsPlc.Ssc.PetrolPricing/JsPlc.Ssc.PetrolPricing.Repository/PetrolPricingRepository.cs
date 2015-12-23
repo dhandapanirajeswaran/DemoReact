@@ -9,6 +9,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Permissions;
 using System.Threading.Tasks;
@@ -752,6 +753,39 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                 existingPriceRecord.UploadId = calculatedSitePrice.UploadId;
                 db.SaveChanges();
                 return existingPriceRecord;
+            }
+        }
+
+        public async Task<int> SaveOverridePricesAsync(List<SitePrice> prices, DateTime? forDate= null)
+        {
+            if (!forDate.HasValue) forDate = DateTime.Now;
+            try
+            {
+                using (var db = new RepositoryContext())
+                {
+                    foreach (SitePrice p in prices)
+                    {
+                        // 
+                        var dbPricesForDate = db.SitePrices.Where(x => DbFunctions.DiffDays(x.DateOfCalc, forDate) == 0).AsNoTracking().ToList();
+
+                        SitePrice p1 = p; // to prevent closure issue
+                        var entry = dbPricesForDate.FirstOrDefault(x => x.SiteId == p1.SiteId && x.FuelTypeId == p1.FuelTypeId);
+                        if (entry == null)
+                        {
+                            throw new ApplicationException(
+                            String.Format("Price not found in DB for siteId={0}, fuelId={1}", p1.SiteId, p1.FuelTypeId));
+                        }
+                        entry.OverriddenPrice = p.OverriddenPrice;
+                        db.Entry(entry).State = EntityState.Modified;
+                        //db.Entry(entry).Property(x => x.OverriddenPrice).IsModified = true;
+                    }
+                    int rowsAffected = await db.SaveChangesAsync();
+                    return rowsAffected;
+                }
+            }
+            catch (Exception ex)
+            {
+                return 0;
             }
         }
 

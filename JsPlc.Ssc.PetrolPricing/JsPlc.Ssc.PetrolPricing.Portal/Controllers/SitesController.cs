@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -26,13 +27,18 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 
         // Coded Only - TODO wire up the postback to backend
         [System.Web.Mvc.HttpPost]
-        public async Task<JsonResult> PutPriceOverride([FromBody] List<SitePriceViewModel> sitePricesView)
+        public async Task<JsonResult> SavePriceOverrides([FromBody] OverridePricePostViewModel[] postbackKey1 = null)
         {
-            if (ModelState.IsValid)
+            if (postbackKey1 != null)
             {
-                var response = await _serviceFacade.UpdateSitePricesAsync(sitePricesView);
-                return !response.Any() ? new HttpResponseMessage(HttpStatusCode.BadRequest).ToJsonResult(null, null, "ApiFail") : 
-                    new HttpResponseMessage(HttpStatusCode.OK).ToJsonResult(response, null, "ApiSuccess");
+                List<OverridePricePostViewModel> siteOverridePriceList = postbackKey1.ToList();
+                if (ModelState.IsValid)
+                {
+                    //var siteOverridePriceList = siteOverridePrices;
+                    var response = await _serviceFacade.SaveOverridePricesAsync(siteOverridePriceList);
+                    return !response.Any() ? new HttpResponseMessage(HttpStatusCode.BadRequest).ToJsonResult(null, null, "ApiFail") : 
+                        new HttpResponseMessage(HttpStatusCode.OK).ToJsonResult(response, null, "ApiSuccess");
+                }
             }
             var errArray = this.GetUiErrorList();
             var badRequestResponse = new HttpResponseMessage
@@ -40,7 +46,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
                 StatusCode = HttpStatusCode.BadRequest
             };
             // key and string of arrays
-            return badRequestResponse.ToJsonResult(null, errArray, "UIValidationErrors");
+            return badRequestResponse.ToJsonResult(postbackKey1, errArray, "UIValidationErrors");
         }
 
         [ScriptMethod(UseHttpGet = true)]
@@ -119,7 +125,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
         /// </summary>
         /// <param name="msg"></param>
         /// <returns></returns>
-        public ActionResult Prices(string msg = "")
+        public ActionResult Prices(int x =0, string msg = "")
         {
             // Display list of existing sites along with their status
             ViewBag.Message = msg;
@@ -131,8 +137,13 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 
 
         [System.Web.Mvc.HttpPost]
-        public ActionResult Prices()
+        public ActionResult PostPrices([FromBody] string postBackData="")
         {
+            List<SitePriceViewModel> siteData = JsonConvert.DeserializeObject(postBackData) as List<SitePriceViewModel>;
+            if (siteData != null)
+            {
+                Debug.Write("FormData:" + Request.Form);
+            }
             //_serviceFacade.EmailUpdatedPricesToSite();
 
             //var sitesViewModelsWithPrices = _serviceFacade.GetSitePrices();

@@ -8,6 +8,7 @@ AS
 --Declare @forDate DateTime = '2015-12-18' -- Uncomment for manual testing
 --Declare @SuperUnleadedMarkup Int = 5 -- Uncomment for manual testing
 If(@SuperUnleadedMarkup = 0) Set @SuperUnleadedMarkup = 5
+Set @SuperUnleadedMarkup = @SuperUnleadedMarkup * 10
 
 Insert Into SitePrice (SiteId, FuelTypeId, DateOfCalc, DateOfPrice, UploadId, EffDate, SuggestedPrice, OverriddenPrice) -- comment out for manual test
 Select SiteId, 1, DateOfCalc, DateOfPrice, UploadId, EffDate, SuggestedPrice + @SuperUnleadedMarkup, 0 from -- comment out for manual test

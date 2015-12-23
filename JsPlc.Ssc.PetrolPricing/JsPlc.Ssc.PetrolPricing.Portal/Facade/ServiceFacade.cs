@@ -224,27 +224,31 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
         /// <summary>
         /// Save site Price overrides back to backend
         /// </summary>
-        /// <param name="sitePriceViewModel"></param>
-        public async Task<List<SitePriceViewModel>> UpdateSitePricesAsync(List<SitePriceViewModel> sitePriceViewModel)
+        /// <param name="siteOverridePriceViewModel"></param>
+        public async Task<List<OverridePricePostViewModel>> SaveOverridePricesAsync(List<OverridePricePostViewModel> siteOverridePriceViewModel)
         {
             //TODO PUT to Api
+            var jsonData = JsonConvert.SerializeObject(siteOverridePriceViewModel);
+            var response = await RunAsync(jsonData, HttpMethod.Put, "SaveOverridePrices");
+            var result = response.Content.ReadAsStringAsync().Result;
+
             await Task.FromResult(0);
-            return sitePriceViewModel;
+            return siteOverridePriceViewModel;
         }
 
-        // TRULY Async static method
-        public async Task<HttpResponseMessage> RunAsync(string siteViewJson, HttpMethod method)
+        // TRULY Async static method (calls /api/{serviceUri})
+        public async Task<HttpResponseMessage> RunAsync(string jsonData, HttpMethod method, string serviceUri)
         {
             using (var client = new HttpClient())
             {
                 client.DefaultRequestHeaders.Accept.Clear();
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-                var serviceUrl = String.Format("{0}api/Sites", ConfigurationManager.AppSettings["ServicesBaseUrl"]);
+                var serviceUrl = String.Format("{0}api/{1}", ConfigurationManager.AppSettings["ServicesBaseUrl"], serviceUri);
 
                 var request = new HttpRequestMessage(method, serviceUrl)
                 {
-                    Content = new StringContent(siteViewJson,
+                    Content = new StringContent(jsonData,
                         Encoding.UTF8,
                         "application/json")
                 };

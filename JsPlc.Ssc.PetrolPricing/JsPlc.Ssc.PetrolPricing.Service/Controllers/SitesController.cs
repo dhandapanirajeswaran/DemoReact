@@ -140,6 +140,18 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
             return Ok(cheapestPrice);
         }
 
+        [System.Web.Http.HttpPut]
+        [System.Web.Http.Route("api/SaveOverridePrices/")]
+        public async Task<IHttpActionResult> PutOverridePrices(List<OverridePricePostViewModel> pricesToSave)
+        {
+            int rows;
+            using (var ps = new PriceService())
+            {
+               rows = await ps.SaveOverridePricesAsync(pricesToSave);
+            }
+            return Ok(rows);
+        }
+
         /// <summary>
         ///  Not used yet, churns out a lot of data
         /// </summary>

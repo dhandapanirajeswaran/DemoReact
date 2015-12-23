@@ -5,10 +5,13 @@ using System.Data.Entity;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading;
 using System.Threading.Tasks;
 using JsPlc.Ssc.PetrolPricing.Models;
 using JsPlc.Ssc.PetrolPricing.Models.Common;
+using JsPlc.Ssc.PetrolPricing.Models.ViewModels;
 
 namespace JsPlc.Ssc.PetrolPricing.Business
 {
@@ -274,6 +277,26 @@ namespace JsPlc.Ssc.PetrolPricing.Business
             DateTime usingPricesforDate)
         {
             return _db.GetDailyPricesForFuelByCompetitors(competitorCatNos, fuelId, usingPricesforDate);
+        }
+
+        public async Task<int> SaveOverridePricesAsync(List<OverridePricePostViewModel> pricesToSave)
+        {
+            int retval = 0;
+            List<SitePrice> prices = new List<SitePrice>();
+            foreach (var price in pricesToSave)
+            {
+                var fuelTypeId = price.FuelTypeId.ToNullable<int>();
+                var siteId = price.SiteId.ToNullable<int>();
+                var overridePrice = price.OverridePrice;
+                if (fuelTypeId != null && siteId != null && overridePrice > 0)
+                    prices.Add(new SitePrice
+                    {
+                        SiteId = siteId.Value,
+                        FuelTypeId = fuelTypeId.Value, OverriddenPrice = Convert.ToInt32(Math.Truncate(overridePrice * 10))
+                    });
+            }
+            retval = await _db.SaveOverridePricesAsync(prices);
+            return retval;
         }
     }
 
