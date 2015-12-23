@@ -43,6 +43,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             return _context.Sites
                 //.Include(s => s.Emails)
                 .Where(s => s.IsSainsburysSite)
+                .AsNoTracking()
                 .OrderBy(q => q.Id).ToArray();
         }
 
@@ -412,6 +413,55 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                 return false;
             }
 
+        }
+
+        /// <summary>
+        /// Demo 22/12/15 new requirement: Create SitePrices for SuperUnleaded with Markup
+        /// </summary>
+        /// <param name="forDate"></param>
+        /// <param name="markup">SuperUnl normally 5ppl dearer than Unl</param>
+        /// <param name="siteId">0 to run for all sites, or set specific SiteId param</param>
+        /// <returns></returns>
+        public async Task<int> CreateMissingSuperUnleadedFromUnleaded(DateTime forDate, int markup, int siteId=0)
+        {
+            //@forDate DateTime,
+
+            var siteIdParam = new SqlParameter("@siteId", SqlDbType.Int)
+            {
+                Value = siteId
+            };
+            var forDateParam = new SqlParameter("@forDate", SqlDbType.DateTime)
+            {
+                Value = forDate
+            };
+            var markupParam = new SqlParameter("@SuperUnleadedMarkup", SqlDbType.Int)
+            {
+                Value = markup
+            };
+            
+            // any other params here
+
+            var sqlParams = new List<SqlParameter>
+            {
+                siteIdParam, forDateParam, markupParam
+            };
+            const string spName = "dbo.spSetSuperUnleadedPricesFromUnleaded";
+            // Test in SQL:     Exec dbo.spSetSuperUnleadedPricesFromUnleaded '2015-11-30'
+            // No output, just successful execution, Exception on failure
+
+            using (var connection = new SqlConnection(_context.Database.Connection.ConnectionString))
+            {
+                using (var command = new SqlCommand(spName, connection))
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Parameters.AddRange(sqlParams.ToArray());
+
+                    connection.Open();
+
+                    int rowsAffectedTask = await command.ExecuteNonQueryAsync();
+                    return rowsAffectedTask;
+                }
+            }
         }
 
         public bool NewDailyPrices(List<DailyPrice> dailyPriceList, FileUpload fileDetails, int startingLineNumber)

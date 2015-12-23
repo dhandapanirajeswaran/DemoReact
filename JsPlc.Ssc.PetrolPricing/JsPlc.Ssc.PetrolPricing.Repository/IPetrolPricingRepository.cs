@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using JsPlc.Ssc.PetrolPricing.Models;
 using JsPlc.Ssc.PetrolPricing.Models.ViewModels;
 
@@ -133,6 +134,8 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         FileUpload GetDailyFileWithCalcRunningForDate(DateTime forDate);
 
         bool UpdateCatalistQuarterlyData(List<CatalistQuarterly> CatalistQuarterlyData, FileUpload fileDetails, bool isSainsburys);
+
+        Task<int> CreateMissingSuperUnleadedFromUnleaded(DateTime forDate, int markup, int siteId = 0);
     }
 
     public interface IPetrolPricingRepositoryLookup

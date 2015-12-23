@@ -50,6 +50,10 @@ else set @todayPriceDate = @lastPriceDate
    Select Distinct s.Id as SiteId, dp.FuelTypeId, ft.FuelTypeName
    from sites s, DailyPrice dp, FuelType ft
    Where s.CatNo = dp.CatNo and dp.FuelTypeId = ft.Id
+   Union 
+   Select Distinct s.Id as SiteId, sp.FuelTypeId, ft.FuelTypeName
+   from sites s, SitePrice sp, FuelType ft
+   Where s.Id = sp.SiteId and sp.FuelTypeId = ft.Id
 ) -- select * from siteFuels
 ,sitesWithFuels as
 (

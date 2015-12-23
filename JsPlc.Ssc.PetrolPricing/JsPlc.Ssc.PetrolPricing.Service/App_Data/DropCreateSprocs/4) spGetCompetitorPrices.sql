@@ -152,9 +152,9 @@ else set @yestPriceDate = @phhYestDate
 
 		cs.FuelTypeId, cs.FuelTypeName, -- could be null as derived from DP file
 
-		todp.UploadDateTime, todp.ModalPrice, -- could be null 
+	    todp.DailyUploadId,	todp.UploadDateTime, todp.ModalPrice, -- could be null 
 
-		yestp.UploadDateTime UploadDateTimeYest, yestp.ModalPrice ModalPriceYest -- could be null
+		yestp.DailyUploadId as DailyUploadIdYest, yestp.UploadDateTime UploadDateTimeYest, yestp.ModalPrice ModalPriceYest -- could be null
 				
 	From compWithFuels cs
 		Left Outer Join todaysPrices todp

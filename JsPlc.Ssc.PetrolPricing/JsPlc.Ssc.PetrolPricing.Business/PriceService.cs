@@ -8,12 +8,14 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using JsPlc.Ssc.PetrolPricing.Models;
+using JsPlc.Ssc.PetrolPricing.Models.Common;
 
 namespace JsPlc.Ssc.PetrolPricing.Business
 {
     public class PriceService : BaseService
     {
         private readonly bool _includeJsSitesAsCompetitors; // false by default (excludes JS sites)
+        private int[] _fuelSelectionArray = new[] {1, 2, 5, 6, 7}; // superunl, unl, superdiesel, diesel, lpg
 
         public PriceService()
         {
@@ -70,7 +72,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
                 catch (Exception)
                 {
                     _db.UpdateImportProcessStatus(12, dpFile);
-                        //CalcFailed
+                    //CalcFailed
                 }
             }
             await Task.FromResult(0);
@@ -106,25 +108,49 @@ namespace JsPlc.Ssc.PetrolPricing.Business
             var priceService = new PriceService();
             if(!forDate.HasValue) forDate = DateTime.Now;
 
-            var sites = _db.GetSites().AsQueryable().AsNoTracking();
-            var fuels = LookupService.GetFuelTypes().AsQueryable().AsNoTracking().ToList();
-            //var taskArray = new List<Task>();
+            var sites = _db.GetJsSites().Where(x => x.IsActive).AsQueryable().AsNoTracking();
+            var fuels = LookupService.GetFuelTypes().Where(x => _fuelSelectionArray.Contains(x.Id)).AsQueryable().AsNoTracking().ToList(); // Limit calc iterations to known fuels
+            var taskArray = new List<Task>();
             foreach (var site in sites)
             {
                 var tmpSite = site;
                 foreach (var fuel in fuels.ToList())
                 {
-                    Debug.WriteLine("Calculation started ... for site:" + site.Id);
+                    Debug.WriteLine("Calculation started... for site:" + site.Id + " at:" + DateTime.Now.ToString("s"));
                     FuelType fuel1 = fuel;
-                    priceService.CalcPrice(tmpSite.Id, fuel1.Id, forDate);
+                    var cheapestPrice = priceService.CalcPrice(tmpSite.Id, fuel1.Id, forDate);
+                    //taskArray.Add(t);
                     //var calculatedSitePrice = priceService.CalcPrice(tmpSite.Id, fuel.Id, forDate);
                     // AddOrUpdate doesnt work here, only works within the CalcPrice method, Ughh EF!!
                     //if (calculatedSitePrice != null) { var updatedPrice = _db.AddOrUpdateSitePriceRecord(tmpSite, calculatedSitePrice);} 
                 }
             }
             //Task.WaitAll(taskArray.ToArray());
+
+            CreateMissingSuperUnleadedFromUnleaded(forDate.Value); // for performance, run for all sites
             return true;
         }
+
+        /// <summary>
+        /// Demo 22/12/15 new requirement: Create SitePrices for SuperUnleaded with Markup
+        /// Creates rows in SitePrice for SuperUnleaded using Unleaded Prices with a markup to SuggestedPrice (OverridePrice for new rows = 0)
+        /// </summary>
+        /// <param name="forDate"></param>
+        /// <param name="markup"></param>
+        /// <param name="siteId"></param>
+        public void CreateMissingSuperUnleadedFromUnleaded(DateTime forDate, int? markup = null, int siteId =0)
+        {
+            if (!markup.HasValue)
+            {
+                markup = SettingsService.GetSetting("SuperUnleadedMarkup").ToNullable<int>();
+            }
+
+            if (markup != null)
+            {
+                _db.CreateMissingSuperUnleadedFromUnleaded(forDate, markup.Value, siteId);
+            }
+        }
+
         /// <summary>
         /// Calculate price of a Fuel for a Given JS Site based on Pricing Rules and updates DB
         ///  As per flow diagram 30 Nov 2015
@@ -136,11 +162,15 @@ namespace JsPlc.Ssc.PetrolPricing.Business
         /// <returns></returns>
         public SitePrice CalcPrice(int siteId, int fuelId, DateTime? usingPricesforDate = null)
         {
+            // TODO For performance - amend this module to use sproc spGetCompetitorPrices set to calc cheapest prices
+            // Call sproc only once for all sites, and passing in comps for site to calc cheapest using that
+            // This approach will enable parallel execution
+
             if (!usingPricesforDate.HasValue) usingPricesforDate = DateTime.Now; // Uses dailyPrices of competitors Upload date matching this date
 
-            var site = _db.GetSite(siteId);
-            if (site == null || !site.CatNo.HasValue) return null;
-            if (!_db.AnyDailyPricesForFuelOnDate(fuelId, usingPricesforDate.Value))
+            var site = _db.GetSite(siteId); // TODO get site in caller
+            if (site == null || !site.CatNo.HasValue) return null; // TODO chk in caller
+            if (!_db.AnyDailyPricesForFuelOnDate(fuelId, usingPricesforDate.Value)) // TODO chk in caller
                 return null;
             // APPLY PRICING RULES: based on drivetime (see Market Comparison sheet) as per meeting 02Dec2015 @ 13:00
             // If 0-5 mins away – match to minimum competitor
@@ -184,7 +214,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
                 SuggestedPrice = competitor.DailyPrice.ModalPrice + markup * 10, // since modalPrice is held in pence*10 (Catalist format)
                 DateOfCalc = usingPricesforDate.Value.Date // Only date component
             };
-            // Ideally this should be done in caller.
+            // TODO for parallel exec - amend this to run in caller
             var retval = _db.AddOrUpdateSitePriceRecord(cheapestPrice); 
             return cheapestPrice;
         }

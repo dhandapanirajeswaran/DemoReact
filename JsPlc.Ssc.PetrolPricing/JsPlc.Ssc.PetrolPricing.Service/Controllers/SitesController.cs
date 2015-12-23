@@ -126,17 +126,18 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
 
             // Test for 30 Nov prices as we have a dummy set of these setup
             // We dont have any 1st Dec prices
-            SitePrice price = null;
+            SitePrice cheapestPrice = null;
             if (!forDate.HasValue) forDate = DateTime.Now; // DateTime.Parse("2015-11-30")
             if (fuelId !=0 && siteId != 0)
             {
-                price = _priceService.CalcPrice(siteId, fuelId, forDate.Value); // Unleaded
+                cheapestPrice = _priceService.CalcPrice(siteId, fuelId, forDate.Value); // Unleaded
+                _priceService.CreateMissingSuperUnleadedFromUnleaded(forDate.Value, null, siteId);
             }
             else
             {
                var result = await _priceService.DoCalcDailyPrices(forDate); // multiple sites
             }
-            return Ok(price);
+            return Ok(cheapestPrice);
         }
 
         /// <summary>
