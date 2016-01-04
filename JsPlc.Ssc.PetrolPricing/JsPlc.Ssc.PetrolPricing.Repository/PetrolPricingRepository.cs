@@ -6,6 +6,7 @@ using System.Data.Entity.Infrastructure;
 using System.Data.Entity.Migrations;
 using System.Data.Entity.SqlServer;
 using System.Data.SqlClient;
+using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
@@ -465,6 +466,90 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             }
         }
 
+        public bool NewQuarterlyRecords(List<CatalistQuarterly> siteCatalistData, FileUpload fileDetails, int startingLineNumber)
+        {
+            int addingEntryLineNo = startingLineNumber;
+
+            using (var newDbContext = new RepositoryContext(new SqlConnection(_context.Database.Connection.ConnectionString)))
+            {
+                using (var tx = newDbContext.Database.BeginTransaction())
+                {
+                    newDbContext.Configuration.AutoDetectChangesEnabled = false;
+                    try
+                    {
+                        foreach (CatalistQuarterly fileRecord in siteCatalistData)
+                        {
+                            var dbRecord = new QuarterlyUploadStaging();
+                            dbRecord.QuarterlyUploadId = fileDetails.Id;
+
+                            dbRecord.SainsSiteCatNo = (int)fileRecord.SainsCatNo;
+                            dbRecord.SainsSiteName = fileRecord.SainsSiteName;
+                            dbRecord.SainsSiteTown = fileRecord.SainsSiteTown;
+
+                            dbRecord.Rank = (int)fileRecord.Rank;
+                            dbRecord.DriveDist = (float)fileRecord.DriveDistanceMiles;
+                            dbRecord.DriveTime = (float)fileRecord.DriveTimeMins;
+                            dbRecord.CatNo = (int)fileRecord.CatNo;
+
+                            dbRecord.Brand = fileRecord.Brand;
+                            dbRecord.SiteName = fileRecord.SiteName;
+                            dbRecord.Addr = fileRecord.Address;
+                            dbRecord.Suburb = fileRecord.Suburb;
+
+                            dbRecord.Town = fileRecord.Town;
+                            dbRecord.PostCode = fileRecord.Postcode;
+                            dbRecord.Company = fileRecord.CompanyName;
+                            dbRecord.Ownership = fileRecord.Ownership;
+
+                            newDbContext.QuarterlyUploadStaging.Add(dbRecord);
+                            addingEntryLineNo += 1;
+                        }
+
+                        newDbContext.SaveChanges();
+
+                        tx.Commit();
+                        return true;
+                    }
+                    catch (DbUpdateException e)
+                    {
+
+                        tx.Rollback();
+
+                        foreach (var dbUpdateException in e.Entries)
+                        {
+                            var dbRecord = dbUpdateException.Entity as QuarterlyUploadStaging ?? new QuarterlyUploadStaging();
+                            LogImportError(fileDetails,
+                                String.Format("Failed to save Quarterly record:{0},{1},{2},{3},{4},{5},{6},{7},{8},{9}",
+                                    dbRecord.SainsSiteName, dbRecord.SainsSiteTown, dbRecord.SainsSiteCatNo,
+                                    dbRecord.Rank, dbRecord.DriveDist, dbRecord.DriveTime, dbRecord.CatNo, dbRecord.Brand, dbRecord.SiteName, 
+                                    dbRecord.Addr),
+                                    startingLineNumber);
+                            dbUpdateException.State = EntityState.Unchanged;
+                        }
+
+                        return false;
+                    }
+                    catch (DbEntityValidationException dbEx)
+                    {
+                        tx.Rollback();
+                        foreach (var validationErrors in dbEx.EntityValidationErrors)
+                        {
+                            foreach (var validationError in validationErrors.ValidationErrors)
+                            {
+                                LogImportError(fileDetails,
+                                    "DbEntityValidationException occured:" + validationError.ErrorMessage +
+                                    "," + validationError.PropertyName, addingEntryLineNo);
+
+                                Trace.TraceInformation("Property: {0} Error: {1}", validationError.PropertyName,
+                                    validationError.ErrorMessage);
+                            }
+                        }
+                        return false;
+                    }
+                }
+            }
+        }
+
         public bool NewDailyPrices(List<DailyPrice> dailyPriceList, FileUpload fileDetails, int startingLineNumber)
         {
             int addingEntryLineNo = startingLineNumber;
@@ -665,6 +750,16 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         }
 
         /// <summary>
+        /// Delete all QuarterlyUploadStaging records prior to starting Import of QuarterlyUploadStaging
+        /// </summary>
+        public void DeleteRecordsForQuarterlyUploadStaging()
+        {
+            var db = new RepositoryContext(_context.Database.Connection);
+            var deleteCmd = String.Format("Truncate table QuarterlyUploadStaging"); // automatically reseeds to 1
+            db.Database.ExecuteSqlCommand(deleteCmd);
+        }
+
+        /// <summary>
         /// Delete all DailyImport records of older uploads of today
         /// ONLY call this on successful import of at least one file of ofDate
         /// Reason - To keep DailyPrice table lean. Otherwise CalcPrice will take a long time to troll through a HUGE table
@@ -836,7 +931,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                 int rowCount = 0;
                 foreach (var row in SiteCatalistData)
                 {
-                    var siteCatNo = Convert.ToInt32(row.SiteCatNo);
+                    var siteCatNo = Convert.ToInt32(row.SainsCatNo);
                     var catNo = Convert.ToInt32(row.CatNo);
                     var rank = Convert.ToInt32(row.Rank);
 

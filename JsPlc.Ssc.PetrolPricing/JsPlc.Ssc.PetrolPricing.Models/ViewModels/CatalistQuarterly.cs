@@ -9,9 +9,10 @@ namespace JsPlc.Ssc.PetrolPricing.Models.ViewModels
     public class CatalistQuarterly
     {
         //Types are set as in excel to avoid parsing on import
-        public string MasterSiteName { get; set; }
-        public string SiteTown { get; set; }
-        public double SiteCatNo { get; set; }
+        public string SainsSiteName { get; set; }
+        public string SainsSiteTown { get; set; }
+        public double SainsCatNo { get; set; }
+
         public double Rank { get; set; }
         public double DriveDistanceMiles { get; set; }
         public double DriveTimeMins { get; set; }
