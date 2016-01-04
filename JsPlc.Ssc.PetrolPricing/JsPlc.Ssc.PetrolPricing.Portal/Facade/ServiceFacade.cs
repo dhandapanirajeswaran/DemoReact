@@ -221,17 +221,22 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             
             return result; //(response.IsSuccessStatusCode) ? result : null;
         }
+
         /// <summary>
         /// Save site Price overrides back to backend
         /// </summary>
         /// <param name="siteOverridePriceViewModel"></param>
-        public async Task<List<OverridePricePostViewModel>> SaveOverridePricesAsync(List<OverridePricePostViewModel> siteOverridePriceViewModel)
+        public async Task<List<OverridePricePostViewModel>> SaveOverridePricesAsync(
+            List<OverridePricePostViewModel> siteOverridePriceViewModel)
         {
-            //TODO PUT to Api
+            //Done PUT to Api
             var jsonData = JsonConvert.SerializeObject(siteOverridePriceViewModel);
             var response = await RunAsync(jsonData, HttpMethod.Put, "SaveOverridePrices");
             var result = response.Content.ReadAsStringAsync().Result;
-
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new ApplicationException(result); // json error structure
+            }
             await Task.FromResult(0);
             return siteOverridePriceViewModel;
         }
@@ -244,7 +249,8 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
                 client.DefaultRequestHeaders.Accept.Clear();
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-                var serviceUrl = String.Format("{0}api/{1}", ConfigurationManager.AppSettings["ServicesBaseUrl"], serviceUri);
+                var serviceUrl = String.Format("{0}api/{1}", ConfigurationManager.AppSettings["ServicesBaseUrl"],
+                    serviceUri);
 
                 var request = new HttpRequestMessage(method, serviceUrl)
                 {
@@ -253,14 +259,13 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
                         "application/json")
                 };
 
-                var response = await client.SendAsync(request)
-                    .ContinueWith(responseTask =>
-                    {
-                        Console.WriteLine("Response: {0}", responseTask.Result);
-                        return responseTask.Result;
-                    });
+                var response = await client.SendAsync(request);
 
-                return !response.IsSuccessStatusCode ? new HttpResponseMessage { StatusCode = HttpStatusCode.NotImplemented } : response;
+                return response;
+                //if (response.IsSuccessStatusCode && response.Content.IsHttpResponseMessageContent())
+                //{
+                //    return await response.Content.ReadAsHttpResponseMessageAsync();
+                //}
             }
         }
         public void Dispose()

@@ -91,8 +91,9 @@
                 <div class="col-md-2 left"><button type="submit" class="btn btn-default" data-bind="click: loadNewDateData">Go</button></div>
             </div>
             <div class="col-md-3 right">
-                <button type="button" class="btn btn-default" data-bind="click: savePetrolPricingForm, visible: !$root.ViewingHistorical()">Save Prices</button>
-                <div id="unSavedChangesMsg" data-bind="visible: $root.HasUnsavedChanges() && !$root.ViewingHistorical()" style="color: brown; font-size: larger">You have unsaved changes</div>
+                <button type="button" class="btn btn-default" id="btnSavePrices"
+                        data-bind="click: savePetrolPricingForm, visible: !$root.HasValidationErrors() && $root.HasUnsavedChanges() && !$root.ViewingHistorical()">Save Prices</button>
+                <div id="unSavedChangesMsg" data-bind="visible: !$root.HasValidationErrors() && $root.HasUnsavedChanges() && !$root.ViewingHistorical()" style="color: brown; font-size: larger">You have unsaved changes</div>
             </div>
         </div>
         <hr />
@@ -147,7 +148,10 @@
                         <td>
                             &nbsp;<span data-bind="text: FuelPrice.AutoPrice"></span>
                             <input type="text" data-bind="value: FuelPrice.OverridePrice, visible: !$root.ViewingHistorical(),
-                                id: ($parent.SiteId + '-' + FuelPrice.FuelTypeId + '-overridePrice'), event:{keyup: changeProp}" class="txtPrice" />
+                                id: ('OverridePrice_' + $parent.SiteId + '_' + FuelPrice.FuelTypeId), event:{keyup: changeProp}" class="txtPrice" />
+                            <span style="color: red">
+                                <span data-bind="attr :{id: ('OverridePriceHighlight_' + $parent.SiteId + '_' + FuelPrice.FuelTypeId)}"></span>
+                            </span>
                             <!-- note: override prices can be extracted using $('#SiteId-FueldTypeId-overridePrice') -->
                             <i data-bind="attr: {
                                     class: (!UpDownValue() || UpDownValue() == 0 || UpDownValue() == '-') ? 'fa fa-arrow-circle-o-right'

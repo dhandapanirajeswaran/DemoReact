@@ -25,28 +25,39 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 
         // AJAX Methods
 
-        // Coded Only - TODO wire up the postback to backend
+        // Coded Only - wired up the postback to backend
         [System.Web.Mvc.HttpPost]
         public async Task<JsonResult> SavePriceOverrides([FromBody] OverridePricePostViewModel[] postbackKey1 = null)
         {
-            if (postbackKey1 != null)
+            try
             {
-                List<OverridePricePostViewModel> siteOverridePriceList = postbackKey1.ToList();
-                if (ModelState.IsValid)
+                if (postbackKey1 != null)
                 {
-                    //var siteOverridePriceList = siteOverridePrices;
-                    var response = await _serviceFacade.SaveOverridePricesAsync(siteOverridePriceList);
-                    return !response.Any() ? new HttpResponseMessage(HttpStatusCode.BadRequest).ToJsonResult(null, null, "ApiFail") : 
-                        new HttpResponseMessage(HttpStatusCode.OK).ToJsonResult(response, null, "ApiSuccess");
+                    List<OverridePricePostViewModel> siteOverridePriceList = postbackKey1.ToList();
+                    //postbackKey1[0].OverridePrice = "abc"; // force error
+                    if (ModelState.IsValid)
+                    {
+                        //var siteOverridePriceList = siteOverridePrices;
+                        var response = await _serviceFacade.SaveOverridePricesAsync(siteOverridePriceList);
+                        return (response == null || !response.Any())
+                            ? new HttpResponseMessage(HttpStatusCode.BadRequest).ToJsonResult(postbackKey1, null, "ApiFail", "Invalid postback data")
+                            : new HttpResponseMessage(HttpStatusCode.OK).ToJsonResult(response, null, "ApiSuccess");
+                    }
+                    var errArray = this.GetUiErrorList();
+                    var badRequestResponse = new HttpResponseMessage
+                    {
+                        StatusCode = HttpStatusCode.BadRequest
+                    };
+                    // key and string of arrays
+                    return badRequestResponse.ToJsonResult(postbackKey1, errArray, "UIValidationErrors");
                 }
+                return new HttpResponseMessage(HttpStatusCode.OK).ToJsonResult(null, null, "ApiSuccess");
             }
-            var errArray = this.GetUiErrorList();
-            var badRequestResponse = new HttpResponseMessage
+            catch (Exception ex)
             {
-                StatusCode = HttpStatusCode.BadRequest
-            };
-            // key and string of arrays
-            return badRequestResponse.ToJsonResult(postbackKey1, errArray, "UIValidationErrors");
+                return new HttpResponseMessage(HttpStatusCode.BadRequest).ToJsonResult(postbackKey1, null, "ApiFail",
+                    ex.Message);
+            }
         }
 
         [ScriptMethod(UseHttpGet = true)]

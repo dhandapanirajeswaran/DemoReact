@@ -15,7 +15,8 @@ namespace JsPlc.Ssc.PetrolPricing.Models.ViewModels
         [Required]
         public string FuelTypeId { get; set; } // 1,2,6 values
 
-        [Range(1d, 400d, ErrorMessage = "Override price should be between 1 and 400")] // prevent user postback of prices over £4
-        public float OverridePrice { get; set; } // from user input 
+        //[Range(typeof(float), "0.00", "400.0", ErrorMessage = "Override price should be between 0 and 400")] // prevent user postback of prices over £4
+        //[Required(AllowEmptyStrings = true)]
+        public string OverridePrice { get; set; } // from user input 
     }
 }

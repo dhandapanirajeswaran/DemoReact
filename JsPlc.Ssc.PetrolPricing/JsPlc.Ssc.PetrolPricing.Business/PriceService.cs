@@ -5,10 +5,13 @@ using System.Data.Entity;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Web.Http;
 using JsPlc.Ssc.PetrolPricing.Models;
 using JsPlc.Ssc.PetrolPricing.Models.Common;
 using JsPlc.Ssc.PetrolPricing.Models.ViewModels;
@@ -287,12 +290,17 @@ namespace JsPlc.Ssc.PetrolPricing.Business
             {
                 var fuelTypeId = price.FuelTypeId.ToNullable<int>();
                 var siteId = price.SiteId.ToNullable<int>();
-                var overridePrice = price.OverridePrice;
-                if (fuelTypeId != null && siteId != null && overridePrice > 0)
+                var overridePrice = 0.0f;
+                if (!float.TryParse(price.OverridePrice, out overridePrice))
+                {
+                    throw new ApplicationException("Invalid Price:" + price.OverridePrice);
+                }
+                if (fuelTypeId != null && siteId != null && overridePrice >= 0) // Save 0 prices (no override)
                     prices.Add(new SitePrice
                     {
                         SiteId = siteId.Value,
-                        FuelTypeId = fuelTypeId.Value, OverriddenPrice = Convert.ToInt32(Math.Truncate(overridePrice * 10))
+                        FuelTypeId = fuelTypeId.Value,
+                        OverriddenPrice = Convert.ToInt32(Math.Truncate(overridePrice*10))
                     });
             }
             retval = await _db.SaveOverridePricesAsync(prices);
