@@ -72,6 +72,7 @@
     <Compile Include="BaseService.cs" />
     <Compile Include="EmailService.cs" />
     <Compile Include="PriceService.cs" />
+    <Compile Include="ReportService.cs" />
     <Compile Include="SiteService.cs" />
     <Compile Include="RepositoryInit.cs">
       <SubType>Code</SubType>

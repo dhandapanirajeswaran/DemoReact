@@ -152,6 +152,14 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         /// <param name="prices"></param>
         /// <param name="forDate"></param>
         Task<int> SaveOverridePricesAsync(List<SitePrice> prices, DateTime? forDate = null);
+
+        /// <summary>
+        /// Gets the details of the competitor sites within 0-5mins, 5-10mins, 15-20mins & 20-25mins from Sainsbury’s. 
+        /// Split by Tesco, Morrison’s Asda, BP etc.
+        /// </summary>
+        /// <param name="siteId"></param>
+        /// <returns></returns>
+        CompetitorSiteReportViewModel GetCompetitorSiteReport(int siteId);
     }
 
     public interface IPetrolPricingRepositoryLookup

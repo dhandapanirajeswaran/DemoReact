@@ -1089,5 +1089,11 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         {
             _context.Dispose();
         }
+
+        public CompetitorSiteReportViewModel GetCompetitorSiteReport(int siteId)
+        {
+            var result = new CompetitorSiteReportViewModel();
+            return result;
+        }
     }
 }
