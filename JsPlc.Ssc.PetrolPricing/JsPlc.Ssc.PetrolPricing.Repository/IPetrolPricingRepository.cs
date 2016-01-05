@@ -9,11 +9,11 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 {
     public interface IPetrolPricingRepository
     {
-        
+
         IEnumerable<Site> GetSites();
 
         IEnumerable<Site> GetJsSites();
-        
+
         Site GetSite(int siteId);
 
         SitePriceViewModel GetASiteWithPrices(int siteId, DateTime forDate);
@@ -40,7 +40,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         IEnumerable<SiteToCompetitor> GetCompetitors(int siteId, int driveTimeFrom, int driveTimeTo, bool includeSainsburysAsCompetitors = true);
 
         SiteToCompetitor LookupSiteAndCompetitor(int siteCatNo, int competitorCatNo);
-        
+
         bool UpdateSiteToCompFromQuarterlyData(List<CatalistQuarterly> SiteCatalistData); // IMPORT method to SiteToComp
 
         //IEnumerable<Site> GetSitesWithPricesAndCompetitors();
@@ -51,7 +51,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         /// <param name="toPriceDate">optional</param>
         /// <returns></returns>
         IEnumerable<Site> GetSitesWithEmailsAndPrices(DateTime? fromPriceDate = null, DateTime? toPriceDate = null);
-        
+
         IEnumerable<Site> GetSitesWithCompetitors();
 
         /// <summary>
@@ -88,7 +88,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         FileUpload GetFileUpload(int id);
 
         FileUpload NewUpload(FileUpload upload);
-        
+
         bool ExistsUpload(string storedFileName);
 
         bool AnyFileUploadForDate(DateTime date, UploadType uploadType);
@@ -103,7 +103,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         void Dispose();
 
         SitePrice AddOrUpdateSitePriceRecord(SitePrice calculatedSitePrice);
-      
+
         /// <summary>
         /// Reason - To keep DailyPrice table lean. Otherwise CalcPrice will take a long time to troll through a HUGE table
         /// Clear criteria = Where date = today and fileId <> the successful Id (afile.Id)
@@ -151,6 +151,14 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         /// <param name="prices"></param>
         /// <param name="forDate"></param>
         Task<int> SaveOverridePricesAsync(List<SitePrice> prices, DateTime? forDate = null);
+
+        /// <summary>
+        /// Gets the details of the competitor sites within 0-5mins, 5-10mins, 15-20mins & 20-25mins from Sainsbury’s. 
+        /// Split by Tesco, Morrison’s Asda, BP etc.
+        /// </summary>
+        /// <param name="siteId"></param>
+        /// <returns></returns>
+        CompetitorSiteReportViewModel GetCompetitorSiteReport(int siteId);
     }
 
     public interface IPetrolPricingRepositoryLookup

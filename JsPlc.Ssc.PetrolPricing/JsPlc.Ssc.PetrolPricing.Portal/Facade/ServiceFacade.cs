@@ -273,6 +273,12 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             _client = null;
         }
 
+        public CompetitorSiteReportViewModel GetCompetitorSites(int siteId)
+        {
+            var response = _client.Value.GetAsync("api/GetCompetitorSites/" + siteId).Result;
+            var result = response.Content.ReadAsAsync<CompetitorSiteReportViewModel>().Result;
+            return (response.IsSuccessStatusCode) ? result : null;
+        }
 
     }
 }

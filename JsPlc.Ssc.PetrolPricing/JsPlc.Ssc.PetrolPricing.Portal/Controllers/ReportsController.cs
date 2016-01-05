@@ -31,6 +31,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
         {
             if (ModelState.IsValid)
             {
+                var data = _serviceFacade.GetCompetitorSites(item.SiteId);
             }
             
             Load(item);

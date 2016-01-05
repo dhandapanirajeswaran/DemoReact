@@ -1,13 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using JsPlc.Ssc.PetrolPricing.Models.ViewModels;
 
 namespace JsPlc.Ssc.PetrolPricing.Business
 {
     public class ReportService : BaseService
     {
-
+        public CompetitorSiteReportViewModel GetCompetitorSites(int siteId)
+        {
+            return _db.GetCompetitorSiteReport(siteId);
+        }
     }
 }

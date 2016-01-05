@@ -59,6 +59,9 @@
     <Compile Include="Common\Functions.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="ImportProcessError.cs" />
+    <Compile Include="ViewModels\CompetitorSiteReportViewModel.cs" />
+    <Compile Include="ViewModels\CompetitorSiteDetailViewModel.cs" />
+    <Compile Include="ViewModels\CompetitorSiteTimeViewModel.cs" />
     <Compile Include="ViewModels\CompetitorSiteViewModel.cs" />
     <Compile Include="ViewModels\OverridePricePostViewModel.cs" />
     <Compile Include="ViewModels\SiteViewModel.cs" />
