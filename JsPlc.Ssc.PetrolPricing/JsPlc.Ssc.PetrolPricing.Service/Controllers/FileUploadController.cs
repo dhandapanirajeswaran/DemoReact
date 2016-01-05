@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data.Entity.Infrastructure;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
@@ -39,13 +40,18 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
                     {
                         return BadRequest("File with that name already exists. Please try again.");
                     }
-                    var fu = fs.NewUpload(fileUpload);
-                    return Ok(fu.Result);
+                    var fu = await fs.NewUpload(fileUpload);
+                    return Ok(fu);
                 }
             }
-            catch (Exception ex)
+            catch (Exception ex) // format the exception to report back to Client
             {
                 return new ExceptionResult(ex, this);
+                //return new ExceptionResult(ex, this);
+                //throw new HttpResponseException(new HttpResponseMessage {
+                //    ReasonPhrase = ex.Message, StatusCode = HttpStatusCode.BadRequest, 
+                //    Content = new StringContent(ex.Message),
+                //});
             }
         }
 
@@ -65,9 +71,11 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
             int? uploadTypeId = keyValuePairs.FirstOrDefault(x => x.Key.Equals("uploadTypeId")).Value.TryParseInt();
             int? statusId = keyValuePairs.FirstOrDefault(x => x.Key.Equals("statusId")).Value.TryParseInt();
 
-            using (var fs = _fileService)
+            using (var fs1 = _fileService)
             {
-                return Ok(fs.GetFileUploads(dtParam, uploadTypeId, statusId).ToList());
+                var fs = fs1; // closure
+                var list = await Task.Run(() => fs.GetFileUploads(dtParam, uploadTypeId, statusId));
+                return Ok(list.ToList());
             }
         }
 
@@ -99,7 +107,7 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
                 using (var fs = _fileService)
                 {
                     DateTime dt = DateTime.Parse(uploadDateTime);
-                    var exists = fs.ExistingDailyUploads(dt);
+                    var exists = await fs.ExistingDailyUploads(dt);
                     return Ok(exists.ToList()); //  T or F
                 }
             }
@@ -125,16 +133,17 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
         {
             try
             {
-                using (var fs = _fileService)
+                using (var fs1 = _fileService)
                 {
-                    var uploadedFiles = fs.GetFileUploads(forDate, fileTypeId, 1).ToList();
+                    var fs = fs1;
+                    var uploadedFiles = await Task.Run(() => fs.GetFileUploads(forDate, fileTypeId, 1));
                         //Status = 1 "uploaded" files only
                     switch (fileTypeId)
                     {
                         case 1:
-                            return Ok(fs.ProcessDailyPrice(uploadedFiles));
+                            return Ok(fs.ProcessDailyPrice(uploadedFiles.ToList()));
                         case 2:
-                            return Ok(fs.ProcessQuarterlyFile(uploadedFiles));
+                            return Ok(fs.ProcessQuarterlyFileNew(uploadedFiles.ToList()));
                         default:
                             throw new ApplicationException("Invalid file type specified");
                     }
@@ -146,6 +155,10 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
             }
         }
 
+        /// <summary>
+        /// Test - Process a quarterly file - import and calc
+        /// </summary>
+        /// <returns></returns>
         [HttpGet] // Process files in upload list 
         [Route("api/ProcessQuarterlyFile")]
         public async Task<IHttpActionResult> ProcessQuarterlyFile()
@@ -160,7 +173,7 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
 
             using (var fs = _fileService)
             {
-                return Ok(fs.ProcessQuarterlyFile(aFileList));
+                return Ok(fs.ProcessQuarterlyFileNew(aFileList));
             }
 
         }

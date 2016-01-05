@@ -29,6 +29,9 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         bool NewQuarterlyRecords(List<CatalistQuarterly> siteCatalistData, FileUpload fileDetails,
             int startingLineNumber);
 
+        // RUN sprocs to Add/Update/Delete sites and siteToCompetitors
+        Task<bool> ImportQuarterlyUploadStaging(int uploadId);
+
         /// <summary>
         /// Useful for SiteMaint screen
         /// </summary>
@@ -41,8 +44,6 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
         SiteToCompetitor LookupSiteAndCompetitor(int siteCatNo, int competitorCatNo);
         
-        bool UpdateSiteToCompFromQuarterlyData(List<CatalistQuarterly> SiteCatalistData); // IMPORT method to SiteToComp
-
         //IEnumerable<Site> GetSitesWithPricesAndCompetitors();
         /// <summary>
         /// Useful for emailing
@@ -83,7 +84,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
         void UpdateImportProcessStatus(int statusId, FileUpload fileUpload);
 
-        IEnumerable<FileUpload> GetFileUploads(DateTime? date, int? uploadType, int? statusId);
+        Task<List<FileUpload>> GetFileUploads(DateTime? date, int? uploadType, int? statusId);
 
         FileUpload GetFileUpload(int id);
 
@@ -91,14 +92,14 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         
         bool ExistsUpload(string storedFileName);
 
-        bool AnyFileUploadForDate(DateTime date, UploadType uploadType);
+        Task<bool> AnyFileUploadForDate(DateTime date, UploadType uploadType);
 
         void LogImportError(FileUpload fileDetails, string errorMessage, int? lineNumber);
 
         /// <summary>
-        /// Mark file status = Failed for any imports/calcs exceeeding 5 min
+        /// Mark file status = Failed for any imports/calcs exceeding 1min, 5 min respectively
         /// </summary>
-        void FailHangedFileUploadOrCalcs(int importTimeout, int calcTimeout);
+        void FailHangedFileUploadOrCalcs(int importTimeoutMilliSec, int calcTimeoutMilliSec);
 
         void Dispose();
 
@@ -115,7 +116,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         /// <summary>
         /// Delete all QuarterlyUploadStaging records prior to starting Import of QuarterlyUploadStaging
         /// </summary>
-        void DeleteRecordsForQuarterlyUploadStaging();
+        Task<bool> DeleteRecordsForQuarterlyUploadStaging();
 
         /// <summary>
         /// Do we have any daily prices for a given fuelId on the date
@@ -141,7 +142,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         /// <returns>FileUpload</returns>
         FileUpload GetDailyFileWithCalcRunningForDate(DateTime forDate);
 
-        bool UpdateCatalistQuarterlyData(List<CatalistQuarterly> CatalistQuarterlyData, FileUpload fileDetails, bool isSainsburys);
+        //bool UpdateCatalistQuarterlyData(List<CatalistQuarterly> CatalistQuarterlyData, FileUpload fileDetails, bool isSainsburys);
 
         Task<int> CreateMissingSuperUnleadedFromUnleaded(DateTime forDate, int markup, int siteId = 0);
 
