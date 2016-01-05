@@ -1,8 +1,19 @@
-﻿
-@{
-    ViewBag.Title = "CompetitorSites";
+﻿@model JsPlc.Ssc.PetrolPricing.Models.ViewModels.LoadViewModel
+
+<h2>View Competitor Sites By Driving Time</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <div class="form-group">
+            @Html.LabelFor(model => model.Sites, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownList("SiteId", new SelectList(Model.Sites, "Id", "SiteName", Model.SiteId), new { @class = "form-control" })
+            </div>
+        </div>
+    </div>
+
+    <input type="submit" value="View" class="btn btn-primary" />
 }
-
-<h2>Competitor Sites</h2>
-
-

@@ -83,9 +83,4 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Models
         public string SelectedProvider { get; set; }
         public ICollection<System.Web.Mvc.SelectListItem> Providers { get; set; }
     }
-
-    public class CompetitorSitesViewModel 
-    {
-        public int SiteId { get; set; }
-    }
 }

@@ -1,5 +1,6 @@
-﻿using JsPlc.Ssc.PetrolPricing.Portal.Facade;
-using JsPlc.Ssc.PetrolPricing.Portal.Models;
+﻿using JsPlc.Ssc.PetrolPricing.Models.ViewModels;
+using JsPlc.Ssc.PetrolPricing.Portal.Facade;
+using System.Linq;
 using System.Web.Mvc;
 
 namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
@@ -11,23 +12,34 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 
         public ActionResult Index(string msg = "")
         {
-            // Display list of existing sites along with their status
             ViewBag.Message = msg;
 
-            //var model = _serviceFacade.GetSites();
             return View();
         }
 
         [HttpGet]
         public ActionResult CompetitorSites()
         {
-            return View();
+            var vm = new CompetitorSiteViewModel();
+            Load(vm);
+            
+            return View(vm);
         }
 
         [HttpPost]
-        public ActionResult CompetitorSites(CompetitorSitesViewModel item)
+        public ActionResult CompetitorSites(CompetitorSiteViewModel item)
         {
-            return View();
+            if (ModelState.IsValid)
+            {
+            }
+            
+            Load(item);
+            return View(item);
+        }
+
+        private void Load(CompetitorSiteViewModel item)
+        {
+            item.Sites = _serviceFacade.GetSites().OrderBy(x => x.SiteName).ToList();
         }
     }
 }
