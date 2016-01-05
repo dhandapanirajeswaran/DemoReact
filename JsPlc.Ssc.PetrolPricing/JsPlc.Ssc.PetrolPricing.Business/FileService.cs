@@ -12,8 +12,10 @@ using System.Data;
 using System.Text;
 
 using JsPlc.Ssc.PetrolPricing.Models;
+using JsPlc.Ssc.PetrolPricing.Models.Common;
 using JsPlc.Ssc.PetrolPricing.Models.ViewModels;
 using JsPlc.Ssc.PetrolPricing.Repository;
+using MoreLinq;
 using Newtonsoft.Json.Serialization;
 
 using System.Data.OleDb;
@@ -42,9 +44,10 @@ namespace JsPlc.Ssc.PetrolPricing.Business
                     await _priceService.DoCalcDailyPrices(fileUpload.UploadDateTime); // dont await this.. let it run in background..
                     break;
                 case 2: // LONG Running Task - Fire and Forget
-                    Task t = new Task(() => 
-                        ProcessQuarterlyFile(GetFileUploads(newUpload.UploadDateTime, newUpload.UploadTypeId, uploadedStatus).ToList()));
-                        t.Start();
+                        //ProcessQuarterlyFile(GetFileUploads(newUpload.UploadDateTime, newUpload.UploadTypeId, uploadedStatus).ToList())
+                        //    .Wait();
+                    var filesToProcess = GetFileUploads(newUpload.UploadDateTime, newUpload.UploadTypeId, uploadedStatus);
+                    var fileProcessed = await ProcessQuarterlyFileNew(filesToProcess.ToList());
                     // TODO what happens when we have new Quarterly file uploaded, do we calc prices
                     //_priceService.DoCalcPrices(fileUpload.UploadDateTime);
                     break;
@@ -70,7 +73,6 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 
         public IEnumerable<FileUpload> GetFileUploads(DateTime? date, int? uploadTypeId, int? statusId)
         {
-
             return _db.GetFileUploads(date, uploadTypeId, statusId).ToList();
         }
 
@@ -154,12 +156,6 @@ namespace JsPlc.Ssc.PetrolPricing.Business
             return listOfFiles;
         }
 
-        //public IEnumerable<FileUpload> ProcessQuarterlyFile(List<FileUpload> uploadedFiles)
-        //{
-        //    //throw new NotImplementedException();
-           
-        //}
-
         /// <summary>
         /// Parses the CSV line to make a DailyPrice object
         /// - Logs error if parsing fails
@@ -193,15 +189,72 @@ namespace JsPlc.Ssc.PetrolPricing.Business
         }
 
         //Process Quarterly File//////////////////////////////////////////////////////////////////////////////////////
+        public async Task<FileUpload> ProcessQuarterlyFileNew(List<FileUpload> uploadedFiles)
+        {
+            if (!uploadedFiles.Any()) return uploadedFiles.FirstOrDefault();
 
-        public IEnumerable<FileUpload> ProcessQuarterlyFile(List<FileUpload> uploadedFiles)
+            var latestFile = uploadedFiles.OrderByDescending(x => x.UploadDateTime).ToList().First();
+
+            // start processing only the MOST recent file
+            var aFile = latestFile;
+
+            try
+            {
+                DataTable dataTable = await GetQuarterlyData(aFile);
+                var rows = dataTable.ToDataRowsList();
+                dataTable = null;
+                if (!rows.Any())
+                {
+                    throw new Exception("No rows found in file:" + aFile.OriginalFileName + " dated:" +
+                                        aFile.UploadDateTime);
+                }
+
+                _db.UpdateImportProcessStatus(5, aFile); //Processing 5
+
+                // Delete older rows before import
+                _db.DeleteRecordsForQuarterlyUploadStaging();
+
+                var success = await ImportQuarterlyRecords(aFile, rows); // dumps all rows into the quarterly staging table
+
+                // TODO ONCE this completes, RUN sprocs to Add/Update/Delete sites and siteToCompetitors 
+
+                _db.UpdateImportProcessStatus(success? 10 : 15, aFile); //ok 10, failed 15
+            }
+            catch (Exception ex)
+            {
+                _db.LogImportError(aFile, ex.Message, null);
+                _db.UpdateImportProcessStatus(15, aFile); //failed 15
+            }
+            return aFile;
+
+        }
+
+        private async Task<bool> ImportQuarterlyRecords(FileUpload aFile, IEnumerable<DataRow> allRows)
+        {
+            int batchNo = 0;
+            foreach (IEnumerable<DataRow> batchRows in allRows.Batch(Constants.QuarterlyFileRowsBatchSize))
+            {
+                List<CatalistQuarterly> allSites = await ParseSiteRowsBatch(aFile, batchRows, batchNo);
+                var batchSuccess =
+                    _db.NewQuarterlyRecords(allSites, aFile, batchNo*Constants.QuarterlyFileRowsBatchSize);
+                if (!batchSuccess)
+                {
+                    return false;
+                }
+
+                batchNo += 1;
+            }
+            return true;
+        }
+
+        public async Task<IEnumerable<FileUpload>> ProcessQuarterlyFile(List<FileUpload> uploadedFiles)
         {
             foreach (FileUpload aFile in uploadedFiles)
             {
                 try
                 {
                     _db.UpdateImportProcessStatus(5, aFile); //Processing 5
-                    UpdateSitesFromCatalistQuarterly(aFile);
+                    await UpdateSitesFromCatalistQuarterly(aFile);
                     _db.UpdateImportProcessStatus(10, aFile);//ok 10
                 }
                 catch (Exception ex)
@@ -213,10 +266,12 @@ namespace JsPlc.Ssc.PetrolPricing.Business
             return uploadedFiles;
         }
 
-        private bool UpdateSitesFromCatalistQuarterly(FileUpload aFile)
+
+
+        private async Task<bool> UpdateSitesFromCatalistQuarterly(FileUpload aFile)
         {
             //Get data from excel and parse to gen list
-            DataTable dataTable = GetQuarterlyData(aFile);
+            DataTable dataTable = await GetQuarterlyData(aFile);
 
             var batchRows = new List<DataRow>();
             int rowcount = 0;
@@ -256,7 +311,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
             List<CatalistQuarterly> allSites = new List<CatalistQuarterly>();
             List<CatalistQuarterly> allUniqueSites = new List<CatalistQuarterly>();
 
-            allSites = ParseSiteRowsBatch(aFile, batchRows, batchNo);
+            allSites = ParseSiteRowsBatch(aFile, batchRows, batchNo).Result;
 
             allUniqueSites = allSites.GroupBy(site => site.CatNo)
                 .Select(catNo => catNo.First())
@@ -280,7 +335,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
             }
         }
 
-        private DataTable GetQuarterlyData(FileUpload aFile)
+        private async Task<DataTable> GetQuarterlyData(FileUpload aFile)
         {
             DataTable data = new DataTable();
             var storedFilePath = SettingsService.GetUploadPath();
@@ -301,7 +356,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
             return data;
         }
 
-        private List<CatalistQuarterly> ParseSiteRowsBatch(FileUpload aFile, IEnumerable<DataRow> batchRows, int batchNo)
+        private async Task<List<CatalistQuarterly>> ParseSiteRowsBatch(FileUpload aFile, IEnumerable<DataRow> batchRows, int batchNo)
         {
             List<CatalistQuarterly> siteCatalistData = new List<CatalistQuarterly>();
             int rowCount = 0;
@@ -314,9 +369,9 @@ namespace JsPlc.Ssc.PetrolPricing.Business
                     CatalistQuarterly site = new CatalistQuarterly();
 
                     //Sainsburys Store
-                    site.MasterSiteName = row[0].ToString();
-                    site.SiteTown = row[1].ToString();
-                    site.SiteCatNo = double.Parse(row[2].ToString()); // has to be a valid value, else file invalid
+                    site.SainsSiteName = row[0].ToString();
+                    site.SainsSiteTown = row[1].ToString();
+                    site.SainsCatNo = double.Parse(row[2].ToString()); // has to be a valid value, else file invalid
 
                     //Site to competitor
                     site.Rank = String.IsNullOrEmpty(row[3].ToString()) ? 999d : double.Parse(row[3].ToString()); // forgiving parse, set a high rank if not given

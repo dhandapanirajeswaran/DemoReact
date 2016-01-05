@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Data;
 using System.Linq;
 
 namespace JsPlc.Ssc.PetrolPricing.Models.Common
@@ -42,6 +43,18 @@ namespace JsPlc.Ssc.PetrolPricing.Models.Common
                 Town = x.Town
             }));
             return sitesVm;
+        }
+
+        public static List<DataRow> ToDataRowsList(this DataTable dataTable)
+        {
+            var rowCount = dataTable.Rows.Count;
+            DataRow[] retval = {};
+            if (rowCount <= 0) return retval.ToList();
+
+            var rowsArr = new DataRow[rowCount];
+            dataTable.Rows.CopyTo(rowsArr, 0);
+            retval = rowsArr;
+            return retval.ToList();
         }
     }
 }

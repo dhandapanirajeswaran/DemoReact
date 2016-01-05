@@ -26,6 +26,9 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
         bool NewDailyPrices(List<DailyPrice> dailyPriceList, FileUpload fileDetails, int startingLineNumber);
 
+        bool NewQuarterlyRecords(List<CatalistQuarterly> siteCatalistData, FileUpload fileDetails,
+            int startingLineNumber);
+
         /// <summary>
         /// Useful for SiteMaint screen
         /// </summary>
@@ -108,6 +111,11 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         /// <param name="ofDate"></param>
         /// <param name="uploadId"></param>
         void DeleteRecordsForOlderImportsOfDate(DateTime ofDate, int uploadId);
+
+        /// <summary>
+        /// Delete all QuarterlyUploadStaging records prior to starting Import of QuarterlyUploadStaging
+        /// </summary>
+        void DeleteRecordsForQuarterlyUploadStaging();
 
         /// <summary>
         /// Do we have any daily prices for a given fuelId on the date
