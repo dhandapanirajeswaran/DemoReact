@@ -246,6 +246,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
                 var result = await response.Content.ReadAsStringAsync();
                 throw new ApplicationException(result); // json error structure
             }
+            // TODO IDEALLY var result = await response.Content.ReadAsAsync<List<OverridePricePostViewModel>>();
             await Task.FromResult(0);
             return siteOverridePriceViewModel;
         }
