@@ -253,6 +253,12 @@
     <Content Include="App_Data\DropCreateSprocs\2%29 spGetSitePrices.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="App_Data\DropCreateSprocs\7%29 Drop spImportQuarterlyRecords.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="App_Data\DropCreateSprocs\8%29 spImportQuarterlyRecords.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="App_Data\DropCreateSprocs\5%29 Drop spSetSuperUnleadedPricesFromUnleaded.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

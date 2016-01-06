@@ -14,7 +14,7 @@ namespace JsPlc.Ssc.PetrolPricing.Models
         public const int SitesPageSize = 350;
 
         public const int PricePageSize = 350;
-        public const int QuarterlyFileRowsBatchSize = 2000;
+        public const int QuarterlyFileRowsBatchSize = 5000; // 3 secs
         public const string EmailPriceReplacementStringForZero = "N/a";
     }
 }

@@ -33,14 +33,15 @@ namespace JsPlc.Ssc.PetrolPricing.Business
         }
 
         /// <summary>
-        /// Pickup latest upload file with success/CalcFailed status and run calc with that
+        /// FIRE AND FORGET - Pickup latest upload file with success/CalcFailed status and run calc with that
         /// This is purely for use indication. 
         /// The CalcPrice relies on the DailyPrice table not a specific file param.
         /// To protect against multiple runs of Calc simultaneously - 
         ///     Checks if calc is running and Throws exception if already calc is running and tell you the uploadId. 
         /// </summary>
         /// <param name="forDate"></param>
-        public async Task<bool> DoCalcDailyPrices(DateTime? forDate)
+        /// <param name="calcTimeoutMilliSecs">timeout in msecs</param>
+        public async Task<bool> DoCalcDailyPricesFireAndForget(DateTime? forDate, int calcTimeoutMilliSecs)
         {
             if (!forDate.HasValue) forDate = DateTime.Now;
             // Only ones Uploaded today and successfully processed files
@@ -60,11 +61,6 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 
                 try
                 {
-                    // Fail any calcs taking over 1 or 2 mins..
-                    _db.FailHangedFileUploadOrCalcs(
-                        Convert.ToInt32(SettingsService.GetSetting("DailyImportTimeoutMin")), // config 1 minutes
-                        Convert.ToInt32(SettingsService.GetSetting("DailyCalcTimeoutMin")));  // config 5 minutes
-
                     _db.UpdateImportProcessStatus(11, dpFile); //Calculating 6
 
                     var taskData = new CalcTaskData {ForDate = forDate.Value, FileUpload = dpFile};
@@ -72,13 +68,17 @@ namespace JsPlc.Ssc.PetrolPricing.Business
                     // LONG Running Task - Fire and Forget
                     Task t = new Task(() => DoCalcAsync(taskData));
                     t.Start();
+
+                    // Run a waiter for aborting the task after set time
+                    Task tWait = new Task(() => t.Wait(calcTimeoutMilliSecs));
+                    tWait.Start();
+
                     Debug.WriteLine("Calculation fired...");
                     Trace.WriteLine("Calculation fired... for fileID:" + dpFile.Id);
                 }
                 catch (Exception)
                 {
-                    _db.UpdateImportProcessStatus(12, dpFile);
-                    //CalcFailed
+                    _db.UpdateImportProcessStatus(12, dpFile); //CalcFailed
                 }
             }
             await Task.FromResult(0);
@@ -96,7 +96,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
             }
             catch (Exception)
             {
-                _db.UpdateImportProcessStatus(12, calcTaskData.FileUpload);
+                _db.UpdateImportProcessStatus(12, calcTaskData.FileUpload); //CalcFailed
             }
         }
 

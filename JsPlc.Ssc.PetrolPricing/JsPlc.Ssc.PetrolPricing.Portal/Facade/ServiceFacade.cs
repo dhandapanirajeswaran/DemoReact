@@ -124,25 +124,25 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
         }
 
         // Get list of file uploads
-        public IEnumerable<FileUpload> GetFileUploads(int? typeId, int? statusId) // 1 = Daily, 2 = Qtryly
+        public async Task<IEnumerable<FileUpload>> GetFileUploads(int? typeId, int? statusId) // 1 = Daily, 2 = Qtryly
         {
             var filters = typeId.HasValue ? "uploadTypeId=" + typeId.Value  + "&" : "";
             filters = statusId.HasValue ? filters + "statusId=" + statusId.Value + "&": "";
 
             var apiUrl = String.IsNullOrEmpty(filters) ? "api/fileuploads/" : "api/fileuploads/?" + filters;
 
-            var response = _client.Value.GetAsync(apiUrl).Result;
+            var response = await _client.Value.GetAsync(apiUrl);
 
             var result = response.Content.ReadAsAsync<IEnumerable<FileUpload>>().Result;
 
             return (response.IsSuccessStatusCode) ? result : null;
         }
 
-        public FileUpload GetFileUpload(int id)
+        public async Task<FileUpload> GetFileUpload(int id)
         {
             var apiUrl = "api/fileuploads/" + id;
 
-            var response = _client.Value.GetAsync(apiUrl).Result;
+            var response = await _client.Value.GetAsync(apiUrl);
 
             var result = response.Content.ReadAsAsync<FileUpload>().Result;
 
@@ -159,11 +159,11 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
 
             return (response.IsSuccessStatusCode) ? result : null;
         }
-        public IEnumerable<FileUpload> ExistingDailyUploads(DateTime uploadDatetime)
+        public async Task<IEnumerable<FileUpload>> ExistingDailyUploads(DateTime uploadDatetime)
         {
             string apiUrl = "api/ExistingDailyUploads/" + uploadDatetime.ToString("yyyy-MM-dd");
 
-            var response = _client.Value.GetAsync(apiUrl).Result;
+            var response = await _client.Value.GetAsync(apiUrl);
 
             var result = response.Content.ReadAsAsync<IEnumerable<FileUpload>>().Result;
 
@@ -207,17 +207,26 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
 
             var result = response.Content.ReadAsAsync<IEnumerable<ImportProcessStatus>>().Result;
 
+            // TODO Consistent return value/exception handling approach
+            //If (response.IsSuccessStatusCode)
+            //var result = await response.Content.ReadAs<T>().Result;
+            //if (!response.IsSuccessStatusCode)
+            //{
+            //   var result = await response.Content.ReadAsStringAsync(); // Reads the Http
+            //   throw new ApplicationException(result); // json error structure
+            //}
+
             return (response.IsSuccessStatusCode) ? result : null;
         }
 
 
-        public string ReInitDb(string option = "")
+        public async Task<string> ReInitDb(string option = "")
         {
             var apiUrl = "api/ReInitDb?buildOptions=" + option;
 
-            var response = _client.Value.GetAsync(apiUrl).Result;
+            var response = await _client.Value.GetAsync(apiUrl);
 
-            var result = response.Content.ReadAsStringAsync().Result;
+            var result = await response.Content.ReadAsStringAsync();
             
             return result; //(response.IsSuccessStatusCode) ? result : null;
         }
@@ -232,9 +241,9 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             //Done PUT to Api
             var jsonData = JsonConvert.SerializeObject(siteOverridePriceViewModel);
             var response = await RunAsync(jsonData, HttpMethod.Put, "SaveOverridePrices");
-            var result = response.Content.ReadAsStringAsync().Result;
             if (!response.IsSuccessStatusCode)
             {
+                var result = await response.Content.ReadAsStringAsync();
                 throw new ApplicationException(result); // json error structure
             }
             await Task.FromResult(0);

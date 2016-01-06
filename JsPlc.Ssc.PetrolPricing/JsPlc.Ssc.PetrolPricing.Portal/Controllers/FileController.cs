@@ -6,6 +6,7 @@ using System.Linq;
 using System.Security.AccessControl;
 using System.Security.Cryptography;
 using System.Security.Principal;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 //using JsPlc.Ssc.PetrolPricing.Business;
@@ -24,19 +25,19 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
     {
         readonly ServiceFacade _serviceFacade = new ServiceFacade();
 
-        public ActionResult Index(string msg = "")
+        public async Task<ActionResult> Index(string msg = "")
         {
             // Display list of existing files along with their status
             ViewBag.Message = msg;
 
             using (var svc = new ServiceFacade())
             {
-                var model  = svc.GetFileUploads(null, null);
+                var model  = await svc.GetFileUploads(null, null);
                 return View(model);
             }
         }
 
-        public ActionResult Upload(string errMsg = "")
+        public async Task<ActionResult> Upload(string errMsg = "")
         {
             ViewBag.Message = "Upload Daily/Quarterly file";
             ViewBag.ErrorMessage = errMsg;
@@ -46,7 +47,8 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
                 UploadTypes = GetUploadTypes(),
                 UploadDate = DateTime.Now
             };
-            if (ExistingDailyUploads(model.UploadDate).Any())
+            var existingUploads = await ExistingDailyUploads(model.UploadDate);
+            if (existingUploads.Any())
             {
                 ViewBag.WarningMessage = "Warning: Daily file already exists for today.";
             }
@@ -54,7 +56,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
         }
 
         [HttpPost]
-        public ActionResult Upload(HttpPostedFileBase file, int uploadTypes, DateTime? uploadDate)
+        public async Task<ActionResult> Upload(HttpPostedFileBase file, int uploadTypes, DateTime? uploadDate)
         {
             var model = new UploadViewModel
             {
@@ -75,8 +77,9 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
                 var fu = file.ToFileUpload(User.Identity.Name, uploadDate, uploadTypes);
 
                 var fum = new FileUploadModel(fu, new ServiceFacade());
+                var status = await fum.UploadFile(file);
 
-                switch (fum.UploadFile(file)) // Store fu to state
+                switch (status) // Store fu to state
                 {
                     case FileUploadStatus.InvalidUpload:
                         return RedirectToAction("Upload", new { errMsg = "Invalid upload file. Please retry and select a file to upload" });
@@ -101,7 +104,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             return RedirectToAction("Upload", new { errMsg = errorMessage });
         }
 
-        public ActionResult ConfirmUpload(string guidKey)
+        public async Task<ActionResult> ConfirmUpload(string guidKey)
         {
             var fileUpload = Session[guidKey] as FileUpload;
             if (fileUpload == null)
@@ -113,7 +116,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             {
                 OriginalFileName = fileUpload.OriginalFileName,
                 Guid = guidKey,
-                ExistingFiles = ExistingDailyUploads(fileUpload.UploadDateTime)
+                ExistingFiles = await ExistingDailyUploads(fileUpload.UploadDateTime)
             };
             return View(model);
         }
@@ -138,10 +141,10 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             return RedirectToAction("Upload");
         }
 
-        public ActionResult Details(int id)
+        public async Task<ActionResult> Details(int id)
         {
             // Return file upload details with processing steps and errors if any
-            var model = _serviceFacade.GetFileUpload(id);
+            var model = await _serviceFacade.GetFileUpload(id);
             return View(model);
         }
 
@@ -151,9 +154,9 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
         /// </summary>
         /// <returns></returns>
         // To check for warning where file exists (daily file type check for the date)
-        private IEnumerable<FileUpload> ExistingDailyUploads(DateTime uploadDateTime)
+        private async Task<IEnumerable<FileUpload>> ExistingDailyUploads(DateTime uploadDateTime)
         {
-            return _serviceFacade.ExistingDailyUploads(uploadDateTime);
+            return await _serviceFacade.ExistingDailyUploads(uploadDateTime);
         }
 
         private static IEnumerable<UploadType> GetUploadTypes()
@@ -236,7 +239,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             RecordUpload();
         }
 
-        public FileUploadStatus UploadFile(HttpPostedFileBase uploadedFile)
+        public async Task<FileUploadStatus> UploadFile(HttpPostedFileBase uploadedFile)
         {
             _uploadedFile = uploadedFile;
 
@@ -244,8 +247,8 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             {
                 return FileUploadStatus.InvalidUpload;
             }
-
-            if (_fileUpload.UploadTypeId == 1 && _serviceFacade.ExistingDailyUploads(_fileUpload.UploadDateTime).Any())
+            var existingUploads = await _serviceFacade.ExistingDailyUploads(_fileUpload.UploadDateTime);
+            if (_fileUpload.UploadTypeId == 1 && existingUploads.Any())
             {
                 _holdKey = Guid.NewGuid().ToString();
                 _uploadStatus = PersistToHoldFile();

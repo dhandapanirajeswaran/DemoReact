@@ -124,6 +124,8 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
         {
             // returns a SitePrice object, maybe later we call this for multiple fuels of the site
 
+            await FileService.KillAnyImportOrCalcsExceedingTimeouts();
+
             // Test for 30 Nov prices as we have a dummy set of these setup
             // We dont have any 1st Dec prices
             SitePrice cheapestPrice = null;
@@ -135,7 +137,9 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
             }
             else
             {
-               var result = await _priceService.DoCalcDailyPrices(forDate); // multiple sites
+                // 5 min * 60 * 1000 millisecs
+                // NOTE: Only fires and forgets.. Doesnt actually await anything..
+               var result = await _priceService.DoCalcDailyPricesFireAndForget(forDate, 5 * 60 * 1000); // multiple sites
             }
             return Ok(cheapestPrice);
         }
@@ -153,11 +157,13 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
                 }
                 return Ok(rows);
             }
-            catch (Exception ex)
+            catch (Exception ex) // format the exception to report back to Client
             {
-                throw new HttpResponseException(new HttpResponseMessage {
-                    ReasonPhrase = ex.Message, StatusCode = HttpStatusCode.BadRequest, Content = new StringContent(ex.Message),
-                });
+                return new ExceptionResult(ex, this);
+                //throw new HttpResponseException(new HttpResponseMessage {
+                //    ReasonPhrase = ex.Message, StatusCode = HttpStatusCode.BadRequest, 
+                //    Content = new StringContent(ex.Message),
+                //});
             }
         }
 
