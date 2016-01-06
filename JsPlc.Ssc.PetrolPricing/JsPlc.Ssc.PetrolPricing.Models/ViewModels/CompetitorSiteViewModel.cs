@@ -9,10 +9,13 @@ namespace JsPlc.Ssc.PetrolPricing.Models.ViewModels
         public IEnumerable<Site> Sites { get; set; }
 
         public int SiteId { get; set; }
+
+        public CompetitorSiteReportViewModel Report { get; set; }
         
         public CompetitorSiteViewModel()
         {
             Sites = new List<Site>();
+            Report = new CompetitorSiteReportViewModel();
         }
     }
 }
