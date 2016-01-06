@@ -22,7 +22,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
         {
             var vm = new CompetitorSiteViewModel();
             Load(vm);
-            
+
             return View(vm);
         }
 
@@ -31,9 +31,9 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
         {
             if (ModelState.IsValid)
             {
-                var data = _serviceFacade.GetCompetitorSites(item.SiteId);
+                item.Report = _serviceFacade.GetCompetitorSites(item.SiteId);
             }
-            
+
             Load(item);
             return View(item);
         }

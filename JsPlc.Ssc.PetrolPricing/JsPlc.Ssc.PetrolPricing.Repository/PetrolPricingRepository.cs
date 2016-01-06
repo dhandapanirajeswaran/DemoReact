@@ -108,7 +108,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             }).Where(x => x.DiffFromDays >= 0 && x.DiffToDays <= daysBetweenFromAndTo);
 
             IQueryable<SitePrice> pricesForAllSitesBetweenDates = from f in rangedDatePrices
-                select f.Price;
+                                                                  select f.Price;
 
             var getPricesForSite = new Func<int, List<SitePrice>>(i =>
                 pricesForAllSitesBetweenDates.Where(p => p.SiteId == i).ToList());
@@ -185,7 +185,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             };
             var skipRecsParam = new SqlParameter("@skipRecs", SqlDbType.Int)
             {
-                Value = (pageNo - 1)*pageSize
+                Value = (pageNo - 1) * pageSize
             };
             var takeRecsParam = new SqlParameter("@takeRecs", SqlDbType.Int)
             {
@@ -224,7 +224,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
                     foreach (DataRow pgRow in pgTable.Rows)
                     {
-                        var loopSiteId = (int) pgRow["siteId"];
+                        var loopSiteId = (int)pgRow["siteId"];
                         if (loopSiteId != lastSiteId)
                         {
                             sitePriceRow = new SitePriceViewModel();
@@ -233,11 +233,11 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                         }
                         if (sitePriceRow == null) continue;
 
-                        sitePriceRow.SiteId = (int) pgRow["SiteId"];
-                        sitePriceRow.CatNo = Convert.IsDBNull(pgRow["CatNo"]) ? null : (int?) pgRow["CatNo"];
-                            // ToNullable<int> or ToNullable<double>
-                        sitePriceRow.StoreName = (string) pgRow["SiteName"];
-                        sitePriceRow.Address = (string) pgRow["Address"];
+                        sitePriceRow.SiteId = (int)pgRow["SiteId"];
+                        sitePriceRow.CatNo = Convert.IsDBNull(pgRow["CatNo"]) ? null : (int?)pgRow["CatNo"];
+                        // ToNullable<int> or ToNullable<double>
+                        sitePriceRow.StoreName = (string)pgRow["SiteName"];
+                        sitePriceRow.Address = (string)pgRow["Address"];
                         // any other fields for UI extract here
 
                         sitePriceRow.FuelPrices = sitePriceRow.FuelPrices ?? new List<FuelPriceViewModel>();
@@ -252,7 +252,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                                 : (SuggestedPriceToday.HasValue) ? SuggestedPriceToday.Value : 0;
                             sitePriceRow.FuelPrices.Add(new FuelPriceViewModel
                             {
-                                FuelTypeId = (int) pgRow["FuelTypeId"],
+                                FuelTypeId = (int)pgRow["FuelTypeId"],
                                 // Tomorrow's prices
                                 AutoPrice = (!AutoPrice.HasValue) ? 0 : AutoPrice.Value,
                                 OverridePrice = (!OverridePrice.HasValue) ? 0 : OverridePrice.Value,
@@ -291,7 +291,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             // NOTE: Below paging params are for JSSite(s), not for competitors (we get all competitors for the specified sites resultset)
             var skipRecsParam = new SqlParameter("@skipRecs", SqlDbType.Int)
             {
-                Value = (pageNo - 1)*pageSize
+                Value = (pageNo - 1) * pageSize
             };
             var takeRecsParam = new SqlParameter("@takeRecs", SqlDbType.Int)
             {
@@ -330,7 +330,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
                     foreach (DataRow pgRow in pgTable.Rows)
                     {
-                        var loopSiteId = (int) pgRow["siteId"];
+                        var loopSiteId = (int)pgRow["siteId"];
                         if (loopSiteId != lastSiteId)
                         {
                             sitePriceRow = new SitePriceViewModel();
@@ -339,13 +339,13 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                         }
                         if (sitePriceRow == null) continue;
 
-                        sitePriceRow.SiteId = (int) pgRow["SiteId"]; // CompetitorId
-                        sitePriceRow.JsSiteId = (int) pgRow["JsSiteId"];
-                        sitePriceRow.CatNo = Convert.IsDBNull(pgRow["CatNo"]) ? null : (int?) pgRow["CatNo"];
-                            // ToNullable<int> or ToNullable<double>
-                        sitePriceRow.StoreName = (string) pgRow["SiteName"];
-                        sitePriceRow.Brand = (string) pgRow["Brand"];
-                        sitePriceRow.Address = (string) pgRow["Address"];
+                        sitePriceRow.SiteId = (int)pgRow["SiteId"]; // CompetitorId
+                        sitePriceRow.JsSiteId = (int)pgRow["JsSiteId"];
+                        sitePriceRow.CatNo = Convert.IsDBNull(pgRow["CatNo"]) ? null : (int?)pgRow["CatNo"];
+                        // ToNullable<int> or ToNullable<double>
+                        sitePriceRow.StoreName = (string)pgRow["SiteName"];
+                        sitePriceRow.Brand = (string)pgRow["Brand"];
+                        sitePriceRow.Address = (string)pgRow["Address"];
 
                         sitePriceRow.DriveTime = pgRow["DriveTime"].ToString().ToNullable<float>();
                         sitePriceRow.Distance = pgRow["Distance"].ToString().ToNullable<float>();
@@ -360,7 +360,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                             var YestPrice = pgRow["ModalPriceYest"].ToString().ToNullable<int>();
                             sitePriceRow.FuelPrices.Add(new FuelPriceViewModel
                             {
-                                FuelTypeId = (int) pgRow["FuelTypeId"],
+                                FuelTypeId = (int)pgRow["FuelTypeId"],
                                 //// Tomorrow's prices
                                 //AutoPrice = (!AutoPrice.HasValue) ? 0 : AutoPrice.Value,
                                 //OverridePrice = (!OverridePrice.HasValue) ? 0 : OverridePrice.Value,
@@ -374,7 +374,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                         }
                     }
                     return dbList;
-                        // .OrderBy(x => x.JsSiteId).ThenBy(x => x.SiteId).ThenBy(x => x.DriveTime); // TODO ordering doesnt work, hmmm...
+                    // .OrderBy(x => x.JsSiteId).ThenBy(x => x.SiteId).ThenBy(x => x.DriveTime); // TODO ordering doesnt work, hmmm...
                 }
             }
         }
@@ -506,14 +506,14 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                             var dbRecord = new QuarterlyUploadStaging();
                             dbRecord.QuarterlyUploadId = fileDetails.Id;
 
-                            dbRecord.SainsSiteCatNo = (int) fileRecord.SainsCatNo;
+                            dbRecord.SainsSiteCatNo = (int)fileRecord.SainsCatNo;
                             dbRecord.SainsSiteName = fileRecord.SainsSiteName;
                             dbRecord.SainsSiteTown = fileRecord.SainsSiteTown;
 
-                            dbRecord.Rank = (int) fileRecord.Rank;
-                            dbRecord.DriveDist = (float) fileRecord.DriveDistanceMiles;
-                            dbRecord.DriveTime = (float) fileRecord.DriveTimeMins;
-                            dbRecord.CatNo = (int) fileRecord.CatNo;
+                            dbRecord.Rank = (int)fileRecord.Rank;
+                            dbRecord.DriveDist = (float)fileRecord.DriveDistanceMiles;
+                            dbRecord.DriveTime = (float)fileRecord.DriveTimeMins;
+                            dbRecord.CatNo = (int)fileRecord.CatNo;
 
                             dbRecord.Brand = fileRecord.Brand;
                             dbRecord.SiteName = fileRecord.SiteName;
@@ -857,10 +857,10 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         {
             _context.Database.ExecuteSqlCommand("Update FileUpload Set StatusId = 16 Where " +
                                                 "StatusId = 5 and DateDiff(SECOND, UploadDateTime, GetDate()) >= " +
-                                                importTimeoutMilliSec/1000);
+                                                importTimeoutMilliSec / 1000);
             _context.Database.ExecuteSqlCommand("Update FileUpload Set StatusId = 17 Where " +
                                                 "StatusId = 11 and DateDiff(SECOND, UploadDateTime, GetDate()) >= " +
-                                                calcTimeoutMilliSec/1000);
+                                                calcTimeoutMilliSec / 1000);
         }
 
         public FileUpload GetDailyFileWithCalcRunningForDate(DateTime forDate)
@@ -933,7 +933,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             }
         }
 
-    /// <summary>
+        /// <summary>
         /// Generic method to Log an import error for the running import of FileUpload for both Daily and Quarterly files
         /// </summary>
         /// <param name="fileDetails"></param>
@@ -975,9 +975,9 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
         public SiteToCompetitor LookupSiteAndCompetitor(int siteCatNo, int competitorCatNo)
         {
-            return _context.SiteToCompetitors.FirstOrDefault(x => 
-                    x.Site.CatNo.HasValue && x.Site.CatNo.Value == siteCatNo 
-                &&  x.Competitor.CatNo.HasValue && x.Competitor.CatNo.Value == competitorCatNo);
+            return _context.SiteToCompetitors.FirstOrDefault(x =>
+                    x.Site.CatNo.HasValue && x.Site.CatNo.Value == siteCatNo
+                && x.Competitor.CatNo.HasValue && x.Competitor.CatNo.Value == competitorCatNo);
         }
         /// <summary>
         /// Get competitors based on drivetime criteria
@@ -1093,6 +1093,39 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         public CompetitorSiteReportViewModel GetCompetitorSiteReport(int siteId)
         {
             var result = new CompetitorSiteReportViewModel();
+
+            var referenceSite = _context.Sites.Include(x => x.Competitors).FirstOrDefault(x => x.Id == siteId);
+            if (referenceSite != null)
+            {
+                var brandReportRows = new List<CompetitorSiteTimeViewModel>();
+                var brands = referenceSite.Competitors.Select(x => x.Competitor.Brand).Distinct().OrderBy(x => x);
+                foreach (var brandName in brands)
+                {
+                    var brandCompetitors = referenceSite.Competitors.Where(x => x.Competitor.Brand == brandName).ToList();
+                    var brandReportRow = new CompetitorSiteTimeViewModel();
+                    brandReportRow.BrandName = brandName;
+                    brandReportRow.Count0To5 = Count(brandCompetitors, 0, 5);
+                    brandReportRow.Count5To10 = Count(brandCompetitors, 5, 10);
+                    brandReportRow.Count10To15 = Count(brandCompetitors, 10, 15);
+                    brandReportRow.Count15To20 = Count(brandCompetitors, 15, 20);
+                    brandReportRow.Count20To25 = Count(brandCompetitors, 20, 25);
+                    brandReportRow.Count25To30= Count(brandCompetitors, 25, 30);
+
+                    brandReportRows.Add(brandReportRow);
+                }
+                result.Items = brandReportRows;
+            }
+
+            return result;
+        }
+
+        private int Count(IEnumerable<SiteToCompetitor> data, int min, int max)
+        {
+            var result = 0;
+            if (data != null)
+            {
+                result = data.Count(x => x.DriveTime >= min && x.DriveTime <= max);
+            }
             return result;
         }
     }

@@ -6,14 +6,61 @@
 {
     @Html.AntiForgeryToken()
 
-    <div class="form-horizontal">
+    <div class="form-inline">
         <div class="form-group">
-            @Html.LabelFor(model => model.Sites, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.DropDownList("SiteId", new SelectList(Model.Sites, "Id", "SiteName", Model.SiteId), new { @class = "form-control" })
-            </div>
+            <label>Site:</label>&nbsp;
+            @Html.DropDownList("SiteId", new SelectList(Model.Sites, "Id", "SiteName", Model.SiteId), new { @class = "form-control" })
         </div>
+        <input type="submit" value="View" class="btn btn-primary pull-right" />
     </div>
+}
 
-    <input type="submit" value="View" class="btn btn-primary" />
+
+@if (Model.Report.Items.Any())
+{
+    <table class="table table-hover table-responsive table-striped ">
+        <thead>
+            <tr>
+                <th>
+                    Brand Name
+                </th>
+                <th>
+                    0 - 5
+                </th>
+                <th>
+                    5 - 10
+                </th>
+                <th>
+                    10 - 15
+                </th>
+                <th>
+                    15 - 20
+                </th>
+                <th>
+                    20 - 25
+                </th>
+                <th>
+                    25 - 30
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Report.Items)
+            {
+                <tr>
+                    <td>@item.BrandName</td>
+                    <td>@item.Count0To5</td>
+                    <td>@item.Count5To10</td>
+                    <td>@item.Count10To15</td>
+                    <td>@item.Count15To20</td>
+                    <td>@item.Count20To25</td>
+                    <td>@item.Count25To30</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <div class="alert alert-info" role="alert">No data was found</div>
 }
