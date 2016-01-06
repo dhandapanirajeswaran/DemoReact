@@ -97,6 +97,13 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         void LogImportError(FileUpload fileDetails, string errorMessage, int? lineNumber);
 
         /// <summary>
+        /// Logs all entries in list to EmailSendLog table in one go.
+        /// </summary>
+        /// <param name="logItems"></param>
+        /// <returns></returns>
+        Task<List<EmailSendLog>> LogEmailSendLog(List<EmailSendLog> logItems);
+
+        /// <summary>
         /// Mark file status = Failed for any imports/calcs exceeding 1min, 5 min respectively
         /// </summary>
         void FailHangedFileUploadOrCalcs(int importTimeoutMilliSec, int calcTimeoutMilliSec);

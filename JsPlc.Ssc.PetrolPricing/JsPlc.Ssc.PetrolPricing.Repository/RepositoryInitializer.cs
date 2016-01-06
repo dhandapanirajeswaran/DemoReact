@@ -70,6 +70,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
             DbInitUploadTypes(context);
 
+            // TODO - Comment out after Site Imports start working
             SetupDummyData(context);
 
             ReInitSprocs(context);

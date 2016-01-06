@@ -228,7 +228,8 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
             //Using an SMTP client with the specified host name and port.
             using (var client = EmailService.CreateSmtpClient())
             {
-                string mailFrom = ConfigurationManager.AppSettings["emailFrom"]; // "akiaip5@gmail.com";
+                string mailFrom = SettingsService.EmailFrom(); // "akiaip5@gmail.com";
+
                 const string mailTo = "somesiteEmail@sainsburys.co.uk"; //"akiaip5@gmail.com";
                 const string mailSubject = "Hello, Test Email from Gmail SMTP 587";
                 const string mailBody = "<h1>Hello, This is a <span syle='color: red'>Test Email from Smtp</span> from C# code</h1>";
@@ -258,35 +259,57 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
             return Ok(result);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="siteId">0 to send for all sites, otherwise specific siteID</param>
+        /// <param name="endTradeDate">Normally todays date, prefer Y-M-D format</param>
+        /// <param name="loginUserEmail">Reports send log back to this emailaddr</param>
+        /// <returns></returns>
         [System.Web.Http.HttpGet]
         [System.Web.Http.Route("api/emailSites")]
-        public IHttpActionResult EmailSites(int siteId = 0, DateTime? endTradeDate = null)
+        public async Task<IHttpActionResult> EmailSites(int siteId = 0, DateTime? endTradeDate = null, string loginUserEmail="")
         {
-            //Site site = new Site();
-            if (endTradeDate == null) endTradeDate = DateTime.Now;
-
-            var listOfSites = new List<Site>();
-
-            //REMOVE Adding sample data for prices and emails for the moment. 
-            //SiteEmail emailsForSite = new SiteEmail();
-            //emailsForSite.EmailAddress = "steven.farkas@sainsburys.co.uk";
-            //site.Emails.Add(emailsForSite);
-
-            if (siteId != 0)
+            try
             {
-                var site = _siteService.GetSitesWithEmailsAndPrices().FirstOrDefault(x => x.Id == siteId);
-                if (site != null) listOfSites.Add(site);
-            }
-            else
-            {
-                listOfSites = _siteService.GetSitesWithEmailsAndPrices().ToList();
-            }
-            if (listOfSites.Any())
-            {
-                _emailService.SendEmail(listOfSites, endTradeDate.Value);
-            }
+                //Site site = new Site();
+                if (endTradeDate == null) endTradeDate = DateTime.Now;
 
-            return Ok();
+                var listOfSites = new List<Site>();
+
+                //REMOVE Adding sample data for prices and emails for the moment. 
+                //SiteEmail emailsForSite = new SiteEmail();
+                //emailsForSite.EmailAddress = "steven.farkas@sainsburys.co.uk";
+                //site.Emails.Add(emailsForSite);
+
+                if (siteId != 0)
+                {
+                    var site = _siteService.GetSitesWithEmailsAndPrices()
+                        .FirstOrDefault(x => x.Id == siteId);
+                    if (site != null) listOfSites.Add(site);
+                }
+                else
+                {
+                    listOfSites = _siteService.GetSitesWithEmailsAndPrices().ToList();
+                }
+                if (listOfSites.Any())
+                {
+                    bool sendResult = 
+                        await _emailService.SendEmailAsync(listOfSites, endTradeDate.Value, loginUserEmail);
+                    // We continue sending on failure.. Log shows which passed or failed
+                }
+                else
+                {
+                    return new ExceptionResult(
+                        new ApplicationException("No site found with id:" + siteId), this);
+                }
+
+                return Ok(); // can return a List<EmailSendLog>
+            }
+            catch (Exception ex)
+            {
+                return new ExceptionResult(ex, this);
+            }
         }
 
 

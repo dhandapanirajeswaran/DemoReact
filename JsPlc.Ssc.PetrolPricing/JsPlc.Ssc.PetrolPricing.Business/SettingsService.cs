@@ -50,9 +50,32 @@ namespace JsPlc.Ssc.PetrolPricing.Business
             return GetSetting("ExcelQuarterlyFileSheetName");
         }
 
+        public static string EmailSubject()
+        {
+            return GetSetting("emailSubject");
+        }
+        public static string EmailFrom()
+        {
+            return GetSetting("emailFrom");
+        }
+        public static string FixedEmailTo() // For internal testing, set this value in config and run Admin script to set configkeys to DB
+        {
+            return GetSetting("emailTo");
+        }
+        public static string MailHostSelector()
+        {
+            return GetSetting("mailHostSelector");
+        }
+
+        public static string GetSuperUnleadedMarkup()
+        {
+            return GetSetting("SuperUnleadedMarkup");
+        }
+
         public static string PetrolDbConnectionString()
         {
             return ConfigurationManager.ConnectionStrings["PetrolPricingRepository"].ToString();
         }
+
     }
 }

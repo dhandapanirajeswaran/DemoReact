@@ -65,11 +65,13 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 
                     var taskData = new CalcTaskData {ForDate = forDate.Value, FileUpload = dpFile};
 
+                    // ###########################
                     // LONG Running Task - Fire and Forget
+                    // ###########################
                     Task t = new Task(() => DoCalcAsync(taskData));
                     t.Start();
 
-                    // Run a waiter for aborting the task after set time
+                    // Run a waiter for aborting the task after set time (wrong approach.., need a cancellation token instead)
                     Task tWait = new Task(() => t.Wait(calcTimeoutMilliSecs));
                     tWait.Start();
 
@@ -131,6 +133,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
                     //if (calculatedSitePrice != null) { var updatedPrice = _db.AddOrUpdateSitePriceRecord(tmpSite, calculatedSitePrice);} 
                 }
             }
+            // TODO retry this with await WhenAll()
             //Task.WaitAll(taskArray.ToArray());
 
             CreateMissingSuperUnleadedFromUnleaded(forDate.Value); // for performance, run for all sites
@@ -148,13 +151,10 @@ namespace JsPlc.Ssc.PetrolPricing.Business
         {
             if (!markup.HasValue)
             {
-                markup = SettingsService.GetSetting("SuperUnleadedMarkup").ToNullable<int>();
+                markup = SettingsService.GetSuperUnleadedMarkup().ToNullable<int>();
             }
-
-            if (markup != null)
-            {
-                _db.CreateMissingSuperUnleadedFromUnleaded(forDate, markup.Value, siteId);
-            }
+            if (markup == null) markup = 5; // also defaulted in sproc
+            _db.CreateMissingSuperUnleadedFromUnleaded(forDate, markup.Value, siteId);
         }
 
         /// <summary>
@@ -184,6 +184,8 @@ namespace JsPlc.Ssc.PetrolPricing.Business
             // If 10-15 mins away – add 2p to minimum competitor
             // If 15-20 mins away – add 3p to the minimum competitor
             // If 20-25 mins away – add 4p to the minimum competitor price
+
+            // Method calls
 
             // 0-5 min
             var cheapestCompetitor = GetCheapestPriceUsingParams(siteId, 0, 5, fuelId,
@@ -221,6 +223,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
                 DateOfCalc = usingPricesforDate.Value.Date // Only date component
             };
             // TODO for parallel exec - amend this to run in caller
+            // Method call
             var retval = _db.AddOrUpdateSitePriceRecord(cheapestPrice); 
             return cheapestPrice;
         }
@@ -241,9 +244,11 @@ namespace JsPlc.Ssc.PetrolPricing.Business
             int siteId, int driveTimeFrom, int driveTimeTo, int fuelId,
             DateTime usingPricesForDate, int markup, bool includeJsSiteAsComp = false)
         {
+            // Method call
             var competitorsXtoYmiles = _db.GetCompetitors(siteId, driveTimeFrom, driveTimeTo, includeJsSiteAsComp).ToList(); // Only Non-JS competitors (2nd arg false)
             if (!competitorsXtoYmiles.Any()) return null;
 
+            // Method call
             var cheapestCompetitor = GetCheapestCompetitor(competitorsXtoYmiles, fuelId, usingPricesForDate);
 
             return (cheapestCompetitor != null)
@@ -259,6 +264,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
             var competitorCatNos = competitors.Where(x => x.Competitor.CatNo.HasValue)
                 .Select(x => x.Competitor.CatNo.Value);
 
+            // Method call
             var dailyPricesForFuelByCompetitors = GetDailyPricesForFuelByCompetitors(competitorCatNos, fuelId,
                 usingPricesforDate);
 
@@ -279,6 +285,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
         private IEnumerable<DailyPrice> GetDailyPricesForFuelByCompetitors(IEnumerable<int> competitorCatNos, int fuelId,
             DateTime usingPricesforDate)
         {
+            // Method call
             return _db.GetDailyPricesForFuelByCompetitors(competitorCatNos, fuelId, usingPricesforDate);
         }
 

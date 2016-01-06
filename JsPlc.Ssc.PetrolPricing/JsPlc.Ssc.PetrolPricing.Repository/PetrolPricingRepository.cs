@@ -957,6 +957,32 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         }
 
         /// <summary>
+        /// As this is used for Audit, suppress errors as not useful to user..
+        /// </summary>
+        /// <param name="logItems"></param>
+        /// <returns></returns>
+        public async Task<List<EmailSendLog>> LogEmailSendLog(List<EmailSendLog> logItems)
+        {
+            try
+            {
+                var db = new RepositoryContext(new SqlConnection(_context.Database.Connection.ConnectionString));
+
+                foreach (var logItem in logItems)
+                {
+                    db.EmailSendLogs.Attach(logItem);
+                    db.Entry(logItem).State = EntityState.Added;
+                }
+                int rowsAffected = await db.SaveChangesAsync();
+                return rowsAffected <= 0 ? null : logItems;
+            }
+            catch (Exception) // User wouldnt want to know about email logging errors. Thats implementation issue.
+            {
+                return null;
+                // possibly log to Application error log..
+            }
+        }
+
+        /// <summary>
         /// Updated the FileUpload status as specified by param StatusId
         /// </summary>
         /// <param name="fileUpload">The fileUpload object whose status is to be updated</param>

@@ -63,21 +63,19 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
 
         public Site EditSite(Site site)
         {
-           //TODO
-           const string apiUrl = "api/Sites/";
+            //TODO
+            const string apiUrl = "api/Sites/";
 
-           var response = _client.Value.PutAsync(apiUrl, site, new JsonMediaTypeFormatter()).Result;
-           var result = response.Content.ReadAsAsync<Site>().Result;
+            var response = _client.Value.PutAsync(apiUrl, site, new JsonMediaTypeFormatter()).Result;
+            var result = response.Content.ReadAsAsync<Site>().Result;
 
-           return (response.IsSuccessStatusCode) ? result : null;
+            return (response.IsSuccessStatusCode) ? result : null;
         }
 
         //TODO feed in real data from price grid
         public void EmailUpdatedPricesToSite()
         {
-
             var response = _client.Value.GetAsync("api/emailSite?siteId=1&endTradeDate=11/12/2015").Result;
-           
         }
 
         //TODO feed in real data from price grid
