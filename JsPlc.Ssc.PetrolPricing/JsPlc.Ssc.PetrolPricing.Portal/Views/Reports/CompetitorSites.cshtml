@@ -1,6 +1,6 @@
 ﻿@model JsPlc.Ssc.PetrolPricing.Models.ViewModels.CompetitorSiteViewModel
 
-<h2>Report - View Competitor Sites By Driving Time</h2>
+<h2>Report - View Competitor Sites By Driving Time in Minutes</h2>
 
 @using (Html.BeginForm())
 {
@@ -11,10 +11,8 @@
             <label>Site:</label>&nbsp;
             @Html.DropDownList("SiteId", new SelectList(Model.Sites, "Id", "SiteName", Model.SiteId), new { @class = "form-control" })
         </div>
-        <input type="submit" value="View" class="btn btn-primary pull-right" />
     </div>
 }
-
 
 @if (Model.Report.BrandTimes.Any())
 {
@@ -63,4 +61,8 @@
 else if (Model.SiteId > 0)
 {
     <div class="alert alert-info" role="alert">No data was found for the Site - @Model.Report.SiteName</div>
+}
+
+@section scripts {
+    <script src="~/Scripts/reports/competitorSites.js"></script>
 }
