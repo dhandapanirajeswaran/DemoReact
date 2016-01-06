@@ -60,7 +60,7 @@
     <Compile Include="Constants.cs" />
     <Compile Include="ImportProcessError.cs" />
     <Compile Include="ViewModels\CompetitorSiteReportViewModel.cs" />
-    <Compile Include="ViewModels\CompetitorSiteTimeViewModel.cs" />
+    <Compile Include="ViewModels\CompetitorBrandTimeViewModel.cs" />
     <Compile Include="ViewModels\CompetitorSiteViewModel.cs" />
     <Compile Include="ViewModels\OverridePricePostViewModel.cs" />
     <Compile Include="ViewModels\SiteViewModel.cs" />
