@@ -5,14 +5,12 @@ namespace JsPlc.Ssc.PetrolPricing.Models.ViewModels
 {
     public class CompetitorSiteTimeViewModel
     {
-        public int From { get; set; }
-        public int To { get; set; }
+        public int Count0To5 { get; set; }
+        public int Count5To10 { get; set; }
+        public int Count10To15 { get; set; }
+        public int Count15To20 { get; set; }
+        public int Count20To25 { get; set; }
 
-        public IEnumerable<CompetitorSiteDetailViewModel> Details { get; set; }
-
-        public CompetitorSiteTimeViewModel()
-        {
-            Details = new List<CompetitorSiteDetailViewModel>();
-        }
+        public string SiteName { get; set; }
     }
 }
