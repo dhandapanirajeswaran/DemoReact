@@ -60,7 +60,7 @@
         </tbody>
     </table>
 }
-else
+else if (Model.SiteId > 0)
 {
-    <div class="alert alert-info" role="alert">No data was found</div>
+    <div class="alert alert-info" role="alert">No data was found for the Site - @Model.Report.SiteName</div>
 }
