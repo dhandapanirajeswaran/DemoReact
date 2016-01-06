@@ -13,6 +13,9 @@ using System.Configuration;
 using System.Net;
 
 using JsPlc.Ssc.PetrolPricing.Models;
+using JsPlc.Ssc.PetrolPricing.Models.Common;
+using JsPlc.Ssc.PetrolPricing.Models.Dtos;
+using JsPlc.Ssc.PetrolPricing.Models.Enums;
 using JsPlc.Ssc.PetrolPricing.Repository;
 using MoreLinq;
 
@@ -37,111 +40,111 @@ namespace JsPlc.Ssc.PetrolPricing.Business
         /// <param name="endTradeDate">Usually today's date</param>
         /// <param name="reportBackEmailAddr">Emails the send log to reportBackEmailAddr(LoginUser)</param>
         /// <returns></returns>
-        public async Task<bool> SendEmailAsync(IEnumerable<Site> listSites, DateTime endTradeDate, 
+        public async Task<ConcurrentDictionary<int, EmailSendLog>> SendEmailAsync(IEnumerable<Site> listSites,
+            DateTime endTradeDate,
             string reportBackEmailAddr)
         {
             var sites = listSites as IList<Site> ?? listSites.ToList();
-            try
+            foreach (Site site in sites)
             {
-                foreach (Site site in sites)
+                var logEntry = new EmailSendLog();
+                try
                 {
-                    try
+                    // This Try can be a Task to run in parallel, 
+                    // completion of each task can add entry to "sendLog"
+                    _sendLog.TryAdd(site.Id, logEntry);
+
+                    logEntry = logEntry.SetupLogEntry1(site.Id, endTradeDate, reportBackEmailAddr, DateTime.Now, "");
+
+                    // EMAIL Task
+                    //one email built per sites for multiple user in site email list
+                    var emailBody = BuildEmailBody(site, endTradeDate);
+                    if (String.IsNullOrEmpty(emailBody))
                     {
-                        // This Try can be a Task to run in parallel, 
-                        // completion of each task can add entry to "sendLog"
+                        logEntry.EmailBody = emailBody;
+                        logEntry.AddMessageToLogEntry(
+                            string.Format(
+                                "Warning: No email generated for siteId={0}, siteName={1}. Possibly no prices for site.",
+                                site.Id,
+                                site.SiteName));
+                        continue;
+                    }
 
-                        //one email built per sites for multiple user in site email list
-                        var emailBody = BuildEmailBody(site, endTradeDate);
-                        if (String.IsNullOrEmpty(emailBody)) continue;
+                    var emailSubject = SettingsService.EmailSubject();
+                    var emailFrom = SettingsService.EmailFrom();
 
-                        var emailSubject = SettingsService.EmailSubject();
-                        var emailFrom = SettingsService.EmailFrom();
+                    using (var smtpClient = CreateSmtpClient())
+                    {
+                        var message = new MailMessage();
 
-                        using (var smtpClient = CreateSmtpClient())
+                        message.From = new MailAddress(emailFrom, emailFrom); // TODO - DisplayName same as fromEmail
+                        message.Subject = site.SiteName + " - " + emailSubject;
+                        message.Body = emailBody;
+                        message.BodyEncoding = Encoding.ASCII;
+                        message.IsBodyHtml = true;
+
+                        var emailToSet = await GetEmailToAddresses(site);
+
+                        var sendMode = String.IsNullOrEmpty(emailToSet.FixedEmailTo)
+                            ? EmailSendMode.Live
+                            : EmailSendMode.Test;
+
+                        logEntry = logEntry.SetupLogEntry2(message, emailToSet);
+
+                        if (sendMode == EmailSendMode.Test)
                         {
-                            var emailToSet = await GetEmailToAddresses(site); 
-
-                            var message = new MailMessage();
-                            message.From = new MailAddress(emailFrom, emailFrom); // TODO - DisplayName same as fromEmail
-
-                            message.Subject = site.SiteName + " - " + emailSubject;
-
-                            if (String.IsNullOrEmpty(emailToSet.FixedEmailTo))
-                            {
-                                emailToSet.ListOfEmailTo.ForEach(e => message.To.Add(e));                               
-                            }
-                            else
-                            {
-                                message.To.Add(emailToSet.FixedEmailTo);
-                            }
-
-                            message.Body = emailBody;
-                            message.BodyEncoding = Encoding.ASCII;
-                            message.IsBodyHtml = true;
-
-                            var logEntry = CreateLogEntry(site.Id, 
-                                message, 
-                                emailToSet, endTradeDate, 
-                                reportBackEmailAddr, 
-                                DateTime.Now, "");
-
-                            _sendLog.TryAdd(site.Id, logEntry);
-
-                            smtpClient.SendCompleted += SmtpClientSendCompleted;
-                            smtpClient.SendAsync(message, logEntry); // can throw exception return type is Task
-
-                            // OR use SendMailAsync
-                            //var userToken = message;
-                            //smtpClient.SendAsync(message, userToken); 
+                            // In test mode, we still send the email to test email format etc., even if no site email addresses are set..
+                            message.To.Add(emailToSet.FixedEmailTo);
                         }
+                        else
+                        {
+                            emailToSet.ListOfEmailTo.ForEach(e => message.To.Add(e));
+                        }
+
+                        // For sites with no email set.. log a warning..in both Test and Live mode..
+                        // Also in Live mode we "SKIP" sending email.. since we cant..
+                        if (!emailToSet.ListOfEmailTo.Any()) // In Test mode, this would not be True ever !! 
+                        {
+                            logEntry.AddMessageToLogEntry(
+                                string.Format("Warning: No email(s) setup for siteId={0}, siteName={1}", site.Id,
+                                    site.SiteName));
+                            if (sendMode == EmailSendMode.Live)
+                            {
+                                continue; // In LIVE Mode, we cant send email as the To list is blank
+                            }
+                        }
+
+                        smtpClient.SendCompleted += SmtpClientSendCompleted;
+                        smtpClient.SendAsync(message, logEntry); // can throw exception return type is Task
+
+                        // OR use SendMailAsync
+                        //var userToken = message;
+                        //smtpClient.SendAsync(message, userToken); 
                     }
-                    catch(Exception ex)
+                }
+                catch (Exception ex)
+                {
+                    EmailSendLog addedEntry;
+                    if (!_sendLog.TryGetValue(site.Id, out addedEntry))
                     {
-                        RecordEmailsSentToSite(site.Id, ex.Message); //FAIL - Not Send
-                        // Continue on failure..
+                        _sendLog.TryAdd(site.Id, logEntry);
+                        addedEntry = logEntry;
                     }
-                    // maybe not needed, Success - Sent since we have completed handler..
-                    //RecordEmailsSentToSites("Success", site.SiteName); 
-                } // end foreach
-            }
-            catch(Exception ex) // General failure, report back to User UI.. 
-            {
-                RecordEmailGeneralFailure(sites, endTradeDate, reportBackEmailAddr, ex.Message); //FAIL - Could Not Send
-                return false;
-            }
+                    addedEntry.AddErrorMessageToLogEntry(ex.Message);
+                    // CURRENT Approach: Continue sending on failure..
+                    // OR Break out.. Not sure yet.
+                }
+                
+            } // end foreach
+           
+            //}
+            //catch (Exception ex) // General failure, report back to User UI.. Overkill, TODO remove this 
+            //{
+            //    RecordEmailGeneralFailure(sites, endTradeDate, reportBackEmailAddr, ex.Message); //FAIL - Could Not Send
+            //    return _sendLog;
+            //}
 
-            return true;
-        }
-
-        /// <summary>
-        /// Creates a log entry object
-        /// We can add errorMessage and status to it on SendCompleted
-        /// </summary>
-        /// <param name="siteId"></param>
-        /// <param name="message"></param>
-        /// <param name="emailToSet"></param>
-        /// <param name="endTradeDate"></param>
-        /// <param name="loginUser"></param>
-        /// <param name="sendDateTime"></param>
-        /// <param name="errMessage"></param>
-        /// <returns></returns>
-        private EmailSendLog CreateLogEntry(int siteId, MailMessage message, EmailToSet emailToSet, 
-            DateTime endTradeDate, string loginUser, DateTime sendDateTime, string errMessage)
-        {
-            return new EmailSendLog
-            {
-                EmailBody = message.Body,
-                EmailFrom = message.From.Address,
-                EmailSubject = message.Subject,
-                FixedEmailTo = emailToSet.FixedEmailTo,
-                ListOfEmailTo = emailToSet.CommaSeprListOfEmailTo,
-                EndTradeDate = endTradeDate,
-                IsTest = !String.IsNullOrEmpty(emailToSet.FixedEmailTo),
-                LoginUser = loginUser,
-                SendDate = sendDateTime,
-                SiteId = siteId,
-                Status = String.IsNullOrEmpty(errMessage) ? 0 : 1 // when do we set warning 
-            };
+            return _sendLog;
         }
 
         /// <summary>
@@ -326,59 +329,45 @@ namespace JsPlc.Ssc.PetrolPricing.Business
             smtpClient.Dispose();
         }
 
-        private void RecordEmailGeneralFailure(IEnumerable<Site> sites, 
-            DateTime endTradeDate, string reportBackEmailAddr, string failureMessage)
-        {
-            var paraSites= new ConcurrentBag<string>();
-            sites.AsParallel().ForEach(site =>
-            {
-                var s = site;
-                if (s.CatNo != null) paraSites.Add(s.CatNo.Value.ToString(CultureInfo.InvariantCulture));
-            });
-            var commaSeprSites = String.Join(",", paraSites.ToArray());
+        //private void RecordEmailGeneralFailure(IEnumerable<Site> sites, 
+        //    DateTime endTradeDate, string reportBackEmailAddr, string failureMessage)
+        //{
+        //    var paraSites= new ConcurrentBag<string>();
+        //    sites.AsParallel().ForEach(site =>
+        //    {
+        //        var s = site;
+        //        if (s.CatNo != null) paraSites.Add(s.CatNo.Value.ToString(CultureInfo.InvariantCulture));
+        //    });
+        //    var commaSeprSites = String.Join(",", paraSites.ToArray());
 
-            try
-            {
-                var logEntries = new List<EmailSendLog>
-                {
-                    new EmailSendLog()
-                    {
-                        CommaSeprSiteCatIds = commaSeprSites,
-                        ErrorMessage = failureMessage,
-                        Status = 1, 
+        //    try
+        //    {
+        //        var logEntries = new List<EmailSendLog>
+        //        {
+        //            new EmailSendLog()
+        //            {
+        //                CommaSeprSiteCatIds = commaSeprSites,
+        //                ErrorMessage = failureMessage,
+        //                Status = 1, 
                         
-                        EndTradeDate = endTradeDate,
-                        SiteId = -1,
-                        LoginUser = reportBackEmailAddr
-                    }
-                };
-                _sendLog.TryAdd(-1, logEntries.First());
-            }
-            catch
-            {
-                // suppress Audit errors for now
-            }
-        }
+        //                EndTradeDate = endTradeDate,
+        //                SiteId = -1,
+        //                LoginUser = reportBackEmailAddr
+        //            }
+        //        };
+        //        _sendLog.TryAdd(-1, logEntries.First());
+        //    }
+        //    catch
+        //    {
+        //        // suppress Audit errors for now
+        //    }
+        //}
 
-        private async Task<List<EmailSendLog>> SaveEmailLogToRepository(List<EmailSendLog> logEntries)
+        public async Task<List<EmailSendLog>> SaveEmailLogToRepositoryAsync(List<EmailSendLog> logEntries)
         {
             List<EmailSendLog> savedEntries = null;
             savedEntries = await _db.LogEmailSendLog(logEntries);
             return savedEntries;
-        }
-
-        //TODO Log to Audit Table
-        private void RecordEmailsSentToSite(int siteId, string reasonForFailure= "")
-        {
-            try
-            {
-                // Code to record email success/failure (TODO what level of audit details needed ??)
-            }
-            catch (Exception)
-            {
-                // suppress Audit errors for now
-            }
-        
         }
 
         /// <summary>
@@ -444,13 +433,5 @@ namespace JsPlc.Ssc.PetrolPricing.Business
         public decimal priceDiesel { get; set; }
         public bool atLeastOnePriceAvailable { get; set; }
     }
-
-    public class EmailToSet
-    {
-        public string FixedEmailTo { get; set; }
-        public List<string> ListOfEmailTo { get; set; }
-        public string CommaSeprListOfEmailTo { get; set; }
-    }
-
 }
 

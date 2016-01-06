@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics;
@@ -276,7 +277,7 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
                 if (endTradeDate == null) endTradeDate = DateTime.Now;
 
                 var listOfSites = new List<Site>();
-
+                ConcurrentDictionary<int, EmailSendLog> sendLog;
                 //REMOVE Adding sample data for prices and emails for the moment. 
                 //SiteEmail emailsForSite = new SiteEmail();
                 //emailsForSite.EmailAddress = "steven.farkas@sainsburys.co.uk";
@@ -294,8 +295,7 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
                 }
                 if (listOfSites.Any())
                 {
-                    bool sendResult = 
-                        await _emailService.SendEmailAsync(listOfSites, endTradeDate.Value, loginUserEmail);
+                    sendLog = await _emailService.SendEmailAsync(listOfSites, endTradeDate.Value, loginUserEmail);
                     // We continue sending on failure.. Log shows which passed or failed
                 }
                 else
@@ -303,8 +303,10 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
                     return new ExceptionResult(
                         new ApplicationException("No site found with id:" + siteId), this);
                 }
-
-                return Ok(); // can return a List<EmailSendLog>
+               
+                List<EmailSendLog> logEntries = sendLog.AsParallel().Select(s => s.Value).ToList();
+                logEntries = await _emailService.SaveEmailLogToRepositoryAsync(logEntries);
+                return Ok(logEntries); // return a List<EmailSendLog> 
             }
             catch (Exception ex)
             {

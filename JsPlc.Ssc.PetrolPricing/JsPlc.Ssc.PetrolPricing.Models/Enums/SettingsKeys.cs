@@ -11,4 +11,10 @@ namespace JsPlc.Ssc.PetrolPricing.Models.Enums
         UploadPath = 1,
         SomeOtherVal = 2
     }
+
+    public enum EmailSendMode
+    {
+        Test =0,
+        Live = 1
+    }
 }

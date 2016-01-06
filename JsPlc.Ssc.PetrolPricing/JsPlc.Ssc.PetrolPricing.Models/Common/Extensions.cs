@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Linq;
+using System.Net.Mail;
+using JsPlc.Ssc.PetrolPricing.Models.Dtos;
 
 namespace JsPlc.Ssc.PetrolPricing.Models.Common
 {
@@ -56,5 +58,53 @@ namespace JsPlc.Ssc.PetrolPricing.Models.Common
             retval = rowsArr;
             return retval.ToList();
         }
+        public static EmailSendLog AddMessageToLogEntry(this EmailSendLog logEntry, string message)
+        {
+            logEntry.ErrorMessage += message;
+            return logEntry;
+        }
+
+        public static EmailSendLog AddErrorMessageToLogEntry(this EmailSendLog logEntry, string message)
+        {
+            logEntry.Status = 1;
+            logEntry.AddMessageToLogEntry(message);
+            return logEntry;
+        }
+
+        /// <summary>
+        /// Setsup a log entry object
+        /// We can add errorMessage and status to it on SendCompleted
+        /// </summary>
+        /// <param name="logEntry"></param>
+        /// <param name="siteId"></param>
+        /// <param name="message"></param>
+        /// <param name="emailToSet"></param>
+        /// <param name="endTradeDate"></param>
+        /// <param name="loginUser"></param>
+        /// <param name="sendDateTime"></param>
+        /// <param name="errMessage"></param>
+        /// <returns></returns>
+        public static EmailSendLog SetupLogEntry1(this EmailSendLog logEntry, int siteId, DateTime endTradeDate, 
+            string loginUser, DateTime sendDateTime, string errMessage)
+        {
+            logEntry.SiteId = siteId;
+            logEntry.EndTradeDate = endTradeDate;
+            logEntry.LoginUser = loginUser;
+            logEntry.SendDate = sendDateTime;
+            logEntry.Status = String.IsNullOrEmpty(errMessage) ? 0 : 1; // when do we set warning 
+            return logEntry;
+        }
+
+        public static EmailSendLog SetupLogEntry2(this EmailSendLog logEntry, MailMessage message, EmailToSet emailToSet)
+        {
+            logEntry.EmailBody = message.Body;
+            logEntry.EmailFrom = message.From.Address;
+            logEntry.EmailSubject = message.Subject;
+            logEntry.FixedEmailTo = emailToSet.FixedEmailTo;
+            logEntry.ListOfEmailTo = emailToSet.CommaSeprListOfEmailTo;
+            logEntry.IsTest = !String.IsNullOrEmpty(emailToSet.FixedEmailTo);
+            return logEntry;
+        }
+
     }
 }

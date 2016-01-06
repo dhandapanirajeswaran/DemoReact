@@ -58,6 +58,7 @@
     <Compile Include="Common\Extensions.cs" />
     <Compile Include="Common\Functions.cs" />
     <Compile Include="Constants.cs" />
+    <Compile Include="DTOs\EmailToSet.cs" />
     <Compile Include="EmailSendLog.cs" />
     <Compile Include="ImportProcessError.cs" />
     <Compile Include="ViewModels\CompetitorSiteReportViewModel.cs" />
