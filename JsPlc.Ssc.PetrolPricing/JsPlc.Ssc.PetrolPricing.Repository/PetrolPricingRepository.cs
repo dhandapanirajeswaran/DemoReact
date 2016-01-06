@@ -1097,6 +1097,8 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             var referenceSite = _context.Sites.Include(x => x.Competitors).FirstOrDefault(x => x.Id == siteId);
             if (referenceSite != null)
             {
+                result.SiteName = referenceSite.SiteName;
+
                 var brandReportRows = new List<CompetitorSiteTimeViewModel>();
                 var brands = referenceSite.Competitors.Select(x => x.Competitor.Brand).Distinct().OrderBy(x => x);
                 foreach (var brandName in brands)

@@ -7,6 +7,8 @@ namespace JsPlc.Ssc.PetrolPricing.Models.ViewModels
     {
         public IEnumerable<CompetitorSiteTimeViewModel> Items { get; set; }
 
+        public string SiteName { get; set; }
+        
         public CompetitorSiteReportViewModel()
         {
             Items = new List<CompetitorSiteTimeViewModel>();
