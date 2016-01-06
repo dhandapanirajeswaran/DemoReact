@@ -3,7 +3,7 @@ using System.ComponentModel;
 
 namespace JsPlc.Ssc.PetrolPricing.Models.ViewModels
 {
-    public class CompetitorSiteTimeViewModel
+    public class CompetitorBrandTimeViewModel
     {
         public int Count0To5 { get; set; }
         public int Count5To10 { get; set; }

@@ -18,15 +18,6 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
         }
 
         [HttpGet]
-        public ActionResult CompetitorSites()
-        {
-            var vm = new CompetitorSiteViewModel();
-            Load(vm);
-
-            return View(vm);
-        }
-
-        [HttpPost]
         public ActionResult CompetitorSites(CompetitorSiteViewModel item)
         {
             if (ModelState.IsValid)

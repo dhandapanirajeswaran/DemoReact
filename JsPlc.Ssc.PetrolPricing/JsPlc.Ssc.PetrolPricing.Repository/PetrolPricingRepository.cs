@@ -1125,12 +1125,12 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             {
                 result.SiteName = referenceSite.SiteName;
 
-                var brandReportRows = new List<CompetitorSiteTimeViewModel>();
+                var brandReportRows = new List<CompetitorBrandTimeViewModel>();
                 var brands = referenceSite.Competitors.Select(x => x.Competitor.Brand).Distinct().OrderBy(x => x);
                 foreach (var brandName in brands)
                 {
                     var brandCompetitors = referenceSite.Competitors.Where(x => x.Competitor.Brand == brandName).ToList();
-                    var brandReportRow = new CompetitorSiteTimeViewModel();
+                    var brandReportRow = new CompetitorBrandTimeViewModel();
                     brandReportRow.BrandName = brandName;
                     brandReportRow.Count0To5 = Count(brandCompetitors, 0, 5);
                     brandReportRow.Count5To10 = Count(brandCompetitors, 5, 10);
@@ -1141,7 +1141,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
                     brandReportRows.Add(brandReportRow);
                 }
-                result.Items = brandReportRows;
+                result.BrandTimes = brandReportRows;
             }
 
             return result;
