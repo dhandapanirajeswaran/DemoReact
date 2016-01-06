@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using System.Web.Mvc;
 using JsPlc.Ssc.PetrolPricing.Portal.Facade;
 
@@ -18,14 +19,14 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 
         [HttpGet]
         [Authorize(Users = "Parveen.Kumar@sainsburys.co.uk, admin@sainsburys.co.uk")]
-        public ActionResult ReInitDb(string option = "")
+        public async Task<ActionResult> ReInitDb(string option = "")
         {
             // Display list of existing files along with their status
             if (option == "") return View(model: "");
 
             using (var svc = new ServiceFacade())
             {
-                var msg = svc.ReInitDb(option);
+                string msg = await svc.ReInitDb(option);
                 ViewBag.Message = msg;
                 return View(model: msg);
             }
