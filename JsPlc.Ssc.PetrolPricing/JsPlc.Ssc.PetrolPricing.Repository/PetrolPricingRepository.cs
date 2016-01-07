@@ -1151,12 +1151,46 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         {
             var result = new PricePointReportViewModel();
 
+            when = DateTime.Parse("30 Nov 2015");
+
             var f = _context.FuelType.FirstOrDefault(x => x.Id == fuelTypeId);
             if (f != null)
             {
                 result.FuelTypeName = f.FuelTypeName;
+
+                var dailyPrices = _context.DailyPrices.Where(x => x.DateOfPrice == when && x.FuelTypeId == fuelTypeId).ToList();
+                var distinctPrices = dailyPrices.Select(x => x.ModalPrice).Distinct().OrderBy(x => x).ToList();
+                var distinctCatNos = dailyPrices.Select(x => x.CatNo).Distinct().ToList();
+                var competitorSites = _context.Sites.Where(x => distinctCatNos.Contains(x.CatNo.Value) && !x.IsSainsburysSite).ToList();
+                var distinctBrands = competitorSites.Select(x => x.Brand).Distinct().OrderBy(x => x).ToList();
+
+                foreach (var distinctPrice in distinctPrices)
+                {
+                    var matchingDailyPrices = dailyPrices.Where(x => x.ModalPrice == distinctPrice).ToList();
+                    foreach (var dailyPrice in matchingDailyPrices)
+                    {
+                        var reportRowItem = result.PricePointReportRows.FirstOrDefault(x => x.Price == distinctPrice);
+                        if (reportRowItem == null)
+                        {
+                            reportRowItem = new PricePointReportRowViewModel();
+                            reportRowItem.Price = distinctPrice;
+                            result.PricePointReportRows.Add(reportRowItem);
+                        }
+
+                        foreach (var distinctBrand in distinctBrands)
+                        {
+                            var b = reportRowItem.PricePointBrands.FirstOrDefault(x => x.Name == distinctBrand);
+                            if (b == null)
+                            {
+                                b = new PricePointBrandViewModel();
+                                b.Name = distinctBrand;
+                                reportRowItem.PricePointBrands.Add(b);
+                            }
+                            b.Count += competitorSites.Count(x => x.Brand == distinctBrand && x.CatNo == dailyPrice.CatNo);
+                        }
+                    }
+                }
             }
-            
 
             return result;
         }
