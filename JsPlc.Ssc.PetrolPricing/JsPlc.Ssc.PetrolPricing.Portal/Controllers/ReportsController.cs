@@ -36,10 +36,12 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
         {
             if (!item.For.HasValue) item.For = DateTime.Now;
 
+            var dieselReport = _serviceFacade.GetPricePoints(item.For.Value, (int)FuelTypeItem.Diesel);
             var unleadedReport = _serviceFacade.GetPricePoints(item.For.Value, (int)FuelTypeItem.Unleaded);
-
+            
+            item.PricePointReports.Add(dieselReport);
             item.PricePointReports.Add(unleadedReport);
-
+            
             return View(item);
         }
 
