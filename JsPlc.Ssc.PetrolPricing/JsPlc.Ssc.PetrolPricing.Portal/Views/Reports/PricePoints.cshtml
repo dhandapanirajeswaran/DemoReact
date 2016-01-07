@@ -1,5 +1,7 @@
 ﻿@model JsPlc.Ssc.PetrolPricing.Models.ViewModels.PricePointReportContainerViewModel
-
+@{
+    var requestedDate = @Model.For.Value.Date.ToString("dd-MM-yyyy");
+}
 <div class="report">
     <h2>Report - View Number Of Sites At Each Price Point</h2>
 
@@ -10,7 +12,7 @@
         <div class="form-inline">
             <div class="form-group">
                 <label>When:</label>&nbsp;
-                <input type="text" class="datepicker form-control" id="For" name="For" value='@Model.For.Value.Date.ToString("dd-MMM-yyyy")'>
+                <input type="text" class="datepicker form-control" id="For" name="For" value='@requestedDate'>
             </div>
             <input type="button" value="View" class="btn btn-primary" id="btnViewReport" />
         </div>
@@ -49,7 +51,7 @@
         }
         else
         {
-            <div class="alert alert-info" role="alert">No data found for @report.FuelTypeName</div>
+            <div class="alert alert-info" role="alert">No data found for @report.FuelTypeName on @requestedDate</div>
         }
     }
 
