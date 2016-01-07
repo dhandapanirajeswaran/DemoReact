@@ -1,5 +1,6 @@
 ﻿using JsPlc.Ssc.PetrolPricing.Models.ViewModels;
 using JsPlc.Ssc.PetrolPricing.Portal.Facade;
+using System;
 using System.Linq;
 using System.Web.Mvc;
 
@@ -26,6 +27,14 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             }
 
             Load(item);
+            return View(item);
+        }
+
+        [HttpGet]
+        public ActionResult PricePoints(PricePointReportContainerViewModel item)
+        {
+            if (!item.For.HasValue) item.For = DateTime.Now;
+
             return View(item);
         }
 

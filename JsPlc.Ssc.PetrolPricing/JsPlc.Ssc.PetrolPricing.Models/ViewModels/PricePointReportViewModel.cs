@@ -6,11 +6,11 @@ namespace JsPlc.Ssc.PetrolPricing.Models.ViewModels
     {
         public string FuelTypeName { get; set; }
 
-        public List<PricePointReportItem> PricePointReportItems { get; set; }
+        public List<PricePointReportRowViewModel> PricePointReportRows { get; set; }
 
         public PricePointReportViewModel()
         {
-            PricePointReportItems = new List<PricePointReportItem>();
+            PricePointReportRows = new List<PricePointReportRowViewModel>();
         }
     }
 }
