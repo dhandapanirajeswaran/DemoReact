@@ -167,6 +167,14 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         /// <param name="siteId"></param>
         /// <returns></returns>
         CompetitorSiteReportViewModel GetCompetitorSiteReport(int siteId);
+
+        /// <summary>
+        /// Gets the details of the number of sites at each price point, split by brand
+        /// </summary>
+        /// <param name="when">The date to compare price points on</param>
+        /// <param name="fuelTypeId">The typeof of fuel to compare on</param>
+        /// <returns></returns>
+        PricePointReportViewModel GetPricePoints(DateTime when, int fuelTypeId);
     }
 
     public interface IPetrolPricingRepositoryLookup

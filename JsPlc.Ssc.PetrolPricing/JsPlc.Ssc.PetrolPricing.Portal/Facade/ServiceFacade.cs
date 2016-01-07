@@ -28,7 +28,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
         {
             _client = new Lazy<HttpClient>();
             _client.Value.BaseAddress = new Uri(ConfigurationManager.AppSettings["ServicesBaseUrl"] + "");
-            
+
             _client.Value.DefaultRequestHeaders.Accept.Clear();
             _client.Value.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         }
@@ -39,7 +39,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             var response = _client.Value.GetAsync("api/sites/").Result;
 
             var result = response.Content.ReadAsAsync<IEnumerable<Site>>().Result;
-            return (response.IsSuccessStatusCode) ? result : null ;
+            return (response.IsSuccessStatusCode) ? result : null;
         }
 
         // Get a Site
@@ -51,10 +51,10 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             return (response.IsSuccessStatusCode) ? result : null;
         }
 
-        public Site NewSite(Site site) 
+        public Site NewSite(Site site)
         {
             const string apiUrl = "api/Sites/";
-            
+
             var response = _client.Value.PostAsync(apiUrl, site, new JsonMediaTypeFormatter()).Result;
             var result = response.Content.ReadAsAsync<Site>().Result;
 
@@ -81,7 +81,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
         //TODO feed in real data from price grid
         public void EmailUpdatedPricesToAllSite(int siteId, DateTime dateOfUpdate)
         {
-            
+
         }
 
 
@@ -89,7 +89,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
         /// List of SitePriceViewModel for Site Pricing View
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<SitePriceViewModel> GetSitePrices(DateTime? forDate=null, int siteId=0, int pageNo=1,
+        public IEnumerable<SitePriceViewModel> GetSitePrices(DateTime? forDate = null, int siteId = 0, int pageNo = 1,
                 int pageSize = Constants.PricePageSize, string apiName = "SitePrices")
         {
             // Optional params(defaults) - forDate (Date of Calc/Viewing today), siteId (0 for all sites), pageNo(1), PageSize(20)
@@ -124,8 +124,8 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
         // Get list of file uploads
         public async Task<IEnumerable<FileUpload>> GetFileUploads(int? typeId, int? statusId) // 1 = Daily, 2 = Qtryly
         {
-            var filters = typeId.HasValue ? "uploadTypeId=" + typeId.Value  + "&" : "";
-            filters = statusId.HasValue ? filters + "statusId=" + statusId.Value + "&": "";
+            var filters = typeId.HasValue ? "uploadTypeId=" + typeId.Value + "&" : "";
+            filters = statusId.HasValue ? filters + "statusId=" + statusId.Value + "&" : "";
 
             var apiUrl = String.IsNullOrEmpty(filters) ? "api/fileuploads/" : "api/fileuploads/?" + filters;
 
@@ -225,7 +225,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             var response = await _client.Value.GetAsync(apiUrl);
 
             var result = await response.Content.ReadAsStringAsync();
-            
+
             return result; //(response.IsSuccessStatusCode) ? result : null;
         }
 
@@ -285,6 +285,14 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
         {
             var response = _client.Value.GetAsync("api/GetCompetitorSites/" + siteId).Result;
             var result = response.Content.ReadAsAsync<CompetitorSiteReportViewModel>().Result;
+            return (response.IsSuccessStatusCode) ? result : null;
+        }
+
+        public PricePointReportViewModel GetPricePoints(DateTime when, int fuelTypeId)
+        {
+            var url = string.Format("api/GetPricePoints/{0}/{1}", when.ToString("ddMMMyyyy"), fuelTypeId);
+            var response = _client.Value.GetAsync(url).Result;
+            var result = response.Content.ReadAsAsync<PricePointReportViewModel>().Result;
             return (response.IsSuccessStatusCode) ? result : null;
         }
 

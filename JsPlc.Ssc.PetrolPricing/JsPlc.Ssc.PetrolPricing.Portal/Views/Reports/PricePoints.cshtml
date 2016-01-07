@@ -9,7 +9,12 @@
     <div class="form-inline">
         <div class="form-group">
             <label>When:</label>&nbsp;
-           
+            
         </div>
     </div>
+}
+
+@foreach (var report in Model.PricePointReports)
+{
+    <h2>@report.FuelTypeName</h2>
 }

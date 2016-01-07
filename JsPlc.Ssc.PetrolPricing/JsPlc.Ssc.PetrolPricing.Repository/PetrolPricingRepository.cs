@@ -1137,7 +1137,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                     brandReportRow.Count10To15 = Count(brandCompetitors, 10, 15);
                     brandReportRow.Count15To20 = Count(brandCompetitors, 15, 20);
                     brandReportRow.Count20To25 = Count(brandCompetitors, 20, 25);
-                    brandReportRow.Count25To30= Count(brandCompetitors, 25, 30);
+                    brandReportRow.Count25To30 = Count(brandCompetitors, 25, 30);
 
                     brandReportRows.Add(brandReportRow);
                 }
@@ -1146,6 +1146,21 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
             return result;
         }
+
+        public PricePointReportViewModel GetPricePoints(DateTime when, int fuelTypeId)
+        {
+            var result = new PricePointReportViewModel();
+
+            var f = _context.FuelType.FirstOrDefault(x => x.Id == fuelTypeId);
+            if (f != null)
+            {
+                result.FuelTypeName = f.FuelTypeName;
+            }
+            
+
+            return result;
+        }
+
 
         private int Count(IEnumerable<SiteToCompetitor> data, int min, int max)
         {

@@ -1,4 +1,5 @@
-﻿using JsPlc.Ssc.PetrolPricing.Models.ViewModels;
+﻿using JsPlc.Ssc.PetrolPricing.Models.Enums;
+using JsPlc.Ssc.PetrolPricing.Models.ViewModels;
 using JsPlc.Ssc.PetrolPricing.Portal.Facade;
 using System;
 using System.Linq;
@@ -34,6 +35,10 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
         public ActionResult PricePoints(PricePointReportContainerViewModel item)
         {
             if (!item.For.HasValue) item.For = DateTime.Now;
+
+            var unleadedReport = _serviceFacade.GetPricePoints(item.For.Value, (int)FuelTypeItem.Unleaded);
+
+            item.PricePointReports.Add(unleadedReport);
 
             return View(item);
         }
