@@ -1190,6 +1190,8 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                 }
             }
 
+            result.PricePointReportRows = result.PricePointReportRows.Where(x => x.PricePointBrands.Any(b => b.Count > 0)).ToList();
+
             return result;
         }
 
