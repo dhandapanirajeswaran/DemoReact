@@ -1151,8 +1151,6 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         {
             var result = new PricePointReportViewModel();
 
-            when = DateTime.Parse("30 Nov 2015");
-
             var f = _context.FuelType.FirstOrDefault(x => x.Id == fuelTypeId);
             if (f != null)
             {
