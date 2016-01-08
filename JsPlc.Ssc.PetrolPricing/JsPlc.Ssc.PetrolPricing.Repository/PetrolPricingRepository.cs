@@ -97,7 +97,9 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                 .Where(x => x.IsActive && x.IsSainsburysSite)
                 .OrderBy(q => q.Id).ToList();
 
-            int daysBetweenFromAndTo = Convert.ToInt32((toPriceDate.Value - fromPriceDate.Value).TotalDays);
+            int daysBetweenFromAndTo = 
+                Convert.ToInt32((toPriceDate.Value - fromPriceDate.Value).TotalDays);
+
             var rangedDatePrices = _context.SitePrices.Select(x => new
             {
                 DiffFromDays = DbFunctions.DiffDays(fromPriceDate.Value, x.DateOfCalc),
