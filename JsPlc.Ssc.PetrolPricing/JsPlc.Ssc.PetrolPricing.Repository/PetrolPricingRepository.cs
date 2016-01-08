@@ -1207,7 +1207,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         public NationalAverageReportViewModel GetReportNationalAverage(DateTime when)
         {
             var result = new NationalAverageReportViewModel();
-            when = DateTime.Parse("30 Nov 2015");
+            
             var fuelTypeIds = new List<int>() { (int)FuelTypeItem.Diesel, (int)FuelTypeItem.Unleaded };
             var dailyPrices = _context.DailyPrices.Where(x => x.DateOfPrice == when && fuelTypeIds.Contains(x.FuelTypeId));
             var fuels = _context.FuelType.ToList();

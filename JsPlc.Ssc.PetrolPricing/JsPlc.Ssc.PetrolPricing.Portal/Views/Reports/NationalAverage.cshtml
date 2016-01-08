@@ -1,6 +1,22 @@
 ﻿@model JsPlc.Ssc.PetrolPricing.Models.ViewModels.NationalAverageReportContainerViewModel
+@{
+    var requestedDate = @Model.For.Value.Date.ToString("dd-MMM-yyyy");
+}
 
 <h2>Report - National Average</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-inline">
+        <div class="form-group">
+            <label>When:</label>&nbsp;
+            <input type="text" class="datepicker form-control" id="For" name="For" value='@requestedDate'>
+        </div>
+        <input type="button" value="View" class="btn btn-primary" id="btnViewReport" />
+    </div>
+}
 
 @if (Model != null && Model.NationalAverageReport != null && Model.NationalAverageReport.Fuels.Any())
 {
@@ -29,4 +45,9 @@
             }
         </tbody>
     </table>
+}
+
+@section scripts {
+    <script src="~/Scripts/bootstrap-datepicker.min.js"></script>
+    <script src="~/Scripts/reports/nationalAverage.js"></script>
 }
