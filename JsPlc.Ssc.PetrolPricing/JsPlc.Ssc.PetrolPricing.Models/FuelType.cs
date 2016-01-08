@@ -14,6 +14,6 @@ namespace JsPlc.Ssc.PetrolPricing.Models
         public int Id { get; set; }
 
         [Required]
-        public string FuelTypeName { get; set; } // 1=Super, 2=Unleaded, 5=Super Dis, 6=Std Dis, 7=LPG
+        public string FuelTypeName { get; set; } // 1=Super, 2=Unleaded, 6=Std Dis, // Unused 5=Super Dis, 7=LPG
     }
 }

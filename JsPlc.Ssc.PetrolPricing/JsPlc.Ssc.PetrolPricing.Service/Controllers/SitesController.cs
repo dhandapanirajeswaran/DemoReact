@@ -277,7 +277,7 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
                 if (endTradeDate == null) endTradeDate = DateTime.Now;
 
                 var listOfSites = new List<Site>();
-                ConcurrentDictionary<int, EmailSendLog> sendLog;
+                var sendLog = new ConcurrentDictionary<int, EmailSendLog>();
                 //REMOVE Adding sample data for prices and emails for the moment. 
                 //SiteEmail emailsForSite = new SiteEmail();
                 //emailsForSite.EmailAddress = "steven.farkas@sainsburys.co.uk";
@@ -297,11 +297,6 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
                 {
                     sendLog = await _emailService.SendEmailAsync(listOfSites, endTradeDate.Value, loginUserEmail);
                     // We continue sending on failure.. Log shows which passed or failed
-                }
-                else
-                {
-                    return new ExceptionResult(
-                        new ApplicationException("No site found with id:" + siteId), this);
                 }
                
                 List<EmailSendLog> logEntries = sendLog.AsParallel().Select(s => s.Value).ToList();
