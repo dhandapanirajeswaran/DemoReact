@@ -39,7 +39,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             var response = _client.Value.GetAsync("api/sites/").Result;
 
             var result = response.Content.ReadAsAsync<IEnumerable<Site>>().Result;
-            return (response.IsSuccessStatusCode) ? result : null ;
+            return (response.IsSuccessStatusCode) ? result : null;
         }
 
         // Get a Site
@@ -83,9 +83,9 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             {
                 var result = await response.Content.ReadAsAsync<List<EmailSendLog>>();
                 return result;
-            }
+        }
             else
-            {
+        {
                 var result = await response.Content.ReadAsStringAsync(); // Reads the HttpResponseMsg as Json
                 throw new ApplicationException(result); // json error structure
             }
@@ -96,7 +96,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
         /// List of SitePriceViewModel for Site Pricing View
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<SitePriceViewModel> GetSitePrices(DateTime? forDate=null, int siteId=0, int pageNo=1,
+        public IEnumerable<SitePriceViewModel> GetSitePrices(DateTime? forDate = null, int siteId = 0, int pageNo = 1,
                 int pageSize = Constants.PricePageSize, string apiName = "SitePrices")
         {
             // Optional params(defaults) - forDate (Date of Calc/Viewing today), siteId (0 for all sites), pageNo(1), PageSize(20)
@@ -131,8 +131,8 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
         // Get list of file uploads
         public async Task<IEnumerable<FileUpload>> GetFileUploads(int? typeId, int? statusId) // 1 = Daily, 2 = Qtryly
         {
-            var filters = typeId.HasValue ? "uploadTypeId=" + typeId.Value  + "&" : "";
-            filters = statusId.HasValue ? filters + "statusId=" + statusId.Value + "&": "";
+            var filters = typeId.HasValue ? "uploadTypeId=" + typeId.Value + "&" : "";
+            filters = statusId.HasValue ? filters + "statusId=" + statusId.Value + "&" : "";
 
             var apiUrl = String.IsNullOrEmpty(filters) ? "api/fileuploads/" : "api/fileuploads/?" + filters;
 
@@ -295,5 +295,20 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             return (response.IsSuccessStatusCode) ? result : null;
         }
 
+        public PricePointReportViewModel GetPricePoints(DateTime when, int fuelTypeId)
+        {
+            var url = string.Format("api/GetPricePoints/{0}/{1}", when.ToString("ddMMMyyyy"), fuelTypeId);
+            var response = _client.Value.GetAsync(url).Result;
+            var result = response.Content.ReadAsAsync<PricePointReportViewModel>().Result;
+            return (response.IsSuccessStatusCode) ? result : null;
+        }
+
+        public PricePointReportViewModel GetNationalAverage(DateTime when)
+        {
+            var url = string.Format("api/GetNationalAverage/{0}", when.ToString("ddMMMyyyy"));
+            var response = _client.Value.GetAsync(url).Result;
+            var result = response.Content.ReadAsAsync<PricePointReportViewModel>().Result;
+            return (response.IsSuccessStatusCode) ? result : null;
+        }
     }
 }

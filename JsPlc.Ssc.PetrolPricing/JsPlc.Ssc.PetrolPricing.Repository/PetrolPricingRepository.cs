@@ -1124,7 +1124,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             _context.Dispose();
         }
 
-        public CompetitorSiteReportViewModel GetCompetitorSiteReport(int siteId)
+        public CompetitorSiteReportViewModel GeReporttCompetitorSite(int siteId)
         {
             var result = new CompetitorSiteReportViewModel();
 
@@ -1145,13 +1145,67 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                     brandReportRow.Count10To15 = Count(brandCompetitors, 10, 15);
                     brandReportRow.Count15To20 = Count(brandCompetitors, 15, 20);
                     brandReportRow.Count20To25 = Count(brandCompetitors, 20, 25);
-                    brandReportRow.Count25To30= Count(brandCompetitors, 25, 30);
+                    brandReportRow.Count25To30 = Count(brandCompetitors, 25, 30);
 
                     brandReportRows.Add(brandReportRow);
                 }
                 result.BrandTimes = brandReportRows;
             }
 
+            return result;
+        }
+
+        public PricePointReportViewModel GetReportPricePoints(DateTime when, int fuelTypeId)
+        {
+            var result = new PricePointReportViewModel();
+
+            var f = _context.FuelType.FirstOrDefault(x => x.Id == fuelTypeId);
+            if (f != null)
+            {
+                result.FuelTypeName = f.FuelTypeName;
+
+                var dailyPrices = _context.DailyPrices.Where(x => x.DateOfPrice == when && x.FuelTypeId == fuelTypeId).ToList();
+                var distinctPrices = dailyPrices.Select(x => x.ModalPrice).Distinct().OrderBy(x => x).ToList();
+                var distinctCatNos = dailyPrices.Select(x => x.CatNo).Distinct().ToList();
+                var competitorSites = _context.Sites.Where(x => distinctCatNos.Contains(x.CatNo.Value) && !x.IsSainsburysSite).ToList();
+                var distinctBrands = competitorSites.Select(x => x.Brand).Distinct().OrderBy(x => x).ToList();
+
+                foreach (var distinctPrice in distinctPrices)
+                {
+                    var matchingDailyPrices = dailyPrices.Where(x => x.ModalPrice == distinctPrice).ToList();
+                    foreach (var dailyPrice in matchingDailyPrices)
+                    {
+                        var reportRowItem = result.PricePointReportRows.FirstOrDefault(x => x.Price == distinctPrice);
+                        if (reportRowItem == null)
+                        {
+                            reportRowItem = new PricePointReportRowViewModel();
+                            reportRowItem.Price = distinctPrice;
+                            result.PricePointReportRows.Add(reportRowItem);
+                        }
+
+                        foreach (var distinctBrand in distinctBrands)
+                        {
+                            var b = reportRowItem.PricePointBrands.FirstOrDefault(x => x.Name == distinctBrand);
+                            if (b == null)
+                            {
+                                b = new PricePointBrandViewModel();
+                                b.Name = distinctBrand;
+                                reportRowItem.PricePointBrands.Add(b);
+                            }
+                            b.Count += competitorSites.Count(x => x.Brand == distinctBrand && x.CatNo == dailyPrice.CatNo);
+                        }
+                    }
+                }
+            }
+
+            result.PricePointReportRows = result.PricePointReportRows.Where(x => x.PricePointBrands.Any(b => b.Count > 0)).ToList();
+
+            return result;
+        }
+
+        public NationalAverageReportViewModel GetReportNationalAverage(DateTime when)
+        {
+            var result = new NationalAverageReportViewModel();
             return result;
         }
 

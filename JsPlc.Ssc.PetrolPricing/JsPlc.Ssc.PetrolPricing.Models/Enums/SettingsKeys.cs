@@ -14,7 +14,18 @@ namespace JsPlc.Ssc.PetrolPricing.Models.Enums
 
     public enum EmailSendMode
     {
-        Test =0,
+        Test = 0,
         Live = 1
+    }
+
+    public enum FuelTypeItem
+    {
+        SuperUnleaded = 1,
+        Unleaded = 2,
+        Unknown1 = 3,
+        Unknown2 = 4,
+        SuperDiesel = 5,
+        Diesel = 6,
+        LPG = 7
     }
 }

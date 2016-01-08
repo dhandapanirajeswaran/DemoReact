@@ -309,6 +309,7 @@
     <Content Include="Scripts\moment.js" />
     <Content Include="Scripts\moment.min.js" />
     <Content Include="Scripts\r.js" />
+    <Content Include="Scripts\reports\pricePoints.js" />
     <Content Include="Scripts\reports\competitorSites.js" />
     <Content Include="Scripts\require.config.js" />
     <Content Include="Scripts\require.js" />
@@ -378,6 +379,8 @@
     <Content Include="Views\Sites\Prices.cshtml" />
     <Content Include="Views\Admin\ReInitDb.cshtml" />
     <Content Include="Views\Reports\CompetitorSites.cshtml" />
+    <Content Include="Views\Reports\PricePoints.cshtml" />
+    <Content Include="Views\Reports\NationalAverage.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\uploads\" />

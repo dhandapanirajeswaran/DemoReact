@@ -1,5 +1,7 @@
-﻿using JsPlc.Ssc.PetrolPricing.Models.ViewModels;
+﻿using JsPlc.Ssc.PetrolPricing.Models.Enums;
+using JsPlc.Ssc.PetrolPricing.Models.ViewModels;
 using JsPlc.Ssc.PetrolPricing.Portal.Facade;
+using System;
 using System.Linq;
 using System.Web.Mvc;
 
@@ -27,6 +29,26 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 
             Load(item);
             return View(item);
+        }
+
+        [HttpGet]
+        public ActionResult PricePoints(PricePointReportContainerViewModel item)
+        {
+            if (!item.For.HasValue) item.For = DateTime.Now;
+
+            var dieselReport = _serviceFacade.GetPricePoints(item.For.Value, (int)FuelTypeItem.Diesel);
+            var unleadedReport = _serviceFacade.GetPricePoints(item.For.Value, (int)FuelTypeItem.Unleaded);
+            
+            item.PricePointReports.Add(dieselReport);
+            item.PricePointReports.Add(unleadedReport);
+            
+            return View(item);
+        }
+
+        [HttpGet]
+        public ActionResult NationalAverage()
+        {
+            return View();
         }
 
         private void Load(CompetitorSiteViewModel item)
