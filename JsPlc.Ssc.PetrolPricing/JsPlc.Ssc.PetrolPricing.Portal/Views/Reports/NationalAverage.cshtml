@@ -24,9 +24,16 @@
         <thead>
             <tr>
                 <th>Fuel Type</th>
-                @foreach (var brand in Model.NationalAverageReport.Fuels.First().Brands)
+                @if (!Model.NationalAverageReport.Fuels.First().Brands.Any())
                 {
-                    <th>@(brand.BrandName)(£)</th>
+                    <th>Status</th>
+                }
+                else
+                {
+                    foreach (var brand in Model.NationalAverageReport.Fuels.First().Brands)
+                    {
+                        <th>@(brand.BrandName)(£)</th>
+                    }
                 }
             </tr>
         </thead>
@@ -37,6 +44,10 @@
                     <td>
                         @fuelType.FuelName
                     </td>
+                    @if (!fuelType.Brands.Any())
+                    {
+                        <td>There is no data available</td>
+                    }
                     @foreach (var brand in fuelType.Brands)
                     {
                         <td>@brand.Average</td>
