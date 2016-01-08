@@ -60,6 +60,32 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             }
         }
 
+        /// <summary>
+        /// Send email to site
+        /// </summary>
+        /// <param name="siteId"></param>
+        /// <returns></returns>
+        [ScriptMethod(UseHttpGet = true)]
+        public async Task<JsonResult> SendEmailToSite(int siteId = 0)
+        {
+            List<EmailSendLog> sendLog = null;
+            try
+            {
+                // Email all sites
+                var response = await _serviceFacade.EmailUpdatedPricesSites(siteId);
+                sendLog = response;
+                return (response == null || !response.Any())
+                    ? new HttpResponseMessage(HttpStatusCode.BadRequest).ToJsonResult(response, null, "ApiFail",
+                        "Invalid data")
+                    : new HttpResponseMessage(HttpStatusCode.OK).ToJsonResult(sendLog, null, "ApiSuccess");
+            }
+            catch (Exception ex)
+            {
+                return new HttpResponseMessage(HttpStatusCode.BadRequest)
+                    .ToJsonResult(sendLog, null, "ApiFail", ex.Message);
+            }
+        }
+
         [ScriptMethod(UseHttpGet = true)]
         public JsonResult GetSitesWithPricesJson(string date=null, int siteId=0, int pageNo=1, 
                 int pageSize=Constants.PricePageSize, int getCompetitor=0)
