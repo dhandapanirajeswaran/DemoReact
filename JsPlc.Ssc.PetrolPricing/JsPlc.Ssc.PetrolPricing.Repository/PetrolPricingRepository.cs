@@ -25,6 +25,7 @@ using JsPlc.Ssc.PetrolPricing.Models.Common;
 using JsPlc.Ssc.PetrolPricing.Models.ViewModels;
 using MoreLinq;
 using EntityState = System.Data.Entity.EntityState;
+using JsPlc.Ssc.PetrolPricing.Models.Enums;
 
 namespace JsPlc.Ssc.PetrolPricing.Repository
 {
@@ -1198,6 +1199,36 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         public NationalAverageReportViewModel GetReportNationalAverage(DateTime when)
         {
             var result = new NationalAverageReportViewModel();
+
+            var fuelTypeIds = new List<int>() { (int)FuelTypeItem.Diesel, (int)FuelTypeItem.Unleaded };
+            var dailyPrices = _context.DailyPrices.Where(x => x.DateOfPrice == when && fuelTypeIds.Contains(x.FuelTypeId));
+            var fuels = _context.FuelType.ToList();
+
+            foreach (var fuelType in fuelTypeIds)
+            {
+                var f = fuels.FirstOrDefault(x => x.Id == fuelType);
+                if (f != null)
+                {
+                    var fuelRow = new NationalAverageReportFuelViewModel();
+                    result.Fuels.Add(fuelRow);
+                    fuelRow.FuelName = f.FuelTypeName;
+
+                    var distinctCatNos = dailyPrices.Select(x => x.CatNo).Distinct().ToList();
+                    var competitorSites = _context.Sites.Where(x => distinctCatNos.Contains(x.CatNo.Value) && !x.IsSainsburysSite).ToList();
+                    var distinctBrands = competitorSites.Select(x => x.Brand).Distinct().OrderBy(x => x).ToList();
+
+                    foreach (var brand in distinctBrands)
+                    {
+                        var brandAvg = new NationalAverageReportBrandViewModel();
+                        fuelRow.Brands.Add(brandAvg);
+                        brandAvg.BrandName = brand;
+
+                        var brandCatsNos = competitorSites.Where(x => x.Brand == brand).Where(x => x.CatNo.HasValue).Select(x => x.CatNo.Value).ToList();
+                        brandAvg.Average = dailyPrices.Where(x => x.FuelTypeId == fuelType && brandCatsNos.Contains(x.CatNo)).Average(x => x.ModalPrice);
+                    }
+                }
+            }
+
             return result;
         }
 

@@ -64,6 +64,9 @@
     <Compile Include="ViewModels\CompetitorSiteReportViewModel.cs" />
     <Compile Include="ViewModels\CompetitorBrandTimeViewModel.cs" />
     <Compile Include="ViewModels\CompetitorSiteViewModel.cs" />
+    <Compile Include="ViewModels\NationalAverageReportFuelViewModel.cs" />
+    <Compile Include="ViewModels\NationalAverageReportBrandViewModel.cs" />
+    <Compile Include="ViewModels\NationalAverageReportContainerViewModel.cs" />
     <Compile Include="ViewModels\OverridePricePostViewModel.cs" />
     <Compile Include="ViewModels\PricePointBrandViewModel.cs" />
     <Compile Include="ViewModels\PricePointReportRowViewModel.cs" />

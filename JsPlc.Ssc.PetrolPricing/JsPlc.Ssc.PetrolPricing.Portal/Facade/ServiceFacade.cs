@@ -296,11 +296,11 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             return (response.IsSuccessStatusCode) ? result : null;
         }
 
-        public PricePointReportViewModel GetNationalAverage(DateTime when)
+        public NationalAverageReportViewModel GetNationalAverage(DateTime when)
         {
             var url = string.Format("api/GetNationalAverage/{0}", when.ToString("ddMMMyyyy"));
             var response = _client.Value.GetAsync(url).Result;
-            var result = response.Content.ReadAsAsync<PricePointReportViewModel>().Result;
+            var result = response.Content.ReadAsAsync<NationalAverageReportViewModel>().Result;
             return (response.IsSuccessStatusCode) ? result : null;
         }
     }
