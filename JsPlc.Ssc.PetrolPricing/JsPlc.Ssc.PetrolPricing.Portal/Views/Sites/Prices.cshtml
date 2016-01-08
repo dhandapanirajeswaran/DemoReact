@@ -25,7 +25,12 @@
                     <h4 class="modal-title" id="myModalLabel">Send Email to ALL Sites</h4>
                 </div>
                 <div class="modal-body">
-                    <p>Are you sure you want to email <strong>ALL</strong> Sites their daily price update</p>
+                    <p>Are you sure you want to email <strong>ALL</strong> Sites their daily price update?</p>
+                    <h5 style="color: red" data-bind="visible: pageHasUnsavedChanges">
+                        The prices shown on screen are still UNSAVED.
+                        The emails will not be sent with these unsaved prices.
+                        If you wish to send these prices, please close this popup and click "Save Prices" first.
+                    </h5>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal" data-bind="click: emailAllCloseClick">Cancel</button>
