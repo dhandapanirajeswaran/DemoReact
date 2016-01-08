@@ -45,6 +45,12 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             return View(item);
         }
 
+        [HttpGet]
+        public ActionResult NationalAverage()
+        {
+            return View();
+        }
+
         private void Load(CompetitorSiteViewModel item)
         {
             item.Sites = _serviceFacade.GetSites().OrderBy(x => x.SiteName).ToList();

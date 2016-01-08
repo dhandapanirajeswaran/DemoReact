@@ -380,6 +380,7 @@
     <Content Include="Views\Admin\ReInitDb.cshtml" />
     <Content Include="Views\Reports\CompetitorSites.cshtml" />
     <Content Include="Views\Reports\PricePoints.cshtml" />
+    <Content Include="Views\Reports\NationalAverage.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\uploads\" />

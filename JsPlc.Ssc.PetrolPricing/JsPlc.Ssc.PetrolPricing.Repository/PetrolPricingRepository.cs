@@ -1116,7 +1116,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             _context.Dispose();
         }
 
-        public CompetitorSiteReportViewModel GetCompetitorSiteReport(int siteId)
+        public CompetitorSiteReportViewModel GeReporttCompetitorSite(int siteId)
         {
             var result = new CompetitorSiteReportViewModel();
 
@@ -1147,7 +1147,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             return result;
         }
 
-        public PricePointReportViewModel GetPricePoints(DateTime when, int fuelTypeId)
+        public PricePointReportViewModel GetReportPricePoints(DateTime when, int fuelTypeId)
         {
             var result = new PricePointReportViewModel();
 
@@ -1195,6 +1195,11 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             return result;
         }
 
+        public NationalAverageReportViewModel GetReportNationalAverage(DateTime when)
+        {
+            var result = new NationalAverageReportViewModel();
+            return result;
+        }
 
         private int Count(IEnumerable<SiteToCompetitor> data, int min, int max)
         {

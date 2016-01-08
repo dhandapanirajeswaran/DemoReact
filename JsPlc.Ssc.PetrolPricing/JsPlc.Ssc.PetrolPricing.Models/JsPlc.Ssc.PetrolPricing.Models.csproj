@@ -68,6 +68,7 @@
     <Compile Include="ViewModels\PricePointBrandViewModel.cs" />
     <Compile Include="ViewModels\PricePointReportRowViewModel.cs" />
     <Compile Include="ViewModels\PricePointReportContainerViewModel.cs" />
+    <Compile Include="ViewModels\NationalAverageReportViewModel.cs" />
     <Compile Include="ViewModels\PricePointReportViewModel.cs" />
     <Compile Include="ViewModels\SiteViewModel.cs" />
     <Compile Include="SitePrice.cs" />

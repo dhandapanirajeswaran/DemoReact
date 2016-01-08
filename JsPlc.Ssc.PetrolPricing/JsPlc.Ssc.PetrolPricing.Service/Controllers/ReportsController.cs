@@ -11,7 +11,7 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
         public IHttpActionResult GetCompetitorSites([FromUri]int siteId = 0)
         {
             var rs = new ReportService();
-            var result = rs.GetCompetitorSites(siteId);
+            var result = rs.GetReportCompetitorSites(siteId);
             return Ok(result);
         }
 
@@ -20,7 +20,16 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
         public IHttpActionResult GetPricePoints([FromUri]DateTime when, [FromUri]int fuelTypeId)
         {
             var rs = new ReportService();
-            var result = rs.GetPricePoints(when, fuelTypeId);
+            var result = rs.GetReportPricePoints(when, fuelTypeId);
+            return Ok(result);
+        }
+
+        [HttpGet]
+        [Route("api/GetNationalAverage/{when}")]
+        public IHttpActionResult GetNationalAverage([FromUri]DateTime when)
+        {
+            var rs = new ReportService();
+            var result = rs.GetReportNationalAverage(when);
             return Ok(result);
         }
     }
