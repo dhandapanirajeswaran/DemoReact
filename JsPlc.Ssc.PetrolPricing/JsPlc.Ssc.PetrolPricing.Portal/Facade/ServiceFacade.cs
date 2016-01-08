@@ -79,13 +79,13 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             var apiUrl = String.IsNullOrEmpty(filters) ? String.Format("api/{0}/", apiName) : String.Format("api/{0}/?{1}", apiName, filters);
 
             var response = await _client.Value.GetAsync(apiUrl);
-            if(response.IsSuccessStatusCode)
+            if (response.IsSuccessStatusCode)
             {
                 var result = await response.Content.ReadAsAsync<List<EmailSendLog>>();
                 return result;
-        }
+            }
             else
-        {
+            {
                 var result = await response.Content.ReadAsStringAsync(); // Reads the HttpResponseMsg as Json
                 throw new ApplicationException(result); // json error structure
             }
