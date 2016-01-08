@@ -38,17 +38,19 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 
             var dieselReport = _serviceFacade.GetPricePoints(item.For.Value, (int)FuelTypeItem.Diesel);
             var unleadedReport = _serviceFacade.GetPricePoints(item.For.Value, (int)FuelTypeItem.Unleaded);
-            
+
             item.PricePointReports.Add(dieselReport);
             item.PricePointReports.Add(unleadedReport);
-            
+
             return View(item);
         }
 
         [HttpGet]
-        public ActionResult NationalAverage()
+        public ActionResult NationalAverage(NationalAverageReportContainerViewModel item)
         {
-            return View();
+            if (!item.For.HasValue) item.For = DateTime.Now;
+            item.NationalAverageReport = _serviceFacade.GetNationalAverage(item.For.Value);
+            return View(item);
         }
 
         private void Load(CompetitorSiteViewModel item)
