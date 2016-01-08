@@ -932,11 +932,24 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                         dbPricesForDate.FirstOrDefault(x => x.SiteId == p1.SiteId && x.FuelTypeId == p1.FuelTypeId);
                     if (entry == null)
                     {
-                        throw new ApplicationException(
-                            String.Format("Price not found in DB for siteId={0}, fuelId={1}", p1.SiteId, p1.FuelTypeId));
+                        entry = new SitePrice
+                        {
+                            SiteId = p.SiteId,
+                            FuelTypeId = p.FuelTypeId,
+                            DateOfCalc = forDate.Value,
+                            DateOfPrice = forDate.Value, 
+                            SuggestedPrice = 0, 
+                            OverriddenPrice = p.OverriddenPrice
+                        };
+                        db.Entry(entry).State = EntityState.Added;
+                        //throw new ApplicationException(
+                        //    String.Format("Price not found in DB for siteId={0}, fuelId={1}", p1.SiteId, p1.FuelTypeId));
                     }
-                    entry.OverriddenPrice = p.OverriddenPrice;
-                    db.Entry(entry).State = EntityState.Modified;
+                    else
+                    {
+                        entry.OverriddenPrice = p.OverriddenPrice;
+                        db.Entry(entry).State = EntityState.Modified;
+                    }
                     //db.Entry(entry).Property(x => x.OverriddenPrice).IsModified = true;
                 }
                 int rowsAffected = await db.SaveChangesAsync();
