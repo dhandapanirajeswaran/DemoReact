@@ -45,6 +45,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
             string reportBackEmailAddr)
         {
             var sites = listSites as IList<Site> ?? listSites.ToList();
+            // SERIES execution for now.
             foreach (Site site in sites)
             {
                 var logEntry = new EmailSendLog();
@@ -114,9 +115,10 @@ namespace JsPlc.Ssc.PetrolPricing.Business
                             }
                         }
 
-                        smtpClient.SendCompleted += SmtpClientSendCompleted;
-                        smtpClient.SendAsync(message, logEntry); // can throw exception return type is Task
+                        //smtpClient.SendCompleted += SmtpClientSendCompleted;
+                        //smtpClient.SendAsync(message, logEntry); // can throw exception return type is Task
 
+                        smtpClient.Send(message);
                         // OR use SendMailAsync
                         //var userToken = message;
                         //smtpClient.SendAsync(message, userToken); 
@@ -160,7 +162,9 @@ namespace JsPlc.Ssc.PetrolPricing.Business
             emailToSet.FixedEmailTo = testEmailTo;
 
             emailToSet.ListOfEmailTo = new List<string>();
-            if (String.IsNullOrEmpty(testEmailTo))
+            //if (String.IsNullOrEmpty(testEmailTo))
+
+            // we want this list still, where to send will vbbe decided by message building
             {
                 emailToSet.ListOfEmailTo.AddRange(site.Emails.Where(x => !string.IsNullOrEmpty(x.EmailAddress))
                     .Select(email => email.EmailAddress));
@@ -201,7 +205,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 
             sb.Append("<tr><td><strong>Product</strong></td><td><strong>New Price</strong></td></tr>");
             sb.Append("<tr><td>Unleaded</td><td>kUnleadedPrice</td></tr>");
-            sb.Append("<tr><td>LPG (if applicable)</td><td>kLpgPrice</td></tr>");
+            sb.Append("<tr><td>Super (if applicable)</td><td>kSuperPrice</td></tr>");
             sb.Append("<tr><td>Diesel</td><td>kDieselPrice</td></tr>");
 
             sb.Append("</table>");
@@ -253,9 +257,9 @@ namespace JsPlc.Ssc.PetrolPricing.Business
                     emailForSite.priceUnleaded = (sp.OverriddenPrice == 0) ? sp.SuggestedPrice : sp.OverriddenPrice;
                     atLeastOne = true;
                 }
-                if (sp.FuelTypeId == 7) // lpg
+                if (sp.FuelTypeId == 1) // Super unl.
                 {
-                    emailForSite.priceLpg = (sp.OverriddenPrice == 0) ? sp.SuggestedPrice : sp.OverriddenPrice;
+                    emailForSite.priceSuper = (sp.OverriddenPrice == 0) ? sp.SuggestedPrice : sp.OverriddenPrice;
                     atLeastOne = true;
                 }
                 if (sp.FuelTypeId == 6) // diesel
@@ -278,7 +282,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
             emailBody = emailBody.Replace("kSiteName", emailForSite.siteName);
             emailBody = emailBody.Replace("kStartDateMonthYear", emailForSite.changeDate.ToString("dd MMM yyyy", CultureInfo.InvariantCulture));
             emailBody = emailBody.Replace("kUnleadedPrice", GetPriceFormattedPriceForEmail(emailForSite.priceUnleaded));
-            emailBody = emailBody.Replace("kLpgPrice", GetPriceFormattedPriceForEmail(emailForSite.priceLpg)); // (priceLpg / 10).ToString("###.0", CultureInfo.InvariantCulture));
+            emailBody = emailBody.Replace("kSuperPrice", GetPriceFormattedPriceForEmail(emailForSite.priceSuper)); // (priceSuper / 10).ToString("###.0", CultureInfo.InvariantCulture));
             emailBody = emailBody.Replace("kDieselPrice", GetPriceFormattedPriceForEmail(emailForSite.priceDiesel)); // / 10).ToString("###.0", CultureInfo.InvariantCulture));
 
             return emailForSite.emailBody = emailBody;
@@ -311,18 +315,20 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 
             if (e.Error != null)
             {
-                logEntry.ErrorMessage = e.Error.Message;
+                logEntry.AddErrorMessageToLogEntry(e.Error.Message);
                 logEntry.Status = 1;
                 //tracer.ErrorEx(
                 //    e.Error,
                 //    string.Format("Message sending for \"{0}\" failed.", userAsyncState.EmailMessageInfo.RecipientName)
                 //    );
             }
-            else
-            {
-                logEntry.ErrorMessage = "";
-                logEntry.Status = 0;
-            }
+
+            // Default is blank error, and success, so no change needed
+            //else
+            //{
+            //    logEntry.ErrorMessage = "";
+            //    logEntry.Status = 0;
+            //}
 
             // Cleaning up resources
             //.....
@@ -429,7 +435,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
         public string emailBody { get; set; }
         public DateTime changeDate { get; set; }
         public decimal priceUnleaded { get; set; }
-        public decimal priceLpg { get; set; }
+        public decimal priceSuper { get; set; }
         public decimal priceDiesel { get; set; }
         public bool atLeastOnePriceAvailable { get; set; }
     }

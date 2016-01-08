@@ -261,16 +261,17 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
         private static void DbInitFuelTypes(RepositoryContext context)
         {
-            // # 1=Super, 2=Unleaded, 5=Super Dis, 6=Std Dis, 7=LPG
+            // # 1=Super, 2=Unleaded, 6=Std Dis, Only these 3 are used 
+            // Unused 5=Super Dis, 7=LPG
             var fuelTypes = new List<FuelType>{
                 new FuelType{Id=1, FuelTypeName = "Super Unleaded"},
                 new FuelType{Id=2, FuelTypeName = "Unleaded"},
                 // TODO update when query clarified with Izzy. So far we might see these fuelCodes in Catalist so included it, so that imports carry on
-                new FuelType{Id=3, FuelTypeName = "Unknown1"}, // TODO
-                new FuelType{Id=4, FuelTypeName = "Unknown2"}, // TODO
-                new FuelType{Id=5, FuelTypeName = "Super Diesel"},
+                new FuelType{Id=3, FuelTypeName = "Unknown1"}, // Unused
+                new FuelType{Id=4, FuelTypeName = "Unknown2"}, // Unused
+                new FuelType{Id=5, FuelTypeName = "Super Diesel"}, // Unused
                 new FuelType{Id=6, FuelTypeName = "Diesel"},
-                new FuelType{Id=7, FuelTypeName = "LPG"},
+                new FuelType{Id=7, FuelTypeName = "LPG"}, //Unused
             };
 
             fuelTypes.ForEach(f => context.FuelType.Add(f));

@@ -28,7 +28,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
         {
             _client = new Lazy<HttpClient>();
             _client.Value.BaseAddress = new Uri(ConfigurationManager.AppSettings["ServicesBaseUrl"] + "");
-
+            
             _client.Value.DefaultRequestHeaders.Accept.Clear();
             _client.Value.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         }
@@ -51,10 +51,10 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             return (response.IsSuccessStatusCode) ? result : null;
         }
 
-        public Site NewSite(Site site)
+        public Site NewSite(Site site) 
         {
             const string apiUrl = "api/Sites/";
-
+            
             var response = _client.Value.PostAsync(apiUrl, site, new JsonMediaTypeFormatter()).Result;
             var result = response.Content.ReadAsAsync<Site>().Result;
 
@@ -72,18 +72,25 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             return (response.IsSuccessStatusCode) ? result : null;
         }
 
-        //TODO feed in real data from price grid
-        public void EmailUpdatedPricesToSite()
+        public async Task<List<EmailSendLog>> EmailUpdatedPricesSites(int siteId=0, DateTime? forDate = null, string apiName = "emailSites")
         {
-            var response = _client.Value.GetAsync("api/emailSite?siteId=1&endTradeDate=11/12/2015").Result;
-        }
+            string filters = (forDate.HasValue) ? "endTradeDate=" + forDate.Value.ToString("yyyy-MM-dd") + "&" : "";
+            filters = filters + "siteId=" + siteId + "&";
+            var apiUrl = String.IsNullOrEmpty(filters) ? String.Format("api/{0}/", apiName) : String.Format("api/{0}/?{1}", apiName, filters);
 
-        //TODO feed in real data from price grid
-        public void EmailUpdatedPricesToAllSite(int siteId, DateTime dateOfUpdate)
+            var response = await _client.Value.GetAsync(apiUrl);
+            if(response.IsSuccessStatusCode)
+            {
+                var result = await response.Content.ReadAsAsync<List<EmailSendLog>>();
+                return result;
+        }
+            else
         {
-
+                var result = await response.Content.ReadAsStringAsync(); // Reads the HttpResponseMsg as Json
+                throw new ApplicationException(result); // json error structure
+            }
+            // Dont wrap the whole call in try catch as we can handle exceptions in Controllers
         }
-
 
         /// <summary>
         /// List of SitePriceViewModel for Site Pricing View
@@ -225,7 +232,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             var response = await _client.Value.GetAsync(apiUrl);
 
             var result = await response.Content.ReadAsStringAsync();
-
+            
             return result; //(response.IsSuccessStatusCode) ? result : null;
         }
 

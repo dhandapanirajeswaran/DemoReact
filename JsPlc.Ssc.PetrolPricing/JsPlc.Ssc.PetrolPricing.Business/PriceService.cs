@@ -21,7 +21,8 @@ namespace JsPlc.Ssc.PetrolPricing.Business
     public class PriceService : BaseService
     {
         private readonly bool _includeJsSitesAsCompetitors; // false by default (excludes JS sites)
-        private int[] _fuelSelectionArray = new[] {1, 2, 5, 6, 7}; // superunl, unl, superdiesel, diesel, lpg
+        private readonly int[] _fuelSelectionArray = new[] { 1, 2, 6, }; // superunl, unl, diesel,  
+            // 5, 7 // not used superdiesel, , lpg
 
         public PriceService()
         {

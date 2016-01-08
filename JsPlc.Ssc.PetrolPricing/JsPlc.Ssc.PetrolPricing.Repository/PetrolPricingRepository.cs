@@ -115,13 +115,21 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                 pricesForAllSitesBetweenDates.Where(p => p.SiteId == i).ToList());
 
             //List<SitePrice> pricesForSite = getPricesForSite(2); // sample
-
             foreach (var site in retval)
             {
+                var emails = new List<string>();
+                site.Emails.ForEach(x => emails.Add(x.EmailAddress));
                 _context.Entry(site).State = EntityState.Detached;
+
                 var prices = getPricesForSite(site.Id);
                 site.Prices = new List<SitePrice>();
                 site.Prices = prices;
+
+                emails.ForEach(x => site.Emails.Add(new SiteEmail
+                {
+                    EmailAddress = x
+                }));
+
                 sites.Add(site);
             }
             return sites;
