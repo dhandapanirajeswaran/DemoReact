@@ -11,6 +11,7 @@ namespace JsPlc.Ssc.PetrolPricing.Models.ViewModels
         public int Count15To20 { get; set; }
         public int Count20To25 { get; set; }
         public int Count25To30 { get; set; }
+        public int CountMoreThan30 { get; set; }
 
         public string BrandName { get; set; }
     }

@@ -1149,6 +1149,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                     brandReportRow.Count15To20 = Count(brandCompetitors, 15, 20);
                     brandReportRow.Count20To25 = Count(brandCompetitors, 20, 25);
                     brandReportRow.Count25To30 = Count(brandCompetitors, 25, 30);
+                    brandReportRow.CountMoreThan30 = Count(brandCompetitors, 30, int.MaxValue);
 
                     brandReportRows.Add(brandReportRow);
                 }
