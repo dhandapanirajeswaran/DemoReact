@@ -148,7 +148,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 
             var model = _serviceFacade.GetSites().Where(x => x.IsSainsburysSite);
             // Filtering based on search value
-            if (searchTerm != "")
+            if (!String.IsNullOrEmpty(searchTerm))
             {
                 model = model.Where(x =>
                     x.CatNo.ToString().Equals(searchTerm)
