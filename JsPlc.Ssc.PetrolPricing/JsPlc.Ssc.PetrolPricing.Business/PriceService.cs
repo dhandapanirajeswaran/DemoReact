@@ -22,7 +22,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
     {
         private readonly bool _includeJsSitesAsCompetitors; // false by default (excludes JS sites)
         private readonly int[] _fuelSelectionArray = new[] { 1, 2, 6, }; // superunl, unl, diesel,  
-            // 5, 7 // not used superdiesel, , lpg
+        // 5, 7 // not used superdiesel, , lpg
 
         public PriceService()
         {
@@ -64,7 +64,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
                 {
                     _db.UpdateImportProcessStatus(11, dpFile); //Calculating 6
 
-                    var taskData = new CalcTaskData {ForDate = forDate.Value, FileUpload = dpFile};
+                    var taskData = new CalcTaskData { ForDate = forDate.Value, FileUpload = dpFile };
 
                     // ###########################
                     // LONG Running Task - Fire and Forget
@@ -115,7 +115,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
             Task.Delay(1000);
 
             var priceService = new PriceService();
-            if(!forDate.HasValue) forDate = DateTime.Now;
+            if (!forDate.HasValue) forDate = DateTime.Now;
 
             var sites = _db.GetJsSites().Where(x => x.IsActive).AsQueryable().AsNoTracking();
             var fuels = LookupService.GetFuelTypes().Where(x => _fuelSelectionArray.Contains(x.Id)).AsQueryable().AsNoTracking().ToList(); // Limit calc iterations to known fuels
@@ -148,7 +148,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
         /// <param name="forDate"></param>
         /// <param name="markup"></param>
         /// <param name="siteId"></param>
-        public void CreateMissingSuperUnleadedFromUnleaded(DateTime forDate, int? markup = null, int siteId =0)
+        public void CreateMissingSuperUnleadedFromUnleaded(DateTime forDate, int? markup = null, int siteId = 0)
         {
             if (!markup.HasValue)
             {
@@ -175,10 +175,27 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 
             if (!usingPricesforDate.HasValue) usingPricesforDate = DateTime.Now; // Uses dailyPrices of competitors Upload date matching this date
 
+            var cheapestPrice = new SitePrice
+            {
+                SiteId = siteId,
+                //JsSite = site,
+                FuelTypeId = fuelId,
+                DateOfCalc = usingPricesforDate.Value.Date, // Only date component
+                DateOfPrice = usingPricesforDate.Value.Date,
+                SuggestedPrice = 0,
+                UploadId = 0
+            };
+
             var site = _db.GetSite(siteId); // TODO get site in caller
-            if (site == null || !site.CatNo.HasValue) return null; // TODO chk in caller
+            if (site == null) return null;
+            if (!site.CatNo.HasValue)
+            {
+                _db.AddOrUpdateSitePriceRecord(cheapestPrice); return cheapestPrice;
+            }
             if (!_db.AnyDailyPricesForFuelOnDate(fuelId, usingPricesforDate.Value)) // TODO chk in caller
-                return null;
+            {
+                _db.AddOrUpdateSitePriceRecord(cheapestPrice); return cheapestPrice;
+            }
             // APPLY PRICING RULES: based on drivetime (see Market Comparison sheet) as per meeting 02Dec2015 @ 13:00
             // If 0-5 mins away – match to minimum competitor
             // If 5-10 mins away – add 1p to minimum competitor 
@@ -208,24 +225,20 @@ namespace JsPlc.Ssc.PetrolPricing.Business
                 cheapestCompetitor = GetCheapestPriceUsingParams(siteId, 20, 25, fuelId,
                 usingPricesforDate.Value, 4, _includeJsSitesAsCompetitors);
 
-            if (!cheapestCompetitor.HasValue) return null;
+            if (!cheapestCompetitor.HasValue)
+            {
+                _db.AddOrUpdateSitePriceRecord(cheapestPrice); return cheapestPrice;
+            }
 
             var competitor = cheapestCompetitor.Value.Key;
             var markup = cheapestCompetitor.Value.Value;
 
-            var cheapestPrice = new SitePrice
-            {
-                SiteId = siteId,
-                //JsSite = site,
-                FuelTypeId = fuelId,
-                DateOfPrice = competitor.DailyPrice.DateOfPrice,
-                UploadId = competitor.DailyPrice.DailyUploadId, // If we can provide traceability to calc file, then why not
-                SuggestedPrice = competitor.DailyPrice.ModalPrice + markup * 10, // since modalPrice is held in pence*10 (Catalist format)
-                DateOfCalc = usingPricesforDate.Value.Date // Only date component
-            };
+            cheapestPrice.DateOfPrice = competitor.DailyPrice.DateOfPrice;
+            cheapestPrice.UploadId = competitor.DailyPrice.DailyUploadId; // If we can provide traceability to calc file, then why not
+            cheapestPrice.SuggestedPrice = competitor.DailyPrice.ModalPrice + markup * 10; // since modalPrice is held in pence*10 (Catalist format)
             // TODO for parallel exec - amend this to run in caller
             // Method call
-            var retval = _db.AddOrUpdateSitePriceRecord(cheapestPrice); 
+            var retval = _db.AddOrUpdateSitePriceRecord(cheapestPrice);
             return cheapestPrice;
         }
 
@@ -308,7 +321,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
                     {
                         SiteId = siteId.Value,
                         FuelTypeId = fuelTypeId.Value,
-                        OverriddenPrice = Convert.ToInt32(Math.Truncate(overridePrice*10))
+                        OverriddenPrice = Convert.ToInt32(Math.Truncate(overridePrice * 10))
                     });
             }
             retval = await _db.SaveOverridePricesAsync(prices);
