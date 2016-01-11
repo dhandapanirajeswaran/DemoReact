@@ -9,8 +9,13 @@
 <div align="right">
     <input type="button" value="New Sainsbury's Site" onclick="location.href='@Url.Action("Create", "Sites" )'" class="btn btn-primary" />
 </div>
-<!-- Approx 300 Sinsbury's sites -->
+<!-- Approx 300 Sainsbury's sites -->
 <div>
+    <form method="GET">
+        Search: <input type="text" value="" name="searchTerm" /><input type="submit" value="Go"/>
+        <input type="submit" value="Show All" />
+    </form>
+    <br /><hr />
     List of Sites:
     @Html.Partial("_SiteList", Model)
 </div>

@@ -115,12 +115,23 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             return jsonResult;
         }
 
-        public ActionResult Index(string msg = "")
+        public ActionResult Index(string msg = "", string searchTerm="")
         {
             // Display list of existing sites along with their status
             ViewBag.Message = msg;
-
+       
             var model = _serviceFacade.GetSites().Where(x => x.IsSainsburysSite);
+            // Filtering based on search value
+            if (searchTerm != "")
+            {
+                model = model.Where(x => 
+                    x.CatNo.ToString().Equals(searchTerm) 
+                    || 
+                    x.StoreNo.ToString().Equals(searchTerm)
+                    ||
+                    x.SiteName.ToUpper().Contains(searchTerm.ToUpper())
+                    ).ToList();
+            }
             return View(model);
         }
 
