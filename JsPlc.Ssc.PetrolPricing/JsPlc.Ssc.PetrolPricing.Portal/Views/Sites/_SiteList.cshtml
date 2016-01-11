@@ -1,4 +1,5 @@
-﻿@model IEnumerable<JsPlc.Ssc.PetrolPricing.Models.Site>
+﻿@using JsPlc.Ssc.PetrolPricing.Models
+@model IEnumerable<JsPlc.Ssc.PetrolPricing.Models.Site>
 
 <table class="table small">
     <tr>
@@ -89,9 +90,15 @@
             @if (item.IsSainsburysSite)
             {
                 @Html.ActionLink("Edit", "Edit", new { id = item.Id })
+                @(" | ")
             }
             @Html.ActionLink("Details", "Details", new { id = item.Id }, htmlAttributes: new { onclick = "return true;" })
             @*@Html.ActionLink("Delete", "Delete", new { id = item.Id }, htmlAttributes: new { onclick = "return false;" })*@
+            @if (item.Emails == null || !item.Emails.Any())
+            {
+                <br /><span style="color: red">@("No Emails..")</span>
+            }
+
         </td>
     </tr>
 }
