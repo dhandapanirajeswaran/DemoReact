@@ -1007,6 +1007,29 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         }
 
         /// <summary>
+        /// Gets the EmailSendLog entries for selected site (or all sites if siteId =0) forDate, latest first 
+        /// </summary>
+        /// <param name="siteId"></param>
+        /// <param name="forDate"></param>
+        /// <returns></returns>
+        public Task<List<EmailSendLog>> GetEmailSendLog(int siteId, DateTime forDate)
+        {
+            var retval = new List<EmailSendLog>();
+            using (var db = new RepositoryContext(new SqlConnection(_context.Database.Connection.ConnectionString)))
+            {
+                var list = db.EmailSendLogs;
+                if (!list.Any()) return Task.FromResult(retval);
+
+                retval = list.Where(x => DbFunctions.DiffDays(x.SendDate, forDate) == 0)
+                    .AsNoTracking()
+                    .ToList();
+                retval = retval.OrderByDescending(x => x.SendDate).ToList();
+
+            }
+            return Task.FromResult(retval);
+        }
+
+        /// <summary>
         /// Updated the FileUpload status as specified by param StatusId
         /// </summary>
         /// <param name="fileUpload">The fileUpload object whose status is to be updated</param>

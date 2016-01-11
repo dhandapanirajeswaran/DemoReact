@@ -182,6 +182,8 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         /// <param name="when"></param>
         /// <returns></returns>
         NationalAverageReportViewModel GetReportNationalAverage(DateTime when);
+
+        Task<List<EmailSendLog>> GetEmailSendLog(int siteId, DateTime forDate);
     }
 
     public interface IPetrolPricingRepositoryLookup

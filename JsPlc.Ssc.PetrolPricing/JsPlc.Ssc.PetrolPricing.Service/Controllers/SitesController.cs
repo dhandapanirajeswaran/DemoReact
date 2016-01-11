@@ -309,6 +309,32 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="siteId">0 to send for all sites, otherwise specific siteID</param>
+        /// <param name="forDate"></param>
+        /// <returns></returns>
+        [System.Web.Http.HttpGet]
+        [System.Web.Http.Route("api/getEmailSendLog")]
+        public async Task<IHttpActionResult> GetEmailSendLog(int siteId = 0, DateTime? forDate = null)
+        {
+            try
+            {
+                //Site site = new Site();
+                if (forDate == null) forDate = DateTime.Now;
+
+                List<EmailSendLog> sendLog = await _emailService.GetEmailSendLog(siteId, forDate);
+                // We continue sending on failure.. Log shows which passed or failed
+
+                return Ok(sendLog); // return a List<EmailSendLog> 
+            }
+            catch (Exception ex)
+            {
+                return new ExceptionResult(ex, this);
+            }
+        }
+
 
         /// <summary>
         /// Test email body replacement values, usable for UI click to get full email Html with prices

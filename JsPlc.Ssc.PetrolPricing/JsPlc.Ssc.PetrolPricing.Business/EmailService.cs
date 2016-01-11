@@ -56,7 +56,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
                     // completion of each task can add entry to "sendLog"
                     _sendLog.TryAdd(site.Id, logEntry);
 
-                    logEntry = logEntry.SetupLogEntry1(site.Id, endTradeDate, reportBackEmailAddr, DateTime.Now, "");
+                    logEntry = logEntry.SetupLogEntry1(site.Id, endTradeDate, reportBackEmailAddr, DateTime.Now);
 
                     // EMAIL Task
                     //one email built per sites for multiple user in site email list
@@ -97,7 +97,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
                         // Also in Live mode we "SKIP" sending email.. since we cant..
                         if (!emailToSet.ListOfEmailTo.Any()) // In Test mode, this would not be True ever !! 
                         {
-                            logEntry.AddMessageToLogEntry(
+                            logEntry.AddWarningMessageToLogEntry(
                                 string.Format("Warning: No email(s) setup for siteId={0}, siteName={1}", site.Id,
                                     site.SiteName));
                             if (sendMode == EmailSendMode.Live)
@@ -109,9 +109,9 @@ namespace JsPlc.Ssc.PetrolPricing.Business
                         if (String.IsNullOrEmpty(emailBody))
                         {
                             logEntry.EmailBody = emailBody;
-                            logEntry.AddMessageToLogEntry(
+                            logEntry.AddWarningMessageToLogEntry(
                                 string.Format(
-                                    "Warning: No email generated for siteId={0}, siteName={1}. Possibly no prices to communicate for site.",
+                                    "Warning: No email to send for siteId={0}, siteName={1}. Possibly no valid prices set to communicate for site.",
                                     site.Id,
                                     site.SiteName));
                             //continue; // In LIVE Mode, we shouldnt send email if body is blank  
@@ -121,22 +121,22 @@ namespace JsPlc.Ssc.PetrolPricing.Business
                         if (sendable)
                         {
                             smtpClient.Send(message);
+                            logEntry.SetSuccessful();
                         }
                     }
                 }
                 catch (Exception ex)
                 {
-                    EmailSendLog addedEntry;
-                    if (!_sendLog.TryGetValue(site.Id, out addedEntry))
+                    EmailSendLog existingEntry;
+                    if (!_sendLog.TryGetValue(site.Id, out existingEntry))
                     {
                         _sendLog.TryAdd(site.Id, logEntry);
-                        addedEntry = logEntry;
+                        existingEntry = logEntry;
                     }
-                    addedEntry.AddErrorMessageToLogEntry(ex.Message);
+                    existingEntry.AddErrorMessageToLogEntry(ex.Message);
                     // CURRENT Approach: Continue sending on failure..
                     // OR Break out.. Not sure yet.
                 }
-                
             } // end foreach
 
             return _sendLog;
@@ -350,7 +350,18 @@ namespace JsPlc.Ssc.PetrolPricing.Business
             return client;
         }
 
-       
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="siteId"></param>
+        /// <param name="forDate"></param>
+        /// <returns></returns>
+        public async Task<List<EmailSendLog>> GetEmailSendLog(int siteId, DateTime? forDate)
+        {
+            if (!forDate.HasValue) forDate = DateTime.Now;
+            var retval = await _db.GetEmailSendLog(siteId, forDate.Value);
+            return retval;
+        }
     }
 
     public class EmailSiteData

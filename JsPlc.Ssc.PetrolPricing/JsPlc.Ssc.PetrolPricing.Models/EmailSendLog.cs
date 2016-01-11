@@ -7,7 +7,7 @@ namespace JsPlc.Ssc.PetrolPricing.Models
     /// <summary>
     /// Audit log populated when sending emails:
     /// Id (Key identity), SiteId, EmailFrom, EmailTo(comma sepr strings), Subject, Body, EndTradeDate, 
-    /// SendDate, LoginUser, Status (0 success, 1 Fail, 2 warning), ErrorMessage
+    /// SendDate, LoginUser, Status (IsSuccess, IsWarning, IsError), WarningMessage, ErrorMessage
     /// </summary>
     public class EmailSendLog
     {
@@ -43,10 +43,15 @@ namespace JsPlc.Ssc.PetrolPricing.Models
         [StringLength(500)]
         public string LoginUser { get; set; } // 
 
-        public int Status { get; set; } // 0 = Success, 1 = Fail, 2 = Warning (blank or invalid emails scenarios) 
+        public bool IsSuccess { get; set; } 
+        public bool IsWarning  { get; set; }
+        public bool IsError { get; set; }
 
         [StringLength(5000)]
         public string CommaSeprSiteCatIds { get; set; } // In case of general failure, contains all sites requested
+
+        // Log what the warning was if any (status = 1)
+        public string WarningMessage { get; set; }
 
         // Log what the error was if any (status = 0)
         public string ErrorMessage { get; set; }

@@ -9,6 +9,7 @@ using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Script.Services;
 using JsPlc.Ssc.PetrolPricing.Models;
+using JsPlc.Ssc.PetrolPricing.Models.Common;
 using JsPlc.Ssc.PetrolPricing.Models.ViewModels;
 using JsPlc.Ssc.PetrolPricing.Portal.Facade;
 using JsPlc.Ssc.PetrolPricing.Portal.Helper.Extensions;
@@ -74,10 +75,11 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
                 // Email all sites
                 var response = await _serviceFacade.EmailUpdatedPricesSites(siteId);
                 sendLog = response;
+                var sendSummaryString = sendLog.ToSendSummary();
                 return (response == null || !response.Any())
                     ? new HttpResponseMessage(HttpStatusCode.BadRequest).ToJsonResult(response, null, "ApiFail",
-                        "Invalid data")
-                    : new HttpResponseMessage(HttpStatusCode.OK).ToJsonResult(sendLog, null, "ApiSuccess");
+                        "Error: unable to send emails, please check each status for per site - Errors or warnings near envelope icon..\n")
+                    : new HttpResponseMessage(HttpStatusCode.OK).ToJsonResult(sendLog, null, "ApiSuccess", "", sendSummaryString);
             }
             catch (Exception ex)
             {
@@ -115,18 +117,42 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             return jsonResult;
         }
 
-        public ActionResult Index(string msg = "", string searchTerm="")
+        [ScriptMethod(UseHttpGet = true)]
+        public async Task<JsonResult> GetEmailSendLog(string date = null, int siteId = 0)
+        {
+            DateTime forDate;
+            if (!DateTime.TryParse(date, out forDate)) forDate = DateTime.Now;
+
+            List<EmailSendLog> sendLog = null;
+            try
+            {
+                // Email all sites
+                var response = await _serviceFacade.GetEmailSendLog(siteId, forDate);
+                sendLog = response;
+                return (response == null)
+                    ? new HttpResponseMessage(HttpStatusCode.BadRequest).ToJsonResult(sendLog, null, "ApiFail",
+                        "Invalid data")
+                    : new HttpResponseMessage(HttpStatusCode.OK).ToJsonResult(sendLog, null, "ApiSuccess");
+            }
+            catch (Exception ex)
+            {
+                return new HttpResponseMessage(HttpStatusCode.BadRequest)
+                    .ToJsonResult(sendLog, null, "ApiFail", ex.Message);
+            }
+        }
+
+        public ActionResult Index(string msg = "", string searchTerm = "")
         {
             // Display list of existing sites along with their status
             ViewBag.Message = msg;
-       
+
             var model = _serviceFacade.GetSites().Where(x => x.IsSainsburysSite);
             // Filtering based on search value
             if (searchTerm != "")
             {
-                model = model.Where(x => 
-                    x.CatNo.ToString().Equals(searchTerm) 
-                    || 
+                model = model.Where(x =>
+                    x.CatNo.ToString().Equals(searchTerm)
+                    ||
                     x.StoreNo.ToString().Equals(searchTerm)
                     ||
                     x.SiteName.ToUpper().Contains(searchTerm.ToUpper())
@@ -134,6 +160,8 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             }
             return View(model);
         }
+
+
 
         public ActionResult Create()
         {

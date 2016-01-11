@@ -92,6 +92,26 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             // Dont wrap the whole call in try catch as we can handle exceptions in Controllers
         }
 
+        public async Task<List<EmailSendLog>> GetEmailSendLog(int siteId = 0, DateTime? forDate = null, string apiName = "getEmailSendLog")
+        {
+            string filters = (forDate.HasValue) ? "forDate=" + forDate.Value.ToString("yyyy-MM-dd") + "&" : "";
+            filters = filters + "siteId=" + siteId + "&";
+            var apiUrl = String.IsNullOrEmpty(filters) ? String.Format("api/{0}/", apiName) : String.Format("api/{0}/?{1}", apiName, filters);
+
+            var response = await _client.Value.GetAsync(apiUrl);
+            if (response.IsSuccessStatusCode)
+            {
+                var result = await response.Content.ReadAsAsync<List<EmailSendLog>>();
+                return result;
+            }
+            else
+            {
+                var result = await response.Content.ReadAsStringAsync(); // Reads the HttpResponseMsg as Json
+                throw new ApplicationException(result); // json error structure
+            }
+            // Dont wrap the whole call in try catch as we can handle exceptions in Controllers
+        }
+
         /// <summary>
         /// List of SitePriceViewModel for Site Pricing View
         /// </summary>
@@ -310,5 +330,6 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             var result = response.Content.ReadAsAsync<NationalAverageReportViewModel>().Result;
             return (response.IsSuccessStatusCode) ? result : null;
         }
+
     }
 }

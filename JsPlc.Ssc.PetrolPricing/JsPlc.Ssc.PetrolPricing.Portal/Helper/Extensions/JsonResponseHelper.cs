@@ -11,6 +11,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Helper.Extensions
     public class PetrolPricingJsonData
     {
         public JsonStatusCode JsonStatusCode { get; set; }
+        public string SummaryString { get; set; }
         public string ErrorSummaryString { get; set; }
         public object JsonObject { get; set; }
         public object ModelErrors { get; set; }
@@ -24,7 +25,8 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Helper.Extensions
 
     public static class JsonResponseHelper
     {
-        public static JsonResult ToJsonResult(this HttpResponseMessage response, object jsonPayload, object modelErrors, string customStatusCode, string errorSummary ="")
+        public static JsonResult ToJsonResult(this HttpResponseMessage response, object jsonPayload, 
+            object modelErrors, string customStatusCode, string errorSummary ="", string summary = "")
         {
             return new JsonResult
             {
@@ -32,6 +34,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Helper.Extensions
                 Data = new PetrolPricingJsonData
                 {
                     ModelErrors = modelErrors,
+                    SummaryString = summary,
                     ErrorSummaryString = errorSummary,
                     JsonObject = jsonPayload,
                     JsonStatusCode = new JsonStatusCode

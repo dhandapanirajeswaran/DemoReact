@@ -14,7 +14,7 @@
 <!-- knockout binds here -->
 <div class="container" id="petrolpricingpage">
     <div id="msgs"></div>
-    
+
     <!-- Email ALL popup within knockout -->
     <div class="modal fade" id="emailAllSites" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
          data-bind="with: emailAllPopupSiteItemModel, visible: showEmailAllPopup">
@@ -40,9 +40,8 @@
         </div>
     </div>
     <!-- END Email ALL popup within knockout -->
-
     <!-- Email popup within knockout -->
-    <div class="modal fade" id="emailSite" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" 
+    <div class="modal fade" id="emailSite" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
          data-bind="with: emailPopupSiteItemModel, visible: showEmailPopup">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -50,7 +49,7 @@
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                     <h4 class="modal-title" id="myModalLabel">Send Email</h4>
                     <h5 style="color: red" data-bind="visible: pageHasUnsavedChanges">The prices shown are UNSAVED. The email will not be sent with these unsaved prices. If you wish to send these prices, please close this popup and click "Save Prices" first.</h5>
-                    <span data-bind="text: emailSendResult"></span>
+                    @*<span xdata-bind="text: emailSendResult"></span>*@
                 </div>
                 <div class="modal-body">
                     <h2 style="visibility: hidden; display: none">
@@ -98,7 +97,6 @@
         </div>
     </div>
     <!-- End Email popup within knockout -->
-
     <!-- Submit disabled, all work done thru ajax calls -->
     <form id="myform" method="post" data-bind="submit: savePetrolPricingForm" xclass="input-group-sm" action="sites/PostPrices" onsubmit="return false;">
         <div class="row">
@@ -106,8 +104,10 @@
             <div class="col-md-3 right">
                 <div xstyle="width:100%;text-align:right;margin-top:-20px;">
                     <!-- EMAIL all Button, only loads popup -->
-                    <button type="button" class="btn btn-default" data-toggle="modal" data-target="#emailAllSites" 
-                            data-bind="visible: !$root.ViewingHistorical()">Email all &nbsp;<i class="fa fa-envelope-o"></i></button>
+                    <button type="button" class="btn btn-default" data-toggle="modal" data-target="#emailAllSites"
+                            data-bind="visible: !$root.ViewingHistorical()">
+                        Email all &nbsp;<i class="fa fa-envelope-o"></i>
+                    </button>
                 </div>
             </div>
         </div>
@@ -170,7 +170,21 @@
                                data-bind="attr:{href:('#CollapseCompetitorsforsite' + SiteId)}, click: getCompetitorDataClick"><i class="fa fa-plus-square-o"></i></a>
                         </td>
                         <td><span data-bind="text: StoreNo"></span></td>
-                        <td><span><a href="#" data-toggle="modal" data-target="#emailSite" data-bind="click: bindEmailTemplate"><i class="fa fa-envelope-o"></i></a></span></td>
+                        <!-- Email envelope... -->
+                        <td>
+                            <span>
+                                <a href="#" data-toggle="modal" data-target="#emailSite" data-bind="click: bindEmailTemplate">
+                                    <i class="fa fa-envelope-o"></i>
+                                    <!-- ko if: hasEmailSendLogEntry() -->
+                                    <!-- ko with: EmailSendLogEntry -->
+                                    <i class="fa fa-check" data-bind="visible: IsSuccess, attr: {title:'Email sent..'}" style="color: green"></i>
+                                    <i class="fa fa-warning" data-bind="visible: IsWarning, attr: {title:WarningMessage}" style="color: orange"></i>
+                                    <i class="fa fa-ban" data-bind="visible: IsError, attr: {title:ErrorMessage}" style="color: red"></i>
+                                    <!-- /ko -->
+                                    <!-- /ko -->
+                                </a>
+                            </span>
+                        </td>
                         <td><span data-bind="text: StoreName"></span></td>
                         <td><span data-bind="text: CatNo"></span></td>
                         <td><span data-bind="text: PfsNo"></span></td>
