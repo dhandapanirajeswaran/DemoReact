@@ -6,7 +6,7 @@ namespace JsPlc.Ssc.PetrolPricing.Models.ViewModels
     public class CompetitorSiteViewModel
     {
         [DisplayName("Site")]
-        public IEnumerable<Site> Sites { get; set; }
+        public List<Site> Sites { get; set; }
 
         public int SiteId { get; set; }
 

@@ -1,4 +1,6 @@
-﻿using JsPlc.Ssc.PetrolPricing.Models.Enums;
+﻿using System.Collections.Generic;
+using JsPlc.Ssc.PetrolPricing.Models;
+using JsPlc.Ssc.PetrolPricing.Models.Enums;
 using JsPlc.Ssc.PetrolPricing.Models.ViewModels;
 using JsPlc.Ssc.PetrolPricing.Portal.Facade;
 using System;
@@ -26,8 +28,13 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             {
                 item.Report = _serviceFacade.GetCompetitorSites(item.SiteId);
             }
-
             Load(item);
+            if (!item.Sites.Any() || item.Sites.First().SiteName == "") return View(item);
+
+            var tempSites = item.Sites;
+            item.Sites = new List<Site> { new Site { SiteName = "Please select..." } };
+            item.Sites.AddRange(tempSites);
+            
             return View(item);
         }
 
