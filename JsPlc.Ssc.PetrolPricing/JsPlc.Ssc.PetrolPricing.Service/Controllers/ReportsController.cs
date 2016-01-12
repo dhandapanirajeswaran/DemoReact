@@ -6,6 +6,11 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
 {
     public class ReportsController : BaseController
     {
+        /// <summary>
+        /// Competitor Sites report
+        /// </summary>
+        /// <param name="siteId"></param>
+        /// <returns></returns>
         [HttpGet]
         [Route("api/GetCompetitorSites/{siteId}")]
         public IHttpActionResult GetCompetitorSites([FromUri]int siteId = 0)
@@ -15,6 +20,12 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
             return Ok(result);
         }
 
+        /// <summary>
+        /// PricePoints Report
+        /// </summary>
+        /// <param name="when"></param>
+        /// <param name="fuelTypeId"></param>
+        /// <returns></returns>
         [HttpGet]
         [Route("api/GetPricePoints/{when}/{fuelTypeId}")]
         public IHttpActionResult GetPricePoints([FromUri]DateTime when, [FromUri]int fuelTypeId)

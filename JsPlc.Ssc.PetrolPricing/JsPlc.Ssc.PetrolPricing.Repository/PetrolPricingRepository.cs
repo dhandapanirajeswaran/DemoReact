@@ -1163,7 +1163,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             _context.Dispose();
         }
 
-        public CompetitorSiteReportViewModel GeReporttCompetitorSite(int siteId)
+        public CompetitorSiteReportViewModel GetReportCompetitorSite(int siteId)
         {
             var result = new CompetitorSiteReportViewModel();
 
@@ -1204,7 +1204,12 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             {
                 result.FuelTypeName = f.FuelTypeName;
 
-                var dailyPrices = _context.DailyPrices.Where(x => x.DateOfPrice == when && x.FuelTypeId == fuelTypeId).ToList();
+                // Ignore this approach.. which uses Date Of Price from DailyPrice, instead see next line..
+                //var dailyPrices = _context.DailyPrices.Where(x => DbFunctions.DiffDays(x.DateOfPrice, when) == 0 && x.FuelTypeId == fuelTypeId).ToList();
+
+                // Report uses Prices as per date of upload..(not date of Price in DailyPrice).. 
+                var dailyPrices = _context.DailyPrices.Where(x => DbFunctions.DiffDays(x.DailyUpload.UploadDateTime, when) == 0 && x.FuelTypeId == fuelTypeId).ToList();
+                
                 var distinctPrices = dailyPrices.Select(x => x.ModalPrice).Distinct().OrderBy(x => x).ToList();
                 var distinctCatNos = dailyPrices.Select(x => x.CatNo).Distinct().ToList();
                 var competitorSites = _context.Sites.Where(x => distinctCatNos.Contains(x.CatNo.Value) && !x.IsSainsburysSite).ToList();

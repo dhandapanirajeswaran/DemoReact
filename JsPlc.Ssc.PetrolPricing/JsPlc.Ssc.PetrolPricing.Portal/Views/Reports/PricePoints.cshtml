@@ -1,11 +1,16 @@
 ﻿@model JsPlc.Ssc.PetrolPricing.Models.ViewModels.PricePointReportContainerViewModel
 @{
-    var requestedDate = @Model.For.Value.Date.ToString("dd-MMM-yyyy");
+    if (!Model.ForDate.HasValue)
+    {
+        Model.ForDate = DateTime.Now;
+    }
+    
+    var requestedDate = @Model.ForDate.Value.Date.ToString("dd-MMM-yyyy");
 }
 <div class="report">
     <h2>Report - View Number Of Sites At Each Price Point</h2>
 
-    @using (Html.BeginForm())
+    @using (Html.BeginForm(FormMethod.Get))
     {
         @Html.AntiForgeryToken()
 
@@ -29,9 +34,16 @@
                 <thead>
                     <tr>
                         <th>Price (£)</th>
-                        @foreach (var brand in report.PricePointReportRows.FirstOrDefault().PricePointBrands)
+                        
+                        @{
+                            var pricePointReportRowViewModel = report.PricePointReportRows.FirstOrDefault();
+                        }
+                        @if (pricePointReportRowViewModel != null)
                         {
-                            <th>@brand.Name</th>
+                            foreach (var brand in pricePointReportRowViewModel.PricePointBrands)
+                            {
+                                <th>@brand.Name</th>
+                            }
                         }
                     </tr>
                 </thead>
@@ -39,7 +51,7 @@
                     @foreach (var row in report.PricePointReportRows)
                     {
                         <tr>
-                            <td>@row.Price</td>
+                            <td>@(  (row.Price/10).ToString("####.0") )</td>
                             @foreach (var brand in row.PricePointBrands)
                             {
                                 <td>@brand.Count</td>

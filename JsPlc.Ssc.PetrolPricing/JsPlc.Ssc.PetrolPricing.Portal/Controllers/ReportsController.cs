@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Web.Http;
 using JsPlc.Ssc.PetrolPricing.Models;
 using JsPlc.Ssc.PetrolPricing.Models.Enums;
 using JsPlc.Ssc.PetrolPricing.Models.ViewModels;
@@ -9,7 +10,7 @@ using System.Web.Mvc;
 
 namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 {
-    [Authorize]
+    [System.Web.Mvc.Authorize]
     public class ReportsController : Controller
     {
         private readonly ServiceFacade _serviceFacade = new ServiceFacade();
@@ -21,7 +22,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             return View();
         }
 
-        [HttpGet]
+        [System.Web.Mvc.HttpGet]
         public ActionResult CompetitorSites(CompetitorSiteViewModel item)
         {
             if (ModelState.IsValid)
@@ -38,13 +39,19 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             return View(item);
         }
 
-        [HttpGet]
-        public ActionResult PricePoints(PricePointReportContainerViewModel item)
+        [System.Web.Mvc.HttpGet]
+        public ActionResult PricePoints(string For="")
         {
-            if (!item.For.HasValue) item.For = DateTime.Now;
+            var item = new PricePointReportContainerViewModel{For = For};
 
-            var dieselReport = _serviceFacade.GetPricePoints(item.For.Value, (int)FuelTypeItem.Diesel);
-            var unleadedReport = _serviceFacade.GetPricePoints(item.For.Value, (int)FuelTypeItem.Unleaded);
+            DateTime forDate;
+            if (!DateTime.TryParse(item.For, out forDate))
+                forDate = DateTime.Now;
+
+            item.ForDate = forDate;
+
+            var dieselReport = _serviceFacade.GetPricePoints(forDate, (int)FuelTypeItem.Diesel);
+            var unleadedReport = _serviceFacade.GetPricePoints(forDate, (int)FuelTypeItem.Unleaded);
 
             item.PricePointReports.Add(dieselReport);
             item.PricePointReports.Add(unleadedReport);
@@ -52,7 +59,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             return View(item);
         }
 
-        [HttpGet]
+        [System.Web.Mvc.HttpGet]
         public ActionResult NationalAverage(NationalAverageReportContainerViewModel item)
         {
             if (!item.For.HasValue) item.For = DateTime.Now;

@@ -166,7 +166,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         /// </summary>
         /// <param name="siteId"></param>
         /// <returns></returns>
-        CompetitorSiteReportViewModel GeReporttCompetitorSite(int siteId);
+        CompetitorSiteReportViewModel GetReportCompetitorSite(int siteId);
 
         /// <summary>
         /// Gets the details of the number of sites at each price point, split by brand

@@ -7,7 +7,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
     {
         public CompetitorSiteReportViewModel GetReportCompetitorSites(int siteId)
         {
-            return _db.GeReporttCompetitorSite(siteId);
+            return _db.GetReportCompetitorSite(siteId);
         }
 
         public PricePointReportViewModel GetReportPricePoints(DateTime when, int fuelTypeId)
