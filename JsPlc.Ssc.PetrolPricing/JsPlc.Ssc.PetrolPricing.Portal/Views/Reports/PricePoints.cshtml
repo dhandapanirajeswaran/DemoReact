@@ -10,10 +10,8 @@
 <div class="report">
     <h2>Report - View Number Of Sites At Each Price Point</h2>
 
-    @using (Html.BeginForm(FormMethod.Get))
+    @using (Html.BeginForm("PricePoints", "Reports", FormMethod.Get))
     {
-        @Html.AntiForgeryToken()
-
         <div class="form-inline">
             <div class="form-group">
                 <label>When:</label>&nbsp;
@@ -34,24 +32,17 @@
                 <thead>
                     <tr>
                         <th>Price (£)</th>
-                        
-                        @{
-                            var pricePointReportRowViewModel = report.PricePointReportRows.FirstOrDefault();
-                        }
-                        @if (pricePointReportRowViewModel != null)
-                        {
-                            foreach (var brand in pricePointReportRowViewModel.PricePointBrands)
+                            @foreach (var brand in report.PricePointReportRows.First().PricePointBrands)
                             {
                                 <th>@brand.Name</th>
                             }
-                        }
                     </tr>
                 </thead>
                 <tbody>
                     @foreach (var row in report.PricePointReportRows)
                     {
                         <tr>
-                            <td>@(  (row.Price/10).ToString("####.0") )</td>
+                            <td>@(  (row.Price/10).ToString("###0.0") )</td>
                             @foreach (var brand in row.PricePointBrands)
                             {
                                 <td>@brand.Count</td>

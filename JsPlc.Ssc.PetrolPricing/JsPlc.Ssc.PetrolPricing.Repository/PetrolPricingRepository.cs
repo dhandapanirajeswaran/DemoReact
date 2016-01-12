@@ -1223,8 +1223,10 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                         var reportRowItem = result.PricePointReportRows.FirstOrDefault(x => x.Price == distinctPrice);
                         if (reportRowItem == null)
                         {
-                            reportRowItem = new PricePointReportRowViewModel();
-                            reportRowItem.Price = distinctPrice;
+                            reportRowItem = new PricePointReportRowViewModel
+                            {
+                                Price = distinctPrice
+                            };
                             result.PricePointReportRows.Add(reportRowItem);
                         }
 
@@ -1233,8 +1235,10 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                             var b = reportRowItem.PricePointBrands.FirstOrDefault(x => x.Name == distinctBrand);
                             if (b == null)
                             {
-                                b = new PricePointBrandViewModel();
-                                b.Name = distinctBrand;
+                                b = new PricePointBrandViewModel
+                                {
+                                    Name = distinctBrand
+                                };
                                 reportRowItem.PricePointBrands.Add(b);
                             }
                             b.Count += competitorSites.Count(x => x.Brand == distinctBrand && x.CatNo == dailyPrice.CatNo);
@@ -1252,39 +1256,46 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         {
             var result = new NationalAverageReportViewModel();
             
-            var fuelTypeIds = new List<int>() { (int)FuelTypeItem.Diesel, (int)FuelTypeItem.Unleaded };
-            var dailyPrices = _context.DailyPrices.Where(x => x.DateOfPrice == when && fuelTypeIds.Contains(x.FuelTypeId));
+            var fuelTypeIds = new List<int> { (int)FuelTypeItem.Diesel, (int)FuelTypeItem.Unleaded };
+
+            // Ignore this approach.. which uses Date Of Price from DailyPrice, instead see next line..
+            //var dailyPrices = _context.DailyPrices.Where(x => x.DateOfPrice == when && fuelTypeIds.Contains(x.FuelTypeId));
+
+            // Report uses Prices as per date of upload..(not date of Price in DailyPrice).. 
+            var dailyPrices = _context.DailyPrices.Where(x => DbFunctions.DiffDays(x.DailyUpload.UploadDateTime, when) == 0 && fuelTypeIds.Contains(x.FuelTypeId)).ToList();
+            
             var fuels = _context.FuelType.ToList();
 
             foreach (var fuelType in fuelTypeIds)
             {
                 var f = fuels.FirstOrDefault(x => x.Id == fuelType);
-                if (f != null)
+                if (f == null) continue;
+
+                var fuelRow = new NationalAverageReportFuelViewModel();
+                result.Fuels.Add(fuelRow);
+                fuelRow.FuelName = f.FuelTypeName;
+
+                var distinctCatNos = dailyPrices.Select(x => x.CatNo).Distinct().ToList();
+                var competitorSites = _context.Sites.Where(x => distinctCatNos.Contains(x.CatNo.Value) && !x.IsSainsburysSite).ToList();
+                var distinctBrands = competitorSites.Select(x => x.Brand).Distinct().OrderBy(x => x).ToList();
+
+                foreach (var brand in distinctBrands)
                 {
-                    var fuelRow = new NationalAverageReportFuelViewModel();
-                    result.Fuels.Add(fuelRow);
-                    fuelRow.FuelName = f.FuelTypeName;
+                    var brandAvg = new NationalAverageReportBrandViewModel();
+                    fuelRow.Brands.Add(brandAvg);
+                    brandAvg.BrandName = brand;
 
-                    var distinctCatNos = dailyPrices.Select(x => x.CatNo).Distinct().ToList();
-                    var competitorSites = _context.Sites.Where(x => distinctCatNos.Contains(x.CatNo.Value) && !x.IsSainsburysSite).ToList();
-                    var distinctBrands = competitorSites.Select(x => x.Brand).Distinct().OrderBy(x => x).ToList();
+                    var brandCatsNos = competitorSites.Where(x => x.Brand == brand).Where(x => x.CatNo.HasValue).Select(x => x.CatNo.Value).ToList();
+                    var pricesList = dailyPrices.Where(x => x.FuelTypeId == fuelType && brandCatsNos.Contains(x.CatNo)).ToList();
 
-                    foreach (var brand in distinctBrands)
-                    {
-                        var brandAvg = new NationalAverageReportBrandViewModel();
-                        fuelRow.Brands.Add(brandAvg);
-                        brandAvg.BrandName = brand;
-
-                        var brandCatsNos = competitorSites.Where(x => x.Brand == brand).Where(x => x.CatNo.HasValue).Select(x => x.CatNo.Value).ToList();
-                        brandAvg.Average = dailyPrices.Where(x => x.FuelTypeId == fuelType && brandCatsNos.Contains(x.CatNo)).Average(x => x.ModalPrice);
-                    }
+                    brandAvg.Average = pricesList.Any() ? (int)pricesList.Average(x => x.ModalPrice): 0;
                 }
             }
 
             return result;
         }
 
-        private int Count(IEnumerable<SiteToCompetitor> data, int min, int max)
+        private static int Count(IEnumerable<SiteToCompetitor> data, int min, int max)
         {
             var result = 0;
             if (data != null)

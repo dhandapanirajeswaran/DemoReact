@@ -1,14 +1,17 @@
 ﻿@model JsPlc.Ssc.PetrolPricing.Models.ViewModels.NationalAverageReportContainerViewModel
 @{
-    var requestedDate = @Model.For.Value.Date.ToString("dd-MMM-yyyy");
+    if (!Model.ForDate.HasValue)
+    {
+        Model.ForDate = DateTime.Now;
+    }
+
+    var requestedDate = @Model.ForDate.Value.Date.ToString("dd-MMM-yyyy");
 }
 
 <h2>Report - National Average</h2>
 
-@using (Html.BeginForm())
+@using (Html.BeginForm("NationalAverage", "Reports", FormMethod.Get))
 {
-    @Html.AntiForgeryToken()
-
     <div class="form-inline">
         <div class="form-group">
             <label>When:</label>&nbsp;
@@ -50,7 +53,7 @@
                     }
                     @foreach (var brand in fuelType.Brands)
                     {
-                        <td>@brand.Average</td>
+                        <td>@(  (brand.Average / 10).ToString("###0.0"))</td>
                     }
                 </tr>
             }

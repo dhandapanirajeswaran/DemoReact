@@ -35,6 +35,11 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
             return Ok(result);
         }
 
+        /// <summary>
+        /// National average report
+        /// </summary>
+        /// <param name="when"></param>
+        /// <returns></returns>
         [HttpGet]
         [Route("api/GetNationalAverage/{when}")]
         public IHttpActionResult GetNationalAverage([FromUri]DateTime when)

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using System.Web.Http;
 using JsPlc.Ssc.PetrolPricing.Models;
 using JsPlc.Ssc.PetrolPricing.Models.Enums;
@@ -60,10 +61,15 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
         }
 
         [System.Web.Mvc.HttpGet]
-        public ActionResult NationalAverage(NationalAverageReportContainerViewModel item)
+        public ActionResult NationalAverage(string For="")
         {
-            if (!item.For.HasValue) item.For = DateTime.Now;
-            item.NationalAverageReport = _serviceFacade.GetNationalAverage(item.For.Value);
+            var item = new NationalAverageReportContainerViewModel {For = For};
+            DateTime forDate;
+            if (!DateTime.TryParse(item.For, out forDate))
+                forDate = DateTime.Now;
+
+            item.ForDate = forDate;
+            item.NationalAverageReport = _serviceFacade.GetNationalAverage(forDate);
             return View(item);
         }
 
