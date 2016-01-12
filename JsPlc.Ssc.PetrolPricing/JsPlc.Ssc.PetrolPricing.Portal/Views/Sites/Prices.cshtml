@@ -8,6 +8,10 @@
 
 @*<form id="myform" method="post" action="emailAllSites">*@
 @*</form>*@
+<style type="text/css">
+    .smaller-normal { font-size: smaller; font-weight: normal }
+    .smaller { font-size: smaller; }
+</style>
 
 <h2>Site Prices</h2>
 
@@ -28,7 +32,7 @@
                     <p>Are you sure you want to email <strong>ALL</strong> Sites their daily price update?</p>
                     <h5 style="color: red" data-bind="visible: pageHasUnsavedChanges">
                         The prices shown on screen are still UNSAVED.
-                        The emails will not be sent with these unsaved prices.
+                        The emails will NOT be sent with these unsaved prices.
                         If you wish to send these prices, please close this popup and click "Save Prices" first.
                     </h5>
                 </div>
@@ -48,10 +52,10 @@
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                     <h4 class="modal-title" id="myModalLabel">Send Email</h4>
-                    <h5 style="color: red" data-bind="visible: pageHasUnsavedChanges">The prices shown are UNSAVED. The email will not be sent with these unsaved prices. If you wish to send these prices, please close this popup and click "Save Prices" first.</h5>
+                    <h5 style="color: red" data-bind="visible: pageHasUnsavedChanges">The prices shown are UNSAVED. The email will NOT be sent with these unsaved prices. If you wish to send these prices, please close this popup and click "Save Prices" first.</h5>
                     @*<span xdata-bind="text: emailSendResult"></span>*@
                 </div>
-                <div class="modal-body">
+                <div class="modal-body smaller">
                     <h2 style="visibility: hidden; display: none">
                         kSiteName:<span data-bind="text: kSiteName"></span>
                         kStartDateMonthYear:<span data-bind="text: kStartDateMonthYear"></span>
@@ -88,7 +92,7 @@
                     </ul>
                 </div>
                 <div class="modal-footer">
-                    <h5 style="color: red" data-bind="visible: pageHasUnsavedChanges">The prices shown are UNSAVED. The email will not be sent with these unsaved prices. If you wish to send these prices, please close this popup and click "Save Prices" first.</h5>
+                    <h5 style="color: red" data-bind="visible: pageHasUnsavedChanges">The prices shown are UNSAVED. The email will NOT be sent with these unsaved prices. If you wish to send these prices, please close this popup and click "Save Prices" first.</h5>
                     <button type="button" class="btn btn-default" data-dismiss="modal" data-bind="click: hideEmailPopup">Cancel</button>
                     <input type="button" class="btn btn-default" value="Email Site"
                            id="EmailSiteButton" onclick="" data-dismiss="modal" data-bind="visible: showEmailSiteButton, click: emailSendClick" />
@@ -145,9 +149,33 @@
                         <th><span>Cat No.</span></th>
                         <th><span>PFS No.</span></th>
 
-                        <th colspan="2"><span class="fuelHeaderGroup">&nbsp;Unleaded&nbsp;</span></th>
-                        <th colspan="2"><span class="fuelHeaderGroup">&nbsp;Diesel&nbsp;</span></th>
-                        <th colspan="2"><span class="fuelHeaderGroup">&nbsp;Super Unleaded&nbsp;</span></th>
+                        <th colspan="2">
+                            <span class="smaller-normal" data-bind="visible: !$root.ViewingHistorical()">
+                                Change(+/-n):<input type="text" style="width: 30px; height: 20px;" data-bind="value: $root.unleadedOffset" />
+                                <input type="button" value="Go" data-bind="click: changePricePerLitreUnleaded" />
+                            </span>
+                            <br />
+                            <span class="fuelHeaderGroup">
+                                &nbsp;Unleaded&nbsp;
+                            </span>
+
+                        </th>
+                        <th colspan="2">
+                            <span class="smaller-normal" data-bind="visible: !$root.ViewingHistorical()">
+                                Change(+/-n):<input type="text" style="width: 30px; height: 20px;" data-bind="value: $root.dieselOffset" />
+                                <input type="button" value="Go" data-bind="click: changePricePerLitreDiesel" />
+                                <br />
+                            </span>
+                            <span class="fuelHeaderGroup">&nbsp;Diesel&nbsp;</span>
+                        </th>
+                        <th colspan="2">
+                            <span class="smaller-normal" data-bind="visible: !$root.ViewingHistorical()">
+                                Change(+/-n):<input type="text" style="width: 30px; height: 20px;" data-bind="value: $root.superOffset" />
+                                <input type="button" value="Go" data-bind="click: changePricePerLitreSuper" />
+                                <br />
+                            </span>
+                            <span class="fuelHeaderGroup">&nbsp;Super Unleaded&nbsp;</span>
+                        </th>
                     </tr>
                     <tr>
                         <!-- 12 column layout -->
