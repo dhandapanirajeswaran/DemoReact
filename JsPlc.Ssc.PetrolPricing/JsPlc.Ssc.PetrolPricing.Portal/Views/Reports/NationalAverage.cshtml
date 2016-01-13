@@ -53,7 +53,7 @@
                     }
                     @foreach (var brand in fuelType.Brands)
                     {
-                        <td>@(  (brand.Average / 10).ToString("###0.0"))</td>
+                        <td>@(  (brand.Average / 10.0).ToString("###0.0"))</td>
                     }
                 </tr>
             }
