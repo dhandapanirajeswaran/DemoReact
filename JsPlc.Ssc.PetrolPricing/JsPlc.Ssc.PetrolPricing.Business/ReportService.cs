@@ -20,5 +20,9 @@ namespace JsPlc.Ssc.PetrolPricing.Business
             return _db.GetReportNationalAverage(when);
         }
 
+        public PriceMovementReportViewModel GetReportPriceMovement(DateTime @from, DateTime to, int fuelTypeId)
+        {
+            return _db.GetReportPriceMovement(from, to, fuelTypeId);
+       }
     }
 }

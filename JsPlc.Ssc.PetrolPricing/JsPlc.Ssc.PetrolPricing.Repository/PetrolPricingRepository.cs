@@ -1295,6 +1295,13 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             return result;
         }
 
+        public PriceMovementReportViewModel GetReportPriceMovement(DateTime @from, DateTime to, int fuelTypeId)
+        {
+            var retval = new PriceMovementReportViewModel();
+
+            return retval;
+        }
+
         private static int Count(IEnumerable<SiteToCompetitor> data, int min, int max)
         {
             var result = 0;

@@ -68,11 +68,13 @@
     <Compile Include="ViewModels\NationalAverageReportBrandViewModel.cs" />
     <Compile Include="ViewModels\NationalAverageReportContainerViewModel.cs" />
     <Compile Include="ViewModels\OverridePricePostViewModel.cs" />
+    <Compile Include="ViewModels\PriceMovementReportContainerViewModel.cs" />
     <Compile Include="ViewModels\PricePointBrandViewModel.cs" />
     <Compile Include="ViewModels\PricePointReportRowViewModel.cs" />
     <Compile Include="ViewModels\PricePointReportContainerViewModel.cs" />
     <Compile Include="ViewModels\NationalAverageReportViewModel.cs" />
     <Compile Include="ViewModels\PricePointReportViewModel.cs" />
+    <Compile Include="ViewModels\SelectItemViewModel.cs" />
     <Compile Include="ViewModels\SiteViewModel.cs" />
     <Compile Include="SitePrice.cs" />
     <Compile Include="DailyPrice.cs" />

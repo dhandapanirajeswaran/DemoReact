@@ -183,6 +183,15 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         /// <returns></returns>
         NationalAverageReportViewModel GetReportNationalAverage(DateTime when);
 
+        /// <summary>
+        /// Gets the price movement for the selected fuel within the selected dates
+        /// </summary>
+        /// <param name="from"></param>
+        /// <param name="to"></param>
+        /// <param name="fuelTypeId"></param>
+        /// <returns></returns>
+        PriceMovementReportViewModel GetReportPriceMovement(DateTime @from, DateTime to, int fuelTypeId);
+
         Task<List<EmailSendLog>> GetEmailSendLog(int siteId, DateTime forDate);
     }
 

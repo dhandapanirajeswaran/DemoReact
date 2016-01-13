@@ -1,6 +1,7 @@
 ﻿using JsPlc.Ssc.PetrolPricing.Business;
 using System;
 using System.Web.Http;
+using JsPlc.Ssc.PetrolPricing.Models.ViewModels;
 
 namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
 {
@@ -46,6 +47,22 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
         {
             var rs = new ReportService();
             var result = rs.GetReportNationalAverage(when);
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// PriceMovement Report
+        /// </summary>
+        /// <param name="from"></param>
+        /// <param name="to"></param>
+        /// <param name="fuelTypeId"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("api/GetPriceMovement/{from}/{to}/{fuelTypeId}")]
+        public IHttpActionResult GetPriceMovement([FromUri]DateTime from, [FromUri]DateTime to, [FromUri]int fuelTypeId)
+        {
+            var rs = new ReportService();
+            var result = rs.GetReportPriceMovement(from, to, fuelTypeId);
             return Ok(result);
         }
     }

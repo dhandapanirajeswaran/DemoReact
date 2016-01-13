@@ -136,6 +136,5 @@ namespace JsPlc.Ssc.PetrolPricing.Models.Common
                 totalCount, successCount, errorCount, warningCount);
             return retval;
         }
-
     }
 }

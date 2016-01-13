@@ -331,5 +331,13 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             return (response.IsSuccessStatusCode) ? result : null;
         }
 
+        public PriceMovementReportViewModel GetPriceMovement(DateTime fromDate, DateTime toDate, int fuelTypeId)
+        {
+            var url = string.Format("api/GetPriceMovement/{0}/{1}/{2}", fromDate.ToString("ddMMMyyyy"), toDate.ToString("ddMMMyyyy"), fuelTypeId);
+
+            var response = _client.Value.GetAsync(url).Result;
+            var result = response.Content.ReadAsAsync<PriceMovementReportViewModel>().Result;
+            return (response.IsSuccessStatusCode) ? result : null;
+        }
     }
 }
