@@ -14,15 +14,14 @@
     var requestedToDate = @Model.ToDate.Value.Date.ToString("dd-MMM-yyyy");
 }
 <style>
-    select{
+    select {
         height: 30px;
         font-size: 15px;
     }
-     
 </style>
 <div class="report">
     <h2>Report - Price Movement within selected dates</h2>
-    
+
     <div id="errorMsgs" style="color: red"></div>
     <div id="msgs"></div>
     @using (Html.BeginForm("PriceMovement", "Reports", FormMethod.Get, new { onkeydown = "return event.keyCode!=13", onsubmit = "return false" }))
@@ -49,7 +48,13 @@
             Price movement of @Model.FuelTypeName
             From: @Model.FromDate.Value.ToString("dd-MMM-yyyy") - To: @Model.ToDate.Value.ToString("dd-MMM-yyyy")
         </h2>
-
+        <!-- EXPORT Button -->
+        <div class="row">
+            <div class="col-md-12 right">
+                <input type="button" id="btnExportReport" value="Export to Excel" />
+            </div>
+        </div>
+        <!-- Report Data -->
         <table class="table table-hover table-responsive table-striped">
             <thead>
                 <tr>
@@ -81,7 +86,7 @@
                         }
                         @foreach (var dataItem in siteRow.DataItems)
                         {
-                            <td>@(  (dataItem.PriceValue/10.0).ToString("###0.0"))</td>
+                            <td>@(  (dataItem.PriceValue / 10.0).ToString("###0.0"))</td>
                         }
                     </tr>
                 }

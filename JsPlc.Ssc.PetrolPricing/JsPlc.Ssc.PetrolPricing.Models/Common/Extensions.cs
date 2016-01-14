@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net.Mail;
 using System.Threading;
 using JsPlc.Ssc.PetrolPricing.Models.Dtos;
+using JsPlc.Ssc.PetrolPricing.Models.ViewModels;
 
 namespace JsPlc.Ssc.PetrolPricing.Models.Common
 {
@@ -135,6 +136,37 @@ namespace JsPlc.Ssc.PetrolPricing.Models.Common
             retval = String.Format("Email send summary: \n Successful: {1} of {0} \n Errors: {2} of {0} \n Warnings: {3} of {0} \n ",
                 totalCount, successCount, errorCount, warningCount);
             return retval;
+        }
+
+        public static DataTable ToPriceMovementReportDataTable(
+            this PriceMovementReportContainerViewModel reportContainer, string tableName = "PriceMovementReport")
+        {
+            var dt = new DataTable(tableName);
+            dt.Columns.Add("Sites");
+
+            // Setup Table Columns - Sites  Date1   Date2   Date3...
+            if (!reportContainer.PriceMovementReport.ReportRows.First().DataItems.Any())
+            {
+                dt.Columns.Add("Status");
+            }
+            var datesAsString = reportContainer.PriceMovementReport.Dates.Select(x => x.ToString("dd-MMM-yyyy")).ToArray();
+            foreach (var dateString in datesAsString)
+            {
+                dt.Columns.Add(dateString);
+            }
+            foreach (var siteRow in reportContainer.PriceMovementReport.ReportRows)
+            {
+                DataRow dr = dt.NewRow();
+                dr[0] = siteRow.SiteName;
+                var i = 1;
+                foreach (var dataItem in siteRow.DataItems)
+                {
+                    dr[i] = (dataItem.PriceValue/10.0).ToString("###0.0");
+                    i += 1;
+                }
+                dt.Rows.Add(dr);
+            }
+            return dt;
         }
     }
 }

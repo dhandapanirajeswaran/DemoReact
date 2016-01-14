@@ -1303,6 +1303,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             {
                 dates.Add(d);
             }
+            retval.Dates = dates;
 
             var sitesWithPrices = GetSitesWithEmailsAndPrices(fromDt, toDt).ToList();
             foreach (var s in sitesWithPrices)

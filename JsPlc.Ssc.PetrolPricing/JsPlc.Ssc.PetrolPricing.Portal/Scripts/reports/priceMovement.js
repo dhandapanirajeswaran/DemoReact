@@ -27,8 +27,26 @@
             $('#fuelTypes').focus();
             return false;
         }
-       
+        
         window.location.href = '/reports/PriceMovement?DateFrom=' + dt1 + "&DateTo=" + dt2 + "&Id=" + id;
+        return true;
     });
+    $("#btnExportReport").click(function () {
+        $('#errorMsgs').html("");
+        $('#msgs').html("");
+
+        var id = $('#fuelTypes').val();
+        var dt1 = forDp ? forDp.val() : $('#DateFrom').val();
+        var dt2 = toDp ? toDp.val() : $('#DateTo').val();
+        if (id == 0) {
+            $('#errorMsgs').html("Please select a fuel");
+            $('#fuelTypes').focus();
+            return false;
+        }
+
+        window.location.href = '/reports/ExportPriceMovement?DateFrom=' + dt1 + "&DateTo=" + dt2 + "&Id=" + id;
+        return true;
+    });
+
 });
 

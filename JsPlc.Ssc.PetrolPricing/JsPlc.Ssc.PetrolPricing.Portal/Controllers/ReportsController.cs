@@ -1,15 +1,19 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Data;
+using System.IO;
+using System.Net.Http;
 using System.Runtime.InteropServices;
 using System.Web.Http;
+using ClosedXML.Excel;
 using JsPlc.Ssc.PetrolPricing.Models;
+using JsPlc.Ssc.PetrolPricing.Models.Common;
 using JsPlc.Ssc.PetrolPricing.Models.Enums;
 using JsPlc.Ssc.PetrolPricing.Models.ViewModels;
 using JsPlc.Ssc.PetrolPricing.Portal.Facade;
 using System;
 using System.Linq;
 using System.Web.Mvc;
-using JsPlc.Ssc.PetrolPricing.Portal.Helper.Extensions;
 
 namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 {
@@ -80,6 +84,64 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
         {
             var listOfFuelIds = new []{1, 2, 6};
 
+            var fuelsSelectList = LoadFuels(listOfFuelIds, id);
+            ViewData["fuelTypes"] = fuelsSelectList;
+
+            var reportContainer = LoadPriceMovementReport(dateFrom, dateTo, id, fuelsSelectList);
+
+            var model = reportContainer;
+            return View(model);
+        }
+
+        [System.Web.Mvc.HttpGet]
+        public ActionResult ExportPriceMovement(string dateFrom = "", string dateTo = "", int id = 0)
+        {
+            var listOfFuelIds = new[] { 1, 2, 6 };
+
+            var fuelsSelectList = LoadFuels(listOfFuelIds, id);
+            ViewData["fuelTypes"] = fuelsSelectList;
+            var reportContainer = LoadPriceMovementReport(dateFrom, dateTo, id, fuelsSelectList);
+
+            var dt = reportContainer.ToPriceMovementReportDataTable(); // default tableName = PriceMovementReport (also becomes sheet name in Xlsx)
+            if (dt.Rows.Count <= 2 || !reportContainer.FromDate.HasValue || !reportContainer.ToDate.HasValue)
+            {
+                return new ContentResult { Content = "No data to download..", ContentType = "text/plain" };
+            }
+
+            using (var wb = new XLWorkbook())
+            {
+                wb.Worksheets.Add(dt);
+                wb.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+                wb.Style.Font.Bold = true;
+
+                Response.Clear();
+                Response.Buffer = true;
+                Response.Charset = "";
+                Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                string filenameSuffix = String.Format("[{0}] [{1} to {2}]",
+                    reportContainer.FuelTypeName,
+                    reportContainer.FromDate.Value.ToString("dd-MMM-yyyy"),
+                    reportContainer.ToDate.Value.ToString("dd-MMM-yyyy"));
+
+                string downloadHeader = String.Format("attachment;filename= PriceMovementReport{0}.xlsx",
+                    filenameSuffix);
+                Response.AddHeader("content-disposition", downloadHeader);
+
+                using (var myMemoryStream = new MemoryStream())
+                {
+                    wb.SaveAs(myMemoryStream);
+                    myMemoryStream.WriteTo(Response.OutputStream);
+                    Response.Flush();
+                    Response.End();
+                    return new EmptyResult();
+                }
+            }
+            //return RedirectToAction("Index", "Report");
+        }
+
+        private PriceMovementReportContainerViewModel LoadPriceMovementReport(string dateFrom, string dateTo, int id, 
+            SelectList fuelsSelectList)
+        {
             var reportContainer = new PriceMovementReportContainerViewModel();
 
             DateTime fromDate, toDate;
@@ -96,9 +158,6 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
                 toDate = tmpDate;
             }
 
-            var fuelsSelectList = LoadFuels(listOfFuelIds, id);
-            ViewData["fuelTypes"] = fuelsSelectList;
-
             reportContainer.FromDate = fromDate;
             reportContainer.ToDate = toDate;
             reportContainer.FuelTypeId = id;
@@ -112,9 +171,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
                     reportContainer.PriceMovementReport = _serviceFacade.GetPriceMovement(fromDate, toDate, id);
                 }
             }
-
-            var model = reportContainer;
-            return View(model);
+            return reportContainer;
         }
 
         /// <summary>

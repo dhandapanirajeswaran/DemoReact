@@ -20,6 +20,7 @@ namespace JsPlc.Ssc.PetrolPricing.Models.ViewModels
 
     public class PriceMovementReportViewModel
     {
+        public List<DateTime> Dates { get; set; }
         public List<PriceMovementReportRows> ReportRows { get; set; }
 
         public PriceMovementReportViewModel()
