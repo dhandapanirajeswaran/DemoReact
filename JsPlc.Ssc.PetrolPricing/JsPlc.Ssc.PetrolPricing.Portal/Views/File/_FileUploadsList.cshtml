@@ -35,7 +35,7 @@
             @Html.DisplayFor(modelItem => item.UploadType.UploadTypeName)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.UploadDateTime)
+            @item.UploadDateTime.ToString("dd-MMM-yyyy")
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.Status.Status)

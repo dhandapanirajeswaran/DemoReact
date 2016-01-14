@@ -125,7 +125,7 @@
                            style="background-color: #ececec; width: 100px" name="viewingDate" width="200"
                            data-bind="value: $root.InitDate" />
                 </div>
-                <div class="col-md-2 left"><button type="submit" class="btn btn-default" data-bind="click: loadNewDateData">Go</button></div>
+                <div class="col-md-2 left"><button type="button" class="btn btn-default" data-bind="click: loadNewDateData">Go</button></div>
             </div>
             <div class="col-md-3 right">
                 <button type="button" class="btn btn-default" id="btnSavePrices"
@@ -324,5 +324,7 @@
 <br />
 
 <script type="text/javascript">
-    require(["SitePricing"]);
+    require(["SitePricing"], function(prices) {
+        prices.go();
+    });
 </script>

@@ -38,11 +38,12 @@ require.config({
 
     },
     shim: {
-        "bootstrap-datepicker": { deps: ["jquery"] },
-        "bootstrap-datepickerGB": { deps: ["jquery", "bootstrap-datepicker"] },
+        "bootstrap-datepicker": { deps: ["jquery", "bootstrap"] },
+        "bootstrap-datepickerGB": { deps: ["jquery", "bootstrap", "bootstrap-datepicker"] },
         "jqueryval": { deps: ["jquery"] },
         "knockout": { deps: ["jquery"] },
-        "bootstrap": { deps: ["jquery"] }
+        "bootstrap": { deps: ["jquery"] },
+        "SitePricing": { deps: ["jquery", "bootstrap-datepickerGB"] }
         //"ko-binding-handlers": { deps: ["jquery"] }
         //"tableedit": { deps: ["tabletools"] }
     },
