@@ -190,7 +190,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         /// <param name="to"></param>
         /// <param name="fuelTypeId"></param>
         /// <returns></returns>
-        PriceMovementReportViewModel GetReportPriceMovement(DateTime @from, DateTime to, int fuelTypeId);
+        PriceMovementReportViewModel GetReportPriceMovement(DateTime from, DateTime to, int fuelTypeId);
 
         Task<List<EmailSendLog>> GetEmailSendLog(int siteId, DateTime forDate);
     }

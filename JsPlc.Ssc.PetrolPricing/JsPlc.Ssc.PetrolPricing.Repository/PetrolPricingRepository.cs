@@ -1295,11 +1295,39 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             return result;
         }
 
-        public PriceMovementReportViewModel GetReportPriceMovement(DateTime @from, DateTime to, int fuelTypeId)
+        public PriceMovementReportViewModel GetReportPriceMovement(DateTime fromDt, DateTime toDt, int fuelTypeId)
         {
             var retval = new PriceMovementReportViewModel();
+            var dates = new List<DateTime>();
+            for (var d = fromDt; d <= toDt; d = d.AddDays(1))
+            {
+                dates.Add(d);
+            }
 
+            var sitesWithPrices = GetSitesWithEmailsAndPrices(fromDt, toDt).ToList();
+            foreach (var s in sitesWithPrices)
+            {
+                var dataRow = new PriceMovementReportRows
+                {
+                    SiteId = s.Id, SiteName = s.SiteName, DataItems = new List<PriceMovementReportDataItems>()
+                };
+                retval.ReportRows.Add(dataRow);
+                var dataItems = dataRow.DataItems;
+
+                dataItems.AddRange(dates.Select(d => new PriceMovementReportDataItems
+                {
+                    PriceDate = d, PriceValue = GetPriceOnDate(s.Prices, d, fuelTypeId)
+                }));
+            }
             return retval;
+        }
+
+        private static int GetPriceOnDate(IEnumerable<SitePrice> sitePrices, DateTime d, int fuelId)
+        {
+            var price = sitePrices.FirstOrDefault(x => x.DateOfCalc.Equals(d) && x.FuelTypeId == fuelId);
+            return (price == null)
+                ? 0
+                : (price.OverriddenPrice == 0) ? price.SuggestedPrice : price.OverriddenPrice;
         }
 
         private static int Count(IEnumerable<SiteToCompetitor> data, int min, int max)
