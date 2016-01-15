@@ -168,5 +168,39 @@ namespace JsPlc.Ssc.PetrolPricing.Models.Common
             }
             return dt;
         }
+
+        public static List<DataTable> ToPricePointsReportDataTable(
+        this PricePointReportContainerViewModel reportContainer)
+        {
+            var retval = new List<DataTable>(); 
+            foreach (var report in reportContainer.PricePointReports)
+            {
+                var dt = new DataTable(report.FuelTypeName);
+
+                dt.Columns.Add("Price (£)");
+                // Setup Table Columns - Price(£) Brand1    Brand2   Brand3...
+                foreach (var brand in report.PricePointReportRows.First().PricePointBrands)
+                {
+                    dt.Columns.Add(brand.Name);
+                }
+                // Add row data to table..
+                foreach (var row in report.PricePointReportRows)
+                {
+                    DataRow dr = dt.NewRow();
+                    // 1st column is Price value
+                    dr[0] = ((row.Price/10).ToString("###0.0"));
+                    var i = 1;
+                    // 2nd col onwards are brand counts
+                    foreach (PricePointBrandViewModel brand in row.PricePointBrands)
+                    {
+                        dr[i] = brand.Count;
+                        i += 1;
+                    }
+                    dt.Rows.Add(dr);
+                }
+                retval.Add(dt);
+            }
+            return retval;
+        }
     }
 }

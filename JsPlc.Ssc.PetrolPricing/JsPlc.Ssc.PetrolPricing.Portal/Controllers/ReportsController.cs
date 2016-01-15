@@ -49,13 +49,11 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
         [System.Web.Mvc.HttpGet]
         public ActionResult PricePoints(string For="")
         {
-            var item = new PricePointReportContainerViewModel{For = For};
-
             DateTime forDate;
-            if (!DateTime.TryParse(item.For, out forDate))
+            if (!DateTime.TryParse(For, out forDate))
                 forDate = DateTime.Now;
 
-            item.ForDate = forDate;
+            var item = new PricePointReportContainerViewModel {ForDate = forDate};
 
             var dieselReport = _serviceFacade.GetPricePoints(forDate, (int)FuelTypeItem.Diesel);
             var unleadedReport = _serviceFacade.GetPricePoints(forDate, (int)FuelTypeItem.Unleaded);
@@ -103,7 +101,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             var reportContainer = LoadPriceMovementReport(dateFrom, dateTo, id, fuelsSelectList);
 
             var dt = reportContainer.ToPriceMovementReportDataTable(); // default tableName = PriceMovementReport (also becomes sheet name in Xlsx)
-            if (dt.Rows.Count <= 2 || !reportContainer.FromDate.HasValue || !reportContainer.ToDate.HasValue)
+            if (dt.Rows.Count <= 1 || !reportContainer.FromDate.HasValue || !reportContainer.ToDate.HasValue)
             {
                 return new ContentResult { Content = "No data to download..", ContentType = "text/plain" };
             }
@@ -124,6 +122,58 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
                     reportContainer.ToDate.Value.ToString("dd-MMM-yyyy"));
 
                 string downloadHeader = String.Format("attachment;filename= PriceMovementReport{0}.xlsx",
+                    filenameSuffix);
+                Response.AddHeader("content-disposition", downloadHeader);
+
+                using (var myMemoryStream = new MemoryStream())
+                {
+                    wb.SaveAs(myMemoryStream);
+                    myMemoryStream.WriteTo(Response.OutputStream);
+                    Response.Flush();
+                    Response.End();
+                    return new EmptyResult();
+                }
+            }
+            //return RedirectToAction("Index", "Report");
+        }
+
+        [System.Web.Mvc.HttpGet]
+        public ActionResult ExportPricePoints(string For = "")
+        {
+            DateTime forDate;
+            if (!DateTime.TryParse(For, out forDate))
+                forDate = DateTime.Now;
+
+            var reportContainer = new PricePointReportContainerViewModel { ForDate = forDate };
+
+            var dieselReport = _serviceFacade.GetPricePoints(forDate, (int)FuelTypeItem.Diesel);
+            var unleadedReport = _serviceFacade.GetPricePoints(forDate, (int)FuelTypeItem.Unleaded);
+
+            reportContainer.PricePointReports.Add(dieselReport);
+            reportContainer.PricePointReports.Add(unleadedReport);
+
+            var tables = reportContainer.ToPricePointsReportDataTable(); // Each tableName = As per fuelname in each PricePointReports
+            if (!tables.Any())
+            {
+                return new ContentResult { Content = "No data to download..", ContentType = "text/plain" };
+            }
+
+            using (var wb = new XLWorkbook())
+            {
+                foreach (var dt in tables)
+                {
+                    wb.Worksheets.Add(dt);
+                }
+                wb.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+                wb.Style.Font.Bold = true;
+
+                Response.Clear();
+                Response.Buffer = true;
+                Response.Charset = "";
+                Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                string filenameSuffix = String.Format("[{0}]", forDate.ToString("dd-MMM-yyyy"));
+
+                string downloadHeader = String.Format("attachment;filename= PricePointsReport{0}.xlsx",
                     filenameSuffix);
                 Response.AddHeader("content-disposition", downloadHeader);
 

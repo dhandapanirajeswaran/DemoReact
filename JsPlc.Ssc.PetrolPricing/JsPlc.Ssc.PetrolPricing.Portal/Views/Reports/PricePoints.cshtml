@@ -20,6 +20,17 @@
             <input type="button" value="View" class="btn btn-primary" id="btnViewReport" />
         </div>
     }
+    
+    @if (Model.PricePointReports.Any())
+    {
+        <!-- EXPORT Button -->
+        <div class="row">
+            <div class="col-md-12 right">
+                <input type="button" id="btnExportReport" value="Export to Excel" />
+            </div>
+        </div>
+        <!-- Report Data -->
+    }
 
     @foreach (var report in Model.PricePointReports)
     {
