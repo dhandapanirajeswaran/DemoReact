@@ -172,10 +172,21 @@ namespace JsPlc.Ssc.PetrolPricing.Models.Common
         public static List<DataTable> ToPricePointsReportDataTable(
         this PricePointReportContainerViewModel reportContainer)
         {
-            var retval = new List<DataTable>(); 
+            var retval = new List<DataTable>();
             foreach (var report in reportContainer.PricePointReports)
             {
                 var dt = new DataTable(report.FuelTypeName);
+
+                if (!report.PricePointReportRows.Any())
+                {
+                    dt.Columns.Add("No Data");
+                    var dr = dt.NewRow();
+                    DateTime forDate = reportContainer.ForDate.HasValue ? reportContainer.ForDate.Value : DateTime.Now;
+                    dr[0] = String.Format("Sorry, no {0} fuel data was found on {1}", report.FuelTypeName, forDate.ToString("dd-MMM-yyyy"));
+                    dt.Rows.Add(dr);
+                    retval.Add(dt);
+                    continue;
+                }
 
                 dt.Columns.Add("Price (£)");
                 // Setup Table Columns - Price(£) Brand1    Brand2   Brand3...
@@ -201,6 +212,44 @@ namespace JsPlc.Ssc.PetrolPricing.Models.Common
                 retval.Add(dt);
             }
             return retval;
+        }
+
+        public static DataTable ToNationalAverageReportDataTable(
+            this NationalAverageReportContainerViewModel reportContainer, string tableName = "NationalAverage")
+        {
+            var dt = new DataTable(tableName);
+            dt.Columns.Add("FuelType");
+
+            if (!reportContainer.NationalAverageReport.Fuels.First().Brands.Any())
+            {
+                dt.Columns.Add("Status");
+            }
+
+            // Setup Table Columns - Fuel Type Brand1   Brand2   Brand3...
+            foreach (var brand in reportContainer.NationalAverageReport.Fuels.First().Brands)
+            {
+                dt.Columns.Add(brand.BrandName);
+            }
+
+            // Data Rows
+            foreach (var fuelType in reportContainer.NationalAverageReport.Fuels)
+            {
+                DataRow dr = dt.NewRow();
+                dr[0] = fuelType.FuelName;
+                var i = 1;
+
+                if (!fuelType.Brands.Any())
+                {
+                    dr[1] = "There is no data available";
+                }
+                foreach (var brand in fuelType.Brands)
+                {
+                    dr[i] = (brand.Average/10.0).ToString("###0.0");
+                    i += 1;
+                }
+                dt.Rows.Add(dr);
+            }
+            return dt;
         }
     }
 }

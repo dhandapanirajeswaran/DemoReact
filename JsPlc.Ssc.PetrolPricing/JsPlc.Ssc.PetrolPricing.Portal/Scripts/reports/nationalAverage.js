@@ -1,6 +1,6 @@
-﻿var _forDp
-$(function () {
-    _forDp = $('.datepicker').datepicker({
+﻿$(function () {
+    var forDp;
+    forDp = $('.datepicker').datepicker({
         language: "en-GB",
         autoClose: true,
         format: 'd-M-yyyy',
@@ -9,8 +9,12 @@ $(function () {
     });
 
     $("#btnViewReport").click(function () {
-        var dt = _forDp.val();
+        var dt = forDp.val();
         window.location.href = '/reports/nationalAverage?For=' + dt;
+    });
+    $("#btnExportReport").click(function () {
+        var dt = forDp.val();
+        window.location.href = '/reports/ExportNationalAverage?For=' + dt;
     });
 });
 

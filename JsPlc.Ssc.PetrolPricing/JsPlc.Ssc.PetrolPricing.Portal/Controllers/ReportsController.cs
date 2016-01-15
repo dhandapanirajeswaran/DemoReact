@@ -67,13 +67,16 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
         [System.Web.Mvc.HttpGet]
         public ActionResult NationalAverage(string For="")
         {
-            var item = new NationalAverageReportContainerViewModel {For = For};
             DateTime forDate;
-            if (!DateTime.TryParse(item.For, out forDate))
+            if (!DateTime.TryParse(For, out forDate))
                 forDate = DateTime.Now;
 
-            item.ForDate = forDate;
-            item.NationalAverageReport = _serviceFacade.GetNationalAverage(forDate);
+            var item = new NationalAverageReportContainerViewModel
+            {
+                ForDate = forDate,
+                NationalAverageReport = _serviceFacade.GetNationalAverage(forDate)
+            };
+
             return View(item);
         }
 
@@ -122,6 +125,54 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
                     reportContainer.ToDate.Value.ToString("dd-MMM-yyyy"));
 
                 string downloadHeader = String.Format("attachment;filename= PriceMovementReport{0}.xlsx",
+                    filenameSuffix);
+                Response.AddHeader("content-disposition", downloadHeader);
+
+                using (var myMemoryStream = new MemoryStream())
+                {
+                    wb.SaveAs(myMemoryStream);
+                    myMemoryStream.WriteTo(Response.OutputStream);
+                    Response.Flush();
+                    Response.End();
+                    return new EmptyResult();
+                }
+            }
+            //return RedirectToAction("Index", "Report");
+        }
+
+        [System.Web.Mvc.HttpGet]
+        public ActionResult ExportNationalAverage(string For="")
+        {
+            DateTime forDate;
+            if (!DateTime.TryParse(For, out forDate))
+                forDate = DateTime.Now;
+
+            var reportContainer = new NationalAverageReportContainerViewModel
+            {
+                ForDate = forDate,
+                NationalAverageReport = _serviceFacade.GetNationalAverage(forDate)
+            };
+
+            var dt = reportContainer.ToNationalAverageReportDataTable(); // default tableName = PriceMovementReport (also becomes sheet name in Xlsx)
+
+            if (dt.Rows.Count <= 1) // Model != null && Model.NationalAverageReport != null && Model.NationalAverageReport.Fuels.Any()
+            {
+                return new ContentResult { Content = "No data to download..", ContentType = "text/plain" };
+            }
+
+            using (var wb = new XLWorkbook())
+            {
+                wb.Worksheets.Add(dt);
+                wb.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+                wb.Style.Font.Bold = true;
+
+                Response.Clear();
+                Response.Buffer = true;
+                Response.Charset = "";
+                Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                string filenameSuffix = String.Format("[{0}]", forDate.ToString("dd-MMM-yyyy"));
+
+                string downloadHeader = String.Format("attachment;filename= NationalAverageReport{0}.xlsx",
                     filenameSuffix);
                 Response.AddHeader("content-disposition", downloadHeader);
 
