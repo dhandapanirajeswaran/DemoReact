@@ -1317,18 +1317,171 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
                 dataItems.AddRange(dates.Select(d => new PriceMovementReportDataItems
                 {
-                    PriceDate = d, PriceValue = GetPriceOnDate(s.Prices, d, fuelTypeId)
+                    PriceDate = d, PriceValue = GetSitePriceOnDate(s.Prices, d, fuelTypeId)
                 }));
             }
             return retval;
         }
 
-        private static int GetPriceOnDate(IEnumerable<SitePrice> sitePrices, DateTime d, int fuelId)
+        /// <summary>
+        /// Compliance Report - ComplianceReportContainerViewModel.ComplianceReportViewModel
+        /// Approach:
+        ///     CatPrice - Look for DailyPrice going forward D+1, D+2 until we find one.. (possibly none found)
+        ///     ExpectedPrice - Look for SitePrice going back D-1, D-2 until we find one..
+        ///     where D = forDate
+        /// </summary>
+        /// <param name="forDate"></param>
+        /// <returns></returns>
+        public ComplianceReportViewModel GetReportCompliance(DateTime forDate)
+        {
+            var fuelTypesList = new[] {2, 6, 1}; // Unl, Diesel, Super
+            var retval = new ComplianceReportViewModel();
+
+            //DateTime? sitePriceDateLookingBack = GetLastSitePriceDate(forDate);
+            DateTime? catPriceDateLookingForward = GetFirstDailyPriceDate(forDate);
+
+            var sites = GetJsSites();
+            var reportFuels = GetFuelTypes().Where(x => fuelTypesList.Contains(x.Id)).ToList();
+
+            var sitePrices = CallSitePriceSproc(forDate); 
+            
+            var dailyPrices = new List<DailyPrice>();
+            if (catPriceDateLookingForward != null)
+            {
+                dailyPrices = GetDailyPricesForDate(catPriceDateLookingForward.Value);
+            }
+
+            foreach (var site in sites)
+            {
+                Site site1 = site;
+                var dataRow = new ComplianceReportRow
+                {
+                    SiteId = site1.Id,
+                    PfsNo = site1.PfsNo.ToString(),
+                    StoreNo = site1.StoreNo.ToString(),
+                    CatNo = site1.CatNo.ToString(),
+                    SiteName = site1.SiteName,
+                    DataItems = new List<ComplianceReportDataItem>()
+                };
+                retval.ReportRows.Add(dataRow);
+                var dataItems = dataRow.DataItems;
+
+                var sitePriceViewModels = sitePrices as SitePriceViewModel[] ?? sitePrices;
+                var sitePriceViewModel = sitePriceViewModels.FirstOrDefault(x => x.SiteId == site1.Id);
+
+                foreach (var fuelId in fuelTypesList) // report order as per array - Unl, Diesel, Super
+                {
+                    FuelType fuel = reportFuels.FirstOrDefault(x => x.Id == fuelId);
+
+                    if (fuel == null) throw new ApplicationException("FuelId:" + fuelId + " not found in database.");
+
+                    var dataItem = new ComplianceReportDataItem
+                    {
+                        FuelTypeId = fuel.Id, FuelTypeName = fuel.FuelTypeName
+                    };
+                    dataItems.Add(dataItem);
+                    
+                    // Find the ExpectedPrice
+                    int sitePrice = GetSitePriceForFuel(sitePriceViewModel, fuel.Id);
+                    if (sitePrice > 0)
+                    {
+                        dataItem.FoundExpectedPrice = true;
+                        dataItem.ExpectedPriceValue = sitePrice;
+                    }
+
+                    var dailyPrice = dailyPrices.FirstOrDefault(x => x.CatNo.Equals(site1.CatNo) && x.FuelTypeId == fuel.Id);
+                    if (dailyPrice != null)
+                    {
+                        dataItem.CatPriceValue = dailyPrice.ModalPrice;
+                        dataItem.FoundCatPrice = true;
+                    }
+                    if (!dataItem.FoundCatPrice || !dataItem.FoundExpectedPrice) continue;
+
+                    dataItem.Diff = (dataItem.CatPriceValue - dataItem.ExpectedPriceValue) / 10;
+                    dataItem.DiffValid = true;
+                }
+            }
+            return retval;
+        }
+
+        // Move forward from the forDate and find a set of Prices which were recently uploaded..
+        private DateTime? GetFirstDailyPriceDate(DateTime forDate)
+        {
+            using (var db = new RepositoryContext(new SqlConnection(_context.Database.Connection.ConnectionString)))
+            {
+                var priceDates = db.DailyPrices.Include(x => x.DailyUpload)
+                    .Where(x => x.DailyUpload.Status.Id == 10 
+                    && DbFunctions.DiffDays(forDate, x.DailyUpload.UploadDateTime) >= 1)
+                    .DistinctBy(x => x.DailyUpload.UploadDateTime).OrderBy(x => x.DailyUpload.UploadDateTime).Take(5); // ascending order
+
+                // success status
+                //.Select(x => x.DailyUpload.UploadDateTime)
+                //.Where(x => DbFunctions.DiffDays(x, forDate) >= 1) // UploadDate - forDate >= 1
+                if (priceDates.Any())
+                {
+                    return priceDates.First().DailyUpload.UploadDateTime;
+                }
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Get DailyPrices for the upload date specified
+        /// </summary>
+        /// <param name="forUploadDate"></param>
+        /// <returns></returns>
+        private List<DailyPrice> GetDailyPricesForDate(DateTime forUploadDate)
+        {
+            List<DailyPrice> retval = new List<DailyPrice>();
+            using (var db = new RepositoryContext(new SqlConnection(_context.Database.Connection.ConnectionString)))
+            {
+                var prices = db.DailyPrices.Where(
+                    x => DbFunctions.DiffDays(x.DailyUpload.UploadDateTime, forUploadDate) == 0)
+                    .Select(x => x);
+                retval.AddRange(prices);
+                return retval;
+            }
+        }
+
+        // Move backward from the forDate and find a set of Prices which were last calculated..
+        //private DateTime? GetLastSitePriceDate(DateTime forDate)
+        //{
+        //    using (var db = new RepositoryContext(new SqlConnection(_context.Database.Connection.ConnectionString)))
+        //    {
+        //        IEnumerable<DateTime> priceDates = db.SitePrices.Select(x => x.DateOfCalc)
+        //            .Where(x => DbFunctions.DiffDays(forDate, x) >= 1) // forDate - DateOfCalc >= 1
+        //            .DistinctBy(x => x).OrderByDescending(x => x);
+        //        if (priceDates.Any())
+        //        {
+        //            return priceDates.First();
+        //        }
+        //        return null;
+        //    }
+        //}
+
+
+        private static int GetSitePriceForFuel(SitePriceViewModel sitePrice, int fuelId)
+        {
+            var fuelPrice = sitePrice.FuelPrices.FirstOrDefault(x => x.FuelTypeId == fuelId);
+            return (fuelPrice == null)
+                ? 0
+                : (fuelPrice.TodayPrice.HasValue) ? fuelPrice.TodayPrice.Value : 0;
+        }
+
+        private static int GetSitePriceOnDate(IEnumerable<SitePrice> sitePrices, DateTime d, int fuelId)
         {
             var price = sitePrices.FirstOrDefault(x => x.DateOfCalc.Equals(d) && x.FuelTypeId == fuelId);
             return (price == null)
                 ? 0
                 : (price.OverriddenPrice == 0) ? price.SuggestedPrice : price.OverriddenPrice;
+        }
+
+        private static int GetDailyPriceOnDate(IEnumerable<DailyPrice> dailyPrices, DateTime d, int fuelId)
+        {
+            var price = dailyPrices.FirstOrDefault(x => x.DailyUpload.UploadDateTime.Date.Equals(d) && x.FuelTypeId == fuelId);
+            return (price == null)
+                ? 0
+                : price.ModalPrice;
         }
 
         private static int Count(IEnumerable<SiteToCompetitor> data, int min, int max)

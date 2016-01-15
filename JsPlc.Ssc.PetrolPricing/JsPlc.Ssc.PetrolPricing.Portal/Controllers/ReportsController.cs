@@ -94,6 +94,33 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             return View(model);
         }
 
+        /// <summary>
+        /// By default on load, it runs for the previous day.. (as today would not make sense) 
+        /// Since we wont get compliance for today by default as it is against DailyUpload yet to happen tomorrow.
+        /// </summary>
+        /// <param name="For"></param>
+        /// <returns></returns>
+        [System.Web.Mvc.HttpGet]
+        public ActionResult Compliance(string For = "")
+        {
+            DateTime forDate;
+            if (!DateTime.TryParse(For, out forDate))
+                forDate = DateTime.Now.AddDays(-1);
+
+            var item = new ComplianceReportContainerViewModel
+            {
+                ForDate = forDate,
+                ComplianceReport = _serviceFacade.GetReportCompliance(forDate)
+            };
+
+            return View(item);
+        }
+
+
+        //### #### #### #### ####
+        //### EXPORT REPORTS ####
+        //### #### #### #### ####
+
         [System.Web.Mvc.HttpGet]
         public ActionResult ExportPriceMovement(string dateFrom = "", string dateTo = "", int id = 0)
         {

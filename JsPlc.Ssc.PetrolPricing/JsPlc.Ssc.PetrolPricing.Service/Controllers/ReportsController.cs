@@ -50,6 +50,21 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
             return Ok(result);
         }
 
+
+        /// <summary>
+        /// Compliance Report
+        /// </summary>
+        /// <param name="when"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("api/GetComplianceReport/{when}")]
+        public IHttpActionResult GetComplianceReport([FromUri]DateTime when)
+        {
+            var rs = new ReportService();
+            var result = rs.GetReportCompliance(when);
+            return Ok(result);
+        }
+
         /// <summary>
         /// PriceMovement Report
         /// </summary>

@@ -73,5 +73,16 @@ namespace JsPlc.Ssc.PetrolPricing.Business
         {
             return String.Format(format, cacheKeyStrings);
         }
+
+        /// <summary>
+        /// Gets the compliance report for a pump on a given date
+        /// </summary>
+        /// <param name="forDate"></param>
+        /// <returns></returns>
+        public ComplianceReportViewModel GetReportCompliance(DateTime forDate)
+        {
+            var report = _db.GetReportCompliance(forDate);
+            return report;
+        }
     }
 }

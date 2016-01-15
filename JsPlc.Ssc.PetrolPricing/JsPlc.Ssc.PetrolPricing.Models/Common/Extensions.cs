@@ -169,6 +169,39 @@ namespace JsPlc.Ssc.PetrolPricing.Models.Common
             return dt;
         }
 
+        // No export needed for compliance report.. as per Prem.
+        public static DataTable ToComplianceReportDataTable(
+            this ComplianceReportContainerViewModel reportContainer, string tableName = "ComplianceReport")
+        {
+            var dt = new DataTable(tableName);
+            dt.Columns.Add("Sites");
+
+            // Setup Table Columns - Sites  Date1   Date2   Date3...
+            if (!reportContainer.ComplianceReport.ReportRows.First().DataItems.Any())
+            {
+                dt.Columns.Add("Status");
+            }
+            List<FuelType> fuels = reportContainer.ComplianceReport.ReportRows.First().DataItems.Select(x => new FuelType { Id = x.FuelTypeId, FuelTypeName = x.FuelTypeName }).ToList();
+
+            foreach (var fuel in fuels)
+            {
+                dt.Columns.Add(fuel.FuelTypeName);
+            }
+            //foreach (var siteRow in reportContainer.PriceMovementReport.ReportRows)
+            //{
+            //    DataRow dr = dt.NewRow();
+            //    dr[0] = siteRow.SiteName;
+            //    var i = 1;
+            //    foreach (var dataItem in siteRow.DataItems)
+            //    {
+            //        dr[i] = (dataItem.PriceValue / 10.0).ToString("###0.0");
+            //        i += 1;
+            //    }
+            //    dt.Rows.Add(dr);
+            //}
+            return dt;
+        }
+
         public static List<DataTable> ToPricePointsReportDataTable(
         this PricePointReportContainerViewModel reportContainer)
         {

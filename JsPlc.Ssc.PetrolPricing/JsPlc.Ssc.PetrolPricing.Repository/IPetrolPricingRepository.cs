@@ -192,6 +192,13 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         /// <returns></returns>
         PriceMovementReportViewModel GetReportPriceMovement(DateTime from, DateTime to, int fuelTypeId);
 
+        /// <summary>
+        /// Gets the compliance report for a pump on a given date
+        /// </summary>
+        /// <param name="forDate"></param>
+        /// <returns></returns>
+        ComplianceReportViewModel GetReportCompliance(DateTime forDate);
+
         Task<List<EmailSendLog>> GetEmailSendLog(int siteId, DateTime forDate);
     }
 
