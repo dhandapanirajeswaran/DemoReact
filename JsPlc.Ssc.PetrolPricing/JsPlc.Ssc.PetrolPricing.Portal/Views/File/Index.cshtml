@@ -2,7 +2,10 @@
 @{
     ViewBag.Title = "File Upload";
 }
-
+@section head
+{
+    <meta http-equiv="refresh" content="15"/>
+}
 <h2>File Upload</h2>
 <p style="color:blue; font-size: larger; font-weight: bold">@ViewBag.Message</p>
 
@@ -12,8 +15,12 @@
 
 <div>
     Daily Pricing and Quarterly Files
+    <br/><span class="small" style="color: red">This page auto-refreshes every 15 sec to update status</span>
     <hr/>
     List of Files:
     @Html.Partial("_FileUploadsList", Model)
 
 </div>
+<br/>
+
+

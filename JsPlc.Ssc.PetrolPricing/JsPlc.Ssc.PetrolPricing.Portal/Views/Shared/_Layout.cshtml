@@ -17,6 +17,7 @@
         });
     </script>
     <meta name="description" content="Petrol pricing application for responding to market prices" />
+    @RenderSection("head", false)
 </head>
 <body>
     <div class="navbar navbar-inverse navbar-fixed-top">
@@ -54,7 +55,7 @@
     @Scripts.Render("~/bundles/bootstrap")
     @RenderSection("scripts", required: false)
     <script type="text/javascript">
-        require(['bootstrap'], function() {
+        require(['bootstrap'], function () {
         });
     </script>
 
