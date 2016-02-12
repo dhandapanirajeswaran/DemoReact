@@ -1,0 +1,101 @@
+﻿@model JsPlc.Ssc.PetrolPricing.Models.ViewModels.NationalAverageReportContainerViewModel
+@{
+    if (!Model.ForDate.HasValue)
+    {
+        Model.ForDate = DateTime.Now;
+    }
+
+    var requestedDate = @Model.ForDate.Value.Date.ToString("dd-MMM-yyyy");
+}
+
+<h2>Report - Competitors Price Range</h2>
+
+@using (Html.BeginForm("CompetitorsPriceRange", "PriceReports", FormMethod.Get))
+{
+    <div class="form-inline">
+        <div class="form-group">
+            <label>When:</label>&nbsp;
+            <input type="text" class="datepicker form-control" id="For" name="For" value='@requestedDate'>
+        </div>
+        <input type="button" value="View" class="btn btn-primary" id="btnViewReport" />
+    </div>
+}
+
+@if (Model != null && Model.NationalAverageReport != null && Model.NationalAverageReport.Fuels.Any())
+{
+    <br />
+    <!-- EXPORT Button -->
+    <div class="row">
+        <div class="col-md-12 right">
+            <input type="button" id="btnExportReport" value="Export to Excel" />
+        </div>
+    </div>
+    <hr />
+
+    <!-- Report Data -->
+
+    <table class="table table-hover table-responsive table-striped">
+        <thead>
+            <tr>
+                <td></td>
+                <td colspan="2"><strong>Avg retails</strong></td>
+                <td colspan="2"><strong>Difference</strong></td>
+                <td colspan="2"><strong>Pricing range</strong></td>
+            </tr>
+            <tr>
+                <td><strong>@requestedDate</strong></td>
+                @for (int i = 0; i < 3; i++)
+                {
+                    foreach (var fuelType in Model.NationalAverageReport.Fuels)
+                    {
+                        <td><strong>@fuelType.FuelName</strong></td>
+                    }
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var brand in Model.NationalAverageReport.Fuels.First().Brands)
+            {
+            <tr>
+                <td><strong>@(brand.BrandName)(£)</strong></td>
+                @* Average *@
+                @foreach (var fuelType in Model.NationalAverageReport.Fuels)
+                {
+                    var fuelBrand = fuelType.Brands.First(b => b.BrandName == brand.BrandName);
+                    <td>@((fuelBrand.Average / 10.0).ToString("###0.0"))</td>
+                }
+                @* Difference *@
+                @foreach (var fuelType in Model.NationalAverageReport.Fuels)
+                {
+                    var fuelBrand = fuelType.Brands.First(b => b.BrandName.Equals(brand.BrandName, StringComparison.InvariantCultureIgnoreCase));
+
+                    int diff = fuelBrand.Average > 0 ? (fuelBrand.Average - fuelType.SainsburysPrice) : 0;
+                    string color = "";
+                    if (diff < 0)
+                    {
+                        color = "red";
+                    }
+                    else if (diff > 0)
+                    {
+                        color = "green";
+                    }
+
+                    <td style="color: @color">@((diff / 10.0).ToString("###0.0"))</td>
+                }
+
+                @* Range *@
+                @foreach (var fuelType in Model.NationalAverageReport.Fuels)
+                {
+                    var fuelBrand = fuelType.Brands.First(b => brand.BrandName.Equals(b.BrandName, StringComparison.InvariantCultureIgnoreCase));
+                    <td>@((fuelBrand.Min / 10.0).ToString("###0.0")) - @((fuelBrand.Max / 10.0).ToString("###0.0"))</td>
+                }
+            </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@section scripts {
+    <script src="~/Scripts/bootstrap-datepicker.min.js"></script>
+    <script src="~/Scripts/PriceReports/competitorsPriceRange.js"></script>
+}

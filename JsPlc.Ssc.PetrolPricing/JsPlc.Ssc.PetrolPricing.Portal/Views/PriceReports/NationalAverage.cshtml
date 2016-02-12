@@ -1,0 +1,78 @@
+﻿@model JsPlc.Ssc.PetrolPricing.Models.ViewModels.NationalAverageReportContainerViewModel
+@{
+    if (!Model.ForDate.HasValue)
+    {
+        Model.ForDate = DateTime.Now;
+    }
+
+    var requestedDate = @Model.ForDate.Value.Date.ToString("dd-MMM-yyyy");
+}
+
+<h2>Report - National Average</h2>
+
+@using (Html.BeginForm("NationalAverage", "PriceReports", FormMethod.Get))
+{
+    <div class="form-inline">
+        <div class="form-group">
+            <label>When:</label>&nbsp;
+            <input type="text" class="datepicker form-control" id="For" name="For" value='@requestedDate'>
+        </div>
+        <input type="button" value="View" class="btn btn-primary" id="btnViewReport" />
+    </div>
+}
+
+@if (Model != null && Model.NationalAverageReport != null && Model.NationalAverageReport.Fuels.Any())
+{
+    <br/>
+    <!-- EXPORT Button -->
+    <div class="row">
+        <div class="col-md-12 right">
+            <input type="button" id="btnExportReport" value="Export to Excel" />
+        </div>
+    </div>
+    <hr/>
+    
+    <!-- Report Data -->
+
+    <table class="table table-hover table-responsive table-striped">
+        <thead>
+            <tr>
+                <th>Fuel Type</th>
+                @if (!Model.NationalAverageReport.Fuels.First().Brands.Any())
+                {
+                    <th>Status</th>
+                }
+                else
+                {
+                    foreach (var brand in Model.NationalAverageReport.Fuels.First().Brands)
+                    {
+                        <th>@(brand.BrandName)(£)</th>
+                    }
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var fuelType in Model.NationalAverageReport.Fuels)
+            {
+                <tr>
+                    <td>
+                        @fuelType.FuelName
+                    </td>
+                    @if (!fuelType.Brands.Any())
+                    {
+                        <td>There is no data available</td>
+                    }
+                    @foreach (var brand in fuelType.Brands)
+                    {
+                        <td>@(  (brand.Average / 10.0).ToString("###0.0"))</td>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@section scripts {
+    <script src="~/Scripts/bootstrap-datepicker.min.js"></script>
+    <script src="~/Scripts/PriceReports/nationalAverage.js"></script>
+}

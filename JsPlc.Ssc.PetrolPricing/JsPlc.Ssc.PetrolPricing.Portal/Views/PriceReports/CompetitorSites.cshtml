@@ -1,0 +1,72 @@
+﻿@model JsPlc.Ssc.PetrolPricing.Models.ViewModels.CompetitorSiteViewModel
+
+<h2>Report - View Competitor Sites By Driving Time in Minutes</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-inline">
+        <div class="form-group">
+            <label>Site:</label>&nbsp;
+            @Html.DropDownList("SiteId", new SelectList(Model.Sites, "Id", "SiteName", Model.SiteId), new { @class = "form-control" })
+        </div>
+    </div>
+}
+
+@if (Model.Report.BrandTimes.Any())
+{
+    <table class="table table-hover table-responsive table-striped ">
+        <thead>
+            <tr>
+                <th>
+                    Brand Name
+                </th>
+                <th>
+                    0 - 5
+                </th>
+                <th>
+                    5 - 10
+                </th>
+                <th>
+                    10 - 15
+                </th>
+                <th>
+                    15 - 20
+                </th>
+                <th>
+                    20 - 25
+                </th>
+                <th>
+                    25 - 30
+                </th>
+                <th>
+                    > 30
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Report.BrandTimes)
+            {
+                <tr>
+                    <td>@item.BrandName</td>
+                    <td>@item.Count0To5</td>
+                    <td>@item.Count5To10</td>
+                    <td>@item.Count10To15</td>
+                    <td>@item.Count15To20</td>
+                    <td>@item.Count20To25</td>
+                    <td>@item.Count25To30</td>
+                    <td>@item.CountMoreThan30</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else if (Model.SiteId > 0)
+{
+    <div class="alert alert-info" role="alert">No data was found for the Site - @Model.Report.SiteName</div>
+}
+
+@section scripts {
+    <script src="~/Scripts/PriceReports/competitorSites.js"></script>
+}

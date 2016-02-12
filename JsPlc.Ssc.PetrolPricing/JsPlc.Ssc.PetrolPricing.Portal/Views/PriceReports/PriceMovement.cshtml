@@ -1,0 +1,101 @@
+﻿@using System.Web.UI.WebControls
+@model JsPlc.Ssc.PetrolPricing.Models.ViewModels.PriceMovementReportContainerViewModel	
+@{
+    if (!Model.FromDate.HasValue)
+    {
+        Model.FromDate = DateTime.Now;
+    }
+    if (!Model.ToDate.HasValue)
+    {
+        Model.ToDate = DateTime.Now;
+    }
+
+    var requestedFromDate = @Model.FromDate.Value.Date.ToString("dd-MMM-yyyy");
+    var requestedToDate = @Model.ToDate.Value.Date.ToString("dd-MMM-yyyy");
+}
+<style>
+    select {
+        height: 30px;
+        font-size: 15px;
+    }
+</style>
+<div class="report">
+    <h2>Report - Price Movement within selected dates</h2>
+
+    <div id="errorMsgs" style="color: red"></div>
+    <div id="msgs"></div>
+    @using (Html.BeginForm("PriceMovement", "PriceReports", FormMethod.Get, new { onkeydown = "return event.keyCode!=13", onsubmit = "return false" }))
+    {
+        <div class="form-inline">
+            <div class="form-group">
+                <label>From:</label>&nbsp;
+                <input type="text" class="datepicker form-control" id="DateFrom" name="dateFrom" value='@requestedFromDate'>
+                &nbsp;
+                <label>To:</label>&nbsp;
+                <input type="text" class="datepicker form-control" id="DateTo" name="dateTo" value='@requestedToDate'>
+                &nbsp;
+                <label>Fuel:</label>&nbsp;
+                @Html.DropDownList("fuelTypes")
+            </div>
+            <input type="button" value="View" class="btn btn-primary" id="btnViewReport" />
+        </div>
+    }
+
+    @if (Model.FuelTypeId != 0)
+    {
+        <hr />
+        <h2>
+            Price movement of @Model.FuelTypeName
+            From: @Model.FromDate.Value.ToString("dd-MMM-yyyy") - To: @Model.ToDate.Value.ToString("dd-MMM-yyyy")
+        </h2>
+        <!-- EXPORT Button -->
+        <div class="row">
+            <div class="col-md-12 right">
+                <input type="button" id="btnExportReport" value="Export to Excel" />
+            </div>
+        </div>
+        <!-- Report Data -->
+        <table class="table table-hover table-responsive table-striped">
+            <thead>
+                <tr>
+                    <th>Sites</th>
+
+                    @if (!Model.PriceMovementReport.ReportRows.First().DataItems.Any())
+                    {
+                        <th>Status</th>
+                    }
+                    else
+                    {
+                        foreach (var date in Model.PriceMovementReport.ReportRows.First().DataItems.Select(x => x.PriceDate))
+                        {
+                            <th>@(date.ToString("dd-MMM-yy"))</th>
+                        }
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var siteRow in Model.PriceMovementReport.ReportRows)
+                {
+                    <tr>
+                        <td>
+                            @siteRow.SiteName
+                        </td>
+                        @if (!siteRow.DataItems.Any())
+                        {
+                            <td>There is no data available</td>
+                        }
+                        @foreach (var dataItem in siteRow.DataItems)
+                        {
+                            <td>@(  (dataItem.PriceValue / 10.0).ToString("###0.0"))</td>
+                        }
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>
+
+@section scripts {
+    <script src="~/Scripts/bootstrap-datepicker.min.js"></script>
+    <script src="~/Scripts/PriceReports/priceMovement.js"></script>
+}
