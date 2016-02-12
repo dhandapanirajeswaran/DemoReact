@@ -43,11 +43,11 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
         }
 
         // Get a Site
-        public Site GetSite(int siteId)
+        public SiteViewModel GetSite(int siteId)
         {
             var response = _client.Value.GetAsync("api/sites/" + siteId).Result;
 
-            var result = response.Content.ReadAsAsync<Site>().Result;
+            var result = response.Content.ReadAsAsync<SiteViewModel>().Result;
             return (response.IsSuccessStatusCode) ? result : null;
         }
 
@@ -61,13 +61,13 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             return (response.IsSuccessStatusCode) ? result : null;
         }
 
-        public Site EditSite(Site site)
+        public SiteViewModel EditSite(SiteViewModel site)
         {
             //TODO
             const string apiUrl = "api/Sites/";
 
             var response = _client.Value.PutAsync(apiUrl, site, new JsonMediaTypeFormatter()).Result;
-            var result = response.Content.ReadAsAsync<Site>().Result;
+            var result = response.Content.ReadAsAsync<SiteViewModel>().Result;
 
             return (response.IsSuccessStatusCode) ? result : null;
         }
@@ -334,6 +334,14 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
         public NationalAverageReportViewModel GetNationalAverage(DateTime when)
         {
             var url = string.Format("api/GetNationalAverage/{0}", when.ToString("ddMMMyyyy"));
+            var response = _client.Value.GetAsync(url).Result;
+            var result = response.Content.ReadAsAsync<NationalAverageReportViewModel>().Result;
+            return (response.IsSuccessStatusCode) ? result : null;
+        }
+
+        public NationalAverageReportViewModel GetNationalAverage2(DateTime when)
+        {
+            var url = string.Format("api/GetNationalAverage2/{0}", when.ToString("ddMMMyyyy"));
             var response = _client.Value.GetAsync(url).Result;
             var result = response.Content.ReadAsAsync<NationalAverageReportViewModel>().Result;
             return (response.IsSuccessStatusCode) ? result : null;

@@ -31,6 +31,8 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 {
     public class PetrolPricingRepository : IPetrolPricingRepositoryLookup, IPetrolPricingRepository, IDisposable
     {
+        const string SainsburysBrandName = "Sainsburys";
+
         private readonly RepositoryContext _context;
 
         public PetrolPricingRepository()
@@ -74,13 +76,31 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                 .Where(x => x.Prices.All(p => p.DateOfCalc.Equals(forDate)));
         }
 
-        public IEnumerable<Site> GetSitesWithCompetitors()
+        private static object cachedCompetitorsLock = new Object();
+
+        public Dictionary<int, Site> GetSitesWithCompetitors()
         {
-            var retval = _context.Sites
+            Dictionary<int, Site> cachedCompetitors = PetrolPricingRepositoryMemoryCache.CacheObj.Get("GetSitesWithCompetitors") as Dictionary<int, Site>;
+            
+            if (cachedCompetitors == null)
+            {
+                lock (cachedCompetitorsLock)
+                {
+                    cachedCompetitors = PetrolPricingRepositoryMemoryCache.CacheObj.Get("GetSitesWithCompetitors") as Dictionary<int, Site>;
+
+                    if (cachedCompetitors == null)
+                    {
+                        cachedCompetitors = _context.Sites
                 .Include(x => x.Competitors)
                 .Where(x => x.IsActive)
-                .OrderBy(q => q.Id).ToList();
-            return retval;
+                .OrderBy(q => q.Id).ToDictionary(k => k.Id, v => v);
+
+                        PetrolPricingRepositoryMemoryCache.CacheObj.Add("GetSitesWithCompetitors", cachedCompetitors, PetrolPricingRepositoryMemoryCache.ReportsCacheExpirationPolicy(20));
+                    }
+                }
+            }
+
+            return cachedCompetitors;
         }
 
         // Useful for emailing
@@ -97,7 +117,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                 .Where(x => x.IsActive && x.IsSainsburysSite)
                 .OrderBy(q => q.Id).ToList();
 
-            int daysBetweenFromAndTo = 
+            int daysBetweenFromAndTo =
                 Convert.ToInt32((toPriceDate.Value - fromPriceDate.Value).TotalDays);
 
             var rangedDatePrices = _context.SitePrices.Select(x => new
@@ -261,6 +281,22 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                             var TodayPrice = (OverriddenPriceToday.HasValue && OverriddenPriceToday.Value != 0)
                                 ? OverriddenPriceToday.Value
                                 : (SuggestedPriceToday.HasValue) ? SuggestedPriceToday.Value : 0;
+
+                            var Markup = pgRow["Markup"].ToString().ToNullable<int>();
+                            var IsTrailPrice = pgRow["IsTrailPrice"].ToString().ToNullable<bool>();
+
+                            var competitorId = pgRow["CompetitorId"].ToString().ToNullable<int>();
+
+                            var competitorName = "Unknown";
+
+
+
+                            if (competitorId.HasValue)
+                            {
+                                var competitorSite = GetSite(competitorId.Value);
+                                competitorName = string.Format("{0}/{1}", competitorSite.Brand, competitorSite.SiteName);
+                            }
+
                             sitePriceRow.FuelPrices.Add(new FuelPriceViewModel
                             {
                                 FuelTypeId = (int)pgRow["FuelTypeId"],
@@ -269,7 +305,10 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                                 OverridePrice = (!OverridePrice.HasValue) ? 0 : OverridePrice.Value,
 
                                 // Today's prices (whatever was calculated yesterday OR last)
-                                TodayPrice = TodayPrice
+                                TodayPrice = TodayPrice,
+                                Markup = Markup.HasValue ? Markup.Value : 0,
+                                CompetitorName = competitorName,
+                                IsTrailPrice = IsTrailPrice.HasValue ? IsTrailPrice.Value : false
                             });
                         }
                     }
@@ -390,6 +429,8 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             }
         }
 
+        private static object cachedGetDailyPricesForFuelByCompetitorsLock = new Object();
+
         /// <summary>
         /// Gets a list of DailyPrices for the list of Competitors for the specified fuel
         /// </summary>
@@ -400,13 +441,58 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         public IEnumerable<DailyPrice> GetDailyPricesForFuelByCompetitors(IEnumerable<int> competitorCatNos, int fuelId,
             DateTime usingPricesforDate)
         {
-            // If multiple uploads, needs to be handled here, but we assume one for now.
-            IEnumerable<DailyPrice> dailyPrices = _context.DailyPrices.Include(x => x.DailyUpload);
+            string cacheKey = usingPricesforDate.Ticks.ToString();
+            Dictionary<string, DailyPrice> dailyPricesCache = PetrolPricingRepositoryMemoryCache.CacheObj.Get(cacheKey) as Dictionary<string, DailyPrice>;
+            
+            if (dailyPricesCache == null)
+            {
+                lock (cachedGetDailyPricesForFuelByCompetitorsLock)
+                {
+                    dailyPricesCache = PetrolPricingRepositoryMemoryCache.CacheObj.Get(cacheKey) as Dictionary<string, DailyPrice>;
+                    
+                    if (dailyPricesCache == null)
+                    {
+                        // If multiple uploads, needs to be handled here, but we assume one for now.
+                        dailyPricesCache = _context.DailyPrices.Include(x => x.DailyUpload)
+                            .Where(x => DbFunctions.TruncateTime(x.DailyUpload.UploadDateTime) == usingPricesforDate.Date)
+                            .ToDictionary(k => string.Format("{0}_{1}", k.FuelTypeId, k.CatNo), v => v);
 
-            return dailyPrices.Where(x => competitorCatNos.Contains(x.CatNo) &&
-                                          x.FuelTypeId == fuelId &&
-                                          x.DailyUpload.UploadDateTime.Date.Equals(usingPricesforDate.Date)).ToList();
+                        PetrolPricingRepositoryMemoryCache.CacheObj.Add(cacheKey, dailyPricesCache, PetrolPricingRepositoryMemoryCache.ReportsCacheExpirationPolicy(20));
+                    }
+                }
+            }
+
+            List<DailyPrice> result = new List<DailyPrice>();
+
+            foreach (var catNo in competitorCatNos)
+            {
+                var key = string.Format("{0}_{1}", fuelId, catNo);
+                if (dailyPricesCache.ContainsKey(key))
+                {
+                    result.Add(dailyPricesCache[key]);
+                }
+            }
+
+            return result;
         }
+
+        /// <summary>
+        /// Gets a list of DailyPrices for the list of Competitors for the specified fuel
+        /// </summary>
+        /// <param name="competitorCatNos"></param>
+        /// <param name="fuelId"></param>
+        /// <param name="usingPricesforDate"></param>
+        /// <returns></returns>
+        //public IEnumerable<DailyPrice> GetDailyPricesForFuelByCompetitors(IEnumerable<int> competitorCatNos, int fuelId,
+        //    DateTime usingPricesforDate)
+        //{
+        //    // If multiple uploads, needs to be handled here, but we assume one for now.
+        //    IEnumerable<DailyPrice> dailyPrices = _context.DailyPrices.Include(x => x.DailyUpload);
+
+        //    return dailyPrices.Where(x => competitorCatNos.Contains(x.CatNo) &&
+        //                                  x.FuelTypeId == fuelId &&
+        //                                  x.DailyUpload.UploadDateTime.Date.Equals(usingPricesforDate.Date)).ToList();
+        //}
 
         public Site GetSite(int id)
         {
@@ -653,122 +739,6 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             }
         }
 
-        //public bool UpdateCatalistQuarterlyData(List<CatalistQuarterly> siteCatalistData, FileUpload fileDetails,
-        //    bool isSainsburys)
-        //{
-        //    int addingEntryLineNo = 0;
-        //    int savetrigger = 0;
-
-        //    using (
-        //        var newDbContext =
-        //            new RepositoryContext(new SqlConnection(_context.Database.Connection.ConnectionString)))
-        //    {
-        //        using (var tx = newDbContext.Database.BeginTransaction()) // TODO, refactor this massive transaction.. 
-        //        {
-        //            newDbContext.Configuration.AutoDetectChangesEnabled = false;
-
-        //            try
-        //            {
-        //                foreach (CatalistQuarterly CA in siteCatalistData)
-        //                {
-        //                    //if (addingEntryLineNo > 1000)
-        //                    //{
-        //                    //    newDbContext.SaveChanges();
-        //                    //    //tx.Commit();
-        //                    //}
-        //                    Site site = new Site();
-
-        //                    site.CatNo = Convert.ToInt32(CA.CatNo);
-
-        //                    var result = newDbContext.Sites.SingleOrDefault(x => x.CatNo == site.CatNo);
-
-        //                    if (result != null)
-        //                    {
-        //                        newDbContext.Entry(result).State = EntityState.Modified;
-
-        //                        result.CatNo = Convert.ToInt32(CA.CatNo);
-        //                        result.SiteName = CA.SiteName;
-        //                        result.Town = CA.Town;
-        //                        result.Brand = CA.Brand;
-        //                        result.Address = CA.Address;
-        //                        result.Suburb = CA.Suburb;
-        //                        result.PostCode = CA.Postcode;
-        //                        result.Company = CA.CompanyName;
-        //                        result.Ownership = CA.Ownership;
-
-        //                        if (CA.Brand == "SAINSBURYS")
-        //                        {
-        //                            result.IsSainsburysSite = true;
-        //                        }
-        //                    }
-        //                    else
-        //                    {
-        //                        site.CatNo = Convert.ToInt32(CA.CatNo);
-        //                        site.SiteName = CA.SiteName;
-        //                        site.Town = CA.Town;
-        //                        site.Brand = CA.Brand;
-        //                        site.Address = CA.Address;
-        //                        site.Suburb = CA.Suburb;
-        //                        site.PostCode = CA.Postcode;
-        //                        site.Ownership = CA.Ownership;
-        //                        site.Company = CA.CompanyName;
-        //                        site.IsActive = true;
-
-        //                        if (CA.Brand == "SAINSBURYS")
-        //                        {
-        //                            site.IsSainsburysSite = true;
-        //                        }
-
-        //                        newDbContext.Sites.Add(site);
-        //                    }
-
-        //                    addingEntryLineNo += 1;
-        //                }
-
-        //                newDbContext.SaveChanges();
-
-        //                tx.Commit();
-        //                return true;
-        //            }
-        //            catch (DbUpdateException e)
-        //            {
-
-        //                tx.Rollback();
-
-        //                foreach (var dbUpdateException in e.Entries)
-        //                {
-        //                    var dailyPrice = dbUpdateException.Entity as DailyPrice ?? new DailyPrice();
-        //                    LogImportError(fileDetails, String.Format("Failed to save price:{0},{1},{2},{3},{4}",
-        //                        dailyPrice.CatNo, dailyPrice.FuelTypeId, dailyPrice.AllStarMerchantNo,
-        //                        dailyPrice.DateOfPrice, dailyPrice.ModalPrice)
-        //                        , addingEntryLineNo);
-        //                    dbUpdateException.State = EntityState.Unchanged;
-        //                }
-
-        //                return false;
-        //            }
-        //            catch (DbEntityValidationException dbEx)
-        //            {
-        //                tx.Rollback();
-        //                foreach (var validationErrors in dbEx.EntityValidationErrors)
-        //                {
-        //                    foreach (var validationError in validationErrors.ValidationErrors)
-        //                    {
-        //                        LogImportError(fileDetails,
-        //                            "DbEntityValidationException occured:" + validationError.ErrorMessage +
-        //                            "," + validationError.PropertyName, addingEntryLineNo);
-
-        //                        Trace.TraceInformation("Property: {0} Error: {1}", validationError.PropertyName,
-        //                            validationError.ErrorMessage);
-        //                    }
-        //                }
-        //                return false;
-        //            }
-        //        }
-        //    }
-        //    return true;
-        //}
-
         private void UpdateSiteEmails(Site site)
         {
             var siteEmailIds = site.Emails.Select(x => x.Id).ToList();
@@ -830,12 +800,55 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             db.Database.ExecuteSqlCommand(deleteCmd);
         }
 
-        public bool AnyDailyPricesForFuelOnDate(int fuelId, DateTime usingPricesforDate)
+        private static object cachedAnyDailyPricesForFuelOnDateLock = new Object();
+
+        public bool AnyDailyPricesForFuelOnDate(int fuelId, DateTime usingPricesforDate, int fileUploadId)
         {
-            var list1 =
-                _context.DailyPrices.Include(x => x.DailyUpload).Where(x => x.FuelTypeId.Equals(fuelId)).ToList();
-            var list2 = list1.Any(x => x.DailyUpload.UploadDateTime.Date.Equals(usingPricesforDate.Date));
-            return list1.Any() && list2;
+
+            var cacheKey = fileUploadId.ToString();
+
+            List<int> cachedAnyDailyPricesForFuelOnDate = PetrolPricingRepositoryMemoryCache.CacheObj.Get(cacheKey) as List<int>;
+            
+            if (cachedAnyDailyPricesForFuelOnDate == null)
+            {
+                lock (cachedAnyDailyPricesForFuelOnDateLock)
+                {
+                    cachedAnyDailyPricesForFuelOnDate = PetrolPricingRepositoryMemoryCache.CacheObj.Get(cacheKey) as List<int>;
+
+                    if (cachedAnyDailyPricesForFuelOnDate == null)
+                    {
+                        cachedAnyDailyPricesForFuelOnDate = _context.DailyPrices
+                            .Include(x => x.DailyUpload)
+                            .Where(x => DbFunctions.TruncateTime(x.DailyUpload.UploadDateTime) == usingPricesforDate.Date)
+                            .Select(x => x.FuelTypeId).Distinct().ToList();
+
+                        PetrolPricingRepositoryMemoryCache.CacheObj.Add(cacheKey, cachedAnyDailyPricesForFuelOnDate, PetrolPricingRepositoryMemoryCache.ReportsCacheExpirationPolicy(5));
+                    }
+                }
+            }
+
+            return cachedAnyDailyPricesForFuelOnDate.Any(x => x == fuelId);
+
+//delete this after above functionality confirmed working
+
+//#if DEBUG1
+//            Stopwatch swLevel1a = new Stopwatch();
+//            swLevel1a.Start();
+//#endif
+//            var list1 =
+//                _context.DailyPrices.Include(x => x.DailyUpload).Where(x => x.FuelTypeId.Equals(fuelId)).ToList();
+
+//#if DEBUG1
+//            Debug.WriteLine("AnyDailyPricesForFuelOnDate list 1: {0}", swLevel1a.Elapsed);
+//            swLevel1a.Restart();
+//#endif
+
+//            var list2 = list1.Any(x => x.DailyUpload.UploadDateTime.Date.Equals(usingPricesforDate.Date));
+
+//#if DEBUG1
+//            Debug.WriteLine("AnyDailyPricesForFuelOnDate list 2: {0}", swLevel1a.Elapsed);
+//#endif
+//            return list1.Any() && list2;
         }
 
         /// <summary>
@@ -884,33 +897,43 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             return calcFileRunningForDate; // could be null
         }
 
-        public SitePrice AddOrUpdateSitePriceRecord(SitePrice calculatedSitePrice)
+        public void AddOrUpdateSitePriceRecord(SitePrice calculatedSitePrice)
         {
-            var priceRecords = _context.SitePrices.AsNoTracking().Where(
+
+            var existingPriceRecord = _context.SitePrices.AsNoTracking().FirstOrDefault(
                 x => x.SiteId == calculatedSitePrice.SiteId
-                     && x.FuelTypeId == calculatedSitePrice.FuelTypeId).ToList();
-            var existingPriceRecord =
-                priceRecords.FirstOrDefault(x => x.DateOfCalc.Date.Equals(calculatedSitePrice.DateOfCalc.Date));
+                     && x.FuelTypeId == calculatedSitePrice.FuelTypeId
+                     && DbFunctions.TruncateTime(x.DateOfCalc)== calculatedSitePrice.DateOfCalc.Date);
 
             if (existingPriceRecord == null)
             {
                 calculatedSitePrice.JsSite = null;
-                //_context.Entry(calculatedSitePrice).State = EntityState.Detached;
-                //_context.SitePrices.Attach(calculatedSitePrice);
                 _context.Entry(calculatedSitePrice).State = EntityState.Added;
                 _context.SaveChanges();
-                return calculatedSitePrice;
+
             }
-            //_context.AttachAndModify(new SitePrice { Id = existingPriceRecord.Id }).Set(x => x.SuggestedPrice, calculatedSitePrice.SuggestedPrice);
-            var db = new RepositoryContext(new SqlConnection(_context.Database.Connection.ConnectionString));
+            else
             {
-                db.Entry(existingPriceRecord).State = EntityState.Modified;
-                existingPriceRecord.SuggestedPrice = calculatedSitePrice.SuggestedPrice;
-                existingPriceRecord.DateOfCalc = calculatedSitePrice.DateOfCalc;
-                existingPriceRecord.DateOfPrice = calculatedSitePrice.DateOfPrice;
-                existingPriceRecord.UploadId = calculatedSitePrice.UploadId;
-                db.SaveChanges();
-                return existingPriceRecord;
+
+                var stores = _context.Database.ExecuteSqlCommand(
+    @"UPDATE [dbo].[SitePrice]
+   SET 
+     [SuggestedPrice] = {0}
+	,[DateOfCalc] = {1}
+	,[DateOfPrice] = {2}
+	,[UploadId] = {3}
+    ,[CompetitorId] = {4}
+    ,[Markup] = {5}
+    ,[IsTrailPrice] = {6}
+ WHERE Id = {7}",
+                    calculatedSitePrice.SuggestedPrice,
+                    calculatedSitePrice.DateOfCalc,
+                    calculatedSitePrice.DateOfPrice,
+                    calculatedSitePrice.UploadId,
+                    calculatedSitePrice.CompetitorId,
+                    calculatedSitePrice.Markup,
+                    calculatedSitePrice.IsTrailPrice,
+                    calculatedSitePrice.Id);
             }
         }
 
@@ -937,8 +960,8 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                             SiteId = p.SiteId,
                             FuelTypeId = p.FuelTypeId,
                             DateOfCalc = forDate.Value,
-                            DateOfPrice = forDate.Value, 
-                            SuggestedPrice = 0, 
+                            DateOfPrice = forDate.Value,
+                            SuggestedPrice = 0,
                             OverriddenPrice = p.OverriddenPrice
                         };
                         db.Entry(entry).State = EntityState.Added;
@@ -1037,8 +1060,8 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         public void UpdateImportProcessStatus(int statusId, FileUpload fileUpload)
         {
             var db = new RepositoryContext(new SqlConnection(_context.Database.Connection.ConnectionString));
-            var fu = db.FileUploads.AsNoTracking().FirstOrDefault(x => x.Id == fileUpload.Id);
-            if (fu == null) return;
+            //var fu = db.FileUploads.AsNoTracking().FirstOrDefault(x => x.Id == fileUpload.Id);
+            //if (fu == null) return;
             _context.Database.ExecuteSqlCommand("Update FileUpload Set StatusId = " + statusId + " where Id = " +
                                                 fileUpload.Id);
             //fu.StatusId = statusId;
@@ -1060,12 +1083,10 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         /// <param name="driveTimeTo"></param>
         /// <param name="includeSainsburysAsCompetitors"></param>
         /// <returns></returns>
-        public IEnumerable<SiteToCompetitor> GetCompetitors(int siteId, int driveTimeFrom, int driveTimeTo, bool includeSainsburysAsCompetitors = true)
+        public IEnumerable<SiteToCompetitor> GetCompetitors(Site site, float driveTimeFrom, float driveTimeTo, bool includeSainsburysAsCompetitors = true)
         {
-            var site = GetSite(siteId);
-
-            IEnumerable<SiteToCompetitor> siteCompetitors = GetSitesWithCompetitors().Where(x => x.Id == site.Id)
-                .SelectMany(x => x.Competitors).Where(x => x.DriveTime >= driveTimeFrom && x.DriveTime <= driveTimeTo)
+            IEnumerable<SiteToCompetitor> siteCompetitors = GetSitesWithCompetitors()[site.Id]
+                .Competitors.Where(x => x.DriveTime >= driveTimeFrom && x.DriveTime <= driveTimeTo)
                 .ToList();
 
             if (!includeSainsburysAsCompetitors)
@@ -1073,6 +1094,11 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                 siteCompetitors = siteCompetitors.Where(x => !x.Competitor.IsSainsburysSite);
             }
             return siteCompetitors;
+        }
+
+        public SiteToCompetitor GetCompetitor(int siteId, int competitorId)
+        {
+            return _context.SiteToCompetitors.FirstOrDefault(x => x.CompetitorId == competitorId && x.SiteId == siteId);
         }
 
         // New File Upload
@@ -1167,27 +1193,42 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         {
             var result = new CompetitorSiteReportViewModel();
 
-            var referenceSite = _context.Sites.Include(x => x.Competitors).FirstOrDefault(x => x.Id == siteId);
-            if (referenceSite != null)
+            var referenceSites = _context.Sites.Include(x => x.Competitors).Where(x => x.Id == (siteId > 0 ? siteId : x.Id)).ToList();
+
+            if (referenceSites.Any())
             {
-                result.SiteName = referenceSite.SiteName;
+                if (siteId > 0)
+                {
+                    result.SiteName = referenceSites.First().SiteName;
+                }
 
                 var brandReportRows = new List<CompetitorBrandTimeViewModel>();
-                var brands = referenceSite.Competitors.Select(x => x.Competitor.Brand).Distinct().OrderBy(x => x);
-                foreach (var brandName in brands)
-                {
-                    var brandCompetitors = referenceSite.Competitors.Where(x => x.Competitor.Brand == brandName).ToList();
-                    var brandReportRow = new CompetitorBrandTimeViewModel();
-                    brandReportRow.BrandName = brandName;
-                    brandReportRow.Count0To5 = Count(brandCompetitors, 0, 5);
-                    brandReportRow.Count5To10 = Count(brandCompetitors, 5, 10);
-                    brandReportRow.Count10To15 = Count(brandCompetitors, 10, 15);
-                    brandReportRow.Count15To20 = Count(brandCompetitors, 15, 20);
-                    brandReportRow.Count20To25 = Count(brandCompetitors, 20, 25);
-                    brandReportRow.Count25To30 = Count(brandCompetitors, 25, 30);
-                    brandReportRow.CountMoreThan30 = Count(brandCompetitors, 30, int.MaxValue);
 
-                    brandReportRows.Add(brandReportRow);
+                foreach (var referenceSite in referenceSites)
+                {
+
+                    var brands = referenceSite.Competitors.Select(x => x.Competitor.Brand).Distinct().OrderBy(x => x);
+                    foreach (var brandName in brands)
+                    {
+                        var brandCompetitors = referenceSite.Competitors.Where(x => x.Competitor.Brand == brandName).ToList();
+
+                        var brandReportRow = brandReportRows.FirstOrDefault(x => x.BrandName == brandName);
+
+                        if (brandReportRow == null)
+                        {
+                            brandReportRow = new CompetitorBrandTimeViewModel();
+                            brandReportRow.BrandName = brandName;
+                            brandReportRows.Add(brandReportRow);
+                        }
+
+                        brandReportRow.Count0To5 += Count(brandCompetitors, 0, 4.99f);
+                        brandReportRow.Count5To10 += Count(brandCompetitors, 5, 9.99f);
+                        brandReportRow.Count10To15 += Count(brandCompetitors, 10, 14.99f);
+                        brandReportRow.Count15To20 += Count(brandCompetitors, 15, 19.99f);
+                        brandReportRow.Count20To25 += Count(brandCompetitors, 20, 24.99f);
+                        brandReportRow.Count25To30 += Count(brandCompetitors, 25, 29.99f);
+                        brandReportRow.CountMoreThan30 += Count(brandCompetitors, 30, int.MaxValue);
+                    }
                 }
                 result.BrandTimes = brandReportRows;
             }
@@ -1209,7 +1250,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
                 // Report uses Prices as per date of upload..(not date of Price in DailyPrice).. 
                 var dailyPrices = _context.DailyPrices.Where(x => DbFunctions.DiffDays(x.DailyUpload.UploadDateTime, when) == 0 && x.FuelTypeId == fuelTypeId).ToList();
-                
+
                 var distinctPrices = dailyPrices.Select(x => x.ModalPrice).Distinct().OrderBy(x => x).ToList();
                 var distinctCatNos = dailyPrices.Select(x => x.CatNo).Distinct().ToList();
                 var competitorSites = _context.Sites.Where(x => distinctCatNos.Contains(x.CatNo.Value) && !x.IsSainsburysSite).ToList();
@@ -1255,15 +1296,12 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         public NationalAverageReportViewModel GetReportNationalAverage(DateTime when)
         {
             var result = new NationalAverageReportViewModel();
-            
-            var fuelTypeIds = new List<int> { (int)FuelTypeItem.Diesel, (int)FuelTypeItem.Unleaded };
 
-            // Ignore this approach.. which uses Date Of Price from DailyPrice, instead see next line..
-            //var dailyPrices = _context.DailyPrices.Where(x => x.DateOfPrice == when && fuelTypeIds.Contains(x.FuelTypeId));
+            var fuelTypeIds = new List<int> { (int)FuelTypeItem.Diesel, (int)FuelTypeItem.Unleaded };
 
             // Report uses Prices as per date of upload..(not date of Price in DailyPrice).. 
             var dailyPrices = _context.DailyPrices.Where(x => DbFunctions.DiffDays(x.DailyUpload.UploadDateTime, when) == 0 && fuelTypeIds.Contains(x.FuelTypeId)).ToList();
-            
+
             var fuels = _context.FuelType.ToList();
 
             foreach (var fuelType in fuelTypeIds)
@@ -1288,12 +1326,66 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                     var brandCatsNos = competitorSites.Where(x => x.Brand == brand).Where(x => x.CatNo.HasValue).Select(x => x.CatNo.Value).ToList();
                     var pricesList = dailyPrices.Where(x => x.FuelTypeId == fuelType && brandCatsNos.Contains(x.CatNo)).ToList();
 
-                    brandAvg.Average = pricesList.Any() ? (int)pricesList.Average(x => x.ModalPrice): 0;
+                    brandAvg.Average = pricesList.Any() ? (int)pricesList.Average(x => x.ModalPrice) : 0;
                 }
             }
 
             return result;
         }
+
+        public NationalAverageReportViewModel GetReportNationalAverage2(DateTime when)
+        {
+            var result = new NationalAverageReportViewModel();
+
+            var fuelTypeIds = new List<int> { (int)FuelTypeItem.Diesel, (int)FuelTypeItem.Unleaded };
+
+            // Report uses Prices as per date of upload..(not date of Price in DailyPrice).. 
+            var dailyPrices = _context.DailyPrices.Where(x => DbFunctions.DiffDays(x.DailyUpload.UploadDateTime, when) == 0 && fuelTypeIds.Contains(x.FuelTypeId)).ToList();
+
+            var fuels = _context.FuelType.ToList();
+
+            foreach (var fuelType in fuelTypeIds)
+            {
+                var f = fuels.FirstOrDefault(x => x.Id == fuelType);
+                if (f == null) continue;
+
+                var fuelRow = new NationalAverageReportFuelViewModel();
+                result.Fuels.Add(fuelRow);
+                fuelRow.FuelName = f.FuelTypeName;
+
+                var distinctCatNos = dailyPrices.Select(x => x.CatNo).Distinct().ToList();
+                var competitorSites = _context.Sites.Where(x => distinctCatNos.Contains(x.CatNo.Value)).ToList();
+                var distinctBrands = competitorSites.Select(x => x.Brand).Distinct().OrderBy(x => x).ToList();
+
+                distinctBrands.Remove(SainsburysBrandName.ToUpper());
+                distinctBrands.Insert(0, SainsburysBrandName.ToUpper());
+
+                foreach (var brand in distinctBrands)
+                {
+                    var brandAvg = new NationalAverageReportBrandViewModel();
+                    fuelRow.Brands.Add(brandAvg);
+                    brandAvg.BrandName = brand;
+
+                    var brandCatsNos = competitorSites.Where(x => x.Brand == brand).Where(x => x.CatNo.HasValue).Select(x => x.CatNo.Value).ToList();
+                    var pricesList = dailyPrices.Where(x => x.FuelTypeId == fuelType && brandCatsNos.Contains(x.CatNo)).ToList();
+
+                    if (pricesList.Any())
+                    {
+                        brandAvg.Min = (int)pricesList.Min(x => x.ModalPrice);
+                        brandAvg.Average = (int)pricesList.Average(x => x.ModalPrice);
+                        brandAvg.Max = (int)pricesList.Max(x => x.ModalPrice);
+                    }
+
+                    if (brand.Equals(SainsburysBrandName, StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        fuelRow.SainsburysPrice = brandAvg.Average;
+                    }
+                }
+            }
+
+            return result;
+        }
+
 
         public PriceMovementReportViewModel GetReportPriceMovement(DateTime fromDt, DateTime toDt, int fuelTypeId)
         {
@@ -1310,14 +1402,17 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             {
                 var dataRow = new PriceMovementReportRows
                 {
-                    SiteId = s.Id, SiteName = s.SiteName, DataItems = new List<PriceMovementReportDataItems>()
+                    SiteId = s.Id,
+                    SiteName = s.SiteName,
+                    DataItems = new List<PriceMovementReportDataItems>()
                 };
                 retval.ReportRows.Add(dataRow);
                 var dataItems = dataRow.DataItems;
 
                 dataItems.AddRange(dates.Select(d => new PriceMovementReportDataItems
                 {
-                    PriceDate = d, PriceValue = GetSitePriceOnDate(s.Prices, d, fuelTypeId)
+                    PriceDate = d,
+                    PriceValue = GetSitePriceOnDate(s.Prices, d, fuelTypeId)
                 }));
             }
             return retval;
@@ -1334,7 +1429,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         /// <returns></returns>
         public ComplianceReportViewModel GetReportCompliance(DateTime forDate)
         {
-            var fuelTypesList = new[] {2, 6, 1}; // Unl, Diesel, Super
+            var fuelTypesList = new[] { 2, 6, 1 }; // Unl, Diesel, Super
             var retval = new ComplianceReportViewModel();
 
             //DateTime? sitePriceDateLookingBack = GetLastSitePriceDate(forDate);
@@ -1343,8 +1438,8 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             var sites = GetJsSites();
             var reportFuels = GetFuelTypes().Where(x => fuelTypesList.Contains(x.Id)).ToList();
 
-            var sitePrices = CallSitePriceSproc(forDate); 
-            
+            var sitePrices = CallSitePriceSproc(forDate);
+
             var dailyPrices = new List<DailyPrice>();
             if (catPriceDateLookingForward != null)
             {
@@ -1377,10 +1472,11 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
                     var dataItem = new ComplianceReportDataItem
                     {
-                        FuelTypeId = fuel.Id, FuelTypeName = fuel.FuelTypeName
+                        FuelTypeId = fuel.Id,
+                        FuelTypeName = fuel.FuelTypeName
                     };
                     dataItems.Add(dataItem);
-                    
+
                     // Find the ExpectedPrice
                     int sitePrice = GetSitePriceForFuel(sitePriceViewModel, fuel.Id);
                     if (sitePrice > 0)
@@ -1410,7 +1506,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             using (var db = new RepositoryContext(new SqlConnection(_context.Database.Connection.ConnectionString)))
             {
                 var priceDates = db.DailyPrices.Include(x => x.DailyUpload)
-                    .Where(x => x.DailyUpload.Status.Id == 10 
+                    .Where(x => x.DailyUpload.Status.Id == 10
                     && DbFunctions.DiffDays(forDate, x.DailyUpload.UploadDateTime) >= 1)
                     .DistinctBy(x => x.DailyUpload.UploadDateTime).OrderBy(x => x.DailyUpload.UploadDateTime).Take(5); // ascending order
 
@@ -1443,23 +1539,6 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             }
         }
 
-        // Move backward from the forDate and find a set of Prices which were last calculated..
-        //private DateTime? GetLastSitePriceDate(DateTime forDate)
-        //{
-        //    using (var db = new RepositoryContext(new SqlConnection(_context.Database.Connection.ConnectionString)))
-        //    {
-        //        IEnumerable<DateTime> priceDates = db.SitePrices.Select(x => x.DateOfCalc)
-        //            .Where(x => DbFunctions.DiffDays(forDate, x) >= 1) // forDate - DateOfCalc >= 1
-        //            .DistinctBy(x => x).OrderByDescending(x => x);
-        //        if (priceDates.Any())
-        //        {
-        //            return priceDates.First();
-        //        }
-        //        return null;
-        //    }
-        //}
-
-
         private static int GetSitePriceForFuel(SitePriceViewModel sitePrice, int fuelId)
         {
             var fuelPrice = sitePrice.FuelPrices.FirstOrDefault(x => x.FuelTypeId == fuelId);
@@ -1484,7 +1563,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                 : price.ModalPrice;
         }
 
-        private static int Count(IEnumerable<SiteToCompetitor> data, int min, int max)
+        private static int Count(IEnumerable<SiteToCompetitor> data, float min, float max)
         {
             var result = 0;
             if (data != null)

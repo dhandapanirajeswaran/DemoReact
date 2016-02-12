@@ -232,20 +232,42 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
         public ActionResult Edit(int id)
         {
             var model = _serviceFacade.GetSite(id);
+
+            var sortedCompetitors = model.Competitors.Where(c => c.IsSainsburysSite == false).OrderBy(c => c.SiteName).ToList();
+
+            sortedCompetitors.Insert(0, new SiteViewModel
+            {
+                SiteName = "Not specified"
+            });
+
+            model.Competitors = sortedCompetitors;
+            
             return View(model);
         }
 
         [System.Web.Mvc.HttpPost]
-        public ActionResult Edit(Site site)
+        public ActionResult Edit(SiteViewModel site)
         {
             // TODO Somehow email edits fail on VM, MediaType Formatter error when text/html returned from api.
             if (!ModelState.IsValid)
             {
                 ViewBag.ErrorMessage = "Please check for validation errors under each field.";
+
+                var model = _serviceFacade.GetSite(site.Id);
+                
+                var sortedCompetitors = model.Competitors.Where(c => c.IsSainsburysSite == false).OrderBy(c => c.SiteName).ToList();
+                
+                sortedCompetitors.Insert(0, new SiteViewModel
+                {
+                    SiteName = "Not specified"
+                });
+                site.Competitors = sortedCompetitors;
+
                 return View(site);
             }
-            site.IsSainsburysSite = true;
-            var nonBlankVals = new List<SiteEmail>();
+            
+            var nonBlankVals = new List<SiteEmailViewModel>();
+            site.IsSainsburysSite = true; //Only Sainsburys sites are editable
             site.Emails.ForEach(x =>
             {
                 if (!x.EmailAddress.IsNullOrWhiteSpace())

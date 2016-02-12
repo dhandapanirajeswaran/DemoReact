@@ -28,6 +28,8 @@ namespace JsPlc.Ssc.PetrolPricing.Models.ViewModels
         public List<SitePriceViewModel> competitors { get; set; }
 
         public List<FuelPriceViewModel> FuelPrices { get; set; } // list item contains price for each fuel
+
+        public bool IsTrailPrice { get; set; } // if true, then trial price has been selected 
     }
 
     // each fuel's price
@@ -45,5 +47,13 @@ namespace JsPlc.Ssc.PetrolPricing.Models.ViewModels
 
         // Yesterday's Prices
         public int? YestPrice { get; set; } // from db
+
+        // Markup of the selected Competitor
+        public int? Markup { get; set; }
+
+        // Selected Competitor
+        public string CompetitorName { get; set; }
+
+        public bool IsTrailPrice { get; set; }
     }
 }

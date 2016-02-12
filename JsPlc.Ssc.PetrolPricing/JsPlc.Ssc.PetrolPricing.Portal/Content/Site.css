@@ -56,6 +56,12 @@ img.comp-logo {
 div, span, h1, h2, h3, h4, h5, h6 {
     font-family: Mary Ann, Arial, sans-serif;
 }
+
+hr {
+    margin-bottom: 10px;
+    margin-top: 10px
+}
+
 /*div { display: block; float: none;}*/
 .apptitle {
     color: #04ACCF;
@@ -395,10 +401,10 @@ textarea {
     text-align: center;
 }
 
-.report .panel a {
-    color: white;
-}
+    .report .panel a {
+        color: white;
+    }
 
 .report .panel-disabled {
-    opacity:0.5;
+    opacity: 0.5;
 }

@@ -40,7 +40,9 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         /// <param name="driveTimeTo"></param>
         /// <param name="includeSainsburysAsCompetitors"></param>
         /// <returns></returns>
-        IEnumerable<SiteToCompetitor> GetCompetitors(int siteId, int driveTimeFrom, int driveTimeTo, bool includeSainsburysAsCompetitors = true);
+        IEnumerable<SiteToCompetitor> GetCompetitors(Site site, float driveTimeFrom, float driveTimeTo, bool includeSainsburysAsCompetitors = true);
+
+        SiteToCompetitor GetCompetitor(int siteId, int competitorId);
 
         SiteToCompetitor LookupSiteAndCompetitor(int siteCatNo, int competitorCatNo);
         
@@ -53,7 +55,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         /// <returns></returns>
         IEnumerable<Site> GetSitesWithEmailsAndPrices(DateTime? fromPriceDate = null, DateTime? toPriceDate = null);
         
-        IEnumerable<Site> GetSitesWithCompetitors();
+        Dictionary<int, Site> GetSitesWithCompetitors();
 
         /// <summary>
         /// Useful for pricing screen
@@ -110,7 +112,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
         void Dispose();
 
-        SitePrice AddOrUpdateSitePriceRecord(SitePrice calculatedSitePrice);
+        void AddOrUpdateSitePriceRecord(SitePrice calculatedSitePrice);
       
         /// <summary>
         /// Reason - To keep DailyPrice table lean. Otherwise CalcPrice will take a long time to troll through a HUGE table
@@ -131,7 +133,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         /// <param name="fuelId"></param>
         /// <param name="usingPricesforDate"></param>
         /// <returns></returns>
-        bool AnyDailyPricesForFuelOnDate(int fuelId, DateTime usingPricesforDate);
+        bool AnyDailyPricesForFuelOnDate(int fuelId, DateTime usingPricesforDate, int fileUploadId);
 
 
         /// <summary>
@@ -182,6 +184,13 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         /// <param name="when"></param>
         /// <returns></returns>
         NationalAverageReportViewModel GetReportNationalAverage(DateTime when);
+
+        /// <summary>
+        /// Gets the national average 2 report for the specified date
+        /// </summary>
+        /// <param name="when"></param>
+        /// <returns></returns>
+        NationalAverageReportViewModel GetReportNationalAverage2(DateTime when);
 
         /// <summary>
         /// Gets the price movement for the selected fuel within the selected dates

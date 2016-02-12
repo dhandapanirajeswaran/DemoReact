@@ -34,15 +34,12 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
         //[Route("api/site/{id}")] // Not needed but works
         public IHttpActionResult Get([FromUri]int id)
         {
-            var sites = _siteService.GetJsSites();
-            IEnumerable<Site> site = sites.Where(x => x.Id == id);
+            var site = _siteService.GetSite(id);
 
-            var siteArr = site as Site[] ?? site.ToArray();
-            if(!siteArr.Any())
+            if (site == null)
                 return NotFound();
-            List<SiteViewModel> sitesVm = siteArr.ToList().ToSiteViewModelList();
-
-            return Ok(sitesVm.FirstOrDefault());
+            
+            return Ok(site.ToSiteViewModel());
         }
         
         [System.Web.Http.HttpGet]
@@ -86,7 +83,7 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
 
 
         [System.Web.Http.HttpPut] // Edit new site
-        public async Task<IHttpActionResult> Update(Site site)
+        public async Task<IHttpActionResult> Update(SiteViewModel site)
         {
             if (site == null)
             {
@@ -97,7 +94,7 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
             {
                 using (var ss = _siteService)
                 {
-                    ss.UpdateSite(site);
+                    ss.UpdateSite(site.ToSite());
                     return Ok(site);
                 }
             }
@@ -119,31 +116,32 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
         /// <param name="fuelId"></param>
         /// <param name="forDate"></param>
         /// <returns>SitePrice</returns>
-        [System.Web.Http.HttpGet]
-        [System.Web.Http.Route("api/CalcPrice/")]
-        public async Task<IHttpActionResult> CalcPrice([FromUri]int siteId=0, [FromUri] int fuelId=0, DateTime? forDate = null)
-        {
-            // returns a SitePrice object, maybe later we call this for multiple fuels of the site
+        //[System.Web.Http.HttpGet]
+        //[System.Web.Http.Route("api/CalcPrice/")]
+        //public async Task<IHttpActionResult> CalcPrice([FromUri]int siteId=0, [FromUri] int fuelId=0, DateTime? forDate = null)
+        //{
+        //    // returns a SitePrice object, maybe later we call this for multiple fuels of the site
 
-            await FileService.KillAnyImportOrCalcsExceedingTimeouts();
+        //    await FileService.KillAnyImportOrCalcsExceedingTimeouts();
 
-            // Test for 30 Nov prices as we have a dummy set of these setup
-            // We dont have any 1st Dec prices
-            SitePrice cheapestPrice = null;
-            if (!forDate.HasValue) forDate = DateTime.Now; // DateTime.Parse("2015-11-30")
-            if (fuelId !=0 && siteId != 0)
-            {
-                cheapestPrice = _priceService.CalcPrice(siteId, fuelId, forDate.Value); // Unleaded
-                _priceService.CreateMissingSuperUnleadedFromUnleaded(forDate.Value, null, siteId);
-            }
-            else
-            {
-                // 5 min * 60 * 1000 millisecs
-                // NOTE: Only fires and forgets.. Doesnt actually await anything..
-               var result = await _priceService.DoCalcDailyPricesFireAndForget(forDate, 5 * 60 * 1000); // multiple sites
-            }
-            return Ok(cheapestPrice);
-        }
+        //    // Test for 30 Nov prices as we have a dummy set of these setup
+        //    // We dont have any 1st Dec prices
+        //    SitePrice cheapestPrice = null;
+        //    if (!forDate.HasValue) forDate = DateTime.Now; // DateTime.Parse("2015-11-30")
+        //    if (fuelId !=0 && siteId != 0)
+        //    {
+        //        var site = _siteService.GetSite(siteId);
+        //        cheapestPrice = _priceService.CalcPrice(null, site, fuelId, forDate.Value); // Unleaded
+        //        _priceService.CreateMissingSuperUnleadedFromUnleaded(forDate.Value, null, siteId);
+        //    }
+        //    else
+        //    {
+        //        // 5 min * 60 * 1000 millisecs
+        //        // NOTE: Only fires and forgets.. Doesnt actually await anything..
+        //       var result = await _priceService.DoCalcDailyPricesFireAndForget(forDate, 5 * 60 * 1000); // multiple sites
+        //    }
+        //    return Ok(cheapestPrice);
+        //}
 
         [System.Web.Http.HttpPut]
         [System.Web.Http.Route("api/SaveOverridePrices/")]

@@ -22,40 +22,107 @@ namespace JsPlc.Ssc.PetrolPricing.Models.Common
             };
         }
 
+        public static SiteEmail ToSiteEmail(this SiteEmailViewModel siteEmail)
+        {
+            return new SiteEmail
+            {
+                Id = siteEmail.Id,
+                EmailAddress = siteEmail.EmailAddress,
+                SiteId = siteEmail.SiteId
+            };
+        }
+
         public static List<SiteEmailViewModel> ToSiteEmailViewModelList(this List<SiteEmail> siteEmails)
         {
             IEnumerable<SiteEmailViewModel> retval = siteEmails.Select(x => x.ToSiteEmailViewModel());
             return retval.ToList();
         }
 
+        public static List<SiteEmail> ToSiteEmailList(this List<SiteEmailViewModel> siteEmails)
+        {
+            IEnumerable<SiteEmail> retval = siteEmails.Select(x => x.ToSiteEmail());
+            return retval.ToList();
+        }
+
         public static List<SiteViewModel> ToSiteViewModelList(this List<Site> sites)
         {
             var sitesVm = new List<SiteViewModel>();
-            sites.ForEach(x => sitesVm.Add(new SiteViewModel
+            sites.ForEach(site => sitesVm.Add(new SiteViewModel
             {
-                Id = x.Id,
-                Address = x.Address,
-                Brand = x.Brand,
-                CatNo = x.CatNo,
-                Company = x.Company,
-                Emails = x.Emails.ToList().ToSiteEmailViewModelList(),
-                IsActive = x.IsActive,
-                IsSainsburysSite = x.IsSainsburysSite,
-                Ownership = x.Ownership,
-                PfsNo = x.PfsNo,
-                PostCode = x.PostCode,
-                SiteName = x.SiteName,
-                StoreNo = x.StoreNo,
-                Suburb = x.Suburb,
-                Town = x.Town
+                Id = site.Id,
+                Address = site.Address,
+                Brand = site.Brand,
+                CatNo = site.CatNo,
+                Company = site.Company,
+                Emails = site.Emails.ToList().ToSiteEmailViewModelList(),
+                IsActive = site.IsActive,
+                IsSainsburysSite = site.IsSainsburysSite,
+                Ownership = site.Ownership,
+                PfsNo = site.PfsNo,
+                PostCode = site.PostCode,
+                SiteName = site.SiteName,
+                StoreNo = site.StoreNo,
+                Suburb = site.Suburb,
+                Town = site.Town
             }));
             return sitesVm;
+        }
+
+        public static SiteViewModel ToSiteViewModel(this Site site)
+        {
+            var siteVm = new SiteViewModel
+            {
+                Id = site.Id,
+                Address = site.Address,
+                Brand = site.Brand,
+                CatNo = site.CatNo,
+                Company = site.Company,
+                Emails = site.Emails.ToList().ToSiteEmailViewModelList(),
+                Competitors = site.Competitors.Select(x => x.Competitor).ToList().ToSiteViewModelList(),
+                IsActive = site.IsActive,
+                IsSainsburysSite = site.IsSainsburysSite,
+                Ownership = site.Ownership,
+                PfsNo = site.PfsNo,
+                PostCode = site.PostCode,
+                SiteName = site.SiteName,
+                StoreNo = site.StoreNo,
+                Suburb = site.Suburb,
+                Town = site.Town,
+                TrailPriceCompetitorId = site.TrailPriceCompetitorId
+            };
+
+            return siteVm;
+        }
+
+        public static Site ToSite(this SiteViewModel site)
+        {
+            var siteVm = new Site
+            {
+                Id = site.Id,
+                Address = site.Address,
+                Brand = site.Brand,
+                CatNo = site.CatNo,
+                Company = site.Company,
+                Emails = site.Emails.ToList().ToSiteEmailList(),
+                IsActive = site.IsActive,
+                IsSainsburysSite = site.IsSainsburysSite,
+                Ownership = site.Ownership,
+                PfsNo = site.PfsNo,
+                PostCode = site.PostCode,
+                SiteName = site.SiteName,
+                StoreNo = site.StoreNo,
+                Suburb = site.Suburb,
+                Town = site.Town,
+                TrailPriceCompetitorId = site.TrailPriceCompetitorId
+            };
+
+            return siteVm;
         }
 
         public static List<DataRow> ToDataRowsList(this DataTable dataTable)
         {
             var rowCount = dataTable.Rows.Count;
-            DataRow[] retval = {};
+            DataRow[] retval = { };
             if (rowCount <= 0) return retval.ToList();
 
             var rowsArr = new DataRow[rowCount];
@@ -161,7 +228,7 @@ namespace JsPlc.Ssc.PetrolPricing.Models.Common
                 var i = 1;
                 foreach (var dataItem in siteRow.DataItems)
                 {
-                    dr[i] = (dataItem.PriceValue/10.0).ToString("###0.0");
+                    dr[i] = (dataItem.PriceValue / 10.0).ToString("###0.0");
                     i += 1;
                 }
                 dt.Rows.Add(dr);
@@ -232,7 +299,7 @@ namespace JsPlc.Ssc.PetrolPricing.Models.Common
                 {
                     DataRow dr = dt.NewRow();
                     // 1st column is Price value
-                    dr[0] = ((row.Price/10).ToString("###0.0"));
+                    dr[0] = ((row.Price / 10).ToString("###0.0"));
                     var i = 1;
                     // 2nd col onwards are brand counts
                     foreach (PricePointBrandViewModel brand in row.PricePointBrands)
@@ -277,12 +344,124 @@ namespace JsPlc.Ssc.PetrolPricing.Models.Common
                 }
                 foreach (var brand in fuelType.Brands)
                 {
-                    dr[i] = (brand.Average/10.0).ToString("###0.0");
+                    dr[i] = (brand.Average / 10.0).ToString("###0.0");
                     i += 1;
                 }
                 dt.Rows.Add(dr);
             }
             return dt;
         }
+
+        public static DataTable ToCompetitorsPriceRangeDataTable(
+            this NationalAverageReportContainerViewModel reportContainer, string tableName = "Competitors Price Range")
+        {
+            var dt = new DataTable(tableName);
+            dt.Columns.Add("Brand");
+
+            //groups
+            string[] groups = { "Avg retails", "Difference", "Pricing range" };
+
+            foreach (var group in groups)
+                foreach (var fuelType in reportContainer.NationalAverageReport.Fuels)
+                {
+                    dt.Columns.Add(string.Format("{0} ({1})", fuelType.FuelName, group));
+                }
+
+            foreach (var brand in reportContainer.NationalAverageReport.Fuels.First().Brands)
+            {
+                var dr = dt.NewRow();
+                dr[0] = string.Concat(brand.BrandName, "(£)");
+                var i = 1;
+
+                //avg
+                foreach (var fuelType in reportContainer.NationalAverageReport.Fuels)
+                {
+                    var fuelBrand = fuelType.Brands.First(b => b.BrandName == brand.BrandName);
+                    dr[i] = ((fuelBrand.Average / 10.0).ToString("###0.0"));
+                    i++;
+                }
+
+                //difference
+                foreach (var fuelType in reportContainer.NationalAverageReport.Fuels)
+                {
+                    var fuelBrand = fuelType.Brands.First(b => b.BrandName.Equals(brand.BrandName, StringComparison.InvariantCultureIgnoreCase));
+
+                    int diff = fuelBrand.Average > 0 ? (fuelBrand.Average - fuelType.SainsburysPrice) : 0;
+
+                    dr[i] = ((diff / 10.0).ToString("###0.0"));
+                    i++;
+                }
+
+                //range
+                foreach (var fuelType in reportContainer.NationalAverageReport.Fuels)
+                {
+                    var fuelBrand = fuelType.Brands.First(b => brand.BrandName.Equals(b.BrandName, StringComparison.InvariantCultureIgnoreCase));
+
+                    dr[i] = string.Concat(((fuelBrand.Min / 10.0).ToString("###0.0")), " - ", ((fuelBrand.Max / 10.0).ToString("###0.0")));
+                    i++;
+                }
+                dt.Rows.Add(dr);
+            }
+
+            return dt;
+        }
+
+        public static DataTable ToNationalAverageReport2DataTable(
+            this NationalAverageReportContainerViewModel reportContainer, string tableName = "NationalAverage")
+        {
+            var dt = new DataTable(tableName);
+            dt.Columns.Add("FuelType");
+
+            if (!reportContainer.NationalAverageReport.Fuels.First().Brands.Any())
+            {
+                dt.Columns.Add("Status");
+            }
+
+            // Setup Table Columns - Fuel Type Brand1   Brand2   Brand3...
+            foreach (var brand in reportContainer.NationalAverageReport.Fuels.First().Brands)
+            {
+                dt.Columns.Add(brand.BrandName);
+            }
+
+            // Data Rows
+            foreach (var fuelType in reportContainer.NationalAverageReport.Fuels)
+            {
+                //average fuel price row
+                DataRow dr = dt.NewRow();
+                dr[0] = fuelType.FuelName;
+                var i = 1;
+
+                if (!fuelType.Brands.Any())
+                {
+                    dr[1] = "There is no data available";
+                }
+                foreach (var brand in fuelType.Brands)
+                {
+                    dr[i] = (brand.Average / 10.0).ToString("###0.0");
+                    i += 1;
+                }
+                dt.Rows.Add(dr);
+
+                //price difference row
+                dr = dt.NewRow();
+                dr[0] = "Difference";
+
+                i = 1;
+
+                if (!fuelType.Brands.Any())
+                {
+                    dr[1] = "There is no data available";
+                }
+                foreach (var brand in fuelType.Brands)
+                {
+                    int diff = brand.Average > 0 ? (brand.Average - fuelType.SainsburysPrice) : 0;
+                    dr[i] = (diff / 10.0).ToString("###0.0");
+                    i += 1;
+                }
+                dt.Rows.Add(dr);
+            }
+            return dt;
+        }
+
     }
 }

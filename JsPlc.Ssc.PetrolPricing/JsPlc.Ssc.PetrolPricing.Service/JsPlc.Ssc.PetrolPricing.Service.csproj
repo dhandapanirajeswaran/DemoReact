@@ -274,6 +274,8 @@
     <Content Include="App_Data\DummyDataScripts\1%29 PricesSetup.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="App_Data\PostSeedScripts\1%29 FC-7 SitePrice table - add CompetitorId and Markup columns - Copy.sql" />
+    <Content Include="App_Data\PostSeedScripts\2%29 FC-30 Site table - add TrailPriceCompetitorId column.sql" />
     <Content Include="Areas\HelpPage\HelpPage.css" />
     <Content Include="Content\bootstrap-theme.css" />
     <Content Include="Content\bootstrap-theme.min.css" />
@@ -340,7 +342,6 @@
     <Content Include="Views\Shared\_Layout.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="App_Data\PostSeedScripts\" />
     <Folder Include="bin\" />
     <Folder Include="Models\" />
   </ItemGroup>

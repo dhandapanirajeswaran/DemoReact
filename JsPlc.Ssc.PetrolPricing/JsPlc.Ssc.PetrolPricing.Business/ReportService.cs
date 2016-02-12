@@ -43,6 +43,11 @@ namespace JsPlc.Ssc.PetrolPricing.Business
             return _db.GetReportNationalAverage(when);
         }
 
+        public NationalAverageReportViewModel GetReportNationalAverage2(DateTime when)
+        {
+            return _db.GetReportNationalAverage2(when);
+        }
+
         /// <summary>
         /// Cached for 30 seconds (see 0.5 value in expiration policy)
         /// </summary>

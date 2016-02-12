@@ -18,13 +18,11 @@ namespace JsPlc.Ssc.PetrolPricing.Models
         public int? CatNo { get; set; } // Catalist no.
         public string Brand { get; set; }
 
-        [Required]
         public string SiteName { get; set; }
 
         public string Address { get; set; }
         public string Suburb { get; set; }
         
-        [Required]
         public string Town { get; set; }
 
         public string PostCode { get; set; }
@@ -34,15 +32,17 @@ namespace JsPlc.Ssc.PetrolPricing.Models
         public int? StoreNo { get; set; }
         public int? PfsNo { get; set; }
 
-        [DefaultValue(true)]
-        public bool IsSainsburysSite { get; set; } // defaults to false
-        public bool IsActive { get; set; } // defaults to false
+        public bool IsSainsburysSite { get; set; } 
+
+        public bool IsActive { get; set; } 
         
         public virtual ICollection<SiteEmail> Emails { get; set; }
 
         public virtual ICollection<SitePrice> Prices { get; set; }
 
-        public virtual ICollection<SiteToCompetitor> Competitors { get; set; } 
+        public virtual ICollection<SiteToCompetitor> Competitors { get; set; }
+
+        public int? TrailPriceCompetitorId { get; set; }
     }
 
     public class SiteEmail

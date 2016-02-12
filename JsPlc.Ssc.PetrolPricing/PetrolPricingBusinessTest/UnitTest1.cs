@@ -33,13 +33,6 @@ namespace PetrolPricingBusinessTest
         }
 
         [TestMethod]
-        public void GetSiteWithCompetitors()
-        {
-            var sites = _siteService.GetCompetitors(1, 0, 5, true);
-            sites = _siteService.GetCompetitors(2, 5, 10, true);
-        }
-
-        [TestMethod]
         public void GetSitesPricesInDateRange()
         {
             var siteWithPricesInDateRange = _repository.GetSitesWithEmailsAndPrices(DateTime.Now, DateTime.Now);

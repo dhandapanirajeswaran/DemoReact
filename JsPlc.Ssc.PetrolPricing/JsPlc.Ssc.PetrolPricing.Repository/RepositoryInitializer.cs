@@ -22,6 +22,11 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 {
     public class RepositoryInitializer : DropCreateDatabaseIfModelChanges<RepositoryContext>
     {
+        public override void InitializeDatabase(RepositoryContext context)
+        {
+            base.InitializeDatabase(context);
+        }
+
         protected override void Seed(RepositoryContext context)
         {
             SeedRepository(context);

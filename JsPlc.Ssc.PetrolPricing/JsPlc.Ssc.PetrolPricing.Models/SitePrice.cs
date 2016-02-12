@@ -31,5 +31,11 @@ namespace JsPlc.Ssc.PetrolPricing.Models
         public int OverriddenPrice { get; set; } // Stored as raw value 1079, defaults to 0
 
         // Email/Reporting concern: Make sure we are aware or 0 values in SuggestedPrice/OverriddenPrice as we dont want 0 price going out to Stores..
+
+        public int? CompetitorId { get; set; } // selected competitor id
+
+        public int Markup { get; set; } // selected competitor markup to the site
+
+        public bool IsTrailPrice { get; set; } // if true, then trial price has been selected 
     }
 }

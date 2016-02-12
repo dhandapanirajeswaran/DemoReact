@@ -71,7 +71,7 @@ else set @todayPriceDate = @lastPriceDate
 		sf.SiteId, sf.FuelTypeId, sf.FuelTypeName, 
 
 		sp.DateOfCalc, sp.DateOfPrice, sp.EffDate,
-		sp.SuggestedPrice, sp.OverriddenPrice
+		sp.SuggestedPrice, sp.OverriddenPrice, sp.CompetitorId, sp.Markup, sp.IsTrailPrice
 	FROM siteFuels sf Left Join SitePrice sp
 		On sf.FuelTypeId = sp.FuelTypeId And sf.SiteId = sp.SiteId
 ) -- Select * from sitePrices
@@ -92,6 +92,7 @@ else set @todayPriceDate = @lastPriceDate
 
 		tomp.DateOfCalc, tomp.DateOfPrice, 
 		tomp.SuggestedPrice, tomp.OverriddenPrice,
+		tomp.CompetitorId, tomp.Markup, tomp.IsTrailPrice,
 
 		todp.DateOfCalc DateOfCalcForTodaysPrice, todp.DateOfPrice DateOfPriceForTodaysPrice, 
 		todp.SuggestedPrice SuggestedPriceToday, todp.OverriddenPrice OverriddenPriceToday

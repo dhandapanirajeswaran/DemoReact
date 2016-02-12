@@ -11,14 +11,13 @@ namespace JsPlc.Ssc.PetrolPricing.Models
 {
     public class SiteViewModel
     {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
         public int? CatNo { get; set; } // Catalist no.
         public string Brand { get; set; }
 
         [Required]
+        [Display(Name = "Site name")]
         public string SiteName { get; set; }
 
         public string Address { get; set; }
@@ -27,6 +26,7 @@ namespace JsPlc.Ssc.PetrolPricing.Models
         [Required]
         public string Town { get; set; }
 
+        [Display(Name = "Post code")]
         public string PostCode { get; set; }
         public string Company { get; set; }
         public string Ownership { get; set; }
@@ -35,10 +35,22 @@ namespace JsPlc.Ssc.PetrolPricing.Models
         public int? PfsNo { get; set; }
 
         [DefaultValue(true)]
+        [Display(Name = "Is Sainsburys site")]
         public bool IsSainsburysSite { get; set; } // defaults to false
+        
+        [Display(Name = "Is active")]
         public bool IsActive { get; set; } // defaults to false
 
+        [Display(Name = "Inherit price from")]
+        public int? TrailPriceCompetitorId { get; set; }
+
         public ICollection<SiteEmailViewModel> Emails { get; set; }
+
+        public List<SiteViewModel> Competitors { get; set; }
+
+        public SiteViewModel() {
+            Competitors = new List<SiteViewModel>();
+        }
     }
     public class SiteEmailViewModel
     {

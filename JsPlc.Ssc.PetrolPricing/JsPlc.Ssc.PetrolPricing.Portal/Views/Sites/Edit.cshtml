@@ -1,5 +1,5 @@
 ﻿@using JsPlc.Ssc.PetrolPricing.Models
-@model JsPlc.Ssc.PetrolPricing.Models.Site
+@model JsPlc.Ssc.PetrolPricing.Models.SiteViewModel
 
 @{
     ViewBag.Title = "Edit";
@@ -75,6 +75,14 @@
                     @Html.ValidationMessageFor(model => model.PostCode, "", new { @class = "text-danger" })
                 </div>
             </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.TrailPriceCompetitorId, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.DropDownListFor(model => model.TrailPriceCompetitorId, Model.Competitors.Select(c => new SelectListItem { Value = c.Id.ToString(), Text=c.SiteName.ToString(), Selected = c.Id == Model.TrailPriceCompetitorId }), new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.TrailPriceCompetitorId, "", new { @class = "text-danger" })
+                </div>
+            </div>
         </div>
         <div class="col-md-6">
 
@@ -116,16 +124,16 @@
                     @{
                         var i = 0;
                         <!-- Depending on how many emails a site has, we add elements, 3 for now -->
-                        var emails = (Model.Emails == null || !Model.Emails.Any()) ? new List<SiteEmail>
+                        var emails = (Model.Emails == null || !Model.Emails.Any()) ? new List<SiteEmailViewModel>
                         {
-                            new SiteEmail {EmailAddress = "", Id = 0},
-                            new SiteEmail {EmailAddress = "", Id = 0},
-                            new SiteEmail {EmailAddress = "", Id = 0}
+                            new SiteEmailViewModel {EmailAddress = "", Id = 0},
+                            new SiteEmailViewModel {EmailAddress = "", Id = 0},
+                            new SiteEmailViewModel {EmailAddress = "", Id = 0}
                         } : Model.Emails;
 
                         while(emails.Count<3)
                         {
-                            emails.Add(new SiteEmail {EmailAddress = "", Id = 0});
+                            emails.Add(new SiteEmailViewModel {EmailAddress = "", Id = 0});
                         }
 
                         foreach (var email in emails)

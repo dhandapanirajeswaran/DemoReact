@@ -50,6 +50,20 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
             return Ok(result);
         }
 
+        /// <summary>
+        /// National average 2 report
+        /// </summary>
+        /// <param name="when"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("api/GetNationalAverage2/{when}")]
+        public IHttpActionResult GetNationalAverage2([FromUri]DateTime when)
+        {
+            var rs = new ReportService();
+            var result = rs.GetReportNationalAverage2(when);
+            return Ok(result);
+        }
+
 
         /// <summary>
         /// Compliance Report

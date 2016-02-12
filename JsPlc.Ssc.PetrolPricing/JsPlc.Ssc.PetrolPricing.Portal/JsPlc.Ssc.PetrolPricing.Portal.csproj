@@ -178,7 +178,7 @@
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AdminController.cs" />
-    <Compile Include="Controllers\ReportsController.cs" />
+    <Compile Include="Controllers\PriceReportsController.cs" />
     <Compile Include="Controllers\SitesController.cs" />
     <Compile Include="Controllers\FileController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
@@ -317,12 +317,14 @@
     <Content Include="Scripts\moment-with-locales.min.js" />
     <Content Include="Scripts\moment.js" />
     <Content Include="Scripts\moment.min.js" />
+    <Content Include="Scripts\pricereports\competitorsPriceRange.js" />
+    <Content Include="Scripts\pricereports\nationalAverage2.js" />
     <Content Include="Scripts\r.js" />
-    <Content Include="Scripts\reports\nationalAverage.js" />
-    <Content Include="Scripts\reports\priceMovement.js" />
-    <Content Include="Scripts\reports\compliance.js" />
-    <Content Include="Scripts\reports\pricePoints.js" />
-    <Content Include="Scripts\reports\competitorSites.js" />
+    <Content Include="Scripts\pricereports\nationalAverage.js" />
+    <Content Include="Scripts\pricereports\priceMovement.js" />
+    <Content Include="Scripts\pricereports\compliance.js" />
+    <Content Include="Scripts\pricereports\pricePoints.js" />
+    <Content Include="Scripts\pricereports\competitorSites.js" />
     <Content Include="Scripts\require.config.js" />
     <Content Include="Scripts\require.js" />
     <Content Include="Scripts\respond.js" />
@@ -340,7 +342,7 @@
     <Content Include="Scripts\Utils\helpers.js" />
     <Content Include="Scripts\Utils\petrolpricingDatePickers.js" />
     <Content Include="Scripts\_references.js" />
-    <Content Include="Views\Reports\PriceMovement.cshtml">
+    <Content Include="Views\PriceReports\PriceMovement.cshtml">
       <SubType>Code</SubType>
     </Content>
     <Content Include="Web.config" />
@@ -386,17 +388,19 @@
     <Content Include="Views\Sites\_SiteList.cshtml" />
     <Content Include="Views\Sites\Index.cshtml" />
     <Content Include="Views\Shared\_NavLinks.cshtml" />
-    <Content Include="Views\Reports\Index.cshtml" />
+    <Content Include="Views\PriceReports\Index.cshtml" />
     <Content Include="Views\Sites\Create.cshtml" />
     <Content Include="Views\Sites\Details.cshtml" />
     <Content Include="Views\Sites\Edit.cshtml" />
     <Content Include="Views\File\_ImportErrors.cshtml" />
     <Content Include="Views\Sites\Prices.cshtml" />
     <Content Include="Views\Admin\ReInitDb.cshtml" />
-    <Content Include="Views\Reports\CompetitorSites.cshtml" />
-    <Content Include="Views\Reports\PricePoints.cshtml" />
-    <Content Include="Views\Reports\NationalAverage.cshtml" />
-    <Content Include="Views\Reports\Compliance.cshtml" />
+    <Content Include="Views\PriceReports\CompetitorSites.cshtml" />
+    <Content Include="Views\PriceReports\PricePoints.cshtml" />
+    <Content Include="Views\PriceReports\NationalAverage.cshtml" />
+    <Content Include="Views\PriceReports\Compliance.cshtml" />
+    <Content Include="Views\PriceReports\NationalAverage2.cshtml" />
+    <Content Include="Views\PriceReports\CompetitorsPriceRange.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\uploads\" />
