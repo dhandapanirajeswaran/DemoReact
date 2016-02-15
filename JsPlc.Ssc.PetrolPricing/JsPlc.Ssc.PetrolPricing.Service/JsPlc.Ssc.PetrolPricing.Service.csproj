@@ -275,6 +275,8 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="App_Data\PostSeedScripts\1%29 FC-7 SitePrice table - add CompetitorId and Markup columns - Copy.sql" />
+    <Content Include="App_Data\PostSeedScripts\4%29 FC-31 Add all sites email id to our system.sql" />
+    <Content Include="App_Data\PostSeedScripts\3%29 FC-32 Add all JS site details from the attached excel sheet.sql" />
     <Content Include="App_Data\PostSeedScripts\2%29 FC-30 Site table - add TrailPriceCompetitorId column.sql" />
     <Content Include="Areas\HelpPage\HelpPage.css" />
     <Content Include="Content\bootstrap-theme.css" />

@@ -59,7 +59,7 @@ else set @todayPriceDate = @lastPriceDate
 (
 	Select s.Id as SiteId, s.CatNo, s.SiteName, s.Address, s.Suburb, s.Town,  
 		s.IsSainsburysSite, s.Brand, s.Company, s.Ownership,
-		sf.FuelTypeId, sf.FuelTypeName
+		sf.FuelTypeId, sf.FuelTypeName, s.PfsNo, s.StoreNo
 	From 
 		[Site] s 
 			Inner Join siteFuels sf
@@ -88,7 +88,7 @@ else set @todayPriceDate = @lastPriceDate
 	SELECT swf.SiteId, swf.CatNo,
 		swf.SiteName, swf.Address, swf.Suburb, swf.Town,  
 		swf.IsSainsburysSite, swf.Brand, swf.Company, swf.Ownership,
-		swf.FuelTypeId, swf.FuelTypeName,
+		swf.FuelTypeId, swf.FuelTypeName, swf.PfsNo, swf.StoreNo,
 
 		tomp.DateOfCalc, tomp.DateOfPrice, 
 		tomp.SuggestedPrice, tomp.OverriddenPrice,

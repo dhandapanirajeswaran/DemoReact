@@ -42,6 +42,7 @@ namespace JsPlc.Ssc.PetrolPricing.Models
         public bool IsActive { get; set; } // defaults to false
 
         [Display(Name = "Inherit price from")]
+        [DefaultValue(null)]
         public int? TrailPriceCompetitorId { get; set; }
 
         public ICollection<SiteEmailViewModel> Emails { get; set; }

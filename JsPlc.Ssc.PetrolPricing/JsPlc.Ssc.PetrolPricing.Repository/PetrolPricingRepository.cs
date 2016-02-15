@@ -271,6 +271,10 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                         sitePriceRow.Address = (string)pgRow["Address"];
                         // any other fields for UI extract here
 
+                        sitePriceRow.PfsNo = pgRow["PfsNo"].ToString().ToNullable<int>();
+                        sitePriceRow.StoreNo = pgRow["StoreNo"].ToString().ToNullable<int>();
+
+
                         sitePriceRow.FuelPrices = sitePriceRow.FuelPrices ?? new List<FuelPriceViewModel>();
                         if (!Convert.IsDBNull(pgRow["FuelTypeId"]))
                         {
@@ -284,6 +288,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
                             var Markup = pgRow["Markup"].ToString().ToNullable<int>();
                             var IsTrailPrice = pgRow["IsTrailPrice"].ToString().ToNullable<bool>();
+                            
 
                             var competitorId = pgRow["CompetitorId"].ToString().ToNullable<int>();
 
@@ -297,6 +302,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                                 competitorName = string.Format("{0}/{1}", competitorSite.Brand, competitorSite.SiteName);
                             }
 
+                            
                             sitePriceRow.FuelPrices.Add(new FuelPriceViewModel
                             {
                                 FuelTypeId = (int)pgRow["FuelTypeId"],
@@ -306,7 +312,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
                                 // Today's prices (whatever was calculated yesterday OR last)
                                 TodayPrice = TodayPrice,
-                                Markup = Markup.HasValue ? Markup.Value : 0,
+                                Markup = Markup,
                                 CompetitorName = competitorName,
                                 IsTrailPrice = IsTrailPrice.HasValue ? IsTrailPrice.Value : false
                             });
