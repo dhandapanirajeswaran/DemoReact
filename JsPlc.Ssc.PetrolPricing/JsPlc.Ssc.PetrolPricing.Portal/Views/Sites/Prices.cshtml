@@ -123,24 +123,55 @@
                 </div>
             </div>
         </div>
+        <hr class="hide" data-bind="visible: !$root.HasValidationErrors() && $root.HasUnsavedChanges() && !$root.ViewingHistorical()" />
+        <div class="hide row" data-bind="visible: !$root.HasValidationErrors() && $root.HasUnsavedChanges() && !$root.ViewingHistorical()">
+            <div class="col-md-12">
+                <div class="col-md-12 text-right">
+                    <button type="button" class="btn btn-default" id="btnSavePrices"
+                            data-bind="click: savePetrolPricingForm">
+                        Save Prices
+                    </button>
+                    <div id="unSavedChangesMsg" style="color: brown; font-size: larger">You have unsaved changes</div>
+                </div>
+            </div>
+        </div>
         <hr />
         <div class="row">
             <div class="col-md-12">
                 <!-- Date Picker -->
-                <div class="col-md-2"><b>Select date:</b></div>
-                <div class="col-md-2 left">
+                <div class="col-md-1">
+                    <label for="viewingDate">Date:</label>
                     <input type="text" id="viewingDate" class="datepicker form-control"
-                           style="background-color: #ececec; width: 100px" name="viewingDate" width="200"
+                           style="width: 85px" name="viewingDate"
                            data-bind="value: $root.InitDate" />
                 </div>
-                <div class="col-md-5 left"><button type="button" class="btn btn-default" data-bind="click: loadNewDateData">Go</button></div>
+                <!-- Store Name -->
+                <div class="col-md-2">
+                    <label for="viewingStoreName">Store name:</label>
+                    <input type="text" id="viewingStoreName" class="form-control"
+                           name="viewingStoreName" data-bind="value: $root.StoreName" />
+                </div>
+                <!-- Store Town -->
+                <div class="col-md-2">
+                    <label for="viewingStoreTown">Store town:</label>
+                    <input type="text" id="viewingStoreTown" class="form-control"
+                           name="viewingStoreTown" data-bind="value: $root.StoreTown" />
+                </div>
+                <!-- Store No -->
+                <div class="col-md-2">
+                    <label for="viewingStoreNo">Store #:</label>
+                    <input type="text" id="viewingStoreNo" class="form-control"
+                           name="viewingStoreNo" data-bind="numeric, value: $root.StoreNo" />
+                </div>
+                <!-- Catalist No -->
+                <div class="col-md-1">
+                    <label for="viewingCatNo">Catalist #:</label>
+                    <input type="text" id="viewingCatNo" class="form-control"
+                           name="viewingCatNo" data-bind="numeric, value: $root.CatNo" />
+                </div>
 
-                <div class="col-md-3 text-right">
-                    <button type="button" class="btn btn-default" id="btnSavePrices"
-                            data-bind="click: savePetrolPricingForm, visible: !$root.HasValidationErrors() && $root.HasUnsavedChanges() && !$root.ViewingHistorical()">
-                        Save Prices
-                    </button>
-                    <div id="unSavedChangesMsg" data-bind="visible: !$root.HasValidationErrors() && $root.HasUnsavedChanges() && !$root.ViewingHistorical()" style="color: brown; font-size: larger">You have unsaved changes</div>
+                <div class="col-md-1 left">
+                    <button style="margin-top: 24px" type="button" class="btn btn-default" data-bind="click: loadPageWithParams">Go</button>
                 </div>
             </div>
         </div>
@@ -152,7 +183,7 @@
                     <tr>
                         <th colspan="7">
                             <!-- Price Change Type -->
-                            <div class="col-md-3" style="margin-left: -10px"><b>Price change type:</b></div>
+                            <div class="col-md-4" style="margin-left: -10px"><b>Price change type:</b></div>
                             <div class="col-md-4">
                                 <span><input type="radio" value="(+/-n)" data-bind="click: switchChangeType, checked: changeType" /> (+/-n)</span>
                                 <span><input type="radio" value="Override all" data-bind="click: switchChangeType, checked: changeType" /> Override all</span>

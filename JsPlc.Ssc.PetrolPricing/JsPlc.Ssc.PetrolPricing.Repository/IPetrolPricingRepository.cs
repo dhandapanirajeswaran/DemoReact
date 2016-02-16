@@ -16,7 +16,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         
         Site GetSite(int siteId);
 
-        SitePriceViewModel GetASiteWithPrices(int siteId, DateTime forDate);
+        SitePriceViewModel GetASiteWithPrices(int siteId, DateTime forDate, string storeName);
 
         Site GetSiteByCatNo(int catNo);
 
@@ -65,7 +65,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         /// <param name="pageNo"></param>
         /// <param name="pageSize"></param>
         /// <returns></returns>
-        IEnumerable<SitePriceViewModel> GetSitesWithPrices(DateTime forDate, int siteId = 0, int pageNo = 1,
+        IEnumerable<SitePriceViewModel> GetSitesWithPrices(DateTime forDate, string storeName = "", int catNo = 0, int storeNo = 0, string storeTown = "", int siteId = 0, int pageNo = 1,
             int pageSize = Constants.PricePageSize);
 
         /// <summary>

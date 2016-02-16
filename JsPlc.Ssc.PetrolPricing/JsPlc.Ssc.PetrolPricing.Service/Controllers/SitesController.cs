@@ -183,18 +183,27 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
         /// Test Url: api/SitePrices?forDate=2015-11-30&amp;siteId=1 
         /// or api/SitePrices
         /// </summary>
-        /// <param name="forDate">Optional - Date of Calc/Viewing</param>
-        /// <param name="siteId">Optional - Specific SiteId or 0 for all Sites</param>
-        /// <param name="pageNo">Optional - Viewing PageNo</param>
-        /// <param name="pageSize">Optional - PageSize, set large value (e.g. 1000) to get all sites</param>
-        /// <returns>List of SitePriceViewModel</returns>
+        /// <param name="forDate"></param>
+        /// <param name="storeName"></param>
+        /// <param name="catNo"></param>
+        /// <param name="storeNo"></param>
+        /// <param name="storeTown"></param>
+        /// <param name="siteId"></param>
+        /// <param name="pageNo"></param>
+        /// <param name="pageSize"></param>
+        /// <returns></returns>
         [System.Web.Http.HttpGet]
         [System.Web.Http.Route("api/SitePrices")]
-        public IHttpActionResult GetSitesWithPrices([FromUri] DateTime? forDate=null,
+        public IHttpActionResult GetSitesWithPrices(
+            [FromUri] DateTime? forDate=null, 
+            [FromUri]string storeName = "",
+            [FromUri]int catNo = 0,
+            [FromUri]int storeNo = 0,
+            [FromUri]string storeTown = "",
             [FromUri]int siteId = 0, [FromUri]int pageNo = 1, [FromUri]int pageSize = Constants.PricePageSize)
         {
             if (!forDate.HasValue) forDate = DateTime.Now;
-            IEnumerable<SitePriceViewModel> siteWithPrices = _siteService.GetSitesWithPrices(forDate.Value, siteId, pageNo, pageSize);
+            IEnumerable<SitePriceViewModel> siteWithPrices = _siteService.GetSitesWithPrices(forDate.Value, storeName, catNo, storeNo, storeTown, siteId, pageNo, pageSize);
             return Ok(siteWithPrices.ToList());
         }
 

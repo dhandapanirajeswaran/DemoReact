@@ -157,10 +157,10 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             return sites;
         }
 
-        public IEnumerable<SitePriceViewModel> GetSitesWithPrices(DateTime forDate, int siteId = 0, int pageNo = 1,
+        public IEnumerable<SitePriceViewModel> GetSitesWithPrices(DateTime forDate, string storeName = "", int catNo = 0, int storeNo = 0, string storeTown = "", int siteId = 0, int pageNo = 1,
             int pageSize = Constants.PricePageSize)
         {
-            var retval = CallSitePriceSproc(forDate, siteId, pageNo, pageSize);
+            var retval = CallSitePriceSproc(forDate, storeName, catNo, storeNo, storeTown, siteId, pageNo, pageSize);
 
             return retval;
         }
@@ -173,9 +173,9 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             return retval;
         }
 
-        public SitePriceViewModel GetASiteWithPrices(int siteId, DateTime forDate)
+        public SitePriceViewModel GetASiteWithPrices(int siteId, DateTime forDate, string storeName)
         {
-            var listSitePlusPrice = CallSitePriceSproc(forDate, siteId, 1, 1);
+            var listSitePlusPrice = CallSitePriceSproc(forDate, string.Empty, 0, 0, string.Empty, siteId, 1, 1);
 
             //sitePlusPrice = listSitePlusPrice.Where(x => x.SiteId == siteId);
             SitePriceViewModel sitePlusPrice = new SitePriceViewModel();
@@ -198,7 +198,9 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         /// <param name="pageNo">[Optional] Defaults to Page 1, or specify a page no.</param>
         /// <param name="pageSize">[Optional] Defaults to Pagesize as per constant, or specify a page size</param>
         /// <returns>List of SitePriceViewModel (with overridable price as an input price by user)</returns>
-        private IEnumerable<SitePriceViewModel> CallSitePriceSproc(DateTime forDate, int siteId = 0, int pageNo = 1,
+        private IEnumerable<SitePriceViewModel> CallSitePriceSproc(
+            DateTime forDate, string storeName = "", int catNo = 0, int storeNo = 0, string storeTown = "", 
+            int siteId = 0, int pageNo = 1,
             int pageSize = Constants.PricePageSize)
         {
             //@siteId int,
@@ -222,6 +224,23 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             {
                 Value = pageSize
             };
+            var storeNameParam = new SqlParameter("@storeName", SqlDbType.NVarChar)
+            {
+                Value = string.IsNullOrWhiteSpace(storeName) ? "" : storeName
+            };
+            var catNoParam = new SqlParameter("@catNo", SqlDbType.Int)
+            {
+                Value = catNo
+            };
+            var storeNoParam = new SqlParameter("@storeNo", SqlDbType.Int)
+            {
+                Value = storeNo
+            };
+            var storeTownParam = new SqlParameter("@storeTown", SqlDbType.NVarChar)
+            {
+                Value = string.IsNullOrWhiteSpace(storeTown) ? "" : storeTown
+            };
+            
             // any other params here
 
             var sqlParams = new List<SqlParameter>
@@ -229,7 +248,11 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                 siteIdParam,
                 forDateParam,
                 skipRecsParam,
-                takeRecsParam
+                takeRecsParam,
+                storeNameParam,
+                storeTownParam,
+                catNoParam,
+                storeNoParam
             };
             const string spName = "dbo.spGetSitePrices";
             // Test in SQL:     Exec dbo.spGetSitePrices 0, '2015-11-30'

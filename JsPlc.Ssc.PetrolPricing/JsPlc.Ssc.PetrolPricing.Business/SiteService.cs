@@ -30,9 +30,9 @@ namespace JsPlc.Ssc.PetrolPricing.Business
             return _db.GetSitesWithEmailsAndPrices(forDate);
         }
 
-        public IEnumerable<SitePriceViewModel> GetSitesWithPrices(DateTime forDate, int siteId = 0, int pageNo = 1, int pageSize = Constants.PricePageSize)
+        public IEnumerable<SitePriceViewModel> GetSitesWithPrices(DateTime forDate, string storeName = "", int catNo = 0, int storeNo = 0, string storeTown = "", int siteId = 0, int pageNo = 1, int pageSize = Constants.PricePageSize)
         {
-            return _db.GetSitesWithPrices(forDate, siteId, pageNo, pageSize);
+            return _db.GetSitesWithPrices(forDate, storeName, catNo, storeNo, storeTown, siteId, pageNo, pageSize);
         }
 
         public IEnumerable<SitePriceViewModel> GetCompetitorsWithPrices(DateTime forDate, int siteId = 0, int pageNo = 1, int pageSize = Constants.PricePageSize)
@@ -50,9 +50,9 @@ namespace JsPlc.Ssc.PetrolPricing.Business
             return _db.NewSite(site);
         }
 
-        public SitePriceViewModel GetSiteAndPrices(int siteId, DateTime date)
+        public SitePriceViewModel GetSiteAndPrices(int siteId, DateTime date, string storeName)
         {
-            return _db.GetASiteWithPrices(siteId, date);
+            return _db.GetASiteWithPrices(siteId, date, storeName);
         }
 
         public bool ExistsSite(string siteName, int? catNo)

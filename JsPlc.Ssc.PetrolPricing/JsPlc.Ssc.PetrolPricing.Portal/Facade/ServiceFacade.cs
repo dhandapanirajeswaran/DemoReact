@@ -28,7 +28,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
         {
             _client = new Lazy<HttpClient>();
             _client.Value.BaseAddress = new Uri(ConfigurationManager.AppSettings["ServicesBaseUrl"] + "");
-            
+
             _client.Value.DefaultRequestHeaders.Accept.Clear();
             _client.Value.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         }
@@ -51,10 +51,10 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             return (response.IsSuccessStatusCode) ? result : null;
         }
 
-        public Site NewSite(Site site) 
+        public Site NewSite(Site site)
         {
             const string apiUrl = "api/Sites/";
-            
+
             var response = _client.Value.PostAsync(apiUrl, site, new JsonMediaTypeFormatter()).Result;
             var result = response.Content.ReadAsAsync<Site>().Result;
 
@@ -72,7 +72,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             return (response.IsSuccessStatusCode) ? result : null;
         }
 
-        public async Task<List<EmailSendLog>> EmailUpdatedPricesSites(int siteId=0, DateTime? forDate = null, string apiName = "emailSites")
+        public async Task<List<EmailSendLog>> EmailUpdatedPricesSites(int siteId = 0, DateTime? forDate = null, string apiName = "emailSites")
         {
             string filters = (forDate.HasValue) ? "endTradeDate=" + forDate.Value.ToString("yyyy-MM-dd") + "&" : "";
             filters = filters + "siteId=" + siteId + "&";
@@ -116,11 +116,21 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
         /// List of SitePriceViewModel for Site Pricing View
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<SitePriceViewModel> GetSitePrices(DateTime? forDate = null, int siteId = 0, int pageNo = 1,
-                int pageSize = Constants.PricePageSize, string apiName = "SitePrices")
+        public IEnumerable<SitePriceViewModel> GetSitePrices(DateTime? forDate = null,
+            string storeName = "",
+            int catNo = 0,
+            int storeNo = 0,
+            string storeTown = "",
+            int siteId = 0, int pageNo = 1,
+            int pageSize = Constants.PricePageSize, 
+            string apiName = "SitePrices")
         {
             // Optional params(defaults) - forDate (Date of Calc/Viewing today), siteId (0 for all sites), pageNo(1), PageSize(20)
             string filters = (forDate.HasValue) ? "forDate=" + forDate.Value.ToString("yyyy-MM-dd") + "&" : "";
+            filters = filters + "storeName=" + storeName + "&";
+            filters = filters + "storeTown=" + storeTown + "&";
+            filters = filters + "catNo=" + catNo + "&";
+            filters = filters + "storeNo=" + storeNo + "&";
             filters = filters + "siteId=" + siteId + "&";
             filters = filters + "pageNo=" + pageNo + "&";
             filters = filters + "pageSize=" + pageSize + "&";
@@ -145,7 +155,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
         public IEnumerable<SitePriceViewModel> GetCompetitorsWithPrices(DateTime? forDate = null, int siteId = 0, int pageNo = 1,
             int pageSize = Constants.PricePageSize)
         {
-            return GetSitePrices(forDate, siteId, pageNo, Constants.PricePageSize, apiName: "CompetitorPrices");
+            return GetSitePrices(forDate, string.Empty, 0, 0, string.Empty, siteId, pageNo, Constants.PricePageSize, apiName: "CompetitorPrices");
         }
 
         // Get list of file uploads
@@ -252,7 +262,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             var response = await _client.Value.GetAsync(apiUrl);
 
             var result = await response.Content.ReadAsStringAsync();
-            
+
             return result; //(response.IsSuccessStatusCode) ? result : null;
         }
 

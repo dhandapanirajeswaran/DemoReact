@@ -89,14 +89,16 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
         }
 
         [ScriptMethod(UseHttpGet = true)]
-        public JsonResult GetSitesWithPricesJson(string date=null, int siteId=0, int pageNo=1, 
-                int pageSize=Constants.PricePageSize, int getCompetitor=0)
+        public JsonResult GetSitesWithPricesJson(string date = null, string storeName = "",
+            int catNo = 0, int storeNo = 0,
+            string storeTown = "", int siteId = 0, int pageNo = 1,
+                int pageSize = Constants.PricePageSize, int getCompetitor = 0)
         {
             DateTime forDate;
             if (!DateTime.TryParse(date, out forDate)) forDate = DateTime.Now;
             // POST scenarios use : JsonConvert.SerializeObject(siteView);
             IEnumerable<SitePriceViewModel> sitesViewModelsWithPrices = (getCompetitor != 1)
-                ? _serviceFacade.GetSitePrices(forDate, siteId, pageNo, pageSize)
+                ? _serviceFacade.GetSitePrices(forDate, storeName, catNo, storeNo, storeTown, siteId, pageNo, pageSize)
                 : _serviceFacade.GetCompetitorsWithPrices(forDate, siteId, pageNo, pageSize); // for getting comps by ajax
 
             if (getCompetitor == 1)
@@ -176,7 +178,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
                 ViewBag.ErrorMessage = "Please check for validation errors under each field.";
                 return View(site);
             }
-            site.IsSainsburysSite = true; 
+            site.IsSainsburysSite = true;
             var nonBlankVals = new List<SiteEmail>();
             site.Emails.ForEach(x =>
             {
@@ -201,7 +203,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
         /// </summary>
         /// <param name="msg"></param>
         /// <returns></returns>
-        public ActionResult Prices(int x =0, string msg = "")
+        public ActionResult Prices(int x = 0, string msg = "")
         {
             // Display list of existing sites along with their status
             ViewBag.Message = msg;
@@ -213,7 +215,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 
 
         [System.Web.Mvc.HttpPost]
-        public ActionResult PostPrices([FromBody] string postBackData="")
+        public ActionResult PostPrices([FromBody] string postBackData = "")
         {
             List<SitePriceViewModel> siteData = JsonConvert.DeserializeObject(postBackData) as List<SitePriceViewModel>;
             if (siteData != null)
@@ -241,7 +243,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             });
 
             model.Competitors = sortedCompetitors;
-            
+
             return View(model);
         }
 
@@ -254,9 +256,9 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
                 ViewBag.ErrorMessage = "Please check for validation errors under each field.";
 
                 var model = _serviceFacade.GetSite(site.Id);
-                
+
                 var sortedCompetitors = model.Competitors.Where(c => c.IsSainsburysSite == false).OrderBy(c => c.SiteName).ToList();
-                
+
                 sortedCompetitors.Insert(0, new SiteViewModel
                 {
                     SiteName = "Not specified"
@@ -265,7 +267,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 
                 return View(site);
             }
-            
+
             var nonBlankVals = new List<SiteEmailViewModel>();
             site.IsSainsburysSite = true; //Only Sainsburys sites are editable
             site.Emails.ForEach(x =>

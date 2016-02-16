@@ -2,7 +2,11 @@
 	@siteId int,
 	@forDate DateTime,
 	@skipRecs int,
-	@takeRecs int
+	@takeRecs int,
+	@storeName nvarchar(500),
+	@storeTown nvarchar(500),
+	@catNo int,
+	@storeNo int
 AS
 
 --Declare @siteId int = 0
@@ -40,7 +44,12 @@ else set @todayPriceDate = @lastPriceDate
 	Select *
 	FROM Site s
 	Where (@siteId = 0 OR s.Id = @siteId)
-			AND s.IsSainsburysSite = 1 AND s.IsActive = 1 
+			AND (@catNo = 0 OR s.CatNo = @catNo)
+			AND (@storeNo = 0 OR s.StoreNo = @storeNo)
+			AND (@storeName = '' OR s.SiteName like ('%' + @storeName + '%'))
+			AND (@storeTown = '' OR s.Town like ('%' + @storeTown + '%'))
+			AND s.IsSainsburysSite = 1 
+			AND s.IsActive = 1 
 	Order By Id
 	Offset @skipRecs ROWS
 	Fetch Next @takeRecs ROWS ONLY
