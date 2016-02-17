@@ -51,12 +51,12 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             return (response.IsSuccessStatusCode) ? result : null;
         }
 
-        public Site NewSite(Site site)
+        public SiteViewModel NewSite(SiteViewModel site)
         {
             const string apiUrl = "api/Sites/";
 
             var response = _client.Value.PostAsync(apiUrl, site, new JsonMediaTypeFormatter()).Result;
-            var result = response.Content.ReadAsAsync<Site>().Result;
+            var result = response.Content.ReadAsAsync<SiteViewModel>().Result;
 
             return (response.IsSuccessStatusCode) ? result : null;
         }

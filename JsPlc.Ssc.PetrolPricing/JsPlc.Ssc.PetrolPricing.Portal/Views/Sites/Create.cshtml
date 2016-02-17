@@ -1,5 +1,5 @@
 ﻿@using JsPlc.Ssc.PetrolPricing.Models
-@model JsPlc.Ssc.PetrolPricing.Models.Site
+@model JsPlc.Ssc.PetrolPricing.Models.SiteViewModel
 
 @{
     ViewBag.Title = "New Sainsburys Site";
@@ -115,11 +115,11 @@
                     @{
                         var i = 0;
                         <!-- Depending on how many emails a site has, we add elements, 3 for now -->
-                        var emails = (Model.Emails == null || !Model.Emails.Any()) ? new List<SiteEmail>
+    var emails = (Model.Emails == null || !Model.Emails.Any()) ? new List<SiteEmailViewModel>
                         {
-                            new SiteEmail {EmailAddress = ""},
-                            new SiteEmail {EmailAddress = ""},
-                            new SiteEmail {EmailAddress = ""}
+                            new SiteEmailViewModel {EmailAddress = ""},
+                            new SiteEmailViewModel {EmailAddress = ""},
+                            new SiteEmailViewModel {EmailAddress = ""}
                         } : Model.Emails;
 
                         foreach (var email in emails)

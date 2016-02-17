@@ -171,11 +171,11 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 
         public ActionResult Create()
         {
-            return View(new Site());
+            return View(new SiteViewModel());
         }
 
         [System.Web.Mvc.HttpPost]
-        public ActionResult Create(Site site)
+        public ActionResult Create(SiteViewModel site)
         {
             if (!ModelState.IsValid)
             {
@@ -183,7 +183,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
                 return View(site);
             }
             site.IsSainsburysSite = true;
-            var nonBlankVals = new List<SiteEmail>();
+            var nonBlankVals = new List<SiteEmailViewModel>();
             site.Emails.ForEach(x =>
             {
                 if (!x.EmailAddress.IsNullOrWhiteSpace()) nonBlankVals.Add(x);

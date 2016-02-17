@@ -56,7 +56,7 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
         }
 
         [System.Web.Http.HttpPost] // Create new site
-        public async Task<IHttpActionResult> Post(Site site)
+        public async Task<IHttpActionResult> Post(SiteViewModel site)
         {
             if (site == null)
             {
@@ -71,8 +71,8 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
                     {
                         return BadRequest("Site with that name already exists. Please try again.");
                     }
-                    var su = ss.NewSite(site);
-                    return Ok(su);
+                    var su = ss.NewSite(site.ToSite());
+                    return Ok(su.ToSiteViewModel());
                 }
             }
             catch (Exception ex)
