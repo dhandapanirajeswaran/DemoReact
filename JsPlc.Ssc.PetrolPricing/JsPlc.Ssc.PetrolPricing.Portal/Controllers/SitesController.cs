@@ -152,10 +152,10 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             // Filtering based on search value
 
             if (string.IsNullOrWhiteSpace(storeName) == false)
-                model = model.Where(x => x.SiteName.ToUpper().Contains(storeName.ToUpper()));
+                model = model.Where(x => string.IsNullOrWhiteSpace(x.SiteName) == false && x.SiteName.ToUpper().Contains(storeName.ToUpper()));
 
             if (string.IsNullOrWhiteSpace(storeTown) == false)
-                model = model.Where(x => x.Town.ToUpper().Contains(storeTown.ToUpper()));
+                model = model.Where(x => string.IsNullOrWhiteSpace(x.Town) == false && x.Town.Contains(storeTown.ToUpper()));
 
             if (catNo > 0)
                 model = model.Where(x => x.CatNo == catNo);
