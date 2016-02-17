@@ -254,18 +254,6 @@ namespace JsPlc.Ssc.PetrolPricing.Models.Common
             {
                 dt.Columns.Add(fuel.FuelTypeName);
             }
-            //foreach (var siteRow in reportContainer.PriceMovementReport.ReportRows)
-            //{
-            //    DataRow dr = dt.NewRow();
-            //    dr[0] = siteRow.SiteName;
-            //    var i = 1;
-            //    foreach (var dataItem in siteRow.DataItems)
-            //    {
-            //        dr[i] = (dataItem.PriceValue / 10.0).ToString("###0.0");
-            //        i += 1;
-            //    }
-            //    dt.Rows.Add(dr);
-            //}
             return dt;
         }
 
@@ -462,6 +450,5 @@ namespace JsPlc.Ssc.PetrolPricing.Models.Common
             }
             return dt;
         }
-
     }
 }

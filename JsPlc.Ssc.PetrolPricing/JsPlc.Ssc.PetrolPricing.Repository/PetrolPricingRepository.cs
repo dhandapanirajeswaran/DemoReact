@@ -33,6 +33,8 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
     {
         const string SainsburysBrandName = "Sainsburys";
 
+        private enum ReportTypes { Default, NormalisedMax }
+
         private readonly RepositoryContext _context;
 
         public PetrolPricingRepository()
@@ -1224,9 +1226,14 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
             var referenceSites = _context.Sites.Include(x => x.Competitors).Where(x => x.Id == (siteId > 0 ? siteId : x.Id)).ToList();
 
+            ReportTypes reportType = siteId == -1 ? ReportTypes.NormalisedMax : ReportTypes.Default;
+
+            //normalised brand competitor report
+            Dictionary<string, int> normalisedBrandCompetitors = new Dictionary<string, int>();
+
             if (referenceSites.Any())
             {
-                if (siteId > 0)
+                if (referenceSites.Count == 0)
                 {
                     result.SiteName = referenceSites.First().SiteName;
                 }
@@ -1250,13 +1257,26 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                             brandReportRows.Add(brandReportRow);
                         }
 
-                        brandReportRow.Count0To5 += Count(brandCompetitors, 0, 4.99f);
-                        brandReportRow.Count5To10 += Count(brandCompetitors, 5, 9.99f);
-                        brandReportRow.Count10To15 += Count(brandCompetitors, 10, 14.99f);
-                        brandReportRow.Count15To20 += Count(brandCompetitors, 15, 19.99f);
-                        brandReportRow.Count20To25 += Count(brandCompetitors, 20, 24.99f);
-                        brandReportRow.Count25To30 += Count(brandCompetitors, 25, 29.99f);
-                        brandReportRow.CountMoreThan30 += Count(brandCompetitors, 30, int.MaxValue);
+                        if (reportType == ReportTypes.Default)
+                        {
+                            brandReportRow.Count0To5 += Count(brandCompetitors, 0, 4.99f);
+                            brandReportRow.Count5To10 += Count(brandCompetitors, 5, 9.99f);
+                            brandReportRow.Count10To15 += Count(brandCompetitors, 10, 14.99f);
+                            brandReportRow.Count15To20 += Count(brandCompetitors, 15, 19.99f);
+                            brandReportRow.Count20To25 += Count(brandCompetitors, 20, 24.99f);
+                            brandReportRow.Count25To30 += Count(brandCompetitors, 25, 29.99f);
+                            brandReportRow.CountMoreThan30 += Count(brandCompetitors, 30, int.MaxValue);
+                        }
+                        else
+                        {
+                            brandReportRow.Count0To5 = MaxCount(brandName, brandCompetitors, normalisedBrandCompetitors, 0, 4.99f);
+                            brandReportRow.Count5To10 = MaxCount(brandName, brandCompetitors, normalisedBrandCompetitors, 5, 9.99f);
+                            brandReportRow.Count10To15 = MaxCount(brandName, brandCompetitors, normalisedBrandCompetitors, 10, 14.99f);
+                            brandReportRow.Count15To20 = MaxCount(brandName, brandCompetitors, normalisedBrandCompetitors, 15, 19.99f);
+                            brandReportRow.Count20To25 = MaxCount(brandName, brandCompetitors, normalisedBrandCompetitors, 20, 24.99f);
+                            brandReportRow.Count25To30 = MaxCount(brandName, brandCompetitors, normalisedBrandCompetitors, 25, 29.99f);
+                            brandReportRow.CountMoreThan30 = MaxCount(brandName, brandCompetitors, normalisedBrandCompetitors, 30, int.MaxValue);
+                        }
                     }
                 }
                 result.BrandTimes = brandReportRows;
@@ -1592,14 +1612,41 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                 : price.ModalPrice;
         }
 
-        private static int Count(IEnumerable<SiteToCompetitor> data, float min, float max)
+        private static int Count(IEnumerable<SiteToCompetitor> brandCompetitors, float min, float max)
         {
             var result = 0;
-            if (data != null)
+            if (brandCompetitors != null)
             {
-                result = data.Count(x => x.DriveTime >= min && x.DriveTime <= max);
+                result = brandCompetitors.Count(x => x.DriveTime >= min && x.DriveTime <= max);
             }
             return result;
+        }
+
+        private int MaxCount(string brandName, List<SiteToCompetitor> brandCompetitors, Dictionary<string, int> normalisedBrandCompetitors, float min, float max)
+        {
+            var result = 0;
+            if (brandCompetitors != null)
+            {
+                result = brandCompetitors.Count(x => x.DriveTime >= min && x.DriveTime <= max);
+            }
+
+            var key = string.Format("{0}_{1}_{2}", brandName, min, max);
+
+            if (normalisedBrandCompetitors.ContainsKey(key))
+            {
+                var currentMax = normalisedBrandCompetitors[key];
+
+                if(currentMax < result)
+                {
+                    normalisedBrandCompetitors[key] = result;
+                }
+            }
+            else
+            {
+                normalisedBrandCompetitors.Add(key, result);
+            }
+
+            return normalisedBrandCompetitors[key];
         }
     }
 }
