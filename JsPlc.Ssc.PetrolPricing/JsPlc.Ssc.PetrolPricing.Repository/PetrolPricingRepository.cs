@@ -294,6 +294,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                         // ToNullable<int> or ToNullable<double>
                         sitePriceRow.StoreName = (string)pgRow["SiteName"];
                         sitePriceRow.Address = (string)pgRow["Address"];
+                        sitePriceRow.Town = (string)pgRow["Town"];
                         // any other fields for UI extract here
 
                         sitePriceRow.PfsNo = pgRow["PfsNo"].ToString().ToNullable<int>();
