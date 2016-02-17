@@ -11,11 +11,50 @@
 </div>
 <!-- Approx 300 Sainsbury's sites -->
 <div>
-    <form method="GET">
-        Search: <input type="text" value="" name="searchTerm" /><input type="submit" value="Go"/>
-        <input type="submit" value="Show All" />
-    </form>
-    <br /><hr />
+    <div class="row">
+        <div class="col-md-12">
+            <!-- Catalist No -->
+            <div class="col-md-2">
+                <label for="viewingCatNo">Catalist No:</label>
+                <input type="text" id="viewingCatNo" class="form-control"
+                       name="viewingCatNo" data-bind="numeric, value: $root.CatNo" />
+            </div>
+            <!-- Store No -->
+            <div class="col-md-2">
+                <label for="viewingStoreNo">Store No:</label>
+                <input type="text" id="viewingStoreNo" class="form-control"
+                       name="viewingStoreNo" data-bind="numeric, value: $root.StoreNo" />
+            </div>
+            
+            <!-- Store Name -->
+            <div class="col-md-2">
+                <label for="viewingStoreName">Store Name:</label>
+                <input type="text" id="viewingStoreName" class="form-control"
+                       name="viewingStoreName" data-bind="value: $root.StoreName" />
+            </div>
+            <!-- Store Town -->
+            <div class="col-md-2">
+                <label for="viewingStoreTown">Town:</label>
+                <input type="text" id="viewingStoreTown" class="form-control"
+                       name="viewingStoreTown" data-bind="value: $root.StoreTown" />
+            </div>
+            
+            <div class="col-md-1 left">
+                <button style="margin-top: 24px" type="button" class="btn btn-default" data-bind="click: searchSainsburysStores">Go</button>
+            </div>
+
+            <div class="col-md-1 left">
+                <button style="margin-top: 24px" type="button" class="btn btn-default" data-bind="click: function() { reloadSearchPage('Sites') }">Show all</button>
+            </div>
+        </div>
+    </div>
+    <hr />
     List of Sites:
     @Html.Partial("_SiteList", Model)
 </div>
+
+<script type="text/javascript">
+    require(["SitePricing"], function (prices) {
+        prices.go();
+    });
+</script>
