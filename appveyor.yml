@@ -1,0 +1,23 @@
+version: 1.0.{build}
+configuration: release
+assembly_info:
+  patch: true
+  file: '**\AssemblyInfo.*'
+  assembly_version: '{version}'
+  assembly_file_version: '{version}'
+  assembly_informational_version: '{version}'
+before_build:
+- cmd: for /R %%f in (*.sln) do nuget restore "%%f"
+build:
+  project: JsPlc.Ssc.PetrolPricing\PetrolPricing.sln
+  publish_wap: true
+#deploy:
+#- provider: Environment
+#  name: petrolpricing-development
+#notifications:
+#- provider: Slack
+#  incoming_webhook: https://hooks.slack.com/services/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
+#  channel: petrolpricing
+#  on_build_success: true
+#  on_build_failure: true
+#  on_build_status_changed: true
