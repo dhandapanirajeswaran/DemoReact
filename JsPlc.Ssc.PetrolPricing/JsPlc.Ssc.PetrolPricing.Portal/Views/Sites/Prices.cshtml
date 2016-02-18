@@ -257,7 +257,7 @@
                     <tr class="panel-heading" role="tab" data-bind="id:('Heading' + SiteId)">
                         <td>
                             <a role="button" data-toggle="collapse" data-parent="#accordion"
-                               data-bind="attr:{href:('#CollapseCompetitorsforsite' + SiteId)}, click: getCompetitorDataClick"><i class="fa fa-plus-square-o"></i></a>
+                               data-bind="attr:{href:('#CollapseCompetitorsforsite' + SiteId)}, click: getCompetitorDataClick"><i class="fa fa-plus-square-o" data-bind="css: showingComps() ? 'fa fa-minus-square-o' : 'fa fa-plus-square-o'"></i></a>
                         </td>
                         <td><span data-bind="text: StoreNo"></span></td>
                         <!-- Email envelope... -->
