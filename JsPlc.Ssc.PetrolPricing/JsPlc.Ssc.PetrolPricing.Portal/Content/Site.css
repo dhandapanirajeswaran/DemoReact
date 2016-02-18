@@ -88,7 +88,8 @@ hr {
 }
 
 .txtPrice {
-    width: 60px;
+    width: 30px;
+    height: 20px;
 }
 
 .expander {

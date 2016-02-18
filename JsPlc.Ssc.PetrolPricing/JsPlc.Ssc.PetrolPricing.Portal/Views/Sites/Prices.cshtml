@@ -175,7 +175,7 @@
                 </div>
                 <!-- show all button -->
                 <div class="col-md-1 left">
-                    <button style="margin-top: 24px" type="button" class="btn btn-default" data-bind="click: function() { reloadSearchPage('Sites/Prices') }">Show all</button>
+                    <button style="margin-top: 24px" type="button" class="btn btn-default" data-bind="click: function() { reloadSearchPage('Sites/Prices?date='+$root.InitDateInUsFormat()) }">Show all</button>
                 </div>
             </div>
         </div>
@@ -226,16 +226,16 @@
                         <th><span>Cat No.</span></th>
                         <th><span>PFS No.</span></th>
 
-                        <th width="180" colspan="2">
+                        <th width="200" colspan="2">
                             <span class="fuelHeaderGroup">
                                 &nbsp;Unleaded&nbsp;
                             </span>
 
                         </th>
-                        <th width="180" colspan="2">
+                        <th width="200" colspan="2">
                             <span class="fuelHeaderGroup">&nbsp;Diesel&nbsp;</span>
                         </th>
-                        <th width="180" colspan="2">
+                        <th width="200" colspan="2">
                             <span class="fuelHeaderGroup">&nbsp;Super Unleaded&nbsp;</span>
                         </th>
                     </tr>
@@ -243,12 +243,12 @@
                         <!-- 13 column layout -->
                         <th colspan="7"></th>
 
-                        <th width="90"><span>Today</span></th>
-                        <th width="90"><span>Tomorrow</span></th>
-                        <th width="90"><span>Today</span></th>
-                        <th width="90"><span>Tomorrow</span></th>
-                        <th width="90"><span>Today</span></th>
-                        <th width="90"><span>Tomorrow</span></th>
+                        <th width="100"><span>Today</span></th>
+                        <th width="100"><span>Tomorrow</span></th>
+                        <th width="100"><span>Today</span></th>
+                        <th width="100"><span>Tomorrow</span></th>
+                        <th width="100"><span>Today</span></th>
+                        <th width="100"><span>Tomorrow</span></th>
                     </tr>
                 </thead>
                 <tbody data-bind="with: dataModel">
