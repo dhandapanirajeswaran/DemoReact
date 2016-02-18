@@ -212,39 +212,39 @@
                             </span>
                         </th>
                     </tr>
-                    <!-- 11 column layout -->
+                    <!-- 13 column layout -->
                     <tr rowspan="2" style="background-color: silver">
-                        <th colspan="1"><span>#</span></th>
+                        <th><span>#</span></th>
                         <th><span>Store No.</span></th>
                         <th><span></span></th>
-                        <th width="150"><span>Store Name</span></th>
-                        <th width="100"><span>Store Town</span></th>
+                        <th><span>Store Name</span></th>
+                        <th><span>Store Town</span></th>
                         <th><span>Cat No.</span></th>
                         <th><span>PFS No.</span></th>
 
-                        <th colspan="2">
+                        <th width="180" colspan="2">
                             <span class="fuelHeaderGroup">
                                 &nbsp;Unleaded&nbsp;
                             </span>
 
                         </th>
-                        <th colspan="2">
+                        <th width="180" colspan="2">
                             <span class="fuelHeaderGroup">&nbsp;Diesel&nbsp;</span>
                         </th>
-                        <th colspan="2">
+                        <th width="180" colspan="2">
                             <span class="fuelHeaderGroup">&nbsp;Super Unleaded&nbsp;</span>
                         </th>
                     </tr>
                     <tr>
-                        <!-- 12 column layout -->
+                        <!-- 13 column layout -->
                         <th colspan="7"></th>
 
-                        <th><span>Today</span></th>
-                        <th><span>Tomorrow</span></th>
-                        <th><span>Today</span></th>
-                        <th><span>Tomorrow</span></th>
-                        <th><span>Today</span></th>
-                        <th><span>Tomorrow</span></th>
+                        <th width="90"><span>Today</span></th>
+                        <th width="90"><span>Tomorrow</span></th>
+                        <th width="90"><span>Today</span></th>
+                        <th width="90"><span>Tomorrow</span></th>
+                        <th width="90"><span>Today</span></th>
+                        <th width="90"><span>Tomorrow</span></th>
                     </tr>
                 </thead>
                 <tbody data-bind="with: dataModel">
@@ -314,11 +314,11 @@
                                         <th><span>Drive-Time</span></th>
                                         <th><span>Cat No.</span></th>
 
-                                        <th colspan="2" class="tblHighlight">
+                                        <th width="150" colspan="2" class="tblHighlight">
                                             <span class="fuelHeaderGroup">&nbsp;Unleaded&nbsp;</span>
                                         </th>
-                                        <th colspan="2"><span class="fuelHeaderGroup">&nbsp;Diesel&nbsp;</span></th>
-                                        <th colspan="2" class="tblHighlight"><span class="fuelHeaderGroup">&nbsp;Super Unleaded&nbsp;</span></th>
+                                        <th width="150" colspan="2"><span class="fuelHeaderGroup">&nbsp;Diesel&nbsp;</span></th>
+                                        <th width="150" colspan="2" class="tblHighlight"><span class="fuelHeaderGroup">&nbsp;Super Unleaded&nbsp;</span></th>
                                     </tr>
                                     <tr>
                                         <th colspan="4"></th>
@@ -328,7 +328,6 @@
                                         <th><span>Today</span></th>
                                         <th class="tblHighlight"><span>Yesterday</span></th>
                                         <th class="tblHighlight"><span>Today</span></th>
-
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -372,7 +371,7 @@
                 </tbody>
                 <tbody data-bind="cvisible: !$root.dataAvailable" style="visibility: hidden; display: none">
                     <tr>
-                        <td colspan="12" class="noSiteData">Sorry, no site data available</td>
+                        <td colspan="13" class="noSiteData">Sorry, no site data available</td>
                     </tr>
                 </tbody>
             </table>
