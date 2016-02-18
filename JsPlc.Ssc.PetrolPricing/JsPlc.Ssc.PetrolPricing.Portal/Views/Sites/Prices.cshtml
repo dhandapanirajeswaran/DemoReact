@@ -184,7 +184,7 @@
             <table class="table table-striped table-hover" id="accordion">
                 <!-- HEADINGS -->
                 <thead>
-                    <tr>
+                    <tr data-bind="visible: !$root.ViewingHistorical()">
                         <th colspan="7">
                             <!-- Price Change Type -->
                             <div class="col-md-4" style="margin-left: -10px"><b>Price change type:</b></div>
@@ -195,21 +195,21 @@
 
                         </th>
                         <th colspan="2">
-                            <span class="smaller-normal" data-bind="visible: !$root.ViewingHistorical()">
+                            <span class="smaller-normal">
                                 <span style="display: inline-block; width: 55px" data-bind="text: changeType"></span>
                                 <input type="text" style="width: 30px; height: 20px;" data-bind="value: $root.unleadedOffset" />
                                 <input type="button" value="Go" data-bind="click: changePricePerLitreUnleaded" />
                             </span>
                         </th>
                         <th colspan="2">
-                            <span class="smaller-normal" data-bind="visible: !$root.ViewingHistorical()">
+                            <span class="smaller-normal">
                                 <span style="display: inline-block; width: 55px" data-bind="text: changeType"></span>
                                 <input type="text" style="width: 30px; height: 20px;" data-bind="value: $root.dieselOffset" />
                                 <input type="button" value="Go" data-bind="click: changePricePerLitreDiesel" />
                             </span>
                         </th>
                         <th colspan="2">
-                            <span class="smaller-normal" data-bind="visible: !$root.ViewingHistorical()">
+                            <span class="smaller-normal">
                                 <span style="display: inline-block; width: 55px" data-bind="text: changeType"></span>
                                 <input type="text" style="width: 30px; height: 20px;" data-bind="value: $root.superOffset" />
                                 <input type="button" value="Go" data-bind="click: changePricePerLitreSuper" />
