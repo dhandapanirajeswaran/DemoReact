@@ -373,9 +373,9 @@
                     </tr>
                     <!-- /ko -->
                 </tbody>
-                <tbody data-bind="cvisible: !$root.dataAvailable" style="visibility: hidden; display: none">
+                <tbody data-bind="visible: $root.dataAvailable() == false" style="display: none">
                     <tr>
-                        <td colspan="13" class="noSiteData">Sorry, no site data available</td>
+                        <td colspan="13" class="noSiteData">No results found</td>
                     </tr>
                 </tbody>
             </table>

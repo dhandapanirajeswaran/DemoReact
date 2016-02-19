@@ -44,63 +44,66 @@
         </th>
         <th></th>
     </tr>
+    @if (Model.Any() == false)
+    {
+        <tr><td colspan="14" class="noSiteData">No results found</td></tr>
+    }
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.CatNo)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.StoreNo)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PfsNo)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Brand)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SiteName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Address)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Suburb)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Town)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PostCode)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Company)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Ownership)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IsSainsburysSite)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IsActive)
+            </td>
+            <td>
+                @if (item.IsSainsburysSite)
+                {
+                    @Html.ActionLink("Edit", "Edit", new { id = item.Id })
+                    @(" | ")
+                }
+                @Html.ActionLink("Details", "Details", new { id = item.Id }, htmlAttributes: new { onclick = "return true;" })
+                @if (item.Emails == null || !item.Emails.Any())
+                {
+                    <br /><span style="color: red">@("No Emails..")</span>
+                }
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.CatNo)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.StoreNo)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.PfsNo)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Brand)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.SiteName)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Address)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Suburb)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Town)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.PostCode)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Company)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Ownership)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.IsSainsburysSite)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.IsActive)
-        </td>
-        <td>
-            @if (item.IsSainsburysSite)
-            {
-                @Html.ActionLink("Edit", "Edit", new { id = item.Id })
-                @(" | ")
-            }
-            @Html.ActionLink("Details", "Details", new { id = item.Id }, htmlAttributes: new { onclick = "return true;" })
-            @*@Html.ActionLink("Delete", "Delete", new { id = item.Id }, htmlAttributes: new { onclick = "return false;" })*@
-            @if (item.Emails == null || !item.Emails.Any())
-            {
-                <br /><span style="color: red">@("No Emails..")</span>
-            }
-
-        </td>
-    </tr>
-}
+            </td>
+        </tr>
+    }
 
 </table>
