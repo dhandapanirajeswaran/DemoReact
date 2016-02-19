@@ -1,13 +1,7 @@
 ﻿@{
     ViewBag.Title = "Site Prices";
 }
-<!-- Modal -->
-@*<form id="myform" method="post" action="sites/prices">*@
-<!-- email popup was here -->
-@*</form>*@
 
-@*<form id="myform" method="post" action="emailAllSites">*@
-@*</form>*@
 <style type="text/css">
     .smaller-normal {
         font-size: smaller;
@@ -388,5 +382,14 @@
 <script type="text/javascript">
     require(["SitePricing"], function (prices) {
         prices.go();
+
+        $('.datepicker')
+            .datepicker({
+                language: "en-GB",
+                format: 'dd/mm/yyyy',
+                orientation: 'auto top',
+                autoclose: true,
+                todayHighlight: true
+            });
     });
 </script>

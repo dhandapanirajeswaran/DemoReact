@@ -27,6 +27,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/bootstrap.css",
                       "~/Content/font-awesome.min.css",
+                      "~/Content/bootstrap-datepicker.min.css",
                       "~/Content/site.css"));
         }
     }
