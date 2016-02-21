@@ -14,7 +14,7 @@ namespace PetrolPricingBusinessTest
     public class UnitTest1
     {
         private const string dbConnString =
-            "Data Source=(local)\SQL2014;Database=PetrolPricingRepository;User ID=sa;Password=Password12!;MultipleActiveResultSets=true";
+            "Data Source=(local)\\SQL2014;Database=PetrolPricingRepository;User ID=sa;Password=Password12!;MultipleActiveResultSets=true";
 
         private SiteService _siteService;
         private RepositoryContext _context;
