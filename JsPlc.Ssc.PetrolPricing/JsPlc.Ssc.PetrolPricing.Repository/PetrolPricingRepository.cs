@@ -83,7 +83,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         public Dictionary<int, Site> GetSitesWithCompetitors()
         {
             Dictionary<int, Site> cachedCompetitors = PetrolPricingRepositoryMemoryCache.CacheObj.Get("GetSitesWithCompetitors") as Dictionary<int, Site>;
-            
+
             if (cachedCompetitors == null)
             {
                 lock (cachedCompetitorsLock)
@@ -201,7 +201,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         /// <param name="pageSize">[Optional] Defaults to Pagesize as per constant, or specify a page size</param>
         /// <returns>List of SitePriceViewModel (with overridable price as an input price by user)</returns>
         private IEnumerable<SitePriceViewModel> CallSitePriceSproc(
-            DateTime forDate, string storeName = "", int catNo = 0, int storeNo = 0, string storeTown = "", 
+            DateTime forDate, string storeName = "", int catNo = 0, int storeNo = 0, string storeTown = "",
             int siteId = 0, int pageNo = 1,
             int pageSize = Constants.PricePageSize)
         {
@@ -242,7 +242,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             {
                 Value = string.IsNullOrWhiteSpace(storeTown) ? "" : storeTown
             };
-            
+
             // any other params here
 
             var sqlParams = new List<SqlParameter>
@@ -314,7 +314,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
                             var Markup = pgRow["Markup"].ToString().ToNullable<int>();
                             var IsTrailPrice = pgRow["IsTrailPrice"].ToString().ToNullable<bool>();
-                            
+
 
                             var competitorId = pgRow["CompetitorId"].ToString().ToNullable<int>();
 
@@ -328,7 +328,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                                 competitorName = string.Format("{0}/{1}", competitorSite.Brand, competitorSite.SiteName);
                             }
 
-                            
+
                             sitePriceRow.FuelPrices.Add(new FuelPriceViewModel
                             {
                                 FuelTypeId = (int)pgRow["FuelTypeId"],
@@ -475,13 +475,13 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         {
             string cacheKey = usingPricesforDate.Ticks.ToString();
             Dictionary<string, DailyPrice> dailyPricesCache = PetrolPricingRepositoryMemoryCache.CacheObj.Get(cacheKey) as Dictionary<string, DailyPrice>;
-            
+
             if (dailyPricesCache == null)
             {
                 lock (cachedGetDailyPricesForFuelByCompetitorsLock)
                 {
                     dailyPricesCache = PetrolPricingRepositoryMemoryCache.CacheObj.Get(cacheKey) as Dictionary<string, DailyPrice>;
-                    
+
                     if (dailyPricesCache == null)
                     {
                         // If multiple uploads, needs to be handled here, but we assume one for now.
@@ -840,7 +840,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             var cacheKey = fileUploadId.ToString();
 
             List<int> cachedAnyDailyPricesForFuelOnDate = PetrolPricingRepositoryMemoryCache.CacheObj.Get(cacheKey) as List<int>;
-            
+
             if (cachedAnyDailyPricesForFuelOnDate == null)
             {
                 lock (cachedAnyDailyPricesForFuelOnDateLock)
@@ -860,27 +860,6 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             }
 
             return cachedAnyDailyPricesForFuelOnDate.Any(x => x == fuelId);
-
-//delete this after above functionality confirmed working
-
-//#if DEBUG1
-//            Stopwatch swLevel1a = new Stopwatch();
-//            swLevel1a.Start();
-//#endif
-//            var list1 =
-//                _context.DailyPrices.Include(x => x.DailyUpload).Where(x => x.FuelTypeId.Equals(fuelId)).ToList();
-
-//#if DEBUG1
-//            Debug.WriteLine("AnyDailyPricesForFuelOnDate list 1: {0}", swLevel1a.Elapsed);
-//            swLevel1a.Restart();
-//#endif
-
-//            var list2 = list1.Any(x => x.DailyUpload.UploadDateTime.Date.Equals(usingPricesforDate.Date));
-
-//#if DEBUG1
-//            Debug.WriteLine("AnyDailyPricesForFuelOnDate list 2: {0}", swLevel1a.Elapsed);
-//#endif
-//            return list1.Any() && list2;
         }
 
         /// <summary>
@@ -935,7 +914,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             var existingPriceRecord = _context.SitePrices.AsNoTracking().FirstOrDefault(
                 x => x.SiteId == calculatedSitePrice.SiteId
                      && x.FuelTypeId == calculatedSitePrice.FuelTypeId
-                     && DbFunctions.TruncateTime(x.DateOfCalc)== calculatedSitePrice.DateOfCalc.Date);
+                     && DbFunctions.TruncateTime(x.DateOfCalc) == calculatedSitePrice.DateOfCalc.Date);
 
             if (existingPriceRecord == null)
             {
@@ -1225,41 +1204,42 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         {
             var result = new CompetitorSiteReportViewModel();
 
-            var referenceSites = _context.Sites.Include(x => x.Competitors).Where(x => x.Id == (siteId > 0 ? siteId : x.Id)).ToList();
-
-            ReportTypes reportType = siteId == -1 ? ReportTypes.NormalisedMax : ReportTypes.Default;
+            var sainsburysSites = _context.Sites.Include(x => x.Competitors).Where(x => x.Id == (siteId > 0 ? siteId : x.Id)).ToList();
 
             //normalised brand competitor report
             Dictionary<string, int> normalisedBrandCompetitors = new Dictionary<string, int>();
 
-            if (referenceSites.Any())
+            if (sainsburysSites.Any())
             {
-                if (referenceSites.Count == 0)
+                if (sainsburysSites.Count == 0)
                 {
-                    result.SiteName = referenceSites.First().SiteName;
+                    result.SiteName = sainsburysSites.First().SiteName;
                 }
 
                 var brandReportRows = new List<CompetitorBrandTimeViewModel>();
 
-                foreach (var referenceSite in referenceSites)
+                ReportTypes reportType = siteId == -1
+                ? ReportTypes.NormalisedMax
+                : ReportTypes.Default;
+
+                // 1) Sainsbury's site
+                foreach (var sainsburysSite in sainsburysSites)
                 {
-
-                    var brands = referenceSite.Competitors.Select(x => x.Competitor.Brand).Distinct().OrderBy(x => x);
-                    foreach (var brandName in brands)
+                    if (reportType == ReportTypes.Default)
                     {
-                        var brandCompetitors = referenceSite.Competitors.Where(x => x.Competitor.Brand == brandName).ToList();
-
-                        var brandReportRow = brandReportRows.FirstOrDefault(x => x.BrandName == brandName);
-
-                        if (brandReportRow == null)
+                        var brandNames = sainsburysSite.Competitors.Select(x => x.Competitor.Brand).Distinct().OrderBy(x => x);
+                        foreach (var brandName in brandNames)
                         {
-                            brandReportRow = new CompetitorBrandTimeViewModel();
-                            brandReportRow.BrandName = brandName;
-                            brandReportRows.Add(brandReportRow);
-                        }
+                            var brandCompetitors = sainsburysSite.Competitors.Where(x => x.Competitor.Brand == brandName).ToList();
 
-                        if (reportType == ReportTypes.Default)
-                        {
+                            var brandReportRow = brandReportRows.FirstOrDefault(x => x.BrandName == brandName);
+
+                            if (brandReportRow == null)
+                            {
+                                brandReportRow = new CompetitorBrandTimeViewModel();
+                                brandReportRow.BrandName = brandName;
+                                brandReportRows.Add(brandReportRow);
+                            }
                             brandReportRow.Count0To5 += Count(brandCompetitors, 0, 4.99f);
                             brandReportRow.Count5To10 += Count(brandCompetitors, 5, 9.99f);
                             brandReportRow.Count10To15 += Count(brandCompetitors, 10, 14.99f);
@@ -1268,15 +1248,34 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                             brandReportRow.Count25To30 += Count(brandCompetitors, 25, 29.99f);
                             brandReportRow.CountMoreThan30 += Count(brandCompetitors, 30, int.MaxValue);
                         }
-                        else
+                    }
+                    else
+                    {
+                        var brandNames = sainsburysSite.Competitors.Select(x => x.Competitor.Brand).Distinct();
+
+                        // 2) all unique brand names e.g. ASDA, TESCO
+                        foreach (var brandName in brandNames)
                         {
-                            brandReportRow.Count0To5 = MaxCount(brandName, brandCompetitors, normalisedBrandCompetitors, 0, 4.99f);
-                            brandReportRow.Count5To10 = MaxCount(brandName, brandCompetitors, normalisedBrandCompetitors, 5, 9.99f);
-                            brandReportRow.Count10To15 = MaxCount(brandName, brandCompetitors, normalisedBrandCompetitors, 10, 14.99f);
-                            brandReportRow.Count15To20 = MaxCount(brandName, brandCompetitors, normalisedBrandCompetitors, 15, 19.99f);
-                            brandReportRow.Count20To25 = MaxCount(brandName, brandCompetitors, normalisedBrandCompetitors, 20, 24.99f);
-                            brandReportRow.Count25To30 = MaxCount(brandName, brandCompetitors, normalisedBrandCompetitors, 25, 29.99f);
-                            brandReportRow.CountMoreThan30 = MaxCount(brandName, brandCompetitors, normalisedBrandCompetitors, 30, int.MaxValue);
+                            // 3) brands of the competitor from step 2) e.g. ASDA so we get all ASDA here
+                            var brandCompetitors = sainsburysSite.Competitors.Where(x => x.Competitor.Brand == brandName).ToList();
+
+                            // 4) have we already counted for this brand
+                            var brandReportRow = brandReportRows.FirstOrDefault(x => x.BrandName == brandName);
+                            if (brandReportRow == null)
+                            {
+                                brandReportRow = new CompetitorBrandTimeViewModel();
+                                brandReportRow.BrandName = brandName;
+                                brandReportRows.Add(brandReportRow);
+                            }
+
+                            // 5) let's count 
+                            brandReportRow.Count0To5 += NormalisedCount(brandCompetitors /* e.g. All ASDAs*/, normalisedBrandCompetitors, 0, 4.99f);
+                            brandReportRow.Count5To10 += NormalisedCount(brandCompetitors, normalisedBrandCompetitors, 5, 9.99f);
+                            brandReportRow.Count10To15 += NormalisedCount(brandCompetitors, normalisedBrandCompetitors, 10, 14.99f);
+                            brandReportRow.Count15To20 += NormalisedCount(brandCompetitors, normalisedBrandCompetitors, 15, 19.99f);
+                            brandReportRow.Count20To25 += NormalisedCount(brandCompetitors, normalisedBrandCompetitors, 20, 24.99f);
+                            brandReportRow.Count25To30 += NormalisedCount(brandCompetitors, normalisedBrandCompetitors, 25, 29.99f);
+                            brandReportRow.CountMoreThan30 += NormalisedCount(brandCompetitors, normalisedBrandCompetitors, 30, int.MaxValue);
                         }
                     }
                 }
@@ -1435,7 +1434,6 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
             return result;
         }
-
 
         public PriceMovementReportViewModel GetReportPriceMovement(DateTime fromDt, DateTime toDt, int fuelTypeId)
         {
@@ -1623,31 +1621,25 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             return result;
         }
 
-        private int MaxCount(string brandName, List<SiteToCompetitor> brandCompetitors, Dictionary<string, int> normalisedBrandCompetitors, float min, float max)
+        private int NormalisedCount(
+            IEnumerable<SiteToCompetitor> brandCompetitors /*e.g. All ASDAs */, 
+            Dictionary<string, int> normalisedBrandCompetitors, 
+            float min, float max)
         {
-            var result = 0;
-            if (brandCompetitors != null)
+            int result = 0;
+
+            // e.g. All ASDAs within min - max drive time
+            foreach (var brandCompetitor in brandCompetitors.Where(x => x.DriveTime >= min && x.DriveTime <= max))
             {
-                result = brandCompetitors.Count(x => x.DriveTime >= min && x.DriveTime <= max);
-            }
+                var key = string.Format("{0}_{1}_{2}", brandCompetitor.CompetitorId, min, max);
 
-            var key = string.Format("{0}_{1}_{2}", brandName, min, max);
-
-            if (normalisedBrandCompetitors.ContainsKey(key))
-            {
-                var currentMax = normalisedBrandCompetitors[key];
-
-                if(currentMax < result)
+                if (normalisedBrandCompetitors.ContainsKey(key) == false)
                 {
-                    normalisedBrandCompetitors[key] = result;
+                    normalisedBrandCompetitors.Add(key, 1);
+                    result++;
                 }
             }
-            else
-            {
-                normalisedBrandCompetitors.Add(key, result);
-            }
-
-            return normalisedBrandCompetitors[key];
+            return result;
         }
     }
 }

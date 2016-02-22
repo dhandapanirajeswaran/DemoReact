@@ -44,7 +44,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             item.Sites = new List<Site> { 
                 new Site { SiteName = "Please select..." }, 
                 new Site { SiteName = "SAINSBURYS ALL", Id = 0 },
-                new Site { SiteName = "SAINSBURYS ALL NORMALISED MAX", Id = -1 }
+                new Site { SiteName = "SAINSBURYS ALL NORMALISED", Id = -1 }
             };
             item.Sites.AddRange(tempSites);
 
