@@ -32,6 +32,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
     public class PetrolPricingRepository : IPetrolPricingRepositoryLookup, IPetrolPricingRepository, IDisposable
     {
         const string SainsburysBrandName = "Sainsburys";
+        const string SainsburysCompanyName = "J SAINSBURY PLC";
 
         private enum ReportTypes { Default, NormalisedMax }
 
@@ -1445,6 +1446,8 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
                 var distinctCatNos = dailyPrices.Select(x => x.CatNo).Distinct().ToList();
                 var competitorSites = _context.Sites.Where(x => distinctCatNos.Contains(x.CatNo.Value)).ToList();
+                
+                //calculating by brands
                 var distinctBrands = competitorSites.Select(x => x.Brand).Distinct().OrderBy(x => x).ToList();
 
                 distinctBrands.Remove(SainsburysBrandName.ToUpper());
@@ -1469,6 +1472,34 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                     if (brand.Equals(SainsburysBrandName, StringComparison.InvariantCultureIgnoreCase))
                     {
                         fuelRow.SainsburysPrice = brandAvg.Average;
+                    }
+                }
+
+                //calculating by companies
+                var distinctCompanies = competitorSites.Select(x => x.Company).Distinct().OrderBy(x => x).ToList();
+
+                distinctCompanies.Remove(SainsburysCompanyName.ToUpper());
+                distinctCompanies.Insert(0, SainsburysCompanyName.ToUpper());
+
+                foreach (var company in distinctCompanies)
+                {
+                    var companyAvg = new NationalAverageReportBrandViewModel();
+                    fuelRow.Companies.Add(companyAvg);
+                    companyAvg.BrandName = company;
+
+                    var companyCatsNos = competitorSites.Where(x => x.Company == company).Where(x => x.CatNo.HasValue).Select(x => x.CatNo.Value).ToList();
+                    var pricesList = dailyPrices.Where(x => x.FuelTypeId == fuelType && companyCatsNos.Contains(x.CatNo)).ToList();
+
+                    if (pricesList.Any())
+                    {
+                        companyAvg.Min = (int)pricesList.Min(x => x.ModalPrice);
+                        companyAvg.Average = (int)pricesList.Average(x => x.ModalPrice);
+                        companyAvg.Max = (int)pricesList.Max(x => x.ModalPrice);
+                    }
+
+                    if (company.Equals(SainsburysCompanyName, StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        fuelRow.SainsburysPrice = companyAvg.Average;
                     }
                 }
             }

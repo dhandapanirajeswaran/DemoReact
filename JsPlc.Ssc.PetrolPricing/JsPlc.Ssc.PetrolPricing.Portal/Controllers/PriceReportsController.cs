@@ -217,11 +217,13 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
                 NationalAverageReport = _serviceFacade.GetNationalAverage2(forDate)
             };
 
-            var dt = reportContainer.ToCompetitorsPriceRangeDataTable(); // default tableName = PriceMovementReport (also becomes sheet name in Xlsx)
+            var dtByBrand = reportContainer.ToCompetitorsPriceRangeByBrandDataTable(); // default tableName = PriceMovementReport (also becomes sheet name in Xlsx)
+
+            var dtByCompany = reportContainer.ToCompetitorsPriceRangeByCompanyDataTable(); 
 
             string filenameSuffix = String.Format("[{0}]", forDate.ToString("dd-MMM-yyyy"));
 
-            return ExcelDocumentStream(new List<DataTable> { dt }, "CompetitorsPriceRange", filenameSuffix);
+            return ExcelDocumentStream(new List<DataTable> { dtByBrand, dtByCompany }, "CompetitorsPriceRange", filenameSuffix);
         }
 
         [System.Web.Mvc.HttpGet]
