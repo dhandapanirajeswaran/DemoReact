@@ -16,6 +16,8 @@ namespace JsPlc.Ssc.PetrolPricing.Models.ViewModels
         {
             PriceMovementReport = new PriceMovementReportViewModel();
         }
+
+        public string Brand { get; set; }
     }
 
     public class PriceMovementReportViewModel

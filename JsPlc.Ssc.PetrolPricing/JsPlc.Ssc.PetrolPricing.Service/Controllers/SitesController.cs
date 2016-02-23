@@ -55,6 +55,16 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
             return Ok(sitesVm);
         }
 
+        [System.Web.Http.HttpGet]
+        [System.Web.Http.Route("api/brands")]
+        public IHttpActionResult GetBrands()
+        {
+            var sites = _siteService.GetSites().Select(s => s.Brand).Distinct().OrderBy(x => x).ToList();
+            if (!sites.Any())
+                return NotFound();
+            return Ok(sites);
+        }
+
         [System.Web.Http.HttpPost] // Create new site
         public async Task<IHttpActionResult> Post(SiteViewModel site)
         {
@@ -103,45 +113,6 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
                 return new ExceptionResult(ex, this);
             }
         }
-
-        /// <summary>
-        /// Calculates Prices for a given site (as per Catalist upload of today) as a test, 
-        /// Later we extend it to:
-        /// 1. Calc prices for a given date
-        /// 2. Updates SitePrice table with calculated Prices, returns a bool - True if any calcs done for that site, else false
-        /// 3. Return type will have to change when calculating Prices for a given date.. Multiple sites may have multiple outcomes of price calcs (some success, some fails)
-        /// -- Can kickoff for all sites
-        /// </summary>
-        /// <param name="siteId"></param>
-        /// <param name="fuelId"></param>
-        /// <param name="forDate"></param>
-        /// <returns>SitePrice</returns>
-        //[System.Web.Http.HttpGet]
-        //[System.Web.Http.Route("api/CalcPrice/")]
-        //public async Task<IHttpActionResult> CalcPrice([FromUri]int siteId=0, [FromUri] int fuelId=0, DateTime? forDate = null)
-        //{
-        //    // returns a SitePrice object, maybe later we call this for multiple fuels of the site
-
-        //    await FileService.KillAnyImportOrCalcsExceedingTimeouts();
-
-        //    // Test for 30 Nov prices as we have a dummy set of these setup
-        //    // We dont have any 1st Dec prices
-        //    SitePrice cheapestPrice = null;
-        //    if (!forDate.HasValue) forDate = DateTime.Now; // DateTime.Parse("2015-11-30")
-        //    if (fuelId !=0 && siteId != 0)
-        //    {
-        //        var site = _siteService.GetSite(siteId);
-        //        cheapestPrice = _priceService.CalcPrice(null, site, fuelId, forDate.Value); // Unleaded
-        //        _priceService.CreateMissingSuperUnleadedFromUnleaded(forDate.Value, null, siteId);
-        //    }
-        //    else
-        //    {
-        //        // 5 min * 60 * 1000 millisecs
-        //        // NOTE: Only fires and forgets.. Doesnt actually await anything..
-        //       var result = await _priceService.DoCalcDailyPricesFireAndForget(forDate, 5 * 60 * 1000); // multiple sites
-        //    }
-        //    return Ok(cheapestPrice);
-        //}
 
         [System.Web.Http.HttpPut]
         [System.Web.Http.Route("api/SaveOverridePrices/")]

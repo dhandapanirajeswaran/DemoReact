@@ -102,14 +102,16 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
         }
 
         [System.Web.Mvc.HttpGet]
-        public ActionResult PriceMovement(string dateFrom = "", string dateTo = "", int id = 0)
+        public ActionResult PriceMovement(string brandName = "SAINSBURYS", string dateFrom = "", string dateTo = "", int id = 0)
         {
             var listOfFuelIds = new[] { 1, 2, 6 };
 
             var fuelsSelectList = LoadFuels(listOfFuelIds, id);
             ViewData["fuelTypes"] = fuelsSelectList;
 
-            var reportContainer = LoadPriceMovementReport(dateFrom, dateTo, id, fuelsSelectList);
+            ViewData["brands"] = LoadBrands(_serviceFacade.GetBrands(), brandName);
+
+            var reportContainer = LoadPriceMovementReport(brandName, dateFrom, dateTo, id, fuelsSelectList);
 
             var model = reportContainer;
             return View(model);
@@ -143,23 +145,23 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
         //### #### #### #### ####
 
         [System.Web.Mvc.HttpGet]
-        public ActionResult ExportPriceMovement(string dateFrom = "", string dateTo = "", int id = 0)
+        public ActionResult ExportPriceMovement(string brandName = "SAINSBURYS", string dateFrom = "", string dateTo = "", int id = 0)
         {
             var listOfFuelIds = new[] { 1, 2, 6 };
 
             var fuelsSelectList = LoadFuels(listOfFuelIds, id);
             ViewData["fuelTypes"] = fuelsSelectList;
-            var reportContainer = LoadPriceMovementReport(dateFrom, dateTo, id, fuelsSelectList);
+            var reportContainer = LoadPriceMovementReport(brandName, dateFrom, dateTo, id, fuelsSelectList);
 
-            var dt = reportContainer.ToPriceMovementReportDataTable(); // default tableName = PriceMovementReport (also becomes sheet name in Xlsx)
+            var dt = reportContainer.ToPriceMovementReportDataTable(brandName + " PriceMovementReport"); // default tableName = PriceMovementReport (also becomes sheet name in Xlsx)
 
             string filenameSuffix = String.Format("[{0}] [{1} to {2}]",
-                    reportContainer.FuelTypeName,
+                reportContainer.FuelTypeName,
                     reportContainer.FromDate.Value.ToString("dd-MMM-yyyy"),
                     reportContainer.ToDate.Value.ToString("dd-MMM-yyyy"));
 
 
-            return ExcelDocumentStream(new List<DataTable> { dt }, "PriceMovementReport", filenameSuffix);
+            return ExcelDocumentStream(new List<DataTable> { dt }, brandName + " PriceMovementReport", filenameSuffix);
         }
 
         [System.Web.Mvc.HttpGet]
@@ -244,7 +246,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             return ExcelDocumentStream(tables, "PricePointsReport", filenameSuffix);
         }
 
-        private PriceMovementReportContainerViewModel LoadPriceMovementReport(string dateFrom, string dateTo, int id,
+        private PriceMovementReportContainerViewModel LoadPriceMovementReport(string brandName, string dateFrom, string dateTo, int id,
             SelectList fuelsSelectList)
         {
             var reportContainer = new PriceMovementReportContainerViewModel();
@@ -266,6 +268,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             reportContainer.FromDate = fromDate;
             reportContainer.ToDate = toDate;
             reportContainer.FuelTypeId = id;
+            reportContainer.Brand = brandName;
 
             if (id != 0 && toDate >= fromDate)
             {
@@ -273,7 +276,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
                 if (selectedItem != null && selectedItem.Value != null && selectedItem.Value != "0")
                 {
                     reportContainer.FuelTypeName = selectedItem.Text;
-                    reportContainer.PriceMovementReport = _serviceFacade.GetPriceMovement(fromDate, toDate, id);
+                    reportContainer.PriceMovementReport = _serviceFacade.GetPriceMovement(brandName, fromDate, toDate, id);
                 }
             }
             return reportContainer;
@@ -300,6 +303,11 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             var retval = new SelectList(fuellist, "Id", "Name", selectedfuelId);
 
             return retval;
+        }
+
+        private static IEnumerable<SelectListItem> LoadBrands(IEnumerable<string> listOfBrands, string selectedBrandName = "SAINSBURYS")
+        {
+            return listOfBrands.Select(x => new SelectListItem { Text = x, Value = x, Selected = x.Equals(selectedBrandName) });
         }
 
         private void Load(CompetitorSiteViewModel item)
@@ -346,7 +354,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
                 Response.Buffer = true;
                 Response.Charset = "";
                 Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-                
+
                 string downloadHeader = String.Format("attachment;filename= {1}{0}.xlsx",
                     fileNameSuffix,
                     fileName);

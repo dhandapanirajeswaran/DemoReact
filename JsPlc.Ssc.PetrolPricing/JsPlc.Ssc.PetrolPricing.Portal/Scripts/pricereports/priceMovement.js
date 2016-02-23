@@ -20,6 +20,7 @@
         $('#msgs').html("");
 
         var id = $('#fuelTypes').val();
+        var brandName = $('#brands').val();
         var dt1 = forDp ? forDp.val() : $('#DateFrom').val();
         var dt2 = toDp ? toDp.val() : $('#DateTo').val();
         if (id == 0) {
@@ -28,7 +29,7 @@
             return false;
         }
         
-        window.location.href = '/pricereports/PriceMovement?DateFrom=' + dt1 + "&DateTo=" + dt2 + "&Id=" + id;
+        window.location.href = '/pricereports/PriceMovement?DateFrom=' + dt1 + "&DateTo=" + dt2 + "&Id=" + id + "&BrandName=" + brandName;
         return true;
     });
     $("#btnExportReport").click(function () {
@@ -36,6 +37,7 @@
         $('#msgs').html("");
 
         var id = $('#fuelTypes').val();
+        var brandName = $('#brands').val();
         var dt1 = forDp ? forDp.val() : $('#DateFrom').val();
         var dt2 = toDp ? toDp.val() : $('#DateTo').val();
         if (id == 0) {
@@ -44,7 +46,7 @@
             return false;
         }
 
-        window.location.href = '/pricereports/ExportPriceMovement?DateFrom=' + dt1 + "&DateTo=" + dt2 + "&Id=" + id;
+        window.location.href = '/pricereports/ExportPriceMovement?DateFrom=' + dt1 + "&DateTo=" + dt2 + "&Id=" + id + "&BrandName=" + brandName;
         return true;
     });
 

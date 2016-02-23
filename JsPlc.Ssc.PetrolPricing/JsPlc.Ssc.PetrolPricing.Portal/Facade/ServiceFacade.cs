@@ -42,6 +42,15 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             return (response.IsSuccessStatusCode) ? result : null;
         }
 
+        // Get a list of brands
+        public IEnumerable<string> GetBrands()
+        {
+            var response = _client.Value.GetAsync("api/brands").Result;
+
+            var result = response.Content.ReadAsAsync<IEnumerable<string>>().Result;
+            return (response.IsSuccessStatusCode) ? result : null;
+        }
+
         // Get a Site
         public SiteViewModel GetSite(int siteId)
         {
@@ -357,9 +366,9 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             return (response.IsSuccessStatusCode) ? result : null;
         }
 
-        public PriceMovementReportViewModel GetPriceMovement(DateTime fromDate, DateTime toDate, int fuelTypeId)
+        public PriceMovementReportViewModel GetPriceMovement(string brandName, DateTime fromDate, DateTime toDate, int fuelTypeId)
         {
-            var url = string.Format("api/GetPriceMovement/{0}/{1}/{2}", fromDate.ToString("ddMMMyyyy"), toDate.ToString("ddMMMyyyy"), fuelTypeId);
+            var url = string.Format("api/GetPriceMovement/{0}/{1}/{2}/{3}", fromDate.ToString("ddMMMyyyy"), toDate.ToString("ddMMMyyyy"), fuelTypeId, brandName);
 
             var response = _client.Value.GetAsync(url).Result;
             var result = response.Content.ReadAsAsync<PriceMovementReportViewModel>().Result;

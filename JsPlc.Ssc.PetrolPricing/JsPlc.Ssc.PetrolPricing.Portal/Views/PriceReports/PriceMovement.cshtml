@@ -28,6 +28,8 @@
     {
         <div class="form-inline">
             <div class="form-group">
+                <label>Brand:</label>&nbsp;
+                @Html.DropDownList("brands")
                 <label>From:</label>&nbsp;
                 <input type="text" class="datepicker form-control" id="DateFrom" name="dateFrom" value='@requestedFromDate'>
                 &nbsp;
@@ -45,7 +47,7 @@
     {
         <hr />
         <h2>
-            Price movement of @Model.FuelTypeName
+            @Model.Brand price movement of @Model.FuelTypeName
             From: @Model.FromDate.Value.ToString("dd-MMM-yyyy") - To: @Model.ToDate.Value.ToString("dd-MMM-yyyy")
         </h2>
         <!-- EXPORT Button -->

@@ -159,6 +159,47 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             return sites;
         }
 
+        public IEnumerable<Site> GetBrandWithDailyPricesAsPrices(string brandName, DateTime? fromPriceDate = null,
+            DateTime? toPriceDate = null)
+        {
+            if (!fromPriceDate.HasValue) fromPriceDate = DateTime.Now.AddDays(-3);
+            if (!toPriceDate.HasValue) toPriceDate = DateTime.Now.AddDays(3);
+
+            var sites = new List<Site>();
+
+            var retval = _context.Sites
+                .Where(x => x.IsActive && x.Brand == brandName)
+                .OrderBy(q => q.SiteName).ToList();
+
+            int daysBetweenFromAndTo =
+                Convert.ToInt32((toPriceDate.Value - fromPriceDate.Value).TotalDays);
+
+            var fileUploads = _context.FileUploads
+                .Where(x => DbFunctions.TruncateTime(x.UploadDateTime) >= fromPriceDate.Value && DbFunctions.TruncateTime(x.UploadDateTime) <= toPriceDate.Value)
+                .Select(x => x.Id).ToArray();
+
+            var rangedDatePrices = _context.DailyPrices.Include(x => x.DailyUpload)
+                .Where(x => fileUploads.Contains(x.DailyUploadId.Value));
+
+            
+            var getPricesForSite = new Func<int, List<DailyPrice>>(i =>
+                rangedDatePrices.Where(p => p.CatNo == i).ToList());
+
+            foreach (var site in retval)
+            {
+                if (site.CatNo.HasValue == false)
+                    continue;
+
+                site.Prices = new List<SitePrice>();
+                site.Prices = transformToPrices(getPricesForSite(site.CatNo.Value), site);
+
+                sites.Add(site);
+
+                //_context.Entry(site).State = EntityState.Detached;
+            }
+            return sites;
+        }
+
         public IEnumerable<SitePriceViewModel> GetSitesWithPrices(DateTime forDate, string storeName = "", int catNo = 0, int storeNo = 0, string storeTown = "", int siteId = 0, int pageNo = 1,
             int pageSize = Constants.PricePageSize)
         {
@@ -1435,7 +1476,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             return result;
         }
 
-        public PriceMovementReportViewModel GetReportPriceMovement(DateTime fromDt, DateTime toDt, int fuelTypeId)
+        public PriceMovementReportViewModel GetReportPriceMovement(string brandName, DateTime fromDt, DateTime toDt, int fuelTypeId)
         {
             var retval = new PriceMovementReportViewModel();
             var dates = new List<DateTime>();
@@ -1445,7 +1486,10 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             }
             retval.Dates = dates;
 
-            var sitesWithPrices = GetSitesWithEmailsAndPrices(fromDt, toDt).ToList();
+            var sitesWithPrices = brandName == "SAINSBURYS" 
+                ? GetSitesWithEmailsAndPrices(fromDt, toDt).ToList() 
+                : GetBrandWithDailyPricesAsPrices(brandName, fromDt, toDt).ToList();
+
             foreach (var s in sitesWithPrices)
             {
                 var dataRow = new PriceMovementReportRows
@@ -1639,6 +1683,23 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                     result++;
                 }
             }
+            return result;
+        }
+
+        private ICollection<SitePrice> transformToPrices(List<DailyPrice> dailyPrices, Site site)
+        {
+            List<SitePrice> result = new List<SitePrice>();
+
+            dailyPrices.ForEach(dp => result.Add(new SitePrice
+            {
+                SiteId = site.Id,
+                FuelTypeId = dp.FuelTypeId,
+                FuelType = dp.FuelType,
+                DateOfCalc = dp.DailyUpload.UploadDateTime.Date,
+                DateOfPrice = dp.DailyUpload.UploadDateTime.Date,
+                SuggestedPrice = dp.ModalPrice
+            }));
+
             return result;
         }
     }

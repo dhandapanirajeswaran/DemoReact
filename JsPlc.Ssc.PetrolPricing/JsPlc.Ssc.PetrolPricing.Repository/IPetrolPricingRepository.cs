@@ -54,7 +54,10 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         /// <param name="toPriceDate">optional</param>
         /// <returns></returns>
         IEnumerable<Site> GetSitesWithEmailsAndPrices(DateTime? fromPriceDate = null, DateTime? toPriceDate = null);
-        
+
+        IEnumerable<Site> GetBrandWithDailyPricesAsPrices(string brandName, DateTime? fromPriceDate = null,
+            DateTime? toPriceDate = null);
+
         Dictionary<int, Site> GetSitesWithCompetitors();
 
         /// <summary>
@@ -193,13 +196,14 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         NationalAverageReportViewModel GetReportNationalAverage2(DateTime when);
 
         /// <summary>
-        /// Gets the price movement for the selected fuel within the selected dates
+        /// Gets Price Movement report
         /// </summary>
-        /// <param name="from"></param>
-        /// <param name="to"></param>
+        /// <param name="brandName"></param>
+        /// <param name="fromDt"></param>
+        /// <param name="toDt"></param>
         /// <param name="fuelTypeId"></param>
         /// <returns></returns>
-        PriceMovementReportViewModel GetReportPriceMovement(DateTime from, DateTime to, int fuelTypeId);
+        PriceMovementReportViewModel GetReportPriceMovement(string brandName, DateTime fromDt, DateTime toDt, int fuelTypeId);
 
         /// <summary>
         /// Gets the compliance report for a pump on a given date
