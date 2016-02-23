@@ -13,9 +13,10 @@ before_build:
 build:
   project: JsPlc.Ssc.PetrolPricing\PetrolPricing.sln
   publish_wap: true
-  after_build:
+after_build:
 - cmd: >-
     7z a JsPlc.Ssc.PetrolPricing.Service.%appveyor_build_version%.zip %APPVEYOR_BUILD_FOLDER%\JsPlc.Ssc.PetrolPricing\JsPlc.Ssc.PetrolPricing.Service\bin\Release\*.*
+    
     AppVeyor PushArtifact JsPlc.Ssc.PetrolPricing.Service.%appveyor_build_version%.zip -DeploymentName PetrolPricing.Service
 #deploy:
 #- provider: Environment
