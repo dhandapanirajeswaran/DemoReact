@@ -401,6 +401,7 @@
     <Content Include="Views\PriceReports\Compliance.cshtml" />
     <Content Include="Views\PriceReports\NationalAverage2.cshtml" />
     <Content Include="Views\PriceReports\CompetitorsPriceRange.cshtml" />
+    <Content Include="parameters.xml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\uploads\" />
