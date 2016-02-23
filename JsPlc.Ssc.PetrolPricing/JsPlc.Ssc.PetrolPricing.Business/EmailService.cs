@@ -23,7 +23,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 {
     public class EmailService : BaseService, IDisposable
     {
-        private readonly ConcurrentDictionary<int, EmailSendLog> _sendLog = 
+        private readonly ConcurrentDictionary<int, EmailSendLog> _sendLog =
             new ConcurrentDictionary<int, EmailSendLog>();
 
         public void Dispose()
@@ -120,7 +120,9 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 
                         if (sendable)
                         {
+#if !DEBUG
                             smtpClient.Send(message);
+#endif
                             logEntry.SetSuccessful();
                         }
                     }
@@ -192,7 +194,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
             //Body
             sb.Append("<h2>kSiteName</h2>");
             sb.Append("<p><strong>Petrol price changes, effective end of trade kStartDateMonthYear</strong></p>");
-            
+
             //Price Table !important
             sb.Append("<table>");
 
@@ -230,8 +232,9 @@ namespace JsPlc.Ssc.PetrolPricing.Business
         {
             emailForSite.siteName = site.SiteName;
             emailForSite.changeDate = endTradeDate;
+            //trade date prices
             var pricesWithDateCalcAsEndTradeDate = new List<SitePrice>();
-            if (site.Prices!= null && site.Prices.Any())
+            if (site.Prices != null && site.Prices.Any())
             {
                 pricesWithDateCalcAsEndTradeDate = site.Prices.Where(x => x.DateOfCalc.Date.Equals(endTradeDate.Date)).ToList();
             }
@@ -242,34 +245,116 @@ namespace JsPlc.Ssc.PetrolPricing.Business
                 return emailForSite;
             }
 
+            //previous trade date prices
+            var priceDifferenceFound = findPriceDifference(site, endTradeDate, pricesWithDateCalcAsEndTradeDate);
+
+            //send email if we have got here
             var atLeastOne = false;
-            foreach (SitePrice sp in pricesWithDateCalcAsEndTradeDate)
+
+            //if price difference found
+            //System will send an email if:
+            //- there is price change for any fuel from previous trading date
+            //- there is change in quantity of the fuels from previous trading date
+            //- prices for previous trading date not found
+            if (priceDifferenceFound)
             {
-                if (sp.FuelTypeId==2) // unleaded
+                foreach (SitePrice sp in pricesWithDateCalcAsEndTradeDate)
                 {
-                    emailForSite.priceUnleaded = (sp.OverriddenPrice == 0) ? sp.SuggestedPrice : sp.OverriddenPrice;
-                    atLeastOne = true;
+                    if (sp.FuelTypeId == 2) // unleaded
+                    {
+                        emailForSite.priceUnleaded = (sp.OverriddenPrice == 0) ? sp.SuggestedPrice : sp.OverriddenPrice;
+                        atLeastOne = true;
+                    }
+                    if (sp.FuelTypeId == 1) // Super unl.
+                    {
+                        emailForSite.priceSuper = (sp.OverriddenPrice == 0) ? sp.SuggestedPrice : sp.OverriddenPrice;
+                        atLeastOne = true;
+                    }
+                    if (sp.FuelTypeId == 6) // diesel
+                    {
+                        emailForSite.priceDiesel = (sp.OverriddenPrice == 0) ? sp.SuggestedPrice : sp.OverriddenPrice;
+                        atLeastOne = true;
+                    }
+
                 }
-                if (sp.FuelTypeId == 1) // Super unl.
-                {
-                    emailForSite.priceSuper = (sp.OverriddenPrice == 0) ? sp.SuggestedPrice : sp.OverriddenPrice;
-                    atLeastOne = true;
-                }
-                if (sp.FuelTypeId == 6) // diesel
-                {
-                    emailForSite.priceDiesel = (sp.OverriddenPrice == 0) ? sp.SuggestedPrice : sp.OverriddenPrice;
-                    atLeastOne = true;
-                }
-                
             }
             emailForSite.atLeastOnePriceAvailable = atLeastOne;
             return emailForSite;
         }
 
+        private static bool findPriceDifference(Site site, DateTime endTradeDate, List<SitePrice> pricesWithDateCalcAsEndTradeDate)
+        {
+            bool result = false;
+
+            var pricesWithDateCalcAsPreviousEndTradeDate = new List<SitePrice>();
+
+            if (site.Prices != null && site.Prices.Any())
+            {
+                //find previousTradeDate
+                var previousTradeDate = site.Prices.Where(x => x.DateOfCalc.Date < endTradeDate.Date).OrderByDescending(x => x.DateOfCalc).FirstOrDefault();
+
+                //send email if previous trading date not found
+                if (previousTradeDate == null)
+                {
+                    result = true;
+                }
+                else
+                {
+                    pricesWithDateCalcAsPreviousEndTradeDate = site.Prices.Where(x => x.DateOfCalc.Date.Equals(previousTradeDate.DateOfCalc)).ToList();
+                }
+            }
+
+            //send email - if no prices found for previous trade date
+            if (pricesWithDateCalcAsPreviousEndTradeDate.Any() == false)
+            {
+                result = true;
+            }
+            else
+            {
+                //send email - if quantity of trading fuels has changed.
+                if (pricesWithDateCalcAsPreviousEndTradeDate.Count != pricesWithDateCalcAsEndTradeDate.Count)
+                {
+                    result = true;
+                }
+                else
+                {
+                    foreach (var priceWithDateCalcAsEndTradeDate in pricesWithDateCalcAsEndTradeDate)
+                    {
+                        foreach (var priceWithDateCalcAsPreviousEndTradeDate in pricesWithDateCalcAsPreviousEndTradeDate)
+                        {
+                            //find matching fuel
+                            if (priceWithDateCalcAsEndTradeDate.FuelTypeId == priceWithDateCalcAsPreviousEndTradeDate.FuelTypeId)
+                            {
+                                //previous trading date price
+                                var previousTradingDatePrice = priceWithDateCalcAsPreviousEndTradeDate.OverriddenPrice == 0
+                                    ? priceWithDateCalcAsPreviousEndTradeDate.SuggestedPrice
+                                    : priceWithDateCalcAsPreviousEndTradeDate.OverriddenPrice;
+
+                                //current trading date price
+                                var currentTradingDatePrice = priceWithDateCalcAsEndTradeDate.OverriddenPrice == 0
+                                    ? priceWithDateCalcAsEndTradeDate.SuggestedPrice
+                                    : priceWithDateCalcAsEndTradeDate.OverriddenPrice;
+
+                                //compare prices
+                                if (previousTradingDatePrice - currentTradingDatePrice != 0)
+                                {
+                                    result = true;
+                                    break;
+                                }
+                            }
+                        }
+
+                        //if price differece found don't need to go further
+                        if (result)
+                            break;
+                    }
+                }
+            }
+            return result;
+        }
+
         private static string EmailReplaceTemplateKeys(EmailSiteData emailForSite)
         {
-            string xxx = "";//changeDate.DayOfWeek.ToString() + " " + changeDate.Month.ToString(), + " " + changeDate.Year.ToString();
-
             string emailBody = emailForSite.emailBody;
 
             emailBody = emailBody.Replace("kSiteName", emailForSite.siteName);
@@ -283,7 +368,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 
         private static string GetPriceFormattedPriceForEmail(decimal price)
         {
-            return (price == 0) ? Constants.EmailPriceReplacementStringForZero : (price/10).ToString("####.0");
+            return (price == 0) ? Constants.EmailPriceReplacementStringForZero : (price / 10).ToString("####.0");
         }
 
         // optional 
@@ -312,40 +397,40 @@ namespace JsPlc.Ssc.PetrolPricing.Business
             switch (mailHostSelector.ToUpper())
             {
                 case "LOCALHOST":
-                {
-                    // Mail Delivery working on a VM box: 
-                    // Server localhost:25, (.eml) email appears in MailRoot/Drop
-                    // Smtp Server Domains = Alias domain = gmail.com
-                    // UseDefaultCredentials = true; EnableSsl = false; 
-                    client.Host = "localhost";
-                    client.Port = 25;
-                    client.EnableSsl = false;
-                    client.UseDefaultCredentials = true;
-                }
-                break;
+                    {
+                        // Mail Delivery working on a VM box: 
+                        // Server localhost:25, (.eml) email appears in MailRoot/Drop
+                        // Smtp Server Domains = Alias domain = gmail.com
+                        // UseDefaultCredentials = true; EnableSsl = false; 
+                        client.Host = "localhost";
+                        client.Port = 25;
+                        client.EnableSsl = false;
+                        client.UseDefaultCredentials = true;
+                    }
+                    break;
                 case "GMAIL":
-                {
-                    client.Host = "smtp.gmail.com";
-                    client.Port = 587; // 25 or 465 (with SSL) and port 587 (with TLS)
-                    client.EnableSsl = true;
-                    client.UseDefaultCredentials = true;
-                    client.Credentials = new NetworkCredential(
-                        userName: "akiaip5@gmail.com", 
-                        password: "AmDoy02X");
-                }
-                break;
+                    {
+                        client.Host = "smtp.gmail.com";
+                        client.Port = 587; // 25 or 465 (with SSL) and port 587 (with TLS)
+                        client.EnableSsl = true;
+                        client.UseDefaultCredentials = true;
+                        client.Credentials = new NetworkCredential(
+                            userName: "akiaip5@gmail.com",
+                            password: "AmDoy02X");
+                    }
+                    break;
                 case "AWS":
-                {
-                    //private const string smtpIAMUsername = "ses-smtp-user.20151202-103633"; // not needed 
-                    client.Host = "email-smtp.eu-west-1.amazonaws.com";
-                    client.Port = 587; //  25, 587, or 2587
-                    client.EnableSsl = true;
-                    client.UseDefaultCredentials = true;
-                    client.Credentials = new NetworkCredential(
-                        userName: "AKIAIP5MYCP3ETOHJ73A", 
-                        password: "AmDoy02X/bZc5EBMh8AJiOsc6iyodxnN2K7F4epLl3Vt");
-                }
-                break;
+                    {
+                        //private const string smtpIAMUsername = "ses-smtp-user.20151202-103633"; // not needed 
+                        client.Host = "email-smtp.eu-west-1.amazonaws.com";
+                        client.Port = 587; //  25, 587, or 2587
+                        client.EnableSsl = true;
+                        client.UseDefaultCredentials = true;
+                        client.Credentials = new NetworkCredential(
+                            userName: "AKIAIP5MYCP3ETOHJ73A",
+                            password: "AmDoy02X/bZc5EBMh8AJiOsc6iyodxnN2K7F4epLl3Vt");
+                    }
+                    break;
             }
             return client;
         }
@@ -366,7 +451,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 
     public class EmailSiteData
     {
-        public string siteName {get; set;}
+        public string siteName { get; set; }
         public string emailBody { get; set; }
         public DateTime changeDate { get; set; }
         public decimal priceUnleaded { get; set; }

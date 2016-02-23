@@ -117,8 +117,8 @@
                 </div>
             </div>
         </div>
-        <hr class="hide" data-bind="visible: !$root.HasValidationErrors() && $root.HasUnsavedChanges() && !$root.ViewingHistorical()" />
-        <div class="hide row" data-bind="visible: !$root.HasValidationErrors() && $root.HasUnsavedChanges() && !$root.ViewingHistorical()">
+        <hr style="display: none" data-bind="visible: !$root.HasValidationErrors() && $root.HasUnsavedChanges() && !$root.ViewingHistorical()" />
+        <div style="display: none" class="row" data-bind="visible: !$root.HasValidationErrors() && $root.HasUnsavedChanges() && !$root.ViewingHistorical()">
             <div class="col-md-12">
                 <div class="col-md-12 text-right">
                     <button type="button" class="btn btn-default" id="btnSavePrices"
@@ -191,21 +191,21 @@
                         <th colspan="2">
                             <span class="smaller-normal">
                                 <span style="display: inline-block; width: 55px" data-bind="text: changeType"></span>
-                                <input type="text" style="width: 30px; height: 20px;" data-bind="value: $root.unleadedOffset" />
+                                <input type="text" style="width: 40px; height: 20px;" data-bind="value: $root.unleadedOffset" />
                                 <input type="button" value="Go" data-bind="click: changePricePerLitreUnleaded" />
                             </span>
                         </th>
                         <th colspan="2">
                             <span class="smaller-normal">
                                 <span style="display: inline-block; width: 55px" data-bind="text: changeType"></span>
-                                <input type="text" style="width: 30px; height: 20px;" data-bind="value: $root.dieselOffset" />
+                                <input type="text" style="width: 40px; height: 20px;" data-bind="value: $root.dieselOffset" />
                                 <input type="button" value="Go" data-bind="click: changePricePerLitreDiesel" />
                             </span>
                         </th>
                         <th colspan="2">
                             <span class="smaller-normal">
                                 <span style="display: inline-block; width: 55px" data-bind="text: changeType"></span>
-                                <input type="text" style="width: 30px; height: 20px;" data-bind="value: $root.superOffset" />
+                                <input type="text" style="width: 40px; height: 20px;" data-bind="value: $root.superOffset" />
                                 <input type="button" value="Go" data-bind="click: changePricePerLitreSuper" />
                             </span>
                         </th>
@@ -237,12 +237,12 @@
                         <!-- 13 column layout -->
                         <th colspan="7"></th>
 
-                        <th width="100"><span>Today</span></th>
-                        <th width="100"><span>Tomorrow</span></th>
-                        <th width="100"><span>Today</span></th>
-                        <th width="100"><span>Tomorrow</span></th>
-                        <th width="100"><span>Today</span></th>
-                        <th width="100"><span>Tomorrow</span></th>
+                        <th width="60"><span>Today</span></th>
+                        <th width="140"><span>Tomorrow</span></th>
+                        <th width="60"><span>Today</span></th>
+                        <th width="140"><span>Tomorrow</span></th>
+                        <th width="60"><span>Today</span></th>
+                        <th width="140"><span>Tomorrow</span></th>
                     </tr>
                 </thead>
                 <tbody data-bind="with: dataModel">
@@ -258,7 +258,7 @@
                         <td>
                             <span>
                                 <a href="#" data-toggle="modal" data-target="#emailSite" data-bind="click: bindEmailTemplate">
-                                    <i class="fa fa-envelope-o"></i>
+                                    <i class="fa fa-envelope-o" data-bind="visible: canSendEmail()"></i>
                                     <!-- ko if: hasEmailSendLogEntry() -->
                                     <!-- ko with: EmailSendLogEntry -->
                                     <i class="fa fa-check" data-bind="visible: IsSuccess, attr: {title:'Email sent..'}" style="color: green"></i>
@@ -276,7 +276,7 @@
 
                         <!-- ko foreach: FuelPricesToDisplay -->
                         <!-- ko if: siteSupportsFuel -->
-                        <td>
+                        <td style="border-left: 1px solid #ddd">
                             <span data-bind="text: FuelPrice.TodayPrice"></span>
                         </td>
                         <td>

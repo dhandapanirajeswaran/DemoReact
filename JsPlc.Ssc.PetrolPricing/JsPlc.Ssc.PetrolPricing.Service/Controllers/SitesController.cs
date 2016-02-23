@@ -30,7 +30,7 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
 
         public SitesController(SiteService siteService) : base(null, siteService, null) { }
 
-        [System.Web.Http.HttpGet] 
+        [System.Web.Http.HttpGet]
         //[Route("api/site/{id}")] // Not needed but works
         public IHttpActionResult Get([FromUri]int id)
         {
@@ -38,10 +38,10 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
 
             if (site == null)
                 return NotFound();
-            
+
             return Ok(site.ToSiteViewModel());
         }
-        
+
         [System.Web.Http.HttpGet]
         //[Route("api/sites")]
         public IHttpActionResult Get()
@@ -62,7 +62,7 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
             {
                 return BadRequest("Invalid passed data: site");
             }
-    
+
             try
             {
                 using (var ss = _siteService)
@@ -195,7 +195,7 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
         [System.Web.Http.HttpGet]
         [System.Web.Http.Route("api/SitePrices")]
         public IHttpActionResult GetSitesWithPrices(
-            [FromUri] DateTime? forDate=null, 
+            [FromUri] DateTime? forDate = null,
             [FromUri]string storeName = "",
             [FromUri]int catNo = 0,
             [FromUri]int storeNo = 0,
@@ -246,12 +246,15 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
                 try
                 {
                     Debug.WriteLine("TestSendMail: Attempting to send an email through the Amazon SES SMTP interface...");
-                    var mailMsg = new MailMessage(mailFrom, mailTo) { 
-                        IsBodyHtml = true, 
+                    var mailMsg = new MailMessage(mailFrom, mailTo)
+                    {
+                        IsBodyHtml = true,
                         Subject = mailSubject,
                         Body = mailBody,
-                        };
+                    };
+#if !DEBUG
                     client.Send(mailMsg);
+#endif
                     //client.Send(mailFrom, mailTo, mailSubject, mailBody);
                     result = "TestSendMail: Email sent!";
                     Debug.WriteLine("TestSendMail: Email sent!");
@@ -276,7 +279,7 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
         /// <returns></returns>
         [System.Web.Http.HttpGet]
         [System.Web.Http.Route("api/emailSites")]
-        public async Task<IHttpActionResult> EmailSites(int siteId = 0, DateTime? endTradeDate = null, string loginUserEmail="")
+        public async Task<IHttpActionResult> EmailSites(int siteId = 0, DateTime? endTradeDate = null, string loginUserEmail = "")
         {
             try
             {
@@ -305,7 +308,7 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
                     sendLog = await _emailService.SendEmailAsync(listOfSites, endTradeDate.Value, loginUserEmail);
                     // We continue sending on failure.. Log shows which passed or failed
                 }
-               
+
                 List<EmailSendLog> logEntries = sendLog.AsParallel().Select(s => s.Value).ToList();
                 logEntries = await _emailService.SaveEmailLogToRepositoryAsync(logEntries);
                 return Ok(logEntries); // return a List<EmailSendLog> 
@@ -357,7 +360,7 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
 
             var listOfSites = new List<Site>();
             var emailBodies = new List<string>();
-            
+
             if (siteId != 0)
             {
                 var site = _siteService.GetSitesWithEmailsAndPrices().FirstOrDefault(x => x.Id == siteId);
