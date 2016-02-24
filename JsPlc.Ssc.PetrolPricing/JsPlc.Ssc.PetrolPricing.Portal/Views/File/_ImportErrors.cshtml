@@ -1,37 +1,25 @@
 ﻿@using JsPlc.Ssc.PetrolPricing.Models;
 @model IEnumerable<ImportProcessError>
-
-<table class="table">
+<h4>Found errors</h4>
+<table class="table table-striped">
     <tr>
-        @*<th>
-            @Html.DisplayNameFor(model => model.UploadId)
-        </th>*@
-        <th>
+        <th class="col-md-2">
             @Html.DisplayNameFor(model => model.RowOrLineNumber)
         </th>
         <th>
             @Html.DisplayNameFor(model => model.ErrorMessage)
         </th>
-        <th></th>
     </tr>
 
-@foreach (var item in Model) {
-    <tr>
-        @*<td>
-            @Html.DisplayFor(modelItem => item.UploadId)
-        </td>*@
-        <td>
-            @Html.DisplayFor(modelItem => item.RowOrLineNumber)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.ErrorMessage)
-        </td>
-        <td>
-            @*@Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
-            @Html.ActionLink("Details", "Details", new { id=item.Id }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.Id })*@
-        </td>
-    </tr>
-}
-
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.RowOrLineNumber)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ErrorMessage)
+            </td>
+        </tr>
+    }
 </table>

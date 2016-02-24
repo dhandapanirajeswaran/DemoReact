@@ -1,7 +1,10 @@
 ﻿@using System.Globalization
 @model IEnumerable<JsPlc.Ssc.PetrolPricing.Models.FileUpload>
 
-<table class="table">
+@if(Model.Any())
+{ 
+
+<table class="table table-striped">
     <tr>
         <th>
             @Html.DisplayNameFor(model => model.OriginalFileName)
@@ -20,12 +23,6 @@
         </th>
         <th></th>
     </tr>
-    @if (!Model.Any())
-    {
-        <tr>
-            <td colspan="7"><h4 style="color:maroon;">Sorry, no files uploaded yet</h4></td>
-        </tr>
-    }
     @foreach (var item in Model) {
     <tr>
         <td>
@@ -45,9 +42,12 @@
         </td>
         <td>
             @Html.ActionLink("Details", "Details", new { id= item.Id.ToString(CultureInfo.InvariantCulture) })
-            <!-- TODO display details on same page -->
         </td>
     </tr>
 }
-
 </table>
+}
+else
+{
+    <div class="alert alert-info">No files uploaded yet</div>
+}

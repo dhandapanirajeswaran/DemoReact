@@ -28,7 +28,10 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                @Html.ActionLink("Petrol Pricing", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+                <a class="navbar-brand" rel="home" href="/" title="Sainsbury's Petrol Pricing">
+                    <img title="Sainsbury's Petrol Pricing" src="/images/logo.png" />
+                    Petrol Pricing
+                </a>
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
@@ -45,12 +48,15 @@
     </div>
     <div class="container body-content">
         @RenderBody()
-        <hr />
-        <footer>
-            <p>&copy; @DateTime.Now.Year - Sainsburys Petrol Pricing</p>
-        </footer>
     </div>
 
+    <div class="panel-footer" style="margin-top: 100px">
+        <div class="container">
+            <footer>
+                <p>&copy; @DateTime.Today.Year - Sainsbury's Petrol Pricing</p>
+            </footer>
+        </div>
+    </div>
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
     @RenderSection("scripts", required: false)

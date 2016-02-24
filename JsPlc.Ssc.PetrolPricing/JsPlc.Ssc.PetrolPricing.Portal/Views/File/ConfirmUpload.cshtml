@@ -1,24 +1,29 @@
 ﻿@model JsPlc.Ssc.PetrolPricing.Portal.Controllers.UploadConfirmationViewModel
 @{
-    ViewBag.Title = "Confirm Daily Upload";
+    ViewBag.Title = "Confirm Daily Price data file overwrite";
 }
 
-<h2>Upload</h2>
-<h3>@ViewBag.Message</h3>
-<br/>
-<span style="color:red">@ViewBag.ErrorMessage</span>
-<span style="color:green; font-size: larger">@ViewBag.SuccessMessage</span>
-@using(Html.BeginForm("UploadConfirmation", "File", FormMethod.Get))
+<h1>Confirm Daily Price data file overwrite</h1>
+<div class="alert alert-info @(string.IsNullOrWhiteSpace(ViewBag.Message) ? "hidden" : "")">@ViewBag.Message</div>
+<div class="alert alert-danger @(string.IsNullOrWhiteSpace(ViewBag.ErrorMessage) ? "hidden" : "")">@ViewBag.ErrorMessage</div>
+<div class="alert alert-success @(string.IsNullOrWhiteSpace(ViewBag.SuccessMessage) ? "hidden" : "")">@ViewBag.SuccessMessage</div>
+<hr />
+@using (Html.BeginForm("UploadConfirmation", "File", FormMethod.Get))
 {
-    <p style="color:orange; font-size: large">Please confirm to upload another daily price file.</p>
-    <span>Uploading File: </span>@Model.OriginalFileName
-        <br />
-
-    <input type="hidden" value="@Model.Guid" name="guidKey" />
-    <input type="submit" value="Upload" name="response" class="btn btn-primary btn-danger" />
-    <input type="submit" value="Cancel" name="response" class="btn btn-primary" />
-    
-    <h3>Existing daily files:</h3>
-    @Html.Partial("_FileUploadsList", Model.ExistingFiles)
-@*</form>*@
+    <div class="alert alert-warning">
+        <div class="col-md-4">
+            Calculated prices loaded earlied will be overwriten with a new data from new file: <strong>@Model.OriginalFileName</strong>
+        </div>
+        <div class="col-md-1">
+            <input type="hidden" value="@Model.Guid" name="guidKey" />
+            <input type="submit" value="Cancel" name="response" class="btn btn-primary" />
+        </div>
+        <div class="col-md-1">
+            <input type="submit" value="Overwrite" name="response" class="btn btn-primary btn-danger" />
+        </div>
+        <div class="clearfix"></div>
+    </div>
 }
+<hr />
+<h3>Existing Daily Price files</h3>
+@Html.Partial("_FileUploadsList", Model.ExistingFiles)

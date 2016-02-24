@@ -1,27 +1,42 @@
 ﻿@model JsPlc.Ssc.PetrolPricing.Models.ViewModels.UploadViewModel
 @{
-    ViewBag.Title = "Upload";
+    ViewBag.Title = "New file upload";
 }
 
-<h2>Upload</h2>
-<h3>@ViewBag.Message</h3>
-<br/>
-<span style="color:red">@ViewBag.ErrorMessage</span>
-<span style="color:green; font-size: larger">@ViewBag.SuccessMessage</span>
-
+<h1>
+    New file upload
+</h1>
+<hr />
+<div class="alert alert-info @(string.IsNullOrWhiteSpace(ViewBag.Message) ? "hidden" : "")">@ViewBag.Message</div>
+<div class="alert alert-danger @(string.IsNullOrWhiteSpace(ViewBag.ErrorMessage) ? "hidden" : "")">@ViewBag.ErrorMessage</div>
+<div class="alert alert-success @(string.IsNullOrWhiteSpace(ViewBag.SuccessMessage) ? "hidden" : "")">@ViewBag.SuccessMessage</div>
+<div class="alert alert-warning @(string.IsNullOrWhiteSpace(ViewBag.WarningMessage) ? "hidden" : "")">@ViewBag.WarningMessage</div>
 <form action="" method="post" enctype="multipart/form-data">
-    <fieldset>
-        <legend>File upload: @Html.Label(Model.UploadDate.ToLongDateString())</legend>
-        Upload Type: @Html.DropDownListFor(model => model.UploadTypes, new SelectList(
-          Model.UploadTypes, "Id", "UploadTypeName"))
-        <p style="color:orange; font-size: large">@ViewBag.WarningMessage</p>
-        @Html.HiddenFor(model => model.UploadDate, new { name = "uploadDateTime" })
+    <div class="alert alert-info">Uploaded data will be calculated as <strong>@Model.UploadDate.ToString("MMMM dd, yyyy")</strong></div>
 
-        <span style="font-size: smaller">Click the Choose File button to pick a file to upload</span>
-        <label for="file"></label>
-        <input type="file" name="file" id="file"/>
+    <div class="col-md-3">
+        <div class="form-group">
+            <label for="UploadTypes">Upload type:</label>
+            @Html.DropDownListFor(model => model.UploadTypes, new SelectList(
+          Model.UploadTypes, "Id", "UploadTypeName"), new { @class = "form-control" })
 
-        <br /><br />
-        <input type="submit" value="Upload" class="btn btn-primary" />
-    </fieldset>
+            @Html.HiddenFor(model => model.UploadDate, new { name = "uploadDateTime" })
+
+
+        </div>
+
+    </div>
+    <div class="col-md-1" style="margin-top: 24px">
+        <span class="btn btn-success btn-file">
+            Select file
+            <input type="file" name="file" id="file" />
+        </span>
+    </div>
+    <div class="col-md-1" style="margin-top: 24px">
+        <div class="form-group">
+            <input type="submit" value="Upload file" class="btn btn-primary" />
+        </div>
+    </div>   
+
 </form>
+

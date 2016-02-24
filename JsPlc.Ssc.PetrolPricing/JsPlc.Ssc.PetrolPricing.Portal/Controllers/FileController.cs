@@ -9,12 +9,10 @@ using System.Security.Principal;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
-//using JsPlc.Ssc.PetrolPricing.Business;
 using System.Web.Routing;
 using JsPlc.Ssc.PetrolPricing.Models;
 using JsPlc.Ssc.PetrolPricing.Models.Common;
 using JsPlc.Ssc.PetrolPricing.Models.ViewModels;
-//using JsPlc.Ssc.PetrolPricing.Business;
 using JsPlc.Ssc.PetrolPricing.Portal.Facade;
 using Microsoft.Ajax.Utilities;
 
@@ -39,7 +37,6 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 
         public async Task<ActionResult> Upload(string errMsg = "")
         {
-            ViewBag.Message = "Upload Daily/Quarterly file";
             ViewBag.ErrorMessage = errMsg;
 
             var model = new UploadViewModel
@@ -50,7 +47,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             var existingUploads = await ExistingDailyUploads(model.UploadDate);
             if (existingUploads.Any())
             {
-                ViewBag.WarningMessage = "Warning: Daily file already exists for today.";
+                ViewBag.WarningMessage = "Warning: Today Daily Prices file has already been uploaded.";
             }
             return View(model);
         }
@@ -131,14 +128,14 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 
             var fum = new FileUploadModel(fileUpload, new ServiceFacade());
 
-            if (response == "Upload")
+            if (response == "Overwrite")
             {
                 fum.ConfirmedUploadByUser();
                 return RedirectToAction("Index", new { msg = String.Format(Constants.UploadSuccessMessageWithFormat, fum.OriginalFileName) });
             }
             
             fum.CleanupUpload();
-            return RedirectToAction("Upload");
+            return RedirectToAction("Overwrite");
         }
 
         public async Task<ActionResult> Details(int id)

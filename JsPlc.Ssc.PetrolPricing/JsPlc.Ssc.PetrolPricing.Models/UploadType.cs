@@ -14,6 +14,7 @@ namespace JsPlc.Ssc.PetrolPricing.Models
         public int Id { get; set; }
 
         [Required]
+        [Display(Name = "Upload type")]
         public string UploadTypeName { get; set; } // Daily, Quarterly
     }
 }

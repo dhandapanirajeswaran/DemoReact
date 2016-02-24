@@ -231,6 +231,7 @@
     <Content Include="fonts\fontawesome-webfont.eot" />
     <Content Include="fonts\FontAwesome.otf" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
+    <Content Include="images\logo.png" />
     <Content Include="images\report.png" />
     <Content Include="images\sainsbury_s_live_well_for_less.jpg" />
     <Content Include="Scripts\App\common.js" />

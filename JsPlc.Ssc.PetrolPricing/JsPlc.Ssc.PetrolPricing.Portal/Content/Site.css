@@ -59,7 +59,7 @@ div, span, h1, h2, h3, h4, h5, h6 {
 
 hr {
     margin-bottom: 10px;
-    margin-top: 10px
+    margin-top: 10px;
 }
 
 /*div { display: block; float: none;}*/
@@ -239,36 +239,35 @@ textarea {
 }
 
 .navbar-inverse .navbar-nav > li > a {
-    color: #ffffff;
+    color: #3d3d3d;
 }
 
-
-
-
-.navbar {
-    border-radius: 0px;
+.navbar-inverse .navbar-brand {
+    color:#f90;
 }
 
 .navbar {
     position: relative;
     min-height: 0px;
     margin-bottom: 10px;
+    border-radius: 0px;
+    background-color: white;
+    border-color: #ececec;
 }
-
-
-
 
 .nav > li > a {
     position: relative;
     display: block;
-    padding-top: 15px;
-    padding-bottom: 12px;
-    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
-    font-size: 100%;
+    padding-top: 25px;
+    padding-bottom: 25px;
+    font-family: MaryAnn,Arial,sans-serif;
+    font-size: 105%;
+    font-weight: 400;
 }
 
-.navbar-inverse .navbar-nav > li > a:hover {
-    color: #EF6600;
+.navbar-inverse .navbar-nav > li > a:hover,
+.navbar-inverse .navbar-brand:hover {
+    color: #910048;
 }
 
 /* The following rule clipped the menu opton in sm view*/
@@ -408,4 +407,24 @@ textarea {
 
 .report .panel-disabled {
     opacity: 0.5;
+}
+
+.btn-file {
+    position: relative;
+    overflow: hidden;
+}
+.btn-file input[type=file] {
+    position: absolute;
+    top: 0;
+    right: 0;
+    min-width: 100%;
+    min-height: 100%;
+    font-size: 100px;
+    text-align: right;
+    filter: alpha(opacity=0);
+    opacity: 0;
+    outline: none;
+    background: white;
+    cursor: inherit;
+    display: block;
 }

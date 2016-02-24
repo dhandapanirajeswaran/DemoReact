@@ -1,72 +1,75 @@
 ﻿@model JsPlc.Ssc.PetrolPricing.Models.FileUpload
 
 @{
-    ViewBag.Title = "Upload Details";
+    ViewBag.Title = "Uploaded file details";
 }
 
-<h2>View</h2>
+<h1>Uploaded file details</h1>
 
-<div>
-    <h4>FileUpload</h4>
-    <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.OriginalFileName)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.OriginalFileName)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.StoredFileName)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.StoredFileName)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.UploadType)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.UploadType.UploadTypeName)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.UploadDateTime)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.UploadDateTime)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Status)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Status.Status)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.UploadedBy)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.UploadedBy)
-        </dd>
-
-    </dl>
-</div>
-
-<p>
-    @Html.ActionLink("Back to List", "Index")
-</p>
-@if (Model.StatusId == 15 && Model.ImportProcessErrors.Any())
+@if (Model.ImportProcessErrors.Any())
 {
-    <div>
+    <div class="alert alert-danger">
         @Html.Partial("_ImportErrors", Model.ImportProcessErrors)
     </div>
 }
+else
+{
+    <div class="alert alert-info">No errors found</div>
+}
+
+<div class="panel panel-default">
+    <div class="panel-heading">@Html.DisplayNameFor(model => model.OriginalFileName)
+    
+        <strong>@Html.DisplayFor(model => model.OriginalFileName)</strong>
+    </div>
+    <div class="panel-body">
+        <dl>
+            <dt>
+                @Html.DisplayNameFor(model => model.StoredFileName)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.StoredFileName)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.UploadType)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.UploadType.UploadTypeName)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.UploadDateTime)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.UploadDateTime)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Status)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Status.Status)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.UploadedBy)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.UploadedBy)
+            </dd>
+        </dl>
+    </div>
+    <div class="panel-footer">
+
+        @Html.ActionLink("Back to List", "Index", null, new { @class = "btn btn-default" })
+
+    </div>
+
+</div>
+

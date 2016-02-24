@@ -1,26 +1,22 @@
 ﻿@model IEnumerable< JsPlc.Ssc.PetrolPricing.Models.FileUpload>
 @{
-    ViewBag.Title = "File Upload";
+    ViewBag.Title = "Daily Pricing and Quarterly files";
 }
 @section head
 {
     <meta http-equiv="refresh" content="15"/>
 }
-<h2>File Upload</h2>
-<p style="color:blue; font-size: larger; font-weight: bold">@ViewBag.Message</p>
-
-<div align="right">
-    <input type="button" value="New Upload" onclick="location.href='@Url.Action("Upload", "File" )'"  class="btn btn-primary"/>
-</div>
-
 <div>
-    Daily Pricing and Quarterly Files
-    <br/><span class="small" style="color: red">This page auto-refreshes every 15 sec to update status</span>
-    <hr/>
-    List of Files:
+    <div class="row">
+        <div class="col-md-6">
+            <h1>Daily Pricing and Quarterly files</h1>
+            <p>This page reloads every 15 sec to refresh status update</p>
+        </div>
+        <div class="col-md-6 text-right" style="padding-top: 20px">
+            <input type="button" value="New Upload" onclick="location.href='@Url.Action("Upload", "File" )'" class="btn btn-primary" />
+        </div>
+    </div>
+    <div class="alert alert-info @(string.IsNullOrWhiteSpace(ViewBag.Message) ? "hidden" : "")">@ViewBag.Message</div>
+    
     @Html.Partial("_FileUploadsList", Model)
-
 </div>
-<br/>
-
-
