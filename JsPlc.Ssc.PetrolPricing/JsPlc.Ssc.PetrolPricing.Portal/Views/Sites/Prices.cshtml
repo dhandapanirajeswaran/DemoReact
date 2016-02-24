@@ -231,19 +231,19 @@
                         <th><span>Cat No.</span></th>
                         <th><span>PFS No.</span></th>
 
-                        <th width="200" colspan="2" class="text-center" style="border-left: 1px solid #808080">
+                        <th width="200" colspan="2" class="text-center" style="border-left: 1px solid #ccc">
                             <h4>
                                 <span class="label label-success">
                                     &nbsp;Unleaded&nbsp;
                                 </span>
                             </h4>
                         </th>
-                        <th width="200" colspan="2" class="text-center">
+                        <th width="200" colspan="2" class="text-center" style="border-left: 1px solid #ccc">
                             <h4>
                                 <span class="label label-black">&nbsp;Diesel&nbsp;</span>
                             </h4>
                         </th>
-                        <th width="200" colspan="2" class="text-center">
+                        <th width="200" colspan="2" class="text-center" style="border-left: 1px solid #ccc">
                             <h4>
                                 <span class="label label-success-inverted">&nbsp;Super Unleaded&nbsp;</span>
                             </h4>
@@ -328,19 +328,19 @@
                                         <th><span>Drive-Time</span></th>
                                         <th><span>Cat No.</span></th>
 
-                                        <th width="150" colspan="2" class="text-center">
+                                        <th width="150" colspan="2" class="text-center" style="border-left: 1px solid #ccc">
                                             <h4>
                                                 <span class="label label-success">
                                                     &nbsp;Unleaded&nbsp;
                                                 </span>
                                             </h4>
                                         </th>
-                                        <th width="150" colspan="2" class="text-center">
+                                        <th width="150" colspan="2" class="text-center" style="border-left: 1px solid #ccc">
                                             <h4>
                                                 <span class="label label-black">&nbsp;Diesel&nbsp;</span>
                                             </h4>
                                         </th>
-                                        <th width="150" colspan="2" class="text-center">
+                                        <th width="150" colspan="2" class="text-center" style="border-left: 1px solid #ccc">
                                             <h4>
                                                 <span class="label label-success-inverted">&nbsp;Super Unleaded&nbsp;</span>
                                             </h4>
@@ -378,11 +378,11 @@
 
                                         <!-- ko foreach: FuelPricesToDisplay -->
                                         <!-- ko if: siteSupportsFuel -->
-                                        <td><span data-bind="text: FuelPrice.YestPrice"></span></td>
-                                        <td class="tblHighlight"><span data-bind="text: FuelPrice.TodayPrice"></span></td>
+                                        <td style="border-left: 1px solid #ccc"><span data-bind="text: FuelPrice.YestPrice"></span></td>
+                                        <td style="border-left: 1px solid #ccc" class="tblHighlight"><span data-bind="text: FuelPrice.TodayPrice"></span></td>
                                         <!-- /ko -->
                                         <!-- ko if: !siteSupportsFuel -->
-                                        <td colspan="2">n/a</td>
+                                        <td style="border-left: 1px solid #ccc" colspan="2">n/a</td>
                                         <!-- /ko -->
                                         <!-- /ko -->
                                     </tr>
