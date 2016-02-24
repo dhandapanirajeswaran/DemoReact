@@ -27,6 +27,16 @@ select,
 textarea {
 }
 
+pre{
+    margin: 0;
+    padding: 0;
+    font-size: inherit;
+    font-family: inherit;
+    display:inline;
+    background-color: inherit;
+    border: 0;
+}
+
 header.link-banner {
     position: relative;
     padding: 15px 15px;
@@ -348,10 +358,13 @@ textarea {
 .myPageContainer {
 }
 
-.fuelHeaderGroup {
-    color: darkblue;
-    background-color: #ffffff;
-    margin-left: 40px;
+.label-black{
+    background-color: black;
+}
+
+.label-success-inverted {
+    color: #5cb85c;
+    background-color: white;
 }
 
 .dateHeaderLabel {

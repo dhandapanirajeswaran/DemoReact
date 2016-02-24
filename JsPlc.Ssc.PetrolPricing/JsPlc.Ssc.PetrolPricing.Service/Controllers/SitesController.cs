@@ -59,7 +59,7 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
         [System.Web.Http.Route("api/brands")]
         public IHttpActionResult GetBrands()
         {
-            var sites = _siteService.GetSites().Select(s => s.Brand).Distinct().OrderBy(x => x).ToList();
+            var sites = _siteService.GetSites().Where(s => string.IsNullOrWhiteSpace(s.Brand) == false).Select(s => s.Brand).Distinct().OrderBy(x => x).ToList();
             if (!sites.Any())
                 return NotFound();
             return Ok(sites);
