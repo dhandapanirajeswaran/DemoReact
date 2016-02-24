@@ -6,11 +6,11 @@
 <h1>
     New file upload
 </h1>
-<hr />
 <div class="alert alert-info @(string.IsNullOrWhiteSpace(ViewBag.Message) ? "hidden" : "")">@ViewBag.Message</div>
 <div class="alert alert-danger @(string.IsNullOrWhiteSpace(ViewBag.ErrorMessage) ? "hidden" : "")">@ViewBag.ErrorMessage</div>
 <div class="alert alert-success @(string.IsNullOrWhiteSpace(ViewBag.SuccessMessage) ? "hidden" : "")">@ViewBag.SuccessMessage</div>
 <div class="alert alert-warning @(string.IsNullOrWhiteSpace(ViewBag.WarningMessage) ? "hidden" : "")">@ViewBag.WarningMessage</div>
+<hr />
 <form action="" method="post" enctype="multipart/form-data">
     <div class="alert alert-info">Uploaded data will be calculated as <strong>@Model.UploadDate.ToString("MMMM dd, yyyy")</strong></div>
 

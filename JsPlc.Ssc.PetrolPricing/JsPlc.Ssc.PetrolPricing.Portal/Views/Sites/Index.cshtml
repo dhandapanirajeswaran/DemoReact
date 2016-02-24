@@ -1,57 +1,59 @@
 ﻿@model IEnumerable<JsPlc.Ssc.PetrolPricing.Models.Site>
 @{
-    ViewBag.Title = "Sainsbury's Sites";
+    ViewBag.Title = "Sainsbury's sites";
 }
 
-<h2>Site Manager</h2>
-<p style="color:blue; font-size: larger; font-weight: bold">@ViewBag.Message</p>
-
-<div align="right">
-    <input type="button" value="New Sainsbury's Site" onclick="location.href='@Url.Action("Create", "Sites" )'" class="btn btn-primary" />
-</div>
-<!-- Approx 300 Sainsbury's sites -->
-<div>
-    <div class="row">
-        <div class="col-md-12">
-            <!-- Catalist No -->
-            <div class="col-md-2">
-                <label for="viewingCatNo">Catalist No:</label>
-                <input type="text" id="viewingCatNo" class="form-control"
-                       name="viewingCatNo" data-bind="numeric, value: $root.CatNo" />
-            </div>
-            <!-- Store No -->
-            <div class="col-md-2">
-                <label for="viewingStoreNo">Store No:</label>
-                <input type="text" id="viewingStoreNo" class="form-control"
-                       name="viewingStoreNo" data-bind="numeric, value: $root.StoreNo" />
-            </div>
-            
-            <!-- Store Name -->
-            <div class="col-md-2">
-                <label for="viewingStoreName">Store Name:</label>
-                <input type="text" id="viewingStoreName" class="form-control"
-                       name="viewingStoreName" data-bind="value: $root.StoreName" />
-            </div>
-            <!-- Store Town -->
-            <div class="col-md-2">
-                <label for="viewingStoreTown">Town:</label>
-                <input type="text" id="viewingStoreTown" class="form-control"
-                       name="viewingStoreTown" data-bind="value: $root.StoreTown" />
-            </div>
-            
-            <div class="col-md-1 left">
-                <button style="margin-top: 24px" type="button" class="btn btn-default" data-bind="click: searchSainsburysStores">Go</button>
-            </div>
-
-            <div class="col-md-1 left">
-                <button style="margin-top: 24px" type="button" class="btn btn-default" data-bind="click: function() { reloadSearchPage('Sites') }">Show all</button>
-            </div>
-        </div>
+<div class="row">
+    <div class="col-md-6">
+        <h1>Sainsbury's sites</h1>
     </div>
-    <hr />
-    List of Sites:
-    @Html.Partial("_SiteList", Model)
+    <div class="col-md-6 text-right" style="padding-top: 20px">
+        <input type="button" value="New Sainsbury's site" onclick="location.href='@Url.Action("Create", "Sites" )'" class="btn btn-primary" />
+    </div>
 </div>
+<div class="alert alert-info @(string.IsNullOrWhiteSpace(ViewBag.Message) ? "hidden" : "")">@ViewBag.Message</div>
+<!-- Approx 300 Sainsbury's sites -->
+
+<div class="row">
+
+    <!-- Catalist No -->
+    <div class="col-md-2">
+        <label for="viewingCatNo">Catalist no:</label>
+        <input type="text" id="viewingCatNo" class="form-control"
+               name="viewingCatNo" data-bind="numeric, value: $root.CatNo" />
+    </div>
+    <!-- Store No -->
+    <div class="col-md-2">
+        <label for="viewingStoreNo">Store no:</label>
+        <input type="text" id="viewingStoreNo" class="form-control"
+               name="viewingStoreNo" data-bind="numeric, value: $root.StoreNo" />
+    </div>
+
+    <!-- Store Name -->
+    <div class="col-md-2">
+        <label for="viewingStoreName">Store name:</label>
+        <input type="text" id="viewingStoreName" class="form-control"
+               name="viewingStoreName" data-bind="value: $root.StoreName" />
+    </div>
+    <!-- Store Town -->
+    <div class="col-md-2">
+        <label for="viewingStoreTown">Town:</label>
+        <input type="text" id="viewingStoreTown" class="form-control"
+               name="viewingStoreTown" data-bind="value: $root.StoreTown" />
+    </div>
+
+    <div class="col-md-1 left">
+        <button style="margin-top: 24px" type="button" class="btn btn-success" data-bind="click: searchSainsburysStores">Go</button>
+    </div>
+
+    <div class="col-md-3 text-right">
+        <button style="margin-top: 24px" type="button" class="btn btn-default" data-bind="click: function() { reloadSearchPage('Sites') }">Show all</button>
+    </div>
+
+</div>
+<hr />
+@Html.Partial("_SiteList", Model)
+
 
 <script type="text/javascript">
     require(["SitePricing"], function (prices) {

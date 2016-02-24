@@ -15,25 +15,35 @@ namespace JsPlc.Ssc.PetrolPricing.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
+        [Display(Name="Cat no")]
         public int? CatNo { get; set; } // Catalist no.
+
         public string Brand { get; set; }
 
+        [Display(Name = "Site name")]
         public string SiteName { get; set; }
 
         public string Address { get; set; }
+
         public string Suburb { get; set; }
         
         public string Town { get; set; }
 
+        [Display(Name = "Post code")]
         public string PostCode { get; set; }
         public string Company { get; set; }
         public string Ownership { get; set; }
 
+        [Display(Name = "Store no")]
         public int? StoreNo { get; set; }
+
+        [Display(Name = "Pfs no")]
         public int? PfsNo { get; set; }
 
-        public bool IsSainsburysSite { get; set; } 
+        [Display(Name = "Is JS site")]
+        public bool IsSainsburysSite { get; set; }
 
+        [Display(Name = "Is active")]
         public bool IsActive { get; set; } 
         
         public virtual ICollection<SiteEmail> Emails { get; set; }

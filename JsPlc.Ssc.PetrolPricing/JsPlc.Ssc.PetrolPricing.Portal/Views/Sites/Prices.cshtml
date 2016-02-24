@@ -20,8 +20,8 @@
     }
 </style>
 
-<h1>Site Prices</h1>
-
+<h1>Market comparison and planner</h1>
+<hr />
 <!-- knockout binds here -->
 <div id="petrolpricingpage">
     <!-- Email ALL popup within knockout -->
@@ -109,20 +109,6 @@
     <!-- Submit disabled, all work done thru ajax calls -->
     <form id="myform" method="post" data-bind="submit: savePetrolPricingForm" xclass="input-group-sm" action="sites/PostPrices" onsubmit="return false;">
         <div class="row">
-            <div class="col-md-9 left"><h4>Market Comparison: Sainsburys's prices and Competitors</h4></div>
-            <div class="col-md-3 text-right">
-
-                <!-- EMAIL all Button, only loads popup -->
-                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#emailAllSites"
-                        data-bind="visible: !$root.ViewingHistorical()">
-                    Email all &nbsp;<i class="fa fa-envelope-o"></i>
-                </button>
-
-            </div>
-
-        </div>
-        <hr />
-        <div class="row">
             <!-- Date Picker -->
             <div class="col-md-1">
                 <label for="viewingDate">Date:</label>
@@ -160,7 +146,7 @@
             </div>
             <!-- show all button -->
             <div class="col-md-1 right">
-                <button style="margin-top: 24px" type="button" class="btn btn-default" data-bind="click: function() { reloadSearchPage('Sites/Prices?date='+$root.InitDateInUsFormat()) }">Show all</button>
+                <button style="margin-top: 24px" type="button" class="btn btn-primary" data-bind="click: function() { reloadSearchPage('Sites/Prices?date='+$root.InitDateInUsFormat()) }">Show all</button>
             </div>
         </div>
         <hr />
@@ -251,8 +237,15 @@
                     </tr>
                     <tr>
                         <!-- 13 column layout -->
-                        <th colspan="7"></th>
-
+                        <th></th>
+                        <th colspan="3">
+                            <!-- EMAIL all Button, only loads popup -->
+                            <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#emailAllSites"
+                                    data-bind="visible: !$root.ViewingHistorical()">
+                                Email all &nbsp;<i class="fa fa-envelope-o"></i>
+                            </button>
+                        </th>
+                        <th colspan="3"></th>
                         <th width="60" style="border-left: 1px solid #ddd"><span>Today</span></th>
                         <th width="140" style="border-left: 1px solid #ddd"><span>Tomorrow</span></th>
                         <th width="60" style="border-left: 1px solid #ddd"><span>Today</span></th>

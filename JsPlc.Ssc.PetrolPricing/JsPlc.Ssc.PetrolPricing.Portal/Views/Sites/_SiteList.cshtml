@@ -1,7 +1,7 @@
 ﻿@using JsPlc.Ssc.PetrolPricing.Models
 @model IEnumerable<JsPlc.Ssc.PetrolPricing.Models.Site>
 
-<table class="table small">
+<table class="table table-striped">
     <tr>
         <th>
             @Html.DisplayNameFor(model => model.CatNo)
@@ -13,31 +13,24 @@
             @Html.DisplayNameFor(model => model.PfsNo)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Brand)
-        </th>
-        <th>
             @Html.DisplayNameFor(model => model.SiteName)
+            <br />
+            (@Html.DisplayNameFor(model => model.Company))
+            <br />
+            (@Html.DisplayNameFor(model => model.Brand))
         </th>
         <th>
             @Html.DisplayNameFor(model => model.Address)
-        </th>
-        <th>
+            <br />
             @Html.DisplayNameFor(model => model.Suburb)
-        </th>
-        <th>
+            <br />
             @Html.DisplayNameFor(model => model.Town)
         </th>
         <th>
             @Html.DisplayNameFor(model => model.PostCode)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Company)
-        </th>
-        <th>
             @Html.DisplayNameFor(model => model.Ownership)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.IsSainsburysSite)
         </th>
         <th>
             @Html.DisplayNameFor(model => model.IsActive)
@@ -61,31 +54,24 @@
                 @Html.DisplayFor(modelItem => item.PfsNo)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Brand)
-            </td>
-            <td>
                 @Html.DisplayFor(modelItem => item.SiteName)
+                <br />
+                (@Html.DisplayFor(modelItem => item.Company))
+                <br />
+                (@Html.DisplayFor(modelItem => item.Brand))
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Address)
-            </td>
-            <td>
+                <br />
                 @Html.DisplayFor(modelItem => item.Suburb)
-            </td>
-            <td>
+                <br />
                 @Html.DisplayFor(modelItem => item.Town)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.PostCode)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Company)
-            </td>
-            <td>
                 @Html.DisplayFor(modelItem => item.Ownership)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IsSainsburysSite)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.IsActive)
