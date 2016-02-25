@@ -7,8 +7,18 @@
 
     var requestedDate = @Model.ForDate.Value.Date.ToString("dd-MMM-yyyy");
 }
-
-<h2>Report - National Average 2</h2>
+<div class="row">
+    <div class="col-md-6">
+        <h1>Report - National Average with difference</h1>
+    </div>
+    <div class="col-md-6 text-right" style="padding-top: 20px">
+        @if (Model != null && Model.NationalAverageReport != null && Model.NationalAverageReport.Fuels.Any())
+        {
+            <input type="button" class="btn btn-primary" id="btnExportReport" value="Export to Excel" />
+        }
+    </div>
+</div>
+<hr />
 
 @using (Html.BeginForm("NationalAverage2", "PriceReports", FormMethod.Get))
 {
@@ -17,21 +27,12 @@
             <label>When:</label>&nbsp;
             <input type="text" class="datepicker form-control" id="For" name="For" value='@requestedDate'>
         </div>
-        <input type="button" value="View" class="btn btn-primary" id="btnViewReport" />
+        <input type="button" value="View" class="btn btn-success" id="btnViewReport" />
     </div>
 }
-
+<hr />
 @if (Model != null && Model.NationalAverageReport != null && Model.NationalAverageReport.Fuels.Any())
 {
-    <br />
-    <!-- EXPORT Button -->
-    <div class="row">
-        <div class="col-md-12 right">
-            <input type="button" id="btnExportReport" value="Export to Excel" />
-        </div>
-    </div>
-    <hr />
-
     <!-- Report Data -->
 
     <table class="table table-hover table-responsive table-striped">
@@ -60,7 +61,7 @@
                     </td>
                     @if (!fuelType.Brands.Any())
                     {
-                        <td>There is no data available</td>
+                        <td>No data available for specified date</td>
                     }
                     @foreach (var brand in fuelType.Brands)
                     {
@@ -80,11 +81,12 @@
                         if (diff < 0)
                         {
                             color = "red";
-                        } else if (diff > 0)
+                        }
+                        else if (diff > 0)
                         {
                             color = "green";
                         }
-                        
+
                         <td style="color: @color">@((diff / 10.0).ToString("###0.0"))</td>
                     }
                 </tr>

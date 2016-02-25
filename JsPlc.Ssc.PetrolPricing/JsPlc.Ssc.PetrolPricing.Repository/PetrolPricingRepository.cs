@@ -1253,7 +1253,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
             if (sainsburysSites.Any())
             {
-                if (sainsburysSites.Count == 0)
+                if (sainsburysSites.Count == 1)
                 {
                     result.SiteName = sainsburysSites.First().SiteName;
                 }
@@ -1270,6 +1270,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                     if (reportType == ReportTypes.Default)
                     {
                         var brandNames = sainsburysSite.Competitors.Select(x => x.Competitor.Brand).Distinct().OrderBy(x => x);
+                        
                         foreach (var brandName in brandNames)
                         {
                             var brandCompetitors = sainsburysSite.Competitors.Where(x => x.Competitor.Brand == brandName).ToList();
@@ -1474,34 +1475,6 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                         fuelRow.SainsburysPrice = brandAvg.Average;
                     }
                 }
-
-                //calculating by companies
-                var distinctCompanies = competitorSites.Select(x => x.Company).Distinct().OrderBy(x => x).ToList();
-
-                distinctCompanies.Remove(SainsburysCompanyName.ToUpper());
-                distinctCompanies.Insert(0, SainsburysCompanyName.ToUpper());
-
-                foreach (var company in distinctCompanies)
-                {
-                    var companyAvg = new NationalAverageReportBrandViewModel();
-                    fuelRow.Companies.Add(companyAvg);
-                    companyAvg.BrandName = company;
-
-                    var companyCatsNos = competitorSites.Where(x => x.Company == company).Where(x => x.CatNo.HasValue).Select(x => x.CatNo.Value).ToList();
-                    var pricesList = dailyPrices.Where(x => x.FuelTypeId == fuelType && companyCatsNos.Contains(x.CatNo)).ToList();
-
-                    if (pricesList.Any())
-                    {
-                        companyAvg.Min = (int)pricesList.Min(x => x.ModalPrice);
-                        companyAvg.Average = (int)pricesList.Average(x => x.ModalPrice);
-                        companyAvg.Max = (int)pricesList.Max(x => x.ModalPrice);
-                    }
-
-                    if (company.Equals(SainsburysCompanyName, StringComparison.InvariantCultureIgnoreCase))
-                    {
-                        fuelRow.SainsburysPrice = companyAvg.Average;
-                    }
-                }
             }
 
             return result;
@@ -1601,11 +1574,14 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                     dataItems.Add(dataItem);
 
                     // Find the ExpectedPrice
-                    int sitePrice = GetSitePriceForFuel(sitePriceViewModel, fuel.Id);
-                    if (sitePrice > 0)
+                    if (sitePriceViewModel != null)
                     {
-                        dataItem.FoundExpectedPrice = true;
-                        dataItem.ExpectedPriceValue = sitePrice;
+                        int sitePrice = GetSitePriceForFuel(sitePriceViewModel, fuel.Id);
+                        if (sitePrice > 0)
+                        {
+                            dataItem.FoundExpectedPrice = true;
+                            dataItem.ExpectedPriceValue = sitePrice;
+                        }
                     }
 
                     var dailyPrice = dailyPrices.FirstOrDefault(x => x.CatNo.Equals(site1.CatNo) && x.FuelTypeId == fuel.Id);

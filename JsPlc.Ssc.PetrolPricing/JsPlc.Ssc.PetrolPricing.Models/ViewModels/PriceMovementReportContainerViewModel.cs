@@ -15,9 +15,17 @@ namespace JsPlc.Ssc.PetrolPricing.Models.ViewModels
         public PriceMovementReportContainerViewModel()
         {
             PriceMovementReport = new PriceMovementReportViewModel();
+            Brand = "SAINSBURYS";
+            FromDate = DateTime.Today.AddDays(-3);
+            ToDate = DateTime.Today;
+            FuelTypeId = 2;
         }
 
         public string Brand { get; set; }
+
+        public Dictionary<int, string> FuelTypes { get; set; }
+
+        public List<string> Brands { get; set; }
     }
 
     public class PriceMovementReportViewModel

@@ -36,7 +36,9 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             {
                 item.Report = _serviceFacade.GetCompetitorSites(item.SiteId);
             }
+
             Load(item);
+
             if (!item.Sites.Any() || item.Sites.First().SiteName == "")
                 return View(item);
 
@@ -46,6 +48,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
                 new Site { SiteName = "SAINSBURYS ALL", Id = 0 },
                 new Site { SiteName = "SAINSBURYS ALL NORMALISED", Id = -1 }
             };
+
             item.Sites.AddRange(tempSites);
 
             return View(item);
@@ -102,19 +105,29 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
         }
 
         [System.Web.Mvc.HttpGet]
-        public ActionResult PriceMovement(string brandName = "SAINSBURYS", string dateFrom = "", string dateTo = "", int id = 0)
+        public ActionResult PriceMovement([FromUri]DateTime? DateFrom, [FromUri]DateTime? DateTo, [FromUri]int FuelTypeId = 0, [FromUri]string BrandName = "")
         {
-            var listOfFuelIds = new[] { 1, 2, 6 };
+            var model = new PriceMovementReportContainerViewModel();
 
-            var fuelsSelectList = LoadFuels(listOfFuelIds, id);
-            ViewData["fuelTypes"] = fuelsSelectList;
+            if (DateFrom.HasValue)
+                model.FromDate = DateFrom.Value;
 
-            ViewData["brands"] = LoadBrands(_serviceFacade.GetBrands(), brandName);
+            if (DateTo.HasValue)
+                model.ToDate = DateTo.Value;
 
-            var reportContainer = LoadPriceMovementReport(brandName, dateFrom, dateTo, id, fuelsSelectList);
+            if(string.IsNullOrWhiteSpace(BrandName) == false)
+            {
+                model.Brand = BrandName;
+            }
 
-            var model = reportContainer;
-            return View(model);
+            if(FuelTypeId > 0)
+            {
+                model.FuelTypeId = FuelTypeId;
+            }
+
+            var result = LoadPriceMovementReport(model);
+
+            return View(result);
         }
 
         /// <summary>
@@ -145,15 +158,19 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
         //### #### #### #### ####
 
         [System.Web.Mvc.HttpGet]
-        public ActionResult ExportPriceMovement(string brandName = "SAINSBURYS", string dateFrom = "", string dateTo = "", int id = 0)
+        public ActionResult ExportPriceMovement([FromUri]DateTime DateFrom, [FromUri]DateTime DateTo, [FromUri]int FuelTypeId = 0, [FromUri]string BrandName = "")
         {
-            var listOfFuelIds = new[] { 1, 2, 6 };
+            var model = new PriceMovementReportContainerViewModel
+            {
+                FromDate = DateFrom,
+                ToDate = DateTo,
+                FuelTypeId = FuelTypeId,
+                Brand = BrandName
+            };
 
-            var fuelsSelectList = LoadFuels(listOfFuelIds, id);
-            ViewData["fuelTypes"] = fuelsSelectList;
-            var reportContainer = LoadPriceMovementReport(brandName, dateFrom, dateTo, id, fuelsSelectList);
+            var reportContainer = LoadPriceMovementReport(model);
 
-            var dt = reportContainer.ToPriceMovementReportDataTable(brandName + " PriceMovementReport"); // default tableName = PriceMovementReport (also becomes sheet name in Xlsx)
+            var dt = reportContainer.ToPriceMovementReportDataTable(model.Brand + " PriceMovementReport"); // default tableName = PriceMovementReport (also becomes sheet name in Xlsx)
 
             string filenameSuffix = String.Format("[{0}] [{1} to {2}]",
                 reportContainer.FuelTypeName,
@@ -161,7 +178,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
                     reportContainer.ToDate.Value.ToString("dd-MMM-yyyy"));
 
 
-            return ExcelDocumentStream(new List<DataTable> { dt }, brandName + " PriceMovementReport", filenameSuffix);
+            return ExcelDocumentStream(new List<DataTable> { dt }, model.Brand + " PriceMovementReport", filenameSuffix);
         }
 
         [System.Web.Mvc.HttpGet]
@@ -219,11 +236,9 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 
             var dtByBrand = reportContainer.ToCompetitorsPriceRangeByBrandDataTable(); // default tableName = PriceMovementReport (also becomes sheet name in Xlsx)
 
-            var dtByCompany = reportContainer.ToCompetitorsPriceRangeByCompanyDataTable(); 
-
             string filenameSuffix = String.Format("[{0}]", forDate.ToString("dd-MMM-yyyy"));
 
-            return ExcelDocumentStream(new List<DataTable> { dtByBrand, dtByCompany }, "CompetitorsPriceRange", filenameSuffix);
+            return ExcelDocumentStream(new List<DataTable> { dtByBrand }, "CompetitorsPriceRange", filenameSuffix);
         }
 
         [System.Web.Mvc.HttpGet]
@@ -248,40 +263,22 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             return ExcelDocumentStream(tables, "PricePointsReport", filenameSuffix);
         }
 
-        private PriceMovementReportContainerViewModel LoadPriceMovementReport(string brandName, string dateFrom, string dateTo, int id,
-            SelectList fuelsSelectList)
+        private PriceMovementReportContainerViewModel LoadPriceMovementReport(PriceMovementReportContainerViewModel model)
         {
-            var reportContainer = new PriceMovementReportContainerViewModel();
+            model.FuelTypes = LoadFuels(new[] { 1, 2, 6 });
+            model.Brands = _serviceFacade.GetBrands().ToList();
 
-            DateTime fromDate, toDate;
-            if (!DateTime.TryParse(dateFrom, out fromDate))
-                fromDate = DateTime.Now;
-            if (!DateTime.TryParse(dateTo, out toDate))
-                toDate = DateTime.Now;
-
-            // swap them around if in wrong order..
-            if (fromDate > toDate)
+            if (model.FuelTypeId > 0 && model.ToDate >= model.FromDate)
             {
-                DateTime tmpDate = fromDate;
-                fromDate = toDate;
-                toDate = tmpDate;
-            }
-
-            reportContainer.FromDate = fromDate;
-            reportContainer.ToDate = toDate;
-            reportContainer.FuelTypeId = id;
-            reportContainer.Brand = brandName;
-
-            if (id != 0 && toDate >= fromDate)
-            {
-                var selectedItem = fuelsSelectList.FirstOrDefault(x => x.Selected);
-                if (selectedItem != null && selectedItem.Value != null && selectedItem.Value != "0")
+                var selectedItem = model.FuelTypes[model.FuelTypeId];
+                if (model.FuelTypes.ContainsKey(model.FuelTypeId))
                 {
-                    reportContainer.FuelTypeName = selectedItem.Text;
-                    reportContainer.PriceMovementReport = _serviceFacade.GetPriceMovement(brandName, fromDate, toDate, id);
+                    model.FuelTypeName = model.FuelTypes[model.FuelTypeId];
+                    model.PriceMovementReport = _serviceFacade.GetPriceMovement(model.Brand, model.FromDate.Value, model.ToDate.Value, model.FuelTypeId);
                 }
             }
-            return reportContainer;
+
+            return model;
         }
 
         /// <summary>
@@ -290,26 +287,18 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
         /// <param name="listOfFuelIds"></param>
         /// <param name="selectedfuelId"></param>
         /// <returns></returns>
-        private static SelectList LoadFuels(IEnumerable<int> listOfFuelIds, int selectedfuelId = 0)
+        private static Dictionary<int, string> LoadFuels(IEnumerable<int> listOfFuelIds)
         {
-            var fuellist = new List<SelectItemViewModel>
-            {
-                new SelectItemViewModel {Id = 0, Name = "Select fuel.."}
-            };
+            var result = new Dictionary<int, string>();
+
+            result.Add(0, "Select fuel");
 
             var fuelTypes = from FuelTypeItem s in Enum.GetValues(typeof(FuelTypeItem))
                             select new SelectItemViewModel { Id = (int)s, Name = s.ToString() };
 
-            fuellist.AddRange(fuelTypes.Where(x => listOfFuelIds.Contains(x.Id))); // limit items
+            fuelTypes.Where(x => listOfFuelIds.Contains(x.Id)).ForEach(x => result.Add(x.Id, x.Name));
 
-            var retval = new SelectList(fuellist, "Id", "Name", selectedfuelId);
-
-            return retval;
-        }
-
-        private static IEnumerable<SelectListItem> LoadBrands(IEnumerable<string> listOfBrands, string selectedBrandName = "SAINSBURYS")
-        {
-            return listOfBrands.Select(x => new SelectListItem { Text = x, Value = x, Selected = x.Equals(selectedBrandName) });
+            return result;
         }
 
         private void Load(CompetitorSiteViewModel item)

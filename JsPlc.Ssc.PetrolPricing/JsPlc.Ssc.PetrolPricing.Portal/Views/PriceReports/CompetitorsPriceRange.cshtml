@@ -8,7 +8,15 @@
     var requestedDate = @Model.ForDate.Value.Date.ToString("dd-MMM-yyyy");
 }
 
-<h2>Report - Competitors Price Range</h2>
+<div class="row">
+    <div class="col-md-6">
+        <h1>Report - Competitors Price Range</h1>
+    </div>
+    <div class="col-md-6 text-right" style="padding-top: 20px">
+        <input type="button" class="btn btn-primary" id="btnExportReport" value="Export to Excel" />
+    </div>
+</div>
+<hr />
 
 @using (Html.BeginForm("CompetitorsPriceRange", "PriceReports", FormMethod.Get))
 {
@@ -17,26 +25,13 @@
             <label for="For">When:</label>&nbsp;
             <input type="text" class="datepicker form-control" id="For" name="For" value='@requestedDate'>
         </div>
-        <input type="button" value="View" class="btn btn-primary" id="btnViewReport" />
+        <input type="button" value="View" class="btn btn-success" id="btnViewReport" />
     </div>
+    <hr />
 }
 
 @if (Model != null && Model.NationalAverageReport != null && Model.NationalAverageReport.Fuels.Any())
 {
-    <br />
-    <!-- EXPORT Button -->
-    <div class="row">
-        <div class="col-md-2">
-            <label for="isCompanies">Show companies:</label>&nbsp;
-            <input type="checkbox" id="isCompanies" name="isCompanies">
-        </div>
-        <div class="col-md-2">
-            <input type="button" class="btn" id="btnExportReport" value="Export to Excel" />
-        </div>
-        
-    </div>
-    <hr />
-
     <!-- Report Data -->
 
     <table class="table table-hover table-responsive table-striped" id="tblBrands">
@@ -97,66 +92,6 @@
                 </tr>
             }
 
-        </tbody>
-    </table>
-
-    <table class="table table-hover table-responsive table-striped" style="display: none" id="tblCompanies">
-        <thead>
-            <tr>
-                <td></td>
-                <td colspan="2"><strong>Avg retails</strong></td>
-                <td colspan="2"><strong>Difference</strong></td>
-                <td colspan="2"><strong>Pricing range</strong></td>
-            </tr>
-            <tr>
-                <td><strong>@requestedDate</strong></td>
-                @for (int i = 0; i < 3; i++)
-                {
-                    foreach (var fuelType in Model.NationalAverageReport.Fuels)
-                    {
-                        <td><strong>@fuelType.FuelName</strong></td>
-                    }
-                }
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var company in Model.NationalAverageReport.Fuels.First().Companies)
-            {
-                <tr>
-                    <td><strong>@(string.IsNullOrWhiteSpace(company.BrandName) ? "UNKNOWN" : company.BrandName) (£)</strong></td>
-                    @* Average *@
-                    @foreach (var fuelType in Model.NationalAverageReport.Fuels)
-                    {
-                        var fuelBrand = fuelType.Companies.First(b => b.BrandName == company.BrandName);
-                        <td>@((fuelBrand.Average / 10.0).ToString("###0.0"))</td>
-                    }
-                    @* Difference *@
-                    @foreach (var fuelType in Model.NationalAverageReport.Fuels)
-                    {
-                        var fuelBrand = fuelType.Companies.First(b => b.BrandName.Equals(company.BrandName, StringComparison.InvariantCultureIgnoreCase));
-
-                        int diff = fuelBrand.Average > 0 ? (fuelBrand.Average - fuelType.SainsburysPrice) : 0;
-                        string color = "";
-                        if (diff < 0)
-                        {
-                            color = "red";
-                        }
-                        else if (diff > 0)
-                        {
-                            color = "green";
-                        }
-
-                        <td style="color: @color">@((diff / 10.0).ToString("###0.0"))</td>
-                    }
-
-                    @* Range *@
-                    @foreach (var fuelType in Model.NationalAverageReport.Fuels)
-                    {
-                        var fuelBrand = fuelType.Companies.First(b => company.BrandName.Equals(b.BrandName, StringComparison.InvariantCultureIgnoreCase));
-                        <td>@((fuelBrand.Min / 10.0).ToString("###0.0")) - @((fuelBrand.Max / 10.0).ToString("###0.0"))</td>
-                    }
-                </tr>
-            }
         </tbody>
     </table>
 }

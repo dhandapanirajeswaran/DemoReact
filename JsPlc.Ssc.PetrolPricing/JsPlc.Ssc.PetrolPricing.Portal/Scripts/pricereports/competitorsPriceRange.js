@@ -16,20 +16,5 @@
         var dt = forDp.val();
         window.location.href = '/pricereports/ExportCompetitorsPriceRange?For=' + dt;
     });
-
-    $('#isCompanies').click(function () {
-        $tblBrands = $("#tblBrands");
-        $tblCompanies = $("#tblCompanies");
-
-        $tblBrands.hide();
-        $tblCompanies.hide();
-
-        if (this.checked) {
-            $tblCompanies.show();
-        }
-        else {
-            $tblBrands.show();
-        }
-    });
 });
 

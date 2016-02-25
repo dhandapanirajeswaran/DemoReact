@@ -30,9 +30,11 @@
         padding-left: 5px;padding-right: 5px;
     }
 </style>
-<div class="report">
-    <h2>Report - Compliance of sites on selected date</h2>
 
+<h1>Report - Compliance of sites on selected date</h1>
+<hr />
+
+<div class="report">
     <div id="errorMsgs" style="color: red"></div>
     <div id="msgs"></div>
     @using (Html.BeginForm("Compliance", "PriceReports", FormMethod.Get, new { onkeydown = "return event.keyCode!=13", onsubmit = "return false" }))
@@ -45,7 +47,7 @@
                         <input type="text" class="datepicker form-control" id="DateFor" name="dateFor" value='@requestedForDate'>
                         &nbsp;
                     </div>
-                    <input type="button" value="View" class="btn btn-primary" id="btnViewReport" />
+                    <input type="button" value="View" class="btn btn-success" id="btnViewReport" />
                 </div>
             </div>
             <div class="col-md-5 right">
@@ -80,10 +82,6 @@
     @if (Model.ComplianceReport != null && Model.ComplianceReport.ReportRows.Any())
     {
         <hr />
-        <h2>
-            Compliance of sites on: @Model.ForDate.Value.ToString("dd-MMM-yyyy")
-        </h2>
-        <hr />
         <!-- Report Data -->
         <table class="table table-hover table-responsive table-striped">
             <thead>
@@ -105,10 +103,6 @@
                     <th>Cat Diesel</th>
                     <th>Expected</th>
                     <th>Diff</th>
-
-                    @*<th>Cat Super</th>
-                        <th>Expected</th>
-                        <th>Diff</th>*@
                 </tr>
             </thead>
             <tbody>
