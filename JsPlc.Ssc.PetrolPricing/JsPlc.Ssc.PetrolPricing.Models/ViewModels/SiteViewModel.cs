@@ -13,6 +13,7 @@ namespace JsPlc.Ssc.PetrolPricing.Models
     {
         public int Id { get; set; }
 
+        [Display(Name = "Cat no")]
         public int? CatNo { get; set; } // Catalist no.
         public string Brand { get; set; }
 
@@ -31,11 +32,14 @@ namespace JsPlc.Ssc.PetrolPricing.Models
         public string Company { get; set; }
         public string Ownership { get; set; }
 
+        [Display(Name = "Store no")]
         public int? StoreNo { get; set; }
+
+        [Display(Name = "Pfs no")]
         public int? PfsNo { get; set; }
 
         [DefaultValue(true)]
-        [Display(Name = "Is Sainsburys site")]
+        [Display(Name = "Is JS site")]
         public bool IsSainsburysSite { get; set; } // defaults to false
         
         [Display(Name = "Is active")]

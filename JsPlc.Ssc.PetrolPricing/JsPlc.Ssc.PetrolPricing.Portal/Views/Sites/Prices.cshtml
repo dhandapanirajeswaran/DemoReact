@@ -58,7 +58,6 @@
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                     <h4 class="modal-title" id="myModalLabel">Send Email</h4>
                     <h5 style="color: red" data-bind="visible: pageHasUnsavedChanges">The prices shown are UNSAVED. The email will NOT be sent with these unsaved prices. If you wish to send these prices, please close this popup and click "Save Prices" first.</h5>
-                    @*<span xdata-bind="text: emailSendResult"></span>*@
                 </div>
                 <div class="modal-body smaller">
                     <h2 style="visibility: hidden; display: none">
@@ -146,7 +145,7 @@
             </div>
             <!-- show all button -->
             <div class="col-md-1 right">
-                <button style="margin-top: 24px" type="button" class="btn btn-primary" data-bind="click: function() { reloadSearchPage('Sites/Prices?date='+$root.InitDateInUsFormat()) }">Show all</button>
+                <button style="margin-top: 24px" type="button" class="btn btn-default" data-bind="click: function() { reloadSearchPage('Sites/Prices?date='+$root.InitDateInUsFormat()) }">Show all</button>
             </div>
         </div>
         <hr />

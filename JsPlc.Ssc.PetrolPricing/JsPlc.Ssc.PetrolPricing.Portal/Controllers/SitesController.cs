@@ -191,7 +191,8 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             site.Emails = nonBlankVals;
 
             var createdSite = _serviceFacade.NewSite(site);
-            if (createdSite != null) return RedirectToAction("Index", new { msg = "Site: " + createdSite.SiteName + " created successfully" });
+            if (createdSite != null) 
+                return RedirectToAction("Index", new { msg = "Site: " + createdSite.SiteName + " created successfully" });
 
             ViewBag.ErrorMessage = "Unable to create site. Check if this CatNo or SiteName already exists.";
             return View(site);

@@ -17,5 +17,5 @@
     </div>
 </div>
 <div class="alert alert-info @(string.IsNullOrWhiteSpace(ViewBag.Message) ? "hidden" : "")">@ViewBag.Message</div>
-
+<hr />
 @Html.Partial("_FileUploadsList", Model)

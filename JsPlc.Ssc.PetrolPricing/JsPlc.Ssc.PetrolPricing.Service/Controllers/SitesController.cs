@@ -65,8 +65,13 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
             return Ok(sites);
         }
 
-        [System.Web.Http.HttpPost] // Create new site
-        public async Task<IHttpActionResult> Post(SiteViewModel site)
+        /// <summary>
+        /// Create new site
+        /// </summary>
+        /// <param name="site"></param>
+        /// <returns></returns>
+        [System.Web.Http.HttpPost] 
+        public IHttpActionResult Post(SiteViewModel site)
         {
             if (site == null)
             {

@@ -1,11 +1,8 @@
 ﻿@model JsPlc.Ssc.PetrolPricing.Models.FileUpload
-
 @{
     ViewBag.Title = "Uploaded file details";
 }
-
 <h1>Uploaded file details</h1>
-
 @if (Model.ImportProcessErrors.Any())
 {
     <div class="alert alert-danger">
@@ -16,14 +13,12 @@ else
 {
     <div class="alert alert-info">No errors found</div>
 }
-
 <div class="panel panel-default">
     <div class="panel-heading">@Html.DisplayNameFor(model => model.OriginalFileName)
-    
         <strong>@Html.DisplayFor(model => model.OriginalFileName)</strong>
     </div>
     <div class="panel-body">
-        <dl>
+        <dl class="dl-horizontal">
             <dt>
                 @Html.DisplayNameFor(model => model.StoredFileName)
             </dt>
@@ -66,10 +61,6 @@ else
         </dl>
     </div>
     <div class="panel-footer">
-
         @Html.ActionLink("Back to List", "Index", null, new { @class = "btn btn-default" })
-
     </div>
-
 </div>
-
