@@ -13,9 +13,9 @@ before_build:
 build:
   project: JsPlc.Ssc.PetrolPricing\PetrolPricing.sln
   publish_wap: true
-#deploy:
-#- provider: Environment
-#  name: petrolpricing-development
+deploy:
+- provider: Environment
+  name: petrolpricing-development
 #notifications:
 #- provider: Slack
 #  incoming_webhook: https://hooks.slack.com/services/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
