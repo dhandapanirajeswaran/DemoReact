@@ -21,56 +21,55 @@
 </div>
 <hr />
 
-<div class="report">
-    @using (Html.BeginForm("PricePoints", "PriceReports", FormMethod.Get))
-    {
-        <div class="form-inline">
-            <div class="form-group">
-                <label>When:</label>&nbsp;
-                <input type="text" class="datepicker form-control" id="For" name="For" value='@requestedDate'>
-            </div>
+@using (Html.BeginForm("PricePoints", "PriceReports", FormMethod.Get))
+{
+    <div class="row">
+        <div class="col-md-2">
+            <label for="For">When:</label>&nbsp;
+            <input type="text" class="datepicker form-control" id="For" name="For" value='@requestedDate'>
+        </div>
+        <div class="col-md-2" style="padding-top: 24px">
             <input type="button" value="View" class="btn btn-success" id="btnViewReport" />
         </div>
-    }
+    </div>
+}
 
-    @foreach (var report in Model.PricePointReports)
+@foreach (var report in Model.PricePointReports)
+{
+    <hr />
+    <h4>@report.FuelTypeName</h4>
+
+    if (report.PricePointReportRows.Any())
     {
-        <hr />
-        <h4>@report.FuelTypeName</h4>
-
-        if (report.PricePointReportRows.Any())
-        {
-            <table class="table table-hover table-responsive table-striped">
-                <thead>
+        <table class="table table-hover table-responsive table-striped">
+            <thead>
+                <tr>
+                    <th>Price (£)</th>
+                    @foreach (var brand in report.PricePointReportRows.First().PricePointBrands)
+                    {
+                        <th>@brand.Name</th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var row in report.PricePointReportRows)
+                {
                     <tr>
-                        <th>Price (£)</th>
-                        @foreach (var brand in report.PricePointReportRows.First().PricePointBrands)
+                        <td>@(  (row.Price / 10).ToString("###0.0"))</td>
+                        @foreach (var brand in row.PricePointBrands)
                         {
-                            <th>@brand.Name</th>
+                            <td>@brand.Count</td>
                         }
                     </tr>
-                </thead>
-                <tbody>
-                    @foreach (var row in report.PricePointReportRows)
-                    {
-                        <tr>
-                            <td>@(  (row.Price / 10).ToString("###0.0"))</td>
-                            @foreach (var brand in row.PricePointBrands)
-                            {
-                                <td>@brand.Count</td>
-                            }
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        }
-        else
-        {
-            <div class="alert alert-info" role="alert">No @report.FuelTypeName data found at @requestedDate</div>
-        }
+                }
+            </tbody>
+        </table>
     }
-
-</div>
+    else
+    {
+        <div class="alert alert-info" role="alert">No @report.FuelTypeName data found at @requestedDate</div>
+    }
+}
 
 @section scripts {
     <script src="~/Scripts/bootstrap-datepicker.min.js"></script>

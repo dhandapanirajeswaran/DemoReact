@@ -1,13 +1,13 @@
-﻿$(function () {
-    var forDp, toDp;
-    forDp = $('#DateFrom').datepicker({
+﻿$("document").ready(function () {
+    var forDp = $('#DateFrom').datepicker({
         language: "en-GB",
         autoClose: true,
         format: 'd-M-yyyy',
         todayBtn: "linked",
         todayHighlight:true
     });
-    toDp = $('#DateTo').datepicker({
+
+    var toDp = $('#DateTo').datepicker({
         language: "en-GB",
         autoClose: true,
         format: 'd-M-yyyy',

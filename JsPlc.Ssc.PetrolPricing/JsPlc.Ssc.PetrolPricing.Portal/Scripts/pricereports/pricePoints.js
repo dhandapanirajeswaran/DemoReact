@@ -1,6 +1,6 @@
-﻿$(function () {
-    var forDp;
-    forDp = $('.datepicker').datepicker({
+﻿$("document").ready(function () {
+
+    var forDp = $('.datepicker').datepicker({
         language: "en-GB",
         autoClose: true,
         format: 'd-M-yyyy',

@@ -7,8 +7,8 @@
 {
     @Html.AntiForgeryToken()
 
-    <div class="form-inline">
-        <div class="form-group">
+    <div class="row">
+        <div class="col-md-2">
             <label for="SiteId">Site:</label>&nbsp;
             @Html.DropDownList("SiteId", new SelectList(Model.Sites, "Id", "SiteName", Model.SiteId), new { @class = "form-control" })
         </div>

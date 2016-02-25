@@ -22,12 +22,14 @@
 
 @using (Html.BeginForm("NationalAverage2", "PriceReports", FormMethod.Get))
 {
-    <div class="form-inline">
-        <div class="form-group">
-            <label>When:</label>&nbsp;
+    <div class="row">
+        <div class="col-md-2">
+            <label for="For">When:</label>;
             <input type="text" class="datepicker form-control" id="For" name="For" value='@requestedDate'>
         </div>
-        <input type="button" value="View" class="btn btn-success" id="btnViewReport" />
+        <div class="col-md-2" style="padding-top: 24px">
+            <input type="button" value="View" class="btn btn-success" id="btnViewReport" />
+        </div>
     </div>
 }
 <hr />

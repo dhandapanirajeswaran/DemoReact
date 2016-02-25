@@ -10,10 +10,13 @@
     var requestedForDate = @Model.ForDate.Value.Date.ToString("dd-MMM-yyyy");
 }
 <style>
-    .diffColored {min-width: 20px;}
-     .diffNa {
-         background-color: silver;
-     }
+    .diffColored {
+        min-width: 20px;
+    }
+
+    .diffNa {
+        background-color: silver;
+    }
 
     .diffNegative {
         background-color: lightcoral;
@@ -26,12 +29,43 @@
     .diffZero {
         background-color: lightgreen;
     }
-    .spacedLeftRight5px td{
-        padding-left: 5px;padding-right: 5px;
+
+    .spacedLeftRight5px td {
+        padding-left: 5px;
+        padding-right: 5px;
     }
 </style>
 
-<h1>Report - Compliance of sites on selected date</h1>
+<div class="row">
+    <div class="col-md-7">
+        <h1>Report - Compliance of sites on selected date</h1>
+    </div>
+    <div class="col-md-5 right">
+        <table border="1">
+            <thead>
+                <tr>
+                    <th colspan="8">
+                        <center>
+                            Key
+                        </center>
+                    </th>
+                </tr>
+            </thead>
+            <tbody class="spacedLeftRight5px">
+                <tr>
+                    <td class="diffZero diffColored"></td>
+                    <td>Complies</td>
+                    <td class="diffNegative diffColored"></td>
+                    <td>Negative value</td>
+                    <td class="diffPositive diffColored"></td>
+                    <td>Positive value</td>
+                    <td class="diffNa diffColored"></td>
+                    <td>Not available</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
 <hr />
 
 <div class="report">
@@ -40,43 +74,14 @@
     @using (Html.BeginForm("Compliance", "PriceReports", FormMethod.Get, new { onkeydown = "return event.keyCode!=13", onsubmit = "return false" }))
     {
         <div class="row">
-            <div class="col-md-7">
-                <div class="form-inline">
-                    <div class="form-group">
-                        <label>Date:</label>&nbsp;
-                        <input type="text" class="datepicker form-control" id="DateFor" name="dateFor" value='@requestedForDate'>
-                        &nbsp;
-                    </div>
-                    <input type="button" value="View" class="btn btn-success" id="btnViewReport" />
-                </div>
+            <div class="col-md-2">
+                <label for="DateFor">Date:</label>&nbsp;
+                <input type="text" class="datepicker form-control" id="DateFor" name="dateFor" value='@requestedForDate'>
             </div>
-            <div class="col-md-5 right">
-                <table border="1">
-                    <thead>
-                        <tr>
-                            <th colspan="8">
-                                <center>
-                                    Key
-                                </center>
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody class="spacedLeftRight5px">
-                        <tr>
-                            <td class="diffZero diffColored"></td>
-                            <td>Complies</td>
-                            <td class="diffNegative diffColored"></td>
-                            <td>Negative value</td>
-                            <td class="diffPositive diffColored"></td>
-                            <td>Positive value</td>
-                            <td class="diffNa diffColored"></td>
-                            <td>Not available</td>
-                        </tr>
-                    </tbody>
-                </table>
+            <div class="col-md-1" style="padding-top: 24px">
+                <input type="button" value="View" class="btn btn-success" id="btnViewReport" />
             </div>
         </div>
-
     }
 
     @if (Model.ComplianceReport != null && Model.ComplianceReport.ReportRows.Any())
