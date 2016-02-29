@@ -330,9 +330,6 @@
     <Content Include="Scripts\require.js" />
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
-    <Content Include="Scripts\site.js">
-      <ExcludeFromStyleCop>True</ExcludeFromStyleCop>
-    </Content>
     <Content Include="Scripts\text.min.js" />
     <Content Include="Scripts\underscore.js" />
     <Content Include="Scripts\UriJs\CustomBuiltURI.js" />

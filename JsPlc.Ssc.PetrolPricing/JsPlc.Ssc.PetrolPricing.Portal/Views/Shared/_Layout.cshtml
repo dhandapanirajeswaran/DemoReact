@@ -35,12 +35,12 @@
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav navbar-right">
-                    <li>@Html.ActionLink("Home", "Index", "Home")</li>
+                    <li data-menu-item="nav-home">@Html.ActionLink("Home", "Index", "Home")</li>
 
                     @Html.Partial("_NavLinks")
 
-                    <li>@Html.ActionLink("About", "About", "Home")</li>
-                    <li>@Html.ActionLink("Contact", "Contact", "Home")</li>
+                    <li data-menu-item="nav-about">@Html.ActionLink("About", "About", "Home")</li>
+                    <li data-menu-item="nav-contact">@Html.ActionLink("Contact", "Contact", "Home")</li>
                     
                     @Html.Partial("_LoginPartial")
                 </ul>
@@ -63,9 +63,74 @@
     @RenderSection("scripts", required: false)
     <script type="text/javascript">
         require(['bootstrap'], function () {
+
+            //navigation
+            $(".navbar-nav li").removeClass("active");
+
+            var navItemAttributeName = "data-menu-item";
+            $(".navbar-nav li").each(function () {
+                $this = $(this);
+                
+                //nav-home // /
+                if (location.pathname == '/'
+                    && $this.attr(navItemAttributeName) == "nav-home")
+                {
+                    $this.addClass("active");
+                    return false;
+                }
+                //nav-login // /Account/Login
+                else if (location.pathname.indexOf("/Account/Login") == 0
+                    && $this.attr(navItemAttributeName) == "nav-login") {
+                    $this.addClass("active");
+                    return false;
+                }
+                //nav-account // /Manage || /Account
+                else if ((location.pathname.indexOf("/Account") == 0
+                    || location.pathname.indexOf("/Manage") == 0
+                    )
+                    && $this.attr(navItemAttributeName) == "nav-account") {
+                    $this.addClass("active");
+                    return false;
+                }
+                //nav-about // /Home/About
+                else if (location.pathname.indexOf("/Home/About") == 0
+                    && $this.attr(navItemAttributeName) == "nav-about") {
+                    $this.addClass("active");
+                    return false;
+                }
+                //nav-contact // /Home/Contact
+                else if (location.pathname.indexOf("/Home/Contact") == 0
+                    && $this.attr(navItemAttributeName) == "nav-contact") {
+                    $this.addClass("active");
+                    return false;
+                }
+                //nav-upload // /File
+                else if (location.pathname.indexOf("/File") == 0
+                    && $this.attr(navItemAttributeName) == "nav-upload") {
+                    $this.addClass("active");
+                    return false;
+                }
+                //nav-site-pricing // /Sites/Prices
+                else if (location.pathname.indexOf("/Sites/Prices") == 0
+                    && $this.attr(navItemAttributeName) == "nav-site-pricing") {
+                    $this.addClass("active");
+                    return false;
+                }
+                //nav-site-maintenance // /Sites
+                else if (location.pathname.indexOf("/Sites") == 0
+                    && $this.attr(navItemAttributeName) == "nav-site-maintenance") {
+                    $this.addClass("active");
+                    return false;
+                }
+                //nav-reports // /PriceReports
+                else if (location.pathname.indexOf("/PriceReports") == 0
+                    && $this.attr(navItemAttributeName) == "nav-reports") {
+                    $this.addClass("active");
+                    return false;
+                }
+            });
         });
     </script>
 
 </body>
 </html>
-<br /><br /><br /><br /><br /><br />

@@ -278,7 +278,11 @@ textarea {
 }
 
 .navbar-inverse .navbar-nav > li > a:hover,
-.navbar-inverse .navbar-nav > li > ul >li > a:hover {
+.navbar-inverse .navbar-nav > li > ul > li > a:hover,
+.navbar-inverse .navbar-nav > .active > ul > li > a,
+.navbar-inverse .navbar-nav > .active > a, 
+.navbar-inverse .navbar-nav > .active > a:hover
+{
     background-color: #910048;
     color: white;
 }
