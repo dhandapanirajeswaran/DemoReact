@@ -240,7 +240,9 @@
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="ApiXmlDocument.xml" />
+    <Content Include="ApiXmlDocument.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="App_Data\DBWipeScripts\1%29 DbWipeScript.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
