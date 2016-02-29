@@ -48,6 +48,11 @@ namespace JsPlc.Ssc.PetrolPricing.Business
             return _db.GetReportNationalAverage2(when);
         }
 
+        public CompetitorsPriceRangeByCompanyViewModel GetReportCompetitorsPriceRangeByCompany(DateTime when, string companyName, string brandName)
+        {
+            return _db.GetReportCompetitorsPriceRangeByCompany(when, companyName, brandName);
+        }
+
         /// <summary>
         /// Cached for 30 seconds (see 0.5 value in expiration policy)
         /// </summary>

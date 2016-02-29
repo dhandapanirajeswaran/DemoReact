@@ -1,0 +1,167 @@
+﻿@model JsPlc.Ssc.PetrolPricing.Models.ViewModels.CompetitorsPriceRangeByCompanyViewModel
+
+<div class="row">
+    <div class="col-md-6">
+        <h1>Report - Competitors Price Range by company</h1>
+    </div>
+    <div class="col-md-6 text-right" style="padding-top: 20px">
+        @if (Model.ReportCompanies.Any())
+        {
+            using (Html.BeginForm("ExportCompetitorsPriceRangeByCompany", "PriceReports", FormMethod.Get))
+            {
+                <input type="submit" class="btn btn-primary" value="Export to Excel" />
+                <input type="hidden" id="DateForCopy" name="DateFor" />
+                <input type="hidden" id="SelectedCompanyNameCopy" name="SelectedCompanyName" />
+                <input type="hidden" id="SelectedBrandNameCopy" name="SelectedBrandName" />
+            }
+        }
+    </div>
+</div>
+<hr />
+
+@using (Html.BeginForm("CompetitorsPriceRangeByCompany", "PriceReports", FormMethod.Get))
+{
+    <div class="row">
+        <div class="col-md-2">
+            <label for="DateFor">When:</label>
+            <input type="text" class="datepicker form-control" id="DateFor" name="DateFor" value="@Model.Date.ToString("dd-MMM-yyyy")">
+        </div>
+        <div class="col-md-2">
+            <label for="SelectedCompanyName">Company:</label>
+            @Html.DropDownListFor(d => d.SelectedCompanyName, Model.Companies.Select(b => new SelectListItem { Value = b.Key, Text = string.Format("{0} ({1})", b.Key, b.Value), Selected = b.Key == Model.SelectedCompanyName }), null, new { @class = "form-control" })
+        </div>
+        <div class="col-md-2">
+            <label for="SelectedBrandName">Brand:</label>
+            @Html.DropDownListFor(d => d.SelectedBrandName, Model.Brands.Select(b => new SelectListItem { Value = b, Text = b, Selected = b == Model.SelectedBrandName }), null, new { @class = "form-control" })
+        </div>
+        <div class="col-md-2" style="padding-top: 24px">
+            <input type="submit" value="View" class="btn btn-success" id="btnViewReport" />
+        </div>
+    </div>
+    <hr />
+}
+
+@if (Model.ReportCompanies.Any())
+{
+    <!-- Report Data -->
+
+    <table class="table table-hover table-responsive table-striped" id="tblBrands">
+        <thead>
+            <tr>
+                <td></td>
+                <td colspan="2"><strong>Avg retails</strong></td>
+                <td colspan="2"><strong>Difference</strong></td>
+                <td colspan="2"><strong>Pricing range</strong></td>
+            </tr>
+            <tr>
+                <td><strong>@Model.Date.ToString("dd-MMM-yyyy")</strong></td>
+                @for (int i = 0; i < 3; i++)
+                {
+                    foreach (var fuelType in Model.FuelTypes)
+                    {
+                <td><strong>@fuelType.FuelTypeName</strong></td>
+                    }
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var company in Model.ReportCompanies)
+            {
+                if (company.Brands.Any() == false)
+                {
+                    continue;
+                }
+            <tr>
+                <td colspan="7">
+                    <strong>@company.CompanyName</strong>
+                </td>
+            </tr>
+                foreach (var brand in company.Brands)
+                {
+            <tr class="small">
+                <td>@(brand.BrandName) (£)</td>
+                @* Average *@
+                @foreach (var fuelType in Model.FuelTypes)
+                        {
+                            var fuelBrand = brand.Fuels.FirstOrDefault(f => f.FuelTypeId == fuelType.Id);
+                            if (fuelBrand == null)
+                            {
+                        <td>n/a</td>
+                            }
+                            else
+                            {
+                        <td>@((fuelBrand.Average / 10.0).ToString("###0.0"))</td>
+                            }
+                        }
+                @* Difference *@
+                @foreach (var fuelType in Model.FuelTypes)
+                        {
+                            var fuelBrand = brand.Fuels.FirstOrDefault(f => f.FuelTypeId == fuelType.Id);
+
+                            if (fuelBrand == null || Model.SainsburysPrices.ContainsKey(fuelType.Id) == false)
+                            {
+                        <td>n/a</td>
+                            }
+                            else
+                            {
+                                int diff = fuelBrand.Average > 0 ? (fuelBrand.Average - Model.SainsburysPrices[fuelType.Id]) : 0;
+                                string color = "";
+                                if (diff < 0)
+                                {
+                                    color = "red";
+                                }
+                                else if (diff > 0)
+                                {
+                                    color = "green";
+                                }
+                        <td style="color: @color">@((diff / 10.0).ToString("###0.0"))</td>
+                            }
+                        }
+
+                @* Range *@
+                @foreach (var fuelType in Model.FuelTypes)
+                        {
+                            var fuelBrand = brand.Fuels.FirstOrDefault(f => f.FuelTypeId == fuelType.Id);
+                            if (fuelBrand == null)
+                            {
+                        <td>n/a</td>
+                            }
+                            else
+                            {
+                        <td>@((fuelBrand.Min / 10.0).ToString("###0.0")) - @((fuelBrand.Max / 10.0).ToString("###0.0"))</td>
+                            }
+                        }
+            </tr>
+                }
+            }
+
+        </tbody>
+    </table>
+}
+
+@section scripts {
+    <script src="~/Scripts/bootstrap-datepicker.min.js"></script>
+    <script>
+
+        $("document").ready(function () {
+            var forDp = $('.datepicker').datepicker({
+                language: "en-GB",
+                autoClose: true,
+                format: 'd-M-yyyy',
+                todayBtn: "linked",
+                todayHighlight: true
+            });
+
+            $("#DateFor, #SelectedCompanyName, #SelectedBrandName").each(function () {
+                $this = $(this);
+                $("#" + $this.attr("name") + "Copy").val($this.val());
+            });
+
+            $("#DateFor, #SelectedCompanyName, #SelectedBrandName").change(function () {
+                $this = $(this);
+                $("#" + $this.attr("name") + "Copy").val($this.val());
+            });
+        });
+
+    </script>
+}

@@ -64,6 +64,20 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
             return Ok(result);
         }
 
+        /// <summary>
+        /// Competitors Price Range By Company report
+        /// </summary>
+        /// <param name="when"></param>
+        /// <param name="companyName"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("api/GetCompetitorsPriceRangeByCompany/{when}/{companyName}/{brandName}")]
+        public IHttpActionResult GetCompetitorsPriceRangeByCompany([FromUri]DateTime when, [FromUri]string companyName, [FromUri]string brandName)
+        {
+            var rs = new ReportService();
+            var result = rs.GetReportCompetitorsPriceRangeByCompany(when, companyName, brandName);
+            return Ok(result);
+        }
 
         /// <summary>
         /// Compliance Report

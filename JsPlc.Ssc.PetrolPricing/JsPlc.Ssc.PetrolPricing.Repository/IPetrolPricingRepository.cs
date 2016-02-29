@@ -12,6 +12,8 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         
         IEnumerable<Site> GetSites();
 
+        Dictionary<string, int> GetCompanies();
+
         IEnumerable<Site> GetJsSites();
         
         Site GetSite(int siteId);
@@ -204,6 +206,14 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         /// <param name="fuelTypeId"></param>
         /// <returns></returns>
         PriceMovementReportViewModel GetReportPriceMovement(string brandName, DateTime fromDt, DateTime toDt, int fuelTypeId);
+
+        /// <summary>
+        /// Get Competitors Price Range Report by Companies
+        /// </summary>
+        /// <param name="when"></param>
+        /// <param name="companyName"></param>
+        /// <returns></returns>
+        CompetitorsPriceRangeByCompanyViewModel GetReportCompetitorsPriceRangeByCompany(DateTime when, string companyName, string brandName);
 
         /// <summary>
         /// Gets the compliance report for a pump on a given date

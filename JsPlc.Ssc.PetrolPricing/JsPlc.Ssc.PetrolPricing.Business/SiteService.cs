@@ -25,6 +25,11 @@ namespace JsPlc.Ssc.PetrolPricing.Business
             return _db.GetSites().ToList();
         }
 
+        public Dictionary<string, int> GetCompanies()
+        {
+            return _db.GetCompanies();
+        }
+
         public IEnumerable<Site> GetSitesWithEmailsAndPrices(DateTime? forDate=null)
         {
             return _db.GetSitesWithEmailsAndPrices(forDate);

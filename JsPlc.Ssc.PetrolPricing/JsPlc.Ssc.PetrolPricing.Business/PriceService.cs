@@ -333,7 +333,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 
             // Sort asc and pick first (i.e. cheapest)
             var cheapestPrice = pricesForFuelByCompetitors.OrderBy(x => x.ModalPrice).First();
-            var competitor = competitors.First(x => x.Competitor.CatNo == cheapestPrice.CatNo);
+            var competitor = competitors.Where(x => x.Competitor.CatNo.HasValue).First(x => x.Competitor.CatNo == cheapestPrice.CatNo);
 
             return new CheapestCompetitor
             {

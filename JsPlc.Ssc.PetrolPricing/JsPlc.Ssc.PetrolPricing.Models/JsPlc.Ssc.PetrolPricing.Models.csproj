@@ -64,6 +64,10 @@
     <Compile Include="ViewModels\CompetitorSiteReportViewModel.cs" />
     <Compile Include="ViewModels\CompetitorBrandTimeViewModel.cs" />
     <Compile Include="ViewModels\CompetitorSiteViewModel.cs" />
+    <Compile Include="ViewModels\CompetitorsPriceRangeByCompanyBrandFuelViewModel.cs" />
+    <Compile Include="ViewModels\CompetitorsPriceRangeByCompanyBrandViewModel.cs" />
+    <Compile Include="ViewModels\CompetitorsPriceRangeByCompanyCompanyViewModel.cs" />
+    <Compile Include="ViewModels\CompetitorsPriceRangeByCompanyViewModel.cs" />
     <Compile Include="ViewModels\FileUploadViewModel.cs" />
     <Compile Include="ViewModels\NationalAverageReportFuelViewModel.cs" />
     <Compile Include="ViewModels\NationalAverageReportBrandViewModel.cs" />

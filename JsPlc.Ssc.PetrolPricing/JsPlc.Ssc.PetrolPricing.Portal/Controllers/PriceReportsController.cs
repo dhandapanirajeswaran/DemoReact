@@ -22,6 +22,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
     {
         private readonly ServiceFacade _serviceFacade = new ServiceFacade();
 
+        #region Actions
         public ActionResult Index(string msg = "")
         {
             ViewBag.Message = msg;
@@ -105,6 +106,42 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
         }
 
         [System.Web.Mvc.HttpGet]
+        public ActionResult CompetitorsPriceRangeByCompany([FromUri]DateTime? DateFor, [FromUri]string SelectedCompanyName, [FromUri]string SelectedBrandName)
+        {
+            var model = new CompetitorsPriceRangeByCompanyViewModel();
+
+            if (DateFor.HasValue)
+                model.Date = DateFor.Value;
+
+            if (string.IsNullOrWhiteSpace(SelectedCompanyName) == false)
+                model.SelectedCompanyName = SelectedCompanyName;
+
+            if (string.IsNullOrWhiteSpace(SelectedBrandName) == false)
+                model.SelectedBrandName = SelectedBrandName;
+
+            model.FuelTypes = _serviceFacade.GetFuelTypes().Where(ft => model.FuelTypeIds.ToArray().Contains(ft.Id)).ToList();
+
+            var companies = _serviceFacade.GetCompanies();
+
+            if (model.Companies.Any())
+            {
+                model.Companies["All"] = companies.Sum(c => c.Value);
+            }
+
+            _serviceFacade.GetBrands().ForEach(b => model.Brands.Add(b));
+
+            companies.ForEach(c => model.Companies.Add(c.Key, c.Value));
+
+            var result = _serviceFacade.GetCompetitorsPriceRangeByCompany(model.Date, model.SelectedCompanyName, model.SelectedBrandName);
+
+            model.ReportCompanies = result.ReportCompanies;
+
+            model.SainsburysPrices = result.SainsburysPrices;
+
+            return View(model);
+        }
+
+        [System.Web.Mvc.HttpGet]
         public ActionResult PriceMovement([FromUri]DateTime? DateFrom, [FromUri]DateTime? DateTo, [FromUri]int FuelTypeId = 0, [FromUri]string BrandName = "")
         {
             var model = new PriceMovementReportContainerViewModel();
@@ -151,12 +188,13 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 
             return View(item);
         }
+        #endregion
 
-
+        #region Export
         //### #### #### #### ####
         //### EXPORT REPORTS ####
         //### #### #### #### ####
-
+        
         [System.Web.Mvc.HttpGet]
         public ActionResult ExportPriceMovement([FromUri]DateTime DateFrom, [FromUri]DateTime DateTo, [FromUri]int FuelTypeId = 0, [FromUri]string BrandName = "")
         {
@@ -214,7 +252,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
                 NationalAverageReport = _serviceFacade.GetNationalAverage2(forDate)
             };
 
-            var dt = reportContainer.ToNationalAverageReport2DataTable(); // default tableName = PriceMovementReport (also becomes sheet name in Xlsx)
+            var dt = reportContainer.ToNationalAverageReport2DataTable(); 
 
             string filenameSuffix = String.Format("[{0}]", forDate.ToString("dd-MMM-yyyy"));
 
@@ -242,6 +280,20 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
         }
 
         [System.Web.Mvc.HttpGet]
+        public ActionResult ExportCompetitorsPriceRangeByCompany([FromUri]DateTime DateFor, [FromUri]string SelectedCompanyName, [FromUri]string SelectedBrandName)
+        {
+            var report = _serviceFacade.GetCompetitorsPriceRangeByCompany(DateFor, SelectedCompanyName, SelectedBrandName);
+
+            report.FuelTypes = _serviceFacade.GetFuelTypes().Where(ft => report.FuelTypeIds.ToArray().Contains(ft.Id)).ToList();
+
+            var dt = report.ToCompetitorsPriceRangeByCompanyDataTable();
+
+            string filenameSuffix = String.Format("{1}-{2} [{0}]", DateFor.ToString("dd-MMM-yyyy"), SelectedCompanyName, SelectedBrandName);
+
+            return ExcelDocumentStream(new List<DataTable> { dt }, "CompetitorsPriceRangeByCompany", filenameSuffix);
+        }
+
+        [System.Web.Mvc.HttpGet]
         public ActionResult ExportPricePoints(string For = "")
         {
             DateTime forDate;
@@ -262,7 +314,9 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 
             return ExcelDocumentStream(tables, "PricePointsReport", filenameSuffix);
         }
+        #endregion
 
+        #region Private
         private PriceMovementReportContainerViewModel LoadPriceMovementReport(PriceMovementReportContainerViewModel model)
         {
             model.FuelTypes = LoadFuels(new[] { 1, 2, 6 });
@@ -361,5 +415,6 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
                 }
             }
         }
+        #endregion
     }
 }

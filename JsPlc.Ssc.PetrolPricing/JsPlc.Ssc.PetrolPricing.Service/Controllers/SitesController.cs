@@ -65,6 +65,19 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
             return Ok(sites);
         }
 
+        [System.Web.Http.HttpGet]
+        [System.Web.Http.Route("api/companies")]
+        public IHttpActionResult GetCompanies()
+        {
+            var companies = _siteService.GetCompanies()
+                .Where(s => s.Value > 1)
+                .ToDictionary(k => k.Key, v => v.Value);
+            
+            if (!companies.Any())
+                return NotFound();
+            return Ok(companies);
+        }
+
         /// <summary>
         /// Create new site
         /// </summary>

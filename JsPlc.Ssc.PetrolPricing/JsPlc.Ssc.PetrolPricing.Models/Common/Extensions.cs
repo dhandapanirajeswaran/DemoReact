@@ -206,7 +206,7 @@ namespace JsPlc.Ssc.PetrolPricing.Models.Common
         }
 
         public static DataTable ToPriceMovementReportDataTable(
-            this PriceMovementReportContainerViewModel reportContainer, string tableName = "PriceMovementReport")
+            this PriceMovementReportContainerViewModel reportContainer, string tableName = "Price Movement Report")
         {
             var dt = new DataTable(tableName);
             dt.Columns.Add("Sites");
@@ -238,7 +238,7 @@ namespace JsPlc.Ssc.PetrolPricing.Models.Common
 
         // No export needed for compliance report.. as per Prem.
         public static DataTable ToComplianceReportDataTable(
-            this ComplianceReportContainerViewModel reportContainer, string tableName = "ComplianceReport")
+            this ComplianceReportContainerViewModel reportContainer, string tableName = "Compliance Report")
         {
             var dt = new DataTable(tableName);
             dt.Columns.Add("Sites");
@@ -303,7 +303,7 @@ namespace JsPlc.Ssc.PetrolPricing.Models.Common
         }
 
         public static DataTable ToNationalAverageReportDataTable(
-            this NationalAverageReportContainerViewModel reportContainer, string tableName = "NationalAverage")
+            this NationalAverageReportContainerViewModel reportContainer, string tableName = "National Average")
         {
             var dt = new DataTable(tableName);
             dt.Columns.Add("FuelType");
@@ -395,7 +395,7 @@ namespace JsPlc.Ssc.PetrolPricing.Models.Common
         }
 
         public static DataTable ToNationalAverageReport2DataTable(
-            this NationalAverageReportContainerViewModel reportContainer, string tableName = "NationalAverage")
+            this NationalAverageReportContainerViewModel reportContainer, string tableName = "National Average")
         {
             var dt = new DataTable(tableName);
             dt.Columns.Add("FuelType");
@@ -448,6 +448,75 @@ namespace JsPlc.Ssc.PetrolPricing.Models.Common
                 }
                 dt.Rows.Add(dr);
             }
+            return dt;
+        }
+
+        public static DataTable ToCompetitorsPriceRangeByCompanyDataTable(this CompetitorsPriceRangeByCompanyViewModel source, string tableName = "By company")
+        {
+            var dt = new DataTable(tableName);
+            dt.Columns.Add("Company");
+            dt.Columns.Add("Brand");
+
+            //groups
+            string[] groups = { "Avg retails", "Difference", "Pricing range" };
+
+            foreach (var group in groups)
+                foreach (var fuelType in source.FuelTypes)
+                {
+                    dt.Columns.Add(string.Format("{0} ({1})", fuelType.FuelTypeName, group));
+                }
+
+            foreach (var company in source.ReportCompanies)
+            {
+                var dr = dt.NewRow();
+                dr[0] = company.CompanyName;
+
+                dt.Rows.Add(dr);
+
+                foreach (var brand in company.Brands)
+                {
+                    dr = dt.NewRow();
+                    var i = 1;
+                    dr[i] = string.Concat(brand.BrandName, "(£)");
+                    i++;
+
+                    //avg
+                    foreach (var fuelType in source.FuelTypes)
+                    {
+                        var fuelBrand = brand.Fuels.FirstOrDefault(f => f.FuelTypeId == fuelType.Id);
+                        dr[i] = fuelBrand == null ? "n/a" : ((fuelBrand.Average / 10.0).ToString("###0.0"));
+                        i++;
+                    }
+
+                    //difference
+                    foreach (var fuelType in source.FuelTypes)
+                    {
+                        var fuelBrand = brand.Fuels.FirstOrDefault(f => f.FuelTypeId == fuelType.Id);
+
+                        if (fuelBrand == null || source.SainsburysPrices.ContainsKey(fuelType.Id) == false)
+                        {
+                            dr[i] = "n/a";
+                        }
+                        else
+                        {
+                            int diff = fuelBrand.Average > 0 ? (fuelBrand.Average - source.SainsburysPrices[fuelType.Id]) : 0;
+                            dr[i] = ((diff / 10.0).ToString("###0.0"));
+                        }
+                        i++;
+                    }
+
+                    //range
+                    foreach (var fuelType in source.FuelTypes)
+                    {
+                        var fuelBrand = brand.Fuels.FirstOrDefault(f => f.FuelTypeId == fuelType.Id);
+
+                        dr[i] = fuelBrand == null ? "n/a" : string.Concat(((fuelBrand.Min / 10.0).ToString("###0.0")), " - ", ((fuelBrand.Max / 10.0).ToString("###0.0")));
+                        i++;
+                    }
+                    dt.Rows.Add(dr);
+                }
+            }
+
             return dt;
         }
     }

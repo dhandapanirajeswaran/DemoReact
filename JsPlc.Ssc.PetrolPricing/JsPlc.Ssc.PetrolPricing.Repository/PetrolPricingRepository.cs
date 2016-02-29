@@ -55,7 +55,6 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         public IEnumerable<Site> GetJsSites()
         {
             return _context.Sites
-                //.Include(s => s.Emails)
                 .Where(s => s.IsSainsburysSite)
                 .AsNoTracking()
                 .OrderBy(q => q.Id).ToArray();
@@ -66,6 +65,16 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             return _context.Sites
                 .Include(s => s.Emails)
                 .OrderBy(q => q.Id);
+        }
+
+        public Dictionary<string, int> GetCompanies()
+        {
+            return GetSites()
+                .Where(s => string.IsNullOrWhiteSpace(s.Company) == false)
+                .GroupBy(g => g.Company)
+                .Select(s => new { Count = s.Count(), CompanyName = s.Key })
+                .OrderByDescending(x => x.Count)
+                .ToDictionary(k => k.CompanyName, v => v.Count);
         }
 
         // Not safe to use without date clause subsetting Prices, else we might get a ton of price data
@@ -1396,6 +1405,10 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
             var fuels = _context.FuelType.ToList();
 
+            var distinctCatNos = dailyPrices.Select(x => x.CatNo).Distinct().ToList();
+            var competitorSites = _context.Sites.Where(x => distinctCatNos.Contains(x.CatNo.Value) && !x.IsSainsburysSite).ToList();
+            var distinctBrands = competitorSites.Select(x => x.Brand).Distinct().OrderBy(x => x).ToList();
+
             foreach (var fuelType in fuelTypeIds)
             {
                 var f = fuels.FirstOrDefault(x => x.Id == fuelType);
@@ -1404,10 +1417,6 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                 var fuelRow = new NationalAverageReportFuelViewModel();
                 result.Fuels.Add(fuelRow);
                 fuelRow.FuelName = f.FuelTypeName;
-
-                var distinctCatNos = dailyPrices.Select(x => x.CatNo).Distinct().ToList();
-                var competitorSites = _context.Sites.Where(x => distinctCatNos.Contains(x.CatNo.Value) && !x.IsSainsburysSite).ToList();
-                var distinctBrands = competitorSites.Select(x => x.Brand).Distinct().OrderBy(x => x).ToList();
 
                 foreach (var brand in distinctBrands)
                 {
@@ -1436,6 +1445,15 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
             var fuels = _context.FuelType.ToList();
 
+            var distinctCatNos = dailyPrices.Select(x => x.CatNo).Distinct().ToList();
+            var competitorSites = _context.Sites.Where(x => distinctCatNos.Contains(x.CatNo.Value)).ToList();
+
+            //calculating by brands
+            var distinctBrands = competitorSites.Select(x => x.Brand).Distinct().OrderBy(x => x).ToList();
+
+            distinctBrands.Remove(SainsburysBrandName.ToUpper());
+            distinctBrands.Insert(0, SainsburysBrandName.ToUpper());
+
             foreach (var fuelType in fuelTypeIds)
             {
                 var f = fuels.FirstOrDefault(x => x.Id == fuelType);
@@ -1444,15 +1462,6 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                 var fuelRow = new NationalAverageReportFuelViewModel();
                 result.Fuels.Add(fuelRow);
                 fuelRow.FuelName = f.FuelTypeName;
-
-                var distinctCatNos = dailyPrices.Select(x => x.CatNo).Distinct().ToList();
-                var competitorSites = _context.Sites.Where(x => distinctCatNos.Contains(x.CatNo.Value)).ToList();
-                
-                //calculating by brands
-                var distinctBrands = competitorSites.Select(x => x.Brand).Distinct().OrderBy(x => x).ToList();
-
-                distinctBrands.Remove(SainsburysBrandName.ToUpper());
-                distinctBrands.Insert(0, SainsburysBrandName.ToUpper());
 
                 foreach (var brand in distinctBrands)
                 {
@@ -1479,6 +1488,89 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
             return result;
         }
+
+        public CompetitorsPriceRangeByCompanyViewModel GetReportCompetitorsPriceRangeByCompany(DateTime when, string companyName, string brandName)
+        {
+            var result = new CompetitorsPriceRangeByCompanyViewModel();
+            result.Date = when;
+            // Report uses Prices as per date of upload..(not date of Price in DailyPrice).. 
+            var dailyPrices = _context.DailyPrices.Where(x => DbFunctions.DiffDays(x.DailyUpload.UploadDateTime, when) == 0 && result.FuelTypeIds.Contains(x.FuelTypeId)).ToList();
+
+            var fuels = _context.FuelType.ToList();
+
+            var distinctCatNos = dailyPrices.Select(x => x.CatNo).Distinct().ToList();
+
+            var companiesAndBrandsForReportDate = _context.Sites.Where(x => distinctCatNos.Contains(x.CatNo.Value)).ToList();
+
+            var companyNamesQuery = companiesAndBrandsForReportDate.Select(x => x.Company);
+
+            if(string.IsNullOrWhiteSpace(companyName) || companyName.Equals("All"))
+            {
+                var availableCompanyNames = GetCompanies().Where(v => v.Value > 1).Select(k => k.Key).ToArray();
+
+                companyNamesQuery = companyNamesQuery.Where(cn => availableCompanyNames.Contains(cn));
+            }
+            else
+            {
+                companyNamesQuery = companyNamesQuery.Where(cn => cn.Equals(companyName));
+            }
+
+            var distinctCompaniesForReportDate = companyNamesQuery.Distinct().OrderBy(x => x).ToList();
+
+            distinctCompaniesForReportDate.Remove(SainsburysCompanyName.ToUpper());
+            distinctCompaniesForReportDate.Insert(0, SainsburysCompanyName.ToUpper());
+
+            foreach (var company in distinctCompaniesForReportDate)
+            {
+                var newCompanyReportRow = new CompetitorsPriceRangeByCompanyCompanyViewModel
+                {
+                    CompanyName = company
+                };
+
+                var companyBrands = companiesAndBrandsForReportDate.Where(x => x.Company.Equals(company) &&  x.CatNo.HasValue);
+
+                if (false == string.IsNullOrWhiteSpace(brandName) && false == brandName.Equals("All"))
+                {
+                    companyBrands = companyBrands.Where(x => x.Brand.Equals(brandName) || x.Brand.Equals(SainsburysBrandName.ToUpper()));
+                }
+
+                foreach(var companyBrand in companyBrands.Select(b => b.Brand).Distinct())
+                {
+                    var newBrandReportRow = new CompetitorsPriceRangeByCompanyBrandViewModel();
+                    newBrandReportRow.BrandName = companyBrand;
+
+                    foreach (var fuelTypeId in result.FuelTypeIds)
+                    {
+                        var companyBrandCatNos = companyBrands.Where(b => b.Brand == companyBrand).Select(x => x.CatNo.Value).ToList();
+                
+                        var pricesList = dailyPrices.Where(x => x.FuelTypeId == fuelTypeId && companyBrandCatNos.Contains(x.CatNo)).ToList();
+                        
+                        if (pricesList.Any())
+                        {
+                            var newFuel = new CompetitorsPriceRangeByCompanyBrandFuelViewModel();
+
+                            newBrandReportRow.Fuels.Add(newFuel);
+                            newFuel.FuelTypeId = fuelTypeId;
+                            newFuel.Min = (int)pricesList.Min(x => x.ModalPrice);
+                            newFuel.Average = (int)pricesList.Average(x => x.ModalPrice);
+                            newFuel.Max = (int)pricesList.Max(x => x.ModalPrice);
+
+                            if (company.Equals(SainsburysCompanyName, StringComparison.InvariantCultureIgnoreCase))
+                            {
+                                result.SainsburysPrices.Add(fuelTypeId, newFuel.Average);
+                            }
+                        }
+                    }
+
+                    newCompanyReportRow.Brands.Add(newBrandReportRow);
+                }
+
+                result.ReportCompanies.Add(newCompanyReportRow);
+            }
+
+            return result;
+        }
+
 
         public PriceMovementReportViewModel GetReportPriceMovement(string brandName, DateTime fromDt, DateTime toDt, int fuelTypeId)
         {

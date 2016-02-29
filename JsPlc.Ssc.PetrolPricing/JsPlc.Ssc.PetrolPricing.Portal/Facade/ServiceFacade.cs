@@ -51,6 +51,15 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             return (response.IsSuccessStatusCode) ? result : null;
         }
 
+        // Get a list of companies
+        public Dictionary<string, int> GetCompanies()
+        {
+            var response = _client.Value.GetAsync("api/companies").Result;
+
+            var result = response.Content.ReadAsAsync<Dictionary<string, int>>().Result;
+            return (response.IsSuccessStatusCode) ? result : null;
+        }
+
         // Get a Site
         public SiteViewModel GetSite(int siteId)
         {
@@ -234,7 +243,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
 
         public IEnumerable<FuelType> GetFuelTypes()
         {
-            var apiUrl = "api/UploadTypes/";
+            var apiUrl = "api/FuelTypes/";
 
             var response = _client.Value.GetAsync(apiUrl).Result;
 
@@ -363,6 +372,14 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             var url = string.Format("api/GetNationalAverage2/{0}", when.ToString("ddMMMyyyy"));
             var response = _client.Value.GetAsync(url).Result;
             var result = response.Content.ReadAsAsync<NationalAverageReportViewModel>().Result;
+            return (response.IsSuccessStatusCode) ? result : null;
+        }
+
+        public CompetitorsPriceRangeByCompanyViewModel GetCompetitorsPriceRangeByCompany(DateTime when, string companyName, string brandName)
+        {
+            var url = string.Format("api/GetCompetitorsPriceRangeByCompany/{0}/{1}/{2}", when.ToString("ddMMMyyyy"), companyName, brandName);
+            var response = _client.Value.GetAsync(url).Result;
+            var result = response.Content.ReadAsAsync<CompetitorsPriceRangeByCompanyViewModel>().Result;
             return (response.IsSuccessStatusCode) ? result : null;
         }
 

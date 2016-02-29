@@ -403,6 +403,7 @@
     <Content Include="Views\PriceReports\NationalAverage2.cshtml" />
     <Content Include="Views\PriceReports\CompetitorsPriceRange.cshtml" />
     <Content Include="parameters.xml" />
+    <Content Include="Views\PriceReports\CompetitorsPriceRangeByCompany.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\uploads\" />
