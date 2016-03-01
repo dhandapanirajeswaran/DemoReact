@@ -9,11 +9,14 @@ using JsPlc.Ssc.PetrolPricing.Repository;
 
 namespace JsPlc.Ssc.PetrolPricing.Business
 {
-    public class SiteService : BaseService
+    public class SiteService : ISiteService
     {
-        public SiteService() { }
+        protected readonly IPetrolPricingRepository _db;
 
-        public SiteService(IPetrolPricingRepository repository) : base(repository) { }
+        public SiteService(IPetrolPricingRepository db)
+        {
+            _db = db;
+        }
 
         public IEnumerable<Site> GetJsSites()
         {

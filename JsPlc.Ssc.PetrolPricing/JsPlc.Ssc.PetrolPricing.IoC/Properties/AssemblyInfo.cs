@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("PetrolPricingBusinessTest")]
+[assembly: AssemblyTitle("JsPlc.Ssc.PetrolPricing.IoC")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("PetrolPricingBusinessTest")]
-[assembly: AssemblyCopyright("Copyright ©  2015")]
+[assembly: AssemblyProduct("JsPlc.Ssc.PetrolPricing.IoC")]
+[assembly: AssemblyCopyright("Copyright ©  2016")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("0b8a2af1-5e9b-49be-82ed-2fa201c270f9")]
+[assembly: Guid("c0518609-03f4-4aa8-adeb-c7aa932830f9")]
 
 // Version information for an assembly consists of the following four values:
 //

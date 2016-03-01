@@ -1,35 +1,35 @@
-﻿using System;
-using System.Data.Entity.ModelConfiguration.Configuration;
-using System.Diagnostics;
-using System.IO;
-using System.Collections.Generic;
-using System.Data.Entity;
-using System.Globalization;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Web;
-using System.Data;
-using System.Text;
-
-using JsPlc.Ssc.PetrolPricing.Models;
+﻿using JsPlc.Ssc.PetrolPricing.Models;
 using JsPlc.Ssc.PetrolPricing.Models.Common;
 using JsPlc.Ssc.PetrolPricing.Models.ViewModels;
 using JsPlc.Ssc.PetrolPricing.Repository;
 using MoreLinq;
-using Newtonsoft.Json.Serialization;
-
+using System;
+using System.Collections.Generic;
+using System.Data;
 using System.Data.OleDb;
-
-
-
+using System.Globalization;
 using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace JsPlc.Ssc.PetrolPricing.Business
 {
-    public class FileService : BaseService, IDisposable
+    public class FileService : IFileService
     {
-        private readonly PriceService _priceService = new PriceService();
+        private readonly IPriceService _priceService;
+
+        private readonly ISettingsService _settingsService;
+
+        private readonly IPetrolPricingRepository _db;
+
+        public FileService(IPetrolPricingRepository db, 
+            IPriceService priceService,
+            ISettingsService settingsService)
+        {
+            _db = db;
+            _priceService = priceService;
+            _settingsService = settingsService;
+        }
 
         public async Task<FileUpload> NewUpload(FileUpload fileUpload)
         {
@@ -69,39 +69,6 @@ namespace JsPlc.Ssc.PetrolPricing.Business
                 default: throw new ApplicationException("Not a valid File Type to import:" + newUpload.UploadTypeId);
             }
             return newUpload;
-        }
-
-        /// <summary>
-        /// Checks if any DailyFile available, then Fires OFF the calc to run..
-        /// </summary>
-        /// <param name="fileProcessed"></param>
-        /// <returns></returns>
-        private async Task RunRecalc(FileUpload fileProcessed)
-        {
-            var importTimeoutMilliSec = SettingsService.GetImportTimeoutMilliSecs();
-            var calcTimeoutMilliSec = SettingsService.GetCalcTimeoutMilliSecs();
-
-            // Is any calc running..
-            var calcRunningFile = _db.GetDailyFileWithCalcRunningForDate(fileProcessed.UploadDateTime);
-            
-            // Abort calc if taking more time than config timeout 
-            if (calcRunningFile != null)
-            {
-                await KillAnyImportOrCalcsExceedingTimeouts();
-            }
-
-            // Now see if any File available for calc and kickoff calc if yes..
-            var dpFile = _db.GetDailyFileAvailableForCalc(fileProcessed.UploadDateTime);
-            if (dpFile != null)
-            {
-                await _priceService.DoCalcDailyPricesFireAndForget(fileProcessed.UploadDateTime, calcTimeoutMilliSec);
-            }
-        }
-
-
-        public void Dispose()
-        {
-            // do nothing for now
         }
 
         public bool ExistsUpload(string storedFileName)
@@ -145,7 +112,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
             {
                 retval = aFile;
                 _db.UpdateImportProcessStatus(5, aFile);//Processing 5
-                var storedFilePath = SettingsService.GetUploadPath();
+                var storedFilePath = _settingsService.GetUploadPath();
                 var filePathAndName = Path.Combine(storedFilePath, aFile.StoredFileName);
                 try
                 {
@@ -153,8 +120,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
                     int lineNumber = 0;
                     List<bool> importStatus = new List<bool>();
                     List<DailyPrice> listOfDailyPricePrices = new List<DailyPrice>();
-                    //filePathAndName = ""; // FORCES Error
-
+                    
                     var file = new StreamReader(filePathAndName.ToString(CultureInfo.InvariantCulture));
                     bool success = true;
                     while ((line = file.ReadLine()) != null)
@@ -202,63 +168,6 @@ namespace JsPlc.Ssc.PetrolPricing.Business
                 }
             }
             return retval;
-        }
-
-        /// <summary>
-        /// Parses the CSV line to make a DailyPrice object
-        /// - Logs error if parsing fails
-        /// </summary>
-        /// <param name="lineValues"></param>
-        /// <param name="lineNumber"></param>
-        /// <param name="aFile"></param>
-        /// <returns>DailyPrice or null</returns>
-        private DailyPrice ParseDailyLineValues(string lineValues, int lineNumber, FileUpload aFile)
-        {
-            DailyPrice theDailyPrice = new DailyPrice();
-
-            try
-            {
-                string[] words = lineValues.Split(',');
-
-                theDailyPrice.DailyUpload = aFile;
-                theDailyPrice.CatNo = (String.IsNullOrEmpty(words[0]) ? -1 : int.Parse(words[0])); // forgiving parse, set a CatNo which wont show up in calc
-                theDailyPrice.FuelTypeId = int.Parse(words[1]); // has to be a valid value
-                theDailyPrice.AllStarMerchantNo = (String.IsNullOrEmpty(words[2]) ? 0 : int.Parse(words[2])); // forgiving parse, since system doesnt use it
-                theDailyPrice.DateOfPrice = DateTime.Parse(words[3].Substring(0, 4) + "-" + words[3].Substring(4, 2) + "-" + words[3].Substring(6, 2)); // YMD format, works across cultures, // has to be a valid value
-
-                theDailyPrice.ModalPrice = int.Parse(words[10]);  // has to be a valid value
-            }
-            catch 
-            {
-                _db.LogImportError(aFile, "Unable to Parse line", lineNumber);
-                return null;
-            }
-            return theDailyPrice;
-        }
-
-        // Ideally put this into a Process Service
-        public static Task<bool> KillAnyImportOrCalcsExceedingTimeouts()
-        {
-            var repo = new PetrolPricingRepository(new RepositoryContext());
-
-            // Fail any calcs taking over certain minutes set by Config.. 
-            // (Abort is NOT guaranteed as the timeout may not have reached), 
-            // this is only an "attempt" to mark them as Aborted
-
-            // TODO 
-            // Set Task timeout when we kickoff Background task
-            // OR set timeout on Task itself. :-)
-            // Keep tasks in LIST<TASK> so we can abort the tasks as well ...
-            //  otherwise we will have multiple background tasks running, 
-
-            // config 1 minutes
-            var importTimeoutMilliSec = SettingsService.GetImportTimeoutMilliSecs();
-            // config 5 minutes
-            var calcTimeoutMilliSec = SettingsService.GetCalcTimeoutMilliSecs();
-
-            repo.FailHangedFileUploadOrCalcs(importTimeoutMilliSec, calcTimeoutMilliSec);
-
-            return Task.FromResult(true);
         }
 
         //Process Quarterly File//////////////////////////////////////////////////////////////////////////////////////
@@ -319,6 +228,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
             return aFile;
         }
 
+        #region Private Methods
         // Reads XLS file and returns Rows
         private async Task<IEnumerable<DataRow>> GetXlsDataRows(FileUpload aFile)
         {
@@ -353,98 +263,9 @@ namespace JsPlc.Ssc.PetrolPricing.Business
             return true;
         }
 
-    # region 'Old methods'
-        //public async Task<IEnumerable<FileUpload>> ProcessQuarterlyFile(List<FileUpload> uploadedFiles)
-        //{
-        //    foreach (FileUpload aFile in uploadedFiles)
-        //    {
-        //        try
-        //        {
-        //            _db.UpdateImportProcessStatus(5, aFile); //Processing 5
-        //            await UpdateSitesFromCatalistQuarterly(aFile);
-        //            _db.UpdateImportProcessStatus(10, aFile);//ok 10
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            _db.LogImportError(aFile, ex.Message, null);
-        //            _db.UpdateImportProcessStatus(15, aFile);//failed 15
-        //        }
-        //    }
-        //    return uploadedFiles;
-        //}
-    
-        //private async Task<bool> UpdateSitesFromCatalistQuarterly(FileUpload aFile)
-        //{
-        //    //Get data from excel and parse to gen list
-        //    DataTable dataTable = await GetQuarterlyData(aFile);
-
-        //    var batchRows = new List<DataRow>();
-        //    int rowcount = 0;
-        //    int batchCount = 0;
-        //    Stopwatch sw = new Stopwatch();
-        //    sw.Start();
-        //    foreach (DataRow row in dataTable.Rows)
-        //    {
-        //        if (rowcount > Constants.QuarterlyFileRowsBatchSize) // 1000 to start with
-        //        {
-        //            List<DataRow> rows = batchRows;
-        //            int count = batchCount;
-        //            Task t = new Task(() => ProcessQuarterlyBatch(aFile, rows, count));
-        //            t.Start();
-        //            t.Wait();
-                    
-
-        //            Debug.WriteLine("Batch of quarterly size:" + Constants.QuarterlyFileRowsBatchSize + " took: " + sw.ElapsedMilliseconds/1000 + " secs");
-        //            sw.Reset();
-        //            sw.Start();
-        //            batchRows = new List<DataRow>();
-        //            rowcount = 0;
-        //            batchCount += 1;
-        //            if (batchCount >= 1) return true; // only process 1 batches
-        //        }
-        //        batchRows.Add(row);
-        //        rowcount += 1;
-        //    }
-        //    if (batchRows.Any())
-        //        ProcessQuarterlyBatch(aFile, batchRows, batchCount);
-
-        //    return true;
-        //}
-
-        //private void ProcessQuarterlyBatch(FileUpload aFile, IEnumerable<DataRow> batchRows, int batchNo)
-        //{
-        //    List<CatalistQuarterly> allSites = new List<CatalistQuarterly>();
-        //    List<CatalistQuarterly> allUniqueSites = new List<CatalistQuarterly>();
-
-        //    allSites = ParseSiteRowsBatch(aFile, batchRows, batchNo).Result;
-
-        //    allUniqueSites = allSites.GroupBy(site => site.CatNo)
-        //        .Select(catNo => catNo.First())
-        //        .ToList();
-
-        //    //_db.UpdateImportProcessStatus(5, aFile);//Processing 5
-
-        //    //Updates or Add Sites
-        //    if (!_db.UpdateCatalistQuarterlyData(allUniqueSites, aFile, false))
-        //    {
-        //        throw new ApplicationException("Failed to update Site Data..");
-        //        //_db.UpdateImportProcessStatus(15, aFile);//failed 15
-        //    }
-        //    //else { siteSuccess = true; }
-
-        //    //Updates or Add Competitior info
-        //    if (!_db.UpdateSiteToCompFromQuarterlyData(allSites))
-        //    {
-        //        throw new ApplicationException("Failed to update SiteToCompetitor Data..");
-        //        //_db.UpdateImportProcessStatus(15, aFile);//failed 15
-        //    }
-        //}
-
-    # endregion 'Old methods'
-
         private Task<DataTable> GetQuarterlyData(FileUpload aFile)
         {
-            var storedFilePath = SettingsService.GetUploadPath();
+            var storedFilePath = _settingsService.GetUploadPath();
             var filePathAndName = Path.Combine(storedFilePath, aFile.StoredFileName);
 
             //REMOVE
@@ -452,8 +273,8 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 
             var connectionString = string.Format("Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + filePathAndName + ";Extended Properties='Excel 12.0 Xml;HDR=YES'");
                 
-            var adapter = new OleDbDataAdapter(String.Format("SELECT * FROM [{0}$]", 
-                SettingsService.ExcelFileSheetName()), connectionString);
+            var adapter = new OleDbDataAdapter(String.Format("SELECT * FROM [{0}$]",
+                _settingsService.ExcelFileSheetName()), connectionString);
             var ds = new DataSet();
 
             adapter.Fill(ds, "x");
@@ -509,6 +330,53 @@ namespace JsPlc.Ssc.PetrolPricing.Business
             return siteCatalistData;
         }
 
+        /// <summary>
+        /// Parses the CSV line to make a DailyPrice object
+        /// - Logs error if parsing fails
+        /// </summary>
+        /// <param name="lineValues"></param>
+        /// <param name="lineNumber"></param>
+        /// <param name="aFile"></param>
+        /// <returns>DailyPrice or null</returns>
+        private DailyPrice ParseDailyLineValues(string lineValues, int lineNumber, FileUpload aFile)
+        {
+            DailyPrice theDailyPrice = new DailyPrice();
+
+            try
+            {
+                string[] words = lineValues.Split(',');
+
+                theDailyPrice.DailyUpload = aFile;
+                theDailyPrice.CatNo = (String.IsNullOrEmpty(words[0]) ? -1 : int.Parse(words[0])); // forgiving parse, set a CatNo which wont show up in calc
+                theDailyPrice.FuelTypeId = int.Parse(words[1]); // has to be a valid value
+                theDailyPrice.AllStarMerchantNo = (String.IsNullOrEmpty(words[2]) ? 0 : int.Parse(words[2])); // forgiving parse, since system doesnt use it
+                theDailyPrice.DateOfPrice = DateTime.Parse(words[3].Substring(0, 4) + "-" + words[3].Substring(4, 2) + "-" + words[3].Substring(6, 2)); // YMD format, works across cultures, // has to be a valid value
+
+                theDailyPrice.ModalPrice = int.Parse(words[10]);  // has to be a valid value
+            }
+            catch
+            {
+                _db.LogImportError(aFile, "Unable to Parse line", lineNumber);
+                return null;
+            }
+            return theDailyPrice;
+        }
+
+        /// <summary>
+        /// Checks if any DailyFile available, then Fires OFF the calc to run..
+        /// </summary>
+        /// <param name="fileProcessed"></param>
+        /// <returns></returns>
+        private async Task RunRecalc(FileUpload fileProcessed)
+        {
+            // Now see if any File available for calc and kickoff calc if yes..
+            var dpFile = _db.GetDailyFileAvailableForCalc(fileProcessed.UploadDateTime);
+            if (dpFile != null)
+            {
+                await _priceService.DoCalcDailyPricesFireAndForget(fileProcessed.UploadDateTime);
+            }
+        }
+        #endregion
 
     }
 }

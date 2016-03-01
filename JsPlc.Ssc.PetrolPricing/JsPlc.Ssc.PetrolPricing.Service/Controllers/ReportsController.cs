@@ -5,8 +5,15 @@ using JsPlc.Ssc.PetrolPricing.Models.ViewModels;
 
 namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
 {
-    public class ReportsController : BaseController
+    public class ReportsController : ApiController
     {
+        IReportService _reportService;
+
+        public ReportsController(IReportService reportService)
+        {
+            _reportService = reportService;
+        }
+
         /// <summary>
         /// Competitor Sites report
         /// </summary>
@@ -16,8 +23,7 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
         [Route("api/GetCompetitorSites/{siteId}")]
         public IHttpActionResult GetCompetitorSites([FromUri]int siteId = 0)
         {
-            var rs = new ReportService();
-            var result = rs.GetReportCompetitorSites(siteId);
+            var result = _reportService.GetReportCompetitorSites(siteId);
             return Ok(result);
         }
 
@@ -31,8 +37,7 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
         [Route("api/GetPricePoints/{when}/{fuelTypeId}")]
         public IHttpActionResult GetPricePoints([FromUri]DateTime when, [FromUri]int fuelTypeId)
         {
-            var rs = new ReportService();
-            var result = rs.GetReportPricePoints(when, fuelTypeId);
+            var result = _reportService.GetReportPricePoints(when, fuelTypeId);
             return Ok(result);
         }
 
@@ -45,8 +50,7 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
         [Route("api/GetNationalAverage/{when}")]
         public IHttpActionResult GetNationalAverage([FromUri]DateTime when)
         {
-            var rs = new ReportService();
-            var result = rs.GetReportNationalAverage(when);
+            var result = _reportService.GetReportNationalAverage(when);
             return Ok(result);
         }
 
@@ -59,8 +63,7 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
         [Route("api/GetNationalAverage2/{when}")]
         public IHttpActionResult GetNationalAverage2([FromUri]DateTime when)
         {
-            var rs = new ReportService();
-            var result = rs.GetReportNationalAverage2(when);
+            var result = _reportService.GetReportNationalAverage2(when);
             return Ok(result);
         }
 
@@ -74,8 +77,7 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
         [Route("api/GetCompetitorsPriceRangeByCompany/{when}/{companyName}/{brandName}")]
         public IHttpActionResult GetCompetitorsPriceRangeByCompany([FromUri]DateTime when, [FromUri]string companyName, [FromUri]string brandName)
         {
-            var rs = new ReportService();
-            var result = rs.GetReportCompetitorsPriceRangeByCompany(when, companyName, brandName);
+            var result = _reportService.GetReportCompetitorsPriceRangeByCompany(when, companyName, brandName);
             return Ok(result);
         }
 
@@ -88,8 +90,7 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
         [Route("api/GetComplianceReport/{when}")]
         public IHttpActionResult GetComplianceReport([FromUri]DateTime when)
         {
-            var rs = new ReportService();
-            var result = rs.GetReportCompliance(when);
+            var result = _reportService.GetReportCompliance(when);
             return Ok(result);
         }
 
@@ -104,8 +105,7 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
         [Route("api/GetPriceMovement/{from}/{to}/{fuelTypeId}/{brandName}")]
         public IHttpActionResult GetPriceMovement([FromUri]string brandName, [FromUri]DateTime from, [FromUri]DateTime to, [FromUri]int fuelTypeId)
         {
-            var rs = new ReportService();
-            var result = rs.GetReportPriceMovement(brandName, from, to, fuelTypeId);
+            var result = _reportService.GetReportPriceMovement(brandName, from, to, fuelTypeId);
             return Ok(result);
         }
     }

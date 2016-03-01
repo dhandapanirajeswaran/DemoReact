@@ -2,11 +2,19 @@
 using System.Runtime.Caching;
 using JsPlc.Ssc.PetrolPricing.Models.ViewModels;
 using System;
+using JsPlc.Ssc.PetrolPricing.Repository;
 
 namespace JsPlc.Ssc.PetrolPricing.Business
 {
-    public class ReportService : BaseService
+    public class ReportService : IReportService
     {
+        protected readonly IPetrolPricingRepository _db;
+
+        public ReportService(IPetrolPricingRepository db)
+        {
+            _db = db;
+        }
+
         public CompetitorSiteReportViewModel GetReportCompetitorSites(int siteId)
         {
             return _db.GetReportCompetitorSite(siteId);
@@ -79,11 +87,6 @@ namespace JsPlc.Ssc.PetrolPricing.Business
             return retval;
         }
 
-        private static string MakeCacheKey(string format, params object[] cacheKeyStrings)
-        {
-            return String.Format(format, cacheKeyStrings);
-        }
-
         /// <summary>
         /// Gets the compliance report for a pump on a given date
         /// </summary>
@@ -94,5 +97,14 @@ namespace JsPlc.Ssc.PetrolPricing.Business
             var report = _db.GetReportCompliance(forDate);
             return report;
         }
+
+        #region Private Methods
+
+        private static string MakeCacheKey(string format, params object[] cacheKeyStrings)
+        {
+            return String.Format(format, cacheKeyStrings);
+        }
+
+        #endregion
     }
 }

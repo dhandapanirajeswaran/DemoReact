@@ -1,35 +1,24 @@
-﻿using System;
+﻿using JsPlc.Ssc.PetrolPricing.Core;
+using JsPlc.Ssc.PetrolPricing.Models;
+using JsPlc.Ssc.PetrolPricing.Models.Common;
+using JsPlc.Ssc.PetrolPricing.Models.Enums;
+using JsPlc.Ssc.PetrolPricing.Models.ViewModels;
+using MoreLinq;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
-using System.Data.Entity.Migrations;
-using System.Data.Entity.SqlServer;
-using System.Data.SqlClient;
-using System.Globalization;
-using System.IO;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
-using System.Security.Cryptography.X509Certificates;
-using System.Security.Permissions;
-using System.Threading.Tasks;
-using System.Transactions;
-using EntityFramework.Utilities;
-using JsPlc.Ssc.PetrolPricing.Models;
-
 using System.Data.Entity.Validation;
+using System.Data.SqlClient;
 using System.Diagnostics;
-using JsPlc.Ssc.PetrolPricing.Models.Common;
-using JsPlc.Ssc.PetrolPricing.Models.ViewModels;
-using MoreLinq;
+using System.Linq;
+using System.Threading.Tasks;
 using EntityState = System.Data.Entity.EntityState;
-using JsPlc.Ssc.PetrolPricing.Models.Enums;
 
 namespace JsPlc.Ssc.PetrolPricing.Repository
 {
-    public class PetrolPricingRepository : IPetrolPricingRepositoryLookup, IPetrolPricingRepository, IDisposable
+    public class PetrolPricingRepository : IPetrolPricingRepository
     {
         const string SainsburysBrandName = "Sainsburys";
         const string SainsburysCompanyName = "J SAINSBURY PLC";
@@ -38,18 +27,34 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
         private readonly RepositoryContext _context;
 
-        public PetrolPricingRepository()
-        {
-        }
-
         public PetrolPricingRepository(RepositoryContext context)
         {
             _context = context;
         }
 
+        private static object cachedAppSettingsLock = new Object();
+
         public IEnumerable<AppConfigSettings> GetAppConfigSettings()
         {
-            return _context.AppConfigSettings.ToList();
+            List<AppConfigSettings> cachedAppSettings = PetrolPricingRepositoryMemoryCache.CacheObj.Get("cachedAppSettings") as List<AppConfigSettings>;
+
+            if (cachedAppSettings == null)
+            {
+                lock (cachedAppSettingsLock)
+                {
+                    cachedAppSettings = PetrolPricingRepositoryMemoryCache.CacheObj.Get("cachedAppSettings") as List<AppConfigSettings>;
+
+                    if (cachedAppSettings == null)
+                    {
+
+                        cachedAppSettings = _context.AppConfigSettings.ToList();
+
+                        PetrolPricingRepositoryMemoryCache.CacheObj.Add("cachedAppSettings", cachedAppSettings, PetrolPricingRepositoryMemoryCache.ReportsCacheExpirationPolicy(200));
+                    }
+                }
+            }
+
+            return cachedAppSettings;
         }
 
         public IEnumerable<Site> GetJsSites()
@@ -674,7 +679,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         {
             int addingEntryLineNo = startingLineNumber;
 
-            using (var newDbContext = new RepositoryContext(new SqlConnection(_context.Database.Connection.ConnectionString)))
+            using (var newDbContext = new RepositoryContext())
             {
                 using (var tx = newDbContext.Database.BeginTransaction())
                 {
@@ -762,7 +767,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
             using (
                 var newDbContext =
-                    new RepositoryContext(new SqlConnection(_context.Database.Connection.ConnectionString)))
+                    new RepositoryContext())
             {
                 using (var tx = newDbContext.Database.BeginTransaction())
                 {
@@ -849,7 +854,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         /// </summary>
         public Task<bool> DeleteRecordsForQuarterlyUploadStaging()
         {
-            using (var db = new RepositoryContext(new SqlConnection(_context.Database.Connection.ConnectionString)))
+            using (var db = new RepositoryContext())
             {
                 var deleteCmd = String.Format("Truncate table QuarterlyUploadStaging"); // automatically reseeds to 1
                 db.Database.ExecuteSqlCommand(deleteCmd);
@@ -859,7 +864,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
         public Task<bool> ImportQuarterlyUploadStaging(int uploadId)
         {
-            using (var db = new RepositoryContext(new SqlConnection(_context.Database.Connection.ConnectionString)))
+            using (var db = new RepositoryContext())
             {
                 var sprocCmd = String.Format("Exec dbo.spImportQuarterlyRecords {0}", uploadId);
                 db.Database.ExecuteSqlCommand(sprocCmd); // if exception let it bubble up
@@ -876,11 +881,13 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         /// <param name="uploadId"></param>
         public void DeleteRecordsForOlderImportsOfDate(DateTime ofdate, int uploadId)
         {
-            var db = new RepositoryContext(new SqlConnection(_context.Database.Connection.ConnectionString));
-            var deleteCmd = String.Format("Delete from DailyPrice Where DailyUploadId in " +
-                                          "  (Select Id from FileUpload Where DateDiff(d, UploadDateTime, '{0}') = 0 and Id <> {1})",
-                ofdate.ToString("yyyy-MM-dd"), uploadId);
-            db.Database.ExecuteSqlCommand(deleteCmd);
+            using (var db = new RepositoryContext())
+            {
+                var deleteCmd = String.Format("Delete from DailyPrice Where DailyUploadId in " +
+                                              "  (Select Id from FileUpload Where DateDiff(d, UploadDateTime, '{0}') = 0 and Id <> {1})",
+                    ofdate.ToString("yyyy-MM-dd"), uploadId);
+                db.Database.ExecuteSqlCommand(deleteCmd);
+            }
         }
 
         private static object cachedAnyDailyPricesForFuelOnDateLock = new Object();
@@ -932,21 +939,6 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
             var fileUploads = _context.FileUploads.Where(x => uploadIds.Contains(x.Id));
             return fileUploads.Any() ? fileUploads.FirstOrDefault() : null;
-        }
-
-        /// <summary>
-        /// Mark file status = Aborted for any 
-        /// imports exceeding 1 min or 
-        /// calcs exceeeding 5 min
-        /// </summary>
-        public void FailHangedFileUploadOrCalcs(int importTimeoutMilliSec, int calcTimeoutMilliSec)
-        {
-            _context.Database.ExecuteSqlCommand("Update FileUpload Set StatusId = 16 Where " +
-                                                "StatusId = 5 and DateDiff(SECOND, UploadDateTime, GetDate()) >= " +
-                                                importTimeoutMilliSec / 1000);
-            _context.Database.ExecuteSqlCommand("Update FileUpload Set StatusId = 17 Where " +
-                                                "StatusId = 11 and DateDiff(SECOND, UploadDateTime, GetDate()) >= " +
-                                                calcTimeoutMilliSec / 1000);
         }
 
         public FileUpload GetDailyFileWithCalcRunningForDate(DateTime forDate)
@@ -1002,7 +994,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         public async Task<int> SaveOverridePricesAsync(List<SitePrice> prices, DateTime? forDate = null)
         {
             if (!forDate.HasValue) forDate = DateTime.Now;
-            using (var db = new RepositoryContext(new SqlConnection(_context.Database.Connection.ConnectionString)))
+            using (var db = new RepositoryContext())
             {
                 foreach (SitePrice p in prices)
                 {
@@ -1050,19 +1042,21 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         /// <param name="lineNumber"></param>
         public void LogImportError(FileUpload fileDetails, string errorMessage = "", int? lineNumber = 0)
         {
-            var db = new RepositoryContext(new SqlConnection(_context.Database.Connection.ConnectionString));
-            ImportProcessError importProcessErrors = new ImportProcessError();
-
-            importProcessErrors.UploadId = fileDetails.Id;
-            importProcessErrors.ErrorMessage = errorMessage;
-
-            if (lineNumber != null)
+            using (var db = new RepositoryContext())
             {
-                importProcessErrors.RowOrLineNumber = int.Parse(lineNumber.ToString());
-            }
+                ImportProcessError importProcessErrors = new ImportProcessError();
 
-            db.ImportProcessErrors.Add(importProcessErrors);
-            db.SaveChanges();
+                importProcessErrors.UploadId = fileDetails.Id;
+                importProcessErrors.ErrorMessage = errorMessage;
+
+                if (lineNumber != null)
+                {
+                    importProcessErrors.RowOrLineNumber = int.Parse(lineNumber.ToString());
+                }
+
+                db.ImportProcessErrors.Add(importProcessErrors);
+                db.SaveChanges();
+            }
         }
 
         /// <summary>
@@ -1074,15 +1068,17 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         {
             try
             {
-                var db = new RepositoryContext(new SqlConnection(_context.Database.Connection.ConnectionString));
-
-                foreach (var logItem in logItems)
+                using (var db = new RepositoryContext())
                 {
-                    db.EmailSendLogs.Attach(logItem);
-                    db.Entry(logItem).State = EntityState.Added;
+
+                    foreach (var logItem in logItems)
+                    {
+                        db.EmailSendLogs.Attach(logItem);
+                        db.Entry(logItem).State = EntityState.Added;
+                    }
+                    int rowsAffected = await db.SaveChangesAsync();
+                    return rowsAffected <= 0 ? null : logItems;
                 }
-                int rowsAffected = await db.SaveChangesAsync();
-                return rowsAffected <= 0 ? null : logItems;
             }
             catch (Exception) // User wouldnt want to know about email logging errors. Thats implementation issue.
             {
@@ -1100,7 +1096,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         public Task<List<EmailSendLog>> GetEmailSendLog(int siteId, DateTime forDate)
         {
             var retval = new List<EmailSendLog>();
-            using (var db = new RepositoryContext(new SqlConnection(_context.Database.Connection.ConnectionString)))
+            using (var db = new RepositoryContext())
             {
                 var list = db.EmailSendLogs;
                 if (!list.Any()) return Task.FromResult(retval);
@@ -1121,14 +1117,11 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         /// <param name="statusId">Status to set for the uploaded file</param>
         public void UpdateImportProcessStatus(int statusId, FileUpload fileUpload)
         {
-            var db = new RepositoryContext(new SqlConnection(_context.Database.Connection.ConnectionString));
-            //var fu = db.FileUploads.AsNoTracking().FirstOrDefault(x => x.Id == fileUpload.Id);
-            //if (fu == null) return;
-            _context.Database.ExecuteSqlCommand("Update FileUpload Set StatusId = " + statusId + " where Id = " +
-                                                fileUpload.Id);
-            //fu.StatusId = statusId;
-            //db.Entry(fu).State = EntityState.Modified;
-            //db.SaveChanges();
+            using (var db = new RepositoryContext())
+            {
+                _context.Database.ExecuteSqlCommand("Update FileUpload Set StatusId = " + statusId + " where Id = " +
+                                                    fileUpload.Id);
+            }
         }
 
         public SiteToCompetitor LookupSiteAndCompetitor(int siteCatNo, int competitorCatNo)
@@ -1244,11 +1237,6 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         public IEnumerable<ImportProcessStatus> GetProcessStatuses()
         {
             return _context.ImportProcessStatus.ToList();
-        }
-
-        public void Dispose()
-        {
-            _context.Dispose();
         }
 
         public CompetitorSiteReportViewModel GetReportCompetitorSite(int siteId)
@@ -1694,7 +1682,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         // Move forward from the forDate and find a set of Prices which were recently uploaded..
         private DateTime? GetFirstDailyPriceDate(DateTime forDate)
         {
-            using (var db = new RepositoryContext(new SqlConnection(_context.Database.Connection.ConnectionString)))
+            using (var db = new RepositoryContext())
             {
                 var priceDates = db.DailyPrices.Include(x => x.DailyUpload)
                     .Where(x => x.DailyUpload.Status.Id == 10
@@ -1720,7 +1708,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         private List<DailyPrice> GetDailyPricesForDate(DateTime forUploadDate)
         {
             List<DailyPrice> retval = new List<DailyPrice>();
-            using (var db = new RepositoryContext(new SqlConnection(_context.Database.Connection.ConnectionString)))
+            using (var db = new RepositoryContext())
             {
                 var prices = db.DailyPrices.Where(
                     x => DbFunctions.DiffDays(x.DailyUpload.UploadDateTime, forUploadDate) == 0)

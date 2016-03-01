@@ -5,6 +5,7 @@ using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
 using JsPlc.Ssc.PetrolPricing.Repository;
+using JsPlc.Ssc.PetrolPricing.IoC;
 
 namespace JsPlc.Ssc.PetrolPricing.Service
 {
@@ -22,6 +23,9 @@ namespace JsPlc.Ssc.PetrolPricing.Service
             BundleConfig.RegisterBundles(BundleTable.Bundles);
 
             Database.SetInitializer(new RepositoryInitializer());
+
+            UnityConfig.RegisterComponents();
+            Bootstrapper.SetupAutoMapper();
         }
     }
 }

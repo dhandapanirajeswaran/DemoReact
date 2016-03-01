@@ -1,21 +1,22 @@
-﻿using System;
+﻿using JsPlc.Ssc.PetrolPricing.Models;
+using JsPlc.Ssc.PetrolPricing.Models.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
-using JsPlc.Ssc.PetrolPricing.Models;
-using JsPlc.Ssc.PetrolPricing.Models.ViewModels;
 
 namespace JsPlc.Ssc.PetrolPricing.Repository
 {
     public interface IPetrolPricingRepository
     {
-        
+
         IEnumerable<Site> GetSites();
 
         Dictionary<string, int> GetCompanies();
 
         IEnumerable<Site> GetJsSites();
-        
+
         Site GetSite(int siteId);
 
         SitePriceViewModel GetASiteWithPrices(int siteId, DateTime forDate, string storeName);
@@ -47,7 +48,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         SiteToCompetitor GetCompetitor(int siteId, int competitorId);
 
         SiteToCompetitor LookupSiteAndCompetitor(int siteCatNo, int competitorCatNo);
-        
+
         //IEnumerable<Site> GetSitesWithPricesAndCompetitors();
         /// <summary>
         /// Useful for emailing
@@ -96,7 +97,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         FileUpload GetFileUpload(int id);
 
         FileUpload NewUpload(FileUpload upload);
-        
+
         bool ExistsUpload(string storedFileName);
 
         Task<bool> AnyFileUploadForDate(DateTime date, UploadType uploadType);
@@ -110,15 +111,8 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         /// <returns></returns>
         Task<List<EmailSendLog>> LogEmailSendLog(List<EmailSendLog> logItems);
 
-        /// <summary>
-        /// Mark file status = Failed for any imports/calcs exceeding 1min, 5 min respectively
-        /// </summary>
-        void FailHangedFileUploadOrCalcs(int importTimeoutMilliSec, int calcTimeoutMilliSec);
-
-        void Dispose();
-
         void AddOrUpdateSitePriceRecord(SitePrice calculatedSitePrice);
-      
+
         /// <summary>
         /// Reason - To keep DailyPrice table lean. Otherwise CalcPrice will take a long time to troll through a HUGE table
         /// Clear criteria = Where date = today and fileId <> the successful Id (afile.Id)
@@ -223,10 +217,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         ComplianceReportViewModel GetReportCompliance(DateTime forDate);
 
         Task<List<EmailSendLog>> GetEmailSendLog(int siteId, DateTime forDate);
-    }
 
-    public interface IPetrolPricingRepositoryLookup
-    {
         IEnumerable<UploadType> GetUploadTypes();
 
         IEnumerable<FuelType> GetFuelTypes();

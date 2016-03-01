@@ -24,11 +24,24 @@ using WebGrease.Css.Extensions;
 
 namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
 {
-    public class SitesController : BaseController
+    public class SitesController : ApiController
     {
-        public SitesController() { }
+        ISiteService _siteService;
+        IPriceService _priceService;
+        IEmailService _emailService;
+        ISettingsService _settingsService;
 
-        public SitesController(SiteService siteService) : base(null, siteService, null) { }
+        public SitesController(
+            ISiteService siteService, 
+            IPriceService priceService,
+            IEmailService emailService,
+            ISettingsService settingsService)
+        {
+            _siteService = siteService;
+            _priceService = priceService;
+            _emailService = emailService;
+            _settingsService = settingsService;
+        }
 
         [System.Web.Http.HttpGet]
         //[Route("api/site/{id}")] // Not needed but works
@@ -72,7 +85,7 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
             var companies = _siteService.GetCompanies()
                 .Where(s => s.Value > 1)
                 .ToDictionary(k => k.Key, v => v.Value);
-            
+
             if (!companies.Any())
                 return NotFound();
             return Ok(companies);
@@ -83,7 +96,7 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
         /// </summary>
         /// <param name="site"></param>
         /// <returns></returns>
-        [System.Web.Http.HttpPost] 
+        [System.Web.Http.HttpPost]
         public IHttpActionResult Post(SiteViewModel site)
         {
             if (site == null)
@@ -93,15 +106,15 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
 
             try
             {
-                using (var ss = _siteService)
+
+                if (_siteService.ExistsSite(site.SiteName, site.CatNo))
                 {
-                    if (ss.ExistsSite(site.SiteName, site.CatNo))
-                    {
-                        return BadRequest("Site with that name already exists. Please try again.");
-                    }
-                    var su = ss.NewSite(site.ToSite());
-                    return Ok(su.ToSiteViewModel());
+                    return BadRequest("Site with that name already exists. Please try again.");
                 }
+                var su = _siteService.NewSite(site.ToSite());
+
+                return Ok(su.ToSiteViewModel());
+
             }
             catch (Exception ex)
             {
@@ -120,11 +133,8 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
 
             try
             {
-                using (var ss = _siteService)
-                {
-                    ss.UpdateSite(site.ToSite());
-                    return Ok(site);
-                }
+                _siteService.UpdateSite(site.ToSite());
+                return Ok(site);
             }
             catch (Exception ex)
             {
@@ -138,11 +148,8 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
         {
             try
             {
-                int rows;
-                using (var ps = new PriceService())
-                {
-                    rows = await ps.SaveOverridePricesAsync(pricesToSave);
-                }
+                int rows = await _priceService.SaveOverridePricesAsync(pricesToSave);
+
                 return Ok(rows);
             }
             catch (Exception ex) // format the exception to report back to Client
@@ -223,9 +230,9 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
             string result;
 
             //Using an SMTP client with the specified host name and port.
-            using (var client = EmailService.CreateSmtpClient())
+            using (var client = _emailService.CreateSmtpClient())
             {
-                string mailFrom = SettingsService.EmailFrom(); // "akiaip5@gmail.com";
+                string mailFrom = _settingsService.EmailFrom(); // "akiaip5@gmail.com";
 
                 const string mailTo = "somesiteEmail@sainsburys.co.uk"; //"akiaip5@gmail.com";
                 const string mailSubject = "Hello, Test Email from Gmail SMTP 587";

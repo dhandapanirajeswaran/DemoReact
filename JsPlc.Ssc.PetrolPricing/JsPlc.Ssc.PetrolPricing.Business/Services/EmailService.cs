@@ -21,16 +21,21 @@ using MoreLinq;
 
 namespace JsPlc.Ssc.PetrolPricing.Business
 {
-    public class EmailService : BaseService, IDisposable
+    public class EmailService : IEmailService
     {
         private readonly ConcurrentDictionary<int, EmailSendLog> _sendLog =
             new ConcurrentDictionary<int, EmailSendLog>();
 
-        public void Dispose()
-        {
-            // do nothing for now
-        }
+        protected readonly IPetrolPricingRepository _db;
 
+        protected readonly ISettingsService _settingsService;
+
+        public EmailService(IPetrolPricingRepository db, 
+            ISettingsService settingsService)
+        {
+            _db = db;
+            _settingsService = settingsService;
+        }
 
         /// <summary>
         /// Send email to users listed in each site 
@@ -62,8 +67,8 @@ namespace JsPlc.Ssc.PetrolPricing.Business
                     //one email built per sites for multiple user in site email list
                     var emailBody = BuildEmailBody(site, endTradeDate);
 
-                    var emailSubject = SettingsService.EmailSubject();
-                    var emailFrom = SettingsService.EmailFrom();
+                    var emailSubject = _settingsService.EmailSubject();
+                    var emailFrom = _settingsService.EmailFrom();
 
                     using (var smtpClient = CreateSmtpClient())
                     {
@@ -153,7 +158,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
         {
             EmailToSet emailToSet = new EmailToSet();
 
-            var testEmailTo = SettingsService.FixedEmailTo();
+            var testEmailTo = _settingsService.FixedEmailTo();
             emailToSet.FixedEmailTo = testEmailTo;
 
             emailToSet.ListOfEmailTo = new List<string>();
@@ -182,6 +187,77 @@ namespace JsPlc.Ssc.PetrolPricing.Business
             return emailForSite.emailBody;
         }
 
+        public async Task<List<EmailSendLog>> SaveEmailLogToRepositoryAsync(List<EmailSendLog> logEntries)
+        {
+            List<EmailSendLog> savedEntries = null;
+            savedEntries = await _db.LogEmailSendLog(logEntries);
+            return savedEntries;
+        }
+
+        /// <summary>
+        /// Creates an SMTP Client based on AppSettings Keys
+        /// </summary>
+        /// <returns></returns>
+        public SmtpClient CreateSmtpClient()
+        {
+            // Localhost, Gmail, AWS
+            var mailHostSelector = _settingsService.MailHostSelector();
+            var client = new SmtpClient();
+            switch (mailHostSelector.ToUpper())
+            {
+                case "LOCALHOST":
+                    {
+                        // Mail Delivery working on a VM box: 
+                        // Server localhost:25, (.eml) email appears in MailRoot/Drop
+                        // Smtp Server Domains = Alias domain = gmail.com
+                        // UseDefaultCredentials = true; EnableSsl = false; 
+                        client.Host = "localhost";
+                        client.Port = 25;
+                        client.EnableSsl = false;
+                        client.UseDefaultCredentials = true;
+                    }
+                    break;
+                case "GMAIL":
+                    {
+                        client.Host = "smtp.gmail.com";
+                        client.Port = 587; // 25 or 465 (with SSL) and port 587 (with TLS)
+                        client.EnableSsl = true;
+                        client.UseDefaultCredentials = true;
+                        client.Credentials = new NetworkCredential(
+                            userName: "akiaip5@gmail.com",
+                            password: "AmDoy02X");
+                    }
+                    break;
+                case "AWS":
+                    {
+                        //private const string smtpIAMUsername = "ses-smtp-user.20151202-103633"; // not needed 
+                        client.Host = "email-smtp.eu-west-1.amazonaws.com";
+                        client.Port = 587; //  25, 587, or 2587
+                        client.EnableSsl = true;
+                        client.UseDefaultCredentials = true;
+                        client.Credentials = new NetworkCredential(
+                            userName: "AKIAIP5MYCP3ETOHJ73A",
+                            password: "AmDoy02X/bZc5EBMh8AJiOsc6iyodxnN2K7F4epLl3Vt");
+                    }
+                    break;
+            }
+            return client;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="siteId"></param>
+        /// <param name="forDate"></param>
+        /// <returns></returns>
+        public async Task<List<EmailSendLog>> GetEmailSendLog(int siteId, DateTime? forDate)
+        {
+            if (!forDate.HasValue) forDate = DateTime.Now;
+            var retval = await _db.GetEmailSendLog(siteId, forDate.Value);
+            return retval;
+        }
+
+        #region Private Methods
         //Below helper methods used by build email. 
         private static string EmailGetLayout()
         {
@@ -372,81 +448,13 @@ namespace JsPlc.Ssc.PetrolPricing.Business
         }
 
         // optional 
-        static void smtpClient_SendCompleted(object sender, System.ComponentModel.AsyncCompletedEventArgs e)
+        private void smtpClient_SendCompleted(object sender, System.ComponentModel.AsyncCompletedEventArgs e)
         {
             // optional: to be implemented 
         }
 
+        #endregion
 
-        public async Task<List<EmailSendLog>> SaveEmailLogToRepositoryAsync(List<EmailSendLog> logEntries)
-        {
-            List<EmailSendLog> savedEntries = null;
-            savedEntries = await _db.LogEmailSendLog(logEntries);
-            return savedEntries;
-        }
-
-        /// <summary>
-        /// Creates an SMTP Client based on AppSettings Keys
-        /// </summary>
-        /// <returns></returns>
-        public static SmtpClient CreateSmtpClient()
-        {
-            // Localhost, Gmail, AWS
-            var mailHostSelector = SettingsService.MailHostSelector();
-            var client = new SmtpClient();
-            switch (mailHostSelector.ToUpper())
-            {
-                case "LOCALHOST":
-                    {
-                        // Mail Delivery working on a VM box: 
-                        // Server localhost:25, (.eml) email appears in MailRoot/Drop
-                        // Smtp Server Domains = Alias domain = gmail.com
-                        // UseDefaultCredentials = true; EnableSsl = false; 
-                        client.Host = "localhost";
-                        client.Port = 25;
-                        client.EnableSsl = false;
-                        client.UseDefaultCredentials = true;
-                    }
-                    break;
-                case "GMAIL":
-                    {
-                        client.Host = "smtp.gmail.com";
-                        client.Port = 587; // 25 or 465 (with SSL) and port 587 (with TLS)
-                        client.EnableSsl = true;
-                        client.UseDefaultCredentials = true;
-                        client.Credentials = new NetworkCredential(
-                            userName: "akiaip5@gmail.com",
-                            password: "AmDoy02X");
-                    }
-                    break;
-                case "AWS":
-                    {
-                        //private const string smtpIAMUsername = "ses-smtp-user.20151202-103633"; // not needed 
-                        client.Host = "email-smtp.eu-west-1.amazonaws.com";
-                        client.Port = 587; //  25, 587, or 2587
-                        client.EnableSsl = true;
-                        client.UseDefaultCredentials = true;
-                        client.Credentials = new NetworkCredential(
-                            userName: "AKIAIP5MYCP3ETOHJ73A",
-                            password: "AmDoy02X/bZc5EBMh8AJiOsc6iyodxnN2K7F4epLl3Vt");
-                    }
-                    break;
-            }
-            return client;
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="siteId"></param>
-        /// <param name="forDate"></param>
-        /// <returns></returns>
-        public async Task<List<EmailSendLog>> GetEmailSendLog(int siteId, DateTime? forDate)
-        {
-            if (!forDate.HasValue) forDate = DateTime.Now;
-            var retval = await _db.GetEmailSendLog(siteId, forDate.Value);
-            return retval;
-        }
     }
 
     public class EmailSiteData

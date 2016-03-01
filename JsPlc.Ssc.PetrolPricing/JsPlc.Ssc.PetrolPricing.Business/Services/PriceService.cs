@@ -19,20 +19,23 @@ using JsPlc.Ssc.PetrolPricing.Repository;
 
 namespace JsPlc.Ssc.PetrolPricing.Business
 {
-    public class PriceService : BaseService
+    public class PriceService : IPriceService
     {
-        private readonly bool _includeJsSitesAsCompetitors; // false by default (excludes JS sites)
+        protected readonly IPetrolPricingRepository _db;
+        protected readonly ISettingsService _settingsService;
+        protected readonly ILookupService _lookupService;
+
+        public PriceService(IPetrolPricingRepository db,
+            ISettingsService settingsService,
+            ILookupService lookupSerivce)
+        {
+            _db = db;
+            _settingsService = settingsService;
+            _lookupService = lookupSerivce;
+        }
+
         private readonly int[] _fuelSelectionArray = new[] { 1, 2, 6, }; // superunl, unl, diesel,  
         // 5, 7 // not used superdiesel, , lpg
-
-        public PriceService()
-        {
-
-        }
-        public PriceService(bool includeJsSitesAsCompetitors)
-        {
-            _includeJsSitesAsCompetitors = includeJsSitesAsCompetitors;
-        }
 
         /// <summary>
         /// FIRE AND FORGET - Pickup latest upload file with success/CalcFailed status and run calc with that
@@ -43,7 +46,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
         /// </summary>
         /// <param name="forDate"></param>
         /// <param name="calcTimeoutMilliSecs">timeout in msecs</param>
-        public async Task<bool> DoCalcDailyPricesFireAndForget(DateTime? forDate, int calcTimeoutMilliSecs)
+        public async Task<bool> DoCalcDailyPricesFireAndForget(DateTime? forDate)
         {
             if (!forDate.HasValue) forDate = DateTime.Now;
             // Only ones Uploaded today and successfully processed files
@@ -73,10 +76,6 @@ namespace JsPlc.Ssc.PetrolPricing.Business
                     Task t = new Task(() => DoCalcAsync(taskData));
                     t.Start();
 
-                    // Run a waiter for aborting the task after set time (wrong approach.., need a cancellation token instead)
-                    Task tWait = new Task(() => t.Wait(calcTimeoutMilliSecs));
-                    tWait.Start();
-
                     Debug.WriteLine("Calculation fired...");
                     Trace.WriteLine("Calculation fired... for fileID:" + dpFile.Id);
                 }
@@ -87,55 +86,6 @@ namespace JsPlc.Ssc.PetrolPricing.Business
                 }
             }
             await Task.FromResult(0);
-            return true;
-        }
-
-        // LONG Running Task (also updates status within it)
-        private async Task DoCalcAsync(CalcTaskData calcTaskData)
-        {
-            try
-            {
-                bool result = await Task.FromResult(CalcAllSitePrices(calcTaskData));
-                _db.UpdateImportProcessStatus(result ? 10 : 12, calcTaskData.FileUpload);
-                //Success 10 (we intentionally use the same success status since we might wanna kickoff the calc again using same successful staus files)
-            }
-            catch (Exception ex)
-            {
-                _db.UpdateImportProcessStatus(12, calcTaskData.FileUpload); //CalcFailed
-                _db.LogImportError(calcTaskData.FileUpload, string.Format("Exception: {0}", ex.ToString()), 0);
-            }
-        }
-
-        /// <summary>
-        /// Calculate prices for files Uploaded today and in a Success state. 
-        /// No retrospective calc, No future calc
-        /// </summary>
-        ///// <param name="processedFiles">This param is not required as the DP has only 1 price SET for a given day</param>
-        /// <param name="forDate">Optional - use prices of these dates</param>
-        private bool CalcAllSitePrices(CalcTaskData calcTaskData)
-        {
-
-            var forDate = calcTaskData.ForDate;
-            
-            var sites = _db.GetJsSites().Where(x => x.IsActive).AsQueryable().AsNoTracking();
-            var fuels = LookupService.GetFuelTypes().Where(x => _fuelSelectionArray.Contains(x.Id)).AsQueryable().AsNoTracking().ToList(); // Limit calc iterations to known fuels
-            var taskArray = new List<Task>();
-
-            Parallel.ForEach(sites, (site) =>
-            {
-                using (var db = new PetrolPricingRepository(new RepositoryContext()))
-                {
-                    foreach (var fuel in fuels.ToList())
-                    {
-                        var priceService = new PriceService();
-
-                        priceService.CalcPrice(db, site, fuel.Id, calcTaskData);
-                    }
-                }
-            });
-
-            CreateMissingSuperUnleadedFromUnleaded(forDate); // for performance, run for all sites
-
             return true;
         }
 
@@ -150,7 +100,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
         {
             if (!markup.HasValue)
             {
-                markup = SettingsService.GetSuperUnleadedMarkup().ToNullable<int>();
+                markup = _settingsService.GetSuperUnleadedMarkup().ToNullable<int>();
             }
             if (markup == null) markup = 5; // also defaulted in sproc
             _db.CreateMissingSuperUnleadedFromUnleaded(forDate, markup.Value, siteId);
@@ -232,7 +182,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
                 {
                     float nextMin = f * 5;
                     var currentCompetitor = GetCheapestPriceUsingParams(db, site, nextMin, nextMin + 4.99f, fuelId,
-                    usingPricesforDate, (int)f, _includeJsSitesAsCompetitors);
+                    usingPricesforDate, (int)f);
 
                     if (currentCompetitor.HasValue)
                         allCompetitors.Add(currentCompetitor.Value);
@@ -255,7 +205,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
             if (!cheapestCompetitor.HasValue)
             {
                 db.AddOrUpdateSitePriceRecord(cheapestPrice);
-                
+
                 return;
             }
 
@@ -271,9 +221,35 @@ namespace JsPlc.Ssc.PetrolPricing.Business
             // Method call
             db.AddOrUpdateSitePriceRecord(cheapestPrice);
 
-            
+
         }
 
+        public async Task<int> SaveOverridePricesAsync(List<OverridePricePostViewModel> pricesToSave)
+        {
+            int retval = 0;
+            List<SitePrice> prices = new List<SitePrice>();
+            foreach (var price in pricesToSave)
+            {
+                var fuelTypeId = price.FuelTypeId.ToNullable<int>();
+                var siteId = price.SiteId.ToNullable<int>();
+                var overridePrice = 0.0f;
+                if (!float.TryParse(price.OverridePrice, out overridePrice))
+                {
+                    throw new ApplicationException("Invalid Price:" + price.OverridePrice);
+                }
+                if (fuelTypeId != null && siteId != null && overridePrice >= 0) // Save 0 prices (no override)
+                    prices.Add(new SitePrice
+                    {
+                        SiteId = siteId.Value,
+                        FuelTypeId = fuelTypeId.Value,
+                        OverriddenPrice = Convert.ToInt32(Math.Truncate(overridePrice * 10))
+                    });
+            }
+            retval = await _db.SaveOverridePricesAsync(prices);
+            return retval;
+        }
+
+        #region Private Methods
         /// <summary>
         /// 1. Find competitors within drivetime criteria
         /// 2. If none found returns null
@@ -352,30 +328,59 @@ namespace JsPlc.Ssc.PetrolPricing.Business
             return result;
         }
 
-        public async Task<int> SaveOverridePricesAsync(List<OverridePricePostViewModel> pricesToSave)
+        // LONG Running Task (also updates status within it)
+        private async Task DoCalcAsync(CalcTaskData calcTaskData)
         {
-            int retval = 0;
-            List<SitePrice> prices = new List<SitePrice>();
-            foreach (var price in pricesToSave)
+            try
             {
-                var fuelTypeId = price.FuelTypeId.ToNullable<int>();
-                var siteId = price.SiteId.ToNullable<int>();
-                var overridePrice = 0.0f;
-                if (!float.TryParse(price.OverridePrice, out overridePrice))
-                {
-                    throw new ApplicationException("Invalid Price:" + price.OverridePrice);
-                }
-                if (fuelTypeId != null && siteId != null && overridePrice >= 0) // Save 0 prices (no override)
-                    prices.Add(new SitePrice
-                    {
-                        SiteId = siteId.Value,
-                        FuelTypeId = fuelTypeId.Value,
-                        OverriddenPrice = Convert.ToInt32(Math.Truncate(overridePrice * 10))
-                    });
+                bool result = await Task.FromResult(CalcAllSitePrices(calcTaskData));
+                _db.UpdateImportProcessStatus(result ? 10 : 12, calcTaskData.FileUpload);
+                //Success 10 (we intentionally use the same success status since we might wanna kickoff the calc again using same successful staus files)
             }
-            retval = await _db.SaveOverridePricesAsync(prices);
-            return retval;
+            catch (Exception ex)
+            {
+                _db.UpdateImportProcessStatus(12, calcTaskData.FileUpload); //CalcFailed
+                _db.LogImportError(calcTaskData.FileUpload, string.Format("Exception: {0}", ex.ToString()), 0);
+            }
         }
+
+        /// <summary>
+        /// Calculate prices for files Uploaded today and in a Success state. 
+        /// No retrospective calc, No future calc
+        /// </summary>
+        ///// <param name="processedFiles">This param is not required as the DP has only 1 price SET for a given day</param>
+        /// <param name="forDate">Optional - use prices of these dates</param>
+        private bool CalcAllSitePrices(CalcTaskData calcTaskData)
+        {
+
+            var forDate = calcTaskData.ForDate;
+
+            var sites = _db.GetJsSites().Where(x => x.IsActive).AsQueryable().AsNoTracking();
+            var fuels = _lookupService.GetFuelTypes().Where(x => _fuelSelectionArray.Contains(x.Id)).AsQueryable().AsNoTracking().ToList(); // Limit calc iterations to known fuels
+            var taskArray = new List<Task>();
+
+            Parallel.ForEach(sites, (site) =>
+            {
+                using (var context = new RepositoryContext())
+                {
+                    var db = new PetrolPricingRepository(context);
+
+                    foreach (var fuel in fuels.ToList())
+                    {
+                        var priceService = new PriceService(db, _settingsService, _lookupService);
+
+                        priceService.CalcPrice(db, site, fuel.Id, calcTaskData);
+                    }
+                }
+
+            });
+
+            CreateMissingSuperUnleadedFromUnleaded(forDate); // for performance, run for all sites
+
+            return true;
+        }
+
+        #endregion
     }
 
     public class CalcTaskData

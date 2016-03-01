@@ -13,8 +13,15 @@ using Newtonsoft.Json;
 
 namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
 {
-    public class SettingsController : BaseController
+    public class SettingsController : ApiController
     {
+        ISettingsService _settingsService;
+
+        public SettingsController(ISettingsService settingsService)
+        {
+            _settingsService = settingsService;
+        }
+
         [Route("api/settings/{key}")]
         public async Task<IHttpActionResult> Get(string key)
         {
@@ -24,7 +31,7 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
             }
             try
             {
-                    var val = SettingsService.GetSetting(key);
+                var val = _settingsService.GetSetting(key);
                     return Ok(val);
             }
             catch (Exception ex)

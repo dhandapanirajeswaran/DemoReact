@@ -13,7 +13,6 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.UI;
 using JsPlc.Ssc.PetrolPricing.Models;
-//using JsPlc.Ssc.PetrolPricing.Portal.Helpers.Extensions;
 using JsPlc.Ssc.PetrolPricing.Models.Enums;
 using JsPlc.Ssc.PetrolPricing.Models.ViewModels;
 using Newtonsoft.Json;

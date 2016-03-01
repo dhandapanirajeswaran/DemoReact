@@ -7,7 +7,7 @@ using JsPlc.Ssc.PetrolPricing.Models.Persistence;
 
 namespace JsPlc.Ssc.PetrolPricing.Repository
 {
-    public class RepositoryContext:DbContext,IRepositoryContext
+    public class RepositoryContext: DbContext, IRepositoryContext
     {
         public IDbSet<AppConfigSettings> AppConfigSettings { get; set; }
         public IDbSet<FuelType> FuelType { get; set; } // 1=Super, 2=Unleaded,  6=Std Dis, // Unused 5=Super Dis, 7=LPG
@@ -31,7 +31,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
         public RepositoryContext() : base("name=PetrolPricingRepository") { }
 
-        public RepositoryContext(DbConnection connection) : base(connection, true) { }
+        //public RepositoryContext(DbConnection connection) : base(connection, true) { }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
