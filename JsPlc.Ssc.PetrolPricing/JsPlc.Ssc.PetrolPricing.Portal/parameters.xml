@@ -3,7 +3,7 @@
   <parameter name="PetrolPricingLogins-Web.config Connection String" defaultValue="">
     <parameterEntry kind="XmlFile" scope="\\web.config$" match="/configuration/connectionStrings/add[@name='PetrolPricingLogins']" />
   </parameter>
-  <parameter name="ServicesBaseUrl-Web.config Connection String" defaultValue="">
-    <parameterEntry kind="XmlFile" scope="\\web.config$" match="/configuration/connectionStrings/add[@name='ServicesBaseUrl']" />
+  <parameter name="ServicesBaseUrl-Web.config App Setting" defaultValue="">
+    <parameterEntry kind="XmlFile" scope="\\web.config$" match="/configuration/appSettings/add[@key='ServicesBaseUrl']/value/test()" />
   </parameter>
 </parameters>
