@@ -21,6 +21,7 @@ using JsPlc.Ssc.PetrolPricing.Models;
 using JsPlc.Ssc.PetrolPricing.Models.Common;
 using JsPlc.Ssc.PetrolPricing.Models.ViewModels;
 using WebGrease.Css.Extensions;
+using AutoMapper;
 
 namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
 {
@@ -106,7 +107,6 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
 
             try
             {
-
                 if (_siteService.ExistsSite(site.SiteName, site.CatNo))
                 {
                     return BadRequest("Site with that name already exists. Please try again.");
@@ -114,7 +114,6 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
                 var su = _siteService.NewSite(site.ToSite());
 
                 return Ok(su.ToSiteViewModel());
-
             }
             catch (Exception ex)
             {
@@ -148,17 +147,13 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
         {
             try
             {
-                int rows = await _priceService.SaveOverridePricesAsync(pricesToSave);
+                int rows = await _priceService.SaveOverridePricesAsync(Mapper.Map<List<SitePrice>>(pricesToSave));
 
                 return Ok(rows);
             }
             catch (Exception ex) // format the exception to report back to Client
             {
                 return new ExceptionResult(ex, this);
-                //throw new HttpResponseException(new HttpResponseMessage {
-                //    ReasonPhrase = ex.Message, StatusCode = HttpStatusCode.BadRequest, 
-                //    Content = new StringContent(ex.Message),
-                //});
             }
         }
 

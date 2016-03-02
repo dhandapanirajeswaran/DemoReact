@@ -11,12 +11,11 @@ namespace JsPlc.Ssc.PetrolPricing.Models.ViewModels
     public class OverridePricePostViewModel
     {
         [Required]
-        public string SiteId { get; set; } // JSSiteId
+        public int SiteId { get; set; } // JSSiteId
+        
         [Required]
-        public string FuelTypeId { get; set; } // 1,2,6 values
+        public int FuelTypeId { get; set; } // 1,2,6 values
 
-        //[Range(typeof(float), "0.00", "400.0", ErrorMessage = "Override price should be between 0 and 400")] // prevent user postback of prices over £4
-        //[Required(AllowEmptyStrings = true)]
-        public string OverridePrice { get; set; } // from user input 
+        public float OverridePrice { get; set; } // from user input 
     }
 }

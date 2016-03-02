@@ -13,10 +13,8 @@ namespace JsPlc.Ssc.PetrolPricing.Business
     {
         Task<bool> DoCalcDailyPricesFireAndForget(DateTime? forDate);
 
-        void CreateMissingSuperUnleadedFromUnleaded(DateTime forDate, int? markup = null, int siteId = 0);
-
         void CalcPrice(IPetrolPricingRepository db, Site site, int fuelId, CalcTaskData calcTaskData);
 
-        Task<int> SaveOverridePricesAsync(List<OverridePricePostViewModel> pricesToSave);
+        Task<int> SaveOverridePricesAsync(List<SitePrice> pricesToSave);
     }
 }
