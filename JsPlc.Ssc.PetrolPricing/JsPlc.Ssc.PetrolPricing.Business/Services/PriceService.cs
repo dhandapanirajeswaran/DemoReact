@@ -103,6 +103,12 @@ namespace JsPlc.Ssc.PetrolPricing.Business
             if (db == null)
                 db = _db;
 
+            if (calcTaskData == null)
+                throw new ArgumentNullException("calcTaskData can't be null");
+
+            if (site == null)
+                throw new ArgumentNullException("site can't be null");
+
             var usingPricesforDate = calcTaskData.ForDate; // Uses dailyPrices of competitors Upload date matching this date
 
             var cheapestPrice = new SitePrice
@@ -116,16 +122,14 @@ namespace JsPlc.Ssc.PetrolPricing.Business
                 CompetitorId = null
             };
 
-            if (site == null) 
-                return;
-
-            if (!site.CatNo.HasValue)
+            if (false == site.CatNo.HasValue)
             {
                 db.AddOrUpdateSitePriceRecord(cheapestPrice);
                 return;
             }
 
-            if (!db.AnyDailyPricesForFuelOnDate(fuelId, usingPricesforDate, calcTaskData.FileUpload.Id)) // TODO chk in caller
+            //if daily price data not found created default record.
+            if (false == db.AnyDailyPricesForFuelOnDate(fuelId, usingPricesforDate, calcTaskData.FileUpload.Id)) // TODO chk in caller
             {
                 db.AddOrUpdateSitePriceRecord(cheapestPrice);
                 return;
@@ -135,7 +139,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 
             if (site.TrailPriceCompetitorId.HasValue)
             {
-                var foundCompetitorPrices = getCompetitorPriceUsingParams(db, site, site.TrailPriceCompetitorId.Value, fuelId, usingPricesforDate);
+                var foundCompetitorPrices = getCompetitorPriceUsingParams(db, site, fuelId, usingPricesforDate);
 
                 if (foundCompetitorPrices != null)
                 {
@@ -178,13 +182,11 @@ namespace JsPlc.Ssc.PetrolPricing.Business
                         minPriceFound = priceWithMarkup;
                     }
                 }
-
             }
 
-            if (!cheapestCompetitor.HasValue)
+            if (cheapestCompetitor == null)
             {
                 db.AddOrUpdateSitePriceRecord(cheapestPrice);
-
                 return;
             }
 
@@ -253,11 +255,17 @@ namespace JsPlc.Ssc.PetrolPricing.Business
                 : null;
         }
 
-        private CheapestCompetitor getCompetitorPriceUsingParams(IPetrolPricingRepository db, Site site, int competitorId, int fuelId,
+        private CheapestCompetitor getCompetitorPriceUsingParams(IPetrolPricingRepository db, Site site, int fuelId,
             DateTime usingPricesForDate)
         {
+            if (site == null)
+                throw new ArgumentNullException("site");
+
+            if (site.TrailPriceCompetitorId == null)
+                return null;
+
             // Method call
-            var competitor = db.GetCompetitor(site.Id, competitorId);
+            var competitor = db.GetCompetitor(site.Id, site.TrailPriceCompetitorId.Value);
 
             if (competitor == null)
                 return null;

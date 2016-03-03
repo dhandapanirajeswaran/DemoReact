@@ -894,7 +894,6 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
         public bool AnyDailyPricesForFuelOnDate(int fuelId, DateTime usingPricesforDate, int fileUploadId)
         {
-
             var cacheKey = fileUploadId.ToString();
 
             List<int> cachedAnyDailyPricesForFuelOnDate = PetrolPricingRepositoryMemoryCache.CacheObj.Get(cacheKey) as List<int>;
