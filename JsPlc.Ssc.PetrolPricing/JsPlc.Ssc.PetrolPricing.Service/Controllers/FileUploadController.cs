@@ -38,7 +38,7 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
                     return BadRequest("File with that name already exists. Please try again.");
                 }
 
-                var fu = await _fileService.NewUpload(fileUpload);
+                var fu = _fileService.NewUpload(fileUpload);
 
                 return Ok(fu);
             }

@@ -33,7 +33,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             int startingLineNumber);
 
         // RUN sprocs to Add/Update/Delete sites and siteToCompetitors
-        Task<bool> ImportQuarterlyUploadStaging(int uploadId);
+        void ImportQuarterlyUploadStaging(int uploadId);
 
         /// <summary>
         /// Useful for SiteMaint screen
@@ -92,7 +92,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
         void UpdateImportProcessStatus(int statusId, FileUpload fileUpload);
 
-        Task<List<FileUpload>> GetFileUploads(DateTime? date, int? uploadType, int? statusId);
+        List<FileUpload> GetFileUploads(DateTime? date, int? uploadType, int? statusId);
 
         FileUpload GetFileUpload(int id);
 
@@ -100,7 +100,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
         bool ExistsUpload(string storedFileName);
 
-        Task<bool> AnyFileUploadForDate(DateTime date, UploadType uploadType);
+        bool AnyFileUploadForDate(DateTime date, UploadType uploadType);
 
         void LogImportError(FileUpload fileDetails, string errorMessage, int? lineNumber);
 
@@ -124,7 +124,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         /// <summary>
         /// Delete all QuarterlyUploadStaging records prior to starting Import of QuarterlyUploadStaging
         /// </summary>
-        Task<bool> DeleteRecordsForQuarterlyUploadStaging();
+        void DeleteRecordsForQuarterlyUploadStaging();
 
         /// <summary>
         /// Do we have any daily prices for a given fuelId on the date

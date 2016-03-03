@@ -11,7 +11,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 {
     public interface IPriceService
     {
-        Task<bool> DoCalcDailyPricesFireAndForget(DateTime? forDate);
+        bool DoCalcDailyPrices(DateTime? forDate);
 
         void CalcPrice(IPetrolPricingRepository db, Site site, int fuelId, CalcTaskData calcTaskData);
 

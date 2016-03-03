@@ -7,18 +7,18 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 {
     public interface IFileService
     {
-        Task<FileUpload> NewUpload(FileUpload fileUpload);
+        FileUpload NewUpload(FileUpload fileUpload);
 
         bool ExistsUpload(string storedFileName);
 
         Task<IEnumerable<FileUpload>> ExistingDailyUploads(DateTime uploadDateTime);
 
-        Task<IEnumerable<FileUpload>> GetFileUploads(DateTime? date, int? uploadTypeId, int? statusId);
+        IEnumerable<FileUpload> GetFileUploads(DateTime? date, int? uploadTypeId, int? statusId);
 
         FileUpload GetFileUpload(int id);
 
-        Task<FileUpload> ProcessDailyPrice(List<FileUpload> listOfFiles);
+        FileUpload ProcessDailyPrice(List<FileUpload> listOfFiles);
 
-        Task<FileUpload> ProcessQuarterlyFileNew(List<FileUpload> uploadedFiles);
+        FileUpload ProcessQuarterlyFileNew(List<FileUpload> uploadedFiles);
     }
 }

@@ -852,24 +852,22 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         /// <summary>
         /// Delete all QuarterlyUploadStaging records prior to starting Import of QuarterlyUploadStaging
         /// </summary>
-        public Task<bool> DeleteRecordsForQuarterlyUploadStaging()
+        public void DeleteRecordsForQuarterlyUploadStaging()
         {
             using (var db = new RepositoryContext())
             {
                 var deleteCmd = String.Format("Truncate table QuarterlyUploadStaging"); // automatically reseeds to 1
                 db.Database.ExecuteSqlCommand(deleteCmd);
             }
-            return Task.FromResult(true);
         }
 
-        public Task<bool> ImportQuarterlyUploadStaging(int uploadId)
+        public void ImportQuarterlyUploadStaging(int uploadId)
         {
             using (var db = new RepositoryContext())
             {
                 var sprocCmd = String.Format("Exec dbo.spImportQuarterlyRecords {0}", uploadId);
                 db.Database.ExecuteSqlCommand(sprocCmd); // if exception let it bubble up
             }
-            return Task.FromResult(true);
         }
 
         /// <summary>
@@ -928,26 +926,19 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         /// <returns>Returns null if none available</returns>
         public FileUpload GetDailyFileAvailableForCalc(DateTime forDate)
         {
-            // Inline sql as date comparison fails in Linq
-            var uploadIds = _context.Database.SqlQuery<int>(
-                String.Format(
-                    "Select distinct fu.Id from FileUpload fu, DailyPrice dp Where fu.Id = dp.DailyUploadId " +
-                    " and fu.UploadTypeId = 1" +
-                    " and DateDiff(d, UploadDateTime, '{0}') = 0 and fu.StatusId in (10, 16, 17)",
-                    forDate.ToString("yyyy-MM-dd"))).ToArray();
+            int [] validForUploadStatuses = new int[] {10, 16, 17};
+            
+            return _context.FileUploads.Where(x => x.UploadTypeId == 1
+                && DbFunctions.TruncateTime(x.UploadDateTime) == forDate.Date
+                && validForUploadStatuses.Contains(x.StatusId))
+                .OrderByDescending(x => x.UploadDateTime)
+                .FirstOrDefault();
 
-            var fileUploads = _context.FileUploads.Where(x => uploadIds.Contains(x.Id));
-            return fileUploads.Any() ? fileUploads.FirstOrDefault() : null;
         }
 
         public FileUpload GetDailyFileWithCalcRunningForDate(DateTime forDate)
         {
-            var calcUploads = _context.FileUploads.Where(x => x.StatusId == 11 && x.StatusId == 1);
-            if (!calcUploads.Any()) return null;
-
-            var calcFileRunningForDate =
-                calcUploads.ToList().FirstOrDefault(x => x.UploadDateTime.Date.Equals(forDate.Date));
-            return calcFileRunningForDate; // could be null
+            return _context.FileUploads.FirstOrDefault(x => (x.StatusId == 11 || x.StatusId == 1) && DbFunctions.TruncateTime(x.UploadDateTime) == forDate.Date);
         }
 
         public void AddOrUpdateSitePriceRecord(SitePrice calculatedSitePrice)
@@ -1185,7 +1176,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         /// <param name="uploadTypeId">Optional uploadType to filter if needed</param>
         /// <param name="statusId">Optional statusType to filter if needed</param>
         /// <returns></returns>
-        public Task<List<FileUpload>> GetFileUploads(DateTime? date, int? uploadTypeId, int? statusId)
+        public List<FileUpload> GetFileUploads(DateTime? date, int? uploadTypeId, int? statusId)
         {
             IEnumerable<FileUpload> files = GetFileUploads();
 
@@ -1202,8 +1193,8 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             {
                 files = files.Where(x => x.StatusId == statusId.Value);
             }
-            var retval = files.OrderByDescending(x => x.UploadDateTime);
-            return Task.FromResult(retval.ToList());
+
+            return files.OrderByDescending(x => x.UploadDateTime).ToList();
         }
 
         public IEnumerable<FileUpload> GetFileUploads()
@@ -1217,9 +1208,9 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         }
 
         ///  Do we have any FileUploads for specified Date and UploadType
-        public async Task<bool> AnyFileUploadForDate(DateTime date, UploadType uploadType)
+        public bool AnyFileUploadForDate(DateTime date, UploadType uploadType)
         {
-            var anyFilesForDate = await GetFileUploads(date, uploadType.Id, null);
+            var anyFilesForDate = GetFileUploads(date, uploadType.Id, null);
             return anyFilesForDate.Any();
         }
         // ############### Lookup #############

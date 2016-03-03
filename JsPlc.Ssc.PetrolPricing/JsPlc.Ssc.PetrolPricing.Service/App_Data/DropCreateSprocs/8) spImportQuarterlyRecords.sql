@@ -10,7 +10,7 @@ Set @msg = 'File selection:='
 -- Set @uploadId = (Select Top 1 QuarterlyUploadId from QuarterlyUploadStaging)
 
 Print @msg + Convert(VARCHAR(10), @uploadId)
-Insert Into ImportProcessError (UploadId, RowOrLineNumber, ErrorMessage) Values(@uploadId, 0, 'New Quarterly Import Run at:=' + Convert(VARCHAR(20), GetDate()))
+
 -- Select @uploadId
 
 -- End TODO
@@ -72,7 +72,6 @@ if (@@ERROR <> 0) return @@ERROR;
 
 Set @msg = @msg + ' done, rows:' + Convert(VARCHAR(10), @@ROWCOUNT)
 Print @msg
-Insert Into ImportProcessError (UploadId, RowOrLineNumber, ErrorMessage) Values(@uploadId, 0, @msg)
 if (@@ERROR <> 0) return @@ERROR;
 -- End of Populate 1
 -- GO
@@ -93,7 +92,7 @@ if (@@ERROR <> 0) return @@ERROR;
 
 Set @msg = @msg + ' done, rows:' + Convert(VARCHAR(10), @@ROWCOUNT)
 Print @msg
-Insert Into ImportProcessError (UploadId, RowOrLineNumber, ErrorMessage) Values(@uploadId, 0, @msg)
+
 if (@@ERROR <> 0) return @@ERROR;
 -- End of Populate 2
 -- GO
@@ -125,7 +124,7 @@ if (@@ERROR <> 0) return @@ERROR;
 
 Set @msg = @msg + ' done, rows:' + Convert(VARCHAR(10), @@ROWCOUNT)
 Print @msg
-Insert Into ImportProcessError (UploadId, RowOrLineNumber, ErrorMessage) Values(@uploadId, 0, @msg)
+
 if (@@ERROR <> 0) return @@ERROR;
 -- End of UPDATE Missing CatNo 
 -- GO
@@ -157,7 +156,7 @@ if (@@ERROR <> 0) return @@ERROR;
 
 Set @msg = @msg + ' done, rows:' + Convert(VARCHAR(10), @@ROWCOUNT)
 Print @msg
-Insert Into ImportProcessError (UploadId, RowOrLineNumber, ErrorMessage) Values(@uploadId, 0, @msg)
+
 if (@@ERROR <> 0) return @@ERROR;
 -- End of SITE Inserts 
 -- GO
@@ -211,7 +210,7 @@ if (@@ERROR <> 0) return @@ERROR;
 
 Set @msg = @msg + ' done, rows:' + Convert(VARCHAR(10), @@ROWCOUNT)
 Print @msg
-Insert Into ImportProcessError (UploadId, RowOrLineNumber, ErrorMessage) Values(@uploadId, 0, @msg)
+
 if (@@ERROR <> 0) return @@ERROR;
 
 -- End of SITE Updates
@@ -230,7 +229,7 @@ if (@@ERROR <> 0) return @@ERROR;
 
 Set @msg = @msg + ' done'
 Print @msg
-Insert Into ImportProcessError (UploadId, RowOrLineNumber, ErrorMessage) Values(@uploadId, 0, @msg)
+
 if (@@ERROR <> 0) return @@ERROR;
 
 -- Populate
@@ -261,11 +260,10 @@ if (@@ERROR <> 0) return @@ERROR;
 
 Set @msg = @msg + ' done, rows:' + Convert(VARCHAR(10), @@ROWCOUNT)
 Print @msg
-Insert Into ImportProcessError (UploadId, RowOrLineNumber, ErrorMessage) Values(@uploadId, 0, @msg)
+
 if (@@ERROR <> 0) return @@ERROR;
 
 -- End of Quarterly Import Process
-Insert Into ImportProcessError (UploadId, RowOrLineNumber, ErrorMessage) Values(@uploadId, 0, 'Quarterly Import Run Completed at:=' + Convert(VARCHAR(20), GetDate()))
 if (@@ERROR <> 0) return @@ERROR;
 
 -- Run time reported = 1 sec

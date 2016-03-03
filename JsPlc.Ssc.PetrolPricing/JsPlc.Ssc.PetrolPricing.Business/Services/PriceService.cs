@@ -35,57 +35,52 @@ namespace JsPlc.Ssc.PetrolPricing.Business
         }
 
         private readonly int[] _fuelSelectionArray = new[] { 1, 2, 6, }; // superunl, unl, diesel,  
-        // 5, 7 // not used superdiesel, , lpg
-
+        
         /// <summary>
-        /// FIRE AND FORGET - Pickup latest upload file with success/CalcFailed status and run calc with that
-        /// This is purely for use indication. 
-        /// The CalcPrice relies on the DailyPrice table not a specific file param.
-        /// To protect against multiple runs of Calc simultaneously - 
-        ///     Checks if calc is running and Throws exception if already calc is running and tell you the uploadId. 
+        /// 
         /// </summary>
         /// <param name="forDate"></param>
-        /// <param name="calcTimeoutMilliSecs">timeout in msecs</param>
-        public async Task<bool> DoCalcDailyPricesFireAndForget(DateTime? forDate)
+        /// <returns></returns>
+        public bool DoCalcDailyPrices(DateTime? forDate)
         {
-            if (!forDate.HasValue) forDate = DateTime.Now;
-            // Only ones Uploaded today and successfully processed files
-            //var processedFiles = _db.GetFileUploads(forDate, 1, 10).ToList(); // 1 = DailyFile, 10 = Success
-            //if (processedFiles.Any())
+            if (false == forDate.HasValue)
+                forDate = DateTime.Now;
+
+            // Pick file with Status Success or CalcFailed & Update status to Calculating
+            var dpFile = _db.GetDailyFileAvailableForCalc(forDate.Value);
+            var calcRunningFile = _db.GetDailyFileWithCalcRunningForDate(forDate.Value);
+
+            if (calcRunningFile != null)
+                throw new ApplicationException(
+                    "Calculation already running, please wait until that completes. UploadId:" + calcRunningFile.Id);
+            if (dpFile == null)
+                throw new ApplicationException(
+                    "No file available for calc, please provide a new Daily Price upload.");
+
+            try
             {
-                // Pick file with Status Success or CalcFailed & Update status to Calculating
-                var dpFile = _db.GetDailyFileAvailableForCalc(forDate.Value);
-                var calcRunningFile = _db.GetDailyFileWithCalcRunningForDate(forDate.Value);
+                _db.UpdateImportProcessStatus(11, dpFile); //Calculating 6
 
-                if (calcRunningFile != null)
-                    throw new ApplicationException(
-                        "Calculation already running, please wait until that completes. UploadId:" + calcRunningFile.Id);
-                if (dpFile == null)
-                    throw new ApplicationException(
-                        "No file available for calc, please provide a new Daily Price upload.");
+                var taskData = new CalcTaskData { ForDate = forDate.Value, FileUpload = dpFile };
 
-                try
-                {
-                    _db.UpdateImportProcessStatus(11, dpFile); //Calculating 6
+                // ###########################
+                // LONG Running Task - Fire and Forget
+                // ###########################
+                //Task t = new Task(() => doCalcAsync(taskData));
+                //t.Start();
 
-                    var taskData = new CalcTaskData { ForDate = forDate.Value, FileUpload = dpFile };
+                doCalc(taskData);
 
-                    // ###########################
-                    // LONG Running Task - Fire and Forget
-                    // ###########################
-                    Task t = new Task(() => doCalcAsync(taskData));
-                    t.Start();
-
-                    Debug.WriteLine("Calculation fired...");
-                    Trace.WriteLine("Calculation fired... for fileID:" + dpFile.Id);
-                }
-                catch (Exception ex)
-                {
-                    _db.UpdateImportProcessStatus(12, dpFile); //CalcFailed
-                    _db.LogImportError(dpFile, string.Format("Exception: {0}", ex.ToString()), 0);
-                }
+                Debug.WriteLine("Calculation fired...");
+                Trace.WriteLine("Calculation fired... for fileID:" + dpFile.Id);
             }
-            await Task.FromResult(0);
+            catch (Exception ex)
+            {
+                _db.UpdateImportProcessStatus(12, dpFile); //CalcFailed
+                _db.LogImportError(dpFile, string.Format("Exception: {0}", ex.ToString()), 0);
+            }
+
+            //await Task.FromResult(0);
             return true;
         }
 
@@ -283,9 +278,9 @@ namespace JsPlc.Ssc.PetrolPricing.Business
                 .Select(x => x.Competitor.CatNo.Value);
 
             // Method call
-            var pricesForFuelByCompetitors = db.GetDailyPricesForFuelByCompetitors(competitorCatNos, fuelId, usingPricesforDate); 
+            var pricesForFuelByCompetitors = db.GetDailyPricesForFuelByCompetitors(competitorCatNos, fuelId, usingPricesforDate);
 
-            if (!pricesForFuelByCompetitors.Any()) 
+            if (!pricesForFuelByCompetitors.Any())
                 return null;
 
             // Sort asc and pick first (i.e. cheapest)
@@ -300,11 +295,13 @@ namespace JsPlc.Ssc.PetrolPricing.Business
         }
 
         // LONG Running Task (also updates status within it)
-        private async Task doCalcAsync(CalcTaskData calcTaskData)
+        //private async Task doCalc(CalcTaskData calcTaskData)
+        private void doCalc(CalcTaskData calcTaskData)
         {
             try
             {
-                bool result = await Task.FromResult(calcAllSitePrices(calcTaskData));
+                //bool result = await Task.FromResult(calcAllSitePrices(calcTaskData));
+                bool result = calcAllSitePrices(calcTaskData);
                 _db.UpdateImportProcessStatus(result ? 10 : 12, calcTaskData.FileUpload);
                 //Success 10 (we intentionally use the same success status since we might wanna kickoff the calc again using same successful staus files)
             }
