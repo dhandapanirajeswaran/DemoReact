@@ -11,9 +11,9 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 {
     public interface IPriceService
     {
-        bool DoCalcDailyPrices(DateTime? forDate);
+        void DoCalcDailyPrices(DateTime? forDate);
 
-        void CalcPrice(IPetrolPricingRepository db, Site site, int fuelId, CalcTaskData calcTaskData);
+        void CalcPrice(IPetrolPricingRepository db, Site site, int fuelId, PriceCalculationTaskData calcTaskData);
 
         Task<int> SaveOverridePricesAsync(List<SitePrice> pricesToSave);
     }

@@ -22,7 +22,7 @@ namespace JsPlc.Ssc.PetrolPricing.Service
 
             Bootstrapper.ConfigureIoC(container);
 
-            container.RegisterType<RepositoryContext>();
+            container.RegisterType<RepositoryContext>(new TransientLifetimeManager());
             container.RegisterType(typeof(IPetrolPricingRepository), typeof(PetrolPricingRepository), new TransientLifetimeManager());
 
             container.RegisterType<ILookupService, LookupService>();
@@ -32,6 +32,7 @@ namespace JsPlc.Ssc.PetrolPricing.Service
             container.RegisterType<IReportService, ReportService>();
             container.RegisterType<ISiteService, SiteService>();
             container.RegisterType<ISettingsService, SettingsService>();
+			container.RegisterType<IFactory, Factory>();
 
             GlobalConfiguration.Configuration.DependencyResolver = new UnityDependencyResolver(container);
         }

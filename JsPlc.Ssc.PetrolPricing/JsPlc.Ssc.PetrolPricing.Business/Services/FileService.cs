@@ -256,9 +256,6 @@ namespace JsPlc.Ssc.PetrolPricing.Business
             var storedFilePath = _settingsService.GetUploadPath();
             var filePathAndName = Path.Combine(storedFilePath, aFile.StoredFileName);
 
-            //REMOVE
-            //var filePathAndName = "C:/Temp/20151126 163800hrs - Catalist quarterly data.xlsx";
-
             var connectionString = string.Format("Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + filePathAndName + ";Extended Properties='Excel 12.0 Xml;HDR=YES;IMEX=1'");
 
             using (var adapter = new OleDbDataAdapter(String.Format("SELECT * FROM [{0}$]",
@@ -357,14 +354,12 @@ namespace JsPlc.Ssc.PetrolPricing.Business
         /// </summary>
         /// <param name="fileProcessed"></param>
         /// <returns></returns>
-        //private async Task RunRecalc(FileUpload fileProcessed)
         private void RunRecalc(FileUpload fileProcessed)
         {
             // Now see if any File available for calc and kickoff calc if yes..
             var dpFile = _db.GetDailyFileAvailableForCalc(fileProcessed.UploadDateTime);
             if (dpFile != null)
             {
-                //await _priceService.DoCalcDailyPrices(fileProcessed.UploadDateTime);
                 _priceService.DoCalcDailyPrices(fileProcessed.UploadDateTime);
             }
         }

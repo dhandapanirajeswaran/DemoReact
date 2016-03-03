@@ -196,6 +196,27 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
             }
         }
 
+        public List<Models.FuelType> DummyFuelTypes
+        {
+            get
+            {
+                var result = new List<Models.FuelType>
+                {
+                    new Models.FuelType {
+                        Id = 1
+                    },
+                    new Models.FuelType {
+                        Id = 2
+                    },
+                    new Models.FuelType {
+                        Id = 6
+                    }
+                };
+
+                return result;
+            }
+        }
+
         public Models.Site GetDummyCompetitor(int catNo)
         {
             var result = DummyCompetitor;
