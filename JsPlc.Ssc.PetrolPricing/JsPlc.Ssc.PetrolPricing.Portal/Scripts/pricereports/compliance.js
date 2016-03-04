@@ -9,11 +9,11 @@
 
     $("#btnViewReport").click(function () {
         var dt = forDp.val();
-        window.location.href = '/pricereports/Compliance?For=' + dt;
+        window.location.href = '/PriceReports/Compliance?For=' + dt;
     });
     //$("#btnExportReport").click(function () {
     //    var dt = forDp.val();
-    //    window.location.href = '/pricereports/ExportCompliance?For=' + dt;
+    //    window.location.href = '/PriceReports/ExportCompliance?For=' + dt;
     //});
 });
 

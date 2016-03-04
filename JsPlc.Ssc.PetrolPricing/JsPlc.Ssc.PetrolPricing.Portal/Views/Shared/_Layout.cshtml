@@ -79,13 +79,13 @@
                     return false;
                 }
                 //nav-login // /Account/Login
-                else if (location.pathname.indexOf("/Account/Login") == 0
+                else if (location.pathname.toLowerCase().indexOf("/account/login") == 0
                     && $this.attr(navItemAttributeName) == "nav-login") {
                     $this.addClass("active");
                     return false;
                 }
                 //nav-account // /Manage || /Account
-                else if ((location.pathname.indexOf("/Account") == 0
+                else if ((location.pathname.toLowerCase().indexOf("/account") == 0
                     || location.pathname.indexOf("/Manage") == 0
                     )
                     && $this.attr(navItemAttributeName) == "nav-account") {
@@ -93,37 +93,37 @@
                     return false;
                 }
                 //nav-about // /Home/About
-                else if (location.pathname.indexOf("/Home/About") == 0
+                else if (location.pathname.toLowerCase().indexOf("/home/about") == 0
                     && $this.attr(navItemAttributeName) == "nav-about") {
                     $this.addClass("active");
                     return false;
                 }
                 //nav-contact // /Home/Contact
-                else if (location.pathname.indexOf("/Home/Contact") == 0
+                else if (location.pathname.toLowerCase().indexOf("/home/contact") == 0
                     && $this.attr(navItemAttributeName) == "nav-contact") {
                     $this.addClass("active");
                     return false;
                 }
                 //nav-upload // /File
-                else if (location.pathname.indexOf("/File") == 0
+                else if (location.pathname.toLowerCase().indexOf("/file") == 0
                     && $this.attr(navItemAttributeName) == "nav-upload") {
                     $this.addClass("active");
                     return false;
                 }
                 //nav-site-pricing // /Sites/Prices
-                else if (location.pathname.indexOf("/Sites/Prices") == 0
+                else if (location.pathname.toLowerCase().indexOf("/sites/prices") == 0
                     && $this.attr(navItemAttributeName) == "nav-site-pricing") {
                     $this.addClass("active");
                     return false;
                 }
                 //nav-site-maintenance // /Sites
-                else if (location.pathname.indexOf("/Sites") == 0
+                else if (location.pathname.toLowerCase().indexOf("/sites") == 0
                     && $this.attr(navItemAttributeName) == "nav-site-maintenance") {
                     $this.addClass("active");
                     return false;
                 }
                 //nav-reports // /PriceReports
-                else if (location.pathname.indexOf("/PriceReports") == 0
+                else if (location.pathname.toLowerCase().indexOf("/pricereports") == 0
                     && $this.attr(navItemAttributeName) == "nav-reports") {
                     $this.addClass("active");
                     return false;

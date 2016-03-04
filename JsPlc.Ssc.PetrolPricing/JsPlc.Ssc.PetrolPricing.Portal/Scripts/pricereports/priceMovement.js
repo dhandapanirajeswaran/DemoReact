@@ -29,7 +29,7 @@
             return false;
         }
         
-        window.location.href = '/pricereports/PriceMovement?DateFrom=' + dt1 + "&DateTo=" + dt2 + "&FuelTypeId=" + id + "&BrandName=" + brandName;
+        window.location.href = '/PriceReports/PriceMovement?DateFrom=' + dt1 + "&DateTo=" + dt2 + "&FuelTypeId=" + id + "&BrandName=" + brandName;
         return true;
     });
     $("#btnExportReport").click(function () {
@@ -46,7 +46,7 @@
             return false;
         }
 
-        window.location.href = '/pricereports/ExportPriceMovement?DateFrom=' + dt1 + "&DateTo=" + dt2 + "&FuelTypeId=" + id + "&BrandName=" + brandName;
+        window.location.href = '/PriceReports/ExportPriceMovement?DateFrom=' + dt1 + "&DateTo=" + dt2 + "&FuelTypeId=" + id + "&BrandName=" + brandName;
         return true;
     });
 

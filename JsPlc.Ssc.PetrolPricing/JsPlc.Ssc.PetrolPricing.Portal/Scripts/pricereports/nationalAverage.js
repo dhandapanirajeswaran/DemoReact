@@ -9,11 +9,11 @@
 
     $("#btnViewReport").click(function () {
         var dt = forDp.val();
-        window.location.href = '/pricereports/nationalAverage?For=' + dt;
+        window.location.href = '/PriceReports/nationalAverage?For=' + dt;
     });
     $("#btnExportReport").click(function () {
         var dt = forDp.val();
-        window.location.href = '/pricereports/ExportNationalAverage?For=' + dt;
+        window.location.href = '/PriceReports/ExportNationalAverage?For=' + dt;
     });
 });
 

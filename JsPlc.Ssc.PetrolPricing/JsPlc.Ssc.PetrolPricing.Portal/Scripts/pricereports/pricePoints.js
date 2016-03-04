@@ -10,11 +10,11 @@
 
     $("#btnViewReport").click(function () {
         var dt = forDp.val();
-        window.location.href = '/pricereports/PricePoints?For=' + dt;
+        window.location.href = '/PriceReports/PricePoints?For=' + dt;
     });
     $("#btnExportReport").click(function () {
         var dt = forDp.val();
-        window.location.href = '/pricereports/ExportPricePoints?For=' + dt;
+        window.location.href = '/PriceReports/ExportPricePoints?For=' + dt;
     });
 });
 

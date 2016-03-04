@@ -50,13 +50,12 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 				forDate = DateTime.Now;
 
 			// Pick file with Status Success or CalcFailed & Update status to Calculating
-			var dpFile = _db.GetDailyFileAvailableForCalc(forDate.Value);
 			var calcRunningFile = _db.GetDailyFileWithCalcRunningForDate(forDate.Value);
-
 			if (calcRunningFile != null)
 				throw new ApplicationException(
 					"Calculation already running, please wait until that completes. UploadId:" + calcRunningFile.Id);
 
+			var dpFile = _db.GetDailyFileAvailableForCalc(forDate.Value);
 			if (dpFile == null)
 				throw new ApplicationException(
 					"No file available for calc, please provide a new Daily Price upload.");
@@ -213,7 +212,9 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 			{
 				markup = _settingsService.GetSuperUnleadedMarkup().ToNullable<int>();
 			}
-			if (markup == null) markup = 5; // also defaulted in sproc
+			if (markup == null) 
+				markup = 5; // also defaulted in sproc
+			
 			_db.CreateMissingSuperUnleadedFromUnleaded(forDate, markup.Value, siteId);
 		}
 
@@ -301,18 +302,14 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 
 			Parallel.ForEach(sites, (site) =>
 			{
-				//using (var context = new RepositoryContext())
-				//{
 				var db = _factory.Create<IPetrolPricingRepository>(CreationMethod.ServiceLocator, null);
-				//var db = new PetrolPricingRepository(context);
-
+				
 				foreach (var fuel in fuels.ToList())
 				{
 					var priceService = new PriceService(db, _settingsService, _lookupService, _factory);
 
 					priceService.CalcPrice(db, site, fuel.Id, calcTaskData);
 				}
-				//}
 			});
 
 			createMissingSuperUnleadedFromUnleaded(forDate); // for performance, run for all sites

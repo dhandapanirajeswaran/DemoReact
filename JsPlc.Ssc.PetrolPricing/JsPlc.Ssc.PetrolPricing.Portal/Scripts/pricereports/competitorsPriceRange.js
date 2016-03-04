@@ -9,11 +9,11 @@
 
     $("#btnViewReport").click(function () {
         var dt = forDp.val();
-        window.location.href = '/pricereports/competitorsPriceRange?For=' + dt;
+        window.location.href = '/PriceReports/competitorsPriceRange?For=' + dt;
     });
     $("#btnExportReport").click(function () {
         var dt = forDp.val();
-        window.location.href = '/pricereports/ExportCompetitorsPriceRange?For=' + dt;
+        window.location.href = '/PriceReports/ExportCompetitorsPriceRange?For=' + dt;
     });
 });
 
