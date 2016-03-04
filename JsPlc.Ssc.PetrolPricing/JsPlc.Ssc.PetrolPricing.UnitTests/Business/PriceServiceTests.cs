@@ -233,6 +233,10 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
                         arg =>
                             1 == arg.Id)), Times.Once());
             });
+
+			//Super unleaded price should be created
+			//can't test superunleaded price calculation as it's done in stored procedure
+			//CreateMissingSuperUnleadedFromUnleaded
         }
 
         #endregion

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -217,11 +218,37 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
             }
         }
 
+		public List<Models.FileUpload> DummyFileUploads
+		{
+			get
+			{
+				var result = new List<Models.FileUpload>
+                {
+                    new Models.FileUpload {
+						Id = 1,
+                        UploadDateTime = DateTime.Now,
+						StoredFileName = "DailyUpload.txt",
+						UploadTypeId = 1
+                    }
+                };
+
+				return result;
+			}
+		}
+
         public Models.Site GetDummyCompetitor(int catNo)
         {
             var result = DummyCompetitor;
             result.CatNo = catNo;
             return result;
         }
+
+		public string TestFileFolderPath
+		{
+			get
+			{
+				return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "TestFiles");
+			}
+		}
     }
 }

@@ -776,17 +776,20 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                     {
                         foreach (DailyPrice dailyPrice in dailyPriceList)
                         {
-                            if (dailyPrice.DailyUpload != null) dailyPrice.DailyUploadId = dailyPrice.DailyUpload.Id;
+                            if (dailyPrice.DailyUpload != null) 
+								dailyPrice.DailyUploadId = dailyPrice.DailyUpload.Id;
                             dailyPrice.DailyUpload = null;
                             dailyPrice.FuelType = null;
 
                             newDbContext.DailyPrices.Add(dailyPrice);
+
                             addingEntryLineNo += 1;
                         }
 
                         newDbContext.SaveChanges();
 
                         tx.Commit();
+
                         return true;
                     }
                     catch (DbUpdateException e)
@@ -821,6 +824,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                                     validationError.ErrorMessage);
                             }
                         }
+
                         return false;
                     }
                 }
