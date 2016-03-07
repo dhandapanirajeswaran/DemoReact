@@ -9,10 +9,7 @@
         @Html.Partial("_ImportErrors", Model.ImportProcessErrors)
     </div>
 }
-else
-{
-    <div class="alert alert-info">No errors found</div>
-}
+
 <div class="panel panel-default">
     <div class="panel-heading">@Html.DisplayNameFor(model => model.OriginalFileName)
         <strong>@Html.DisplayFor(model => model.OriginalFileName)</strong>

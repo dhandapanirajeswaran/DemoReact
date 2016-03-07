@@ -285,6 +285,17 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 
 			testFileToUpload.UploadTypeId = uploadTypeId;
 
+			if (uploadTypeId == (int)UploadTypes.QuarterlySiteData)
+			{
+				var testFilePathAndName = Path.Combine(TestFileFolderPath, testFileToUpload.StoredFileName);
+
+				var testFileData = new DataFileReader().GetQuarterlyData(testFilePathAndName, QuarterlyFileDataSheetName);
+
+				_mockDataFileReader
+					.Setup(dfr => dfr.GetQuarterlyData(testFilePathAndName, QuarterlyFileDataSheetName))
+					.Returns(testFileData);
+			}
+
 			_mockRepository
 				.Setup(r => r.NewUpload(testFileToUpload))
 				.Returns(testFileToUpload);
@@ -293,6 +304,10 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 			_mockRepository
 				.Setup(r => r.GetDailyFileAvailableForCalc(testFileToUpload.UploadDateTime))
 				.Returns(expectedFileUploadForRecalculation);
+
+			_mockRepository
+				.Setup(r => r.NewQuarterlyRecords(It.IsAny<List<Models.ViewModels.CatalistQuarterly>>(), It.Is<Models.FileUpload>(arg => ComparePrimaryFileUploadAttributes(testFileToUpload, arg)), It.IsAny<int>()))
+				.Returns(true);
 
 			var sut = new FileService(_mockRepository.Object, _mockPriceService.Object, _mockSettingsService.Object, _mockDataFileReader.Object);
 
@@ -318,6 +333,14 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 
 			var testFileToUpload = DummyFileUploads.First(fu => fu.UploadTypeId == (int)UploadTypes.QuarterlySiteData);
 
+			var testFilePathAndName = Path.Combine(TestFileFolderPath, testFileToUpload.StoredFileName);
+
+			var testFileData = new DataFileReader().GetQuarterlyData(testFilePathAndName, QuarterlyFileDataSheetName);
+
+			_mockDataFileReader
+				.Setup(dfr => dfr.GetQuarterlyData(testFilePathAndName, QuarterlyFileDataSheetName))
+				.Returns(testFileData);
+
 			_mockRepository
 				.Setup(r => r.NewUpload(testFileToUpload))
 				.Returns(testFileToUpload);
@@ -326,6 +349,10 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 			_mockRepository
 				.Setup(r => r.GetDailyFileAvailableForCalc(testFileToUpload.UploadDateTime))
 				.Returns(null as FileUpload);
+
+			_mockRepository
+				.Setup(r => r.NewQuarterlyRecords(It.IsAny<List<Models.ViewModels.CatalistQuarterly>>(), It.Is<Models.FileUpload>(arg => ComparePrimaryFileUploadAttributes(testFileToUpload, arg)), It.IsAny<int>()))
+				.Returns(true);
 
 			var sut = new FileService(_mockRepository.Object, _mockPriceService.Object, _mockSettingsService.Object, _mockDataFileReader.Object);
 

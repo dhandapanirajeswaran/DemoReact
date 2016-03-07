@@ -50,7 +50,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 			switch (newUpload.UploadTypeId)
 			{
 				case 1:
-					processedFile = ProcessDailyPrice(newUploadList); 
+					processedFile = ProcessDailyPrice(newUploadList);
 
 					if (processedFile == null)
 						throw new Exception("Upload failed..");
@@ -118,7 +118,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 				try
 				{
 					List<DailyPrice> listOfDailyPricePrices = new List<DailyPrice>();
-					
+
 					int lineNumber = 0;
 
 					using (var file = new StreamReader(filePathAndName.ToString(CultureInfo.InvariantCulture)))
@@ -136,7 +136,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 					}
 
 					List<bool> importStatus = new List<bool>();
-					
+
 					lineNumber = 0;
 
 					while (lineNumber < listOfDailyPricePrices.Count)
@@ -165,6 +165,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 				{
 					_db.LogImportError(aFile, ex.Message + " filePath=" + filePathAndName, null);
 					_db.UpdateImportProcessStatus(15, aFile);
+					return null;
 				}
 			}
 			return retval;
@@ -178,7 +179,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 		/// <returns>The file picked for processing (only one)</returns>
 		public FileUpload ProcessQuarterlyFileNew(List<FileUpload> uploadedFiles)
 		{
-			if (!uploadedFiles.Any()) 
+			if (!uploadedFiles.Any())
 				return null;
 
 			var aFile = uploadedFiles.OrderByDescending(x => x.UploadDateTime).ToList().First();
@@ -190,7 +191,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 				var rows = getXlsDataRows(aFile);
 
 				var dataRows = rows as IList<DataRow> ?? rows.ToList();
-				
+
 				if (!dataRows.Any())
 				{
 					throw new Exception("No rows found in file:" + aFile.OriginalFileName + " dated:" +
@@ -201,7 +202,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 				_db.DeleteRecordsForQuarterlyUploadStaging();
 
 				var success = importQuarterlyRecordsToStaging(aFile, dataRows); // dumps all rows into the quarterly staging table
-				
+
 				if (!success)
 				{
 					throw new Exception("Unable to populate staging table in db");
@@ -214,10 +215,25 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 
 				_db.UpdateImportProcessStatus(aFile.StatusId, aFile); //ok 10, failed 15
 			}
+			catch (OleDbException ex)
+			{
+				if(ex.Message.Contains("Make sure that it does not include invalid characters or punctuation and that it is not too long."))
+				{
+					var message = string.Format("Invalid Sheet 1 name. Expected name: {0}", _settingsService.ExcelFileSheetName());
+					_db.LogImportError(aFile, message, null);
+					_db.UpdateImportProcessStatus(15, aFile); //failed 15
+					return null;
+				}
+				else
+				{
+					throw;
+				}
+			}
 			catch (Exception ex)
 			{
 				_db.LogImportError(aFile, ex.Message, null);
 				_db.UpdateImportProcessStatus(15, aFile); //failed 15
+				return null;
 			}
 			return aFile;
 		}
@@ -354,7 +370,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 		{
 			// Now see if any File available for calc and kickoff calc if yes..
 			var dpFile = _db.GetDailyFileAvailableForCalc(fileProcessed.UploadDateTime);
-			
+
 			if (dpFile != null)
 			{
 				_priceService.DoCalcDailyPrices(fileProcessed.UploadDateTime);
