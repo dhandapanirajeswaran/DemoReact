@@ -97,6 +97,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\JsPlc.Ssc.PetrolPricing.Core\JsPlc.Ssc.PetrolPricing.Core.csproj">
+      <Project>{a63fb2ae-7013-41ba-bb14-082ac91a26b7}</Project>
+      <Name>JsPlc.Ssc.PetrolPricing.Core</Name>
+    </ProjectReference>
     <ProjectReference Include="..\JsPlc.Ssc.PetrolPricing.Models\JsPlc.Ssc.PetrolPricing.Models.csproj">
       <Project>{b9b43a8b-6916-431d-bc1b-6595a1a0f029}</Project>
       <Name>JsPlc.Ssc.PetrolPricing.Models</Name>

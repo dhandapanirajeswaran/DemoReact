@@ -1,4 +1,6 @@
-﻿using System;
+﻿using JsPlc.Ssc.PetrolPricing.Core;
+using JsPlc.Ssc.PetrolPricing.Models;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -8,8 +10,9 @@ using System.Threading.Tasks;
 namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 {
     public class TestBase
-    {
-        protected List<Models.SiteToCompetitor> DummySiteToCompetitors
+	{
+		#region Properties
+		protected List<Models.SiteToCompetitor> DummySiteToCompetitors
         {
             get
             {
@@ -226,9 +229,15 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
                 {
                     new Models.FileUpload {
 						Id = 1,
-                        UploadDateTime = DateTime.Now,
+                        UploadDateTime = DateTime.Today,
 						StoredFileName = "DailyUpload.txt",
-						UploadTypeId = 1
+						UploadTypeId = (int)UploadTypes.DailyPriceData
+                    },
+					new Models.FileUpload {
+						Id = 2,
+                        UploadDateTime = DateTime.Today,
+						StoredFileName = "QuarterlyUpload.xlsx",
+						UploadTypeId = (int)UploadTypes.QuarterlySiteData
                     }
                 };
 
@@ -236,19 +245,39 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 			}
 		}
 
-        public Models.Site GetDummyCompetitor(int catNo)
-        {
-            var result = DummyCompetitor;
-            result.CatNo = catNo;
-            return result;
-        }
-
-		public string TestFileFolderPath
+        public string TestFileFolderPath
 		{
 			get
 			{
 				return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "TestFiles");
 			}
 		}
-    }
+
+		public string QuarterlyFileDataSheetName
+		{
+			get
+			{
+				return "Quarterly TA Analysis V3 2015";
+			}
+		}
+		#endregion
+
+		#region Methods
+		public Models.Site GetDummyCompetitor(int catNo)
+		{
+			var result = DummyCompetitor;
+			result.CatNo = catNo;
+			return result;
+		}
+
+		protected bool ComparePrimaryFileUploadAttributes(FileUpload testFileToUpload, FileUpload arg)
+		{
+			return arg.Id == testFileToUpload.Id
+									&& arg.StoredFileName == testFileToUpload.StoredFileName
+									&& arg.UploadDateTime == testFileToUpload.UploadDateTime
+									&& arg.UploadTypeId == testFileToUpload.UploadTypeId;
+		}
+
+		#endregion
+	}
 }

@@ -105,8 +105,9 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
             int competitorId,
             int suggestedPrice)
         {
-            //Arrange
-            setupMocks(fuelTypeId, driveTimeFrom, driveTimeTo);
+			//Arrange
+			#region Arrange
+			setupMocks(fuelTypeId, driveTimeFrom, driveTimeTo);
 
             _site.TrailPriceCompetitorId = competitorId;
 
@@ -122,8 +123,9 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
                 .Returns(DummyDailyPrices.Where(dp => dp.FuelTypeId == fuelTypeId && dp.CatNo == competitor.Competitor.CatNo));
 
 			PriceService sut = new PriceService(_mockRepository.Object, _mockSettingsService.Object, _mockLookupSerivce.Object, _factory.Object);
+			#endregion
 
-            //Act
+			//Act
             sut.CalcPrice(_mockRepository.Object, _site, fuelTypeId, _calcTaskData);
 
             //Assert
@@ -183,8 +185,9 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
         [Test]
         public void When_DoCalcDailyPrices_Method_Called_Then_Valid_Prices_Should_Be_Calculated()
         {
-            //Arrange
-            var testFileUpload = new Models.FileUpload { Id = 1 };
+			//Arrange
+			#region Arrange
+			var testFileUpload = new Models.FileUpload { Id = 1 };
             //GetDailyFileAvailableForCalc call
             _mockRepository
                 .Setup(r => r.GetDailyFileAvailableForCalc(DateTime.Today))
@@ -211,8 +214,9 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
                 .Returns(DummyFuelTypes);
 
 			PriceService sut = new PriceService(_mockRepository.Object, _mockSettingsService.Object, _mockLookupSerivce.Object, _factory.Object);
+			#endregion
 
-            //Act
+			//Act
             sut.DoCalcDailyPrices(DateTime.Today);
 
             //Assert
@@ -236,7 +240,7 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 
 			//Super unleaded price should be created
 			//can't test superunleaded price calculation as it's done in stored procedure
-			//CreateMissingSuperUnleadedFromUnleaded
+			//test call to CreateMissingSuperUnleadedFromUnleaded
         }
 
         #endregion

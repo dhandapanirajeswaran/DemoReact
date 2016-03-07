@@ -1,10 +1,12 @@
 ﻿using JsPlc.Ssc.PetrolPricing.Business;
 using JsPlc.Ssc.PetrolPricing.Core;
+using JsPlc.Ssc.PetrolPricing.Models;
 using JsPlc.Ssc.PetrolPricing.Repository;
 using Moq;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
@@ -18,6 +20,7 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 		Mock<IPetrolPricingRepository> _mockRepository;
 		Mock<ISettingsService> _mockSettingsService;
 		Mock<IPriceService> _mockPriceService;
+		Mock<IDataFileReader> _mockDataFileReader;
 
 		[SetUp]
 		public void SetUp()
@@ -26,34 +29,38 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 
 			_mockSettingsService = new Mock<ISettingsService>();
 			_mockSettingsService.Setup(s => s.GetUploadPath()).Returns(TestFileFolderPath);
+			_mockSettingsService.Setup(s => s.ExcelFileSheetName()).Returns(QuarterlyFileDataSheetName);
 
 			_mockPriceService = new Mock<IPriceService>();
+
+			_mockDataFileReader = new Mock<IDataFileReader>();
 		}
 
 		[Test]
-		public void When_ProcessDailyPrice_Method_Called_Then_Valid_DailyPrice_Item_SHould_Be_Recorded()
+		public void When_ProcessDailyPrice_Method_Called_Then_Valid_DailyPrice_Items_Should_Be_Recorded()
 		{
 			//Arrange
+			#region Arrange
 			var testFileToUpload = DummyFileUploads.First(fu => fu.UploadTypeId == (int)UploadTypes.DailyPriceData);
 
-			int numberOfLinesInTestFile = getNumberOfLinesInTestFile(testFileToUpload);
+			int numberOfLinesInTestFile = getNumberOfLinesInDailyTestFile(testFileToUpload);
 
 			_mockRepository
-				.Setup(r => 
+				.Setup(r =>
 					r.NewDailyPrices(
-					It.IsAny<List<Models.DailyPrice>>(), 
-					It.Is<Models.FileUpload>(arg => arg.Id == testFileToUpload.Id
-					&& arg.OriginalFileName == testFileToUpload.OriginalFileName
-					&& arg.UploadTypeId == testFileToUpload.UploadTypeId), 
+					It.IsAny<List<Models.DailyPrice>>(),
+					It.Is<Models.FileUpload>(arg => ComparePrimaryFileUploadAttributes(testFileToUpload, arg)),
 					It.IsAny<int>()))
 				.Returns(true);
 
-			var sut = new FileService(_mockRepository.Object, _mockPriceService.Object, _mockSettingsService.Object);
+			var sut = new FileService(_mockRepository.Object, _mockPriceService.Object, _mockSettingsService.Object, _mockDataFileReader.Object);
+			#endregion
 
 			//Act
-			sut.ProcessDailyPrice(DummyFileUploads.Where(fu => fu.UploadTypeId == (int)UploadTypes.DailyPriceData).ToList());
+			var result = sut.ProcessDailyPrice(DummyFileUploads.Where(fu => fu.UploadTypeId == (int)UploadTypes.DailyPriceData).ToList());
 
 			//Assert
+			#region Assert
 			//verify import process status changed to 5 - Processing
 			Assert.DoesNotThrow(delegate
 			{
@@ -67,19 +74,19 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 				_mockRepository
 					.Verify(v => v.NewDailyPrices(
 						It.IsAny<List<Models.DailyPrice>>(),
-						It.Is<Models.FileUpload>(arg => arg.Id == testFileToUpload.Id),
+						It.Is<Models.FileUpload>(arg => ComparePrimaryFileUploadAttributes(testFileToUpload, arg)),
 						0
 						), Times.Once());
 			});
-			
+
 			//verify LAST batch has been uploaded
 			Assert.DoesNotThrow(delegate
 			{
 				_mockRepository
 					.Verify(v => v.NewDailyPrices(
-						It.IsAny<List<Models.DailyPrice>>(), 
-						It.Is<Models.FileUpload>(arg => arg.Id == testFileToUpload.Id),
-						(numberOfLinesInTestFile / 1000) * 1000
+						It.IsAny<List<Models.DailyPrice>>(),
+						It.Is<Models.FileUpload>(arg => ComparePrimaryFileUploadAttributes(testFileToUpload, arg)),
+						(numberOfLinesInTestFile / Constants.DailyFileRowsBatchSize) * Constants.DailyFileRowsBatchSize
 						), Times.Once());
 			});
 
@@ -96,15 +103,183 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 				_mockRepository
 					.Verify(v => v.DeleteRecordsForOlderImportsOfDate(DateTime.Today, testFileToUpload.Id), Times.Once());
 			});
+
+			testFileToUpload.StatusId = 10;
+			AssertExtensions.PropertyValuesAreEquals(result, testFileToUpload);
+			#endregion
+		}
+
+		[Test]
+		public void When_ProcessDailyPrice_Method_Called_And_Exception_Occured_Then_Error_Should_Be_Recorded_And_Status_Updated_To_Failed()
+		{
+			//Arrange
+			#region Arrange
+			var testFileToUpload = DummyFileUploads.First(fu => fu.UploadTypeId == (int)UploadTypes.DailyPriceData);
+
+			int numberOfLinesInTestFile = getNumberOfLinesInDailyTestFile(testFileToUpload);
+
+			_mockRepository
+				.Setup(r =>
+					r.NewDailyPrices(
+					It.IsAny<List<Models.DailyPrice>>(),
+					It.Is<Models.FileUpload>(arg => ComparePrimaryFileUploadAttributes(testFileToUpload, arg)),
+					It.IsAny<int>()))
+				.Throws(new ApplicationException());
+
+			var sut = new FileService(_mockRepository.Object, _mockPriceService.Object, _mockSettingsService.Object, _mockDataFileReader.Object);
+			#endregion
+
+			//Act
+			sut.ProcessDailyPrice(DummyFileUploads.Where(fu => fu.UploadTypeId == (int)UploadTypes.DailyPriceData).ToList());
+
+			//Assert
+			#region Assert
+			//verify LogImportError call
+			Assert.DoesNotThrow(delegate
+			{
+				_mockRepository
+					.Verify(v => v.LogImportError(
+						It.Is<Models.FileUpload>(arg =>
+						ComparePrimaryFileUploadAttributes(testFileToUpload, arg)), It.IsAny<string>(), It.IsAny<int?>()), Times.Once());
+			});
+
+
+			//verify import process status changed to 15 - Failed
+			Assert.DoesNotThrow(delegate
+			{
+				_mockRepository
+					.Verify(v => v.UpdateImportProcessStatus(15, It.Is<Models.FileUpload>(arg =>
+						ComparePrimaryFileUploadAttributes(testFileToUpload, arg))), Times.Once());
+			});
+			#endregion
+		}
+
+		[Test]
+		public void When_ProcessQuarterlyFileNew_Method_Called_Then_Valid_Site_And_SiteToCompetitor_Items_Should_Be_Recorded()
+		{
+			//Arrange
+			var testFileToUpload = DummyFileUploads.First(fu => fu.UploadTypeId == (int)UploadTypes.QuarterlySiteData);
+
+			var testFilePathAndName = Path.Combine(TestFileFolderPath, testFileToUpload.StoredFileName);
+
+			var testFileData = new DataFileReader().GetQuarterlyData(testFilePathAndName, QuarterlyFileDataSheetName);
+
+			_mockDataFileReader
+				.Setup(dfr => dfr.GetQuarterlyData(testFilePathAndName, QuarterlyFileDataSheetName))
+				.Returns(testFileData);
+
+			_mockRepository
+				.Setup(r => r.NewQuarterlyRecords(It.IsAny<List<Models.ViewModels.CatalistQuarterly>>(), It.Is<Models.FileUpload>(arg => ComparePrimaryFileUploadAttributes(testFileToUpload, arg)), It.IsAny<int>()))
+				.Returns(true);
+
+			var sut = new FileService(_mockRepository.Object, _mockPriceService.Object, _mockSettingsService.Object, _mockDataFileReader.Object);
+
+			//Act
+			var result = sut.ProcessQuarterlyFileNew(DummyFileUploads.Where(fu => fu.UploadTypeId == (int)UploadTypes.QuarterlySiteData).ToList());
+
+			//Assert
+			#region Assert
+			//verify import process status changed to 5 - Processing
+			Assert.DoesNotThrow(delegate
+			{
+				_mockRepository
+					.Verify(v => v.UpdateImportProcessStatus(5, It.Is<Models.FileUpload>(arg =>
+						ComparePrimaryFileUploadAttributes(testFileToUpload, arg))), Times.Once());
+			});
+
+			//verify DeleteRecordsForQuarterlyUploadStaging call
+			Assert.DoesNotThrow(delegate
+			{
+				_mockRepository
+					.Verify(v => v.DeleteRecordsForQuarterlyUploadStaging(), Times.Once());
+			});
+
+			//verify FIRST batch has been uploaded
+			Assert.DoesNotThrow(delegate
+			{
+				_mockRepository
+					.Verify(v => v.NewQuarterlyRecords(
+						It.IsAny<List<Models.ViewModels.CatalistQuarterly>>(),
+						It.Is<Models.FileUpload>(arg => ComparePrimaryFileUploadAttributes(testFileToUpload, arg)),
+						0
+						), Times.Once());
+			});
+
+			//verify LAST batch has been uploaded
+			var lastBatchLeg = (testFileData.Rows.Count / Constants.QuarterlyFileRowsBatchSize) * Constants.QuarterlyFileRowsBatchSize;
+			_mockRepository
+					.Verify(v => v.NewQuarterlyRecords(
+						It.IsAny<List<Models.ViewModels.CatalistQuarterly>>(),
+						It.Is<Models.FileUpload>(arg => ComparePrimaryFileUploadAttributes(testFileToUpload, arg)),
+						lastBatchLeg
+						), Times.Once());
+
+			//verify ImportQuarterlyUploadStaging call
+			//this will run stored procedure on SQL server 
+			Assert.DoesNotThrow(delegate
+			{
+				_mockRepository
+					.Verify(v => v.ImportQuarterlyUploadStaging(testFileToUpload.Id), Times.Once());
+			});
+
+			//verify import process status changed to 10 - Success
+			Assert.DoesNotThrow(delegate
+			{
+				_mockRepository
+					.Verify(v => v.UpdateImportProcessStatus(10, It.Is<Models.FileUpload>(arg => arg.Id == testFileToUpload.Id)), Times.Once());
+			});
+
+			testFileToUpload.StatusId = 10;
+			AssertExtensions.PropertyValuesAreEquals(result, testFileToUpload);
+
+			#endregion
+		}
+
+		[Test]
+		public void When_ProcessQuarterlyFileNew_Method_Called_And_Exception_Occured_Then_Error_Should_Be_Recorded_And_Status_Updated_To_Failed()
+		{
+			//Arrange
+			var testFileToUpload = DummyFileUploads.First(fu => fu.UploadTypeId == (int)UploadTypes.QuarterlySiteData);
+
+			_mockRepository
+				.Setup(r => r.DeleteRecordsForQuarterlyUploadStaging())
+				.Throws(new ApplicationException());
+
+			var sut = new FileService(_mockRepository.Object, _mockPriceService.Object, _mockSettingsService.Object, _mockDataFileReader.Object);
+
+			//Act
+			sut.ProcessQuarterlyFileNew(DummyFileUploads.Where(fu => fu.UploadTypeId == (int)UploadTypes.QuarterlySiteData).ToList());
+
+			//Assert
+			#region Assert
+			//verify LogImportError call
+			Assert.DoesNotThrow(delegate
+			{
+				_mockRepository
+					.Verify(v => v.LogImportError(
+						It.Is<Models.FileUpload>(arg =>
+						ComparePrimaryFileUploadAttributes(testFileToUpload, arg)), It.IsAny<string>(), It.IsAny<int?>()), Times.Once());
+			});
+
+			
+			//verify import process status changed to 15 - Failed
+			Assert.DoesNotThrow(delegate
+			{
+				_mockRepository
+					.Verify(v => v.UpdateImportProcessStatus(15, It.Is<Models.FileUpload>(arg =>
+						ComparePrimaryFileUploadAttributes(testFileToUpload, arg))), Times.Once());
+			});
+
+			#endregion
 		}
 
 		#region private Methods
 
-		private int getNumberOfLinesInTestFile(Models.FileUpload testFileToUpload)
+		private int getNumberOfLinesInDailyTestFile(Models.FileUpload testFileToUpload)
 		{
 			int linesNumber = 0;
 
-			using (var file = new StreamReader(Path.Combine(TestFileFolderPath, testFileToUpload.StoredFileName).ToString(CultureInfo.InvariantCulture)))
+			using (var file = new StreamReader(Path.Combine(TestFileFolderPath, testFileToUpload.StoredFileName)))
 			{
 				while (file.Peek() >= 0)
 				{

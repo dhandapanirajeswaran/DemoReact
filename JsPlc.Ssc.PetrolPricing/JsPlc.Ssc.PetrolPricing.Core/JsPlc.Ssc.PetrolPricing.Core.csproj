@@ -39,9 +39,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DataFileReader.cs" />
     <Compile Include="Enums.cs" />
-    <Compile Include="IAutoMapperInitialise.cs" />
-    <Compile Include="IPetrolPricingRepository.cs" />
+    <Compile Include="Extensions.cs" />
+    <Compile Include="Interfaces\IAutoMapperInitialise.cs" />
+    <Compile Include="Interfaces\IDataFileReader.cs" />
+    <Compile Include="Interfaces\IPetrolPricingRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Runtime.InteropServices;
-using System.Runtime.Serialization;
 
 namespace JsPlc.Ssc.PetrolPricing.Models
 {
@@ -42,5 +39,5 @@ namespace JsPlc.Ssc.PetrolPricing.Models
         public string UploadedBy { get; set; } // Emailaddr/Username of Uploader
 
         public virtual ICollection<ImportProcessError> ImportProcessErrors { get; set; }
-    }
+	}
 }

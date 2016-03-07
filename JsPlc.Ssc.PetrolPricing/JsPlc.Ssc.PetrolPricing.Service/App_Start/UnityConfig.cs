@@ -1,4 +1,5 @@
 ﻿using JsPlc.Ssc.PetrolPricing.Business;
+using JsPlc.Ssc.PetrolPricing.Core;
 using JsPlc.Ssc.PetrolPricing.IoC;
 using JsPlc.Ssc.PetrolPricing.Models.Persistence;
 using JsPlc.Ssc.PetrolPricing.Repository;
@@ -33,6 +34,7 @@ namespace JsPlc.Ssc.PetrolPricing.Service
             container.RegisterType<ISiteService, SiteService>();
             container.RegisterType<ISettingsService, SettingsService>();
 			container.RegisterType<IFactory, Factory>();
+			container.RegisterType<IDataFileReader, DataFileReader>();
 
             GlobalConfiguration.Configuration.DependencyResolver = new UnityDependencyResolver(container);
         }

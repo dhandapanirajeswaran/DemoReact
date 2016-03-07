@@ -119,18 +119,6 @@ namespace JsPlc.Ssc.PetrolPricing.Models.Common
             return siteVm;
         }
 
-        public static List<DataRow> ToDataRowsList(this DataTable dataTable)
-        {
-            var rowCount = dataTable.Rows.Count;
-            DataRow[] retval = { };
-            if (rowCount <= 0) return retval.ToList();
-
-            var rowsArr = new DataRow[rowCount];
-            dataTable.Rows.CopyTo(rowsArr, 0);
-            retval = rowsArr;
-            return retval.ToList();
-        }
-
         public static EmailSendLog AddErrorMessageToLogEntry(this EmailSendLog logEntry, string message)
         {
             logEntry.IsError = true;

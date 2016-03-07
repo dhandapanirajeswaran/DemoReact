@@ -1,4 +1,5 @@
-﻿using JsPlc.Ssc.PetrolPricing.Models;
+﻿using JsPlc.Ssc.PetrolPricing.Core;
+using JsPlc.Ssc.PetrolPricing.Models;
 using JsPlc.Ssc.PetrolPricing.Models.Common;
 using JsPlc.Ssc.PetrolPricing.Models.ViewModels;
 using JsPlc.Ssc.PetrolPricing.Repository;
@@ -22,13 +23,17 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 
 		private readonly IPetrolPricingRepository _db;
 
+		private readonly IDataFileReader _dataFileReader;
+
 		public FileService(IPetrolPricingRepository db,
 			IPriceService priceService,
-			ISettingsService settingsService)
+			ISettingsService settingsService,
+			IDataFileReader dataFileReader)
 		{
 			_db = db;
 			_priceService = priceService;
 			_settingsService = settingsService;
+			_dataFileReader = dataFileReader;
 		}
 
 		public FileUpload NewUpload(FileUpload fileUpload)
@@ -133,17 +138,15 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 
 					List<bool> importStatus = new List<bool>();
 					
-					int batchLeg = 1000;
-					
 					lineNumber = 0;
 
 					while (lineNumber < listOfDailyPricePrices.Count)
 					{
-						var nextBatch = listOfDailyPricePrices.Skip(lineNumber).Take(batchLeg).ToList();
+						var nextBatch = listOfDailyPricePrices.Skip(lineNumber).Take(Constants.DailyFileRowsBatchSize).ToList();
 
 						importStatus.Add(_db.NewDailyPrices(nextBatch, aFile, lineNumber));
 
-						lineNumber += batchLeg;
+						lineNumber += Constants.DailyFileRowsBatchSize;
 					}
 
 					aFile.StatusId = importStatus.All(c => c) ? 10 : 15;
@@ -176,12 +179,10 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 		/// <returns>The file picked for processing (only one)</returns>
 		public FileUpload ProcessQuarterlyFileNew(List<FileUpload> uploadedFiles)
 		{
-			if (!uploadedFiles.Any()) return null;
+			if (!uploadedFiles.Any()) 
+				return null;
 
-			var latestFile = uploadedFiles.OrderByDescending(x => x.UploadDateTime).ToList().First();
-
-			// start processing only the MOST recent file
-			var aFile = latestFile;
+			var aFile = uploadedFiles.OrderByDescending(x => x.UploadDateTime).ToList().First();
 
 			try
 			{
@@ -190,6 +191,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 				var rows = getXlsDataRows(aFile);
 
 				var dataRows = rows as IList<DataRow> ?? rows.ToList();
+				
 				if (!dataRows.Any())
 				{
 					throw new Exception("No rows found in file:" + aFile.OriginalFileName + " dated:" +
@@ -200,6 +202,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 				_db.DeleteRecordsForQuarterlyUploadStaging();
 
 				var success = importQuarterlyRecordsToStaging(aFile, dataRows); // dumps all rows into the quarterly staging table
+				
 				if (!success)
 				{
 					throw new Exception("Unable to populate staging table in db");
@@ -208,7 +211,9 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 				// RUN sprocs to Add/Update/Delete sites and siteToCompetitors 
 				_db.ImportQuarterlyUploadStaging(aFile.Id);
 
-				_db.UpdateImportProcessStatus(10, aFile); //ok 10, failed 15
+				aFile.StatusId = 10;
+
+				_db.UpdateImportProcessStatus(aFile.StatusId, aFile); //ok 10, failed 15
 			}
 			catch (Exception ex)
 			{
@@ -225,6 +230,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 			using (DataTable dataTable = getQuarterlyData(aFile))
 			{
 				var rows = dataTable.ToDataRowsList();
+
 				return rows;
 			}
 		}
@@ -258,17 +264,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 			var storedFilePath = _settingsService.GetUploadPath();
 			var filePathAndName = Path.Combine(storedFilePath, aFile.StoredFileName);
 
-			var connectionString = string.Format("Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + filePathAndName + ";Extended Properties='Excel 12.0 Xml;HDR=YES;IMEX=1'");
-
-			using (var adapter = new OleDbDataAdapter(String.Format("SELECT * FROM [{0}$]",
-				_settingsService.ExcelFileSheetName()), connectionString))
-			{
-				using (var ds = new DataSet())
-				{
-					adapter.Fill(ds, "x");
-					return ds.Tables[0].Copy();
-				}
-			}
+			return _dataFileReader.GetQuarterlyData(filePathAndName, _settingsService.ExcelFileSheetName());
 		}
 
 		private List<CatalistQuarterly> parseSiteRowsBatch(FileUpload aFile, IEnumerable<DataRow> batchRows, int batchNo)
