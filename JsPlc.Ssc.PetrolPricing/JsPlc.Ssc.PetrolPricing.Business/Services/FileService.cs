@@ -40,17 +40,17 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 		{
 			FileUpload newUpload = _db.NewUpload(fileUpload);
 
-			IEnumerable<FileUpload> filesToProcess;
-			FileUpload processedFile;
+			List<FileUpload> newUploadList = new List<FileUpload> {
+				newUpload
+			};
 
-			const int uploadedStatus = 1;
+			FileUpload processedFile;
 
 			// Use a fire and forget approach
 			switch (newUpload.UploadTypeId)
 			{
 				case 1:
-					filesToProcess = GetFileUploads(newUpload.UploadDateTime, newUpload.UploadTypeId, uploadedStatus);
-					processedFile = ProcessDailyPrice(filesToProcess.ToList()); // rather quick
+					processedFile = ProcessDailyPrice(newUploadList); 
 
 					if (processedFile == null)
 						throw new Exception("Upload failed..");
@@ -59,8 +59,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 
 					break;
 				case 2:
-					filesToProcess = GetFileUploads(newUpload.UploadDateTime, newUpload.UploadTypeId, uploadedStatus);
-					processedFile = ProcessQuarterlyFileNew(filesToProcess.ToList());
+					processedFile = ProcessQuarterlyFileNew(newUploadList);
 
 					if (processedFile == null)
 						throw new Exception("Upload failed..");
@@ -355,6 +354,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 		{
 			// Now see if any File available for calc and kickoff calc if yes..
 			var dpFile = _db.GetDailyFileAvailableForCalc(fileProcessed.UploadDateTime);
+			
 			if (dpFile != null)
 			{
 				_priceService.DoCalcDailyPrices(fileProcessed.UploadDateTime);

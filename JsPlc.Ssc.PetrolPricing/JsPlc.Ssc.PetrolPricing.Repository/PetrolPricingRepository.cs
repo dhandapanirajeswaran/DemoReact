@@ -1153,15 +1153,19 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         // New File Upload
         public FileUpload NewUpload(FileUpload upload)
         {
-            if (upload.Status == null)
-                upload.Status = GetProcessStatuses().First();
+			if (upload.Status == null)
+			{
+				upload.Status = GetProcessStatuses().First();
+			}
+
             if (upload.UploadType == null)
             {
                 upload.UploadType = GetUploadTypes().FirstOrDefault(x => x.Id == upload.UploadTypeId);
             }
 
             var result = _context.FileUploads.Add(upload);
-            _context.SaveChanges();
+            
+			_context.SaveChanges();
 
             return result; // return full object back
         }
@@ -1184,10 +1188,9 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         {
             IEnumerable<FileUpload> files = GetFileUploads();
 
-            if (date != null)
+            if (date.HasValue)
             {
-                files = files.Where(x => x.UploadDateTime.Date.Equals(date.Value.Date));
-                //SqlFunctions.DateDiff("day", x.UploadDateTime, date.Value)
+                files = files.Where(x => x.UploadDateTime.Date == date.Value.Date);
             }
             if (uploadTypeId.HasValue)
             {

@@ -260,7 +260,6 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 						It.Is<Models.FileUpload>(arg =>
 						ComparePrimaryFileUploadAttributes(testFileToUpload, arg)), It.IsAny<string>(), It.IsAny<int?>()), Times.Once());
 			});
-
 			
 			//verify import process status changed to 15 - Failed
 			Assert.DoesNotThrow(delegate
@@ -270,6 +269,77 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 						ComparePrimaryFileUploadAttributes(testFileToUpload, arg))), Times.Once());
 			});
 
+			#endregion
+		}
+
+		[TestCase((int)UploadTypes.DailyPriceData)] // Daliy
+		[TestCase((int)UploadTypes.QuarterlySiteData)] // Quarterly
+		public void When_NewUpload_Method_Called_Then_Daily_Price_Calculation_Should_Be_Fired(
+			int uploadTypeId
+			)
+		{
+			//Arrange
+			var expectedFileUploadForRecalculation = DummyFileUploads.First(fu => fu.UploadTypeId == (int)UploadTypes.DailyPriceData);
+			
+			var testFileToUpload = DummyFileUploads.First(fu => fu.UploadTypeId == uploadTypeId);
+
+			testFileToUpload.UploadTypeId = uploadTypeId;
+
+			_mockRepository
+				.Setup(r => r.NewUpload(testFileToUpload))
+				.Returns(testFileToUpload);
+
+			//GetFileUploads setup
+			_mockRepository
+				.Setup(r => r.GetDailyFileAvailableForCalc(testFileToUpload.UploadDateTime))
+				.Returns(expectedFileUploadForRecalculation);
+
+			var sut = new FileService(_mockRepository.Object, _mockPriceService.Object, _mockSettingsService.Object, _mockDataFileReader.Object);
+
+			//Act
+			sut.NewUpload(testFileToUpload);
+
+			//Assert
+			#region Assert
+			//verify that file has been sent for recalculation
+			Assert.DoesNotThrow(delegate
+			{
+				_mockPriceService
+					.Verify(v => v.DoCalcDailyPrices(expectedFileUploadForRecalculation.UploadDateTime), Times.Once());
+			});
+			#endregion
+		}
+
+		[Test]
+		public void When_NewUpload_Method_Called_And_New_Daily_Upload_File_Not_Found_Then_Daily_Price_Calculation_Should_NOT_Be_Fired()
+		{
+			//Arrange
+			var expectedFileUploadForRecalculation = DummyFileUploads.First(fu => fu.UploadTypeId == (int)UploadTypes.DailyPriceData);
+
+			var testFileToUpload = DummyFileUploads.First(fu => fu.UploadTypeId == (int)UploadTypes.QuarterlySiteData);
+
+			_mockRepository
+				.Setup(r => r.NewUpload(testFileToUpload))
+				.Returns(testFileToUpload);
+
+			//GetFileUploads setup
+			_mockRepository
+				.Setup(r => r.GetDailyFileAvailableForCalc(testFileToUpload.UploadDateTime))
+				.Returns(null as FileUpload);
+
+			var sut = new FileService(_mockRepository.Object, _mockPriceService.Object, _mockSettingsService.Object, _mockDataFileReader.Object);
+
+			//Act
+			sut.NewUpload(testFileToUpload);
+
+			//Assert
+			#region Assert
+			//verify that file has been sent for recalculation
+			Assert.DoesNotThrow(delegate
+			{
+				_mockPriceService
+					.Verify(v => v.DoCalcDailyPrices(expectedFileUploadForRecalculation.UploadDateTime), Times.Never);
+			});
 			#endregion
 		}
 
