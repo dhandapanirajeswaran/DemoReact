@@ -28,8 +28,10 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 
         SitePriceViewModel GetSiteAndPrices(int siteId, DateTime date, string storeName);
 
-        bool ExistsSite(string siteName, int? catNo);
+		bool ExistsSite(Site site);
 
         bool UpdateSite(Site site);
+
+		bool IsUnique(Site site);
     }
 }

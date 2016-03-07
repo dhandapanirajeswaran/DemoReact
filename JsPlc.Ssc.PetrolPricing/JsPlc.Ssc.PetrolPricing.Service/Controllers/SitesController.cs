@@ -107,10 +107,16 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
 
             try
             {
-                if (_siteService.ExistsSite(site.SiteName, site.CatNo))
+                if (_siteService.ExistsSite(Mapper.Map<Site>(site)))
                 {
                     return BadRequest("Site with that name already exists. Please try again.");
                 }
+
+				if (false == _siteService.IsUnique(Mapper.Map<Site>(site)))
+				{
+					return BadRequest("Site with this Name, Pfs Number and Store Number already exists. Please try again.");
+				}
+
                 var su = _siteService.NewSite(site.ToSite());
 
                 return Ok(su.ToSiteViewModel());
@@ -123,17 +129,25 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
 
 
         [System.Web.Http.HttpPut] // Edit new site
-        public async Task<IHttpActionResult> Update(SiteViewModel site)
+        public async Task<IHttpActionResult> Update(SiteViewModel siteViewModel)
         {
-            if (site == null)
+            if (siteViewModel == null)
             {
                 return BadRequest("Invalid passed data: site");
             }
 
+			var site = Mapper.Map<Site>(siteViewModel);
+
+			if (false == _siteService.IsUnique(site))
+			{
+				return BadRequest("Site with this Name, Pfs Number and Store Number already exists. Please try again.");
+			}
+
             try
             {
-                _siteService.UpdateSite(site.ToSite());
-                return Ok(site);
+				_siteService.UpdateSite(site);
+                
+				return Ok(siteViewModel);
             }
             catch (Exception ex)
             {

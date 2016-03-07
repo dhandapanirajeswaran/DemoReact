@@ -69,7 +69,8 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         {
             return _context.Sites
                 .Include(s => s.Emails)
-                .OrderBy(q => q.Id);
+                .OrderBy(q => q.Id)
+				.AsNoTracking();
         }
 
         public Dictionary<string, int> GetCompanies()

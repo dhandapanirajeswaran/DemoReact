@@ -191,10 +191,10 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             site.Emails = nonBlankVals;
 
             var createdSite = _serviceFacade.NewSite(site);
-            if (createdSite != null) 
-                return RedirectToAction("Index", new { msg = "Site: " + createdSite.SiteName + " created successfully" });
+            if (createdSite.ViewModel != null) 
+                return RedirectToAction("Index", new { msg = "Site: " + createdSite.ViewModel.SiteName + " created successfully" });
 
-            ViewBag.ErrorMessage = "Unable to create site. Check if this CatNo or SiteName already exists.";
+			ViewBag.ErrorMessage = createdSite.ErrorMessage;
             return View(site);
         }
 
@@ -255,20 +255,20 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
         [System.Web.Mvc.HttpPost]
         public ActionResult Edit(SiteViewModel site)
         {
-            // TODO Somehow email edits fail on VM, MediaType Formatter error when text/html returned from api.
+			var model = _serviceFacade.GetSite(site.Id);
+
+			var sortedCompetitors = model.Competitors.Where(c => c.IsSainsburysSite == false).OrderBy(c => c.SiteName).ToList();
+
+			sortedCompetitors.Insert(0, new SiteViewModel
+			{
+				SiteName = "Not specified"
+			});
+			
+			site.Competitors = sortedCompetitors;
+
             if (!ModelState.IsValid)
             {
                 ViewBag.ErrorMessage = "Please check for validation errors under each field.";
-
-                var model = _serviceFacade.GetSite(site.Id);
-
-                var sortedCompetitors = model.Competitors.Where(c => c.IsSainsburysSite == false).OrderBy(c => c.SiteName).ToList();
-
-                sortedCompetitors.Insert(0, new SiteViewModel
-                {
-                    SiteName = "Not specified"
-                });
-                site.Competitors = sortedCompetitors;
 
                 return View(site);
             }
@@ -287,10 +287,11 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 
             var editSite = _serviceFacade.EditSite(site);
 
-            if (editSite != null) return RedirectToAction("Index", new { msg = "Site: " + editSite.SiteName + " updated successfully" });
+            if (editSite.ViewModel != null)
+				return RedirectToAction("Index", new { msg = "Site: " + editSite.ViewModel.SiteName + " updated successfully" });
 
-            ViewBag.ErrorMessage = "Unable to create site.";
-            return View();
+			ViewBag.ErrorMessage = editSite.ErrorMessage;
+			return View(site);
         }
 
     }

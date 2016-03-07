@@ -38,6 +38,7 @@ namespace JsPlc.Ssc.PetrolPricing.Models
         public int? StoreNo { get; set; }
 
         [Display(Name = "Pfs no")]
+		[Range(1, int.MaxValue )]
         public int? PfsNo { get; set; }
 
         [Display(Name = "Is JS site")]

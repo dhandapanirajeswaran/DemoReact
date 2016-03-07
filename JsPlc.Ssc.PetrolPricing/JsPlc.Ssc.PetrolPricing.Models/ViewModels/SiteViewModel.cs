@@ -35,10 +35,12 @@ namespace JsPlc.Ssc.PetrolPricing.Models
 
         [Required]
         [Display(Name = "Store no")]
+		[Range(1, int.MaxValue)]
         public int? StoreNo { get; set; }
 
         [Required]
         [Display(Name = "Pfs no")]
+		[Range(1, int.MaxValue)]
         public int? PfsNo { get; set; }
 
         [DefaultValue(true)]

@@ -16,6 +16,7 @@ using JsPlc.Ssc.PetrolPricing.Models;
 using JsPlc.Ssc.PetrolPricing.Models.Enums;
 using JsPlc.Ssc.PetrolPricing.Models.ViewModels;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
 {
@@ -68,17 +69,29 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             return (response.IsSuccessStatusCode) ? result : null;
         }
 
-        public SiteViewModel NewSite(SiteViewModel site)
+		public FacadeResponse<SiteViewModel> NewSite(SiteViewModel site)
         {
             const string apiUrl = "api/Sites/";
 
             var response = _client.Value.PostAsync(apiUrl, site, new JsonMediaTypeFormatter()).Result;
             var result = response.Content.ReadAsAsync<SiteViewModel>().Result;
 
-            return (response.IsSuccessStatusCode) ? result : null;
+			FacadeResponse<SiteViewModel> resultViewModel = new FacadeResponse<SiteViewModel>();
+
+			if (response.IsSuccessStatusCode)
+			{
+				resultViewModel.ViewModel = result;
+			}
+			else
+			{
+				JObject joResponse = JObject.Parse(response.Content.ReadAsStringAsync().Result);
+				resultViewModel.ErrorMessage = joResponse["Message"].ToString();
+			}
+
+			return resultViewModel;
         }
 
-        public SiteViewModel EditSite(SiteViewModel site)
+		public FacadeResponse<SiteViewModel> EditSite(SiteViewModel site)
         {
             //TODO
             const string apiUrl = "api/Sites/";
@@ -86,7 +99,19 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             var response = _client.Value.PutAsync(apiUrl, site, new JsonMediaTypeFormatter()).Result;
             var result = response.Content.ReadAsAsync<SiteViewModel>().Result;
 
-            return (response.IsSuccessStatusCode) ? result : null;
+			FacadeResponse<SiteViewModel> resultViewModel = new FacadeResponse<SiteViewModel>();
+
+			if (response.IsSuccessStatusCode)
+			{
+				resultViewModel.ViewModel = result;
+			}
+			else
+			{
+				JObject joResponse = JObject.Parse(response.Content.ReadAsStringAsync().Result);
+				resultViewModel.ErrorMessage = joResponse["Message"].ToString();
+			}
+
+			return resultViewModel;
         }
 
         public async Task<List<EmailSendLog>> EmailUpdatedPricesSites(int siteId = 0, DateTime? forDate = null, string apiName = "emailSites")
