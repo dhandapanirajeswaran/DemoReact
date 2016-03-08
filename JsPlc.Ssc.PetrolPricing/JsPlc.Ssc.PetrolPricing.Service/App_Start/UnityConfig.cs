@@ -5,6 +5,7 @@ using JsPlc.Ssc.PetrolPricing.Models.Persistence;
 using JsPlc.Ssc.PetrolPricing.Repository;
 using Microsoft.Practices.Unity;
 using System.Data.Entity;
+using System.Net.Mail;
 using System.Web.Http;
 using Unity.WebApi;
 
@@ -24,7 +25,9 @@ namespace JsPlc.Ssc.PetrolPricing.Service
             Bootstrapper.ConfigureIoC(container);
 
             container.RegisterType<RepositoryContext>(new TransientLifetimeManager());
-            container.RegisterType(typeof(IPetrolPricingRepository), typeof(PetrolPricingRepository), new TransientLifetimeManager());
+			container.RegisterType(typeof(ISmtpClient), typeof(SmtpClientWrapper), new TransientLifetimeManager());
+            
+			container.RegisterType(typeof(IPetrolPricingRepository), typeof(PetrolPricingRepository), new TransientLifetimeManager());
 
             container.RegisterType<ILookupService, LookupService>();
             container.RegisterType<IEmailService, EmailService>();

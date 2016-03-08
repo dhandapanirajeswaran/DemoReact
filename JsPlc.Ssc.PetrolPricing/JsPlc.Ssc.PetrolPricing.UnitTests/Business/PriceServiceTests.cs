@@ -14,7 +14,7 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
         Mock<IPetrolPricingRepository> _mockRepository;
         Mock<ISettingsService> _mockSettingsService;
         Mock<ILookupService> _mockLookupSerivce;
-		Mock<IFactory> _factory;
+		Mock<IFactory> _mockFactory;
 
         Models.Site _site;
         PriceCalculationTaskData _calcTaskData;
@@ -32,9 +32,9 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 
             #endregion
 			
-			_factory = new Mock<IFactory>();
-			_factory
-				.Setup(f => f.Create<IPetrolPricingRepository>(It.IsAny<CreationMethod>(), null))
+			_mockFactory = new Mock<IFactory>();
+			_mockFactory
+				.Setup(f => f.Create<IPetrolPricingRepository>(CreationMethod.ServiceLocator, null))
 				.Returns(_mockRepository.Object);
 
 
@@ -74,7 +74,7 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
             //Arrange
             setupMocks(fuelTypeId, driveTimeFrom, driveTimeTo);
 
-			PriceService sut = new PriceService(_mockRepository.Object, _mockSettingsService.Object, _mockLookupSerivce.Object, _factory.Object);
+			PriceService sut = new PriceService(_mockRepository.Object, _mockSettingsService.Object, _mockLookupSerivce.Object, _mockFactory.Object);
 
             //Act
             sut.CalcPrice(_mockRepository.Object, _site, fuelTypeId, _calcTaskData);
@@ -122,7 +122,7 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
                 .Setup(r => r.GetDailyPricesForFuelByCompetitors(It.IsAny<IEnumerable<int>>(), fuelTypeId, DateTime.Today))
                 .Returns(DummyDailyPrices.Where(dp => dp.FuelTypeId == fuelTypeId && dp.CatNo == competitor.Competitor.CatNo));
 
-			PriceService sut = new PriceService(_mockRepository.Object, _mockSettingsService.Object, _mockLookupSerivce.Object, _factory.Object);
+			PriceService sut = new PriceService(_mockRepository.Object, _mockSettingsService.Object, _mockLookupSerivce.Object, _mockFactory.Object);
 			#endregion
 
 			//Act
@@ -157,7 +157,7 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
                 .Setup(r => r.AnyDailyPricesForFuelOnDate(fuelTypeId, DateTime.Today, It.IsAny<int>()))
                 .Returns(false);
 
-			PriceService sut = new PriceService(_mockRepository.Object, _mockSettingsService.Object, _mockLookupSerivce.Object, _factory.Object);
+			PriceService sut = new PriceService(_mockRepository.Object, _mockSettingsService.Object, _mockLookupSerivce.Object, _mockFactory.Object);
 
             //Act
             sut.CalcPrice(_mockRepository.Object, _site, fuelTypeId, _calcTaskData);
@@ -213,7 +213,7 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
                 .Setup(r => r.GetFuelTypes())
                 .Returns(DummyFuelTypes);
 
-			PriceService sut = new PriceService(_mockRepository.Object, _mockSettingsService.Object, _mockLookupSerivce.Object, _factory.Object);
+			PriceService sut = new PriceService(_mockRepository.Object, _mockSettingsService.Object, _mockLookupSerivce.Object, _mockFactory.Object);
 			#endregion
 
 			//Act

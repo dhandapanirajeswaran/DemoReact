@@ -284,15 +284,6 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
 
             var result = response.Content.ReadAsAsync<IEnumerable<ImportProcessStatus>>().Result;
 
-            // TODO Consistent return value/exception handling approach
-            //If (response.IsSuccessStatusCode)
-            //var result = await response.Content.ReadAs<T>().Result;
-            //if (!response.IsSuccessStatusCode)
-            //{
-            //   var result = await response.Content.ReadAsStringAsync(); // Reads the Http
-            //   throw new ApplicationException(result); // json error structure
-            //}
-
             return (response.IsSuccessStatusCode) ? result : null;
         }
 
@@ -305,7 +296,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
 
             var result = await response.Content.ReadAsStringAsync();
 
-            return result; //(response.IsSuccessStatusCode) ? result : null;
+            return result; 
         }
 
         /// <summary>
@@ -349,10 +340,6 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
                 var response = await client.SendAsync(request);
 
                 return response;
-                //if (response.IsSuccessStatusCode && response.Content.IsHttpResponseMessageContent())
-                //{
-                //    return await response.Content.ReadAsHttpResponseMessageAsync();
-                //}
             }
         }
         public void Dispose()

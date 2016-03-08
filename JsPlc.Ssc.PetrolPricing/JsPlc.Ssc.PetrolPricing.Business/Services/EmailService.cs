@@ -20,6 +20,7 @@ using JsPlc.Ssc.PetrolPricing.Repository;
 using MoreLinq;
 using System.Diagnostics;
 using System.IO;
+using JsPlc.Ssc.PetrolPricing.Core;
 
 namespace JsPlc.Ssc.PetrolPricing.Business
 {
@@ -32,11 +33,15 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 
 		protected readonly ISettingsService _settingsService;
 
+		protected readonly IFactory _factory;
+
 		public EmailService(IPetrolPricingRepository db,
-			ISettingsService settingsService)
+			ISettingsService settingsService,
+			IFactory factory)
 		{
 			_db = db;
 			_settingsService = settingsService;
+			_factory = factory;
 		}
 
 		/// <summary>
@@ -47,7 +52,8 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 		/// <param name="endTradeDate">Usually today's date</param>
 		/// <param name="reportBackEmailAddr">Emails the send log to reportBackEmailAddr(LoginUser)</param>
 		/// <returns></returns>
-		public async Task<ConcurrentDictionary<int, EmailSendLog>> SendEmailAsync(IEnumerable<Site> listSites,
+		public async Task<ConcurrentDictionary<int, EmailSendLog>> SendEmailAsync(
+			IEnumerable<Site> listSites,
 			DateTime endTradeDate,
 			string reportBackEmailAddr)
 		{
@@ -127,9 +133,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 
 						if (sendable)
 						{
-#if !DEBUG
                             smtpClient.Send(message);
-#endif
 							logEntry.SetSuccessful();
 						}
 					}
@@ -185,8 +189,8 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 			{
 				string mailFrom = _settingsService.EmailFrom(); // "akiaip5@gmail.com";
 
-				const string mailTo = "somesiteEmail@sainsburys.co.uk"; //"akiaip5@gmail.com";
-				const string mailSubject = "Hello, Test Email from Gmail SMTP 587";
+				const string mailTo = "andrey.shihov@sainsburys.co.uk"; //"akiaip5@gmail.com";
+				const string mailSubject = "Hello, Test Email from AWS";
 				const string mailBody = "<h1>Hello, This is a <span syle='color: red'>Test Email from Smtp</span> from C# code</h1>";
 
 				// Send the email. 
@@ -241,11 +245,13 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 		/// Creates an SMTP Client based on AppSettings Keys
 		/// </summary>
 		/// <returns></returns>
-		private SmtpClient createSmtpClient()
+		private ISmtpClient createSmtpClient()
 		{
 			// Localhost, Gmail, AWS
 			var mailHostSelector = _settingsService.MailHostSelector();
-			var client = new SmtpClient();
+
+			var client = _factory.Create<ISmtpClient>(CreationMethod.ServiceLocator, null);
+			
 			switch (mailHostSelector.ToUpper())
 			{
 				case "LOCALHOST":
@@ -278,8 +284,8 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 						client.EnableSsl = true;
 						client.UseDefaultCredentials = true;
 						client.Credentials = new NetworkCredential(
-							userName: "AKIAIP5MYCP3ETOHJ73A",
-							password: "AmDoy02X/bZc5EBMh8AJiOsc6iyodxnN2K7F4epLl3Vt");
+							userName: "AKIAJIYB2PBTAJXNPGGQ",
+							password: "ApiiZmKvY+cGYII55wTyQR768+jcNQnPtKeRji3cgGVg");
 					}
 					break;
 			}
