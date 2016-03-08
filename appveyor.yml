@@ -6,6 +6,7 @@ assembly_info:
   assembly_version: '{version}'
   assembly_file_version: '{version}'
   assembly_informational_version: '{version}'
+platform: x86
 services:
   - mssql2014
 before_build:
