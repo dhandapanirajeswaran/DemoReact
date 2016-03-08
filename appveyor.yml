@@ -11,7 +11,7 @@ services:
 before_build:
 - cmd: for /R %%f in (*.sln) do nuget restore "%%f"
 - ps: >-
-    Start-Process .\AccessDatabaseEngine.exe -ArgumentList "/quiet"
+    iwr -useb https://download.microsoft.com/download/f/d/8/fd8c20d8-e38a-48b6-8691-542403b91da1/AccessDatabaseEngine.exe | Start-Process .\AccessDatabaseEngine.exe -ArgumentList "/quiet"
     $x64items = @(Get-ChildItem "HKLM:SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall")
 
     $x64items + @(Get-ChildItem "HKLM:SOFTWARE\wow6432node\Microsoft\Windows\CurrentVersion\Uninstall") `
