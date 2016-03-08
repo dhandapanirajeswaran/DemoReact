@@ -14,12 +14,10 @@ namespace JsPlc.Ssc.PetrolPricing.Business
             DateTime endTradeDate,
             string reportBackEmailAddr);
 
-        Task<EmailToSet> GetEmailToAddresses(Site site);
-
         Task<List<EmailSendLog>> SaveEmailLogToRepositoryAsync(List<EmailSendLog> logEntries);
 
         Task<List<EmailSendLog>> GetEmailSendLog(int siteId, DateTime? forDate);
 
-        SmtpClient CreateSmtpClient();
+        string SendTestEmail();
     }
 }
