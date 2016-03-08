@@ -11,23 +11,18 @@ services:
 before_build:
 - cmd: for /R %%f in (*.sln) do nuget restore "%%f"
 - ps: >-
-    iwr -useb https://download.microsoft.com/download/f/d/8/fd8c20d8-e38a-48b6-8691-542403b91da1/AccessDatabaseEngine.exe | Start-Process .\AccessDatabaseEngine.exe -ArgumentList "/quiet"
-    $x64items = @(Get-ChildItem "HKLM:SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall")
-
-    $x64items + @(Get-ChildItem "HKLM:SOFTWARE\wow6432node\Microsoft\Windows\CurrentVersion\Uninstall") `
-       | ForEach-object { Get-ItemProperty Microsoft.PowerShell.Core\Registry::$_ } `
-       | Sort-Object -Property DisplayName `
-       | Select-Object -Property DisplayName,DisplayVersion
+    Start-BitsTransfer -Source https://download.microsoft.com/download/f/d/8/fd8c20d8-e38a-48b6-8691-542403b91da1/AccessDatabaseEngine.exe -Destination .
+    Start-Process .\AccessDatabaseEngine.exe -ArgumentList "/quiet"
 build:
   project: JsPlc.Ssc.PetrolPricing\PetrolPricing.sln
   publish_wap: true
 deploy:
 - provider: Environment
   name: petrolpricing-development
-#notifications:
-#- provider: Slack
-#  incoming_webhook: https://hooks.slack.com/services/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
-#  channel: petrolpricing
-#  on_build_success: true
-#  on_build_failure: true
-#  on_build_status_changed: true
+notifications:
+- provider: Slack
+  incoming_webhook: https://hooks.slack.com/services/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
+  channel: petrolpricing
+  on_build_success: true
+  on_build_failure: true
+  on_build_status_changed: true
