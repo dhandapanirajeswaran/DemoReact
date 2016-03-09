@@ -11,8 +11,8 @@ services:
 before_build:
 - cmd: for /R %%f in (*.sln) do nuget restore "%%f"
 - ps: >-
-    Invoke-WebRequest -Uri https://download.microsoft.com/download/f/d/8/fd8c20d8-e38a-48b6-8691-542403b91da1/AccessDatabaseEngine.exe -OutFile ./ACE.exe
-    Start-Process .\ACE.exe -ArgumentList "/quiet"
+    Invoke-WebRequest -Uri https://download.microsoft.com/download/f/d/8/fd8c20d8-e38a-48b6-8691-542403b91da1/AccessDatabaseEngine.exe -OutFile AccessDatabaseEngine.exe
+    Start-Process AccessDatabaseEngine.exe -ArgumentList "/quiet" -Wait
 build:
   project: JsPlc.Ssc.PetrolPricing\PetrolPricing.sln
   publish_wap: true
