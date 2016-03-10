@@ -30,6 +30,8 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 
 		Models.Site _site;
 
+		const string _expectedEmailAddress = "andrey.shihov@sainsburys.co.uk";
+
 		[SetUp]
 		public void SetUp()
 		{
@@ -41,8 +43,8 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 
 			_mockSettingsService = new Mock<ISettingsService>();
 			_mockSettingsService.Setup(ss => ss.EmailSubject()).Returns("Test Email Subject");
-			_mockSettingsService.Setup(ss => ss.EmailFrom()).Returns("andrey.shihov@sainsburys.co.uk");
-			_mockSettingsService.Setup(ss => ss.FixedEmailTo()).Returns("andrey.shihov@sainsburys.co.uk");
+			_mockSettingsService.Setup(ss => ss.EmailFrom()).Returns(_expectedEmailAddress);
+			_mockSettingsService.Setup(ss => ss.FixedEmailTo()).Returns(_expectedEmailAddress);
 			_mockSettingsService.Setup(ss => ss.MailHostSelector()).Returns("localhost");
 
 			_mockSmtpClient = new Mock<ISmtpClient>();
@@ -74,60 +76,7 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 
 			//Arrange
 			#region Arrange
-			if (testCase == BuildEmailBodyTestCases.NoPreviousTradeDatePriceFound)
-			{
-				//test when there is no price for the previous trade day
-				_site.Prices = new List<Models.SitePrice> { 
-					new Models.SitePrice {
-						DateOfCalc = DateTime.Today,
-						FuelTypeId = 1,
-						SuggestedPrice = 1000,
-						OverriddenPrice = 1001
-					}
-				};
-			}
-			else if (testCase == BuildEmailBodyTestCases.FuelTypeTradeChange)
-			{
-				//test when fuels has been added/removed
-				_site.Prices = new List<Models.SitePrice> { 
-					new Models.SitePrice {
-						DateOfCalc = DateTime.Today,
-						FuelTypeId = 2,
-						SuggestedPrice = 1004,
-						OverriddenPrice = 1005
-					},
-					new Models.SitePrice {
-						DateOfCalc = DateTime.Today,
-						FuelTypeId = 1,
-						SuggestedPrice = 1000,
-						OverriddenPrice = 1001
-					},
-					new Models.SitePrice {
-						DateOfCalc = DateTime.Today.AddDays(-1),
-						FuelTypeId = 1,
-						SuggestedPrice = 1002,
-						OverriddenPrice = 1003
-					}
-				};
-			}
-			else if (testCase == BuildEmailBodyTestCases.PriceDifferenceChange)
-			{
-				//test when fuel price has changed
-				_site.Prices = new List<Models.SitePrice> { 
-					new Models.SitePrice {
-						DateOfCalc = DateTime.Today,
-						FuelTypeId = 1,
-						SuggestedPrice = 1000,
-						OverriddenPrice = 1001
-					},
-					new Models.SitePrice {
-						DateOfCalc = DateTime.Today.AddDays(-1),
-						FuelTypeId = 1,
-						SuggestedPrice = 1002,
-						OverriddenPrice = 1003
-					}
-				};
-			}
+			populateSitePricesWithChanges(testCase);
 			#endregion
 
 			//Act
@@ -151,6 +100,104 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 		{
 			//Arrange
 			#region Arrange
+			populateSitePricesWithoutChanges(testCase);
+			#endregion
+
+			//Act
+			var result = EmailService.BuildEmailBody(_site, DateTime.Today);
+
+			//Assert
+			//email body is not empty
+			Assert.IsEmpty(result);
+		}
+
+		[TestCase(BuildEmailBodyTestCases.NoPreviousTradeDatePriceFound)]
+		[TestCase(BuildEmailBodyTestCases.FuelTypeTradeChange)]
+		[TestCase(BuildEmailBodyTestCases.PriceDifferenceChange)]
+		public void When_SendEmailAsync_Method_Called_And_All_Requirements_Are_Met_Then_Email_Should_Be_Sent
+		(
+			BuildEmailBodyTestCases testCase
+		)
+		{
+			//Arrange
+			#region Arrange
+			populateSitePricesWithChanges(testCase);
+
+			_site.Emails = new List<Models.SiteEmail>
+			{
+				new Models.SiteEmail {
+					EmailAddress = _expectedEmailAddress
+				}
+			};
+
+			var expectedEmailBody = EmailService.BuildEmailBody(_site, DateTime.Today);
+
+			List<Models.Site> sites = new List<Models.Site> { _site };
+
+			var sut = new EmailService(_mockRepository.Object, _mockSettingsService.Object, _mockFactory.Object);
+
+			#endregion
+			//Act
+			var result = sut.SendEmailAsync(sites, DateTime.Today, _expectedEmailAddress).Result;
+
+			//Assert
+			Assert.IsTrue(result.Count == 1);
+			Assert.IsTrue(result.First().Value.IsSuccess);
+			Assert.DoesNotThrow(delegate
+			{
+				_mockSmtpClient
+					.Verify(v => v.Send(It.Is<MailMessage>(arg =>
+						arg.Body == expectedEmailBody
+						&& arg.To.First().Address == _expectedEmailAddress)), Times.Once());
+			});
+		}
+
+		[TestCase(BuildEmailBodyTestCases.NoPreviousTradeDatePriceFound)]
+		[TestCase(BuildEmailBodyTestCases.FuelTypeTradeChange)]
+		[TestCase(BuildEmailBodyTestCases.PriceDifferenceChange)]
+		public void When_SendEmailAsync_Method_Called_And_There_Is_No_Price_Change_Then_Email_Should_NOT_Be_Sent
+		(
+			BuildEmailBodyTestCases testCase
+		)
+		{
+			//Arrange
+			#region Arrange
+
+			//test when there is not change in price - email should NOT be sent
+			populateSitePricesWithoutChanges(testCase);
+
+			_site.Emails = new List<Models.SiteEmail>
+			{
+				new Models.SiteEmail {
+					EmailAddress = _expectedEmailAddress
+				}
+			};
+
+			var expectedEmailBody = EmailService.BuildEmailBody(_site, DateTime.Today);
+
+			List<Models.Site> sites = new List<Models.Site> { _site };
+
+			var sut = new EmailService(_mockRepository.Object, _mockSettingsService.Object, _mockFactory.Object);
+
+			#endregion
+			//Act
+			var result = sut.SendEmailAsync(sites, DateTime.Today, _expectedEmailAddress).Result;
+
+			//Assert
+			Assert.IsTrue(result.Count == 1);
+			Assert.IsFalse(result.First().Value.IsSuccess);
+			Assert.DoesNotThrow(delegate
+			{
+				_mockSmtpClient
+					.Verify(v => v.Send(It.Is<MailMessage>(arg =>
+						arg.Body == expectedEmailBody
+						&& arg.To.First().Address == _expectedEmailAddress)), Times.Never());
+			});
+		}
+
+		#region Private Methods
+		private void populateSitePricesWithoutChanges(BuildEmailBodyTestCases testCase)
+		{
 			if (testCase == BuildEmailBodyTestCases.NoPreviousTradeDatePriceFound)
 			{
 				//test when there is price for the previous trade day and it's not changed
@@ -217,25 +264,14 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 					}
 				};
 			}
-			#endregion
-
-			//Act
-			var result = EmailService.BuildEmailBody(_site, DateTime.Today);
-
-			//Assert
-			//email body is not empty
-			Assert.IsEmpty(result);
 		}
 
-		[Test]
-		public void When_SendEmailAsync_Method_Called_All_Requirements_Met_Then_Email_Should_Be_Sent()
+		private void populateSitePricesWithChanges(BuildEmailBodyTestCases testCase)
 		{
-			//Arrange
-			#region Arrange
-			var expectedEmailAddress = "andrey.shihov@sainsburys.co.uk";
-			
-			//test when there is no price for the previous trade day - email should be sent
-			_site.Prices = new List<Models.SitePrice> { 
+			if (testCase == BuildEmailBodyTestCases.NoPreviousTradeDatePriceFound)
+			{
+				//test when there is no price for the previous trade day
+				_site.Prices = new List<Models.SitePrice> { 
 					new Models.SitePrice {
 						DateOfCalc = DateTime.Today,
 						FuelTypeId = 1,
@@ -243,34 +279,50 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 						OverriddenPrice = 1001
 					}
 				};
-
-			_site.Emails = new List<Models.SiteEmail>
+			}
+			else if (testCase == BuildEmailBodyTestCases.FuelTypeTradeChange)
 			{
-				new Models.SiteEmail {
-					EmailAddress = expectedEmailAddress
-				}
-			};
-
-			var expectedEmailBody = EmailService.BuildEmailBody(_site, DateTime.Today);
-
-			List<Models.Site> sites = new List<Models.Site>{ _site };
-
-			var sut = new EmailService(_mockRepository.Object, _mockSettingsService.Object, _mockFactory.Object);
-
-			#endregion
-			//Act
-			var result = sut.SendEmailAsync(sites, DateTime.Today, expectedEmailAddress).Result;
-
-			//Assert
-			Assert.IsTrue(result.Count == 1);
-			Assert.IsTrue(result.First().Value.IsSuccess);
-			Assert.DoesNotThrow(delegate
+				//test when fuels has been added/removed
+				_site.Prices = new List<Models.SitePrice> { 
+					new Models.SitePrice {
+						DateOfCalc = DateTime.Today,
+						FuelTypeId = 2,
+						SuggestedPrice = 1004,
+						OverriddenPrice = 1005
+					},
+					new Models.SitePrice {
+						DateOfCalc = DateTime.Today,
+						FuelTypeId = 1,
+						SuggestedPrice = 1000,
+						OverriddenPrice = 1001
+					},
+					new Models.SitePrice {
+						DateOfCalc = DateTime.Today.AddDays(-1),
+						FuelTypeId = 1,
+						SuggestedPrice = 1002,
+						OverriddenPrice = 1003
+					}
+				};
+			}
+			else if (testCase == BuildEmailBodyTestCases.PriceDifferenceChange)
 			{
-				_mockSmtpClient
-					.Verify(v => v.Send(It.Is<MailMessage>(arg =>
-						arg.Body == expectedEmailBody
-						&& arg.To.First().Address == expectedEmailAddress)), Times.Once());
-			});
+				//test when fuel price has changed
+				_site.Prices = new List<Models.SitePrice> { 
+					new Models.SitePrice {
+						DateOfCalc = DateTime.Today,
+						FuelTypeId = 1,
+						SuggestedPrice = 1000,
+						OverriddenPrice = 1001
+					},
+					new Models.SitePrice {
+						DateOfCalc = DateTime.Today.AddDays(-1),
+						FuelTypeId = 1,
+						SuggestedPrice = 1002,
+						OverriddenPrice = 1003
+					}
+				};
+			}
 		}
+		#endregion
 	}
 }

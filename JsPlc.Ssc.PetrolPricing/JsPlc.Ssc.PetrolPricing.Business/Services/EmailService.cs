@@ -119,6 +119,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 								//continue; // In LIVE Mode, we cant send email as the To list is blank
 							}
 						}
+						//emailBody will be empty if there are not changes found for the site
 						if (String.IsNullOrEmpty(emailBody))
 						{
 							logEntry.EmailBody = emailBody;
