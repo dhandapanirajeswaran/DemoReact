@@ -199,7 +199,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 				}
 
 				// Delete older rows before import
-				_db.DeleteRecordsForQuarterlyUploadStaging();
+				_db.TruncateQuarterlyUploadStaging();
 
 				var success = importQuarterlyRecordsToStaging(aFile, dataRows); // dumps all rows into the quarterly staging table
 
@@ -208,8 +208,23 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 					throw new Exception("Unable to populate staging table in db");
 				}
 
-				// RUN sprocs to Add/Update/Delete sites and siteToCompetitors 
-				_db.ImportQuarterlyUploadStaging(aFile.Id);
+				var newQuarterlyRecords = _db.GetQuarterlyRecords();
+
+				var sitesToUpdateCatNo = updateExistingSainsburysSitesWithNewCatNo(newQuarterlyRecords);
+				
+				_db.UpdateSitesCatNo(sitesToUpdateCatNo);
+
+				var newSitesToAdd = addNewSites(newQuarterlyRecords);
+
+				_db.NewSites(newSitesToAdd);
+
+				var sitesToUpdateByCatNo = updateExistingSitesWithNewDataByCatNo(newQuarterlyRecords);
+
+				_db.UpdateSitesPrimaryInformation(sitesToUpdateByCatNo);
+
+				var newSiteToCompetitorRecords = getNewSiteToCompetitors(newQuarterlyRecords);
+
+				_db.UpdateSiteToCompetitor(newSiteToCompetitorRecords);
 
 				aFile.StatusId = 10;
 
@@ -232,6 +247,14 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 			catch (Exception ex)
 			{
 				_db.LogImportError(aFile, ex.Message, null);
+				_db.LogImportError(aFile, ex.StackTrace, null);
+
+				if(ex.InnerException != null)
+				{
+					_db.LogImportError(aFile, ex.InnerException.Message, null);
+					_db.LogImportError(aFile, ex.InnerException.StackTrace, null);
+				}
+
 				_db.UpdateImportProcessStatus(15, aFile); //failed 15
 				return null;
 			}
@@ -239,6 +262,121 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 		}
 
 		#region Private Methods
+		private List<Site> updateExistingSainsburysSitesWithNewCatNo(IEnumerable<QuarterlyUploadStaging> allQuarterlyRecords)
+		{
+			var allSites = _db.GetSites();
+
+			var jsSitesWithoutCatNo = allSites.Where(s => s.IsSainsburysSite && s.CatNo.HasValue == false).ToDictionary(k => k.SiteName, v => v);
+
+			var jsSiteNamesWithoutCatNo = jsSitesWithoutCatNo.Select(js => js.Key).Distinct().ToArray();
+
+			var newSainsburysSitesWithCatNo = allQuarterlyRecords
+				.Where(qr => qr.Brand.ToUpperInvariant().Equals(Const.SAINSBURYS)
+				&& jsSiteNamesWithoutCatNo.Contains(qr.SiteName));
+
+			var result = new List<Site>();
+
+			foreach (var newSainsburysSiteWithCatNo in newSainsburysSitesWithCatNo)
+			{
+				var siteToUpdate = jsSitesWithoutCatNo[newSainsburysSiteWithCatNo.SiteName];
+				siteToUpdate.CatNo = newSainsburysSiteWithCatNo.CatNo;
+
+				if (false == result.Any(r => r.CatNo == newSainsburysSiteWithCatNo.CatNo))
+				{
+					result.Add(siteToUpdate);
+				}
+			}
+
+			return result;
+		}
+
+		private List<Site> addNewSites(IEnumerable<QuarterlyUploadStaging> allQuarterlyRecords)
+		{
+			var allSites = _db.GetSites();
+
+			var allExistingCatNo = allSites
+				.Where(s => s.CatNo.HasValue)
+				.Select(s => s.CatNo)
+				.Distinct()
+				.ToArray();
+
+			var newSiteRecords = allQuarterlyRecords
+				.Where(ns => allExistingCatNo.Contains(ns.CatNo) == false)
+				.GroupBy(g => g.CatNo)
+				.Select(s => s.First());
+
+			var result = new List<Site>();
+
+			foreach(var newSiteRecord in newSiteRecords)
+			{
+				result.Add(newSiteRecord.ToSite());
+			}
+
+			return result;
+		}
+
+		private List<Site> updateExistingSitesWithNewDataByCatNo(IEnumerable<QuarterlyUploadStaging> allQuarterlyRecords)
+		{
+			var allExistingSitesWithCatNo = _db.GetSites()
+				.Where(s => s.CatNo.HasValue)
+				.ToDictionary(k => k.CatNo.Value, v => v);
+
+			List<Site> result = new List<Site>();
+
+			foreach (var quarterlyRecord in allQuarterlyRecords)
+			{ 
+				if(allExistingSitesWithCatNo.ContainsKey(quarterlyRecord.CatNo))
+				{
+					var existingSite = allExistingSitesWithCatNo[quarterlyRecord.CatNo];
+					
+					var existingSiteWithNewValues = quarterlyRecord.ToSite();
+
+					if (existingSite.ToHashCode() != existingSiteWithNewValues.ToHashCode()
+						&& false == result.Any(r => r.CatNo == existingSiteWithNewValues.CatNo))
+					{
+						existingSiteWithNewValues.IsActive = existingSite.IsActive;
+						existingSiteWithNewValues.IsSainsburysSite = existingSite.IsSainsburysSite;
+
+						result.Add(existingSiteWithNewValues);
+					}
+				}
+			}
+
+			return result;
+		}
+
+		private List<SiteToCompetitor> getNewSiteToCompetitors(IEnumerable<QuarterlyUploadStaging> allQuarterlyRecords)
+		{
+			var allExistingSites = _db.GetSites()
+				.Where(s => s.CatNo.HasValue)
+				.ToDictionary(k => k.CatNo.Value, v => v);
+
+			var result = new List<SiteToCompetitor>();
+
+			foreach (var quarterlyRecord in allQuarterlyRecords)
+			{
+				Site jsSite = allExistingSites.ContainsKey(quarterlyRecord.SainsSiteCatNo) ? allExistingSites[quarterlyRecord.SainsSiteCatNo] : null;
+				
+				Site compSite = allExistingSites.ContainsKey(quarterlyRecord.CatNo) ? allExistingSites[quarterlyRecord.CatNo] : null;
+
+				if (jsSite != null && compSite != null)
+				{
+					var newRecord = new SiteToCompetitor
+					{
+						SiteId = jsSite.Id,
+						CompetitorId = compSite.Id,
+						Rank = quarterlyRecord.Rank,
+						DriveTime = quarterlyRecord.DriveTime,
+						Distance = quarterlyRecord.DriveDist
+					};
+
+					result.Add(newRecord);
+				}
+			}
+
+			return result;
+		}
+
 		// Reads XLS file and returns Rows
 		private IEnumerable<DataRow> getXlsDataRows(FileUpload aFile)
 		{

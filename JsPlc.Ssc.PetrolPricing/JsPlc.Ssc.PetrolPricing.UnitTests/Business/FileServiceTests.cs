@@ -154,11 +154,11 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 			#endregion
 		}
 
-#if !DEBUG
-		//workaround for AppVeyor
-		//System.InvalidOperationException : The 'Microsoft.ACE.OLEDB.12.0' provider is not registered on the local machine.
-    [Ignore("Only valid for debug")] 
-#endif
+//#if !DEBUG
+//		//workaround for AppVeyor
+//		//System.InvalidOperationException : The 'Microsoft.ACE.OLEDB.12.0' provider is not registered on the local machine.
+//	[Ignore("Only valid for debug")] 
+//#endif
 		[Test]
 		public void When_ProcessQuarterlyFileNew_Method_Called_Then_Valid_Site_And_SiteToCompetitor_Items_Should_Be_Recorded()
 		{
@@ -196,7 +196,7 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 			Assert.DoesNotThrow(delegate
 			{
 				_mockRepository
-					.Verify(v => v.DeleteRecordsForQuarterlyUploadStaging(), Times.Once());
+					.Verify(v => v.TruncateQuarterlyUploadStaging(), Times.Once());
 			});
 
 			//verify FIRST batch has been uploaded
@@ -219,12 +219,12 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 						lastBatchLeg
 						), Times.Once());
 
-			//verify ImportQuarterlyUploadStaging call
-			//this will run stored procedure on SQL server 
+			//verify UpdateSitesCatNo call
+			//TO DO - update this test to deal with new method functionality
 			Assert.DoesNotThrow(delegate
 			{
 				_mockRepository
-					.Verify(v => v.ImportQuarterlyUploadStaging(testFileToUpload.Id), Times.Once());
+					.Verify(v => v.UpdateSitesCatNo(It.IsAny<List<Site>>()), Times.Once());
 			});
 
 			//verify import process status changed to 10 - Success
@@ -247,7 +247,7 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 			var testFileToUpload = DummyFileUploads.First(fu => fu.UploadTypeId == (int)UploadTypes.QuarterlySiteData);
 
 			_mockRepository
-				.Setup(r => r.DeleteRecordsForQuarterlyUploadStaging())
+				.Setup(r => r.TruncateQuarterlyUploadStaging())
 				.Throws(new ApplicationException());
 
 			var sut = new FileService(_mockRepository.Object, _mockPriceService.Object, _mockSettingsService.Object, _mockDataFileReader.Object);
@@ -257,15 +257,7 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 
 			//Assert
 			#region Assert
-			//verify LogImportError call
-			Assert.DoesNotThrow(delegate
-			{
-				_mockRepository
-					.Verify(v => v.LogImportError(
-						It.Is<Models.FileUpload>(arg =>
-						ComparePrimaryFileUploadAttributes(testFileToUpload, arg)), It.IsAny<string>(), It.IsAny<int?>()), Times.Once());
-			});
-
+			
 			//verify import process status changed to 15 - Failed
 			Assert.DoesNotThrow(delegate
 			{
@@ -277,11 +269,11 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 			#endregion
 		}
 
-#if !DEBUG
-		//workaround for AppVeyor
-		//System.InvalidOperationException : The 'Microsoft.ACE.OLEDB.12.0' provider is not registered on the local machine.
-    [Ignore("Only valid for debug")] 
-#endif
+//#if !DEBUG
+//		//workaround for AppVeyor
+//		//System.InvalidOperationException : The 'Microsoft.ACE.OLEDB.12.0' provider is not registered on the local machine.
+//	[Ignore("Only valid for debug")] 
+//#endif
 		[TestCase((int)UploadTypes.DailyPriceData)] // Daliy
 		[TestCase((int)UploadTypes.QuarterlySiteData)] // Quarterly
 		public void When_NewUpload_Method_Called_Then_Daily_Price_Calculation_Should_Be_Fired(
@@ -336,11 +328,11 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 		}
 
 
-#if !DEBUG
-		//workaround for AppVeyor
-		//System.InvalidOperationException : The 'Microsoft.ACE.OLEDB.12.0' provider is not registered on the local machine.
-    [Ignore("Only valid for debug")] 
-#endif
+//#if !DEBUG
+//		//workaround for AppVeyor
+//		//System.InvalidOperationException : The 'Microsoft.ACE.OLEDB.12.0' provider is not registered on the local machine.
+//	[Ignore("Only valid for debug")] 
+//#endif
 		[Test]
 		public void When_NewUpload_Method_Called_And_New_Daily_Upload_File_Not_Found_Then_Daily_Price_Calculation_Should_NOT_Be_Fired()
 		{
