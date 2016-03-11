@@ -264,9 +264,9 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 		#region Private Methods
 		private List<Site> updateExistingSainsburysSitesWithNewCatNo(IEnumerable<QuarterlyUploadStaging> allQuarterlyRecords)
 		{
-			var allSites = _db.GetSites();
-
-			var jsSitesWithoutCatNo = allSites.Where(s => s.IsSainsburysSite && s.CatNo.HasValue == false).ToDictionary(k => k.SiteName, v => v);
+			var jsSitesWithoutCatNo = _db.GetSites()
+				.Where(s => s.IsSainsburysSite && s.CatNo.HasValue == false)
+				.ToDictionary(k => k.SiteName, v => v);
 
 			var jsSiteNamesWithoutCatNo = jsSitesWithoutCatNo.Select(js => js.Key).Distinct().ToArray();
 
@@ -319,6 +319,8 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 		{
 			var allExistingSitesWithCatNo = _db.GetSites()
 				.Where(s => s.CatNo.HasValue)
+				.GroupBy(g => g.CatNo)
+				.Select(g => g.First())
 				.ToDictionary(k => k.CatNo.Value, v => v);
 
 			List<Site> result = new List<Site>();
@@ -349,6 +351,8 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 		{
 			var allExistingSites = _db.GetSites()
 				.Where(s => s.CatNo.HasValue)
+				.GroupBy(g => g.CatNo)
+				.Select(g => g.First())
 				.ToDictionary(k => k.CatNo.Value, v => v);
 
 			var result = new List<SiteToCompetitor>();

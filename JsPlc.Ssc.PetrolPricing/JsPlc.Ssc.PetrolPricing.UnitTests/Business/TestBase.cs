@@ -9,16 +9,16 @@ using System.Threading.Tasks;
 
 namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 {
-    public class TestBase
+	public class TestBase
 	{
 		#region Properties
 		protected List<Models.SiteToCompetitor> DummySiteToCompetitors
-        {
-            get
-            {
-                var result = new List<Models.SiteToCompetitor>();
+		{
+			get
+			{
+				var result = new List<Models.SiteToCompetitor>();
 
-                result.AddRange(new List<Models.SiteToCompetitor> { 
+				result.AddRange(new List<Models.SiteToCompetitor> { 
                     new Models.SiteToCompetitor
                     {
                          SiteId = 1,
@@ -74,31 +74,31 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
                 }
                 });
 
-                return result;
-            }
-        }
+				return result;
+			}
+		}
 
-        public Models.Site DummyCompetitor
-        {
-            get
-            {
-                return new Models.Site
-                {
-                    Id = 1,
-                    CatNo = 1
-                };
-            }
-        }
+		public Models.Site DummyCompetitor
+		{
+			get
+			{
+				return new Models.Site
+				{
+					Id = 1,
+					CatNo = 1
+				};
+			}
+		}
 
-        public List<Models.DailyPrice> DummyDailyPrices
-        {
-            get
-            {
-                var result = new List<Models.DailyPrice>();
+		public List<Models.DailyPrice> DummyDailyPrices
+		{
+			get
+			{
+				var result = new List<Models.DailyPrice>();
 
-                #region FuelTypeId = 1
+				#region FuelTypeId = 1
 
-                result.AddRange(new List<Models.DailyPrice>
+				result.AddRange(new List<Models.DailyPrice>
                 {
                 new Models.DailyPrice
                 {
@@ -144,11 +144,11 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
                 }
                 });
 
-                #endregion
+				#endregion
 
-                #region FuelTypeId = 2
+				#region FuelTypeId = 2
 
-                result.AddRange(new List<Models.DailyPrice>
+				result.AddRange(new List<Models.DailyPrice>
                 {
                 new Models.DailyPrice
                 {
@@ -194,17 +194,17 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
                 }
                 });
 
-                #endregion
+				#endregion
 
-                return result;
-            }
-        }
+				return result;
+			}
+		}
 
-        public List<Models.FuelType> DummyFuelTypes
-        {
-            get
-            {
-                var result = new List<Models.FuelType>
+		public List<Models.FuelType> DummyFuelTypes
+		{
+			get
+			{
+				var result = new List<Models.FuelType>
                 {
                     new Models.FuelType {
                         Id = 1
@@ -217,9 +217,9 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
                     }
                 };
 
-                return result;
-            }
-        }
+				return result;
+			}
+		}
 
 		public List<Models.FileUpload> DummyFileUploads
 		{
@@ -245,7 +245,7 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 			}
 		}
 
-        public string TestFileFolderPath
+		public string TestFileFolderPath
 		{
 			get
 			{
@@ -258,6 +258,156 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 			get
 			{
 				return "Quarterly TA Analysis V3 2015";
+			}
+		}
+
+		public List<QuarterlyUploadStaging> DummyQuarterlyUploadStagingRecords
+		{
+			get
+			{
+				var result = new List<QuarterlyUploadStaging> { 
+				new QuarterlyUploadStaging{
+					SainsSiteName = "SAINSBURYS HENDON",
+					SainsSiteTown = "LONDON",
+					SainsSiteCatNo = 100,
+					Rank = 1,
+					DriveDist = 1.42f,
+					DriveTime = 6.66f,
+					CatNo = 26054,
+					Brand = "ASDA",
+					//to test site update added " 1" to the end
+					SiteName = "ASDA COLINDALE AUTOMAT 1", 
+					Addr = "CAPITOL WAY",
+					Suburb = "COLINDALE",
+					Town  = "LONDON",
+					PostCode = "NW9 0EW",
+					Company = "ASDA STORES PLC",
+					Ownership = "HYPERMARKET"
+				},
+				new QuarterlyUploadStaging{
+					SainsSiteName = "SAINSBURYS HENDON",
+					SainsSiteTown = "LONDON",
+					SainsSiteCatNo = 100,
+					Rank = 2,
+					DriveDist = 3.57f,
+					DriveTime = 10.9f,
+					CatNo = 1735,
+					Brand = "TESCO",
+					SiteName = "TESCO BRENT CROSS HENDON WAY",
+					Addr = "TILLING ROAD",
+					Suburb = "BRENT CROSS",
+					Town  = "LONDON",
+					PostCode = "NW2 1LZ",
+					Company = "TESCO STORES LTD",
+					Ownership = "HYPERMARKET"
+				},
+				//for updating CatNo
+				new QuarterlyUploadStaging {
+					SainsSiteName = "SAINSBURYS HAYES",
+					SainsSiteTown = "HAYES",
+					SainsSiteCatNo = 1291,
+					Rank = 24,
+					DriveDist = 10.43f,
+					DriveTime = 27.47f,
+					CatNo = 100,
+					Brand = "SAINSBURYS",
+					SiteName = "SAINSBURYS HENDON",
+					Addr = "HYDE ESTATE ROAD",
+					Suburb = "HENDON",
+					Town  = "LONDON",
+					PostCode = "NW9 6JX",
+					Company = "J SAINSBURY PLC",
+					Ownership = "HYPERMARKET"
+				},
+				//for adding new site
+				new QuarterlyUploadStaging{
+					SainsSiteName = "SAINSBURYS HENDON",
+					SainsSiteTown = "LONDON",
+					SainsSiteCatNo = 100,
+					Rank = 3,
+					DriveDist = 2.51f,
+					DriveTime = 11.93f,
+					CatNo = 108,
+					Brand = "MORRISONS",
+					SiteName = "MORRISONS QUEENSBURY",
+					Addr = "CUMBERLAND ROAD",
+					Suburb = "QUEENSBURY",
+					Town  = "LONDON",
+					PostCode = "NW9 6RN",
+					Company = "WM MORRISONS SUPERMARKETS PLC",
+					Ownership = "HYPERMARKET"
+				}
+
+				};
+
+				return result;
+			}
+		}
+
+		public List<Site> DummySites
+		{
+			get
+			{
+				var result = new List<Site> {
+					new Site {
+						Id = 1,
+						CatNo = 100,
+						Brand = "SAINSBURYS",
+						SiteName = "SAINSBURYS HENDON",
+						Address="HYDE ESTATE ROAD",
+						Suburb = "HENDON",
+						Town = "LONDON",
+						PostCode = "NW9 6JX",
+						Company = "J SAINSBURY PLC",
+						Ownership = "HYPERMARKET",
+						IsSainsburysSite = true,
+						IsActive = true
+					},
+					new Site { //same as above but with null CatNo
+						Id = 1,
+						CatNo = null,
+						Brand = "SAINSBURYS",
+						SiteName = "SAINSBURYS HENDON", //should be matching with SainsSiteName in DummyQuarterlyUploadStagingRecords
+						Address="HYDE ESTATE ROAD",
+						Suburb = "HENDON",
+						Town = "LONDON",
+						PostCode = "NW9 6JX",
+						Company = "J SAINSBURY PLC",
+						Ownership = "HYPERMARKET",
+						IsSainsburysSite = true,
+						IsActive = true
+					},
+					new Site {
+						Id = 2,
+						CatNo = 26054,
+						Brand = "ASDA",
+						SiteName = "ASDA COLINDALE AUTOMAT",
+						Address="CAPITOL WAY",
+						Suburb = "COLINDALE",
+						Town = "LONDON",
+						PostCode = "NW9 0EW",
+						Company = "ASDA STORES PLC",
+						Ownership = "HYPERMARKET",
+						IsSainsburysSite = false,
+						IsActive = true
+					},
+					new Site {
+						Id = 3,
+						CatNo = 1735,
+						Brand = "TESCO",
+						SiteName = "TESCO BRENT CROSS HENDON WAY",
+						Address="TILLING ROAD",
+						Suburb = "BRENT CROSS",
+						Town = "LONDON",
+						PostCode = "NW2 1LZ",
+						Company = "TESCO STORES LTD",
+						Ownership = "HYPERMARKET",
+						IsSainsburysSite = false,
+						IsActive = true
+					}
+				};
+
+				return result;
 			}
 		}
 		#endregion
