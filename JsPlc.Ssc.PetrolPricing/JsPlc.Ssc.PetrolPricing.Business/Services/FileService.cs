@@ -53,7 +53,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 					processedFile = ProcessDailyPrice(newUploadList);
 
 					if (processedFile == null)
-						throw new Exception("Upload failed..");
+						throw new FileUploadException("Upload failed. Contact support team.");
 
 					runRecalc(processedFile);
 
@@ -62,13 +62,13 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 					processedFile = ProcessQuarterlyFileNew(newUploadList);
 
 					if (processedFile == null)
-						throw new Exception("Upload failed..");
+						throw new FileUploadException("Upload failed. Contact support team.");
 
 					runRecalc(processedFile);
 
 					break;
 				default:
-					throw new ApplicationException("Not a valid File Type to import:" + newUpload.UploadTypeId);
+					throw new InvalidOperationException(string.Format("Unsupported file type: {0}. Contact support team." + newUpload.UploadTypeId));
 			}
 			return newUpload;
 		}
@@ -115,11 +115,11 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 				_db.UpdateImportProcessStatus(5, aFile);//Processing 5
 				var storedFilePath = _settingsService.GetUploadPath();
 				var filePathAndName = Path.Combine(storedFilePath, aFile.StoredFileName);
+				int lineNumber = 0;
+				bool hasWarning = false;
 				try
 				{
 					List<DailyPrice> listOfDailyPricePrices = new List<DailyPrice>();
-
-					int lineNumber = 0;
 
 					using (var file = new StreamReader(filePathAndName.ToString(CultureInfo.InvariantCulture)))
 					{
@@ -129,42 +129,92 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 
 							string line = file.ReadLine();
 
-							var newDailyPrice = parseDailyLineValues(line, lineNumber, aFile);
+							try
+							{
+								var newDailyPrice = parseDailyLineValues(line, lineNumber, aFile);
 
-							listOfDailyPricePrices.Add(newDailyPrice);
+								listOfDailyPricePrices.Add(newDailyPrice);
+							}
+							catch (Exception ex)
+							{
+								//log error and continue loading file
+								var message = string.Format("Unable to parse daily prices file line: {0}. Fix this line data and try again or contact support team.", lineNumber);
+
+								_db.LogImportError(aFile,
+									message,
+									lineNumber);
+
+								_db.LogImportError(aFile,
+									ex.Message,
+									lineNumber);
+
+								_db.LogImportError(aFile,
+									ex.StackTrace,
+									lineNumber);
+
+								hasWarning = true;
+							}
 						}
 					}
 
 					List<bool> importStatus = new List<bool>();
 
+					//reset linNumber to 0
 					lineNumber = 0;
 
 					while (lineNumber < listOfDailyPricePrices.Count)
 					{
-						var nextBatch = listOfDailyPricePrices.Skip(lineNumber).Take(Constants.DailyFileRowsBatchSize).ToList();
+						try
+						{
+							var nextBatch = listOfDailyPricePrices.Skip(lineNumber).Take(Constants.DailyFileRowsBatchSize).ToList();
 
-						importStatus.Add(_db.NewDailyPrices(nextBatch, aFile, lineNumber));
-
+							importStatus.Add(_db.NewDailyPrices(nextBatch, aFile, lineNumber));
+						}
+						catch (Exception ex)
+						{
+							throw new DailyFileNewBatchException(string.Format("Unable to load daily prices batch number: {0}. Contact support team.", lineNumber), ex);
+						}
 						lineNumber += Constants.DailyFileRowsBatchSize;
 					}
 
-					aFile.StatusId = importStatus.All(c => c) ? 10 : 15;
+					aFile.StatusId = importStatus.All(c => c) 
+						? (int)ImportProcessStatuses.Success
+						: (int)ImportProcessStatuses.Failed;
+
+					if (hasWarning && aFile.StatusId == (int)ImportProcessStatuses.Success)
+						aFile.StatusId = (int)ImportProcessStatuses.Warning; // Warning
 
 					_db.UpdateImportProcessStatus(aFile.StatusId, aFile);
 
-					if (aFile.StatusId == 10)
+					if (aFile.StatusId == (int)ImportProcessStatuses.Success)
 					{
-						// We clear out the dailyPrices for older imports and keep ONLY Latest set of DailyPrices
-						// Reason - To keep DailyPrice table lean. Otherwise CalcPrice will take a long time to troll through a HUGE table
-						_db.DeleteRecordsForOlderImportsOfDate(DateTime.Today, aFile.Id);
-						// Exit on first Successful Calc
-						break; // exit foreach 
+						try
+						{
+							// We clear out the dailyPrices for older imports and keep ONLY Latest set of DailyPrices
+							// Reason - To keep DailyPrice table lean. Otherwise CalcPrice will take a long time to troll through a HUGE table
+							_db.DeleteRecordsForOlderImportsOfDate(DateTime.Today, aFile.Id);
+							// Exit on first Successful Calc
+							break; // exit foreach 
+						}
+						catch (Exception ex)
+						{
+							throw new ApplicationException("Unable to delete today loaded Daily Prices. Contact support team.", ex);
+						}
 					}
 				}
 				catch (Exception ex)
 				{
-					_db.LogImportError(aFile, ex.Message + " filePath=" + filePathAndName, null);
+					_db.LogImportError(aFile, ex.Message + " filePath=" + filePathAndName, lineNumber);
+					_db.LogImportError(aFile, ex.StackTrace, lineNumber);
+
+					if (ex.InnerException != null)
+					{
+						_db.LogImportError(aFile, ex.InnerException.Message, lineNumber);
+						_db.LogImportError(aFile, ex.InnerException.StackTrace, lineNumber);
+					}
+
 					_db.UpdateImportProcessStatus(15, aFile);
+
 					return null;
 				}
 			}
@@ -186,6 +236,8 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 
 			try
 			{
+				aFile.StatusId = (int)ImportProcessStatuses.Success;
+
 				_db.UpdateImportProcessStatus(5, aFile); //Processing 5
 
 				var rows = getXlsDataRows(aFile);
@@ -194,62 +246,80 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 
 				if (!dataRows.Any())
 				{
-					throw new Exception("No rows found in file:" + aFile.OriginalFileName + " dated:" +
-										aFile.UploadDateTime);
+					throw new ApplicationException(string.Format("No rows found in the file: {0}; Date: {1}; Contact support team.",
+										aFile.OriginalFileName, aFile.UploadDateTime));
 				}
 
 				// Delete older rows before import
 				_db.TruncateQuarterlyUploadStaging();
 
-				var success = importQuarterlyRecordsToStaging(aFile, dataRows); // dumps all rows into the quarterly staging table
+				bool gotWarning = false;
+
+				var success = importQuarterlyRecordsToStaging(aFile, dataRows, out gotWarning); // dumps all rows into the quarterly staging table
 
 				if (!success)
 				{
-					throw new Exception("Unable to populate staging table in db");
+					throw new ImportQuarterlyRecordsToStagingException("Unable to populate staging table in db. Contact support team.");
 				}
+
+				if (gotWarning)
+					aFile.StatusId = (int)ImportProcessStatuses.Warning;
 
 				var newQuarterlyRecords = _db.GetQuarterlyRecords();
 
-				var sitesToUpdateCatNo = updateExistingSainsburysSitesWithNewCatNo(newQuarterlyRecords);
-				
-				_db.UpdateSitesCatNo(sitesToUpdateCatNo);
+				try
+				{
+					var sitesToUpdateCatNo = updateExistingSainsburysSitesWithNewCatalistNo(newQuarterlyRecords);
 
-				var newSitesToAdd = addNewSites(newQuarterlyRecords);
+					_db.UpdateSitesCatNo(sitesToUpdateCatNo);
+				}
+				catch (Exception ex)
+				{
+					throw new CatalistNumberUpdateException("Unable update Catalist Numbers. Contact support team.", ex);
+				}
 
-				_db.NewSites(newSitesToAdd);
+				try
+				{
+					var newSitesToAdd = addNewSites(newQuarterlyRecords);
 
-				var sitesToUpdateByCatNo = updateExistingSitesWithNewDataByCatNo(newQuarterlyRecords);
+					_db.NewSites(newSitesToAdd);
 
-				_db.UpdateSitesPrimaryInformation(sitesToUpdateByCatNo);
+				}
+				catch (Exception ex)
+				{
+					throw new NewSiteException("Unable to add new Sites. Contact support team.", ex);
+				}
 
-				var newSiteToCompetitorRecords = getNewSiteToCompetitors(newQuarterlyRecords);
+				try
+				{
+					var sitesToUpdateByCatNo = updateExistingSitesWithNewDataByCatNo(newQuarterlyRecords);
 
-				_db.UpdateSiteToCompetitor(newSiteToCompetitorRecords);
+					_db.UpdateSitesPrimaryInformation(sitesToUpdateByCatNo);
+				}
+				catch (Exception ex)
+				{
+					throw new UpdateSiteException("Unable to update Sites details. Contact support team.", ex);
+				}
 
-				aFile.StatusId = 10;
+				try
+				{
+					var newSiteToCompetitorRecords = getNewSiteToCompetitors(newQuarterlyRecords);
+
+					_db.UpdateSiteToCompetitor(newSiteToCompetitorRecords);
+				}
+				catch (Exception ex)
+				{
+					throw new NewSiteToCompetitorException("Unable to create Site to Competitors records. Contact support team.", ex);
+				}
 
 				_db.UpdateImportProcessStatus(aFile.StatusId, aFile); //ok 10, failed 15
-			}
-			catch (OleDbException ex)
-			{
-				if(ex.Message.Contains("Make sure that it does not include invalid characters or punctuation and that it is not too long."))
-				{
-					var message = string.Format("Invalid Sheet 1 name. Expected name: {0}", _settingsService.ExcelFileSheetName());
-					_db.LogImportError(aFile, message, null);
-					_db.UpdateImportProcessStatus(15, aFile); //failed 15
-					return null;
-				}
-				else
-				{
-					throw;
-				}
 			}
 			catch (Exception ex)
 			{
 				_db.LogImportError(aFile, ex.Message, null);
 				_db.LogImportError(aFile, ex.StackTrace, null);
 
-				if(ex.InnerException != null)
+				if (ex.InnerException != null)
 				{
 					_db.LogImportError(aFile, ex.InnerException.Message, null);
 					_db.LogImportError(aFile, ex.InnerException.StackTrace, null);
@@ -262,7 +332,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 		}
 
 		#region Private Methods
-		private List<Site> updateExistingSainsburysSitesWithNewCatNo(IEnumerable<QuarterlyUploadStaging> allQuarterlyRecords)
+		private List<Site> updateExistingSainsburysSitesWithNewCatalistNo(IEnumerable<QuarterlyUploadStaging> allQuarterlyRecords)
 		{
 			var jsSitesWithoutCatNo = _db.GetSites()
 				.Where(s => s.IsSainsburysSite && s.CatNo.HasValue == false)
@@ -307,7 +377,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 
 			var result = new List<Site>();
 
-			foreach(var newSiteRecord in newSiteRecords)
+			foreach (var newSiteRecord in newSiteRecords)
 			{
 				result.Add(newSiteRecord.ToSite());
 			}
@@ -326,11 +396,11 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 			List<Site> result = new List<Site>();
 
 			foreach (var quarterlyRecord in allQuarterlyRecords)
-			{ 
-				if(allExistingSitesWithCatNo.ContainsKey(quarterlyRecord.CatNo))
+			{
+				if (allExistingSitesWithCatNo.ContainsKey(quarterlyRecord.CatNo))
 				{
 					var existingSite = allExistingSitesWithCatNo[quarterlyRecord.CatNo];
-					
+
 					var existingSiteWithNewValues = quarterlyRecord.ToSite();
 
 					if (existingSite.ToHashCode() != existingSiteWithNewValues.ToHashCode()
@@ -360,7 +430,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 			foreach (var quarterlyRecord in allQuarterlyRecords)
 			{
 				Site jsSite = allExistingSites.ContainsKey(quarterlyRecord.SainsSiteCatNo) ? allExistingSites[quarterlyRecord.SainsSiteCatNo] : null;
-				
+
 				Site compSite = allExistingSites.ContainsKey(quarterlyRecord.CatNo) ? allExistingSites[quarterlyRecord.CatNo] : null;
 
 				if (jsSite != null && compSite != null)
@@ -398,14 +468,23 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 		/// <param name="aFile"></param>
 		/// <param name="allRows"></param>
 		/// <returns></returns>
-		private bool importQuarterlyRecordsToStaging(FileUpload aFile, IEnumerable<DataRow> allRows)
+		private bool importQuarterlyRecordsToStaging(FileUpload aFile, IEnumerable<DataRow> allRows, out bool hasWarning)
 		{
 			int batchNo = 0;
+			hasWarning = false;
+
 			foreach (IEnumerable<DataRow> batchRows in allRows.Batch(Constants.QuarterlyFileRowsBatchSize))
 			{
-				List<CatalistQuarterly> allSites = parseSiteRowsBatch(aFile, batchRows, batchNo);
+				bool gotWarning = false;
+
+				List<CatalistQuarterly> allSites = parseSiteRowsBatch(aFile, batchRows, batchNo, out gotWarning);
+
+				if (gotWarning)
+					hasWarning = true;
+
 				var batchSuccess =
 					_db.NewQuarterlyRecords(allSites, aFile, batchNo * Constants.QuarterlyFileRowsBatchSize);
+
 				if (!batchSuccess)
 				{
 					return false;
@@ -424,18 +503,23 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 			return _dataFileReader.GetQuarterlyData(filePathAndName, _settingsService.ExcelFileSheetName());
 		}
 
-		private List<CatalistQuarterly> parseSiteRowsBatch(FileUpload aFile, IEnumerable<DataRow> batchRows, int batchNo)
+		private List<CatalistQuarterly> parseSiteRowsBatch(FileUpload aFile, IEnumerable<DataRow> batchRows, int batchNo, out bool hasWarnings)
 		{
 			List<CatalistQuarterly> siteCatalistData = new List<CatalistQuarterly>();
+
+			hasWarnings = false;
+
 			int rowCount = 0;
+
 			//starting from 2 to avoid headings held in row 1
 			foreach (DataRow row in batchRows)
 			{
 				rowCount++;
+
+				CatalistQuarterly site = new CatalistQuarterly();
+
 				try
 				{
-					CatalistQuarterly site = new CatalistQuarterly();
-
 					//Sainsburys Store
 					site.SainsSiteName = row[0].ToString();
 					site.SainsSiteTown = row[1].ToString();
@@ -461,12 +545,29 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 				}
 				catch (Exception ex)
 				{
-					//log error and continue..
+					//log error and continue loading file
+					var message = string.Format("Unable to parse line from Catalist Quarterly File - line {0}. SainsCatNo: {1}. CatNo: {2}. SainsSiteName: {3}. SiteName: {4}",
+						(batchNo * Constants.QuarterlyFileRowsBatchSize) + rowCount,
+						row[2].ToString(),
+						row[6].ToString(),
+						row[0].ToString(),
+						row[8].ToString());
+
 					_db.LogImportError(aFile,
-						ex.Message + string.Format(" --> Unable to add/parse line from Catalist Quarterly File - line {0}. Values 1: {1}. Value 2: {2}. JS name: {3}. Site name: {4}. Row to string: {5}", (batchNo * Constants.QuarterlyFileRowsBatchSize) + rowCount, row[2].ToString(), row[6].ToString(), row[0].ToString(), row[8].ToString(), row.ToString()),
+						message,
 						rowCount);
-					throw;
+
+					_db.LogImportError(aFile,
+						ex.Message,
+						rowCount);
+
+					_db.LogImportError(aFile,
+						ex.StackTrace,
+						rowCount);
+
+					hasWarnings = true;
 				}
+
 			}
 
 			return siteCatalistData;

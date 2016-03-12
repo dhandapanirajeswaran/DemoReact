@@ -94,7 +94,7 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 			Assert.DoesNotThrow(delegate
 			{
 				_mockRepository
-					.Verify(v => v.UpdateImportProcessStatus(10, It.Is<Models.FileUpload>(arg => arg.Id == testFileToUpload.Id)), Times.Once());
+					.Verify(v => v.UpdateImportProcessStatus((int)ImportProcessStatuses.Success, It.Is<Models.FileUpload>(arg => arg.Id == testFileToUpload.Id)), Times.Once());
 			});
 
 			//verify deletion of today's daily prices upload attempts
@@ -104,7 +104,7 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 					.Verify(v => v.DeleteRecordsForOlderImportsOfDate(DateTime.Today, testFileToUpload.Id), Times.Once());
 			});
 
-			testFileToUpload.StatusId = 10;
+			testFileToUpload.StatusId = (int)ImportProcessStatuses.Success;
 			AssertExtensions.PropertyValuesAreEquals(result, testFileToUpload);
 			#endregion
 		}
@@ -140,7 +140,7 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 				_mockRepository
 					.Verify(v => v.LogImportError(
 						It.Is<Models.FileUpload>(arg =>
-						ComparePrimaryFileUploadAttributes(testFileToUpload, arg)), It.IsAny<string>(), It.IsAny<int?>()), Times.Once());
+						ComparePrimaryFileUploadAttributes(testFileToUpload, arg)), It.IsAny<string>(), It.IsAny<int?>()), Times.AtLeastOnce());
 			});
 
 
@@ -275,10 +275,10 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 			Assert.DoesNotThrow(delegate
 			{
 				_mockRepository
-					.Verify(v => v.UpdateImportProcessStatus(10, It.Is<Models.FileUpload>(arg => arg.Id == testFileToUpload.Id)), Times.Once());
+					.Verify(v => v.UpdateImportProcessStatus((int)ImportProcessStatuses.Success, It.Is<Models.FileUpload>(arg => arg.Id == testFileToUpload.Id)), Times.Once());
 			});
 
-			testFileToUpload.StatusId = 10;
+			testFileToUpload.StatusId = (int)ImportProcessStatuses.Success;
 			AssertExtensions.PropertyValuesAreEquals(result, testFileToUpload);
 
 			#endregion
@@ -301,6 +301,14 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 
 			//Assert
 			#region Assert
+			//verify LogImportError call
+			Assert.DoesNotThrow(delegate
+			{
+				_mockRepository
+					.Verify(v => v.LogImportError(
+						It.Is<Models.FileUpload>(arg =>
+						ComparePrimaryFileUploadAttributes(testFileToUpload, arg)), It.IsAny<string>(), It.IsAny<int?>()), Times.AtLeastOnce());
+			});
 
 			//verify import process status changed to 15 - Failed
 			Assert.DoesNotThrow(delegate

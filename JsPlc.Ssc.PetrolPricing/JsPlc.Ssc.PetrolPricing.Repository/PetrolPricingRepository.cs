@@ -1005,7 +1005,11 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 		/// <returns>Returns null if none available</returns>
 		public FileUpload GetDailyFileAvailableForCalc(DateTime forDate)
 		{
-			int[] validForUploadStatuses = new int[] { 10, 16, 17 };
+			int[] validForUploadStatuses = new int[] { 
+				(int)ImportProcessStatuses.Success, 
+				(int)ImportProcessStatuses.ImportAborted, 
+				(int)ImportProcessStatuses.CalcAborted 
+			};
 
 			return _context.FileUploads.Where(x => x.UploadTypeId == 1
 				&& DbFunctions.TruncateTime(x.UploadDateTime) == forDate.Date
@@ -1017,7 +1021,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
 		public FileUpload GetDailyFileWithCalcRunningForDate(DateTime forDate)
 		{
-			return _context.FileUploads.FirstOrDefault(x => (x.StatusId == 11 || x.StatusId == 1) && DbFunctions.TruncateTime(x.UploadDateTime) == forDate.Date);
+			return _context.FileUploads.FirstOrDefault(x => (x.StatusId == (int)ImportProcessStatuses.Calculating || x.StatusId == (int)ImportProcessStatuses.Uploaded) && DbFunctions.TruncateTime(x.UploadDateTime) == forDate.Date);
 		}
 
 		public void AddOrUpdateSitePriceRecord(SitePrice calculatedSitePrice)

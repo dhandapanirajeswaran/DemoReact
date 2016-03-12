@@ -20,7 +20,27 @@ namespace JsPlc.Ssc.PetrolPricing.Core
 			{
 				using (var ds = new DataSet())
 				{
-					adapter.Fill(ds, "x");
+					try
+					{
+						adapter.Fill(ds, "x");
+					}
+					catch (OleDbException ex)
+					{
+						if (ex.Message.Contains("Make sure that it does not include invalid characters or punctuation and that it is not too long."))
+						{
+							var message = string.Format("Invalid Sheet 1 name. Expected name: {0}. Fix the issue and try again.", excelFileSheetName);
+
+							throw new ExcelParseFileException(message, ex);
+						}
+						else
+						{
+							throw;
+						}
+					}
+					catch (Exception ex)
+					{
+						throw new ExcelParseFileException("Unable to read excel file. Contact support team.", ex);
+					}
 					return ds.Tables[0].Copy();
 				}
 			}
