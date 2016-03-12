@@ -784,10 +784,21 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 						foreach (var dbUpdateException in e.Entries)
 						{
 							var dailyPrice = dbUpdateException.Entity as DailyPrice ?? new DailyPrice();
+							
 							LogImportError(fileDetails, String.Format("Failed to save price:{0},{1},{2},{3},{4}",
 								dailyPrice.CatNo, dailyPrice.FuelTypeId, dailyPrice.AllStarMerchantNo,
 								dailyPrice.DateOfPrice, dailyPrice.ModalPrice)
 								, startingLineNumber);
+							
+							LogImportError(fileDetails, e.Message, startingLineNumber);
+							
+							LogImportError(fileDetails, e.StackTrace, startingLineNumber);
+
+							if (e.InnerException != null)
+							{
+								LogImportError(fileDetails, e.InnerException, startingLineNumber);
+							}
+
 							dbUpdateException.State = EntityState.Unchanged;
 						}
 
@@ -804,8 +815,14 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 									"DbEntityValidationException occured:" + validationError.ErrorMessage +
 									"," + validationError.PropertyName, addingEntryLineNo);
 
-								Trace.TraceInformation("Property: {0} Error: {1}", validationError.PropertyName,
-									validationError.ErrorMessage);
+								LogImportError(fileDetails, dbEx.Message, startingLineNumber);
+								
+								LogImportError(fileDetails, dbEx.StackTrace, startingLineNumber);
+
+								if (dbEx.InnerException != null)
+								{
+									LogImportError(fileDetails, dbEx.InnerException, startingLineNumber);
+								}
 							}
 						}
 
@@ -1130,6 +1147,28 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 				db.ImportProcessErrors.Add(importProcessErrors);
 				db.SaveChanges();
 			}
+		}
+
+		public void LogImportError(FileUpload fileDetails, Exception exception, int? lineNumber = 0)
+		{
+			using (var db = new RepositoryContext())
+			{
+				ImportProcessError importProcessErrors = new ImportProcessError();
+
+				importProcessErrors.UploadId = fileDetails.Id;
+				importProcessErrors.ErrorMessage = string.Format("Message: {0} Stack trace: {1}", exception.Message, exception.StackTrace);
+
+				if (lineNumber != null)
+				{
+					importProcessErrors.RowOrLineNumber = int.Parse(lineNumber.ToString());
+				}
+
+				db.ImportProcessErrors.Add(importProcessErrors);
+				db.SaveChanges();
+			}
+
+			if (exception.InnerException != null)
+				LogImportError(fileDetails, exception.InnerException, lineNumber);
 		}
 
 		/// <summary>

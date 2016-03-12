@@ -109,6 +109,8 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
 		void LogImportError(FileUpload fileDetails, string errorMessage, int? lineNumber);
 
+		void LogImportError(FileUpload fileDetails, Exception exception, int? lineNumber = 0);
+
 		/// <summary>
 		/// Logs all entries in list to EmailSendLog table in one go.
 		/// </summary>

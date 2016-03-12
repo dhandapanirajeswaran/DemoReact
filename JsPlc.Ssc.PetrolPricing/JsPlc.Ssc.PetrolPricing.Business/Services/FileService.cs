@@ -209,8 +209,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 
 					if (ex.InnerException != null)
 					{
-						_db.LogImportError(aFile, ex.InnerException.Message, lineNumber);
-						_db.LogImportError(aFile, ex.InnerException.StackTrace, lineNumber);
+						_db.LogImportError(aFile, ex.InnerException, lineNumber);
 					}
 
 					_db.UpdateImportProcessStatus(15, aFile);
@@ -316,14 +315,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 			}
 			catch (Exception ex)
 			{
-				_db.LogImportError(aFile, ex.Message, null);
-				_db.LogImportError(aFile, ex.StackTrace, null);
-
-				if (ex.InnerException != null)
-				{
-					_db.LogImportError(aFile, ex.InnerException.Message, null);
-					_db.LogImportError(aFile, ex.InnerException.StackTrace, null);
-				}
+				_db.LogImportError(aFile, ex, null);
 
 				_db.UpdateImportProcessStatus(15, aFile); //failed 15
 				return null;

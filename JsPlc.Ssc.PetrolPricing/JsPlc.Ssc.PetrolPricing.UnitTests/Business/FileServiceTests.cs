@@ -1,6 +1,7 @@
 ﻿using JsPlc.Ssc.PetrolPricing.Business;
 using JsPlc.Ssc.PetrolPricing.Core;
 using JsPlc.Ssc.PetrolPricing.Models;
+using JsPlc.Ssc.PetrolPricing.Models.ViewModels;
 using JsPlc.Ssc.PetrolPricing.Repository;
 using Moq;
 using NUnit.Framework;
@@ -17,6 +18,17 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 	[TestFixture]
 	public class FileServiceTests : TestBase
 	{
+		public enum QuarterlyFileUploadExceptionCases
+		{
+			GetExcelDataRows,
+			TruncateQuarterlyUploadStaging,
+			ImportQuarterlyRecordsToStaging,
+			CatalistNumberUpdateException,
+			NewSiteException,
+			UpdateSiteException,
+			NewSiteToCompetitorException
+		}
+
 		Mock<IPetrolPricingRepository> _mockRepository;
 		Mock<ISettingsService> _mockSettingsService;
 		Mock<IPriceService> _mockPriceService;
@@ -168,8 +180,9 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 			var expectedSiteToCompetitorRecords = DummyQuarterlyUploadStagingRecords
 				.Where(qu => jsSites.Select(js => js.CatNo).ToArray().Contains(qu.SainsSiteCatNo) && qu.CatNo != expectedCatNoForNewSite)
 				.ToList()
-				.Select(stc => 
-					new {
+				.Select(stc =>
+					new
+					{
 						SiteId = jsSites.First(js => js.CatNo == stc.SainsSiteCatNo).Id,
 						CompetitorId = DummySites.First(cs => cs.CatNo == stc.CatNo).Id
 					}
@@ -244,7 +257,7 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 			Assert.DoesNotThrow(delegate
 			{
 				_mockRepository
-					.Verify(v => v.UpdateSitesCatNo(It.Is<List<Site>>(arg => arg.Count(s => 
+					.Verify(v => v.UpdateSitesCatNo(It.Is<List<Site>>(arg => arg.Count(s =>
 						s.CatNo == expectedCatNoForCatNoUpdate) == 1)), Times.Once());
 			});
 
@@ -252,7 +265,7 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 			Assert.DoesNotThrow(delegate
 			{
 				_mockRepository
-					.Verify(v => v.NewSites(It.Is<List<Site>>(arg => arg.Count(s => 
+					.Verify(v => v.NewSites(It.Is<List<Site>>(arg => arg.Count(s =>
 						s.CatNo == expectedCatNoForNewSite) == 1)), Times.Once());
 			});
 
@@ -284,17 +297,76 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 			#endregion
 		}
 
-		[Test]
-		public void When_ProcessQuarterlyFileNew_Method_Called_And_Exception_Occured_Then_Error_Should_Be_Recorded_And_Status_Updated_To_Failed()
+		[TestCase(QuarterlyFileUploadExceptionCases.CatalistNumberUpdateException)]
+		[TestCase(QuarterlyFileUploadExceptionCases.GetExcelDataRows)]
+		[TestCase(QuarterlyFileUploadExceptionCases.ImportQuarterlyRecordsToStaging)]
+		[TestCase(QuarterlyFileUploadExceptionCases.NewSiteException)]
+		[TestCase(QuarterlyFileUploadExceptionCases.NewSiteToCompetitorException)]
+		[TestCase(QuarterlyFileUploadExceptionCases.TruncateQuarterlyUploadStaging)]
+		[TestCase(QuarterlyFileUploadExceptionCases.UpdateSiteException)]
+		public void When_ProcessQuarterlyFileNew_Method_Called_And_Exception_Occured_Then_Error_Should_Be_Recorded_And_Status_Updated_To_Failed(
+			QuarterlyFileUploadExceptionCases quarterlyFileUploadExceptionCase
+			)
 		{
 			//Arrange
+			#region Arrange
 			var testFileToUpload = DummyFileUploads.First(fu => fu.UploadTypeId == (int)UploadTypes.QuarterlySiteData);
 
+			var testFilePathAndName = Path.Combine(TestFileFolderPath, testFileToUpload.StoredFileName);
+
+			var testFileData = new DataFileReader().GetQuarterlyData(testFilePathAndName, QuarterlyFileDataSheetName);
+
+			_mockDataFileReader
+				.Setup(dfr => dfr.GetQuarterlyData(testFilePathAndName, QuarterlyFileDataSheetName))
+				.Returns(testFileData);
+
 			_mockRepository
-				.Setup(r => r.TruncateQuarterlyUploadStaging())
-				.Throws(new ApplicationException());
+				.Setup(r => r.NewQuarterlyRecords(It.IsAny<List<Models.ViewModels.CatalistQuarterly>>(), It.Is<Models.FileUpload>(arg => ComparePrimaryFileUploadAttributes(testFileToUpload, arg)), It.IsAny<int>()))
+				.Returns(true);
+
+			switch (quarterlyFileUploadExceptionCase)
+			{
+				case QuarterlyFileUploadExceptionCases.TruncateQuarterlyUploadStaging:
+					_mockRepository
+					.Setup(r => r.TruncateQuarterlyUploadStaging())
+					.Throws(new ApplicationException());
+					break;
+				case QuarterlyFileUploadExceptionCases.CatalistNumberUpdateException:
+					_mockRepository
+					.Setup(r => r.UpdateSitesCatNo(It.IsAny<List<Site>>()))
+					.Throws(new Exception());
+					break;
+				case QuarterlyFileUploadExceptionCases.GetExcelDataRows:
+					_mockDataFileReader
+					.Setup(r => r.GetQuarterlyData(It.IsAny<string>(), It.IsAny<string>()))
+					.Throws(new ExcelParseFileException());
+					break;
+
+				case QuarterlyFileUploadExceptionCases.ImportQuarterlyRecordsToStaging:
+					_mockRepository
+					.Setup(r => r.NewQuarterlyRecords(It.IsAny<List<CatalistQuarterly>>(), It.IsAny<FileUpload>(), It.IsAny<int>()))
+					.Returns(false);
+					break;
+
+				case QuarterlyFileUploadExceptionCases.NewSiteException:
+					_mockRepository
+					.Setup(r => r.NewSites(It.IsAny<List<Site>>()))
+					.Throws(new Exception());
+					break;
+				case QuarterlyFileUploadExceptionCases.NewSiteToCompetitorException:
+					_mockRepository
+					.Setup(r => r.UpdateSiteToCompetitor(It.IsAny<List<SiteToCompetitor>>()))
+					.Throws(new Exception());
+					break;
+				case QuarterlyFileUploadExceptionCases.UpdateSiteException:
+					_mockRepository
+					.Setup(r => r.UpdateSitesPrimaryInformation(It.IsAny<List<Site>>()))
+					.Throws(new Exception());
+					break;
+			}
 
 			var sut = new FileService(_mockRepository.Object, _mockPriceService.Object, _mockSettingsService.Object, _mockDataFileReader.Object);
+			#endregion
 
 			//Act
 			sut.ProcessQuarterlyFileNew(DummyFileUploads.Where(fu => fu.UploadTypeId == (int)UploadTypes.QuarterlySiteData).ToList());
@@ -302,13 +374,74 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 			//Assert
 			#region Assert
 			//verify LogImportError call
-			Assert.DoesNotThrow(delegate
+			switch (quarterlyFileUploadExceptionCase)
 			{
-				_mockRepository
-					.Verify(v => v.LogImportError(
-						It.Is<Models.FileUpload>(arg =>
-						ComparePrimaryFileUploadAttributes(testFileToUpload, arg)), It.IsAny<string>(), It.IsAny<int?>()), Times.AtLeastOnce());
-			});
+				case QuarterlyFileUploadExceptionCases.TruncateQuarterlyUploadStaging:
+					Assert.DoesNotThrow(delegate
+					{
+						_mockRepository
+							.Verify(v => v.LogImportError(
+								It.Is<Models.FileUpload>(arg =>
+								ComparePrimaryFileUploadAttributes(testFileToUpload, arg)), It.IsAny<Exception>(), It.IsAny<int?>()), Times.AtLeastOnce());
+					});
+					break;
+				case QuarterlyFileUploadExceptionCases.CatalistNumberUpdateException:
+					Assert.DoesNotThrow(delegate
+					{
+						_mockRepository
+							.Verify(v => v.LogImportError(
+								It.Is<Models.FileUpload>(arg =>
+								ComparePrimaryFileUploadAttributes(testFileToUpload, arg)), It.IsAny<CatalistNumberUpdateException>(), It.IsAny<int?>()), Times.AtLeastOnce());
+					});
+					break;
+				case QuarterlyFileUploadExceptionCases.GetExcelDataRows:
+					Assert.DoesNotThrow(delegate
+					{
+						_mockRepository
+							.Verify(v => v.LogImportError(
+								It.Is<Models.FileUpload>(arg =>
+								ComparePrimaryFileUploadAttributes(testFileToUpload, arg)), It.IsAny<ExcelParseFileException>(), It.IsAny<int?>()), Times.AtLeastOnce());
+					});
+					break;
+
+				case QuarterlyFileUploadExceptionCases.ImportQuarterlyRecordsToStaging:
+					Assert.DoesNotThrow(delegate
+					{
+						_mockRepository
+							.Verify(v => v.LogImportError(
+								It.Is<Models.FileUpload>(arg =>
+								ComparePrimaryFileUploadAttributes(testFileToUpload, arg)), It.IsAny<Exception>(), It.IsAny<int?>()), Times.AtLeastOnce());
+					});
+					break;
+
+				case QuarterlyFileUploadExceptionCases.NewSiteException:
+					Assert.DoesNotThrow(delegate
+					{
+						_mockRepository
+							.Verify(v => v.LogImportError(
+								It.Is<Models.FileUpload>(arg =>
+								ComparePrimaryFileUploadAttributes(testFileToUpload, arg)), It.IsAny<NewSiteException>(), It.IsAny<int?>()), Times.AtLeastOnce());
+					});
+					break;
+				case QuarterlyFileUploadExceptionCases.NewSiteToCompetitorException:
+					Assert.DoesNotThrow(delegate
+					{
+						_mockRepository
+							.Verify(v => v.LogImportError(
+								It.Is<Models.FileUpload>(arg =>
+								ComparePrimaryFileUploadAttributes(testFileToUpload, arg)), It.IsAny<NewSiteToCompetitorException>(), It.IsAny<int?>()), Times.AtLeastOnce());
+					});
+					break;
+				case QuarterlyFileUploadExceptionCases.UpdateSiteException:
+					Assert.DoesNotThrow(delegate
+					{
+						_mockRepository
+							.Verify(v => v.LogImportError(
+								It.Is<Models.FileUpload>(arg =>
+								ComparePrimaryFileUploadAttributes(testFileToUpload, arg)), It.IsAny<UpdateSiteException>(), It.IsAny<int?>()), Times.AtLeastOnce());
+					});
+					break;
+			}
 
 			//verify import process status changed to 15 - Failed
 			Assert.DoesNotThrow(delegate
