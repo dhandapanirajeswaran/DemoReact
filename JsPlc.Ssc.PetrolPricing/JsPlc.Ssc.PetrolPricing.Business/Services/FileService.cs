@@ -145,11 +145,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 									lineNumber);
 
 								_db.LogImportError(aFile,
-									ex.Message,
-									lineNumber);
-
-								_db.LogImportError(aFile,
-									ex.StackTrace,
+									ex,
 									lineNumber);
 
 								hasWarning = true;
@@ -186,7 +182,8 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 
 					_db.UpdateImportProcessStatus(aFile.StatusId, aFile);
 
-					if (aFile.StatusId == (int)ImportProcessStatuses.Success)
+					if (aFile.StatusId == (int)ImportProcessStatuses.Success
+						|| aFile.StatusId == (int)ImportProcessStatuses.Warning)
 					{
 						try
 						{
@@ -204,13 +201,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 				}
 				catch (Exception ex)
 				{
-					_db.LogImportError(aFile, ex.Message + " filePath=" + filePathAndName, lineNumber);
-					_db.LogImportError(aFile, ex.StackTrace, lineNumber);
-
-					if (ex.InnerException != null)
-					{
-						_db.LogImportError(aFile, ex.InnerException, lineNumber);
-					}
+					_db.LogImportError(aFile, ex, lineNumber);
 
 					_db.UpdateImportProcessStatus(15, aFile);
 
@@ -550,11 +541,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 						rowCount);
 
 					_db.LogImportError(aFile,
-						ex.Message,
-						rowCount);
-
-					_db.LogImportError(aFile,
-						ex.StackTrace,
+						ex,
 						rowCount);
 
 					hasWarnings = true;

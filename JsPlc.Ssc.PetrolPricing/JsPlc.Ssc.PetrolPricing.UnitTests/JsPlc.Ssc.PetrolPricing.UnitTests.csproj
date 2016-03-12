@@ -142,7 +142,9 @@
   <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config" />
-    <None Include="TestFiles\InvalidQuarterlyUpload.xlsx" />
+    <None Include="TestFiles\InvalidQuarterlyUpload.xlsx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="TestFiles\QuarterlyUpload.xlsx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -151,7 +153,9 @@
     <Content Include="TestFiles\DailyUpload.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="TestFiles\InvalidDailyUpload.txt" />
+    <Content Include="TestFiles\InvalidDailyUpload.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

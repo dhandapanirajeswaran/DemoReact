@@ -245,6 +245,30 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 			}
 		}
 
+		public List<Models.FileUpload> DummyInvalidFileUploads
+		{
+			get
+			{
+				var result = new List<Models.FileUpload>
+                {
+                    new Models.FileUpload {
+						Id = 1,
+                        UploadDateTime = DateTime.Today,
+						StoredFileName = "InvalidDailyUpload.txt",
+						UploadTypeId = (int)UploadTypes.DailyPriceData
+                    },
+					new Models.FileUpload {
+						Id = 2,
+                        UploadDateTime = DateTime.Today,
+						StoredFileName = "InvalidQuarterlyUpload.xlsx",
+						UploadTypeId = (int)UploadTypes.QuarterlySiteData
+                    }
+                };
+
+				return result;
+			}
+		}
+
 		public string TestFileFolderPath
 		{
 			get
