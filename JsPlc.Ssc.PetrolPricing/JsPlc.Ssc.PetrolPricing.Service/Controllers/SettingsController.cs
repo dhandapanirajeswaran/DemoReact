@@ -13,64 +13,62 @@ using Newtonsoft.Json;
 
 namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
 {
-    public class SettingsController : ApiController
-    {
-        ISettingsService _settingsService;
+	public class SettingsController : ApiController
+	{
+		IAppSettings _appSettings;
 
-        public SettingsController(ISettingsService settingsService)
-        {
-            _settingsService = settingsService;
-        }
+		public SettingsController(IAppSettings appSettings)
+		{
+			_appSettings = appSettings;
+		}
 
-        [Route("api/settings/{key}")]
-        public async Task<IHttpActionResult> Get(string key)
-        {
-            if (String.IsNullOrEmpty(key))
-            {
-                return BadRequest("Invalid passed data: setting key");
-            }
-            try
-            {
-                var val = _settingsService.GetSetting(key);
-                    return Ok(val);
-            }
-            catch (Exception ex)
-            {
-                return new ExceptionResult(ex, this);
-            }
-        }
+		[Route("api/settings/{key}")]
+		public async Task<IHttpActionResult> Get(string key)
+		{
+			if (String.IsNullOrEmpty(key))
+			{
+				return BadRequest("Invalid passed data: setting key");
+			}
+			try
+			{
+				var val = _appSettings.GetSetting(key);
+				return Ok(val);
+			}
+			catch (Exception ex)
+			{
+				return new ExceptionResult(ex, this);
+			}
+		}
 
-        /// <summary>
-        /// ReSeed the DB with settings etc, drop n re-create sprocs - FULLREBUILD, CONFIGKEYSONLY, SPROCSONLY, INDEXESONLY
-        /// </summary>
-        /// <param name="buildOptions">FULLREBUILD, CONFIGKEYSONLY, SPROCSONLY, INDEXESONLY</param>
-        /// <returns></returns>
-        [HttpGet]
-        [Route("api/ReInitDb")]
-        public async Task<IHttpActionResult> ReInitDb(string buildOptions = "")
-        {
-            try
-            {
-                switch (buildOptions)
-                {
-                    case "FULLREBUILD": RepositoryInitializer.SeedRepository(new RepositoryContext());
-                        break;
-                    case "CONFIGKEYSONLY": RepositoryInitializer.ReInitConfigKeys(new RepositoryContext());
-                        break;
-                    case "SPROCSONLY": RepositoryInitializer.ReInitSprocs(new RepositoryContext());
-                        break;
-                    case "INDEXESONLY": RepositoryInitializer.ReInitIndexes(new RepositoryContext());
-                        break;
-                    default:
-                        throw new Exception("forcing an exception");
-                        return await Task.FromResult(BadRequest("Invalid option"));
-                }
-                return await Task.FromResult(Ok("Success:" + buildOptions));
-            }
-            catch (Exception ex)
-            {
-                return Task.FromResult(BadRequest(ex.Message)).Result;
-            }
-        }
-    }
+		/// <summary>
+		/// ReSeed the DB with settings etc, drop n re-create sprocs - FULLREBUILD, CONFIGKEYSONLY, SPROCSONLY, INDEXESONLY
+		/// </summary>
+		/// <param name="buildOptions">FULLREBUILD, CONFIGKEYSONLY, SPROCSONLY, INDEXESONLY</param>
+		/// <returns></returns>
+		[HttpGet]
+		[Route("api/ReInitDb")]
+		public async Task<IHttpActionResult> ReInitDb(string buildOptions = "")
+		{
+			try
+			{
+				switch (buildOptions)
+				{
+					case "FULLREBUILD": RepositoryInitializer.SeedRepository(new RepositoryContext());
+						break;
+					case "SPROCSONLY": RepositoryInitializer.ReInitSprocs(new RepositoryContext());
+						break;
+					case "INDEXESONLY": RepositoryInitializer.ReInitIndexes(new RepositoryContext());
+						break;
+					default:
+						throw new Exception("forcing an exception");
+						return await Task.FromResult(BadRequest("Invalid option"));
+				}
+				return await Task.FromResult(Ok("Success:" + buildOptions));
+			}
+			catch (Exception ex)
+			{
+				return Task.FromResult(BadRequest(ex.Message)).Result;
+			}
+		}
+	}
 }

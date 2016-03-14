@@ -31,17 +31,17 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 
 		protected readonly IPetrolPricingRepository _db;
 
-		protected readonly ISettingsService _settingsService;
-
 		protected readonly IFactory _factory;
 
+		protected readonly IAppSettings _appSettings;
+
 		public EmailService(IPetrolPricingRepository db,
-			ISettingsService settingsService,
+			IAppSettings appSettings,
 			IFactory factory)
 		{
 			_db = db;
-			_settingsService = settingsService;
 			_factory = factory;
+			_appSettings = appSettings;
 		}
 
 		/// <summary>
@@ -75,8 +75,8 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 					//one email built per sites for multiple user in site email list
 					var emailBody = BuildEmailBody(site, endTradeDate);
 
-					var emailSubject = _settingsService.EmailSubject();
-					var emailFrom = _settingsService.EmailFrom();
+					var emailSubject = _appSettings.EmailSubject;
+					var emailFrom = _appSettings.EmailFrom;
 
 					using (var smtpClient = createSmtpClient())
 					{
@@ -188,7 +188,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 			//Using an SMTP client with the specified host name and port.
 			using (var client = createSmtpClient())
 			{
-				string mailFrom = _settingsService.EmailFrom(); // "akiaip5@gmail.com";
+				string mailFrom = _appSettings.EmailFrom; // "akiaip5@gmail.com";
 
 				const string mailTo = "andrey.shihov@sainsburys.co.uk"; //"akiaip5@gmail.com";
 				const string mailSubject = "Hello, Test Email from AWS";
@@ -249,7 +249,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 		private ISmtpClient createSmtpClient()
 		{
 			// Localhost, Gmail, AWS
-			var mailHostSelector = _settingsService.MailHostSelector();
+			var mailHostSelector = _appSettings.MailHostSelector;
 
 			var client = _factory.Create<ISmtpClient>(CreationMethod.ServiceLocator, null);
 			
@@ -272,7 +272,6 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 						client.Host = "smtp.gmail.com";
 						client.Port = 587; // 25 or 465 (with SSL) and port 587 (with TLS)
 						client.EnableSsl = true;
-						client.UseDefaultCredentials = true;
 						client.Credentials = new NetworkCredential(
 							userName: "akiaip5@gmail.com",
 							password: "AmDoy02X");
@@ -280,13 +279,12 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 					break;
 				case "AWS":
 					{
-						client.Host = "email-smtp.eu-west-1.amazonaws.com";
-						client.Port = 587; //  25, 587, or 2587
-						client.EnableSsl = true;
-						client.UseDefaultCredentials = true;
+						client.Host = _appSettings.SmtpServer;
+						client.Port = _appSettings.SmtpPort;
+						client.EnableSsl = _appSettings.SmtpEnableSsl;
 						client.Credentials = new NetworkCredential(
-							userName: "AKIAJIYB2PBTAJXNPGGQ",
-							password: "ApiiZmKvY+cGYII55wTyQR768+jcNQnPtKeRji3cgGVg");
+							userName: _appSettings.SmtpUserName,
+							password: _appSettings.SmtpPassword);
 					}
 					break;
 			}
@@ -469,7 +467,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 		{
 			EmailToSet emailToSet = new EmailToSet();
 
-			var testEmailTo = _settingsService.FixedEmailTo();
+			var testEmailTo = _appSettings.FixedEmailTo;
 			
 			emailToSet.FixedEmailTo = testEmailTo;
 

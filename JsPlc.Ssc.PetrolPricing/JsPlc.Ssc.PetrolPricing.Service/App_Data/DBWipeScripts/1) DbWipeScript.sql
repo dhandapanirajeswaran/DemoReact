@@ -47,5 +47,3 @@ Delete from UploadType;
 Delete from ImportProcessStatus;
 --Truncate Table  ImportProcessStatus;
 
-Delete from AppConfigSettings;
---Truncate Table  AppConfigSettings;

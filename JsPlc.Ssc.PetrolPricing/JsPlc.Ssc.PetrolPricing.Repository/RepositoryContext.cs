@@ -9,7 +9,6 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 {
     public class RepositoryContext: DbContext, IRepositoryContext
     {
-        public IDbSet<AppConfigSettings> AppConfigSettings { get; set; }
         public IDbSet<FuelType> FuelType { get; set; } // 1=Super, 2=Unleaded,  6=Std Dis, // Unused 5=Super Dis, 7=LPG
         public IDbSet<UploadType> UploadType { get; set; } // Daily, Quarterly
         public IDbSet<ImportProcessStatus> ImportProcessStatus { get; set; } // Uploaded,Processing,Success,Failed

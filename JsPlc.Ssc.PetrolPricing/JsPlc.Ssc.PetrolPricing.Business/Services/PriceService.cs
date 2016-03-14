@@ -22,19 +22,19 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 	public class PriceService : IPriceService
 	{
 		protected readonly IPetrolPricingRepository _db;
-		protected readonly ISettingsService _settingsService;
 		protected readonly ILookupService _lookupService;
 		protected readonly IFactory _factory;
+		protected readonly IAppSettings _appSettings;
 
 		public PriceService(IPetrolPricingRepository db,
-			ISettingsService settingsService,
+			IAppSettings appSettings,
 			ILookupService lookupSerivce,
 			IFactory factory)
 		{
 			_db = db;
-			_settingsService = settingsService;
 			_lookupService = lookupSerivce;
 			_factory = factory;
+			_appSettings = appSettings;
 		}
 
 		private readonly int[] _fuelSelectionArray = new[] { 1, 2, 6, }; // superunl, unl, diesel,  
@@ -210,7 +210,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 		{
 			if (!markup.HasValue)
 			{
-				markup = _settingsService.GetSuperUnleadedMarkup().ToNullable<int>();
+				markup = _appSettings.SuperUnleadedMarkup;
 			}
 			if (markup == null) 
 				markup = 5; // also defaulted in sproc
@@ -306,7 +306,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 				
 				foreach (var fuel in fuels.ToList())
 				{
-					var priceService = new PriceService(db, _settingsService, _lookupService, _factory);
+					var priceService = new PriceService(db, _appSettings, _lookupService, _factory);
 
 					priceService.CalcPrice(db, site, fuel.Id, calcTaskData);
 				}

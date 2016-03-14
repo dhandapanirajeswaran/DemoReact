@@ -233,8 +233,6 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
 		IEnumerable<ImportProcessStatus> GetProcessStatuses();
 
-		IEnumerable<AppConfigSettings> GetAppConfigSettings();
-
 		void UpdateSiteToCompetitor(List<SiteToCompetitor> newSiteToCompetitorRecords);
 	}
 }

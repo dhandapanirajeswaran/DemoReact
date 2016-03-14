@@ -33,29 +33,6 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
 		private static object cachedAppSettingsLock = new Object();
 
-		public IEnumerable<AppConfigSettings> GetAppConfigSettings()
-		{
-			List<AppConfigSettings> cachedAppSettings = PetrolPricingRepositoryMemoryCache.CacheObj.Get("cachedAppSettings") as List<AppConfigSettings>;
-
-			if (cachedAppSettings == null)
-			{
-				lock (cachedAppSettingsLock)
-				{
-					cachedAppSettings = PetrolPricingRepositoryMemoryCache.CacheObj.Get("cachedAppSettings") as List<AppConfigSettings>;
-
-					if (cachedAppSettings == null)
-					{
-
-						cachedAppSettings = _context.AppConfigSettings.ToList();
-
-						PetrolPricingRepositoryMemoryCache.CacheObj.Add("cachedAppSettings", cachedAppSettings, PetrolPricingRepositoryMemoryCache.ReportsCacheExpirationPolicy(200));
-					}
-				}
-			}
-
-			return cachedAppSettings;
-		}
-
 		public IEnumerable<Site> GetJsSites()
 		{
 			return _context.Sites

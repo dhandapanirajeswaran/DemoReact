@@ -30,18 +30,15 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
 		ISiteService _siteService;
 		IPriceService _priceService;
 		IEmailService _emailService;
-		ISettingsService _settingsService;
-
+		
 		public SitesController(
 			ISiteService siteService,
 			IPriceService priceService,
-			IEmailService emailService,
-			ISettingsService settingsService)
+			IEmailService emailService)
 		{
 			_siteService = siteService;
 			_priceService = priceService;
 			_emailService = emailService;
-			_settingsService = settingsService;
 		}
 
 		[System.Web.Http.HttpGet]

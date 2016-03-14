@@ -23,7 +23,7 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 		}
 
 		Mock<IPetrolPricingRepository> _mockRepository;
-		Mock<ISettingsService> _mockSettingsService;
+		Mock<IAppSettings> _mockAppSettings;
 		Mock<IFactory> _mockFactory;
 
 		Mock<ISmtpClient> _mockSmtpClient;
@@ -41,11 +41,11 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 
 			#endregion
 
-			_mockSettingsService = new Mock<ISettingsService>();
-			_mockSettingsService.Setup(ss => ss.EmailSubject()).Returns("Test Email Subject");
-			_mockSettingsService.Setup(ss => ss.EmailFrom()).Returns(_expectedEmailAddress);
-			_mockSettingsService.Setup(ss => ss.FixedEmailTo()).Returns(_expectedEmailAddress);
-			_mockSettingsService.Setup(ss => ss.MailHostSelector()).Returns("localhost");
+			_mockAppSettings = new Mock<IAppSettings>();
+			_mockAppSettings.Setup(ss => ss.EmailSubject).Returns("Test Email Subject");
+			_mockAppSettings.Setup(ss => ss.EmailFrom).Returns(_expectedEmailAddress);
+			_mockAppSettings.Setup(ss => ss.FixedEmailTo).Returns(_expectedEmailAddress);
+			_mockAppSettings.Setup(ss => ss.MailHostSelector).Returns("localhost");
 
 			_mockSmtpClient = new Mock<ISmtpClient>();
 
@@ -134,7 +134,7 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 
 			List<Models.Site> sites = new List<Models.Site> { _site };
 
-			var sut = new EmailService(_mockRepository.Object, _mockSettingsService.Object, _mockFactory.Object);
+			var sut = new EmailService(_mockRepository.Object, _mockAppSettings.Object, _mockFactory.Object);
 
 			#endregion
 			//Act
@@ -177,7 +177,7 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 
 			List<Models.Site> sites = new List<Models.Site> { _site };
 
-			var sut = new EmailService(_mockRepository.Object, _mockSettingsService.Object, _mockFactory.Object);
+			var sut = new EmailService(_mockRepository.Object, _mockAppSettings.Object, _mockFactory.Object);
 
 			#endregion
 			//Act

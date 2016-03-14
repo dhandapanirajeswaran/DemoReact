@@ -30,7 +30,7 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 		}
 
 		Mock<IPetrolPricingRepository> _mockRepository;
-		Mock<ISettingsService> _mockSettingsService;
+		Mock<IAppSettings> _mockAppSettings;
 		Mock<IPriceService> _mockPriceService;
 		Mock<IDataFileReader> _mockDataFileReader;
 
@@ -39,9 +39,9 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 		{
 			_mockRepository = new Mock<IPetrolPricingRepository>();
 
-			_mockSettingsService = new Mock<ISettingsService>();
-			_mockSettingsService.Setup(s => s.GetUploadPath()).Returns(TestFileFolderPath);
-			_mockSettingsService.Setup(s => s.ExcelFileSheetName()).Returns(QuarterlyFileDataSheetName);
+			_mockAppSettings = new Mock<IAppSettings>();
+			_mockAppSettings.Setup(s => s.UploadPath).Returns(TestFileFolderPath);
+			_mockAppSettings.Setup(s => s.ExcelFileSheetName).Returns(QuarterlyFileDataSheetName);
 
 			_mockPriceService = new Mock<IPriceService>();
 
@@ -65,7 +65,7 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 					It.IsAny<int>()))
 				.Returns(true);
 
-			var sut = new FileService(_mockRepository.Object, _mockPriceService.Object, _mockSettingsService.Object, _mockDataFileReader.Object);
+			var sut = new FileService(_mockRepository.Object, _mockPriceService.Object, _mockAppSettings.Object, _mockDataFileReader.Object);
 			#endregion
 
 			//Act
@@ -138,7 +138,7 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 					It.IsAny<int>()))
 				.Returns(true);
 
-			var sut = new FileService(_mockRepository.Object, _mockPriceService.Object, _mockSettingsService.Object, _mockDataFileReader.Object);
+			var sut = new FileService(_mockRepository.Object, _mockPriceService.Object, _mockAppSettings.Object, _mockDataFileReader.Object);
 			#endregion
 
 			//Act
@@ -229,7 +229,7 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 					It.IsAny<int>()))
 				.Throws(new ApplicationException());
 
-			var sut = new FileService(_mockRepository.Object, _mockPriceService.Object, _mockSettingsService.Object, _mockDataFileReader.Object);
+			var sut = new FileService(_mockRepository.Object, _mockPriceService.Object, _mockAppSettings.Object, _mockDataFileReader.Object);
 			#endregion
 
 			//Act
@@ -301,7 +301,7 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 				.Setup(r => r.GetSites())
 				.Returns(DummySites);
 
-			var sut = new FileService(_mockRepository.Object, _mockPriceService.Object, _mockSettingsService.Object, _mockDataFileReader.Object);
+			var sut = new FileService(_mockRepository.Object, _mockPriceService.Object, _mockAppSettings.Object, _mockDataFileReader.Object);
 			#endregion
 
 			//Act
@@ -450,7 +450,7 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 				.Setup(r => r.GetSites())
 				.Returns(DummySites);
 
-			var sut = new FileService(_mockRepository.Object, _mockPriceService.Object, _mockSettingsService.Object, _mockDataFileReader.Object);
+			var sut = new FileService(_mockRepository.Object, _mockPriceService.Object, _mockAppSettings.Object, _mockDataFileReader.Object);
 			#endregion
 
 			//Act
@@ -605,7 +605,7 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 					break;
 			}
 
-			var sut = new FileService(_mockRepository.Object, _mockPriceService.Object, _mockSettingsService.Object, _mockDataFileReader.Object);
+			var sut = new FileService(_mockRepository.Object, _mockPriceService.Object, _mockAppSettings.Object, _mockDataFileReader.Object);
 			#endregion
 
 			//Act
@@ -731,7 +731,7 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 				.Setup(r => r.NewQuarterlyRecords(It.IsAny<List<Models.ViewModels.CatalistQuarterly>>(), It.Is<Models.FileUpload>(arg => ComparePrimaryFileUploadAttributes(testFileToUpload, arg)), It.IsAny<int>()))
 				.Returns(true);
 
-			var sut = new FileService(_mockRepository.Object, _mockPriceService.Object, _mockSettingsService.Object, _mockDataFileReader.Object);
+			var sut = new FileService(_mockRepository.Object, _mockPriceService.Object, _mockAppSettings.Object, _mockDataFileReader.Object);
 
 			//Act
 			sut.NewUpload(testFileToUpload);
@@ -776,7 +776,7 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 				.Setup(r => r.NewQuarterlyRecords(It.IsAny<List<Models.ViewModels.CatalistQuarterly>>(), It.Is<Models.FileUpload>(arg => ComparePrimaryFileUploadAttributes(testFileToUpload, arg)), It.IsAny<int>()))
 				.Returns(true);
 
-			var sut = new FileService(_mockRepository.Object, _mockPriceService.Object, _mockSettingsService.Object, _mockDataFileReader.Object);
+			var sut = new FileService(_mockRepository.Object, _mockPriceService.Object, _mockAppSettings.Object, _mockDataFileReader.Object);
 
 			//Act
 			sut.NewUpload(testFileToUpload);

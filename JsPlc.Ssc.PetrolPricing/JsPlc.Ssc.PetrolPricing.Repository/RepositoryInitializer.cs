@@ -34,17 +34,6 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         }
 
         /// <summary>
-        /// Deletes and reloads AppSettings keys/values
-        /// </summary>
-        /// <param name="context"></param>
-        public static void ReInitConfigKeys(RepositoryContext context)
-        {
-            context.AppConfigSettings.ForEach(x => context.Entry(x).State = EntityState.Deleted);
-            context.SaveChanges();
-            DbInitConfigKeys(context);
-        }
-
-        /// <summary>
         /// Deletes and recreates sprocs
         /// </summary>
         /// <param name="context"></param>
@@ -66,8 +55,6 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         public static void SeedRepository(RepositoryContext context)
         {
             RunDbScripts(context, ScriptFolderType.DbWipeScripts);
-
-            DbInitConfigKeys(context);
 
             DbInitFuelTypes(context);
 
@@ -280,26 +267,6 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             };
 
             fuelTypes.ForEach(f => context.FuelType.Add(f));
-            context.SaveChanges();
-        }
-
-        private static void DbInitConfigKeys(RepositoryContext context)
-        {
-            var configSettingKeys = ConfigurationManager.AppSettings.AllKeys;
-
-            int id = 1;
-            var appConfigSettings = new List<AppConfigSettings>();
-            foreach (var key in configSettingKeys)
-            {
-                appConfigSettings.Add(new AppConfigSettings
-                {
-                    Id = id,
-                    SettingKey = key,
-                    SettingValue = ConfigurationManager.AppSettings[key]
-                });
-                id += 1;
-            }
-            appConfigSettings.ForEach(a => context.AppConfigSettings.Add(a));
             context.SaveChanges();
         }
 

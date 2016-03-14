@@ -19,21 +19,21 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 	{
 		private readonly IPriceService _priceService;
 
-		private readonly ISettingsService _settingsService;
-
 		private readonly IPetrolPricingRepository _db;
 
 		private readonly IDataFileReader _dataFileReader;
 
+		private readonly IAppSettings _appSettings;
+
 		public FileService(IPetrolPricingRepository db,
 			IPriceService priceService,
-			ISettingsService settingsService,
+			IAppSettings appSettings,
 			IDataFileReader dataFileReader)
 		{
 			_db = db;
 			_priceService = priceService;
-			_settingsService = settingsService;
 			_dataFileReader = dataFileReader;
+			_appSettings = appSettings;
 		}
 
 		public FileUpload NewUpload(FileUpload fileUpload)
@@ -113,7 +113,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 			{
 				retval = aFile;
 				_db.UpdateImportProcessStatus(5, aFile);//Processing 5
-				var storedFilePath = _settingsService.GetUploadPath();
+				var storedFilePath = _appSettings.UploadPath;
 				var filePathAndName = Path.Combine(storedFilePath, aFile.StoredFileName);
 				int lineNumber = 0;
 				bool hasWarning = false;
@@ -480,10 +480,10 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 
 		private DataTable getQuarterlyData(FileUpload aFile)
 		{
-			var storedFilePath = _settingsService.GetUploadPath();
+			var storedFilePath = _appSettings.UploadPath;
 			var filePathAndName = Path.Combine(storedFilePath, aFile.StoredFileName);
 
-			return _dataFileReader.GetQuarterlyData(filePathAndName, _settingsService.ExcelFileSheetName());
+			return _dataFileReader.GetQuarterlyData(filePathAndName, _appSettings.ExcelFileSheetName);
 		}
 
 		private List<CatalistQuarterly> parseSiteRowsBatch(FileUpload aFile, IEnumerable<DataRow> batchRows, int batchNo, out bool hasWarnings)

@@ -116,7 +116,7 @@
     <Compile Include="Interfaces\IEmailService.cs" />
     <Compile Include="Interfaces\ILookupService.cs" />
     <Compile Include="Interfaces\IReportService.cs" />
-    <Compile Include="Interfaces\ISettingsService.cs" />
+    <Compile Include="Interfaces\IAppSettings.cs" />
     <Compile Include="Interfaces\ISiteService.cs" />
     <Compile Include="Services\EmailService.cs" />
     <Compile Include="Interfaces\IFileService.cs" />
@@ -125,7 +125,7 @@
     <Compile Include="Services\PriceService.cs" />
     <Compile Include="Services\ReportService.cs" />
     <Compile Include="Services\SiteService.cs" />
-    <Compile Include="Services\SettingsService.cs" />
+    <Compile Include="AppSettings.cs" />
     <Compile Include="Services\FileService.cs" />
     <Compile Include="Services\LookupService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
