@@ -361,6 +361,7 @@
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="parameters.xml" />
+    <Content Include="deploy.ps1" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="bin\" />
