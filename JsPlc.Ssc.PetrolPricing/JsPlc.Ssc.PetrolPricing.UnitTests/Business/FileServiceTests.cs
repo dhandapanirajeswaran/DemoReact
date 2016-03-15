@@ -640,7 +640,7 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 						_mockRepository
 							.Verify(v => v.LogImportError(
 								It.Is<Models.FileUpload>(arg =>
-								ComparePrimaryFileUploadAttributes(testFileToUpload, arg)), It.IsAny<ExcelParseFileException>(), It.IsAny<int?>()), Times.AtLeastOnce());
+								ComparePrimaryFileUploadAttributes(testFileToUpload, arg)), It.IsAny<string>(), It.IsAny<int?>()), Times.AtLeastOnce());
 					});
 					break;
 
