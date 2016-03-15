@@ -173,7 +173,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 						lineNumber += Constants.DailyFileRowsBatchSize;
 					}
 
-					aFile.StatusId = importStatus.All(c => c) 
+					aFile.StatusId = importStatus.All(c => c)
 						? (int)ImportProcessStatuses.Success
 						: (int)ImportProcessStatuses.Failed;
 
@@ -303,6 +303,12 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 				}
 
 				_db.UpdateImportProcessStatus(aFile.StatusId, aFile); //ok 10, failed 15
+			}
+			catch (ExcelParseFileException ex)
+			{
+				_db.LogImportError(aFile, ex.Message, null);
+				_db.UpdateImportProcessStatus(15, aFile); //failed 15
+				return null;
 			}
 			catch (Exception ex)
 			{

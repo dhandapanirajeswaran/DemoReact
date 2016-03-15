@@ -25,6 +25,7 @@
         }
     </div>
 </div>
+<div class="alert alert-danger @(string.IsNullOrWhiteSpace(ViewBag.ErrorMessage) ? "hidden" : "")">@ViewBag.ErrorMessage</div>
 <hr />
 
 <div class="report">
