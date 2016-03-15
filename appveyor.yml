@@ -17,6 +17,9 @@ before_build:
 build:
   project: JsPlc.Ssc.PetrolPricing\PetrolPricing.sln
   publish_wap: true
+artifacts:
+- path: JsPlc.Ssc.PetrolPricing\JsPlc.Ssc.PetrolPricing.Databases\PetrolPricingRepository\bin\Release\PetrolPricingRepository.dacpac
+  name: JsPlc.Ssc.PetrolPricing.Databases
 deploy:
 - provider: Environment
   name: petrolpricing-development
