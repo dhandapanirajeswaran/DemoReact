@@ -1,2 +1,1 @@
-Set-ItemProperty IIS:\apppools\petrolpricing_portal_pool -name "enable32BitAppOnWin64" -Value "true"
-Set-ItemProperty IIS:\apppools\petrolpricing_service_pool -name "enable32BitAppOnWin64" -Value "true"
+$env:windir\System32\inetsrv\appcmd.exe set apppool /apppool.name:petrolpricing_service_pool /enable32BitAppOnWin64:true

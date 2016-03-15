@@ -402,6 +402,7 @@
     <Content Include="Views\PriceReports\NationalAverage2.cshtml" />
     <Content Include="Views\PriceReports\CompetitorsPriceRange.cshtml" />
     <Content Include="parameters.xml" />
+    <Content Include="deploy.ps1" />
     <Content Include="Views\PriceReports\CompetitorsPriceRangeByCompany.cshtml" />
   </ItemGroup>
   <ItemGroup>
