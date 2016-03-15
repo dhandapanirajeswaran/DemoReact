@@ -11,6 +11,7 @@ using JsPlc.Ssc.PetrolPricing.Business;
 using JsPlc.Ssc.PetrolPricing.Models;
 using JsPlc.Ssc.PetrolPricing.Models.Common;
 using Newtonsoft.Json;
+using JsPlc.Ssc.PetrolPricing.Core;
 
 namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
 {
@@ -30,6 +31,12 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
             {
                 return BadRequest("Invalid passed data: fileUpload");
             }
+
+			if (fileUpload.UploadTypeId == (int)FileUploadTypes.DailyPriceData
+				&& fileUpload.OriginalFileName.ToLowerInvariant().EndsWith(".xlsx"))
+			{
+				return BadRequest("Invalid file format for Daily Price Data file. Expected format is CSV in a simple text file.");
+			}
 
             try
             {

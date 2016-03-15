@@ -53,7 +53,7 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 		{
 			//Arrange
 			#region Arrange
-			var testFileToUpload = DummyFileUploads.First(fu => fu.UploadTypeId == (int)UploadTypes.DailyPriceData);
+			var testFileToUpload = DummyFileUploads.First(fu => fu.UploadTypeId == (int)FileUploadTypes.DailyPriceData);
 
 			int numberOfLinesInTestFile = getNumberOfLinesInDailyTestFile(testFileToUpload);
 
@@ -69,7 +69,7 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 			#endregion
 
 			//Act
-			var result = sut.ProcessDailyPrice(DummyFileUploads.Where(fu => fu.UploadTypeId == (int)UploadTypes.DailyPriceData).ToList());
+			var result = sut.ProcessDailyPrice(DummyFileUploads.Where(fu => fu.UploadTypeId == (int)FileUploadTypes.DailyPriceData).ToList());
 
 			//Assert
 			#region Assert
@@ -126,7 +126,7 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 		{
 			//Arrange
 			#region Arrange
-			var testFileToUpload = DummyInvalidFileUploads.First(fu => fu.UploadTypeId == (int)UploadTypes.DailyPriceData);
+			var testFileToUpload = DummyInvalidFileUploads.First(fu => fu.UploadTypeId == (int)FileUploadTypes.DailyPriceData);
 
 			int numberOfLinesInTestFile = getNumberOfLinesInDailyTestFile(testFileToUpload);
 
@@ -142,7 +142,7 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 			#endregion
 
 			//Act
-			var result = sut.ProcessDailyPrice(DummyInvalidFileUploads.Where(fu => fu.UploadTypeId == (int)UploadTypes.DailyPriceData).ToList());
+			var result = sut.ProcessDailyPrice(DummyInvalidFileUploads.Where(fu => fu.UploadTypeId == (int)FileUploadTypes.DailyPriceData).ToList());
 
 			//Assert
 			#region Assert
@@ -217,7 +217,7 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 		{
 			//Arrange
 			#region Arrange
-			var testFileToUpload = DummyFileUploads.First(fu => fu.UploadTypeId == (int)UploadTypes.DailyPriceData);
+			var testFileToUpload = DummyFileUploads.First(fu => fu.UploadTypeId == (int)FileUploadTypes.DailyPriceData);
 
 			int numberOfLinesInTestFile = getNumberOfLinesInDailyTestFile(testFileToUpload);
 
@@ -233,7 +233,7 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 			#endregion
 
 			//Act
-			sut.ProcessDailyPrice(DummyFileUploads.Where(fu => fu.UploadTypeId == (int)UploadTypes.DailyPriceData).ToList());
+			sut.ProcessDailyPrice(DummyFileUploads.Where(fu => fu.UploadTypeId == (int)FileUploadTypes.DailyPriceData).ToList());
 
 			//Assert
 			#region Assert
@@ -279,7 +279,7 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 					}
 				);
 
-			var testFileToUpload = DummyInvalidFileUploads.First(fu => fu.UploadTypeId == (int)UploadTypes.QuarterlySiteData);
+			var testFileToUpload = DummyInvalidFileUploads.First(fu => fu.UploadTypeId == (int)FileUploadTypes.QuarterlySiteData);
 
 			var testFilePathAndName = Path.Combine(TestFileFolderPath, testFileToUpload.StoredFileName);
 
@@ -305,7 +305,7 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 			#endregion
 
 			//Act
-			var result = sut.ProcessQuarterlyFileNew(DummyInvalidFileUploads.Where(fu => fu.UploadTypeId == (int)UploadTypes.QuarterlySiteData).ToList());
+			var result = sut.ProcessQuarterlyFileNew(DummyInvalidFileUploads.Where(fu => fu.UploadTypeId == (int)FileUploadTypes.QuarterlySiteData).ToList());
 
 			//Assert
 			#region Assert
@@ -428,7 +428,7 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 					}
 				);
 
-			var testFileToUpload = DummyFileUploads.First(fu => fu.UploadTypeId == (int)UploadTypes.QuarterlySiteData);
+			var testFileToUpload = DummyFileUploads.First(fu => fu.UploadTypeId == (int)FileUploadTypes.QuarterlySiteData);
 
 			var testFilePathAndName = Path.Combine(TestFileFolderPath, testFileToUpload.StoredFileName);
 
@@ -454,7 +454,7 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 			#endregion
 
 			//Act
-			var result = sut.ProcessQuarterlyFileNew(DummyFileUploads.Where(fu => fu.UploadTypeId == (int)UploadTypes.QuarterlySiteData).ToList());
+			var result = sut.ProcessQuarterlyFileNew(DummyFileUploads.Where(fu => fu.UploadTypeId == (int)FileUploadTypes.QuarterlySiteData).ToList());
 
 			//Assert
 			#region Assert
@@ -550,7 +550,7 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 		{
 			//Arrange
 			#region Arrange
-			var testFileToUpload = DummyFileUploads.First(fu => fu.UploadTypeId == (int)UploadTypes.QuarterlySiteData);
+			var testFileToUpload = DummyFileUploads.First(fu => fu.UploadTypeId == (int)FileUploadTypes.QuarterlySiteData);
 
 			var testFilePathAndName = Path.Combine(TestFileFolderPath, testFileToUpload.StoredFileName);
 
@@ -609,7 +609,7 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 			#endregion
 
 			//Act
-			sut.ProcessQuarterlyFileNew(DummyFileUploads.Where(fu => fu.UploadTypeId == (int)UploadTypes.QuarterlySiteData).ToList());
+			sut.ProcessQuarterlyFileNew(DummyFileUploads.Where(fu => fu.UploadTypeId == (int)FileUploadTypes.QuarterlySiteData).ToList());
 
 			//Assert
 			#region Assert
@@ -694,20 +694,20 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 			#endregion
 		}
 
-		[TestCase((int)UploadTypes.DailyPriceData)] // Daliy
-		[TestCase((int)UploadTypes.QuarterlySiteData)] // Quarterly
+		[TestCase((int)FileUploadTypes.DailyPriceData)] // Daliy
+		[TestCase((int)FileUploadTypes.QuarterlySiteData)] // Quarterly
 		public void When_NewUpload_Method_Called_Then_Daily_Price_Calculation_Should_Be_Fired(
 			int uploadTypeId
 			)
 		{
 			//Arrange
-			var expectedFileUploadForRecalculation = DummyFileUploads.First(fu => fu.UploadTypeId == (int)UploadTypes.DailyPriceData);
+			var expectedFileUploadForRecalculation = DummyFileUploads.First(fu => fu.UploadTypeId == (int)FileUploadTypes.DailyPriceData);
 
 			var testFileToUpload = DummyFileUploads.First(fu => fu.UploadTypeId == uploadTypeId);
 
 			testFileToUpload.UploadTypeId = uploadTypeId;
 
-			if (uploadTypeId == (int)UploadTypes.QuarterlySiteData)
+			if (uploadTypeId == (int)FileUploadTypes.QuarterlySiteData)
 			{
 				var testFilePathAndName = Path.Combine(TestFileFolderPath, testFileToUpload.StoredFileName);
 
@@ -751,9 +751,9 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 		public void When_NewUpload_Method_Called_And_New_Daily_Upload_File_Not_Found_Then_Daily_Price_Calculation_Should_NOT_Be_Fired()
 		{
 			//Arrange
-			var expectedFileUploadForRecalculation = DummyFileUploads.First(fu => fu.UploadTypeId == (int)UploadTypes.DailyPriceData);
+			var expectedFileUploadForRecalculation = DummyFileUploads.First(fu => fu.UploadTypeId == (int)FileUploadTypes.DailyPriceData);
 
-			var testFileToUpload = DummyFileUploads.First(fu => fu.UploadTypeId == (int)UploadTypes.QuarterlySiteData);
+			var testFileToUpload = DummyFileUploads.First(fu => fu.UploadTypeId == (int)FileUploadTypes.QuarterlySiteData);
 
 			var testFilePathAndName = Path.Combine(TestFileFolderPath, testFileToUpload.StoredFileName);
 

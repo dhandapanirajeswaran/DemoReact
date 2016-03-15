@@ -231,13 +231,13 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 						Id = 1,
                         UploadDateTime = DateTime.Today,
 						StoredFileName = "DailyUpload.txt",
-						UploadTypeId = (int)UploadTypes.DailyPriceData
+						UploadTypeId = (int)FileUploadTypes.DailyPriceData
                     },
 					new Models.FileUpload {
 						Id = 2,
                         UploadDateTime = DateTime.Today,
 						StoredFileName = "QuarterlyUpload.xlsx",
-						UploadTypeId = (int)UploadTypes.QuarterlySiteData
+						UploadTypeId = (int)FileUploadTypes.QuarterlySiteData
                     }
                 };
 
@@ -255,13 +255,13 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 						Id = 1,
                         UploadDateTime = DateTime.Today,
 						StoredFileName = "InvalidDailyUpload.txt",
-						UploadTypeId = (int)UploadTypes.DailyPriceData
+						UploadTypeId = (int)FileUploadTypes.DailyPriceData
                     },
 					new Models.FileUpload {
 						Id = 2,
                         UploadDateTime = DateTime.Today,
 						StoredFileName = "InvalidQuarterlyUpload.xlsx",
-						UploadTypeId = (int)UploadTypes.QuarterlySiteData
+						UploadTypeId = (int)FileUploadTypes.QuarterlySiteData
                     }
                 };
 

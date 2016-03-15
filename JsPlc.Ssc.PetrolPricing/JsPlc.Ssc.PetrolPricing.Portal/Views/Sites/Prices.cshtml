@@ -314,25 +314,25 @@
                         <td colspan="13" xalign="right" style="background-color: grey">
                             <table class="competitorTable table-striped table-hover">
                                 <thead>
-                                    <tr rowspan="2">
+                                    <tr>
                                         <th><span>Brand</span></th>
                                         <th><span>Marker</span></th>
                                         <th><span>Drive-Time</span></th>
                                         <th><span>Cat No.</span></th>
 
-                                        <th width="150" colspan="2" class="text-center" style="border-left: 1px solid #ccc">
+                                        <th colspan="2" class="text-center" style="border-left: 1px solid #ccc">
                                             <h4>
                                                 <span class="label label-success">
                                                     &nbsp;Unleaded&nbsp;
                                                 </span>
                                             </h4>
                                         </th>
-                                        <th width="150" colspan="2" class="text-center" style="border-left: 1px solid #ccc">
+                                        <th colspan="2" class="text-center" style="border-left: 1px solid #ccc">
                                             <h4>
                                                 <span class="label label-black">&nbsp;Diesel&nbsp;</span>
                                             </h4>
                                         </th>
-                                        <th width="150" colspan="2" class="text-center" style="border-left: 1px solid #ccc">
+                                        <th colspan="2" class="text-center" style="border-left: 1px solid #ccc">
                                             <h4>
                                                 <span class="label label-success-inverted">&nbsp;Super Unleaded&nbsp;</span>
                                             </h4>
@@ -343,9 +343,9 @@
                                         <th class="tblHighlight"><span>Yesterday</span></th>
                                         <th class="tblHighlight"><span>Today</span></th>
                                         <th><span>Yesterday</span></th>
-                                        <th><span>Today</span></th>
+										<th><span>Today</span></th>
                                         <th class="tblHighlight"><span>Yesterday</span></th>
-                                        <th class="tblHighlight"><span>Today</span></th>
+										<th class="tblHighlight"><span>Today</span></th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -371,7 +371,21 @@
                                         <!-- ko foreach: FuelPricesToDisplay -->
                                         <!-- ko if: siteSupportsFuel -->
                                         <td style="border-left: 1px solid #ccc"><span data-bind="text: FuelPrice.YestPrice"></span></td>
-                                        <td style="border-left: 1px solid #ccc" class="tblHighlight"><span data-bind="text: FuelPrice.TodayPrice"></span></td>
+										<td style="border-left: 1px solid #ccc;" class="tblHighlight text-nowrap text-right">
+											<span data-bind="text: FuelPrice.TodayPrice"></span>
+
+											
+												<i data-bind="attr: {
+                                    class: (FuelPrice.Difference == 0 || FuelPrice.Difference == '-') ? 'fa fa-arrow-circle-o-right'
+                                            : (FuelPrice.Difference <= 0.1) ? 'fa fa-arrow-circle-o-down': 'fa fa-arrow-circle-o-up',
+                                    style: (FuelPrice.Difference == 0 || FuelPrice.Difference == '-') ? 'color: grey'
+                                            : (FuelPrice.Difference <= 0.1) ? 'color: red': 'color: green',
+                                            }"></i>
+												&nbsp;<span data-bind="text: (FuelPrice.Difference == 0 || FuelPrice.Difference == '-') ? '-' :
+                                                           (FuelPrice.Difference/10)"></span>
+											
+
+										</td>
                                         <!-- /ko -->
                                         <!-- ko if: !siteSupportsFuel -->
                                         <td style="border-left: 1px solid #ccc" colspan="2">n/a</td>

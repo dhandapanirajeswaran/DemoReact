@@ -15,291 +15,299 @@ using JsPlc.Ssc.PetrolPricing.Models.Common;
 using JsPlc.Ssc.PetrolPricing.Models.ViewModels;
 using JsPlc.Ssc.PetrolPricing.Portal.Facade;
 using Microsoft.Ajax.Utilities;
+using JsPlc.Ssc.PetrolPricing.Core;
 
 namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 {
-    [Authorize]
-    public class FileController : Controller
-    {
-        readonly ServiceFacade _serviceFacade = new ServiceFacade();
+	[Authorize]
+	public class FileController : Controller
+	{
+		readonly ServiceFacade _serviceFacade = new ServiceFacade();
 
-        public async Task<ActionResult> Index(string msg = "")
-        {
-            // Display list of existing files along with their status
-            ViewBag.Message = msg;
+		public async Task<ActionResult> Index(string msg = "")
+		{
+			// Display list of existing files along with their status
+			ViewBag.Message = msg;
 
-            using (var svc = new ServiceFacade())
-            {
-                var model  = await svc.GetFileUploads(null, null);
-                return View(model);
-            }
-        }
+			using (var svc = new ServiceFacade())
+			{
+				var model = await svc.GetFileUploads(null, null);
+				return View(model);
+			}
+		}
 
-        public async Task<ActionResult> Upload(string errMsg = "")
-        {
-            ViewBag.ErrorMessage = errMsg;
+		public async Task<ActionResult> Upload(string errMsg = "")
+		{
+			ViewBag.ErrorMessage = errMsg;
 
-            var model = new UploadViewModel
-            {
-                UploadTypes = GetUploadTypes(),
-                UploadDate = DateTime.Now
-            };
-            var existingUploads = await ExistingDailyUploads(model.UploadDate);
-            if (existingUploads.Any())
-            {
-                ViewBag.WarningMessage = "Warning: Today Daily Prices file has already been uploaded.";
-            }
-            return View(model);
-        }
+			var model = new UploadViewModel
+			{
+				UploadTypes = GetUploadTypes(),
+				UploadDate = DateTime.Now
+			};
+			var existingUploads = await ExistingDailyUploads(model.UploadDate);
+			if (existingUploads.Any())
+			{
+				ViewBag.WarningMessage = StringMessages.Warning_DailyPriceFileAlreadyUploaded;
+			}
+			return View(model);
+		}
 
-        [HttpPost]
-        public async Task<ActionResult> Upload(HttpPostedFileBase file, int uploadTypes, DateTime? uploadDate)
-        {
-            var model = new UploadViewModel
-            {
-                UploadTypes = GetUploadTypes(),
-                UploadDate = DateTime.Now
-            };
+		[HttpPost]
+		public async Task<ActionResult> Upload(HttpPostedFileBase file, int uploadTypes, DateTime? uploadDate)
+		{
+			var model = new UploadViewModel
+			{
+				UploadTypes = GetUploadTypes(),
+				UploadDate = DateTime.Now
+			};
 
-            ViewBag.Message = "Upload Daily/Quarterly file";
-            string errorMessage = "";
+			string errorMessage = string.Empty;
 
-            try
-            {
-                if (file == null || file.ContentLength <= 0)
-                {
-                    throw new ApplicationException("Upload file is empty or no file selected. Please select a file to upload");
-                }
+			try
+			{
+				if (file == null || file.ContentLength <= 0)
+				{
+					throw new ApplicationException(StringMessages.Error_UploadedFileIsEmpty);
+				}
 
-                var fu = file.ToFileUpload(User.Identity.Name, uploadDate, uploadTypes);
+				var fu = file.ToFileUpload(User.Identity.Name, uploadDate, uploadTypes);
 
-                var fum = new FileUploadModel(fu, new ServiceFacade());
-                var status = await fum.UploadFile(file);
+				if (uploadTypes == (int)FileUploadTypes.DailyPriceData
+					&& fu.OriginalFileName.ToLowerInvariant().EndsWith(".xlsx"))
+				{
+					ViewBag.ErrorMessage = StringMessages.Error_InvalidFileFormat_DailyPriceData;
+					return View(model);
+				}
 
-                switch (status) // Store fu to state
-                {
-                    case FileUploadStatus.InvalidUpload:
-                        return RedirectToAction("Upload", new { errMsg = "Invalid upload file. Please retry and select a file to upload" });
+				var fum = new FileUploadModel(fu, new ServiceFacade());
 
-                    case FileUploadStatus.Held: // Initiate second step - get User confirmation
-                        var holdKey = Guid.NewGuid().ToString();
-                        Session[holdKey] = fu;
-                        return RedirectToAction("ConfirmUpload", new { guidKey = holdKey });
+				var status = await fum.UploadFile(file);
 
-                    case FileUploadStatus.Saved:
-                        return RedirectToAction("Index", new { msg = String.Format(Constants.UploadSuccessMessageWithFormat, fum.OriginalFileName) });
-                }
-            }
-            catch (ApplicationException ex)
-            {
-                errorMessage = ex.Message;
-            }
-            catch (Exception)
-            {
-                errorMessage = "Sorry, an error occured, please try again.";
-            }
-            return RedirectToAction("Upload", new { errMsg = errorMessage });
-        }
+				switch (status) // Store fu to state
+				{
+					case FileUploadStatus.InvalidUpload:
+						return RedirectToAction("Upload", new { errMsg = StringMessages.Error_InvalidUploadFile });
 
-        public async Task<ActionResult> ConfirmUpload(string guidKey)
-        {
-            var fileUpload = Session[guidKey] as FileUpload;
-            if (fileUpload == null)
-            {
-                return RedirectToAction("Upload", new { errMsg = "Sorry, the file could not be uploaded. Please retry the upload.." });
-            }
+					case FileUploadStatus.Held: // Initiate second step - get User confirmation
+						var holdKey = Guid.NewGuid().ToString();
+						Session[holdKey] = fu;
+						return RedirectToAction("ConfirmUpload", new { guidKey = holdKey });
 
-            var model = new UploadConfirmationViewModel
-            {
-                OriginalFileName = fileUpload.OriginalFileName,
-                Guid = guidKey,
-                ExistingFiles = await ExistingDailyUploads(fileUpload.UploadDateTime)
-            };
-            return View(model);
-        }
+					case FileUploadStatus.Saved:
+						return RedirectToAction("Index", new { msg = String.Format(Constants.UploadSuccessMessageWithFormat, fum.OriginalFileName) });
+				}
+			}
+			catch (ApplicationException ex)
+			{
+				errorMessage = ex.Message;
+			}
+			catch (Exception)
+			{
+				errorMessage = StringMessages.Error_TryAgain;
+			}
+			return RedirectToAction("Upload", new { errMsg = errorMessage });
+		}
 
-        public ActionResult UploadConfirmation(string response, string guidKey)
-        {
-            var fileUpload = Session[guidKey] as FileUpload;
-            if (fileUpload == null)
-            {
-                return RedirectToAction("Upload", new { errMsg = "Sorry, the file could not be uploaded. Please retry the upload.." });
-            }
+		public async Task<ActionResult> ConfirmUpload(string guidKey)
+		{
+			var fileUpload = Session[guidKey] as FileUpload;
+			if (fileUpload == null)
+			{
+				return RedirectToAction("Upload", new { errMsg = StringMessages.Error_ReuploadFile });
+			}
 
-            var fum = new FileUploadModel(fileUpload, new ServiceFacade());
+			var model = new UploadConfirmationViewModel
+			{
+				OriginalFileName = fileUpload.OriginalFileName,
+				Guid = guidKey,
+				ExistingFiles = await ExistingDailyUploads(fileUpload.UploadDateTime)
+			};
+			return View(model);
+		}
 
-            if (response == "Overwrite")
-            {
-                fum.ConfirmedUploadByUser();
-                return RedirectToAction("Index", new { msg = String.Format(Constants.UploadSuccessMessageWithFormat, fum.OriginalFileName) });
-            }
-            
-            fum.CleanupUpload();
-            return RedirectToAction("Overwrite");
-        }
+		public ActionResult UploadConfirmation(string response, string guidKey)
+		{
+			var fileUpload = Session[guidKey] as FileUpload;
+			if (fileUpload == null)
+			{
+				return RedirectToAction("Upload", new { errMsg = StringMessages.Error_ReuploadFile });
+			}
 
-        public async Task<ActionResult> Details(int id)
-        {
-            // Return file upload details with processing steps and errors if any
-            var model = await _serviceFacade.GetFileUpload(id);
-            return View(model);
-        }
+			var fum = new FileUploadModel(fileUpload, new ServiceFacade());
 
-        #region private methods
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        // To check for warning where file exists (daily file type check for the date)
-        private async Task<IEnumerable<FileUpload>> ExistingDailyUploads(DateTime uploadDateTime)
-        {
-            return await _serviceFacade.ExistingDailyUploads(uploadDateTime);
-        }
+			if (response == "Overwrite")
+			{
+				fum.ConfirmedUploadByUser();
+				return RedirectToAction("Index", new { msg = String.Format(Constants.UploadSuccessMessageWithFormat, fum.OriginalFileName) });
+			}
 
-        private static IEnumerable<UploadType> GetUploadTypes()
-        {
-            using (var svcFacade = new ServiceFacade())
-            {
-                return svcFacade.GetUploadTypes();
-            }
-        }
-        #endregion
-    }
+			fum.CleanupUpload();
+			return RedirectToAction("Overwrite");
+		}
 
-    public static class FileUploadExtensions
-    {
-        public static FileUpload ToFileUpload(this HttpPostedFileBase uploadedFile, string userName, DateTime? uploadDate, int uploadTypeId)
-        {
-            var uploadDateTime = uploadDate ?? DateTime.Now;
-            var fileName = Path.GetFileName(uploadedFile.FileName);
-            var originalFileName = fileName;
+		public async Task<ActionResult> Details(int id)
+		{
+			// Return file upload details with processing steps and errors if any
+			var model = await _serviceFacade.GetFileUpload(id);
+			return View(model);
+		}
 
-            var savedFileName = String.Format("{1} {2}hrs - {0}", fileName,
-                uploadDateTime.ToString("yyyyMMdd"),
-                uploadDateTime.ToString("HHmmss"));
-            return new FileUpload
-            {
-                OriginalFileName = originalFileName,
-                StoredFileName = savedFileName,
-                UploadedBy = userName,
-                StatusId = 1,
-                UploadDateTime = uploadDateTime,
-                UploadTypeId = uploadTypeId
-            };
-        }
-    }
+		#region private methods
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		// To check for warning where file exists (daily file type check for the date)
+		private async Task<IEnumerable<FileUpload>> ExistingDailyUploads(DateTime uploadDateTime)
+		{
+			return await _serviceFacade.ExistingDailyUploads(uploadDateTime);
+		}
 
-    public enum FileUploadStatus
-    {
-        Unknown = 0, Read = 1, Held = 2, Confirmed = 3, Saved = 4, InvalidUpload = -1
-    }
+		private static IEnumerable<UploadType> GetUploadTypes()
+		{
+			using (var svcFacade = new ServiceFacade())
+			{
+				return svcFacade.GetUploadTypes();
+			}
+		}
+		#endregion
+	}
 
-    public class UploadConfirmationViewModel
-    {
-        public string OriginalFileName { get; set; }
-        public string Guid { get; set; } // key to session object
-        public bool Response { get; set; } // Upload, Cancel
-        public IEnumerable<FileUpload> ExistingFiles { get; set; } // Show list of files existing for the day
-    }
+	public static class FileUploadExtensions
+	{
+		public static FileUpload ToFileUpload(this HttpPostedFileBase uploadedFile, string userName, DateTime? uploadDate, int uploadTypeId)
+		{
+			var uploadDateTime = uploadDate ?? DateTime.Now;
+			var fileName = Path.GetFileName(uploadedFile.FileName);
+			var originalFileName = fileName;
 
-    public class FileUploadModel
-    {
-        private string _holdKey;
-        private FileUpload _fileUpload;
-        private FileUploadStatus _uploadStatus = FileUploadStatus.Unknown;
-        private ServiceFacade _serviceFacade;
+			var savedFileName = String.Format("{1} {2}hrs - {0}", fileName,
+				uploadDateTime.ToString("yyyyMMdd"),
+				uploadDateTime.ToString("HHmmss"));
+			return new FileUpload
+			{
+				OriginalFileName = originalFileName,
+				StoredFileName = savedFileName,
+				UploadedBy = userName,
+				StatusId = 1,
+				UploadDateTime = uploadDateTime,
+				UploadTypeId = uploadTypeId
+			};
+		}
+	}
 
-        private HttpPostedFileBase _uploadedFile;
+	public enum FileUploadStatus
+	{
+		Unknown = 0, Read = 1, Held = 2, Confirmed = 3, Saved = 4, InvalidUpload = -1
+	}
 
-        private string _uploadPath;
-        private string _uploadHoldPath;
+	public class UploadConfirmationViewModel
+	{
+		public string OriginalFileName { get; set; }
+		public string Guid { get; set; } // key to session object
+		public bool Response { get; set; } // Upload, Cancel
+		public IEnumerable<FileUpload> ExistingFiles { get; set; } // Show list of files existing for the day
+	}
 
-        public FileUploadModel(FileUpload fileUpload, ServiceFacade serviceFacade)
-        {
-            _fileUpload = fileUpload;
-            _uploadStatus = FileUploadStatus.Unknown;
-            _serviceFacade = serviceFacade;
+	public class FileUploadModel
+	{
+		private string _holdKey;
+		private FileUpload _fileUpload;
+		private FileUploadStatus _uploadStatus = FileUploadStatus.Unknown;
+		private ServiceFacade _serviceFacade;
 
-            SetUploadAndHoldPaths();
-        }
+		private HttpPostedFileBase _uploadedFile;
 
-        public string OriginalFileName // Or we could expose entire FileUpload object
-        {
-            get { return _fileUpload.OriginalFileName; }
-        }
+		private string _uploadPath;
+		private string _uploadHoldPath;
 
-        public void ConfirmedUploadByUser()
-        {
-            var heldFile = Path.Combine(_uploadHoldPath, _fileUpload.StoredFileName);
-            var destFile = Path.Combine(_uploadPath, _fileUpload.StoredFileName);
-            File.Move(heldFile, destFile);
-            RecordUpload();
-        }
+		public FileUploadModel(FileUpload fileUpload, ServiceFacade serviceFacade)
+		{
+			_fileUpload = fileUpload;
+			_uploadStatus = FileUploadStatus.Unknown;
+			_serviceFacade = serviceFacade;
 
-        public async Task<FileUploadStatus> UploadFile(HttpPostedFileBase uploadedFile)
-        {
-            _uploadedFile = uploadedFile;
+			SetUploadAndHoldPaths();
+		}
 
-            if (uploadedFile == null || uploadedFile.ContentLength <= 0)
-            {
-                return FileUploadStatus.InvalidUpload;
-            }
-            var existingUploads = await _serviceFacade.ExistingDailyUploads(_fileUpload.UploadDateTime);
-            if (_fileUpload.UploadTypeId == 1 && existingUploads.Any())
-            {
-                _holdKey = Guid.NewGuid().ToString();
-                _uploadStatus = PersistToHoldFile();
-            }
-            else
-            {
-                _uploadStatus = PersistToSaveFile();
-                RecordUpload();
-            }
-        
-            // Simply save the file to Hold or Save path
-            return _uploadStatus;
-        }
+		public string OriginalFileName // Or we could expose entire FileUpload object
+		{
+			get { return _fileUpload.OriginalFileName; }
+		}
 
-        private void SetUploadAndHoldPaths()
-        {
-            _uploadPath = _serviceFacade.GetUploadPath();
-            _uploadPath = Functions.EnsurePathEndsWithSlash(_uploadPath);
-            _uploadHoldPath = String.Format("{0}{1}", _uploadPath, Constants.UploadHoldPath);
-            CreateOrEnsureHoldPathExists();
-        }
+		public void ConfirmedUploadByUser()
+		{
+			var heldFile = Path.Combine(_uploadHoldPath, _fileUpload.StoredFileName);
+			var destFile = Path.Combine(_uploadPath, _fileUpload.StoredFileName);
+			File.Move(heldFile, destFile);
+			RecordUpload();
+		}
 
-        private void CreateOrEnsureHoldPathExists()
-        {
-            if (!Directory.Exists(_uploadHoldPath)) Directory.CreateDirectory(_uploadHoldPath);
+		public async Task<FileUploadStatus> UploadFile(HttpPostedFileBase uploadedFile)
+		{
+			_uploadedFile = uploadedFile;
 
-        }
+			if (uploadedFile == null || uploadedFile.ContentLength <= 0)
+			{
+				return FileUploadStatus.InvalidUpload;
+			}
+			var existingUploads = await _serviceFacade.ExistingDailyUploads(_fileUpload.UploadDateTime);
+			if (_fileUpload.UploadTypeId == 1 && existingUploads.Any())
+			{
+				_holdKey = Guid.NewGuid().ToString();
+				_uploadStatus = PersistToHoldFile();
+			}
+			else
+			{
+				_uploadStatus = PersistToSaveFile();
+				RecordUpload();
+			}
 
-        private FileUploadStatus PersistToHoldFile()
-        {
-            _uploadPath = Functions.EnsurePathEndsWithSlash(_uploadPath);
-            var uploadHoldPath = String.Format("{0}{1}", _uploadPath, Constants.UploadHoldPath);
-            var path = Path.Combine(uploadHoldPath, _fileUpload.StoredFileName);
+			// Simply save the file to Hold or Save path
+			return _uploadStatus;
+		}
 
-            _uploadedFile.SaveAs(path); // PERSIST The File to Upload Holding area
-            return FileUploadStatus.Held;
-        }
+		private void SetUploadAndHoldPaths()
+		{
+			_uploadPath = _serviceFacade.GetUploadPath();
+			_uploadPath = Functions.EnsurePathEndsWithSlash(_uploadPath);
+			_uploadHoldPath = String.Format("{0}{1}", _uploadPath, Constants.UploadHoldPath);
+			CreateOrEnsureHoldPathExists();
+		}
 
-        private FileUploadStatus PersistToSaveFile()
-        {
-            var path = Path.Combine(_uploadPath, _fileUpload.StoredFileName);
-            _uploadedFile.SaveAs(path); // PERSIST The File to Upload area
-            return FileUploadStatus.Saved;
-        }
+		private void CreateOrEnsureHoldPathExists()
+		{
+			if (!Directory.Exists(_uploadHoldPath)) Directory.CreateDirectory(_uploadHoldPath);
 
-        private void RecordUpload()
-        {
-            _serviceFacade.NewUpload(_fileUpload);
-        }
+		}
 
-        public void CleanupUpload()
-        {
-            var heldFile = Path.Combine(_uploadHoldPath, _fileUpload.StoredFileName);
-            File.Delete(heldFile);
-        }
-    }
+		private FileUploadStatus PersistToHoldFile()
+		{
+			_uploadPath = Functions.EnsurePathEndsWithSlash(_uploadPath);
+			var uploadHoldPath = String.Format("{0}{1}", _uploadPath, Constants.UploadHoldPath);
+			var path = Path.Combine(uploadHoldPath, _fileUpload.StoredFileName);
+
+			_uploadedFile.SaveAs(path); // PERSIST The File to Upload Holding area
+			return FileUploadStatus.Held;
+		}
+
+		private FileUploadStatus PersistToSaveFile()
+		{
+			var path = Path.Combine(_uploadPath, _fileUpload.StoredFileName);
+			_uploadedFile.SaveAs(path); // PERSIST The File to Upload area
+			return FileUploadStatus.Saved;
+		}
+
+		private void RecordUpload()
+		{
+			_serviceFacade.NewUpload(_fileUpload);
+		}
+
+		public void CleanupUpload()
+		{
+			var heldFile = Path.Combine(_uploadHoldPath, _fileUpload.StoredFileName);
+			File.Delete(heldFile);
+		}
+	}
 }

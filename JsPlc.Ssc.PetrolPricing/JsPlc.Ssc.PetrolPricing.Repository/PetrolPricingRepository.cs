@@ -469,27 +469,24 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 						sitePriceRow.FuelPrices = sitePriceRow.FuelPrices ?? new List<FuelPriceViewModel>();
 						if (!Convert.IsDBNull(pgRow["FuelTypeId"]))
 						{
-							//var AutoPrice = pgRow["SuggestedPrice"].ToString().ToNullable<int>();
-							//var OverridePrice = pgRow["OverriddenPrice"].ToString().ToNullable<int>();
 							var TodayPrice = pgRow["ModalPrice"].ToString().ToNullable<int>();
 							var YestPrice = pgRow["ModalPriceYest"].ToString().ToNullable<int>();
 							sitePriceRow.FuelPrices.Add(new FuelPriceViewModel
 							{
 								FuelTypeId = (int)pgRow["FuelTypeId"],
-								//// Tomorrow's prices
-								//AutoPrice = (!AutoPrice.HasValue) ? 0 : AutoPrice.Value,
-								//OverridePrice = (!OverridePrice.HasValue) ? 0 : OverridePrice.Value,
-
+								
 								// Today's prices (whatever was calculated yesterday OR last)
 								TodayPrice = TodayPrice,
 
 								// Today's prices (whatever was calculated yesterday OR last)
-								YestPrice = YestPrice
+								YestPrice = YestPrice,
+
+								//Difference between yesterday and today
+								Difference = TodayPrice.HasValue && YestPrice.HasValue ? TodayPrice - YestPrice : null
 							});
 						}
 					}
 					return dbList;
-					// .OrderBy(x => x.JsSiteId).ThenBy(x => x.SiteId).ThenBy(x => x.DriveTime); // TODO ordering doesnt work, hmmm...
 				}
 			}
 		}
