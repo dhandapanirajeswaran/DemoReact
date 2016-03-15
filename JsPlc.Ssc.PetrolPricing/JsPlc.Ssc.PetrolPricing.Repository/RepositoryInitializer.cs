@@ -24,12 +24,13 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
     {
         public override void InitializeDatabase(RepositoryContext context)
         {
-            base.InitializeDatabase(context);
+			//disabling initialisation - moved to dacpack updating strategy
+            //base.InitializeDatabase(context);
         }
 
         protected override void Seed(RepositoryContext context)
         {
-            SeedRepository(context);
+            //SeedRepository(context);
             base.Seed(context);
         }
 
