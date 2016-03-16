@@ -1,4 +1,4 @@
-﻿IF NOT EXISTS(SELECT 1 FROM [dbo].[ImportProcessStatus])
+﻿IF NOT EXISTS(SELECT TOP 1 1 FROM [dbo].[ImportProcessStatus])
 BEGIN
 
 INSERT [dbo].[ImportProcessStatus] ([Id], [Status]) VALUES (1, N'Uploaded')
@@ -16,7 +16,7 @@ END
 
 
 
-IF NOT EXISTS(SELECT 1 FROM [dbo].[UploadTypeName])
+IF NOT EXISTS(SELECT TOP 1 1 FROM [dbo].[UploadType])
 BEGIN
 
 INSERT [dbo].[UploadType] ([Id], [UploadTypeName]) VALUES (1, N'Daily Price Data')
@@ -25,7 +25,7 @@ INSERT [dbo].[UploadType] ([Id], [UploadTypeName]) VALUES (2, N'Quarterly Site D
 END
 
 
-IF NOT EXISTS(SELECT 1 FROM [dbo].[FuelType])
+IF NOT EXISTS(SELECT TOP 1 1 FROM [dbo].[FuelType])
 BEGIN
 INSERT [dbo].[FuelType] ([Id], [FuelTypeName]) VALUES (1, N'Super Unleaded')
 INSERT [dbo].[FuelType] ([Id], [FuelTypeName]) VALUES (2, N'Unleaded')
