@@ -1,12 +1,11 @@
 ﻿@using JsPlc.Ssc.PetrolPricing.Portal.Models
 @model LoginViewModel
-@{
-	ViewBag.Title = "Log in";
-}
+<h1>Log in</h1>
 
-<h1>@ViewBag.Title</h1>
 @Html.ValidationSummary(true, "There is/are some errors with the form. Please correct and try again.", new { @class = "alert alert-danger" })
+
 <hr />
+
 @using (Html.BeginForm("Login", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
 {
 	@Html.AntiForgeryToken()
@@ -35,8 +34,11 @@
 
 		</div>
 		<div class="panel-footer">
-			<div class="col-md-offset-2 col-md-3">
+			<div class="col-md-offset-2 col-md-1">
 				<input type="submit" value="Log in" class="btn btn-primary" />
+			</div>
+			<div class="col-md-2">
+				@Html.ActionLink("Forgot password?", "ForgotPassword", "Account", null, new { @class = "btn btn-default" })
 			</div>
 			<div class="clearfix"></div>
 		</div>
