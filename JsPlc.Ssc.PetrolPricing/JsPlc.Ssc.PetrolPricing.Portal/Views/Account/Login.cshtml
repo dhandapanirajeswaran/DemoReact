@@ -1,6 +1,10 @@
 ﻿@using JsPlc.Ssc.PetrolPricing.Portal.Models
 @model LoginViewModel
-<h1>Log in</h1>
+@{
+	ViewBag.Title = "Log in";
+}
+
+<h1>@ViewBag.Title.</h1>
 
 @Html.ValidationSummary(true, "There is/are some errors with the form. Please correct and try again.", new { @class = "alert alert-danger" })
 

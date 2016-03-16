@@ -1,6 +1,8 @@
 ﻿@using System.Web.UI.WebControls
 @model JsPlc.Ssc.PetrolPricing.Models.ViewModels.PriceMovementReportContainerViewModel
 @{
+	ViewBag.Title = "Report - Price Movement within selected dates";
+	
     if (!Model.FromDate.HasValue)
     {
         Model.FromDate = DateTime.Now;
@@ -16,7 +18,7 @@
 
 <div class="row">
     <div class="col-md-6">
-        <h1>Report - Price Movement within selected dates</h1>
+        <h1>@ViewBag.Title</h1>
     </div>
     <div class="col-md-6 text-right" style="padding-top: 20px">
         @if (Model.FuelTypeId != 0)

@@ -1,16 +1,18 @@
 ﻿@model JsPlc.Ssc.PetrolPricing.Models.ViewModels.NationalAverageReportContainerViewModel
 @{
-    if (!Model.ForDate.HasValue)
-    {
-        Model.ForDate = DateTime.Now;
-    }
+	ViewBag.Title = "Report - Competitors Price Range";
+	
+	if (!Model.ForDate.HasValue)
+	{
+		Model.ForDate = DateTime.Now;
+	}
 
-    var requestedDate = @Model.ForDate.Value.Date.ToString("dd-MMM-yyyy");
+	var requestedDate = @Model.ForDate.Value.Date.ToString("dd-MMM-yyyy");
 }
 
 <div class="row">
     <div class="col-md-6">
-        <h1>Report - Competitors Price Range</h1>
+        <h1>@ViewBag.Title.</h1>
     </div>
     <div class="col-md-6 text-right" style="padding-top: 20px">
         <input type="button" class="btn btn-primary" id="btnExportReport" value="Export to Excel" />

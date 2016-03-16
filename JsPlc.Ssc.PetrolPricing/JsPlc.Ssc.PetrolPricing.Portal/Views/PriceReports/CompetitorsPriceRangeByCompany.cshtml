@@ -1,8 +1,10 @@
 ﻿@model JsPlc.Ssc.PetrolPricing.Models.ViewModels.CompetitorsPriceRangeByCompanyViewModel
-
+@{
+	ViewBag.Title = "Report - Competitors Price Range by company";
+}
 <div class="row">
     <div class="col-md-6">
-        <h1>Report - Competitors Price Range by company</h1>
+        <h1>@ViewBag.Title.</h1>
     </div>
     <div class="col-md-6 text-right" style="padding-top: 20px">
         @if (Model.ReportCompanies.Any())
