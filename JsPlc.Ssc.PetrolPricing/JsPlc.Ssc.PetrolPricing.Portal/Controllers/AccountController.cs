@@ -213,7 +213,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
                 // Send an email with this link
 				string code = await UserManager.GeneratePasswordResetTokenAsync(user.Id);
 				var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
-				UserManager.SendEmail(user.Id, "Reset Password", string.Format("To reset your password please copy and paste following URL into your browser address field. {0}", callbackUrl));
+				UserManager.SendEmail(user.Id, "Reset Password", string.Format("To reset your password please copy and paste following URL into your browser's address field. {0}", callbackUrl));
 				return RedirectToAction("ForgotPasswordConfirmation", "Account");
             }
 
