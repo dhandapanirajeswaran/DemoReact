@@ -21,7 +21,7 @@ namespace JsPlc.Ssc.PetrolPricing.IntegrationTests.Portal.Steps
 		public void GivenIHaveValidDailyPriceDataFileForUpload()
 		{
 #if !DEBUG
-	ScenarioContext.Current.Pending()
+	ScenarioContext.Current.Pending();
 #endif
 			//Arrange
 			var filePathAndName = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "TestFiles/DailyUpload.txt");
@@ -39,7 +39,7 @@ namespace JsPlc.Ssc.PetrolPricing.IntegrationTests.Portal.Steps
 		public void WhenIPressUploadFileButton()
 		{
 #if !DEBUG
-	ScenarioContext.Current.Pending()
+	ScenarioContext.Current.Pending();
 #endif
 			//Arrange
 			var fileToUpload = (HttpTestPostedFile)ScenarioContext.Current[ContextKeys.HttpTestPostedFile.ToString()];
@@ -84,7 +84,7 @@ namespace JsPlc.Ssc.PetrolPricing.IntegrationTests.Portal.Steps
 		public void ThenTheTestFileShouldBeVisibleInTheListAndItsStatusShouldBeSuccess()
 		{
 #if !DEBUG
-	ScenarioContext.Current.Pending()
+	ScenarioContext.Current.Pending();
 #endif
 			//Arrange 
 			FileController fileController = new FileController();
@@ -117,7 +117,7 @@ namespace JsPlc.Ssc.PetrolPricing.IntegrationTests.Portal.Steps
 		public void ThenTheTestDataShouldBeDeleted()
 		{
 #if !DEBUG
-	ScenarioContext.Current.Pending()
+	ScenarioContext.Current.Pending();
 #endif
 			//Arrange
 			FileController fileController = new FileController();
