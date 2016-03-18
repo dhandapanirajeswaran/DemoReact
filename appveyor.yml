@@ -19,7 +19,7 @@ build:
   publish_wap: true
 before_test:
 - ps: >-
-    $configFile = "$env:APPLICATION_PATH\app.config"
+    $configFile = "$env:IntegrationTestAppConfigPath\app.config"
 
     [xml] $xmlfile = Get-Content $configFile
 
