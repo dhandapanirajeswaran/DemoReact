@@ -19,7 +19,7 @@ build:
   publish_wap: true
 before_test:
 - ps: >-
-    $configFile = JsPlc.Ssc.PetrolPricing.IntegrationTests\app.config
+    $configFile = "$env:APPLICATION_PATH\app.config"
 
     [xml] $xmlfile = Get-Content $configFile
 
