@@ -12,6 +12,11 @@ using TechTalk.SpecFlow;
 
 namespace JsPlc.Ssc.PetrolPricing.IntegrationTests.Portal.Steps
 {
+#if !DEBUG
+	//workaround for AppVeyor
+	//System.InvalidOperationException : The 'Microsoft.ACE.OLEDB.12.0' provider is not registered on the local machine.
+	[Ignore("Only valid for debug")]
+#endif
 	[Binding]
 	public class FileControllerSteps : StepsBase
 	{
