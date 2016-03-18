@@ -156,9 +156,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="deploy.ps1">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <None Include="App.config" />
     <None Include="packages.config" />
     <None Include="Portal\Features\FileController.feature">
