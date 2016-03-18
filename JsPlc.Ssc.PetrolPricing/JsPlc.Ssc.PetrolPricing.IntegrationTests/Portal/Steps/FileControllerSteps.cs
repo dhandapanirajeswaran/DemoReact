@@ -15,7 +15,29 @@ namespace JsPlc.Ssc.PetrolPricing.IntegrationTests.Portal.Steps
 	[Binding]
 	public class FileControllerSteps : StepsBase
 	{
-		enum ContextKeys { HttpTestPostedFile, UploadDateTime }
+		enum ContextKeys { HttpTestPostedFile, UploadDateTime, FileType }
+
+		[Given(@"I have valid Quarterly Data File for upload")]
+		public void GivenIHaveValidQuarterlyDataFileForUpload()
+		{
+#if !DEBUG
+			ScenarioContext.Current.Pending();
+#endif
+
+			//Arrange
+			var filePathAndName = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "TestFiles/QuarterlyUpload.xlsx");
+
+			ScenarioContext.Current[ContextKeys.FileType.ToString()] = 2;
+
+			//Act
+			var testFile = new HttpTestPostedFile(filePathAndName);
+
+			ScenarioContext.Current[ContextKeys.HttpTestPostedFile.ToString()] = testFile;
+
+			//Assert
+			Assert.AreEqual(testFile.FileName, "QuarterlyUpload.xlsx");
+		}
+
 
 		[Given(@"I have valid Daily Price Data File for upload")]
 		public void GivenIHaveValidDailyPriceDataFileForUpload()
@@ -25,6 +47,8 @@ namespace JsPlc.Ssc.PetrolPricing.IntegrationTests.Portal.Steps
 #endif
 			//Arrange
 			var filePathAndName = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "TestFiles/DailyUpload.txt");
+
+			ScenarioContext.Current[ContextKeys.FileType.ToString()] = 1;
 
 			//Act
 			var testFile = new HttpTestPostedFile(filePathAndName);
@@ -54,8 +78,10 @@ namespace JsPlc.Ssc.PetrolPricing.IntegrationTests.Portal.Steps
 
 			ScenarioContext.Current[ContextKeys.UploadDateTime.ToString()] = uploadDateTime;
 
+			var fileTypeId = (int)ScenarioContext.Current[ContextKeys.FileType.ToString()];
+
 			//Act
-			var uploadResult = fileController.Upload(fileToUpload, 1, uploadDateTime).Result as RedirectToRouteResult;
+			var uploadResult = fileController.Upload(fileToUpload, fileTypeId, uploadDateTime).Result as RedirectToRouteResult;
 
 			//Assert
 			Assert.Greater(uploadResult.RouteValues.Count, 0);
@@ -95,17 +121,19 @@ namespace JsPlc.Ssc.PetrolPricing.IntegrationTests.Portal.Steps
 
 			var uploadDateTime = (DateTime)ScenarioContext.Current[ContextKeys.UploadDateTime.ToString()];
 
+			var fileTypeId = (int)ScenarioContext.Current[ContextKeys.FileType.ToString()];
+
 			//Act 
 			var indexResultFiles = ((ViewResult)fileController.Index().Result).Model as IEnumerable<FileUpload>;
 
 			//Assert
-			Assert.IsTrue(indexResultFiles.Any(f => 
-				f.OriginalFileName == uploadedFile.FileName 
-				&& f.UploadTypeId == 1
+			Assert.IsTrue(indexResultFiles.Any(f =>
+				f.OriginalFileName == uploadedFile.FileName
+				&& f.UploadTypeId == fileTypeId
 				&& f.UploadDateTime.Date == uploadDateTime.Date
 				&& f.UploadDateTime.Hour == uploadDateTime.Hour
 				&& f.UploadDateTime.Minute == uploadDateTime.Minute
-				//+/- 2 seconds
+					//+/- 2 seconds
 				&& f.UploadDateTime.Second >= uploadDateTime.AddSeconds(-2).Second
 				&& f.UploadDateTime.Second <= uploadDateTime.AddSeconds(2).Second
 				&& f.StatusId == (int)ImportProcessStatuses.Success
@@ -123,7 +151,7 @@ namespace JsPlc.Ssc.PetrolPricing.IntegrationTests.Portal.Steps
 			FileController fileController = new FileController();
 
 			fileController.ControllerContext = MockControllerContext.Object;
-			
+
 			//Act
 			var cleanUpResult = fileController.CleanupIntegrationTestsData(TestUserName);
 

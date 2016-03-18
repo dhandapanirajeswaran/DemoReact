@@ -962,7 +962,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 		{
 			using (var db = new RepositoryContext())
 			{
-				var testFileUploads = db.FileUploads.Where(fu => fu.UploadedBy == testUserName).AsNoTracking();
+				var testFileUploads = db.FileUploads.Where(fu => fu.UploadedBy == testUserName && fu.UploadTypeId == (int)FileUploadTypes.DailyPriceData).AsNoTracking();
 
 				var testFileUploadIds = testFileUploads.Select(fu => fu.Id).ToArray();
 
