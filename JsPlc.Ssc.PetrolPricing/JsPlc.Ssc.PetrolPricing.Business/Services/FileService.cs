@@ -320,6 +320,11 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 			return aFile;
 		}
 
+		public void CleanupIntegrationTestsData(string testUserName = "Integration tests")
+		{
+			_db.CleanupIntegrationTestsData(testUserName);
+		}
+
 		#region Private Methods
 		private List<Site> updateExistingSainsburysSitesWithNewCatalistNo(IEnumerable<QuarterlyUploadStaging> allQuarterlyRecords)
 		{

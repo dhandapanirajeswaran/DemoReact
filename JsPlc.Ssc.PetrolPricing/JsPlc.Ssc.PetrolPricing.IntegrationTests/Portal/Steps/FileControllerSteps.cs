@@ -104,5 +104,19 @@ namespace JsPlc.Ssc.PetrolPricing.IntegrationTests.Portal.Steps
 				));
 		}
 
+		[Then(@"the test data should be deleted")]
+		public void ThenTheTestDataShouldBeDeleted()
+		{
+			//Arrange
+			FileController fileController = new FileController();
+
+			fileController.ControllerContext = MockControllerContext.Object;
+			
+			//Act
+			var cleanUpResult = fileController.CleanupIntegrationTestsData(TestUserName);
+
+			//Assert
+			Assert.IsNotNull(cleanUpResult);
+		}
 	}
 }

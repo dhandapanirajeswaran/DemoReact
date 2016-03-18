@@ -77,6 +77,8 @@ this.ScenarioSetup(scenarioInfo);
  testRunner.When("I press Upload file button", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line 9
  testRunner.Then("the test file should be visible in the list and its status should be Success", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line 10
+ testRunner.And("the test data should be deleted", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
             this.ScenarioCleanup();
         }

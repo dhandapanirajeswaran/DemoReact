@@ -20,5 +20,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
         FileUpload ProcessDailyPrice(List<FileUpload> listOfFiles);
 
         FileUpload ProcessQuarterlyFileNew(List<FileUpload> uploadedFiles);
+
+		void CleanupIntegrationTestsData(string testUserName = "Integration tests");
     }
 }

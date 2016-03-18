@@ -402,5 +402,14 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             var result = response.Content.ReadAsAsync<PriceMovementReportViewModel>().Result;
             return (response.IsSuccessStatusCode) ? result : null;
         }
+
+		public string CleanupIntegrationTestsData(string testUserName)
+		{
+			var url = string.Format("api/CleanupIntegrationTestsData?testUserName={0}", testUserName);
+
+			var response = _client.Value.GetAsync(url).Result;
+			var result = response.Content.ReadAsAsync<string>().Result;
+			return (response.IsSuccessStatusCode) ? result : null;
+		}
     }
 }

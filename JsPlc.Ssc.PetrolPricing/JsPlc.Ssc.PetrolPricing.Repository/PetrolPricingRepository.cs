@@ -951,10 +951,27 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 		{
 			using (var db = new RepositoryContext())
 			{
-				var deleteCmd = String.Format("Delete from DailyPrice Where DailyUploadId in " +
+				var deleteCmd = string.Format("Delete from DailyPrice Where DailyUploadId in " +
 											  "  (Select Id from FileUpload Where DateDiff(d, UploadDateTime, '{0}') = 0 and Id <> {1})",
 					ofdate.ToString("yyyy-MM-dd"), uploadId);
 				db.Database.ExecuteSqlCommand(deleteCmd);
+			}
+		}
+
+		public void CleanupIntegrationTestsData(string testUserName = "Integration tests")
+		{
+			using (var db = new RepositoryContext())
+			{
+				var testFileUploads = db.FileUploads.Where(fu => fu.UploadedBy == testUserName).AsNoTracking();
+
+				var testFileUploadIds = testFileUploads.Select(fu => fu.Id).ToArray();
+
+				var deleteCmd = string.Format(
+@"DELETE FROM DailyPrice WHERE DailyUploadId IN ({0}); 
+DELETE FROM SitePrice WHERE UploadId IN ({0});
+DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds));
+				db.Database.ExecuteSqlCommand(deleteCmd);
+
 			}
 		}
 

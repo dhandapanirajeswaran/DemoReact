@@ -111,6 +111,8 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
 		void LogImportError(FileUpload fileDetails, Exception exception, int? lineNumber = 0);
 
+		void CleanupIntegrationTestsData(string testUserName = "Integration tests");
+
 		/// <summary>
 		/// Logs all entries in list to EmailSendLog table in one go.
 		/// </summary>

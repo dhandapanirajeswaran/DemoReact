@@ -165,5 +165,19 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
             return Ok(_fileService.ProcessQuarterlyFileNew(aFileList));
         }
 
+		[HttpGet] 
+		[Route("api/CleanupIntegrationTestsData")]
+		public async Task<IHttpActionResult> CleanupIntegrationTestsData(string testUserName)
+		{
+			try
+			{
+				_fileService.CleanupIntegrationTestsData(testUserName);
+				return Ok(string.Format("{0} user's data deleted", testUserName));
+			}
+			catch (Exception ex)
+			{
+				return new ExceptionResult(ex, this);
+			}
+		}
     }
 }

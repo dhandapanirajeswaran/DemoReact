@@ -16,6 +16,7 @@ using JsPlc.Ssc.PetrolPricing.Models.ViewModels;
 using JsPlc.Ssc.PetrolPricing.Portal.Facade;
 using Microsoft.Ajax.Utilities;
 using JsPlc.Ssc.PetrolPricing.Core;
+using System.Net.Http;
 
 namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 {
@@ -151,6 +152,12 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 			// Return file upload details with processing steps and errors if any
 			var model = await _serviceFacade.GetFileUpload(id);
 			return View(model);
+		}
+
+		[NonAction]
+		public string CleanupIntegrationTestsData(string testUserName)
+		{
+			return _serviceFacade.CleanupIntegrationTestsData(testUserName);
 		}
 
 		#region private methods
