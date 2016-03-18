@@ -17,24 +17,6 @@ before_build:
 build:
   project: JsPlc.Ssc.PetrolPricing\PetrolPricing.sln
   publish_wap: true
-before_test:
-- ps: >-
-    $configFile = "$env:IntegrationTestAppConfigPath\app.config"
-
-    [xml] $xmlfile = Get-Content $configFile
-
-    write-host "Transforming the config file" $configFile
-
-    foreach ($item in $xmlfile.configuration.appSettings){
-      if($item.add.key -eq "ServicesBaseUrl"){
-        write-host "Updating the connection string to " $env:ServicesBaseUrlAppConfig
-        $item.add.value = $env:ServicesBaseUrlAppConfig
-      }
-    }
-
-    $xmlfile.Save( (Resolve-Path($configFile)))
-
-    write-host "Transformation completed."
 artifacts:
 - path: JsPlc.Ssc.PetrolPricing\JsPlc.Ssc.PetrolPricing.Databases\PetrolPricingRepository\bin\Release\PetrolPricingRepository.dacpac
   name: JsPlc.Ssc.PetrolPricing.Databases
