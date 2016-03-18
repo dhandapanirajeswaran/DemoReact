@@ -12,24 +12,17 @@ using TechTalk.SpecFlow;
 
 namespace JsPlc.Ssc.PetrolPricing.IntegrationTests.Portal.Steps
 {
-#if !DEBUG
-	//workaround for AppVeyor
-	//System.InvalidOperationException : The 'Microsoft.ACE.OLEDB.12.0' provider is not registered on the local machine.
-	[Ignore("Only valid for debug")]
-#endif
 	[Binding]
 	public class FileControllerSteps : StepsBase
 	{
 		enum ContextKeys { HttpTestPostedFile, UploadDateTime }
 
-#if !DEBUG
-	//workaround for AppVeyor
-	//System.InvalidOperationException : The 'Microsoft.ACE.OLEDB.12.0' provider is not registered on the local machine.
-	[Ignore("Only valid for debug")]
-#endif
 		[Given(@"I have valid Daily Price Data File for upload")]
 		public void GivenIHaveValidDailyPriceDataFileForUpload()
 		{
+#if !DEBUG
+	ScenarioContext.Current.Pending()
+#endif
 			//Arrange
 			var filePathAndName = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "TestFiles/DailyUpload.txt");
 
@@ -42,14 +35,12 @@ namespace JsPlc.Ssc.PetrolPricing.IntegrationTests.Portal.Steps
 			Assert.AreEqual(testFile.FileName, "DailyUpload.txt");
 		}
 
-#if !DEBUG
-	//workaround for AppVeyor
-	//System.InvalidOperationException : The 'Microsoft.ACE.OLEDB.12.0' provider is not registered on the local machine.
-	[Ignore("Only valid for debug")]
-#endif
 		[When(@"I press Upload file button")]
 		public void WhenIPressUploadFileButton()
 		{
+#if !DEBUG
+	ScenarioContext.Current.Pending()
+#endif
 			//Arrange
 			var fileToUpload = (HttpTestPostedFile)ScenarioContext.Current[ContextKeys.HttpTestPostedFile.ToString()];
 
@@ -89,14 +80,12 @@ namespace JsPlc.Ssc.PetrolPricing.IntegrationTests.Portal.Steps
 			}
 		}
 
-#if !DEBUG
-	//workaround for AppVeyor
-	//System.InvalidOperationException : The 'Microsoft.ACE.OLEDB.12.0' provider is not registered on the local machine.
-	[Ignore("Only valid for debug")]
-#endif
 		[Then(@"the test file should be visible in the list and its status should be Success")]
 		public void ThenTheTestFileShouldBeVisibleInTheListAndItsStatusShouldBeSuccess()
 		{
+#if !DEBUG
+	ScenarioContext.Current.Pending()
+#endif
 			//Arrange 
 			FileController fileController = new FileController();
 
@@ -127,6 +116,9 @@ namespace JsPlc.Ssc.PetrolPricing.IntegrationTests.Portal.Steps
 		[Then(@"the test data should be deleted")]
 		public void ThenTheTestDataShouldBeDeleted()
 		{
+#if !DEBUG
+	ScenarioContext.Current.Pending()
+#endif
 			//Arrange
 			FileController fileController = new FileController();
 
