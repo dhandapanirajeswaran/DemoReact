@@ -15,7 +15,7 @@ namespace JsPlc.Ssc.PetrolPricing.IntegrationTests.Portal.Steps
 	[Binding]
 	public class FileControllerSteps : StepsBase
 	{
-		enum ContextKeys { HttpTestPostedFile, UploadDateTime, FileType }
+		enum ContextKeys { HttpTestPostedFile, UploadDateTime, FileType, InvalidUploadFileTypeResult }
 
 		[Given(@"I have valid Quarterly Data File for upload")]
 		public void GivenIHaveValidQuarterlyDataFileForUpload()
@@ -140,6 +140,55 @@ namespace JsPlc.Ssc.PetrolPricing.IntegrationTests.Portal.Steps
 				&& f.UploadedBy == TestUserName
 				));
 		}
+
+		[When(@"I select Daily Price Date as File Type and press Upload file button")]
+		public void WhenISelectDailyPriceDateAsFileTypeAndPressUploadFileButton()
+		{
+#if !DEBUG
+	ScenarioContext.Current.Pending();
+#endif
+			//Arrange
+			var fileToUpload = (HttpTestPostedFile)ScenarioContext.Current[ContextKeys.HttpTestPostedFile.ToString()];
+
+			var expectedErrorMessage = String.Format(Constants.UploadSuccessMessageWithFormat, fileToUpload.FileName);
+
+			FileController fileController = new FileController();
+
+			fileController.ControllerContext = MockControllerContext.Object;
+
+			var uploadDateTime = DateTime.Now;
+
+			ScenarioContext.Current[ContextKeys.UploadDateTime.ToString()] = uploadDateTime;
+
+			//so we get file upload error
+			var fileTypeId = 1;
+
+			//Act
+			var invalidUploadResult = fileController.Upload(fileToUpload, fileTypeId, uploadDateTime).Result as ViewResult;
+
+			ScenarioContext.Current[ContextKeys.InvalidUploadFileTypeResult.ToString()] = invalidUploadResult;
+
+			//Assert
+			Assert.IsNotNull(invalidUploadResult);
+		}
+
+		[Then(@"Invalid Upload File Type error should appear")]
+		public void ThenInvalidUploadFileTypeErrorShouldAppear()
+		{
+#if !DEBUG
+	ScenarioContext.Current.Pending();
+#endif
+			//Arrange
+			var invalidUploadResult = (ViewResult)ScenarioContext.Current[ContextKeys.InvalidUploadFileTypeResult.ToString()];
+
+			//Act
+			string resultErrorMessage = invalidUploadResult.ViewBag.ErrorMessage;
+
+			//Assert
+			Assert.AreEqual(JsPlc.Ssc.PetrolPricing.Portal.StringMessages.Error_InvalidFileFormat_DailyPriceData, resultErrorMessage);
+			
+		}
+
 
 		[Then(@"the test data should be deleted")]
 		public void ThenTheTestDataShouldBeDeleted()

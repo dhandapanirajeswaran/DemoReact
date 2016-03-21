@@ -22,7 +22,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class StringMessages {
+    public class StringMessages {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
@@ -36,7 +36,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal {
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Resources.ResourceManager ResourceManager {
+        public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("JsPlc.Ssc.PetrolPricing.Portal.StringMessages", typeof(StringMessages).Assembly);
@@ -51,7 +51,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal {
         ///   resource lookups using this strongly typed resource class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Globalization.CultureInfo Culture {
+        public static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -63,7 +63,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal {
         /// <summary>
         ///   Looks up a localized string similar to Invalid file format for Daily Price Data file. Expected format is CSV in a simple text file..
         /// </summary>
-        internal static string Error_InvalidFileFormat_DailyPriceData {
+        public static string Error_InvalidFileFormat_DailyPriceData {
             get {
                 return ResourceManager.GetString("Error_InvalidFileFormat_DailyPriceData", resourceCulture);
             }
@@ -72,7 +72,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal {
         /// <summary>
         ///   Looks up a localized string similar to Invalid upload file. Please retry and select a file to upload.
         /// </summary>
-        internal static string Error_InvalidUploadFile {
+        public static string Error_InvalidUploadFile {
             get {
                 return ResourceManager.GetString("Error_InvalidUploadFile", resourceCulture);
             }
@@ -81,7 +81,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal {
         /// <summary>
         ///   Looks up a localized string similar to The file could not be uploaded. Please retry the upload..
         /// </summary>
-        internal static string Error_ReuploadFile {
+        public static string Error_ReuploadFile {
             get {
                 return ResourceManager.GetString("Error_ReuploadFile", resourceCulture);
             }
@@ -90,7 +90,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal {
         /// <summary>
         ///   Looks up a localized string similar to An error occured, please try again..
         /// </summary>
-        internal static string Error_TryAgain {
+        public static string Error_TryAgain {
             get {
                 return ResourceManager.GetString("Error_TryAgain", resourceCulture);
             }
@@ -99,7 +99,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal {
         /// <summary>
         ///   Looks up a localized string similar to Upload file is empty or no file selected. Please select a file to upload.
         /// </summary>
-        internal static string Error_UploadedFileIsEmpty {
+        public static string Error_UploadedFileIsEmpty {
             get {
                 return ResourceManager.GetString("Error_UploadedFileIsEmpty", resourceCulture);
             }
@@ -108,7 +108,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal {
         /// <summary>
         ///   Looks up a localized string similar to Warning: Today Daily Prices file has already been uploaded..
         /// </summary>
-        internal static string Warning_DailyPriceFileAlreadyUploaded {
+        public static string Warning_DailyPriceFileAlreadyUploaded {
             get {
                 return ResourceManager.GetString("Warning_DailyPriceFileAlreadyUploaded", resourceCulture);
             }

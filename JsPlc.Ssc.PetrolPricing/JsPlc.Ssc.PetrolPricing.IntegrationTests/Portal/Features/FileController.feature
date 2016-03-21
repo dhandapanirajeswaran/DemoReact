@@ -13,3 +13,8 @@ Scenario: Upload Quarterly Site Data File
 	Given I have valid Quarterly Data File for upload
 	When I press Upload file button
 	Then the test file should be visible in the list and its status should be Success
+
+Scenario: Upload Quarterly Site Data File as Daily Price Data file
+	Given I have valid Quarterly Data File for upload
+	When I select Daily Price Date as File Type and press Upload file button
+	Then Invalid Upload File Type error should appear
