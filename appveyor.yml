@@ -28,10 +28,11 @@ after_build:
 artifacts:
 - path: JsPlc.Ssc.PetrolPricing\JsPlc.Ssc.PetrolPricing.Databases\PetrolPricingRepository\bin\Release\PetrolPricingRepository.dacpac
   name: JsPlc.Ssc.PetrolPricing.Databases
+application: 
+- JsPlc.Ssc.PetrolPricing.IntegrationTests
 deploy:
 - provider: Environment
   name: petrolpricing-development
-- application: JsPlc.Ssc.PetrolPricing.IntegrationTests
 notifications:
 - provider: Slack
   incoming_webhook: https://hooks.slack.com/services/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
