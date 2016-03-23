@@ -28,8 +28,6 @@ after_build:
 artifacts:
 - path: JsPlc.Ssc.PetrolPricing\JsPlc.Ssc.PetrolPricing.Databases\PetrolPricingRepository\bin\Release\PetrolPricingRepository.dacpac
   name: JsPlc.Ssc.PetrolPricing.Databases
-application: 
-- JsPlc.Ssc.PetrolPricing.IntegrationTests
 deploy:
 - provider: Environment
   name: petrolpricing-development
