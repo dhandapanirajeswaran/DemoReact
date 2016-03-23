@@ -20,9 +20,9 @@ namespace JsPlc.Ssc.PetrolPricing.IntegrationTests.Portal.Steps
 		[Given(@"I have valid Quarterly Data File for upload")]
 		public void GivenIHaveValidQuarterlyDataFileForUpload()
 		{
-#if !DEBUG
-			ScenarioContext.Current.Pending();
-#endif
+//#if !DEBUG
+//			ScenarioContext.Current.Pending();
+//#endif
 
 			//Arrange
 			var filePathAndName = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "TestFiles/QuarterlyUpload.xlsx");
@@ -42,9 +42,9 @@ namespace JsPlc.Ssc.PetrolPricing.IntegrationTests.Portal.Steps
 		[Given(@"I have valid Daily Price Data File for upload")]
 		public void GivenIHaveValidDailyPriceDataFileForUpload()
 		{
-#if !DEBUG
-	ScenarioContext.Current.Pending();
-#endif
+//#if !DEBUG
+//	ScenarioContext.Current.Pending();
+//#endif
 			//Arrange
 			var filePathAndName = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "TestFiles/DailyUpload.txt");
 
@@ -62,9 +62,9 @@ namespace JsPlc.Ssc.PetrolPricing.IntegrationTests.Portal.Steps
 		[When(@"I press Upload file button")]
 		public void WhenIPressUploadFileButton()
 		{
-#if !DEBUG
-	ScenarioContext.Current.Pending();
-#endif
+//#if !DEBUG
+//	ScenarioContext.Current.Pending();
+//#endif
 			//Arrange
 			var fileToUpload = (HttpTestPostedFile)ScenarioContext.Current[ContextKeys.HttpTestPostedFile.ToString()];
 
@@ -144,9 +144,9 @@ namespace JsPlc.Ssc.PetrolPricing.IntegrationTests.Portal.Steps
 		[When(@"I select Daily Price Date as File Type and press Upload file button")]
 		public void WhenISelectDailyPriceDateAsFileTypeAndPressUploadFileButton()
 		{
-#if !DEBUG
-	ScenarioContext.Current.Pending();
-#endif
+//#if !DEBUG
+//	ScenarioContext.Current.Pending();
+//#endif
 			//Arrange
 			var fileToUpload = (HttpTestPostedFile)ScenarioContext.Current[ContextKeys.HttpTestPostedFile.ToString()];
 
@@ -175,9 +175,9 @@ namespace JsPlc.Ssc.PetrolPricing.IntegrationTests.Portal.Steps
 		[Then(@"Invalid Upload File Type error should appear")]
 		public void ThenInvalidUploadFileTypeErrorShouldAppear()
 		{
-#if !DEBUG
-	ScenarioContext.Current.Pending();
-#endif
+//#if !DEBUG
+//	ScenarioContext.Current.Pending();
+//#endif
 			//Arrange
 			var invalidUploadResult = (ViewResult)ScenarioContext.Current[ContextKeys.InvalidUploadFileTypeResult.ToString()];
 
@@ -193,9 +193,9 @@ namespace JsPlc.Ssc.PetrolPricing.IntegrationTests.Portal.Steps
 		[Then(@"the test data should be deleted")]
 		public void ThenTheTestDataShouldBeDeleted()
 		{
-#if !DEBUG
-	ScenarioContext.Current.Pending();
-#endif
+//#if !DEBUG
+//	ScenarioContext.Current.Pending();
+//#endif
 			//Arrange
 			FileController fileController = new FileController();
 
