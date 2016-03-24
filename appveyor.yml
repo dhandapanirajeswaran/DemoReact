@@ -17,9 +17,6 @@ before_build:
 build:
   project: JsPlc.Ssc.PetrolPricing\PetrolPricing.sln
   publish_wap: true
-test:
-  assemblies:
-    - '**\*.unittests.dll'
 after_build:
 - cmd: >-
     7z a JsPlc.Ssc.PetrolPricing.IntegrationTests.zip %APPVEYOR_BUILD_FOLDER%\JsPlc.Ssc.PetrolPricing\JsPlc.Ssc.PetrolPricing.IntegrationTests\bin\x86\Release\*.*
@@ -34,7 +31,7 @@ deploy:
   connection_string: 'Server=(local)\SQL2014;Database=my_test_db;User ID=sa;Password=Password12!'
 test:
   assemblies:
-    - '**\*.Integrationtests.dll'
+    - '**\*.*tests.dll'
 deploy:
 - provider: Environment
   name: petrolpricing-development
