@@ -29,6 +29,13 @@ artifacts:
 - path: JsPlc.Ssc.PetrolPricing\JsPlc.Ssc.PetrolPricing.Databases\PetrolPricingRepository\bin\Release\PetrolPricingRepository.dacpac
   name: JsPlc.Ssc.PetrolPricing.Databases
 deploy:
+- provider: SqlDatabase
+  artifact: JsPlc.Ssc.PetrolPricing.Databases
+  connection_string: 'Server=(local)\SQL2014;Database=my_test_db;User ID=sa;Password=Password12!'
+test:
+  assemblies:
+    - '**\*.Integrationtests.dll'
+deploy:
 - provider: Environment
   name: petrolpricing-development
 notifications:
