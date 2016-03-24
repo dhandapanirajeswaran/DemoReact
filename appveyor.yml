@@ -17,6 +17,9 @@ before_build:
 build:
   project: JsPlc.Ssc.PetrolPricing\PetrolPricing.sln
   publish_wap: true
+test:
+  assemblies:
+    - '**\*.*unittests.dll'
 after_build:
 - cmd: >-
     7z a JsPlc.Ssc.PetrolPricing.IntegrationTests.zip %APPVEYOR_BUILD_FOLDER%\JsPlc.Ssc.PetrolPricing\JsPlc.Ssc.PetrolPricing.IntegrationTests\bin\x86\Release\*.*
@@ -26,12 +29,8 @@ artifacts:
 - path: JsPlc.Ssc.PetrolPricing\JsPlc.Ssc.PetrolPricing.Databases\PetrolPricingRepository\bin\Release\PetrolPricingRepository.dacpac
   name: JsPlc.Ssc.PetrolPricing.Databases
 deploy:
-- provider: SqlDatabase
-  artifact: JsPlc.Ssc.PetrolPricing.Databases
-  connection_string: 'Server=(local)\SQL2014;Database=my_test_db;User ID=sa;Password=Password12!'
-test:
-  assemblies:
-    - '**\*.*tests.dll'
+- provider: Environment
+  name: petrolpricing-development
 notifications:
 - provider: Slack
   incoming_webhook: https://hooks.slack.com/services/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
