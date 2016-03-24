@@ -32,9 +32,6 @@ deploy:
 test:
   assemblies:
     - '**\*.*tests.dll'
-deploy:
-- provider: Environment
-  name: petrolpricing-development
 notifications:
 - provider: Slack
   incoming_webhook: https://hooks.slack.com/services/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
