@@ -4,19 +4,19 @@
     <parameterEntry kind="XmlFile" scope="\\web.config$" match="/configuration/appSettings/add[@key='ServicesBaseUrl']/@value" />
   </parameter>
   
-  <parameter name="ClientId-Web.config App Setting" defaultValue="709a3414-c9a6-4e6f-9311-7e95d92aa8e5">
+  <parameter name="ClientId-Web.config App Setting" defaultValue="5f8da1b7-a9f5-462a-9e83-c62e797615db">
     <parameterEntry kind="XmlFile" scope="\\web.config$" match="/configuration/appSettings/add[@key='ida:ClientId']/@value" />
   </parameter>
 
-  <parameter name="Tenant-Web.config App Setting" defaultValue="jsDRM.onmicrosoft.com">
+  <parameter name="Tenant-Web.config App Setting" defaultValue="jsPetrolPricing.onmicrosoft.com">
     <parameterEntry kind="XmlFile" scope="\\web.config$" match="/configuration/appSettings/add[@key='ida:Tenant']/@value" />
   </parameter>
 
-  <parameter name="TenantId-Web.config App Setting" defaultValue="1d58e185-49ed-4722-a3b4-0f4ce64db201">
+  <parameter name="TenantId-Web.config App Setting" defaultValue="7dad053c-6e6a-4e43-b99b-3e9cc7c562c7">
     <parameterEntry kind="XmlFile" scope="\\web.config$" match="/configuration/appSettings/add[@key='ida:TenantId']/@value" />
   </parameter>
 
-  <parameter name="PostLogoutRedirectUri-Web.config App Setting" defaultValue="http://localhost/DRMAdmin/">
+  <parameter name="PostLogoutRedirectUri-Web.config App Setting" defaultValue="http://petrolpricing">
     <parameterEntry kind="XmlFile" scope="\\web.config$" match="/configuration/appSettings/add[@key='ida:PostLogoutRedirectUri']/@value" />
   </parameter>
 </parameters>
