@@ -3,4 +3,8 @@
   <parameter name="PetrolPricingRepository-Web.config Connection String" defaultValue="">
     <parameterEntry kind="XmlFile" scope="\\web.config$" match="/configuration/connectionStrings/add[@name='PetrolPricingRepository']" />
   </parameter>
+
+  <parameter name="PetrolPricingLogins-Web.config Connection String" defaultValue="">
+    <parameterEntry kind="XmlFile" scope="\\web.config$" match="/configuration/connectionStrings/add[@name='PetrolPricingLogins']" />
+  </parameter>
 </parameters>

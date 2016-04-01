@@ -1,11 +1,8 @@
 ﻿using JsPlc.Ssc.PetrolPricing.Business;
 using JsPlc.Ssc.PetrolPricing.Core;
 using JsPlc.Ssc.PetrolPricing.IoC;
-using JsPlc.Ssc.PetrolPricing.Models.Persistence;
 using JsPlc.Ssc.PetrolPricing.Repository;
 using Microsoft.Practices.Unity;
-using System.Data.Entity;
-using System.Net.Mail;
 using System.Web.Http;
 using Unity.WebApi;
 
@@ -13,7 +10,7 @@ namespace JsPlc.Ssc.PetrolPricing.Service
 {
     public static class UnityConfig
     {
-        public static void RegisterComponents()
+        public static void RegisterComponents(HttpConfiguration config)
         {
 			var container = new UnityContainer();
             
@@ -25,9 +22,11 @@ namespace JsPlc.Ssc.PetrolPricing.Service
             Bootstrapper.ConfigureIoC(container);
 
             container.RegisterType<RepositoryContext>(new TransientLifetimeManager());
-			container.RegisterType(typeof(ISmtpClient), typeof(SmtpClientWrapper), new TransientLifetimeManager());
+            container.RegisterType<ApplicationDbContext>(new TransientLifetimeManager());
+            container.RegisterType(typeof(ISmtpClient), typeof(SmtpClientWrapper), new TransientLifetimeManager());
             
 			container.RegisterType(typeof(IPetrolPricingRepository), typeof(PetrolPricingRepository), new TransientLifetimeManager());
+            container.RegisterType(typeof(IAccountRepository), typeof(AccountRepository), new TransientLifetimeManager());
 
             container.RegisterType<ILookupService, LookupService>();
             container.RegisterType<IEmailService, EmailService>();
@@ -38,8 +37,9 @@ namespace JsPlc.Ssc.PetrolPricing.Service
             container.RegisterType<IFactory, Factory>();
 			container.RegisterType<IAppSettings, AppSettings>();
 			container.RegisterType<IDataFileReader, DataFileReader>();
+            container.RegisterType<IAccountService, AccountService>();
 
-            GlobalConfiguration.Configuration.DependencyResolver = new UnityDependencyResolver(container);
+            config.DependencyResolver = new UnityDependencyResolver(container);
         }
     }
 }

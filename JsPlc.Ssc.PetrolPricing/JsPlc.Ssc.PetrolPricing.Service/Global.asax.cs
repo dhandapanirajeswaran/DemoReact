@@ -9,23 +9,10 @@ using JsPlc.Ssc.PetrolPricing.IoC;
 
 namespace JsPlc.Ssc.PetrolPricing.Service
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class WebApiApplication : HttpApplication
     {
-        protected void Application_Start()
-        {
-            GlobalConfiguration.Configuration.Formatters.JsonFormatter.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
-            GlobalConfiguration.Configuration.Formatters.Remove(GlobalConfiguration.Configuration.Formatters.XmlFormatter);
-
-            AreaRegistration.RegisterAllAreas();
-            GlobalConfiguration.Configure(WebApiConfig.Register);
-            FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
-            RouteConfig.RegisterRoutes(RouteTable.Routes);
-            BundleConfig.RegisterBundles(BundleTable.Bundles);
-
-            Database.SetInitializer(new RepositoryInitializer());
-
-            UnityConfig.RegisterComponents();
-            Bootstrapper.SetupAutoMapper();
-        }
     }
 }

@@ -1,17 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
-using System.Globalization;
-using System.Linq;
-using System.Net;
 using System.Net.Http;
 using System.Net.Http.Formatting;
 using System.Net.Http.Headers;
-using System.Security.Permissions;
 using System.Text;
 using System.Threading.Tasks;
-using System.Web;
-using System.Web.UI;
 using JsPlc.Ssc.PetrolPricing.Models;
 using JsPlc.Ssc.PetrolPricing.Models.Enums;
 using JsPlc.Ssc.PetrolPricing.Models.ViewModels;
@@ -411,5 +405,13 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
 			var result = response.Content.ReadAsAsync<string>().Result;
 			return (response.IsSuccessStatusCode) ? result : null;
 		}
+
+        public void RegisterUser(string email)
+        {
+            var apiUrl = $"api/user?email={email}";
+
+            var response = _client.Value.PostAsync(apiUrl, new { }, new JsonMediaTypeFormatter()).Result;
+            
+        }
     }
 }

@@ -112,12 +112,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DataObjects\EmailSiteData.cs" />
+    <Compile Include="Interfaces\IAccountService.cs" />
     <Compile Include="Interfaces\ICreate.cs" />
     <Compile Include="Interfaces\IEmailService.cs" />
     <Compile Include="Interfaces\ILookupService.cs" />
     <Compile Include="Interfaces\IReportService.cs" />
     <Compile Include="Interfaces\IAppSettings.cs" />
     <Compile Include="Interfaces\ISiteService.cs" />
+    <Compile Include="Services\AccountService.cs" />
     <Compile Include="Services\EmailService.cs" />
     <Compile Include="Interfaces\IFileService.cs" />
     <Compile Include="Interfaces\IPriceService.cs" />
