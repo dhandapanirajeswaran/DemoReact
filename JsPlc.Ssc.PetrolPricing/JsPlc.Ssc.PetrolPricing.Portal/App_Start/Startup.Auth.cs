@@ -12,7 +12,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal
     {
         private static string clientId = ConfigurationManager.AppSettings["ida:ClientId"];
         private static string aadInstance = ConfigurationManager.AppSettings["ida:AADInstance"];
-        private static string tenant = ConfigurationManager.AppSettings["ida:Tenant"];
+        private static string tenant = ConfigurationManager.AppSettings["ida:TenantId"];
         private static string postLogoutRedirectUri = ConfigurationManager.AppSettings["ida:PostLogoutRedirectUri"];
         public static readonly string Authority = string.Format(CultureInfo.InvariantCulture, aadInstance, tenant);
 

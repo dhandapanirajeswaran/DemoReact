@@ -408,7 +408,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
 
         public void RegisterUser(string email)
         {
-            var apiUrl = $"api/user?email={email}";
+            var apiUrl = string.Format("api/user?email={0}", email);
 
             var response = _client.Value.PostAsync(apiUrl, new { }, new JsonMediaTypeFormatter()).Result;
             
