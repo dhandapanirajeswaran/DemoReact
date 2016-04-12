@@ -25,7 +25,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         public override void InitializeDatabase(RepositoryContext context)
         {
 			//disabling initialisation - moved to dacpack updating strategy
-            //base.InitializeDatabase(context);
+            base.InitializeDatabase(context);
         }
 
         protected override void Seed(RepositoryContext context)
