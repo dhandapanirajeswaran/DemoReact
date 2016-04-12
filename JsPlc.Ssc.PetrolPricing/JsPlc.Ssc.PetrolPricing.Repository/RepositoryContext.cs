@@ -28,33 +28,8 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         
         public IDbSet<DailyPrice> DailyPrices { get; set; }
 
-        public RepositoryContext() : base("name=PetrolPricingRepository") { }
-
-        //public RepositoryContext(DbConnection connection) : base(connection, true) { }
-
-		//protected override void OnModelCreating(DbModelBuilder modelBuilder)
-		//{
-		//	Configuration.LazyLoadingEnabled = true; // we want to control loading of child entities
-		//	modelBuilder.Conventions.Remove<PluralizingTableNameConvention>();
-		//	modelBuilder.Conventions.Remove<OneToManyCascadeDeleteConvention>();
-
-		//	modelBuilder.Entity<Site>().HasMany(m => m.Competitors).WithRequired(x => x.Site).HasForeignKey(x => x.SiteId);
-
-		//	modelBuilder.Entity<SiteToCompetitor>().HasRequired(m => m.Site).WithMany().HasForeignKey(m => m.SiteId);
-		//	modelBuilder.Entity<SiteToCompetitor>().HasRequired(m => m.Competitor).WithMany().HasForeignKey(m => m.CompetitorId);
-
-		//	modelBuilder.Entity<Site>().HasMany(m => m.Emails).WithRequired(x => x.Site).HasForeignKey(x => x.SiteId);
-		//	modelBuilder.Entity<Site>().HasMany(m => m.Prices).WithRequired(x => x.JsSite).HasForeignKey(x => x.SiteId);
-		//	//modelBuilder.Entity<SiteEmail>().HasRequired(c => c.Site).WithMany(x => x.Emails).HasForeignKey(m => m.SiteId);
-
-		//	modelBuilder.Entity<DailyPrice>().HasRequired(m => m.FuelType).WithMany().HasForeignKey(x => x.FuelTypeId);
-
-		//	modelBuilder.Entity<FileUpload>().HasRequired(x => x.Status).WithMany().HasForeignKey(y => y.StatusId);
-
-		//	modelBuilder.Entity<FileUpload>()
-		//		.HasMany(x => x.ImportProcessErrors)
-		//		.WithRequired(x => x.Upload)
-		//		.HasForeignKey(x => x.UploadId);
-		//}
+        public RepositoryContext() : base("name=PetrolPricingRepository") {
+			Database.SetInitializer<RepositoryContext>(null);
+		}
     }
 }
