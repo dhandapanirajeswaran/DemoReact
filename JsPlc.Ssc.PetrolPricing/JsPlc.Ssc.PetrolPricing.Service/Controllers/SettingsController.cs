@@ -39,36 +39,5 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
 				return new ExceptionResult(ex, this);
 			}
 		}
-
-		/// <summary>
-		/// ReSeed the DB with settings etc, drop n re-create sprocs - FULLREBUILD, CONFIGKEYSONLY, SPROCSONLY, INDEXESONLY
-		/// </summary>
-		/// <param name="buildOptions">FULLREBUILD, CONFIGKEYSONLY, SPROCSONLY, INDEXESONLY</param>
-		/// <returns></returns>
-		[HttpGet]
-		[Route("api/ReInitDb")]
-		public async Task<IHttpActionResult> ReInitDb(string buildOptions = "")
-		{
-			try
-			{
-				switch (buildOptions)
-				{
-					case "FULLREBUILD": RepositoryInitializer.SeedRepository(new RepositoryContext());
-						break;
-					case "SPROCSONLY": RepositoryInitializer.ReInitSprocs(new RepositoryContext());
-						break;
-					case "INDEXESONLY": RepositoryInitializer.ReInitIndexes(new RepositoryContext());
-						break;
-					default:
-						throw new Exception("forcing an exception");
-						return await Task.FromResult(BadRequest("Invalid option"));
-				}
-				return await Task.FromResult(Ok("Success:" + buildOptions));
-			}
-			catch (Exception ex)
-			{
-				return Task.FromResult(BadRequest(ex.Message)).Result;
-			}
-		}
 	}
 }
