@@ -115,7 +115,7 @@
     <Compile Include="PetrolPricingRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RepositoryContext.cs" />
-    <Compile Include="RepositoryInitializer.cs" />
+    <None Include="RepositoryInitializer.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\JsPlc.Ssc.PetrolPricing.Core\JsPlc.Ssc.PetrolPricing.Core.csproj">

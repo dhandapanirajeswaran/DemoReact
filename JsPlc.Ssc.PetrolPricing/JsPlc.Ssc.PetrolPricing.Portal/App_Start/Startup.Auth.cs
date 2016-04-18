@@ -5,6 +5,8 @@ using Microsoft.Owin.Security.OpenIdConnect;
 using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.Cookies;
 using JsPlc.Ssc.PetrolPricing.Portal.Facade;
+using System.Web.Helpers;
+using System.Security.Claims;
 
 namespace JsPlc.Ssc.PetrolPricing.Portal
 {
@@ -21,55 +23,57 @@ namespace JsPlc.Ssc.PetrolPricing.Portal
         {
             app.SetDefaultSignInAsAuthenticationType(CookieAuthenticationDefaults.AuthenticationType);
 
-            app.UseKentorOwinCookieSaver();
+			app.UseKentorOwinCookieSaver();
 
-            app.UseCookieAuthentication(
-                new CookieAuthenticationOptions
-                {
-                    CookieSecure = CookieSecureOption.Always,
-                    Provider = new CookieAuthenticationProvider
-                    {
-                        OnResponseSignedIn = (context) =>
-                        {
-                            if (context.Identity.IsAuthenticated)
-                            {
-                                var facade = new ServiceFacade();
-                                var array = context.Identity.Name.Split(new[] { '#' });
-                                var userName = string.Empty;
-                                if (array == null || array.Length == 0)
-                                {
-                                    userName = context.Identity.Name;
-                                }
-                                else
-                                {
-                                    if (array.Length == 1)
-                                    {
-                                        userName = context.Identity.Name.Split(new[] { '#' })[0];
-                                    }
-                                    else
-                                    {
-                                        userName = context.Identity.Name.Split(new[] { '#' })[1];
-                                    }
-                                }
-                                facade.RegisterUser(userName);
-                            }
-                        }
-                    }
-                });
+			app.UseCookieAuthentication(
+				new CookieAuthenticationOptions
+				{
+					AuthenticationType = CookieAuthenticationDefaults.AuthenticationType,
+					CookieSecure = CookieSecureOption.SameAsRequest,
+					Provider = new CookieAuthenticationProvider
+					{
+						OnResponseSignedIn = (context) =>
+						{
+							if (context.Identity.IsAuthenticated)
+							{
+								var facade = new ServiceFacade();
+								var array = context.Identity.Name.Split(new[] { '#' });
+								var userName = string.Empty;
+								if (array == null || array.Length == 0)
+								{
+									userName = context.Identity.Name;
+								}
+								else
+								{
+									if (array.Length == 1)
+									{
+										userName = context.Identity.Name.Split(new[] { '#' })[0];
+									}
+									else
+									{
+										userName = context.Identity.Name.Split(new[] { '#' })[1];
+									}
+								}
+								facade.RegisterUser(userName);
+							}
+						}
+					}
+				});
 
-            app.UseOpenIdConnectAuthentication(
-                new OpenIdConnectAuthenticationOptions
-                {
-                    ClientId = clientId,
-                    Authority = Authority,
-                    PostLogoutRedirectUri = postLogoutRedirectUri,
-                    //RedirectUri = postLogoutRedirectUri,
+			app.UseOpenIdConnectAuthentication(
+				new OpenIdConnectAuthenticationOptions
+				{
+					SignInAsAuthenticationType = OpenIdConnectAuthenticationDefaults.AuthenticationType,
+					ClientId = clientId,
+					Authority = Authority,
+					PostLogoutRedirectUri = postLogoutRedirectUri,
                     TokenValidationParameters = new System.IdentityModel.Tokens.TokenValidationParameters
                     {
-                        ValidateIssuer = false,
-                        ValidateAudience = false
+                        ValidateIssuer = false
                     }
-                });
+				});
+
+			AntiForgeryConfig.UniqueClaimTypeIdentifier = ClaimTypes.NameIdentifier;
         }
     }
 }
