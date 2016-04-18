@@ -19,14 +19,13 @@ namespace JsPlc.Ssc.PetrolPricing.Portal
         // For more information on configuring authentication, please visit http://go.microsoft.com/fwlink/?LinkId=301864
         public void ConfigureAuth(IAppBuilder app)
         {
-            app.SetDefaultSignInAsAuthenticationType(OpenIdConnectAuthenticationDefaults.AuthenticationType);
+            app.SetDefaultSignInAsAuthenticationType(CookieAuthenticationDefaults.AuthenticationType);
 
             app.UseKentorOwinCookieSaver();
 
             app.UseCookieAuthentication(
                 new CookieAuthenticationOptions
                 {
-                    AuthenticationType = OpenIdConnectAuthenticationDefaults.AuthenticationType,
                     CookieSecure = CookieSecureOption.Always,
                     Provider = new CookieAuthenticationProvider
                     {
@@ -61,11 +60,15 @@ namespace JsPlc.Ssc.PetrolPricing.Portal
             app.UseOpenIdConnectAuthentication(
                 new OpenIdConnectAuthenticationOptions
                 {
-                    SignInAsAuthenticationType = OpenIdConnectAuthenticationDefaults.AuthenticationType,
                     ClientId = clientId,
                     Authority = Authority,
                     PostLogoutRedirectUri = postLogoutRedirectUri,
-                    RedirectUri = postLogoutRedirectUri
+                    //RedirectUri = postLogoutRedirectUri,
+                    TokenValidationParameters = new System.IdentityModel.Tokens.TokenValidationParameters
+                    {
+                        ValidateIssuer = false,
+                        ValidateAudience = false
+                    }
                 });
         }
     }
