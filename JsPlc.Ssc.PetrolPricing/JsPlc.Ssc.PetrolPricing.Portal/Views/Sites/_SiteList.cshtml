@@ -37,11 +37,13 @@
         </th>
         <th></th>
     </tr>
-    @if (Model.Any() == false)
+    @if (Model != null)
+    { 
+    if (Model.Any() == false)
     {
         <tr><td colspan="14" class="noSiteData">No results found</td></tr>
     }
-    @foreach (var item in Model)
+    foreach (var item in Model)
     {
         <tr>
             <td>
@@ -91,5 +93,5 @@
             </td>
         </tr>
     }
-
+    }
 </table>

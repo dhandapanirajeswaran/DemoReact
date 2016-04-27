@@ -146,25 +146,31 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
         public ActionResult Index(string msg = "", string storeName = "", string storeTown = "", int catNo = 0, int storeNo = 0)
         {
             // Display list of existing sites along with their status
-            ViewBag.Message = msg;
+            ViewBag.Message = msg;           
+            try
+            {
+                var model = _serviceFacade.GetSites().Where(x => x.IsSainsburysSite);
+                // Filtering based on search value
 
-            var model = _serviceFacade.GetSites().Where(x => x.IsSainsburysSite);
-            // Filtering based on search value
+                if (string.IsNullOrWhiteSpace(storeName) == false)
+                    model = model.Where(x => string.IsNullOrWhiteSpace(x.SiteName) == false && x.SiteName.ToUpper().Contains(storeName.ToUpper()));
 
-            if (string.IsNullOrWhiteSpace(storeName) == false)
-                model = model.Where(x => string.IsNullOrWhiteSpace(x.SiteName) == false && x.SiteName.ToUpper().Contains(storeName.ToUpper()));
+                if (string.IsNullOrWhiteSpace(storeTown) == false)
+                    model = model.Where(x => string.IsNullOrWhiteSpace(x.Town) == false && x.Town.ToUpper().Contains(storeTown.ToUpper()));
 
-            if (string.IsNullOrWhiteSpace(storeTown) == false)
-                model = model.Where(x => string.IsNullOrWhiteSpace(x.Town) == false && x.Town.ToUpper().Contains(storeTown.ToUpper()));
+                if (catNo > 0)
+                    model = model.Where(x => x.CatNo == catNo);
 
-            if (catNo > 0)
-                model = model.Where(x => x.CatNo == catNo);
-
-            if (storeNo > 0)
-                model = model.Where(x => x.StoreNo == storeNo);
+                if (storeNo > 0)
+                    model = model.Where(x => x.StoreNo == storeNo);
 
 
-            return View(model.ToList());
+                return View(model.ToList());
+            }
+            catch(Exception ce)
+            {
+                return View();
+            }
         }
 
 

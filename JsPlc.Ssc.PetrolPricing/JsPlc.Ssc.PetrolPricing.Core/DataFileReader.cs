@@ -13,6 +13,7 @@ namespace JsPlc.Ssc.PetrolPricing.Core
 	{
 		public DataTable GetQuarterlyData(string filePathAndName, string excelFileSheetName)
 		{
+
 			var connectionString = string.Format("Provider=Microsoft.ACE.OLEDB.12.0;Data Source={0};Extended Properties='Excel 12.0 Xml;HDR=YES;IMEX=1'", filePathAndName);
 
 			using (var adapter = new OleDbDataAdapter(String.Format("SELECT * FROM [{0}$]",
@@ -39,7 +40,7 @@ namespace JsPlc.Ssc.PetrolPricing.Core
 					}
 					catch (Exception ex)
 					{
-						throw new ExcelParseFileException("Unable to read excel file. Contact support team.", ex);
+                        throw new ExcelParseFileException("Unable to read excel file. Contact support team." + System.Environment.NewLine + ex.Message, ex);
 					}
 					return ds.Tables[0].Copy();
 				}

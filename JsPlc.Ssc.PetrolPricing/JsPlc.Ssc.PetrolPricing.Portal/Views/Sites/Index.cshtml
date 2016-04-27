@@ -52,7 +52,10 @@
 
 </div>
 <hr />
-@Html.Partial("_SiteList", Model)
+@if (Model!=null) 
+{
+    @Html.Partial("_SiteList", Model)
+}
 
 
 <script type="text/javascript">
