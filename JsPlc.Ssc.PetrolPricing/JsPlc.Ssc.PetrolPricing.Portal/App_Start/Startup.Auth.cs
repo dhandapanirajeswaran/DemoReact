@@ -67,6 +67,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal
 					ClientId = clientId,
 					Authority = Authority,
 					PostLogoutRedirectUri = postLogoutRedirectUri,
+					RedirectUri = postLogoutRedirectUri,
                     TokenValidationParameters = new System.IdentityModel.Tokens.TokenValidationParameters
                     {
                         ValidateIssuer = false
