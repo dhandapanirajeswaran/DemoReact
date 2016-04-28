@@ -33,78 +33,114 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 		[System.Web.Mvc.HttpGet]
 		public ActionResult CompetitorSites(CompetitorSiteViewModel item)
 		{
-			if (ModelState.IsValid)
-			{
-				item.Report = _serviceFacade.GetCompetitorSites(item.SiteId);
-			}
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    item.Report = _serviceFacade.GetCompetitorSites(item.SiteId);
+                }
 
-            if (item.Report == null) return View();
+                if (item.Report == null) return View();
 
-			Load(item);
+                Load(item);
 
-			if (!item.Sites.Any() || item.Sites.First().SiteName == "")
-				return View(item);
+                if (!item.Sites.Any() || item.Sites.First().SiteName == "")
+                    return View(item);
 
-			var tempSites = item.Sites;
-			item.Sites = new List<Site> { 
+                var tempSites = item.Sites;
+                item.Sites = new List<Site> { 
                 new Site { SiteName = "Please select..." }, 
                 new Site { SiteName = "SAINSBURYS ALL", Id = 0 },
                 new Site { SiteName = "SAINSBURYS ALL NORMALISED", Id = -1 }
-            };
+                 };
 
-			item.Sites.AddRange(tempSites);
+                item.Sites.AddRange(tempSites);
 
-			return View(item);
+                return View(item);
+            }
+            catch (Exception ce)
+            {
+                return View();
+            }
 		}
 
 		[System.Web.Mvc.HttpGet]
 		public ActionResult PricePoints(string For = "")
 		{
-			DateTime forDate;
-			if (!DateTime.TryParse(For, out forDate))
-				forDate = DateTime.Now;
+            try
+            {
+                DateTime forDate;
+                if (!DateTime.TryParse(For, out forDate))
+                    forDate = DateTime.Now;
 
-			var item = new PricePointReportContainerViewModel { ForDate = forDate };
+                var item = new PricePointReportContainerViewModel { ForDate = forDate };
 
-			var dieselReport = _serviceFacade.GetPricePoints(forDate, (int)FuelTypeItem.Diesel);
-			var unleadedReport = _serviceFacade.GetPricePoints(forDate, (int)FuelTypeItem.Unleaded);
+                var dieselReport = _serviceFacade.GetPricePoints(forDate, (int)FuelTypeItem.Diesel);
+                var unleadedReport = _serviceFacade.GetPricePoints(forDate, (int)FuelTypeItem.Unleaded);
 
-			item.PricePointReports.Add(dieselReport);
-			item.PricePointReports.Add(unleadedReport);
+                item.PricePointReports.Add(dieselReport);
+                item.PricePointReports.Add(unleadedReport);
 
-			return View(item);
+                return View(item);
+            }
+            catch (Exception ce)
+            {
+                return View();
+            }
+
 		}
 
 		[System.Web.Mvc.HttpGet]
 		public ActionResult NationalAverage(string For = "")
 		{
-			DateTime forDate;
-			if (!DateTime.TryParse(For, out forDate))
-				forDate = DateTime.Now;
+            try
+            {
+                DateTime forDate;
+                if (!DateTime.TryParse(For, out forDate))
+                    forDate = DateTime.Now;
 
-			var item = new NationalAverageReportContainerViewModel
-			{
-				ForDate = forDate,
-				NationalAverageReport = _serviceFacade.GetNationalAverage(forDate)
-			};
+                var item = new NationalAverageReportContainerViewModel
+                {
+                    ForDate = forDate,
+                    NationalAverageReport = _serviceFacade.GetNationalAverage(forDate)
+                };
 
-			return View(item);
+                return View(item);
+            }
+            catch (Exception ce)
+            {
+                return View();
+            }
 		}
 
 		[System.Web.Mvc.HttpGet]
 		public ActionResult NationalAverage2(string For = "")
 		{
-			var item = GetNationalAverage2Data(For);
+            try
+            {
+                var item = GetNationalAverage2Data(For);
 
-			return View(item);
+                return View(item);
+            }
+            catch (Exception ce)
+            {
+                return View();
+            }
 		}
 
 		[System.Web.Mvc.HttpGet]
 		public ActionResult CompetitorsPriceRange(string For = "")
 		{
-			var item = GetNationalAverage2Data(For);
+            try
+            {
+                var item = GetNationalAverage2Data(For);
 
-			return View(item);
+                return View(item);
+            }
+            catch (Exception ce)
+            {
+                return View();
+            }
 		}
 
 		[System.Web.Mvc.HttpGet]
@@ -156,33 +192,40 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 		[System.Web.Mvc.HttpGet]
 		public ActionResult PriceMovement([FromUri]DateTime? DateFrom, [FromUri]DateTime? DateTo, [FromUri]int FuelTypeId = 0, [FromUri]string BrandName = "")
 		{
-			var model = new PriceMovementReportContainerViewModel();
+            try
+            {
+                var model = new PriceMovementReportContainerViewModel();
 
-			if (DateFrom.HasValue)
-				model.FromDate = DateFrom.Value;
+                if (DateFrom.HasValue)
+                    model.FromDate = DateFrom.Value;
 
-			if (DateTo.HasValue)
-				model.ToDate = DateTo.Value;
+                if (DateTo.HasValue)
+                    model.ToDate = DateTo.Value;
 
-			if (model.FromDate > model.ToDate)
-			{
-				ViewBag.ErrorMessage = "Date From must be after or at the date To. Please fix the issue and try again.";
-				model.FromDate = model.ToDate.Value.AddDays(-3);
-			}
+                if (model.FromDate > model.ToDate)
+                {
+                    ViewBag.ErrorMessage = "Date From must be after or at the date To. Please fix the issue and try again.";
+                    model.FromDate = model.ToDate.Value.AddDays(-3);
+                }
 
-			if (string.IsNullOrWhiteSpace(BrandName) == false)
-			{
-				model.Brand = BrandName;
-			}
+                if (string.IsNullOrWhiteSpace(BrandName) == false)
+                {
+                    model.Brand = BrandName;
+                }
 
-			if (FuelTypeId > 0)
-			{
-				model.FuelTypeId = FuelTypeId;
-			}
+                if (FuelTypeId > 0)
+                {
+                    model.FuelTypeId = FuelTypeId;
+                }
 
-			var result = LoadPriceMovementReport(model);
+                var result = LoadPriceMovementReport(model);
 
-			return View(result);
+                return View(result);
+            }
+            catch (Exception ce)
+            {
+                return View();
+            }
 		}
 
 		/// <summary>
@@ -194,17 +237,24 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 		[System.Web.Mvc.HttpGet]
 		public ActionResult Compliance(string For = "")
 		{
-			DateTime forDate;
-			if (!DateTime.TryParse(For, out forDate))
-				forDate = DateTime.Now.AddDays(-1);
+            try
+            {
+                DateTime forDate;
+                if (!DateTime.TryParse(For, out forDate))
+                    forDate = DateTime.Now.AddDays(-1);
 
-			var item = new ComplianceReportContainerViewModel
-			{
-				ForDate = forDate,
-				ComplianceReport = _serviceFacade.GetReportCompliance(forDate)
-			};
+                var item = new ComplianceReportContainerViewModel
+                {
+                    ForDate = forDate,
+                    ComplianceReport = _serviceFacade.GetReportCompliance(forDate)
+                };
 
-			return View(item);
+                return View(item);
+            }
+            catch (Exception ce)
+            {
+                return View();
+            }
 		}
 		#endregion
 

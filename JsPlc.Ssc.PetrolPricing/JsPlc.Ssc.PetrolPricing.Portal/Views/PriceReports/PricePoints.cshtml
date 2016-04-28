@@ -2,12 +2,12 @@
 @{
 	ViewBag.Title = "Report - View Number Of Sites At Each Price Point";
 	
-    if (!Model.ForDate.HasValue)
+    if (Model != null && !Model.ForDate.HasValue)
     {
         Model.ForDate = DateTime.Now;
     }
 
-    var requestedDate = @Model.ForDate.Value.Date.ToString("dd-MMM-yyyy");
+    var requestedDate = Model != null ? @Model.ForDate.Value.Date.ToString("dd-MMM-yyyy"): null;
 }
 <div class="row">
     <div class="col-md-6">
@@ -15,7 +15,7 @@
     </div>
     <div class="col-md-6 text-right" style="padding-top: 20px">
 
-        @if (Model.PricePointReports.Any())
+        @if (Model != null && Model.PricePointReports.Any())
         {
             <input type="button" id="btnExportReport" class="btn btn-primary" value="Export to Excel" />
         }
@@ -36,7 +36,9 @@
     </div>
 }
 
-@foreach (var report in Model.PricePointReports)
+@if (Model !=null)
+{ 
+foreach (var report in Model.PricePointReports)
 {
     <hr />
     <h4>@report.FuelTypeName</h4>
@@ -71,6 +73,7 @@
     {
         <div class="alert alert-info" role="alert">No @report.FuelTypeName data found at @requestedDate</div>
     }
+}
 }
 
 @section scripts {

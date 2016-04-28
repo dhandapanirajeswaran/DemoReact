@@ -7,7 +7,7 @@
         <h1>@ViewBag.Title.</h1>
     </div>
     <div class="col-md-6 text-right" style="padding-top: 20px">
-        @if (Model.ReportCompanies.Any())
+        @if (Model!=null && Model.ReportCompanies.Any())
         {
             using (Html.BeginForm("ExportCompetitorsPriceRangeByCompany", "PriceReports", FormMethod.Get))
             {
@@ -21,29 +21,32 @@
 </div>
 <hr />
 
-@using (Html.BeginForm("CompetitorsPriceRangeByCompany", "PriceReports", FormMethod.Get))
+@if (Model != null)
 {
-    <div class="row">
-        <div class="col-md-2">
-            <label for="DateFor">When:</label>
-            <input type="text" class="datepicker form-control" id="DateFor" name="DateFor" value="@Model.Date.ToString("dd-MMM-yyyy")">
+    using (Html.BeginForm("CompetitorsPriceRangeByCompany", "PriceReports", FormMethod.Get))
+    {
+        <div class="row">
+            <div class="col-md-2">
+                <label for="DateFor">When:</label>
+                <input type="text" class="datepicker form-control" id="DateFor" name="DateFor" value="@Model.Date.ToString("dd-MMM-yyyy")">
+            </div>
+            <div class="col-md-2">
+                <label for="SelectedCompanyName">Company:</label>
+                @Html.DropDownListFor(d => d.SelectedCompanyName, Model.Companies.Select(b => new SelectListItem { Value = b.Key, Text = string.Format("{0} ({1})", b.Key, b.Value), Selected = b.Key == Model.SelectedCompanyName }), null, new { @class = "form-control" })
+            </div>
+            <div class="col-md-2">
+                <label for="SelectedBrandName">Brand:</label>
+                @Html.DropDownListFor(d => d.SelectedBrandName, Model.Brands.Select(b => new SelectListItem { Value = b, Text = b, Selected = b == Model.SelectedBrandName }), null, new { @class = "form-control" })
+            </div>
+            <div class="col-md-2" style="padding-top: 24px">
+                <input type="submit" value="View" class="btn btn-success" id="btnViewReport" />
+            </div>
         </div>
-        <div class="col-md-2">
-            <label for="SelectedCompanyName">Company:</label>
-            @Html.DropDownListFor(d => d.SelectedCompanyName, Model.Companies.Select(b => new SelectListItem { Value = b.Key, Text = string.Format("{0} ({1})", b.Key, b.Value), Selected = b.Key == Model.SelectedCompanyName }), null, new { @class = "form-control" })
-        </div>
-        <div class="col-md-2">
-            <label for="SelectedBrandName">Brand:</label>
-            @Html.DropDownListFor(d => d.SelectedBrandName, Model.Brands.Select(b => new SelectListItem { Value = b, Text = b, Selected = b == Model.SelectedBrandName }), null, new { @class = "form-control" })
-        </div>
-        <div class="col-md-2" style="padding-top: 24px">
-            <input type="submit" value="View" class="btn btn-success" id="btnViewReport" />
-        </div>
-    </div>
-    <hr />
+        <hr />
+    }
 }
 
-@if (Model.ReportCompanies.Any())
+@if (Model!=null && Model.ReportCompanies.Any())
 {
     <!-- Report Data -->
 

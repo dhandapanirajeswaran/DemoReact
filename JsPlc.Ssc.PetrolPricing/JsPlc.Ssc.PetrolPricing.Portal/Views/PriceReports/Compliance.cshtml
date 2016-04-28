@@ -3,12 +3,12 @@
 @{
 	ViewBag.Title = "Report - Compliance of sites on selected date";
 	
-    if (!Model.ForDate.HasValue)
+    if (Model!=null && !Model.ForDate.HasValue)
     {
         Model.ForDate = DateTime.Now;
     }
 
-    var requestedForDate = @Model.ForDate.Value.Date.ToString("dd-MMM-yyyy");
+    var requestedForDate =Model!=null ?  @Model.ForDate.Value.Date.ToString("dd-MMM-yyyy"): null;
 }
 <style>
     .diffColored {
@@ -85,7 +85,7 @@
         </div>
     }
 
-    @if (Model.ComplianceReport != null && Model.ComplianceReport.ReportRows.Any())
+    @if (Model!=null && Model.ComplianceReport != null && Model.ComplianceReport.ReportRows.Any())
     {
         <hr />
         <!-- Report Data -->

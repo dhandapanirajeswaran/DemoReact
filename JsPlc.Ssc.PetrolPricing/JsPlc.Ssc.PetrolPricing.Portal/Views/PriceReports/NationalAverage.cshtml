@@ -1,13 +1,13 @@
 ﻿@model JsPlc.Ssc.PetrolPricing.Models.ViewModels.NationalAverageReportContainerViewModel
 @{
 	ViewBag.Title = "Report - National Average";
-	
-    if (!Model.ForDate.HasValue)
+
+    if (Model != null && !Model.ForDate.HasValue)
     {
         Model.ForDate = DateTime.Now;
     }
 
-    var requestedDate = @Model.ForDate.Value.Date.ToString("dd-MMM-yyyy");
+    var requestedDate = Model != null ? @Model.ForDate.Value.Date.ToString("dd-MMM-yyyy") : null;
 }
 <div class="row">
     <div class="col-md-6">
