@@ -110,40 +110,47 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 		[System.Web.Mvc.HttpGet]
 		public ActionResult CompetitorsPriceRangeByCompany([FromUri]DateTime? DateFor, [FromUri]string SelectedCompanyName, [FromUri]string SelectedBrandName)
 		{
-			var model = new CompetitorsPriceRangeByCompanyViewModel();
-
-			if (DateFor.HasValue)
-				model.Date = DateFor.Value;
-
-			if (string.IsNullOrWhiteSpace(SelectedCompanyName) == false)
-				model.SelectedCompanyName = SelectedCompanyName;
-
-			if (string.IsNullOrWhiteSpace(SelectedBrandName) == false)
-				model.SelectedBrandName = SelectedBrandName;
-
-			model.FuelTypes = _serviceFacade.GetFuelTypes().Where(ft => model.FuelTypeIds.ToArray().Contains(ft.Id)).ToList();
-
-			var companies = _serviceFacade.GetCompanies();
-
-			if (model.Companies.Any())
-			{
-				model.Companies["All"] = companies.Sum(c => c.Value);
-			}
-
-			_serviceFacade.GetBrands().ForEach(b => model.Brands.Add(b));
-
-			companies.ForEach(c => model.Companies.Add(c.Key, c.Value));
-
-			var result = _serviceFacade.GetCompetitorsPriceRangeByCompany(model.Date, model.SelectedCompanyName, model.SelectedBrandName);
-
-            if (result != null)
+            try
             {
-                model.ReportCompanies = result.ReportCompanies;
+                var model = new CompetitorsPriceRangeByCompanyViewModel();
 
-                model.SainsburysPrices = result.SainsburysPrices;
+                if (DateFor.HasValue)
+                    model.Date = DateFor.Value;
+
+                if (string.IsNullOrWhiteSpace(SelectedCompanyName) == false)
+                    model.SelectedCompanyName = SelectedCompanyName;
+
+                if (string.IsNullOrWhiteSpace(SelectedBrandName) == false)
+                    model.SelectedBrandName = SelectedBrandName;
+
+                model.FuelTypes = _serviceFacade.GetFuelTypes().Where(ft => model.FuelTypeIds.ToArray().Contains(ft.Id)).ToList();
+
+                var companies = _serviceFacade.GetCompanies();
+
+                if (model.Companies.Any())
+                {
+                    model.Companies["All"] = companies.Sum(c => c.Value);
+                }
+
+                _serviceFacade.GetBrands().ForEach(b => model.Brands.Add(b));
+
+                companies.ForEach(c => model.Companies.Add(c.Key, c.Value));
+
+                var result = _serviceFacade.GetCompetitorsPriceRangeByCompany(model.Date, model.SelectedCompanyName, model.SelectedBrandName);
+
+                if (result != null)
+                {
+                    model.ReportCompanies = result.ReportCompanies;
+
+                    model.SainsburysPrices = result.SainsburysPrices;
+                }
+
+                return View(model);
             }
-
-			return View(model);
+            catch(Exception ce)
+            {
+                return View();
+            }
 		}
 
 		[System.Web.Mvc.HttpGet]
