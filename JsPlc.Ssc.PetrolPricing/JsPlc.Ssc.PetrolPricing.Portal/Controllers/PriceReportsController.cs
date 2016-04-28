@@ -38,6 +38,8 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 				item.Report = _serviceFacade.GetCompetitorSites(item.SiteId);
 			}
 
+            if (item.Report == null) return View();
+
 			Load(item);
 
 			if (!item.Sites.Any() || item.Sites.First().SiteName == "")
@@ -134,9 +136,12 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 
 			var result = _serviceFacade.GetCompetitorsPriceRangeByCompany(model.Date, model.SelectedCompanyName, model.SelectedBrandName);
 
-			model.ReportCompanies = result.ReportCompanies;
+            if (result != null)
+            {
+                model.ReportCompanies = result.ReportCompanies;
 
-			model.SainsburysPrices = result.SainsburysPrices;
+                model.SainsburysPrices = result.SainsburysPrices;
+            }
 
 			return View(model);
 		}

@@ -68,44 +68,47 @@
             From: @Model.FromDate.Value.ToString("dd-MMM-yyyy") - To: @Model.ToDate.Value.ToString("dd-MMM-yyyy")
         </h4>
 
-        <!-- Report Data -->
-        <table class="table table-hover table-responsive table-striped">
-            <thead>
-                <tr>
-                    <th>Sites</th>
-
-                    @if (!Model.PriceMovementReport.ReportRows.First().DataItems.Any())
-                    {
-                        <th>Status</th>
-                    }
-                    else
-                    {
-                        foreach (var date in Model.PriceMovementReport.ReportRows.First().DataItems.Select(x => x.PriceDate))
-                        {
-                            <th>@(date.ToString("dd-MMM-yy"))</th>
-                        }
-                    }
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var siteRow in Model.PriceMovementReport.ReportRows)
-                {
+        if (Model.PriceMovementReport != null)
+        { 
+            <!-- Report Data -->
+            <table class="table table-hover table-responsive table-striped">
+                <thead>
                     <tr>
-                        <td>
-                            @siteRow.SiteName
-                        </td>
-                        @if (!siteRow.DataItems.Any())
+                        <th>Sites</th>
+
+                        @if (!Model.PriceMovementReport.ReportRows.First().DataItems.Any())
                         {
-                            <td>There is no data available</td>
+                            <th>Status</th>
                         }
-                        @foreach (var dataItem in siteRow.DataItems)
+                        else
                         {
-                            <td>@(  (dataItem.PriceValue / 10.0).ToString("###0.0"))</td>
+                            foreach (var date in Model.PriceMovementReport.ReportRows.First().DataItems.Select(x => x.PriceDate))
+                            {
+                                <th>@(date.ToString("dd-MMM-yy"))</th>
+                            }
                         }
                     </tr>
-                }
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    @foreach (var siteRow in Model.PriceMovementReport.ReportRows)
+                    {
+                        <tr>
+                            <td>
+                                @siteRow.SiteName
+                            </td>
+                            @if (!siteRow.DataItems.Any())
+                            {
+                                <td>There is no data available</td>
+                            }
+                            @foreach (var dataItem in siteRow.DataItems)
+                            {
+                                <td>@(  (dataItem.PriceValue / 10.0).ToString("###0.0"))</td>
+                            }
+                        </tr>
+                    }
+                </tbody>
+            </table>
+       }
     }
 </div>
 

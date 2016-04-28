@@ -12,65 +12,70 @@
     <div class="row">
         <div class="col-md-2">
             <label for="SiteId">Site:</label>&nbsp;
-            @Html.DropDownList("SiteId", new SelectList(Model.Sites, "Id", "SiteName", Model.SiteId), new { @class = "form-control" })
+            @if (Model != null)
+            { 
+                @Html.DropDownList("SiteId", new SelectList(Model.Sites, "Id", "SiteName", Model.SiteId), new { @class = "form-control" })
+            }
         </div>
     </div>
     <hr />
 }
 
-@if (Model.Report.BrandTimes.Any())
+@if (Model != null)
 {
-    <table class="table table-hover table-responsive table-striped ">
-        <thead>
-            <tr>
-                <th>
-                    Brand Name
-                </th>
-                <th>
-                    0 - 5
-                </th>
-                <th>
-                    5 - 10
-                </th>
-                <th>
-                    10 - 15
-                </th>
-                <th>
-                    15 - 20
-                </th>
-                <th>
-                    20 - 25
-                </th>
-                <th>
-                    25 - 30
-                </th>
-                <th>
-                    > 30
-                </th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model.Report.BrandTimes)
-            {
+    if (Model.Report.BrandTimes.Any())
+    {
+        <table class="table table-hover table-responsive table-striped ">
+            <thead>
                 <tr>
-                    <td>@item.BrandName</td>
-                    <td>@item.Count0To5</td>
-                    <td>@item.Count5To10</td>
-                    <td>@item.Count10To15</td>
-                    <td>@item.Count15To20</td>
-                    <td>@item.Count20To25</td>
-                    <td>@item.Count25To30</td>
-                    <td>@item.CountMoreThan30</td>
+                    <th>
+                        Brand Name
+                    </th>
+                    <th>
+                        0 - 5
+                    </th>
+                    <th>
+                        5 - 10
+                    </th>
+                    <th>
+                        10 - 15
+                    </th>
+                    <th>
+                        15 - 20
+                    </th>
+                    <th>
+                        20 - 25
+                    </th>
+                    <th>
+                        25 - 30
+                    </th>
+                    <th>
+                        > 30
+                    </th>
                 </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Report.BrandTimes)
+                {
+                    <tr>
+                        <td>@item.BrandName</td>
+                        <td>@item.Count0To5</td>
+                        <td>@item.Count5To10</td>
+                        <td>@item.Count10To15</td>
+                        <td>@item.Count15To20</td>
+                        <td>@item.Count20To25</td>
+                        <td>@item.Count25To30</td>
+                        <td>@item.CountMoreThan30</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else if (Model.SiteId > 0)
+    {
+        <div class="alert alert-info" role="alert">Data for <strong>@Model.Report.SiteName</strong> site is not found</div>
+    }
 }
-else if (Model.SiteId > 0)
-{
-    <div class="alert alert-info" role="alert">Data for <strong>@Model.Report.SiteName</strong> site is not found</div>
-}
-
 @section scripts {
     <script src="~/Scripts/PriceReports/competitorSites.js"></script>
 }
