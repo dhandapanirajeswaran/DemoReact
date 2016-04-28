@@ -343,67 +343,131 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
 
         public CompetitorSiteReportViewModel GetCompetitorSites(int siteId)
         {
-            var response = _client.Value.GetAsync("api/GetCompetitorSites/" + siteId).Result;
-            var result = response.Content.ReadAsAsync<CompetitorSiteReportViewModel>().Result;
-            return (response.IsSuccessStatusCode) ? result : null;
+            try
+            {
+                var response = _client.Value.GetAsync("api/GetCompetitorSites/" + siteId).Result;
+                var result = response.Content.ReadAsAsync<CompetitorSiteReportViewModel>().Result;
+                return (response.IsSuccessStatusCode) ? result : null;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Exception in Reports Generation. Contact support team." + System.Environment.NewLine + ex.Message, ex);
+            }
+            return null;
         }
 
         public PricePointReportViewModel GetPricePoints(DateTime when, int fuelTypeId)
         {
-            var url = string.Format("api/GetPricePoints/{0}/{1}", when.ToString("ddMMMyyyy"), fuelTypeId);
-            var response = _client.Value.GetAsync(url).Result;
-            var result = response.Content.ReadAsAsync<PricePointReportViewModel>().Result;
-            return (response.IsSuccessStatusCode) ? result : null;
+            try
+            {
+                var url = string.Format("api/GetPricePoints/{0}/{1}", when.ToString("ddMMMyyyy"), fuelTypeId);
+                var response = _client.Value.GetAsync(url).Result;
+                var result = response.Content.ReadAsAsync<PricePointReportViewModel>().Result;
+                return (response.IsSuccessStatusCode) ? result : null;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Exception in Reports Generation. Contact support team." + System.Environment.NewLine + ex.Message, ex);
+            }
+            return null;
         }
 
         public ComplianceReportViewModel GetReportCompliance(DateTime when)
         {
-            var url = string.Format("api/GetComplianceReport/{0}", when.ToString("ddMMMyyyy"));
-            var response = _client.Value.GetAsync(url).Result;
-            var result = response.Content.ReadAsAsync<ComplianceReportViewModel>().Result;
-            return (response.IsSuccessStatusCode) ? result : null;
+            try
+            {
+                var url = string.Format("api/GetComplianceReport/{0}", when.ToString("ddMMMyyyy"));
+                var response = _client.Value.GetAsync(url).Result;
+                var result = response.Content.ReadAsAsync<ComplianceReportViewModel>().Result;
+                return (response.IsSuccessStatusCode) ? result : null;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Exception in Reports Generation. Contact support team." + System.Environment.NewLine + ex.Message, ex);
+            }
+            return null;
         }
 
         public NationalAverageReportViewModel GetNationalAverage(DateTime when)
         {
-            var url = string.Format("api/GetNationalAverage/{0}", when.ToString("ddMMMyyyy"));
-            var response = _client.Value.GetAsync(url).Result;
-            var result = response.Content.ReadAsAsync<NationalAverageReportViewModel>().Result;
-            return (response.IsSuccessStatusCode) ? result : null;
+            try
+            {
+                var url = string.Format("api/GetNationalAverage/{0}", when.ToString("ddMMMyyyy"));
+                var response = _client.Value.GetAsync(url).Result;
+                var result = response.Content.ReadAsAsync<NationalAverageReportViewModel>().Result;
+                return (response.IsSuccessStatusCode) ? result : null;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Exception in Reports Generation. Contact support team." + System.Environment.NewLine + ex.Message, ex);
+            }
+            return null;
         }
 
         public NationalAverageReportViewModel GetNationalAverage2(DateTime when)
         {
-            var url = string.Format("api/GetNationalAverage2/{0}", when.ToString("ddMMMyyyy"));
-            var response = _client.Value.GetAsync(url).Result;
-            var result = response.Content.ReadAsAsync<NationalAverageReportViewModel>().Result;
-            return (response.IsSuccessStatusCode) ? result : null;
+            try
+            {
+                var url = string.Format("api/GetNationalAverage2/{0}", when.ToString("ddMMMyyyy"));
+                var response = _client.Value.GetAsync(url).Result;
+                var result = response.Content.ReadAsAsync<NationalAverageReportViewModel>().Result;
+                return (response.IsSuccessStatusCode) ? result : null;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Exception in Reports Generation. Contact support team." + System.Environment.NewLine + ex.Message, ex);
+            }
+            return null;
         }
 
         public CompetitorsPriceRangeByCompanyViewModel GetCompetitorsPriceRangeByCompany(DateTime when, string companyName, string brandName)
         {
-            var url = string.Format("api/GetCompetitorsPriceRangeByCompany/{0}/{1}/{2}", when.ToString("ddMMMyyyy"), companyName, brandName);
-            var response = _client.Value.GetAsync(url).Result;
-            var result = response.Content.ReadAsAsync<CompetitorsPriceRangeByCompanyViewModel>().Result;
-            return (response.IsSuccessStatusCode) ? result : null;
+            try
+            {
+                var url = string.Format("api/GetCompetitorsPriceRangeByCompany/{0}/{1}/{2}", when.ToString("ddMMMyyyy"), companyName, brandName);
+                var response = _client.Value.GetAsync(url).Result;
+                var result = response.Content.ReadAsAsync<CompetitorsPriceRangeByCompanyViewModel>().Result;
+                return (response.IsSuccessStatusCode) ? result : null;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Exception in Reports Generation. Contact support team." + System.Environment.NewLine + ex.Message, ex);               
+            }
+            return null;
         }
 
         public PriceMovementReportViewModel GetPriceMovement(string brandName, DateTime fromDate, DateTime toDate, int fuelTypeId)
         {
-            var url = string.Format("api/GetPriceMovement/{0}/{1}/{2}/{3}", fromDate.ToString("ddMMMyyyy"), toDate.ToString("ddMMMyyyy"), fuelTypeId, brandName);
+            try
+            {
+                var url = string.Format("api/GetPriceMovement/{0}/{1}/{2}/{3}", fromDate.ToString("ddMMMyyyy"), toDate.ToString("ddMMMyyyy"), fuelTypeId, brandName);
 
-            var response = _client.Value.GetAsync(url).Result;
-            var result = response.Content.ReadAsAsync<PriceMovementReportViewModel>().Result;
-            return (response.IsSuccessStatusCode) ? result : null;
+                var response = _client.Value.GetAsync(url).Result;
+                var result = response.Content.ReadAsAsync<PriceMovementReportViewModel>().Result;
+                return (response.IsSuccessStatusCode) ? result : null;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Exception in Reports Generation. Contact support team." + System.Environment.NewLine + ex.Message, ex);
+            }
+            return null;
         }
 
 		public string CleanupIntegrationTestsData(string testUserName)
 		{
-			var url = string.Format("api/CleanupIntegrationTestsData?testUserName={0}", testUserName);
+            try
+            {
+                var url = string.Format("api/CleanupIntegrationTestsData?testUserName={0}", testUserName);
 
-			var response = _client.Value.GetAsync(url).Result;
-			var result = response.Content.ReadAsAsync<string>().Result;
-			return (response.IsSuccessStatusCode) ? result : null;
+                var response = _client.Value.GetAsync(url).Result;
+                var result = response.Content.ReadAsAsync<string>().Result;
+                return (response.IsSuccessStatusCode) ? result : null;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Exception in Reports Generation. Contact support team." + System.Environment.NewLine + ex.Message, ex);
+            }
+            return null;
 		}
 
         public void RegisterUser(string email)
