@@ -35,7 +35,7 @@ namespace JsPlc.Ssc.PetrolPricing.Core
 						}
 						else
 						{
-							 throw new ExcelParseFileException("Unable to read excel file (" + filePathAndName + "sheetName:"+ excelFileSheetName +"). Contact support team." + System.Environment.NewLine + ex.Message, ex);
+							throw;
 						}
 					}
 					catch (Exception ex)
