@@ -19,7 +19,7 @@ namespace JsPlc.Ssc.PetrolPricing.Core
             
             if (!File.Exists(filePathAndName))
             {
-                throw new ExcelParseFileException("excel file:" + filePathAndName + ". cannot exist. Contact support team." + System.Environment.NewLine,null);
+                throw new ExcelParseFileException("excel file:" + filePathAndName + ". cannot exist in MechineName: " + Environment.MachineName  + ". Contact support team." + System.Environment.NewLine, null);
 			
             }
 
