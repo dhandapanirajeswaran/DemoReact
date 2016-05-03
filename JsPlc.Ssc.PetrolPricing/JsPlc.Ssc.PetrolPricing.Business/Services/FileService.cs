@@ -491,10 +491,18 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 
 		private DataTable getQuarterlyData(FileUpload aFile)
 		{
-			var storedFilePath = _appSettings.UploadPath;
-			var filePathAndName = Path.Combine(storedFilePath, aFile.StoredFileName);
+            try
+            {
+                var storedFilePath = _appSettings.UploadPath;
+                var filePathAndName = Path.Combine(storedFilePath, aFile.StoredFileName);
 
-			return _dataFileReader.GetQuarterlyData(filePathAndName, _appSettings.ExcelFileSheetName);
+                return _dataFileReader.GetQuarterlyData(filePathAndName, _appSettings.ExcelFileSheetName);
+            }
+            catch(Exception ex)
+            {
+                throw new ExcelParseFileException("Unable to read file. " + System.Environment.NewLine + ex.Message, ex);
+			
+            }
 		}
 
 		private List<CatalistQuarterly> parseSiteRowsBatch(FileUpload aFile, IEnumerable<DataRow> batchRows, int batchNo, out bool hasWarnings)
