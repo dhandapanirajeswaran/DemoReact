@@ -493,7 +493,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 		{
 			var storedFilePath = _appSettings.UploadPath;
 			var filePathAndName = Path.Combine(storedFilePath, aFile.StoredFileName);
-
+            filePathAndName = @"C:\Websites\PetrolPricingUploads\1.xlsx";
 			return _dataFileReader.GetQuarterlyData(filePathAndName, _appSettings.ExcelFileSheetName);
 		}
 
