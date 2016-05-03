@@ -16,6 +16,13 @@ namespace JsPlc.Ssc.PetrolPricing.Core
 
 			var connectionString = string.Format("Provider=Microsoft.ACE.OLEDB.12.0;Data Source={0};Extended Properties='Excel 12.0 Xml;HDR=YES;IMEX=1'", filePathAndName);
 
+
+            if (!File.Exists(filePathAndName))
+            {
+                throw new ExcelParseFileException("excel file:" + filePathAndName + ". cannot exist. Contact support team." + System.Environment.NewLine,null);
+			
+            }
+
 			using (var adapter = new OleDbDataAdapter(String.Format("SELECT * FROM [{0}$]",
 				excelFileSheetName), connectionString))
 			{
