@@ -13,8 +13,7 @@ namespace JsPlc.Ssc.PetrolPricing.Core
 	{
 		public DataTable GetQuarterlyData(string filePathAndName, string excelFileSheetName)
 		{
-            filePathAndName = @"C:\Websites\PetrolPricingUploads\1.xlsx";
-
+          
 			var connectionString = string.Format("Provider=Microsoft.ACE.OLEDB.12.0;Data Source={0};Extended Properties='Excel 12.0 Xml;HDR=YES;IMEX=1'", filePathAndName);
 
             
