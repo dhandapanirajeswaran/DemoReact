@@ -44,7 +44,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 			var model = new UploadViewModel
 			{
 				UploadTypes = GetUploadTypes(),
-				UploadDate = DateTime.Now.ToLocalTime()
+				UploadDate = DateTime.Now
 			};
 			var existingUploads = await ExistingDailyUploads(model.UploadDate);
 			if (existingUploads.Any())
