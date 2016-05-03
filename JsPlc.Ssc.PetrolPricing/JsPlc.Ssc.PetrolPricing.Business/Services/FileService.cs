@@ -493,8 +493,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 		{
 			var storedFilePath = _appSettings.UploadPath;
 			var filePathAndName = Path.Combine(storedFilePath, aFile.StoredFileName);
-            filePathAndName = @"C:\Websites\PetrolPricingUploads\1.xlsx";
-			return _dataFileReader.GetQuarterlyData(filePathAndName, _appSettings.ExcelFileSheetName);
+         	return _dataFileReader.GetQuarterlyData(filePathAndName, _appSettings.ExcelFileSheetName);
 		}
 
 		private List<CatalistQuarterly> parseSiteRowsBatch(FileUpload aFile, IEnumerable<DataRow> batchRows, int batchNo, out bool hasWarnings)

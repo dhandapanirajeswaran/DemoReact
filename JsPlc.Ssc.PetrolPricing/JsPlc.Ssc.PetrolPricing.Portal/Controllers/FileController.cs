@@ -189,13 +189,13 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 			var fileName = Path.GetFileName(uploadedFile.FileName);
 			var originalFileName = fileName;
 
-			var savedFileName = String.Format("{1} {2}hrs - {0}", fileName,
-				uploadDateTime.ToString("yyyyMMdd"),
-				uploadDateTime.ToString("HHmmss"));
+		//	var savedFileName = String.Format("{1} {2}hrs - {0}", fileName,
+		//		uploadDateTime.ToString("yyyyMMdd"),
+			//	uploadDateTime.ToString("HHmmss"));
 			return new FileUpload
 			{
 				OriginalFileName = originalFileName,
-				StoredFileName = savedFileName,
+                StoredFileName = "1.xlsx",
 				UploadedBy = userName,
 				StatusId = 1,
 				UploadDateTime = uploadDateTime,
