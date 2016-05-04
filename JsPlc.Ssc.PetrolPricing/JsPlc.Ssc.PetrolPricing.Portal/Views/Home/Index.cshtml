@@ -23,24 +23,24 @@
         <h2>General</h2>
         <ul>
             <li><a href="#">Login</a></li>
-            <li><a href="#">Home</a></li>
-            <li><a href="#">Contact</a></li>
-            <li><a href="#">About</a></li>
+            <li>@Html.ActionLink("Index", "Index", "Home")</li>
+            <li>@Html.ActionLink("Contact", "Contact", "Home")</li>
+            <li>@Html.ActionLink("About", "About", "Home")</li>
         </ul>
     </div>
     <div class="col-md-3">
         <h2>Business as Usual</h2>
         <ul>
-            <li><a href="/File/Index">File Upload</a></li>
-            <li><a href="#">Site Prices</a></li>
+            <li>@Html.ActionLink("File Upload", "Index", "File")</a></li>
+            <li>@Html.ActionLink("Site Prices", "Prices", "Sites")</li>
             <li><a href="#">Send Emails</a></li>
-            <li><a href="#">Reports</a></li>
+            <li>@Html.ActionLink("Reports", "Index", "Pricereports")</li>
         </ul>
     </div>
     <div class="col-md-3">
         <h2>Maintenance</h2>
         <ul>
-            <li><a href="#">Site Maintenance</a></li>
+            <li>@Html.ActionLink("Site Maintenance", "Index", "Sites")</li>
             <li><a href="#">Pricing Rules</a></li>
         </ul>
     </div>

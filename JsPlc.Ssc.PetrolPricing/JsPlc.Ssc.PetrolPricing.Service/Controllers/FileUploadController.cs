@@ -4,9 +4,12 @@ using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using System.Web.Http;
+using System.Web;
 using System.Web.Http.Results;
+using System.IO;
 using JsPlc.Ssc.PetrolPricing.Business;
 using JsPlc.Ssc.PetrolPricing.Models;
 using JsPlc.Ssc.PetrolPricing.Models.Common;
@@ -15,13 +18,45 @@ using JsPlc.Ssc.PetrolPricing.Core;
 
 namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
 {
+   
     public class FileUploadController : ApiController
     {
         IFileService _fileService;
+        IAppSettings _appSettings;
 
-        public FileUploadController(IFileService fileService)
+        public FileUploadController(IFileService fileService,IAppSettings appSettings)
         {
             _fileService = fileService;
+            _appSettings = appSettings;
+        }
+
+
+        [HttpPost]
+        [Route("api/SaveFile")]
+        public async Task<IHttpActionResult> Post()
+        {
+            try
+            {
+                var queryString = Request.GetQueryNameValuePairs().ToDictionary(x => x.Key, x => x.Value);
+
+                var uploadPath = _appSettings.UploadPath + "\\" + queryString["file"];
+
+                var result = Request.Content.ReadAsStringAsync().Result.Replace("\"", string.Empty);
+                byte[] bytearray = Convert.FromBase64String(result);
+
+
+                using (FileStream writeStream = new FileStream(uploadPath, FileMode.Create, FileAccess.Write))
+                {
+                    writeStream.Write(bytearray, 0, bytearray.Length);
+                    writeStream.Close();
+                }
+
+                return Ok("SUCCESS");
+            }
+            catch (Exception ex)
+            {
+                return new ExceptionResult(ex, this);
+            }
         }
 
         [HttpPost] // Create new upload

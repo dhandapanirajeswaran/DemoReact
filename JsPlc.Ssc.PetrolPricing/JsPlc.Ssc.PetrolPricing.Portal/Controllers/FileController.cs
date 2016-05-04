@@ -263,11 +263,13 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 			if (_fileUpload.UploadTypeId == 1 && existingUploads.Any())
 			{
 				_holdKey = Guid.NewGuid().ToString();
+
 				_uploadStatus = PersistToHoldFile();
 			}
 			else
 			{
-				_uploadStatus = PersistToSaveFile();
+                _uploadStatus = PersistToSaveFile();
+              
 				RecordUpload();
 			}
 
@@ -291,19 +293,23 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 
 		private FileUploadStatus PersistToHoldFile()
 		{
-			_uploadPath = Functions.EnsurePathEndsWithSlash(_uploadPath);
-			var uploadHoldPath = String.Format("{0}{1}", _uploadPath, Constants.UploadHoldPath);
-			var path = Path.Combine(uploadHoldPath, _fileUpload.StoredFileName);
-
-			_uploadedFile.SaveAs(path); // PERSIST The File to Upload Holding area
+			//_uploadPath = Functions.EnsurePathEndsWithSlash(_uploadPath);
+			//var uploadHoldPath = String.Format("{0}{1}", _uploadPath, Constants.UploadHoldPath);
+		//	var path = Path.Combine(uploadHoldPath, _fileUpload.StoredFileName);
+            _serviceFacade.SaveFile(_uploadedFile, Constants.UploadHoldPath+"\\"+_fileUpload.StoredFileName);// PERSIST The File to Upload Holding area
 			return FileUploadStatus.Held;
 		}
 
 		private FileUploadStatus PersistToSaveFile()
 		{
-			var path = Path.Combine(_uploadPath, _fileUpload.StoredFileName);
-			_uploadedFile.SaveAs(path); // PERSIST The File to Upload area
-			return FileUploadStatus.Saved;
+            if (_serviceFacade.SaveFile(_uploadedFile, _fileUpload.StoredFileName) != null)
+            {
+                return FileUploadStatus.Saved;
+            }
+            else
+            {
+                return FileUploadStatus.InvalidUpload;
+            }
 		}
 
 		private void RecordUpload()

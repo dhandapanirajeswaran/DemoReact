@@ -1,10 +1,12 @@
 ﻿using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Net.Http;
 using System.Net.Http.Formatting;
 using System.Net.Http.Headers;
 using System.Text;
+using System.Web;
 using System.Threading.Tasks;
 using JsPlc.Ssc.PetrolPricing.Models;
 using JsPlc.Ssc.PetrolPricing.Models.Enums;
@@ -230,6 +232,25 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
 
             return (response.IsSuccessStatusCode) ? result : null;
         }
+
+
+        public Object SaveFile(HttpPostedFileBase _uploadedFile, string fileName) // 1 = Daily, 2 = Qtryly
+        {
+           
+            string apiUrl = string.Format("api/SaveFile?file={0}", fileName);
+
+            MemoryStream target = new MemoryStream();
+            _uploadedFile.InputStream.CopyTo(target);
+            byte[] data = target.ToArray();
+
+            var response = _client.Value.PostAsync(apiUrl, data, new JsonMediaTypeFormatter()).Result;
+
+            var result = response.Content.ReadAsAsync<Object>().Result;
+
+            return (response.IsSuccessStatusCode) ? result : null;
+        }
+
+
         public async Task<IEnumerable<FileUpload>> ExistingDailyUploads(DateTime uploadDatetime)
         {
             string apiUrl = "api/ExistingDailyUploads/" + uploadDatetime.ToString("yyyy-MM-dd");
