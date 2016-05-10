@@ -6,6 +6,7 @@ using JsPlc.Ssc.PetrolPricing.Portal.Facade;
 
 namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 {
+     [NoCache]
     [Authorize]
     public class AdminController : Controller
     {

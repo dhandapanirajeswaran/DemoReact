@@ -6,6 +6,7 @@ using System.Web.Mvc;
 
 namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 {
+     [NoCache]
     [Authorize]
     public class HomeController : Controller
     {

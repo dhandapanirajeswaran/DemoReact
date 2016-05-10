@@ -19,6 +19,7 @@ using WebGrease.Css.Extensions;
 
 namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 {
+     [NoCache]
     [System.Web.Mvc.Authorize]
     public class SitesController : Controller
     {
