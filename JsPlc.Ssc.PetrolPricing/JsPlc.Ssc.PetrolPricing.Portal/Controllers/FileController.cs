@@ -20,7 +20,7 @@ using System.Net.Http;
 
 namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 {
-     [NoCache]
+  
 	[Authorize]
 	public class FileController : Controller
 	{

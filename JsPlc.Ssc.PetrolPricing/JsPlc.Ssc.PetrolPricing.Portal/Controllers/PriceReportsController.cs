@@ -17,7 +17,7 @@ using System.Web.Mvc;
 
 namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 {
-     [NoCache]
+  
 	[System.Web.Mvc.Authorize]
 	public class PriceReportsController : Controller
 	{
