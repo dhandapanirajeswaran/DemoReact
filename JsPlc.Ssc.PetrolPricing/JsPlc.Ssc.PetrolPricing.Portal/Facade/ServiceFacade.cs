@@ -7,6 +7,7 @@ using System.Net.Http.Formatting;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Web;
+using System.Web.Security;
 using System.Threading.Tasks;
 using JsPlc.Ssc.PetrolPricing.Models;
 using JsPlc.Ssc.PetrolPricing.Models.Enums;
@@ -496,7 +497,33 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             var apiUrl = string.Format("api/user?email={0}", email);
 
             var response = _client.Value.PostAsync(apiUrl, new { }, new JsonMediaTypeFormatter()).Result;
+
+            SaveAuthenticationInfo(email);
             
         }
+
+        private void SaveAuthenticationInfo(string email)
+        {
+            string userData = JsonConvert.SerializeObject(email);
+
+            var timeout = int.Parse(ConfigurationManager.AppSettings["SessionTimeout"]);
+
+            FormsAuthenticationTicket authTicket = new FormsAuthenticationTicket(
+                         1,
+                         email,
+                         DateTime.Now,
+                         DateTime.Now.AddMinutes(timeout),
+                         false, //pass here true, if you want to implement remember me functionality
+                         email);
+
+            string encTicket = FormsAuthentication.Encrypt(authTicket);
+            HttpCookie faCookie = new HttpCookie(FormsAuthentication.FormsCookieName, encTicket);
+         //   faCookie.Expires = DateTime.Now.AddMinutes(timeout);
+            HttpContext.Current.Response.Cookies.Add(faCookie);
+        }
+
+
+
+
     }
 }

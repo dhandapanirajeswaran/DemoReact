@@ -1,8 +1,33 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Web.Security;
+using System.ComponentModel.DataAnnotations;
+using System.Security.Principal;
+
 
 namespace JsPlc.Ssc.PetrolPricing.Portal.Models
 {
+    public class CustomPrincipal : IPrincipal
+    {
+        public IIdentity Identity { get; private set; }
+
+
+        public CustomPrincipal(string strUserMailID)
+        {
+              this.UserName = strUserMailID;
+              this.Identity = new GenericIdentity(strUserMailID);
+        }
+
+        public string UserName { get; set; }
+        public string[] roles { get; set; }
+
+
+        public bool IsInRole(string role)
+        {
+            throw new System.NotImplementedException();
+        }
+    }
+
     public class ExternalLoginConfirmationViewModel
     {
         [Required]
