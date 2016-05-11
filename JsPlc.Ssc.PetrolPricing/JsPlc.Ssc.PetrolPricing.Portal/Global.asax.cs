@@ -47,14 +47,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal
 
             if (authTicket.Expired)
             {
-                authCookie.Expires = DateTime.Now.AddDays(-1d);
-                Request.Cookies.Remove(FormsAuthentication.FormsCookieName);
-                var timeout = int.Parse(ConfigurationManager.AppSettings["SessionTimeout"]);
-                HttpCookie faCookie = new HttpCookie(FormsAuthentication.FormsCookiePath, "");
-                faCookie.Expires = DateTime.Now.AddMinutes(timeout);
-                HttpContext.Current.Response.Cookies.Add(faCookie);
-
-                
+                HttpContext.Current.User = new CustomPrincipal(String.Empty);
                 Response.Redirect("~/Account/LogOff");                   
                 return;
             }
