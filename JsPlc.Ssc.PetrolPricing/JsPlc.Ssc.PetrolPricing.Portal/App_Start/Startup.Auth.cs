@@ -25,11 +25,15 @@ namespace JsPlc.Ssc.PetrolPricing.Portal
 
 			app.UseKentorOwinCookieSaver();
 
+            var timeout = int.Parse(ConfigurationManager.AppSettings["SessionTimeout"]);
+
 			app.UseCookieAuthentication(
 				new CookieAuthenticationOptions
 				{
 					AuthenticationType = CookieAuthenticationDefaults.AuthenticationType,
 					CookieSecure = CookieSecureOption.SameAsRequest,
+                    ExpireTimeSpan = System.TimeSpan.FromMinutes(timeout),
+                    SlidingExpiration= true,
 					Provider = new CookieAuthenticationProvider
 					{
 						OnResponseSignedIn = (context) =>
@@ -67,10 +71,10 @@ namespace JsPlc.Ssc.PetrolPricing.Portal
 					ClientId = clientId,
 					Authority = Authority,
 					PostLogoutRedirectUri = postLogoutRedirectUri,
-					RedirectUri = postLogoutRedirectUri,
+					RedirectUri = postLogoutRedirectUri,                 
                     TokenValidationParameters = new System.IdentityModel.Tokens.TokenValidationParameters
                     {
-                        ValidateIssuer = false
+                        ValidateIssuer = false,                       
                     }
 				});
 
