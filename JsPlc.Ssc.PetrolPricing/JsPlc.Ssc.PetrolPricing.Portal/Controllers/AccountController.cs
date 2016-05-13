@@ -22,30 +22,9 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
         [HttpGet]
         public ActionResult LogOff()
         {
-           
-
-            HttpCookie authCookie = Request.Cookies[FormsAuthentication.FormsCookieName];
-            if (authCookie != null)
-            {
-                authCookie.Expires = DateTime.Now.AddDays(-1d);
-                Request.Cookies.Remove(FormsAuthentication.FormsCookieName);
-
-                HttpCookie authCookiePath = Request.Cookies[FormsAuthentication.FormsCookiePath];
-                if (authCookiePath == null)
-                {
-                    var timeout = int.Parse(ConfigurationManager.AppSettings["SessionTimeout"]);
-                    HttpCookie faCookie = new HttpCookie(FormsAuthentication.FormsCookiePath, "");
-                    faCookie.Expires = DateTime.Now.AddMinutes(timeout);
-                    HttpContext.Response.Cookies.Add(faCookie);
-
-                }
-             
-            }
-
             AuthenticationManager.SignOut(OpenIdConnectAuthenticationDefaults.AuthenticationType,
               CookieAuthenticationDefaults.AuthenticationType);
-
-           
+            FormsAuthentication.SignOut();
             return RedirectToAction("Index", "Home");
         }
     }

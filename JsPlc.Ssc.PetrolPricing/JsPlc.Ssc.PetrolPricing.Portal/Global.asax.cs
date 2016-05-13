@@ -30,45 +30,26 @@ namespace JsPlc.Ssc.PetrolPricing.Portal
 
         protected void Application_PostAuthenticateRequest(Object sender, EventArgs e)
         {
-            HttpCookie authCookie = Request.Cookies[FormsAuthentication.FormsCookieName];
-
-            if (authCookie == null)
-                return;
-
-            HttpCookie authCookiePath = Request.Cookies[FormsAuthentication.FormsCookiePath];
-            if (authCookiePath != null)
-                return;
-
-            FormsAuthenticationTicket authTicket = FormsAuthentication.Decrypt(authCookie.Value);
-
-
-            if (null == authTicket)
-                return;
-
-            if (authTicket.Expired)
+            if (HttpContext.Current.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
             {
-                authCookiePath = Request.Cookies[FormsAuthentication.FormsCookiePath];
-                if (authCookiePath == null)
+
+                HttpCookie authCookie = Request.Cookies[FormsAuthentication.FormsCookieName];
+
+                if (authCookie != null)
                 {
                     var timeout = int.Parse(ConfigurationManager.AppSettings["SessionTimeout"]);
-                    HttpCookie faCookie = new HttpCookie(FormsAuthentication.FormsCookiePath, "");
+                    HttpCookie faCookie = new HttpCookie(FormsAuthentication.FormsCookieName, "");
                     faCookie.Expires = DateTime.Now.AddMinutes(timeout);
                     HttpContext.Current.Response.Cookies.Add(faCookie);
-
                 }
-
-                HttpContext.Current.User = new CustomPrincipal(String.Empty);
-                Response.Redirect("~/Account/LogOff");
-            
-                return;
+                else
+                {
+                  
+                    HttpContext.Current.GetOwinContext().Authentication.SignOut(OpenIdConnectAuthenticationDefaults.AuthenticationType,
+             CookieAuthenticationDefaults.AuthenticationType);
+                    Response.Redirect("~/Account/LogOff");
+                }
             }
-
-            HttpContext.Current.User = new CustomPrincipal(authTicket.UserData);
-
-            if (null == authTicket.UserData)
-               return;
-                       
-            FormsAuthentication.RenewTicketIfOld(authTicket);
         }
 
         protected void Application_BeginRequest()

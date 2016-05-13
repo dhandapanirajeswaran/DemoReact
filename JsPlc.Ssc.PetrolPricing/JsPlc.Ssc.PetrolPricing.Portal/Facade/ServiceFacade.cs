@@ -498,27 +498,15 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
 
             var response = _client.Value.PostAsync(apiUrl, new { }, new JsonMediaTypeFormatter()).Result;
 
-            SaveAuthenticationInfo(email);
+           SaveAuthenticationInfo(email);
             
         }
 
         private void SaveAuthenticationInfo(string email)
         {
-            string userData = JsonConvert.SerializeObject(email);
-
             var timeout = int.Parse(ConfigurationManager.AppSettings["SessionTimeout"]);
-
-            FormsAuthenticationTicket authTicket = new FormsAuthenticationTicket(
-                         1,
-                         email,
-                         DateTime.Now,
-                         DateTime.Now.AddMinutes(timeout),
-                         false, //pass here true, if you want to implement remember me functionality
-                         email);
-
-            string encTicket = FormsAuthentication.Encrypt(authTicket);
-            HttpCookie faCookie = new HttpCookie(FormsAuthentication.FormsCookieName, encTicket);
-         //   faCookie.Expires = DateTime.Now.AddMinutes(timeout);
+            HttpCookie faCookie = new HttpCookie(FormsAuthentication.FormsCookieName, "");
+            faCookie.Expires = DateTime.Now.AddMinutes(timeout);
             HttpContext.Current.Response.Cookies.Add(faCookie);
         }
 
