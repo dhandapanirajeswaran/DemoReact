@@ -31,7 +31,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal
 
         protected void Application_PostAuthenticateRequest(Object sender, EventArgs e)
         {
-            if (HttpContext.Current.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
+           // if (HttpContext.Current.GetOwinContext().Authentication.User.Identity.IsAuthenticated)
             {
                 HttpCookie authCookieName = Request.Cookies[FormsAuthentication.FormsCookieName];
                 var timeout = int.Parse(ConfigurationManager.AppSettings["SessionTimeout"]);
