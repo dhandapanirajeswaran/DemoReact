@@ -508,6 +508,10 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             HttpCookie faCookie = new HttpCookie(FormsAuthentication.FormsCookieName, "");
             faCookie.Expires = DateTime.Now.AddMinutes(timeout);
             HttpContext.Current.Response.Cookies.Add(faCookie);
+
+            HttpCookie faCookiePath = new HttpCookie(FormsAuthentication.FormsCookiePath, "");
+            faCookiePath.Expires = DateTime.Now.AddMinutes((timeout / 2));
+            HttpContext.Current.Response.Cookies.Add(faCookiePath);
         }
 
 

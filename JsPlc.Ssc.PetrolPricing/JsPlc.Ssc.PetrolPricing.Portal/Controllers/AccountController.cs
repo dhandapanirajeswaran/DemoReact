@@ -23,9 +23,9 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
         public ActionResult LogOff()
         {
             AuthenticationManager.SignOut(OpenIdConnectAuthenticationDefaults.AuthenticationType,
-              CookieAuthenticationDefaults.AuthenticationType);
-            FormsAuthentication.SignOut();
+              CookieAuthenticationDefaults.AuthenticationType);         
             return RedirectToAction("Index", "Home");
         }
+               
     }
 }
