@@ -20,11 +20,11 @@ namespace JsPlc.Ssc.PetrolPricing.Models.Enums
 
     public enum FuelTypeItem
     {
-        SuperUnleaded = 1,
+        Super_Unleaded = 1,
         Unleaded = 2,
         Unknown1 = 3,
         Unknown2 = 4,
-        SuperDiesel = 5,
+        Super_Diesel = 5,
         Diesel = 6,
         LPG = 7
     }

@@ -30,6 +30,8 @@ namespace JsPlc.Ssc.PetrolPricing.Models
         public string Town { get; set; }
 
         [Display(Name = "Post code")]
+        [StringLength(20)]
+        [MaxLength(20)]
         public string PostCode { get; set; }
         public string Company { get; set; }
         public string Ownership { get; set; }

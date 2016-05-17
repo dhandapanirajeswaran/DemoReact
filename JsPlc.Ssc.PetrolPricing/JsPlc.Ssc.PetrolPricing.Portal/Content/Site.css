@@ -448,3 +448,6 @@ textarea {
     cursor: inherit;
     display: block;
 }
+.btn-go {margin-top: -4px;}
+.radio-button input {position: relative; top: 2px;}
+.full-width {width: 100%;}

@@ -79,7 +79,7 @@
                     <tr>
                         <th>Sites</th>
 
-                        @if (!Model.PriceMovementReport.ReportRows.First().DataItems.Any())
+                        @if (Model.PriceMovementReport.ReportRows.Count == 0 || !Model.PriceMovementReport.ReportRows.First().DataItems.Any())
                         {
                             <th>Status</th>
                         }

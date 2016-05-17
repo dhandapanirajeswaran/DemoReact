@@ -79,9 +79,9 @@
                     </p>
                     <table>
                         <tr><td><strong>Product</strong></td><td><strong>New Price</strong></td></tr>
-                        <tr><td>Unleaded</td><td><span id="kUnleadedPrice" data-bind="text: kUnleadedPrice"></span></td></tr>
-                        <tr><td>Super (if applicable)</td><td><span id="kSuperPrice" data-bind="text: kSuperPrice"></span></td></tr>
-                        <tr><td>Diesel</td><td><span id="kDieselPrice" data-bind="text: kDieselPrice"></span></td></tr>
+                        <tr><td>Unleaded&nbsp;</td><td>&nbsp;<span id="kUnleadedPrice" data-bind="text: kUnleadedPrice"></span></td></tr>
+                        <tr><td>Super (if applicable)&nbsp;</td><td>&nbsp;<span id="kSuperPrice" data-bind="text: kSuperPrice"></span></td></tr>
+                        <tr><td>Diesel&nbsp;</td><td>&nbsp;<span id="kDieselPrice" data-bind="text: kDieselPrice"></span></td></tr>
                     </table>
                     <br />
                     <ul>
@@ -179,30 +179,29 @@
                             <!-- Price Change Type -->
                             <div class="col-md-4" style="margin-left: -10px"><b>Price change type:</b></div>
                             <div class="col-md-4">
-                                <span><input type="radio" value="(+/-n)" data-bind="click: switchChangeType, checked: changeType" /> (+/-n)</span>
-                                <span><input type="radio" value="Override all" data-bind="click: switchChangeType, checked: changeType" /> Override all</span>
+                                <label class="radio-button"><input type="radio" value="(+/-n)" data-bind="click: switchChangeType, checked: changeType" /> (+/-n)</label>&nbsp;&nbsp;
+                                <label class="radio-button"><input type="radio" value="Override all" data-bind="click: switchChangeType, checked: changeType" /> Override all</label>
                             </div>
-
                         </th>
                         <th colspan="2">
                             <span class="smaller-normal">
                                 <span style="display: inline-block; width: 55px" data-bind="text: changeType"></span>
                                 <input type="text" class="form-control input-override" data-bind="value: $root.unleadedOffset" />
-                                <input type="button" class="btn btn-default btn-xs" value="Go" data-bind="click: changePricePerLitreUnleaded" />
+                                <input type="button" class="btn btn-default btn-xs btn-go" value="Go" data-bind="click: changePricePerLitreUnleaded" />
                             </span>
                         </th>
                         <th colspan="2">
                             <span class="smaller-normal">
                                 <span style="display: inline-block; width: 55px" data-bind="text: changeType"></span>
                                 <input type="text" class="form-control input-override" data-bind="value: $root.dieselOffset" />
-                                <input type="button" class="btn btn-default btn-xs" value="Go" data-bind="click: changePricePerLitreDiesel" />
+                                <input type="button" class="btn btn-default btn-xs btn-go" value="Go" data-bind="click: changePricePerLitreDiesel" />
                             </span>
                         </th>
                         <th colspan="2">
                             <span class="smaller-normal">
                                 <span style="display: inline-block; width: 55px" data-bind="text: changeType"></span>
                                 <input type="text" class="form-control input-override" data-bind="value: $root.superOffset" />
-                                <input type="button" class="btn btn-default btn-xs" value="Go" data-bind="click: changePricePerLitreSuper" />
+                                <input type="button" class="btn btn-default btn-xs btn-go" value="Go" data-bind="click: changePricePerLitreSuper" />
                             </span>
                         </th>
                     </tr>
@@ -312,7 +311,7 @@
                     </tr>
                     <tr data-bind="attr:{id: ('AjaxCollapseCompetitorsforsite' + SiteId)}" class="panel-collapse collapse" role="tabpanel">
                         <td colspan="13" xalign="right" style="background-color: grey">
-                            <table class="competitorTable table-striped table-hover">
+                            <table class="competitorTable table-striped table-hover full-width">
                                 <thead>
                                     <tr>
                                         <th><span>Brand</span></th>

@@ -50,7 +50,6 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 
                 var tempSites = item.Sites;
                 item.Sites = new List<Site> { 
-                new Site { SiteName = "Please select..." }, 
                 new Site { SiteName = "SAINSBURYS ALL", Id = 0 },
                 new Site { SiteName = "SAINSBURYS ALL NORMALISED", Id = -1 }
                  };
@@ -413,11 +412,9 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 		private static Dictionary<int, string> LoadFuels(IEnumerable<int> listOfFuelIds)
 		{
 			var result = new Dictionary<int, string>();
-
-			result.Add(0, "Select fuel");
-
+			
 			var fuelTypes = from FuelTypeItem s in Enum.GetValues(typeof(FuelTypeItem))
-							select new SelectItemViewModel { Id = (int)s, Name = s.ToString() };
+							select new SelectItemViewModel { Id = (int)s, Name = s.ToString().Replace('_',' ') };
 
 			fuelTypes.Where(x => listOfFuelIds.Contains(x.Id)).ForEach(x => result.Add(x.Id, x.Name));
 
@@ -445,15 +442,15 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 
 		private ActionResult ExcelDocumentStream(List<DataTable> tables, string fileName, string fileNameSuffix)
 		{
-			if (!tables.Any())
-			{
-				return new ContentResult { Content = "No data to download..", ContentType = "text/plain" };
-			}
+			//if (!tables.Any())
+			//{
+			//	return new ContentResult { Content = "No data to download..", ContentType = "text/plain" };
+			//}
 
-			if (tables[0].Rows.Count <= 1) // Model != null && Model.NationalAverageReport != null && Model.NationalAverageReport.Fuels.Any()
-			{
-				return new ContentResult { Content = "No data to download..", ContentType = "text/plain" };
-			}
+			//if (tables[0].Rows.Count <= 1) // Model != null && Model.NationalAverageReport != null && Model.NationalAverageReport.Fuels.Any()
+			//{
+			//	return new ContentResult { Content = "No data to download..", ContentType = "text/plain" };
+			//}
 
 			using (var wb = new XLWorkbook())
 			{

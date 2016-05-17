@@ -200,7 +200,7 @@ namespace JsPlc.Ssc.PetrolPricing.Models.Common
             dt.Columns.Add("Sites");
 
             // Setup Table Columns - Sites  Date1   Date2   Date3...
-            if (!reportContainer.PriceMovementReport.ReportRows.First().DataItems.Any())
+            if (reportContainer.PriceMovementReport.ReportRows.Count == 0 || !reportContainer.PriceMovementReport.ReportRows.First().DataItems.Any())
             {
                 dt.Columns.Add("Status");
             }

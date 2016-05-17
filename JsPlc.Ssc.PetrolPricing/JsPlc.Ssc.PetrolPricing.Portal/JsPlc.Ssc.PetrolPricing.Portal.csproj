@@ -497,7 +497,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>49879</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>https://localhost/petrolpricing/</IISUrl>
+          <IISUrl>http://localhost/petrolpricing</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

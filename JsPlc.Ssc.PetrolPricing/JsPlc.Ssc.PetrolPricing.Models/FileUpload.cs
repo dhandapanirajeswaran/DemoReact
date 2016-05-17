@@ -27,6 +27,7 @@ namespace JsPlc.Ssc.PetrolPricing.Models
 
         [Required]
         [Display(Name = "Upload date and time")]
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:dd-MMM-yyyy HH:mm:ss}")]
         public DateTime UploadDateTime { get; set; }
 
         public int StatusId { get; set; }
