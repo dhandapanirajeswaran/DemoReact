@@ -6,6 +6,7 @@ using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.OpenIdConnect;
 using Microsoft.Owin.Security.Cookies;
 using System.Web.Security;
+using JsPlc.Ssc.PetrolPricing.Portal.Helper.Extensions;
 
 namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 {
@@ -23,7 +24,9 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
         public ActionResult LogOff()
         {
             AuthenticationManager.SignOut(OpenIdConnectAuthenticationDefaults.AuthenticationType,
-              CookieAuthenticationDefaults.AuthenticationType);         
+              CookieAuthenticationDefaults.AuthenticationType);
+            UiHelper.bIsFirstStartupAuthCalled = false;
+            FormsAuthentication.SignOut();
             return RedirectToAction("Index", "Home");
         }
                
