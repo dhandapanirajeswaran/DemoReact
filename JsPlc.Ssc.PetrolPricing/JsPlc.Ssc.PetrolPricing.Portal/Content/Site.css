@@ -451,3 +451,4 @@ textarea {
 .btn-go {margin-top: -4px;}
 .radio-button input {position: relative; top: 2px;}
 .full-width {width: 100%;}
+.horz-auto-scroll {max-width: 100%; overflow: auto;}

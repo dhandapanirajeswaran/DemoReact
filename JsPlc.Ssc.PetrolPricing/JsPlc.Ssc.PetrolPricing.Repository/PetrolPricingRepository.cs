@@ -1680,7 +1680,11 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
 				? GetSitesWithEmailsAndPrices(fromDt, toDt).ToList()
 				: GetBrandWithDailyPricesAsPrices(brandName, fromDt, toDt).ToList();
 
-			foreach (var s in sitesWithPrices)
+            var sortedSitesWithPrices = from site in sitesWithPrices
+                                        orderby site.SiteName
+                                        select site;
+
+			foreach (var s in sortedSitesWithPrices)
 			{
 				var dataRow = new PriceMovementReportRows
 				{
