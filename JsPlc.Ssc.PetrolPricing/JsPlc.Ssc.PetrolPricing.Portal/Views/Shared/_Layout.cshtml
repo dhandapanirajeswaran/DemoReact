@@ -69,22 +69,26 @@
             var navItemAttributeName = "data-menu-item";
             $(".navbar-nav li").each(function () {
                 $this = $(this);
+                var locationPath = location.pathname.toLowerCase();
+                
+                // ignore dev URL
+                locationPath = locationPath.replace(/^\/petrolpricing\//i, '/');
                 
                 //nav-home // /
-                if (location.pathname == '/'
+                if (locationPath == '/'
                     && $this.attr(navItemAttributeName) == "nav-home")
                 {
                     $this.addClass("active");
                     return false;
                 }
                 //nav-login // /Account/Login
-                else if (location.pathname.toLowerCase().indexOf("/account/login") == 0
+                else if (locationPath.indexOf("/account/login") == 0
                     && $this.attr(navItemAttributeName) == "nav-login") {
                     $this.addClass("active");
                     return false;
                 }
                 //nav-account // /Manage || /Account
-                else if ((location.pathname.toLowerCase().indexOf("/account") == 0
+                else if ((locationPath.indexOf("/account") == 0
                     || location.pathname.indexOf("/Manage") == 0
                     )
                     && $this.attr(navItemAttributeName) == "nav-account") {
@@ -92,37 +96,37 @@
                     return false;
                 }
                 //nav-about // /Home/About
-                else if (location.pathname.toLowerCase().indexOf("/home/about") == 0
+                else if (locationPath.indexOf("/home/about") == 0
                     && $this.attr(navItemAttributeName) == "nav-about") {
                     $this.addClass("active");
                     return false;
                 }
                 //nav-contact // /Home/Contact
-                else if (location.pathname.toLowerCase().indexOf("/home/contact") == 0
+                else if (locationPath.indexOf("/home/contact") == 0
                     && $this.attr(navItemAttributeName) == "nav-contact") {
                     $this.addClass("active");
                     return false;
                 }
                 //nav-upload // /File
-                else if (location.pathname.toLowerCase().indexOf("/file") == 0
+                else if (locationPath.indexOf("/file") == 0
                     && $this.attr(navItemAttributeName) == "nav-upload") {
                     $this.addClass("active");
                     return false;
                 }
                 //nav-site-pricing // /Sites/Prices
-                else if (location.pathname.toLowerCase().indexOf("/sites/prices") == 0
+                else if (locationPath.indexOf("/sites/prices") == 0
                     && $this.attr(navItemAttributeName) == "nav-site-pricing") {
                     $this.addClass("active");
                     return false;
                 }
                 //nav-site-maintenance // /Sites
-                else if (location.pathname.toLowerCase().indexOf("/sites") == 0
+                else if (locationPath.indexOf("/sites") == 0
                     && $this.attr(navItemAttributeName) == "nav-site-maintenance") {
                     $this.addClass("active");
                     return false;
                 }
                 //nav-reports // /PriceReports
-                else if (location.pathname.toLowerCase().indexOf("/pricereports") == 0
+                else if (locationPath.indexOf("/pricereports") == 0
                     && $this.attr(navItemAttributeName) == "nav-reports") {
                     $this.addClass("active");
                     return false;
