@@ -498,11 +498,11 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
 
             var response = _client.Value.PostAsync(apiUrl, new { }, new JsonMediaTypeFormatter()).Result;
 
-           SaveAuthenticationInfo(email);
+           //SaveAuthenticationInfo(email);
             
         }
 
-        private void SaveAuthenticationInfo(string email)
+      /*  private void SaveAuthenticationInfo(string email)
         {
             var timeout = int.Parse(ConfigurationManager.AppSettings["SessionTimeout"]);
             HttpCookie faCookie = new HttpCookie(FormsAuthentication.FormsCookieName, "");
@@ -512,7 +512,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             HttpCookie faCookiePath = new HttpCookie(FormsAuthentication.FormsCookiePath, "");
             faCookiePath.Expires = DateTime.Now.AddMinutes((timeout / 2));
             HttpContext.Current.Response.Cookies.Add(faCookiePath);
-        }
+        }*/
 
 
 
