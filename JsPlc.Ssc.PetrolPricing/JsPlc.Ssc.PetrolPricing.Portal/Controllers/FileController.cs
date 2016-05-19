@@ -48,7 +48,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 				UploadDate = DateTime.Now
 			};
 			var existingUploads = await ExistingDailyUploads(model.UploadDate);
-            if (existingUploads !=null && existingUploads.Any())
+			if (existingUploads.Any())
 			{
 				ViewBag.WarningMessage = StringMessages.Warning_DailyPriceFileAlreadyUploaded;
 			}
@@ -145,7 +145,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 			}
 
 			fum.CleanupUpload();
-			return RedirectToAction("Overwrite");
+            return RedirectToAction("Upload");
 		}
 
 		public async Task<ActionResult> Details(int id)
@@ -281,7 +281,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 		private void SetUploadAndHoldPaths()
 		{
 			_uploadPath = _serviceFacade.GetUploadPath();
-			_uploadPath = Functions.EnsurePathEndsWithSlash(_uploadPath);
+            _uploadPath = _uploadPath + "\\"; //  Functions.EnsurePathEndsWithSlash(_uploadPath);
 			_uploadHoldPath = String.Format("{0}{1}", _uploadPath, Constants.UploadHoldPath);
 			CreateOrEnsureHoldPathExists();
 		}
