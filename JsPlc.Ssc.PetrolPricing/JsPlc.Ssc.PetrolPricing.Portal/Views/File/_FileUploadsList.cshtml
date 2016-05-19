@@ -1,7 +1,7 @@
 ﻿@using System.Globalization
 @model IEnumerable<JsPlc.Ssc.PetrolPricing.Models.FileUpload>
 
-@if(Model.Any())
+@if(Model !=null && Model.Any())
 { 
 
 <table class="table table-striped">
