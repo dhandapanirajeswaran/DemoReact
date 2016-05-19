@@ -66,29 +66,29 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             return (response.IsSuccessStatusCode) ? result : null;
         }
 
-		public FacadeResponse<SiteViewModel> NewSite(SiteViewModel site)
+        public FacadeResponse<SiteViewModel> NewSite(SiteViewModel site)
         {
             const string apiUrl = "api/Sites/";
 
             var response = _client.Value.PostAsync(apiUrl, site, new JsonMediaTypeFormatter()).Result;
             var result = response.Content.ReadAsAsync<SiteViewModel>().Result;
 
-			FacadeResponse<SiteViewModel> resultViewModel = new FacadeResponse<SiteViewModel>();
+            FacadeResponse<SiteViewModel> resultViewModel = new FacadeResponse<SiteViewModel>();
 
-			if (response.IsSuccessStatusCode)
-			{
-				resultViewModel.ViewModel = result;
-			}
-			else
-			{
-				JObject joResponse = JObject.Parse(response.Content.ReadAsStringAsync().Result);
-				resultViewModel.ErrorMessage = joResponse["Message"].ToString();
-			}
+            if (response.IsSuccessStatusCode)
+            {
+                resultViewModel.ViewModel = result;
+            }
+            else
+            {
+                JObject joResponse = JObject.Parse(response.Content.ReadAsStringAsync().Result);
+                resultViewModel.ErrorMessage = joResponse["Message"].ToString();
+            }
 
-			return resultViewModel;
+            return resultViewModel;
         }
 
-		public FacadeResponse<SiteViewModel> EditSite(SiteViewModel site)
+        public FacadeResponse<SiteViewModel> EditSite(SiteViewModel site)
         {
             //TODO
             const string apiUrl = "api/Sites/";
@@ -96,19 +96,19 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             var response = _client.Value.PutAsync(apiUrl, site, new JsonMediaTypeFormatter()).Result;
             var result = response.Content.ReadAsAsync<SiteViewModel>().Result;
 
-			FacadeResponse<SiteViewModel> resultViewModel = new FacadeResponse<SiteViewModel>();
+            FacadeResponse<SiteViewModel> resultViewModel = new FacadeResponse<SiteViewModel>();
 
-			if (response.IsSuccessStatusCode)
-			{
-				resultViewModel.ViewModel = result;
-			}
-			else
-			{
-				JObject joResponse = JObject.Parse(response.Content.ReadAsStringAsync().Result);
-				resultViewModel.ErrorMessage = joResponse["Message"].ToString();
-			}
+            if (response.IsSuccessStatusCode)
+            {
+                resultViewModel.ViewModel = result;
+            }
+            else
+            {
+                JObject joResponse = JObject.Parse(response.Content.ReadAsStringAsync().Result);
+                resultViewModel.ErrorMessage = joResponse["Message"].ToString();
+            }
 
-			return resultViewModel;
+            return resultViewModel;
         }
 
         public async Task<List<EmailSendLog>> EmailUpdatedPricesSites(int siteId = 0, DateTime? forDate = null, string apiName = "emailSites")
@@ -161,7 +161,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             int storeNo = 0,
             string storeTown = "",
             int siteId = 0, int pageNo = 1,
-            int pageSize = Constants.PricePageSize, 
+            int pageSize = Constants.PricePageSize,
             string apiName = "SitePrices")
         {
             // Optional params(defaults) - forDate (Date of Calc/Viewing today), siteId (0 for all sites), pageNo(1), PageSize(20)
@@ -237,7 +237,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
 
         public Object SaveFile(HttpPostedFileBase _uploadedFile, string fileName) // 1 = Daily, 2 = Qtryly
         {
-           
+
             string apiUrl = string.Format("api/SaveFile?file={0}", fileName);
 
             MemoryStream target = new MemoryStream();
@@ -312,7 +312,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
 
             var result = await response.Content.ReadAsStringAsync();
 
-            return result; 
+            return result;
         }
 
         /// <summary>
@@ -453,7 +453,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             }
             catch (Exception ex)
             {
-                throw new Exception("Exception in Reports Generation. Contact support team." + System.Environment.NewLine + ex.Message, ex);               
+                throw new Exception("Exception in Reports Generation. Contact support team." + System.Environment.NewLine + ex.Message, ex);
             }
             return null;
         }
@@ -475,8 +475,8 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             return null;
         }
 
-		public string CleanupIntegrationTestsData(string testUserName)
-		{
+        public string CleanupIntegrationTestsData(string testUserName)
+        {
             try
             {
                 var url = string.Format("api/CleanupIntegrationTestsData?testUserName={0}", testUserName);
@@ -490,7 +490,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
                 throw new Exception("Exception in Reports Generation. Contact support team." + System.Environment.NewLine + ex.Message, ex);
             }
             return null;
-		}
+        }
 
         public void RegisterUser(string email)
         {
@@ -498,21 +498,21 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
 
             var response = _client.Value.PostAsync(apiUrl, new { }, new JsonMediaTypeFormatter()).Result;
 
-           //SaveAuthenticationInfo(email);
-            
+            //SaveAuthenticationInfo(email);
+
         }
 
-      /*  private void SaveAuthenticationInfo(string email)
-        {
-            var timeout = int.Parse(ConfigurationManager.AppSettings["SessionTimeout"]);
-            HttpCookie faCookie = new HttpCookie(FormsAuthentication.FormsCookieName, "");
-            faCookie.Expires = DateTime.Now.AddMinutes(timeout);
-            HttpContext.Current.Response.Cookies.Add(faCookie);
+        /*  private void SaveAuthenticationInfo(string email)
+          {
+              var timeout = int.Parse(ConfigurationManager.AppSettings["SessionTimeout"]);
+              HttpCookie faCookie = new HttpCookie(FormsAuthentication.FormsCookieName, "");
+              faCookie.Expires = DateTime.Now.AddMinutes(timeout);
+              HttpContext.Current.Response.Cookies.Add(faCookie);
 
-            HttpCookie faCookiePath = new HttpCookie(FormsAuthentication.FormsCookiePath, "");
-            faCookiePath.Expires = DateTime.Now.AddMinutes((timeout / 2));
-            HttpContext.Current.Response.Cookies.Add(faCookiePath);
-        }*/
+              HttpCookie faCookiePath = new HttpCookie(FormsAuthentication.FormsCookiePath, "");
+              faCookiePath.Expires = DateTime.Now.AddMinutes((timeout / 2));
+              HttpContext.Current.Response.Cookies.Add(faCookiePath);
+          }*/
 
 
 
