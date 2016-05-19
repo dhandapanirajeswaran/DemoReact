@@ -48,7 +48,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 				UploadDate = DateTime.Now
 			};
 			var existingUploads = await ExistingDailyUploads(model.UploadDate);
-			if (existingUploads.Any())
+            if (existingUploads!=null && existingUploads.Any())
 			{
 				ViewBag.WarningMessage = StringMessages.Warning_DailyPriceFileAlreadyUploaded;
 			}
