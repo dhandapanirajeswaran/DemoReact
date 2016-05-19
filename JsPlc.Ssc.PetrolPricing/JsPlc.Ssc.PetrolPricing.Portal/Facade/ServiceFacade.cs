@@ -178,9 +178,16 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             var response = _client.Value.GetAsync(apiUrl).Result;
 
             // TODO if response.Content.Headers.ToString().Contains("Content-Type: application/json") do ReadAsync
-
-            var result = response.Content.ReadAsAsync<IEnumerable<SitePriceViewModel>>().Result;
-            return (response.IsSuccessStatusCode) ? result : null;
+            if (response.IsSuccessStatusCode)
+            {
+                var result = response.Content.ReadAsAsync<IEnumerable<SitePriceViewModel>>().Result;
+                return result;
+            }
+            else
+            {
+                return null;
+            } 
+            
         }
 
         /// <summary>
@@ -206,10 +213,15 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             var apiUrl = String.IsNullOrEmpty(filters) ? "api/fileuploads/" : "api/fileuploads/?" + filters;
 
             var response = await _client.Value.GetAsync(apiUrl);
-
-            var result = response.Content.ReadAsAsync<IEnumerable<FileUpload>>().Result;
-
-            return (response.IsSuccessStatusCode) ? result : null;
+            if (response.IsSuccessStatusCode)
+            {
+               var result = response.Content.ReadAsAsync<IEnumerable<FileUpload>>().Result;
+               return result;
+            }
+            else
+            {
+                return null;
+            }
         }
 
         public async Task<FileUpload> GetFileUpload(int id)
@@ -217,10 +229,16 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             var apiUrl = "api/fileuploads/" + id;
 
             var response = await _client.Value.GetAsync(apiUrl);
+            if (response.IsSuccessStatusCode)
+            {
+                var result = response.Content.ReadAsAsync<FileUpload>().Result;
+                return result;
+            }
+            else
+            {
+                return null;
+            } 
 
-            var result = response.Content.ReadAsAsync<FileUpload>().Result;
-
-            return (response.IsSuccessStatusCode) ? result : null;
         }
 
         public FileUpload NewUpload(FileUpload fu) // 1 = Daily, 2 = Qtryly
@@ -228,10 +246,16 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             const string apiUrl = "api/FileUpload/";
 
             var response = _client.Value.PostAsync(apiUrl, fu, new JsonMediaTypeFormatter()).Result;
-
-            var result = response.Content.ReadAsAsync<FileUpload>().Result;
-
-            return (response.IsSuccessStatusCode) ? result : null;
+            if (response.IsSuccessStatusCode)
+            {
+                var result = response.Content.ReadAsAsync<FileUpload>().Result;
+                return result;
+            }
+            else
+            {
+                return null;
+            } 
+          
         }
 
 
@@ -245,10 +269,16 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             byte[] data = target.ToArray();
 
             var response = _client.Value.PostAsync(apiUrl, data, new JsonMediaTypeFormatter()).Result;
+            if (response.IsSuccessStatusCode)
+            {
+                var result = response.Content.ReadAsAsync<Object>().Result;
+                return result;
+            }
+            else
+            {
+                return null;
+            }   
 
-            var result = response.Content.ReadAsAsync<Object>().Result;
-
-            return (response.IsSuccessStatusCode) ? result : null;
         }
 
 
@@ -257,17 +287,30 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             string apiUrl = "api/ExistingDailyUploads/" + uploadDatetime.ToString("yyyy-MM-dd");
 
             var response = await _client.Value.GetAsync(apiUrl);
-
-            var result = response.Content.ReadAsAsync<IEnumerable<FileUpload>>().Result;
-
-            return (response.IsSuccessStatusCode) ? result : null;
+            if (response.IsSuccessStatusCode)
+            {
+                var result = response.Content.ReadAsAsync<IEnumerable<FileUpload>>().Result;
+                return result;
+            }
+            else
+            {
+                return null;
+            }   
+          
         }
         public string GetUploadPath()
         {
             var response = _client.Value.GetAsync("api/settings/" + SettingsKeys.UploadPath).Result;
+            if (response.IsSuccessStatusCode)
+            {
+                var result = response.Content.ReadAsAsync<string>().Result;
+                return result;
+            }
+            else
+            {
+                return null;
+            }
 
-            var result = response.Content.ReadAsAsync<string>().Result;
-            return (response.IsSuccessStatusCode) ? result : null;
         }
 
         public IEnumerable<UploadType> GetUploadTypes()
@@ -276,9 +319,16 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
 
             var response = _client.Value.GetAsync(apiUrl).Result;
 
-            var result = response.Content.ReadAsAsync<IEnumerable<UploadType>>().Result;
+            if (response.IsSuccessStatusCode)
+            {
+                var result = response.Content.ReadAsAsync<IEnumerable<UploadType>>().Result;
+                return result;
+            }
+            else
+            {
+                return null;
+            }
 
-            return (response.IsSuccessStatusCode) ? result : null;
         }
 
         public IEnumerable<FuelType> GetFuelTypes()
@@ -287,9 +337,17 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
 
             var response = _client.Value.GetAsync(apiUrl).Result;
 
-            var result = response.Content.ReadAsAsync<IEnumerable<FuelType>>().Result;
+            if (response.IsSuccessStatusCode)
+            {
+                var result = response.Content.ReadAsAsync<IEnumerable<FuelType>>().Result;
+                return result;
+            }
+            else
+            {
+                return null;
+            }
 
-            return (response.IsSuccessStatusCode) ? result : null;
+           
         }
 
         public IEnumerable<ImportProcessStatus> GetProcessStatuses()
@@ -298,9 +356,15 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
 
             var response = _client.Value.GetAsync(apiUrl).Result;
 
-            var result = response.Content.ReadAsAsync<IEnumerable<ImportProcessStatus>>().Result;
-
-            return (response.IsSuccessStatusCode) ? result : null;
+            if (response.IsSuccessStatusCode)
+            {
+                var result = response.Content.ReadAsAsync<IEnumerable<ImportProcessStatus>>().Result;
+                return result;
+            }
+            else
+            {
+                return null;
+            }   
         }
 
 
@@ -368,8 +432,16 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             try
             {
                 var response = _client.Value.GetAsync("api/GetCompetitorSites/" + siteId).Result;
-                var result = response.Content.ReadAsAsync<CompetitorSiteReportViewModel>().Result;
-                return (response.IsSuccessStatusCode) ? result : null;
+                if (response.IsSuccessStatusCode)
+                {
+                    var result = response.Content.ReadAsAsync<CompetitorSiteReportViewModel>().Result;
+                    return result;
+                }
+                else
+                {
+                    return null;
+                }                
+               
             }
             catch (Exception ex)
             {
@@ -384,8 +456,17 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             {
                 var url = string.Format("api/GetPricePoints/{0}/{1}", when.ToString("ddMMMyyyy"), fuelTypeId);
                 var response = _client.Value.GetAsync(url).Result;
-                var result = response.Content.ReadAsAsync<PricePointReportViewModel>().Result;
-                return (response.IsSuccessStatusCode) ? result : null;
+                if (response.IsSuccessStatusCode)
+                {
+                    var result = response.Content.ReadAsAsync<PricePointReportViewModel>().Result;
+                    return result;
+                }
+                else
+                {
+                    return null;
+                }   
+                
+               
             }
             catch (Exception ex)
             {
@@ -400,8 +481,15 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             {
                 var url = string.Format("api/GetComplianceReport/{0}", when.ToString("ddMMMyyyy"));
                 var response = _client.Value.GetAsync(url).Result;
-                var result = response.Content.ReadAsAsync<ComplianceReportViewModel>().Result;
-                return (response.IsSuccessStatusCode) ? result : null;
+                if (response.IsSuccessStatusCode)
+                {
+                    var result = response.Content.ReadAsAsync<ComplianceReportViewModel>().Result;
+                    return result;
+                }
+                else
+                {
+                    return null;
+                }   
             }
             catch (Exception ex)
             {
@@ -416,8 +504,16 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             {
                 var url = string.Format("api/GetNationalAverage/{0}", when.ToString("ddMMMyyyy"));
                 var response = _client.Value.GetAsync(url).Result;
-                var result = response.Content.ReadAsAsync<NationalAverageReportViewModel>().Result;
-                return (response.IsSuccessStatusCode) ? result : null;
+                if (response.IsSuccessStatusCode)
+                {
+                    var result = response.Content.ReadAsAsync<NationalAverageReportViewModel>().Result;
+                    return result;
+                }
+                else
+                {
+                    return null;
+                }   
+                
             }
             catch (Exception ex)
             {
@@ -432,8 +528,18 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             {
                 var url = string.Format("api/GetNationalAverage2/{0}", when.ToString("ddMMMyyyy"));
                 var response = _client.Value.GetAsync(url).Result;
-                var result = response.Content.ReadAsAsync<NationalAverageReportViewModel>().Result;
-                return (response.IsSuccessStatusCode) ? result : null;
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var result = response.Content.ReadAsAsync<NationalAverageReportViewModel>().Result;
+                    return result;
+                }
+                else
+                {
+                    return null;
+                }    
+              
+               
             }
             catch (Exception ex)
             {
@@ -448,8 +554,17 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             {
                 var url = string.Format("api/GetCompetitorsPriceRangeByCompany/{0}/{1}/{2}", when.ToString("ddMMMyyyy"), companyName, brandName);
                 var response = _client.Value.GetAsync(url).Result;
-                var result = response.Content.ReadAsAsync<CompetitorsPriceRangeByCompanyViewModel>().Result;
-                return (response.IsSuccessStatusCode) ? result : null;
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var result = response.Content.ReadAsAsync<CompetitorsPriceRangeByCompanyViewModel>().Result;
+                    return result;
+                }
+                else
+                {
+                    return null;
+                }              
+               
             }
             catch (Exception ex)
             {
@@ -465,8 +580,16 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
                 var url = string.Format("api/GetPriceMovement/{0}/{1}/{2}/{3}", fromDate.ToString("ddMMMyyyy"), toDate.ToString("ddMMMyyyy"), fuelTypeId, brandName);
 
                 var response = _client.Value.GetAsync(url).Result;
-                var result = response.Content.ReadAsAsync<PriceMovementReportViewModel>().Result;
-                return (response.IsSuccessStatusCode) ? result : null;
+             
+                if (response.IsSuccessStatusCode)
+                {
+                    var result = response.Content.ReadAsAsync<PriceMovementReportViewModel>().Result;
+                    return result;
+                }
+                else
+                {
+                    return null;
+                }
             }
             catch (Exception ex)
             {
@@ -482,8 +605,16 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
                 var url = string.Format("api/CleanupIntegrationTestsData?testUserName={0}", testUserName);
 
                 var response = _client.Value.GetAsync(url).Result;
-                var result = response.Content.ReadAsAsync<string>().Result;
-                return (response.IsSuccessStatusCode) ? result : null;
+                if (response.IsSuccessStatusCode)
+                {
+                    var result = response.Content.ReadAsAsync<string>().Result;
+                    return result;
+                }
+                else
+                {
+                    return null;
+                }
+              
             }
             catch (Exception ex)
             {
