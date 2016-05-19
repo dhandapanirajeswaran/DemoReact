@@ -10,7 +10,7 @@ using JsPlc.Ssc.PetrolPricing.Portal.Helper.Extensions;
 
 namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 {
-       
+
     [Authorize]
     public class AccountController : Controller
     {
@@ -29,6 +29,6 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             FormsAuthentication.SignOut();
             return RedirectToAction("Index", "Home");
         }
-               
+
     }
 }

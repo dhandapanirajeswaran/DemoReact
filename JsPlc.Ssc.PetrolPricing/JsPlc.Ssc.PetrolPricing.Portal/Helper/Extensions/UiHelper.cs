@@ -11,7 +11,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Helper.Extensions
 {
     public static class UiHelper
     {
-        public static bool bIsFirstStartupAuthCalled=false;
+        public static bool bIsFirstStartupAuthCalled = false;
         /// <summary>
         /// ErrorList as a List for View to highlight errors on Input fields
         /// </summary>
@@ -49,7 +49,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Helper.Extensions
         public static void CreateAuthCookie1()
         {
             var timeout = int.Parse(ConfigurationManager.AppSettings["SessionTimeout"]);
-          
+
             HttpCookie faCookie = new HttpCookie(FormsAuthentication.FormsCookieName, "");
             faCookie.Expires = DateTime.Now.AddMinutes(timeout);
             HttpContext.Current.Response.Cookies.Add(faCookie);
