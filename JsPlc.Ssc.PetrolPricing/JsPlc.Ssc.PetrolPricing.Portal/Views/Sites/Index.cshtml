@@ -11,6 +11,15 @@
         <input type="button" value="New Sainsbury's site" onclick="location.href='@Url.Action("Create", "Sites" )'" class="btn btn-primary" />
     </div>
 </div>
+
+<div style="display:block" class="alert alert-warning" data-bind="visible: $root.busyLoadingData()">
+    <div class="col-md-1 text-center"><i class="fa fa-clock-o fa-2x"></i></div>
+    <div class="col-md-10 text-center">
+        <strong>Loading Site Maintenance information. Please wait...</strong>
+    </div>
+    <div class="clearfix"></div>
+</div>
+
 <div class="alert alert-info @(string.IsNullOrWhiteSpace(ViewBag.Message) ? "hidden" : "")">@ViewBag.Message</div>
 <!-- Approx 300 Sainsbury's sites -->
 <hr />
@@ -32,13 +41,13 @@
     <!-- Store Name -->
     <div class="col-md-2">
         <label for="viewingStoreName">Store name:</label>
-        <input type="text" id="viewingStoreName" class="form-control"
+        <input type="text" id="viewingStoreName" class="form-control" maxlength="50"
                name="viewingStoreName" data-bind="value: $root.StoreName" />
     </div>
     <!-- Store Town -->
     <div class="col-md-2">
         <label for="viewingStoreTown">Town:</label>
-        <input type="text" id="viewingStoreTown" class="form-control"
+        <input type="text" id="viewingStoreTown" class="form-control" maxlength="50"
                name="viewingStoreTown" data-bind="value: $root.StoreTown" />
     </div>
 
