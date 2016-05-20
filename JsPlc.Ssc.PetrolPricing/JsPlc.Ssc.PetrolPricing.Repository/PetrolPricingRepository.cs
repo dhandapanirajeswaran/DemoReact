@@ -26,11 +26,52 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
         private readonly RepositoryContext _context;
 
+        private List<string> LstOfBandsToRemoveInNA2;
+
         public PetrolPricingRepository(RepositoryContext context)
         {
             _context = context;
+            AddListOfBandsToRemoveInNA2();
         }
 
+        private void AddListOfBandsToRemoveInNA2()
+        {
+            LstOfBandsToRemoveInNA2 = new List<string> {  Const.WCF,
+                Const.UNBRANDED,
+                Const.TORQ,
+                Const.TOPAZ,
+                Const.THAMES,
+                Const.TEXACO,
+                Const.STAR,
+                Const.SPAR,
+                Const.SOLO,
+                Const.RIX,
+                Const.PRAX,
+                Const.POWER,
+                Const.PACE,
+                Const.OIL4WALES,
+                Const.NOW,
+                Const.NISA,
+                Const.MURCO,
+                Const.MAXOL,
+                Const.JET,
+                Const.IMPERIAL,
+                Const.HARVESTENERGY,
+                Const.GULF,
+                Const.GO,
+                Const.GLEANER,
+                Const.GB,
+                Const.EMO,
+                Const.DRAGON,
+                Const.COSTCUTTER,
+                Const.COOP,
+                Const.CARLTON,
+                Const.CALLOW,
+                Const.BWOC,
+                Const.BATA,
+            };
+
+        }
         private static object cachedAppSettingsLock = new Object();
 
         public IEnumerable<Site> GetJsSites()
@@ -1604,6 +1645,9 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
 
             distinctBrands.Remove(Const.SAINSBURYS);
             distinctBrands.Insert(0, Const.SAINSBURYS);
+
+            foreach (var band in LstOfBandsToRemoveInNA2)
+                distinctBrands.Remove(band);
 
             foreach (var fuelType in fuelTypeIds)
             {
