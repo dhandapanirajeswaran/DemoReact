@@ -248,7 +248,10 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 		{
 			var heldFile = Path.Combine(_uploadHoldPath, _fileUpload.StoredFileName);
 			var destFile = Path.Combine(_uploadPath, _fileUpload.StoredFileName);
-			File.Move(heldFile, destFile);
+            if (File.Exists(heldFile))
+            {
+                File.Move(heldFile, destFile);
+            }
 			RecordUpload();
 		}
 
