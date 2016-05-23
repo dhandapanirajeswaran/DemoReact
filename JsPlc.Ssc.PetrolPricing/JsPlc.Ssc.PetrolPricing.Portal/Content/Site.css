@@ -453,3 +453,13 @@ textarea {
 .full-width {width: 100%;}
 .horz-auto-scroll {max-width: 100%; overflow: auto;}
 .clickable {cursor: pointer;}
+.busy-loader {
+    position: absolute;  
+    z-index: 100; 
+    width: 25%; 
+    top: 6em; 
+    left: 50%; 
+    margin-left: -12%; 
+    height: 4em; 
+    box-shadow: 0 0 12px #666;
+}
