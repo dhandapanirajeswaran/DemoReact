@@ -258,6 +258,16 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
           
         }
 
+        public Object SaveHoldFile(string heldFile, string destFile)
+        {
+            string apiUrl = string.Format("api/SaveHoldFile?heldfile={0}&destFile={1}", heldFile, destFile);
+
+            var response = _client.Value.PostAsync(apiUrl, null).Result;
+
+            var result = response.Content.ReadAsAsync<Object>().Result;
+
+            return (response.IsSuccessStatusCode) ? result : null;
+        }
 
         public Object SaveFile(HttpPostedFileBase _uploadedFile, string fileName) // 1 = Daily, 2 = Qtryly
         {

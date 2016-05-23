@@ -244,16 +244,16 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 			get { return _fileUpload.OriginalFileName; }
 		}
 
-		public void ConfirmedUploadByUser()
-		{
-			var heldFile = Path.Combine(_uploadHoldPath, _fileUpload.StoredFileName);
-			var destFile = Path.Combine(_uploadPath, _fileUpload.StoredFileName);
-            if (File.Exists(heldFile))
+        public void ConfirmedUploadByUser()
+        {
+            var heldFile = Path.Combine(_uploadHoldPath, _fileUpload.StoredFileName);
+            var destFile = Path.Combine(_uploadPath, _fileUpload.StoredFileName);
+            if (_serviceFacade.SaveHoldFile(heldFile, destFile) != null)
             {
-                File.Move(heldFile, destFile);
+                RecordUpload();
             }
-			RecordUpload();
-		}
+
+        }
 
 		public async Task<FileUploadStatus> UploadFile(HttpPostedFileBase uploadedFile)
 		{

@@ -30,6 +30,32 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
             _appSettings = appSettings;
         }
 
+        [HttpPost]
+        [Route("api/SaveHoldFile")]
+        public async Task<IHttpActionResult> SaveHoldFile()
+        {
+            try
+            {
+                var queryString = Request.GetQueryNameValuePairs().ToDictionary(x => x.Key, x => x.Value);
+
+                var heldFile = queryString["heldfile"];
+                var destFile = queryString["destFile"];
+
+                if (File.Exists(heldFile))
+                {
+                    File.Move(heldFile, destFile);
+                    return Ok("SUCCESS");
+                }
+                else
+                    return Ok("FAIL");
+
+
+            }
+            catch (Exception ex)
+            {
+                return new ExceptionResult(ex, this);
+            }
+        }
 
         [HttpPost]
         [Route("api/SaveFile")]
