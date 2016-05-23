@@ -32,6 +32,8 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 
         bool UpdateSite(Site site);
 
+        bool HasDuplicateEmailAddresses(Site site);
+
 		bool IsUnique(Site site);
     }
 }

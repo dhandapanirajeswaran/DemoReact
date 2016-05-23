@@ -85,6 +85,11 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 				|| (site.PfsNo.HasValue && m.PfsNo.HasValue && m.PfsNo.Value == site.PfsNo.Value));
 		}
 
+        public bool HasDuplicateEmailAddresses(Site site)
+        {
+            return site.Emails.Any(x => site.Emails.Count(e => String.Compare(e.EmailAddress, x.EmailAddress, true) == 0) > 1);
+        }
+
 		public bool UpdateSite(Site site)
 		{
 			return _db.UpdateSite(site);

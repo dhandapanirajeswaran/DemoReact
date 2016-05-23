@@ -114,6 +114,11 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
 					return BadRequest("Site with this Name, Pfs Number and Store Number already exists. Please try again.");
 				}
 
+                if (_siteService.HasDuplicateEmailAddresses(Mapper.Map<Site>(site)))
+                {
+                    return BadRequest("Site has duplicate email addresses.");
+                }
+
 				var su = _siteService.NewSite(site.ToSite());
 
 				return Ok(su.ToSiteViewModel());
@@ -140,7 +145,12 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
 				return BadRequest("Site with this Name, Pfs Number and Store Number already exists. Please try again.");
 			}
 
-			try
+            if (_siteService.HasDuplicateEmailAddresses(Mapper.Map<Site>(site)))
+            {
+                return BadRequest("Site has duplicate email addresses.");
+            }
+
+            try
 			{
 				_siteService.UpdateSite(site);
 
