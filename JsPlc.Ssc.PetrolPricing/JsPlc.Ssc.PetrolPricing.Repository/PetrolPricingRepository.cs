@@ -389,6 +389,8 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
                             var competitorId = pgRow["CompetitorId"].ToString().ToNullable<int>();
 
+                            var competitorPriceOffset = pgRow["CompetitorPriceOffset"].ToString().ToNullable<double>();
+
                             var competitorName = "Unknown";
 
                             if (competitorId.HasValue)
@@ -397,18 +399,23 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                                 competitorName = string.Format("{0}/{1}", competitorSite.Brand, competitorSite.SiteName);
                             }
 
+                            var autoPriceAjustment = competitorPriceOffset.HasValue && IsTrailPrice == true
+                                ? (int)(competitorPriceOffset.Value * 10)
+                                : 0;
+
                             sitePriceRow.FuelPrices.Add(new FuelPriceViewModel
                             {
                                 FuelTypeId = (int)pgRow["FuelTypeId"],
                                 // Tomorrow's prices
-                                AutoPrice = (!AutoPrice.HasValue) ? 0 : AutoPrice.Value,
+                                AutoPrice = (!AutoPrice.HasValue) ? 0 : (AutoPrice.Value + autoPriceAjustment),
                                 OverridePrice = (!OverridePrice.HasValue) ? 0 : OverridePrice.Value,
 
                                 // Today's prices (whatever was calculated yesterday OR last)
                                 TodayPrice = TodayPrice,
                                 Markup = Markup,
                                 CompetitorName = competitorName,
-                                IsTrailPrice = IsTrailPrice.HasValue ? IsTrailPrice.Value : false
+                                IsTrailPrice = IsTrailPrice.HasValue ? IsTrailPrice.Value : false,
+                                CompetitorPriceOffset = competitorPriceOffset.HasValue ? competitorPriceOffset.Value : 0
                             });
                         }
                     }

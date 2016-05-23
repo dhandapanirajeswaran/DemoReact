@@ -148,6 +148,7 @@
                 <button style="margin-top: 24px" type="button" class="btn btn-default" data-bind="click: function() { reloadSearchPage('Sites/Prices?date='+$root.InitDateInUsFormat()) }">Show all</button>
             </div>
         </div>
+
         <hr />
         <div style="display: none" class="alert alert-danger" data-bind="visible: $root.HasValidationErrors() || $root.HasErrorMessage()">
             <div class="col-md-1 text-center"><i class="fa fa-exclamation-triangle fa-2x"></i></div>
@@ -156,8 +157,10 @@
         </div>
         <div style="display: none" class="alert alert-warning" data-bind="visible: !$root.hasAnyFieldErrors() && !$root.HasValidationErrors() && $root.HasUnsavedChanges() && !$root.ViewingHistorical() && !$root.hasBadPriceChangeValue()">
             <div class="col-md-1 text-center"><i class="fa fa-question-circle fa-2x"></i></div>
-            <div class="col-md-4">
-                You have unsaved changes. Would you like to save them?
+            <div class="col-md-5">
+                <strong>
+                    You have unsaved changes. Would you like to save them?
+                </strong>
             </div>
             <div class="col-md-1">
                 <button type="button" class="btn btn-success" data-bind="click: savePetrolPricingForm">
@@ -169,14 +172,6 @@
         <div style="display: none" class="alert alert-success" data-bind="visible: $root.HasSuccessMessage()">
             <div class="col-md-1 text-center"><i class="fa fa-exclamation-triangle fa-2x"></i></div>
             <div class="col-md-4" style="padding-top: 2px"><span id="msgSuccess"></span></div>
-            <div class="clearfix"></div>
-        </div>
-
-        <div style="display:block" class="alert alert-warning" data-bind="visible: $root.busyLoadingData()">
-            <div class="col-md-1 text-center"><i class="fa fa-clock-o fa-2x"></i></div>
-            <div class="col-md-10 text-center">
-                <strong>Loading Sales Pricing information. Please wait...</strong>
-            </div>
             <div class="clearfix"></div>
         </div>
 
@@ -193,10 +188,18 @@
             <div class="clearfix"></div>
         </div>
 
-        <div class="alert alert-danger" data-bind="visible: $root.hasAnyFieldErrors() && !$root.HasValidationErrors()">
+        <div style="display:none;" class="alert alert-danger" data-bind="visible: $root.hasAnyFieldErrors() && !$root.HasValidationErrors()">
             <div class="col-md-1 text-center"><i class="fa fa-exclamation-triangle fa-2x"></i></div>
             <div class="col-md-10">
                 <strong>There are 1 or more field errors. Please correct and retry.</strong>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+
+        <div style="display:block;" class="alert alert-warning busy-loader" data-bind="visible: $root.busyLoadingData()">
+            <div class="col-md-1 text-center"><i class="fa fa-clock-o fa-2x"></i></div>
+            <div class="col-md-10 text-center">
+                <strong>Loading Sales Pricing information. Please wait...</strong>
             </div>
             <div class="clearfix"></div>
         </div>
@@ -381,7 +384,7 @@
                                 <tbody>
                                     <!-- ko if: loadingCompetitors() -->
                                     <tr>
-                                        <td colspan="10" class="noSiteData">loading... please wait</td>
+                                        <td colspan="10" class="noSiteData">Loading... Please wait</td>
                                     </tr>
                                     <!-- /ko -->
                                     <!-- ko if: !loadingCompetitors() -->

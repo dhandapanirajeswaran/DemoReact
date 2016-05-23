@@ -33,26 +33,26 @@ namespace JsPlc.Ssc.PetrolPricing.Service.DataMapping
 			Mapper.CreateMap<SiteEmailViewModel, SiteEmail>()
 				.ForMember(co => co.Site, mo => mo.Ignore());
 
-			Mapper.CreateMap<SiteViewModel, Site>()
-				.ForMember(co => co.Address, mo => mo.MapFrom(p => p.Address))
-				.ForMember(co => co.Brand, mo => mo.MapFrom(p => p.Brand))
-				.ForMember(co => co.CatNo, i => i.MapFrom(p => p.CatNo))
-				.ForMember(co => co.Company, i => i.MapFrom(p => p.Company))
-				.ForMember(co => co.Competitors, mo => mo.Ignore()) //ignore
-				.ForMember(co => co.Emails, i => i.MapFrom(p => p.Emails)) //list map
-				.ForMember(co => co.Id, i => i.MapFrom(p => p.Id))
-				.ForMember(co => co.IsActive, i => i.MapFrom(p => p.IsActive))
-				.ForMember(co => co.IsSainsburysSite, i => i.MapFrom(p => p.IsSainsburysSite))
-				.ForMember(co => co.Ownership, i => i.MapFrom(p => p.Ownership))
-				.ForMember(co => co.PfsNo, i => i.MapFrom(p => p.PfsNo))
-				.ForMember(co => co.PostCode, i => i.MapFrom(p => p.PostCode))
-				.ForMember(co => co.Prices, mo => mo.Ignore()) //ignore
-				.ForMember(co => co.SiteName, i => i.MapFrom(p => p.SiteName))
-				.ForMember(co => co.StoreNo, i => i.MapFrom(p => p.StoreNo))
-				.ForMember(co => co.Suburb, i => i.MapFrom(p => p.Suburb))
-				.ForMember(co => co.Town, i => i.MapFrom(p => p.Town))
-				.ForMember(co => co.TrailPriceCompetitorId, i => i.MapFrom(p => p.TrailPriceCompetitorId));
-
+            Mapper.CreateMap<SiteViewModel, Site>()
+                .ForMember(co => co.Address, mo => mo.MapFrom(p => p.Address))
+                .ForMember(co => co.Brand, mo => mo.MapFrom(p => p.Brand))
+                .ForMember(co => co.CatNo, i => i.MapFrom(p => p.CatNo))
+                .ForMember(co => co.Company, i => i.MapFrom(p => p.Company))
+                .ForMember(co => co.Competitors, mo => mo.Ignore()) //ignore
+                .ForMember(co => co.Emails, i => i.MapFrom(p => p.Emails)) //list map
+                .ForMember(co => co.Id, i => i.MapFrom(p => p.Id))
+                .ForMember(co => co.IsActive, i => i.MapFrom(p => p.IsActive))
+                .ForMember(co => co.IsSainsburysSite, i => i.MapFrom(p => p.IsSainsburysSite))
+                .ForMember(co => co.Ownership, i => i.MapFrom(p => p.Ownership))
+                .ForMember(co => co.PfsNo, i => i.MapFrom(p => p.PfsNo))
+                .ForMember(co => co.PostCode, i => i.MapFrom(p => p.PostCode))
+                .ForMember(co => co.Prices, mo => mo.Ignore()) //ignore
+                .ForMember(co => co.SiteName, i => i.MapFrom(p => p.SiteName))
+                .ForMember(co => co.StoreNo, i => i.MapFrom(p => p.StoreNo))
+                .ForMember(co => co.Suburb, i => i.MapFrom(p => p.Suburb))
+                .ForMember(co => co.Town, i => i.MapFrom(p => p.Town))
+                .ForMember(co => co.TrailPriceCompetitorId, i => i.MapFrom(p => p.TrailPriceCompetitorId))
+                .ForMember(co => co.CompetitorPriceOffset, i => i.MapFrom(p => p.CompetitorPriceOffset));
 		}
 	}
 }

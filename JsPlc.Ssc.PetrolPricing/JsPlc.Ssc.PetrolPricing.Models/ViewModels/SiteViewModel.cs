@@ -58,7 +58,12 @@ namespace JsPlc.Ssc.PetrolPricing.Models
 
         public List<SiteViewModel> Competitors { get; set; }
 
-        public SiteViewModel() {
+        [Display(Name = "Inherit price (+/-)")]
+        [Range(-4000, 4000)]
+        public double CompetitorPriceOffset { get; set; }
+
+        public SiteViewModel()
+        {
             Competitors = new List<SiteViewModel>();
         }
     }
