@@ -112,31 +112,31 @@
             <div class="col-md-1">
                 <label for="viewingDate">Date:</label>
                 <input type="text" id="viewingDate" class="datepicker form-control"
-                       style="width: 85px" name="viewingDate"
+                       style="width: 85px" name="viewingDate" maxlength="12"
                        data-bind="value: $root.InitDate" />
             </div>
             <!-- Store No -->
             <div class="col-md-2">
                 <label for="viewingStoreNo">Store No:</label>
-                <input type="text" id="viewingStoreNo" class="form-control"
+                <input type="text" id="viewingStoreNo" class="form-control" maxlength="10"
                        name="viewingStoreNo" data-bind="numeric, value: $root.StoreNo" />
             </div>
             <!-- Store Name -->
             <div class="col-md-2">
                 <label for="viewingStoreName">Store Name:</label>
-                <input type="text" id="viewingStoreName" class="form-control"
+                <input type="text" id="viewingStoreName" class="form-control" maxlength="50"
                        name="viewingStoreName" data-bind="value: $root.StoreName" />
             </div>
             <!-- Store Town -->
             <div class="col-md-2">
                 <label for="viewingStoreTown">Store Town:</label>
-                <input type="text" id="viewingStoreTown" class="form-control"
+                <input type="text" id="viewingStoreTown" class="form-control" maxlength="50"
                        name="viewingStoreTown" data-bind="value: $root.StoreTown" />
             </div>
             <!-- Catalist No -->
             <div class="col-md-2">
                 <label for="viewingCatNo">Catalist No:</label>
-                <input type="text" id="viewingCatNo" class="form-control"
+                <input type="text" id="viewingCatNo" class="form-control" maxlength="10"
                        name="viewingCatNo" data-bind="numeric, value: $root.CatNo" />
             </div>
             <!-- go button -->
@@ -151,7 +151,7 @@
         <hr />
         <div style="display: none" class="alert alert-danger" data-bind="visible: $root.HasValidationErrors() || $root.HasErrorMessage()">
             <div class="col-md-1 text-center"><i class="fa fa-exclamation-triangle fa-2x"></i></div>
-            <div class="col-md-4" style="padding-top: 2px"><span id="msgError"></span></div>
+            <div class="col-md-8" style="padding-top: 2px"><strong><span id="msgError"></span></strong></div>
             <div class="clearfix"></div>
         </div>
         <div style="display: none" class="alert alert-warning" data-bind="visible: !$root.HasValidationErrors() && $root.HasUnsavedChanges() && !$root.ViewingHistorical() && !$root.hasBadPriceChangeValue()">
@@ -172,10 +172,10 @@
             <div class="clearfix"></div>
         </div>
 
-        <div style="display:block" class="alert alert-warning" data-bind="visible: $root.loadingPriceData()">
-            <div class="col-md-1 text-center"><i class="fa fa-info-circle fa-2x"></i></div>
+        <div style="display:block" class="alert alert-warning" data-bind="visible: $root.busyLoadingData()">
+            <div class="col-md-1 text-center"><i class="fa fa-clock-o fa-2x"></i></div>
             <div class="col-md-10 text-center">
-                Loading Sales Pricing information. Please wait...
+                <strong>Loading Sales Pricing information. Please wait...</strong>
             </div>
             <div class="clearfix"></div>
         </div>
@@ -183,7 +183,12 @@
         <div style="display: none;" class="alert alert-danger" data-bind="visible: $root.hasBadPriceChangeValue()">
             <div class="col-md-1 text-center"><i class="fa fa-exclamation-triangle fa-2x"></i></div>
             <div class="col-md-10">
-                Please enter a valid value for the price change.
+                <strong>Please enter a valid value for the price change.</strong>
+            </div>
+            <div class="col-md-1 pull-right">
+                <span class="clickable btn btn-default" data-bind="click:closeWarningPanel">
+                    <i class="fa fa-close"></i> Close
+                </span>
             </div>
             <div class="clearfix"></div>
         </div>
@@ -307,7 +312,7 @@
                         <td style="border-left: 1px solid #ddd">
                             &nbsp;<span data-bind="attr:{title:(FuelPrice.IsTrailPrice ? 'Trail price: ' + FuelPrice.CompetitorName : 'Competitor name: ' + FuelPrice.CompetitorName + '; Markup: ' + FuelPrice.Markup)}, text: FuelPrice.AutoPrice"></span>
                             <input type="text" data-bind="value: FuelPrice.OverridePrice, visible: !$root.ViewingHistorical(),
-                                id: ('OverridePrice_' + $parent.SiteId + '_' + FuelPrice.FuelTypeId), event:{keyup: changeProp}" class="txtPrice" />
+                                id: ('OverridePrice_' + $parent.SiteId + '_' + FuelPrice.FuelTypeId), event:{keyup: changeProp}" class="txtPrice" maxlength="8" />
                             <span style="color: red">
                                 <span data-bind="attr :{id: ('OverridePriceHighlight_' + $parent.SiteId + '_' + FuelPrice.FuelTypeId)}"></span>
                             </span>
