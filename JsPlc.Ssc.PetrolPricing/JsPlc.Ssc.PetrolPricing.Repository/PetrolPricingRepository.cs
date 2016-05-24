@@ -72,7 +72,32 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             };
 
         }
-        private static object cachedAppSettingsLock = new Object();
+
+		private static object cachedAppSettingsLock = new Object();
+
+        public IEnumerable<PPUser> GetPPUsers()
+        {
+            return _context.PPUsers.ToArray();
+        }
+        public IEnumerable<PPUser> AddPPUser(PPUser ppuser)
+        {
+            var result = _context.PPUsers.Add(ppuser);
+            _context.SaveChanges();
+
+            return this.GetPPUsers(); // return full object back
+        }
+
+
+
+        public IEnumerable<PPUser> DeletePPUser(PPUser ppuser)
+        {
+            
+            _context.PPUsers.Remove(ppuser);
+            _context.SaveChanges();
+
+            return this.GetPPUsers();            
+            
+        }
 
         public IEnumerable<Site> GetJsSites()
         {

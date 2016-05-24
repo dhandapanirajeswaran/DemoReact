@@ -10,6 +10,8 @@ namespace JsPlc.Ssc.PetrolPricing.Models.Persistence
         IDbSet<UploadType> UploadType { get; } // Daily, Quarterly
         IDbSet<ImportProcessStatus> ImportProcessStatus { get; } // Uploaded,Processing,Success,Failed
 
+        IDbSet<PPUser> PPUsers { get; set; }
+
         IDbSet<Site> Sites { get; }
         IDbSet<SiteEmail> SiteEmails { get; set; }
         IDbSet<SitePrice> SitePrices { get; set; }

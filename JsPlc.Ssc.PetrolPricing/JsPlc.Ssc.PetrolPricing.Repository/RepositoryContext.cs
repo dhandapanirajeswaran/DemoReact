@@ -13,6 +13,8 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 		public IDbSet<UploadType> UploadType { get; set; } // Daily, Quarterly
 		public IDbSet<ImportProcessStatus> ImportProcessStatus { get; set; } // Uploaded,Processing,Success,Failed
 
+        public IDbSet<PPUser> PPUsers { get; set;  }
+
 		public IDbSet<Site> Sites { get; set; }
 		public IDbSet<SiteEmail> SiteEmails { get; set; }
 		public IDbSet<SitePrice> SitePrices { get; set; }

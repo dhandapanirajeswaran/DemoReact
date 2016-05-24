@@ -116,6 +116,7 @@
     <Compile Include="Interfaces\ICreate.cs" />
     <Compile Include="Interfaces\IEmailService.cs" />
     <Compile Include="Interfaces\ILookupService.cs" />
+    <Compile Include="Interfaces\IPPUserService.cs" />
     <Compile Include="Interfaces\IReportService.cs" />
     <Compile Include="Interfaces\IAppSettings.cs" />
     <Compile Include="Interfaces\ISiteService.cs" />
@@ -124,6 +125,7 @@
     <Compile Include="Interfaces\IFileService.cs" />
     <Compile Include="Interfaces\IPriceService.cs" />
     <Compile Include="PetrolPricingCache.cs" />
+    <Compile Include="Services\PPUserService.cs" />
     <Compile Include="Services\PriceService.cs" />
     <Compile Include="Services\ReportService.cs" />
     <Compile Include="Services\SiteService.cs" />

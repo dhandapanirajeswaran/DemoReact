@@ -1,0 +1,151 @@
+﻿@model IEnumerable<JsPlc.Ssc.PetrolPricing.Models.PPUser>
+@{
+    ViewBag.Title = "Users Information";
+}
+<script type="text/javascript">
+
+    function showEditableRow() {
+        $('#ErrorMessage').hide();
+        $('#datarow').hide();
+        $('#editablerow').show().html(e);
+
+
+    }
+
+    function showData() {
+
+        $('#ErrorMessage').hide();
+        $('#editablerow').hide();
+        $('#datarow').show().html(e);
+
+        location.href = '@Url.Action("Index", "PPUsers")';
+
+    }
+
+
+
+    function AddUser() {
+
+        var firstname = $('#FirstName').val();
+        var lastname = $('#LastName').val();
+        var email = $('#Email').val();
+
+        if (firstname == "" || lastname == "" || email == "") {
+            $("#msg").text("Please enter user details");
+            $("#ErrorMessage").show("slow").delay(5000).fadeOut();
+        }
+        else {
+            $('#ErrorMessage').hide();
+            location.href = '@Url.Action("Adduser", "PPUsers")?firstname=' + firstname + '&lastname=' + lastname + '&email=' + email;
+        }
+    };
+
+
+    function DelteUser(id) {
+        $('#ErrorMessage').hide();
+       location.href = '@Url.Action("Deleteuser", "PPUsers")?id=' + id;
+    };
+
+</script>
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-success">
+                <!-- Default panel contents -->
+                <div class="panel-heading">
+                    <div class="row">
+                        <div class="col-lg-8">
+                            Users Information
+                        </div>
+                        <div class="col-lg-4 query-builder__filterbuttons" >
+                            <button type="button" class="btn btn-default" onclick="showData()">
+                                <span class="glyphicon glyphicon-repeat"></span>
+                            </button>
+                            <button type="button" class="btn btn-success" onclick="showEditableRow()">
+                                <span class="glyphicon glyphicon-plus"></span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="editablerow" style="display:none">
+
+                    <div id="ErrorMessage" class="alert alert-danger" role="alert">
+                        <span id="msg">Sample Error Message</span> 
+                    </div>
+                    <!-- Table -->
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>First Name</th>
+                                <th>Last Name</th>
+                                <th>Email</th>
+                                <th>...</th>
+                            </tr>
+                        </thead>
+                        @Html.Raw("<tr>")
+                       
+                            <td>
+                                <input class="form-control" id="FirstName" placeholder="First Name" required />
+                            </td>
+                            <td>
+                                <input class="form-control" id="LastName" placeholder="Last Name" required />
+                            </td>
+                            <td>
+                                <input class="form-control" id="Email" placeholder="Email" type="email" required />
+                            </td>
+                            <td>
+                                <button type="button" class="btn btn-danger" onclick="showData()">
+                                    <span class="glyphicon glyphicon-remove"></span>
+                                </button>
+                                <button id="btnAdd" type="button" class="btn btn-success" onclick="AddUser()"  >
+                                    <span class="glyphicon glyphicon-ok"></span>
+                                </button>
+                            </td>
+                        @Html.Raw("</tr>")
+                    </table>
+                </div>
+                <div id="datarow">
+                    <table class="table">
+
+                        <thead>
+                            <tr>
+                                <th>First Name</th>
+                                <th>Last Name</th>
+                                <th>Email</th>
+                                <th>...</th>
+                            </tr>
+                        </thead>
+                        @if (Model != null)
+                        {
+                            foreach (var user in Model)
+                            {
+                                <tr >
+                                    <td>
+                                        <span>@user.FirstName</span>
+                                       
+                                    </td>
+                                    <td>
+                                        <span>@user.LastName</span>
+                                       
+                                    </td>
+                                    <td>
+                                        <span>@user.Email</span>
+                                       
+                                    </td>
+                                    <td>
+                                        <button type="button" class="btn btn-default" onclick="DelteUser(@user.Id)">
+                                            <span class=" glyphicon glyphicon-minus">
+                                            </span>
+                                        </button>                                       
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </table>
+                    </div>
+                </div>
+        </div>
+    </div>
+</div> 

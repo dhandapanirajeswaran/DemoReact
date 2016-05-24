@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Net.Http;
@@ -37,6 +38,39 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
 
             var result = response.Content.ReadAsAsync<IEnumerable<Site>>().Result;
             return (response.IsSuccessStatusCode) ? result : null;
+        }
+
+        public IEnumerable<PPUser> GetPPUsers()
+        {
+            var response = _client.Value.GetAsync("api/PPUsers/").Result;
+
+            var result = response.Content.ReadAsAsync<IEnumerable<PPUser>>().Result;
+            return (response.IsSuccessStatusCode) ? result : null;
+
+        }
+
+        public IEnumerable<PPUser> AddPPUser(PPUser user)
+        {
+            var querystring = "api/PPUsers/Add?email=" + user.Email + "&firstname="+ user.FirstName+"&lastname="+ user.LastName;
+
+            var response = _client.Value.PostAsync(querystring,null).Result;
+
+            var result = response.Content.ReadAsAsync<IEnumerable<PPUser>>().Result;
+
+            return (response.IsSuccessStatusCode) ? result : null;  
+
+        }
+
+        public IEnumerable<PPUser> DeletePPUser(int id)
+        {
+            var querystring = "api/PPUsers/Delete?id=" + Convert.ToString(id);
+
+            var response = _client.Value.PostAsync(querystring, null).Result;
+
+            var result = response.Content.ReadAsAsync<IEnumerable<PPUser>>().Result;
+
+            return (response.IsSuccessStatusCode) ? result : null;
+
         }
 
         // Get a list of brands
@@ -635,25 +669,28 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
 
         public void RegisterUser(string email)
         {
-            var apiUrl = string.Format("api/user?email={0}", email);
+            var usersList = GetPPUsers();
+            var user = (from PPUser a in usersList
+                       where a.Email == email
+                       select a).SingleOrDefault();
 
-            var response = _client.Value.PostAsync(apiUrl, new { }, new JsonMediaTypeFormatter()).Result;
+            if (user != null )
+            {
+                var apiUrl = string.Format("api/user?email={0}", email);
 
-            //SaveAuthenticationInfo(email);
+                var response = _client.Value.PostAsync(apiUrl, new { }, new JsonMediaTypeFormatter()).Result;
 
+            }
+            else
+            {
+                HttpContext.Current.Response.Redirect("~/Account/LogOff");
+            }
+            
         }
 
-        /*  private void SaveAuthenticationInfo(string email)
-          {
-              var timeout = int.Parse(ConfigurationManager.AppSettings["SessionTimeout"]);
-              HttpCookie faCookie = new HttpCookie(FormsAuthentication.FormsCookieName, "");
-              faCookie.Expires = DateTime.Now.AddMinutes(timeout);
-              HttpContext.Current.Response.Cookies.Add(faCookie);
 
-              HttpCookie faCookiePath = new HttpCookie(FormsAuthentication.FormsCookiePath, "");
-              faCookiePath.Expires = DateTime.Now.AddMinutes((timeout / 2));
-              HttpContext.Current.Response.Cookies.Add(faCookiePath);
-          }*/
+        
+    
 
 
 
