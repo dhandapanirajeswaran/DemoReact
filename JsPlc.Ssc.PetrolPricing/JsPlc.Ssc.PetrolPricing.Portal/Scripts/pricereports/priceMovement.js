@@ -1,4 +1,7 @@
 ﻿$("document").ready(function () {
+
+    var rootFolder = /\/petrolpricing\//i.test(window.location.href) ? "/petrolpricing" : "";
+
     var forDp = $('#DateFrom').datepicker({
         language: "en-GB",
         autoClose: true,
@@ -29,7 +32,7 @@
             return false;
         }
         
-        window.location.href = '/PriceReports/PriceMovement?DateFrom=' + dt1 + "&DateTo=" + dt2 + "&FuelTypeId=" + id + "&BrandName=" + brandName;
+        window.location.href = rootFolder + '/PriceReports/PriceMovement?DateFrom=' + dt1 + "&DateTo=" + dt2 + "&FuelTypeId=" + id + "&BrandName=" + brandName;
         return true;
     });
     $("#btnExportReport").click(function () {
@@ -46,7 +49,7 @@
             return false;
         }
 
-        window.location.href = '/PriceReports/ExportPriceMovement?DateFrom=' + dt1 + "&DateTo=" + dt2 + "&FuelTypeId=" + id + "&BrandName=" + brandName;
+        window.location.href = rootFolder + '/PriceReports/ExportPriceMovement?DateFrom=' + dt1 + "&DateTo=" + dt2 + "&FuelTypeId=" + id + "&BrandName=" + brandName;
         return true;
     });
 
