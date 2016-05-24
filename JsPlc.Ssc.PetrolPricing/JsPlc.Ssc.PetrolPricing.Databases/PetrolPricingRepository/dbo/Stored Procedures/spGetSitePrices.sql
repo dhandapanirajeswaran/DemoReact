@@ -1,11 +1,4 @@
-﻿USE [PetrolPricingRepository]
-GO
-/****** Object:  StoredProcedure [dbo].[spGetSitePrices]    Script Date: 24/05/2016 09:21:43 ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-ALTER PROCEDURE [dbo].[spGetSitePrices]
+﻿CREATE PROCEDURE [dbo].[spGetSitePrices]
 	@siteId int,
 	@forDate DateTime,
 	@skipRecs int,
