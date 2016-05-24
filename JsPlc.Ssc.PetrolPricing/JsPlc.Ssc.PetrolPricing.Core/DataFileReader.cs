@@ -47,7 +47,7 @@ namespace JsPlc.Ssc.PetrolPricing.Core
 					}
 					catch (Exception ex)
 					{
-                        throw new ExcelParseFileException("Unable to read excel file. Contact support team." + System.Environment.NewLine + ex.Message, ex);
+                        throw new ExcelParseFileException("Unable to read excel file. Contact support team.", ex);
 					}
 					return ds.Tables[0].Copy();
 				}
