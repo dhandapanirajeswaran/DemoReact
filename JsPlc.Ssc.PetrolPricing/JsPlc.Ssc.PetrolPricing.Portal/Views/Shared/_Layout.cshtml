@@ -73,11 +73,11 @@
                 
                 // ignore dev URL
                 locationPath = locationPath.replace(/^\/petrolpricing\//i, '/');
-                
                 //nav-home // /
                 if (locationPath == '/'
                     && $this.attr(navItemAttributeName) == "nav-home")
                 {
+                   
                     $this.addClass("active");
                     return false;
                 }
@@ -133,7 +133,7 @@
                 }
                
                     //nav-reports // /Users
-                else if (locationPath.indexOf("/PPUsers") == 0
+                else if (locationPath.indexOf("/ppusers") == 0
                     && $this.attr(navItemAttributeName) == "nav-users") {
                     $this.addClass("active");
                     return false;
