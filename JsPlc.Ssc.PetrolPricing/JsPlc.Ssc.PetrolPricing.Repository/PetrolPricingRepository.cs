@@ -426,15 +426,11 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                                 competitorName = string.Format("{0}/{1}", competitorSite.Brand, competitorSite.SiteName);
                             }
 
-                            var autoPriceAjustment = competitorPriceOffset.HasValue && IsTrailPrice == true
-                                ? (int)(competitorPriceOffset.Value * 10)
-                                : 0;
-
                             sitePriceRow.FuelPrices.Add(new FuelPriceViewModel
                             {
                                 FuelTypeId = (int)pgRow["FuelTypeId"],
                                 // Tomorrow's prices
-                                AutoPrice = (!AutoPrice.HasValue) ? 0 : (AutoPrice.Value + autoPriceAjustment),
+                                AutoPrice = (!AutoPrice.HasValue) ? 0 : (AutoPrice.Value),
                                 OverridePrice = (!OverridePrice.HasValue) ? 0 : OverridePrice.Value,
 
                                 // Today's prices (whatever was calculated yesterday OR last)
