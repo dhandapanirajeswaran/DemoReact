@@ -104,7 +104,9 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             return _context.Sites
                 .Where(s => s.IsSainsburysSite)
                 .AsNoTracking()
-                .OrderBy(q => q.Id).ToArray();
+                .OrderBy(q => q.SiteName)
+                .ToArray();
+                //.OrderBy(q => q.Id).ToArray();
         }
 
         public IEnumerable<Site> GetSites()

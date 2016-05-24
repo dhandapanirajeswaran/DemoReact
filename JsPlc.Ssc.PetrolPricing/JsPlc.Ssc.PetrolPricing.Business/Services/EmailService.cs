@@ -111,7 +111,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 						if (!emailToSet.ListOfEmailTo.Any()) // In Test mode, this would not be True ever !! 
 						{
 							logEntry.AddWarningMessageToLogEntry(
-								string.Format("Warning: No email(s) setup for siteId={0}, siteName={1}", site.Id,
+								string.Format("Warning: No email(s) setup for siteId={0}, siteName={1}. ", site.Id,
 									site.SiteName));
 							if (sendMode == EmailSendMode.Live)
 							{

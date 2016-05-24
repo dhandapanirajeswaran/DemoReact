@@ -1,5 +1,7 @@
 ﻿$("document").ready(function () {
 
+    var rootFolder = /\/petrolpricing\//i.test(window.location.href) ? "/petrolpricing" : "";
+
     var forDp = $('.datepicker').datepicker({
         language: "en-GB",
         autoClose: true,
@@ -10,11 +12,11 @@
 
     $("#btnViewReport").click(function () {
         var dt = forDp.val();
-        window.location.href = '/PriceReports/PricePoints?For=' + dt;
+        window.location.href = rootFolder + '/PriceReports/PricePoints?For=' + dt;
     });
     $("#btnExportReport").click(function () {
         var dt = forDp.val();
-        window.location.href = '/PriceReports/ExportPricePoints?For=' + dt;
+        window.location.href = rootFolder + '/PriceReports/ExportPricePoints?For=' + dt;
     });
 });
 
