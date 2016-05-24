@@ -66,7 +66,6 @@
 
             //navigation
             $(".navbar-nav li").removeClass("active");
-
             var navItemAttributeName = "data-menu-item";
             $(".navbar-nav li").each(function () {
                 $this = $(this);
@@ -74,11 +73,11 @@
                 
                 // ignore dev URL
                 locationPath = locationPath.replace(/^\/petrolpricing\//i, '/');
-                
                 //nav-home // /
                 if (locationPath == '/'
                     && $this.attr(navItemAttributeName) == "nav-home")
                 {
+                   
                     $this.addClass("active");
                     return false;
                 }
@@ -132,6 +131,15 @@
                     $this.addClass("active");
                     return false;
                 }
+               
+                    //nav-reports // /Users
+                else if (locationPath.indexOf("/ppusers") == 0
+                    && $this.attr(navItemAttributeName) == "nav-users") {
+                    $this.addClass("active");
+                    return false;
+                }
+              
+
             });
         });
     </script>
