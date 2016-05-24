@@ -1,4 +1,11 @@
-﻿CREATE PROCEDURE [dbo].[spGetSitePrices]
+﻿USE [PetrolPricingRepository]
+GO
+/****** Object:  StoredProcedure [dbo].[spGetSitePrices]    Script Date: 24/05/2016 09:21:43 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+ALTER PROCEDURE [dbo].[spGetSitePrices]
 	@siteId int,
 	@forDate DateTime,
 	@skipRecs int,
@@ -56,11 +63,11 @@ else set @todayPriceDate = @lastPriceDate
 ) -- select * from sites
 ,siteFuels as
 (
-   Select Distinct s.Id as SiteId, dp.FuelTypeId, ft.FuelTypeName
+   Select Distinct s.Id as SiteId, dp.FuelTypeId, ft.FuelTypeName, s.CompetitorPriceOffset
    from sites s, DailyPrice dp, FuelType ft
    Where s.CatNo = dp.CatNo and dp.FuelTypeId = ft.Id
    Union 
-   Select Distinct s.Id as SiteId, sp.FuelTypeId, ft.FuelTypeName
+   Select Distinct s.Id as SiteId, sp.FuelTypeId, ft.FuelTypeName, s.CompetitorPriceOffset
    from sites s, SitePrice sp, FuelType ft
    Where s.Id = sp.SiteId and sp.FuelTypeId = ft.Id
 ) -- select * from siteFuels
@@ -80,7 +87,8 @@ else set @todayPriceDate = @lastPriceDate
 		sf.SiteId, sf.FuelTypeId, sf.FuelTypeName, 
 
 		sp.DateOfCalc, sp.DateOfPrice, sp.EffDate,
-		sp.SuggestedPrice, sp.OverriddenPrice, sp.CompetitorId, sp.Markup, sp.IsTrailPrice
+		sp.SuggestedPrice, sp.OverriddenPrice, sp.CompetitorId, sp.Markup, sp.IsTrailPrice,
+		sf.CompetitorPriceOffset
 	FROM siteFuels sf Left Join SitePrice sp
 		On sf.FuelTypeId = sp.FuelTypeId And sf.SiteId = sp.SiteId
 ) -- Select * from sitePrices
@@ -104,7 +112,8 @@ else set @todayPriceDate = @lastPriceDate
 		tomp.CompetitorId, tomp.Markup, tomp.IsTrailPrice,
 
 		todp.DateOfCalc DateOfCalcForTodaysPrice, todp.DateOfPrice DateOfPriceForTodaysPrice, 
-		todp.SuggestedPrice SuggestedPriceToday, todp.OverriddenPrice OverriddenPriceToday
+		todp.SuggestedPrice SuggestedPriceToday, todp.OverriddenPrice OverriddenPriceToday,
+		todp.CompetitorPriceOffset
 	FROM 
 	sitesWithFuels swf
 		Left join tomorrowsPrices as tomp
@@ -118,5 +127,4 @@ else set @todayPriceDate = @lastPriceDate
 		AND (todp.DateOfCalc is null OR DateDiff(day, todp.DateOfCalc, @todayPriceDate) = 0)
 )
 Select * from sitesWithPrices 
-Order By SiteId
-
+Order By SiteName
