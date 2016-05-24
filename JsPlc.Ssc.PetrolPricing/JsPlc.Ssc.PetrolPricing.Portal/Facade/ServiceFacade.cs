@@ -671,7 +671,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
         {
             var usersList = GetPPUsers();
             var user = (from PPUser a in usersList
-                       where a.Email == email
+                       where a.Email.ToLower() == email.ToLower()
                        select a).SingleOrDefault();
 
             if (user != null )
