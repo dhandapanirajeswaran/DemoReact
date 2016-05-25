@@ -9,6 +9,17 @@
 	@storeNo int
 AS
 
+----DEBUG:START
+--DECLARE @siteId INT =982
+--DECLARE @forDate DATETIME='2016-05-24 00:00:00'
+--DECLARE @skipRecs INT=0
+--DECLARE @takeRecs INT =2000
+--DECLARE @storeName NVARCHAR(500)=N''
+--DECLARE @storeTown NVARCHAR(500)=N''
+--DECLARE @catNo INT =0
+--DECLARE @storeNo INT=0
+----DEBUG:END
+
 --Declare @siteId int = 0
 --Declare @forDate DateTime = '2015-12-18'
 --Declare @skipRecs int = 0
@@ -101,14 +112,37 @@ else set @todayPriceDate = @lastPriceDate
 		swf.FuelTypeId, swf.FuelTypeName, swf.PfsNo, swf.StoreNo,
 
 		tomp.DateOfCalc, tomp.DateOfPrice, 
-		tomp.SuggestedPrice, tomp.OverriddenPrice,
-		tomp.CompetitorId, tomp.Markup, tomp.IsTrailPrice,
+
+		CASE WHEN s.TrailPriceCompetitorId IS NOT NULL 
+		THEN
+			(SELECT TOP 1 tdp.ModalPrice FROM dbo.DailyPrice as tdp 
+			inner join dbo.Site as ts on ts.CatNo = tdp.CatNo
+			WHERE ts.TrailPriceCompetitorId = s.TrailPriceCompetitorId and tdp.FuelTypeId = swf.FuelTypeId)
+			+ (todp.CompetitorPriceOffset * 10)
+		ELSE tomp.SuggestedPrice
+		END AS [SuggestedPrice],
+
+		tomp.OverriddenPrice,
+
+		CASE WHEN s.TrailPriceCompetitorId IS NOT NULL 
+			THEN s.TrailPriceCompetitorId
+			ELSE tomp.CompetitorId
+		END as [CompetitorId],
+		CASE WHEN s.TrailPriceCompetitorId IS NOT NULL
+			THEN cast(todp.CompetitorPriceOffset as int)
+			ELSE tomp.Markup
+		END AS [Markup],
+
+		--tomp.Markup,
+		tomp.IsTrailPrice,
 
 		todp.DateOfCalc DateOfCalcForTodaysPrice, todp.DateOfPrice DateOfPriceForTodaysPrice, 
-		todp.SuggestedPrice SuggestedPriceToday, todp.OverriddenPrice OverriddenPriceToday,
+		todp.SuggestedPrice SuggestedPriceToday,
+		todp.OverriddenPrice OverriddenPriceToday,
 		todp.CompetitorPriceOffset
 	FROM 
-	sitesWithFuels swf
+		sitesWithFuels swf
+		inner join dbo.Site as s on s.Id = swf.SiteId
 		Left join tomorrowsPrices as tomp
 			On swf.SiteId = tomp.SiteId
 			And tomp.FuelTypeId = swf.FuelTypeId
