@@ -72,6 +72,12 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 				{
 					throw new ApplicationException(StringMessages.Error_UploadedFileIsEmpty);
 				}
+                else if (file.ContentLength>3145728)
+                {
+                    throw new ApplicationException(StringMessages.Error_UploadedFileLengthGreaterThanMaxSize);
+                }
+
+                
 
 				var fu = file.ToFileUpload(User.Identity.Name, uploadDate, uploadTypes);
 
@@ -81,6 +87,12 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 					ViewBag.ErrorMessage = StringMessages.Error_InvalidFileFormat_DailyPriceData;
 					return View(model);
 				}
+                else  if (fu.UploadTypeId == 2 && !( fu.OriginalFileName.ToLowerInvariant().EndsWith(".xlsx") || fu.OriginalFileName.ToLowerInvariant().EndsWith(".xls")))
+                {
+                    ViewBag.ErrorMessage = StringMessages.Error_InvalidFileFormat_QuarterlyPriceData;
+                    return View(model);
+                }
+
 
 				var fum = new FileUploadModel(fu, new ServiceFacade());
 
@@ -250,7 +262,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             var destFile = Path.Combine(_uploadPath, _fileUpload.StoredFileName);
             if (_serviceFacade.SaveHoldFile(heldFile, destFile) != null)
             {
-                RecordUpload();
+                FileUpload fileUpload = RecordUpload();
             }
 
         }
@@ -273,8 +285,9 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 			else
 			{
                 _uploadStatus = PersistToSaveFile();
-              
-				RecordUpload();
+
+                FileUpload fileUpload=RecordUpload();
+                if (fileUpload == null) _uploadStatus = FileUploadStatus.InvalidUpload;
 			}
 
 			// Simply save the file to Hold or Save path
@@ -316,9 +329,9 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             }
 		}
 
-		private void RecordUpload()
+        private FileUpload RecordUpload()
 		{
-			_serviceFacade.NewUpload(_fileUpload);
+			return _serviceFacade.NewUpload(_fileUpload);
 		}
 
 		public void CleanupUpload()

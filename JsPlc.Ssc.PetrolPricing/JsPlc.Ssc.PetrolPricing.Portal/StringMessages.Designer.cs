@@ -68,6 +68,18 @@ namespace JsPlc.Ssc.PetrolPricing.Portal {
                 return ResourceManager.GetString("Error_InvalidFileFormat_DailyPriceData", resourceCulture);
             }
         }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid file format for Quarterly Price Data file. Expected format is CSV in a simple text file..
+        /// </summary>
+        public static string Error_InvalidFileFormat_QuarterlyPriceData
+        {
+            get {
+                return ResourceManager.GetString("Error_InvalidFileFormat_QuarterlyPriceData", resourceCulture);
+            }
+        }
+              
+       
         
         /// <summary>
         ///   Looks up a localized string similar to Invalid upload file. Please retry and select a file to upload.
@@ -102,6 +114,15 @@ namespace JsPlc.Ssc.PetrolPricing.Portal {
         public static string Error_UploadedFileIsEmpty {
             get {
                 return ResourceManager.GetString("Error_UploadedFileIsEmpty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Upload file length should less than 3MB. Please select a file to upload.
+        /// </summary>
+        public static string Error_UploadedFileLengthGreaterThanMaxSize {
+            get {
+                return ResourceManager.GetString("Error_UploadedFileLengthGreaterThanMaxSize", resourceCulture);
             }
         }
         

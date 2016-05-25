@@ -15,6 +15,7 @@ using JsPlc.Ssc.PetrolPricing.Models.Enums;
 using JsPlc.Ssc.PetrolPricing.Models.ViewModels;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System.Net.Mail;
 
 namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
 {
@@ -673,8 +674,9 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             var user = (from PPUser a in usersList
                        where a.Email.ToLower() == email.ToLower()
                        select a).SingleOrDefault();
-
-            if (user != null )
+            MailAddress address = new MailAddress(email);
+            string host = address.Host;
+            if (user != null || host=="sainsburys.co.uk" || host== "jsCoventryDev.onmicrosoft.com")
             {
                 var apiUrl = string.Format("api/user?email={0}", email);
 

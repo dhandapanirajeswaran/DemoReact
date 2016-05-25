@@ -120,6 +120,9 @@
   <data name="Error_InvalidFileFormat_DailyPriceData" xml:space="preserve">
     <value>Invalid file format for Daily Price Data file. Expected format is CSV in a simple text file.</value>
   </data>
+	<data name="Error_InvalidFileFormat_QuarterlyPriceData" xml:space="preserve">
+    <value>Invalid file format for Quarterly Price Data file. Expected format is Excel file.</value>
+  </data>
   <data name="Error_InvalidUploadFile" xml:space="preserve">
     <value>Invalid upload file. Please retry and select a file to upload</value>
   </data>
@@ -131,6 +134,9 @@
   </data>
   <data name="Error_UploadedFileIsEmpty" xml:space="preserve">
     <value>Upload file is empty or no file selected. Please select a file to upload</value>
+  </data>
+	<data name="Error_UploadedFileLengthGreaterThanMaxSize" xml:space="preserve">
+    <value>Upload file length should less than 3MB. Please select a file to upload</value>
   </data>
   <data name="Warning_DailyPriceFileAlreadyUploaded" xml:space="preserve">
     <value>Warning: Today Daily Prices file has already been uploaded.</value>
