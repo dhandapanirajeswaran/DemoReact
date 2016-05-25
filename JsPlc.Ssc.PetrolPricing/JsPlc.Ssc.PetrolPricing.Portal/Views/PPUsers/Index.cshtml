@@ -34,12 +34,41 @@
             $("#msg").text("Please enter user details");
             $("#ErrorMessage").show("slow").delay(5000).fadeOut();
         }
+        else if (!validateEmail(email))
+        {
+            $("#msg").text("Please enter valid mail id");
+            $("#ErrorMessage").show("slow").delay(5000).fadeOut();
+        }  
+        else if (!checkEmail(email))
+        {
+            $("#msg").text("Please enter sainsburys domain mail id");
+            $("#ErrorMessage").show("slow").delay(5000).fadeOut();
+        }       
         else {
             $('#ErrorMessage').hide();
             location.href = '@Url.Action("Adduser", "PPUsers")?firstname=' + firstname + '&lastname=' + lastname + '&email=' + email;
         }
     };
 
+    function checkEmail(email) {
+        var domainName = "sainsburys.co.uk";
+        if (email.indexOf(domainName) > 0)
+            if ((email.indexOf(domainName) + domainName.length) == email.length) {
+                //do regex checking if any
+                return true;
+            }
+
+      
+        return false;
+    }
+
+
+    function validateEmail(email) {
+        var lastAtPos = email.lastIndexOf('@@');
+        var lastDotPos = email.lastIndexOf('.');
+        var AtPos = email.indexOf('@@@@');        
+        return (lastAtPos < lastDotPos && lastAtPos > 0 && AtPos == -1 && lastDotPos > 2 && (email.length - lastDotPos) > 2);
+    }
 
     function DelteUser(id) {
         $('#ErrorMessage').hide();
@@ -93,7 +122,7 @@
                                 <input class="form-control" id="LastName" placeholder="Last Name" required />
                             </td>
                             <td>
-                                <input class="form-control" id="Email" placeholder="Email" type="email" required />
+                                <input class="form-control" id="Email" placeholder="me@sainsburys.co.uk" type="email" required />
                             </td>
                             <td>
                                 <button type="button" class="btn btn-danger" onclick="showData()">
