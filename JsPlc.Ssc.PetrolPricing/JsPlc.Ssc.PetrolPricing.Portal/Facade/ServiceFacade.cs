@@ -676,7 +676,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
                        select a).SingleOrDefault();
             MailAddress address = new MailAddress(email);
             string host = address.Host;
-            if (user != null || host=="sainsburys.co.uk" || host== "jsCoventryDev.onmicrosoft.com")
+            if ((user != null && host=="sainsburys.co.uk") || (user != null && host== "jsCoventryDev.onmicrosoft.com") )
             {
                 var apiUrl = string.Format("api/user?email={0}", email);
 
