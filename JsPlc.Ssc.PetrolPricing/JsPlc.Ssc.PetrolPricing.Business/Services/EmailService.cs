@@ -294,7 +294,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 		//Below helper methods used by build email. 
 		private static string emailGetLayout()
 		{
-			var filePathAndName = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Templates/EmailTemplate.html");
+			var filePathAndName = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "bin/Templates/EmailTemplate.html");
 
 			StringBuilder sb = new StringBuilder();
 
