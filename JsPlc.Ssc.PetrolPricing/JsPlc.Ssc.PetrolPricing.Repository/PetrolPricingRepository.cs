@@ -426,6 +426,8 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                                 competitorName = string.Format("{0}/{1}", competitorSite.Brand, competitorSite.SiteName);
                             }
 
+                            var trailPriceCompetitorId = pgRow["TrailPriceCompetitorId"].ToString().ToNullable<bool>();
+
                             sitePriceRow.FuelPrices.Add(new FuelPriceViewModel
                             {
                                 FuelTypeId = (int)pgRow["FuelTypeId"],
@@ -438,11 +440,35 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                                 Markup = Markup,
                                 CompetitorName = competitorName,
                                 IsTrailPrice = IsTrailPrice.HasValue ? IsTrailPrice.Value : false,
-                                CompetitorPriceOffset = competitorPriceOffset.HasValue ? competitorPriceOffset.Value : 0
+                                CompetitorPriceOffset = competitorPriceOffset.HasValue ? competitorPriceOffset.Value : 0,
+                                IsBasedOnCompetitor = trailPriceCompetitorId.HasValue
                             });
                         }
                     }
+
+                    Apply5PMarkupForSuperUnleadedForNonCompetitorSites(dbList);
+
                     return dbList;
+                }
+            }
+        }
+        /// <summary>
+        /// Apply a 5P markup for Super unleaded for non-competing sites
+        /// </summary>
+        /// <param name="dbList"></param>
+        private static void Apply5PMarkupForSuperUnleadedForNonCompetitorSites(List<SitePriceViewModel> dbList)
+        {
+            foreach (var site in dbList)
+            {
+                var unleaded = site.FuelPrices.FirstOrDefault(x => x.FuelTypeId == (int)FuelTypeItem.Unleaded);
+                if (unleaded != null && unleaded.IsBasedOnCompetitor == false)
+                {
+                    var superunleaded = site.FuelPrices.FirstOrDefault(x => x.FuelTypeId == (int)FuelTypeItem.Super_Unleaded);
+                    if (superunleaded != null && superunleaded.IsBasedOnCompetitor == false && unleaded.AutoPrice.HasValue)
+                    {
+                        superunleaded.Markup = 5;
+                        superunleaded.AutoPrice = unleaded.AutoPrice.Value + 50;
+                    }
                 }
             }
         }

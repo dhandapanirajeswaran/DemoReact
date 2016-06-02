@@ -10,8 +10,8 @@
 AS
 
 ----DEBUG:START
---DECLARE @siteId INT =982
---DECLARE @forDate DATETIME='2016-05-24 00:00:00'
+--DECLARE @siteId INT = 0 -- 982
+--DECLARE @forDate DATETIME='2016-06-02 00:00:00'
 --DECLARE @skipRecs INT=0
 --DECLARE @takeRecs INT =2000
 --DECLARE @storeName NVARCHAR(500)=N''
@@ -67,11 +67,11 @@ else set @todayPriceDate = @lastPriceDate
 ) -- select * from sites
 ,siteFuels as
 (
-   Select Distinct s.Id as SiteId, dp.FuelTypeId, ft.FuelTypeName, s.CompetitorPriceOffset
+   Select Distinct s.Id as SiteId, dp.FuelTypeId, ft.FuelTypeName, s.CompetitorPriceOffset, s.TrailPriceCompetitorId
    from sites s, DailyPrice dp, FuelType ft
    Where s.CatNo = dp.CatNo and dp.FuelTypeId = ft.Id
    Union 
-   Select Distinct s.Id as SiteId, sp.FuelTypeId, ft.FuelTypeName, s.CompetitorPriceOffset
+   Select Distinct s.Id as SiteId, sp.FuelTypeId, ft.FuelTypeName, s.CompetitorPriceOffset, s.TrailPriceCompetitorId
    from sites s, SitePrice sp, FuelType ft
    Where s.Id = sp.SiteId and sp.FuelTypeId = ft.Id
 ) -- select * from siteFuels
@@ -79,7 +79,8 @@ else set @todayPriceDate = @lastPriceDate
 (
 	Select s.Id as SiteId, s.CatNo, s.SiteName, s.Address, s.Suburb, s.Town,  
 		s.IsSainsburysSite, s.Brand, s.Company, s.Ownership,
-		sf.FuelTypeId, sf.FuelTypeName, s.PfsNo, s.StoreNo
+		sf.FuelTypeId, sf.FuelTypeName, s.PfsNo, s.StoreNo,
+		s.TrailPriceCompetitorId
 	From 
 		[Site] s 
 			Inner Join siteFuels sf
@@ -92,7 +93,8 @@ else set @todayPriceDate = @lastPriceDate
 
 		sp.DateOfCalc, sp.DateOfPrice, sp.EffDate,
 		sp.SuggestedPrice, sp.OverriddenPrice, sp.CompetitorId, sp.Markup, sp.IsTrailPrice,
-		sf.CompetitorPriceOffset
+		sf.CompetitorPriceOffset,
+		sf.TrailPriceCompetitorId
 	FROM siteFuels sf Left Join SitePrice sp
 		On sf.FuelTypeId = sp.FuelTypeId And sf.SiteId = sp.SiteId
 ) -- Select * from sitePrices
@@ -139,7 +141,10 @@ else set @todayPriceDate = @lastPriceDate
 		todp.DateOfCalc DateOfCalcForTodaysPrice, todp.DateOfPrice DateOfPriceForTodaysPrice, 
 		todp.SuggestedPrice SuggestedPriceToday,
 		todp.OverriddenPrice OverriddenPriceToday,
-		todp.CompetitorPriceOffset
+		todp.CompetitorPriceOffset,
+
+		swf.TrailPriceCompetitorId 
+
 	FROM 
 		sitesWithFuels swf
 		inner join dbo.Site as s on s.Id = swf.SiteId

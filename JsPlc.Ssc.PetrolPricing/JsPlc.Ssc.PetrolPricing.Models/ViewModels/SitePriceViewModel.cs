@@ -59,5 +59,7 @@ namespace JsPlc.Ssc.PetrolPricing.Models.ViewModels
 		public int? Difference { get; set; }
 
         public double CompetitorPriceOffset { get; set; }
+
+        public bool IsBasedOnCompetitor { get; set; }
 	}
 }
