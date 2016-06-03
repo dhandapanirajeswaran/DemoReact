@@ -464,7 +464,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                 if (unleaded != null && unleaded.IsBasedOnCompetitor == false)
                 {
                     var superunleaded = site.FuelPrices.FirstOrDefault(x => x.FuelTypeId == (int)FuelTypeItem.Super_Unleaded);
-                    if (superunleaded != null && superunleaded.IsBasedOnCompetitor == false && unleaded.AutoPrice.HasValue)
+                    if (superunleaded != null && superunleaded.IsBasedOnCompetitor == false && unleaded.AutoPrice.HasValue && unleaded.AutoPrice.Value > 0)
                     {
                         superunleaded.Markup = 5;
                         superunleaded.AutoPrice = unleaded.AutoPrice.Value + 50;
