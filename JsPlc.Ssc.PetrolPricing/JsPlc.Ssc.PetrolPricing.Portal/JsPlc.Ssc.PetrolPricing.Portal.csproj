@@ -214,6 +214,7 @@
     </Compile>
     <Compile Include="Helper\Extensions\JsonResponseHelper.cs" />
     <Compile Include="Helper\Extensions\UiHelper.cs" />
+    <Compile Include="Helper\Log4NetSessionLogger.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\Log4NetViewModel.cs" />

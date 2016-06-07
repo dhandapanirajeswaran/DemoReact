@@ -18,6 +18,7 @@ using Newtonsoft.Json;
 using WebGrease.Css.Extensions;
 using JsPlc.Ssc.PetrolPricing.Core.Interfaces;
 using JsPlc.Ssc.PetrolPricing.Core;
+using JsPlc.Ssc.PetrolPricing.Portal.Helper;
 
 namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 {
@@ -27,7 +28,6 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
     {
         private readonly ServiceFacade _serviceFacade = new ServiceFacade();
 
-        private PetrolPricingLogger _logger = new PetrolPricingLogger();
 
         // AJAX Methods
 
@@ -35,6 +35,8 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
         [System.Web.Mvc.HttpPost]
         public async Task<JsonResult> SavePriceOverrides([FromBody] OverridePricePostViewModel[] postbackKey1 = null)
         {
+            var _logger = new Log4NetSessionLogger(this.Session);
+
             _logger.Information("Started: SavePriceOverrides()");
             try
             {
