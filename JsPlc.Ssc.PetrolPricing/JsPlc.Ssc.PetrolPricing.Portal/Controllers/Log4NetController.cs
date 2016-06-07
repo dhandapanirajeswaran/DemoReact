@@ -38,36 +38,5 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
                 FileDump = logger.GetLogText()
             };
         }
-
-        //private Log4NetViewModel ReadLogFile(string logFilePath)
-        //{
-        //    var viewModel = new Log4NetViewModel()
-        //    {
-        //        FileName = logFilePath
-        //    };
-
-        //    try
-        //    {
-        //        if (System.IO.File.Exists(logFilePath) == false)
-        //        {
-        //            viewModel.Message = "Unable to find log file";
-        //            return viewModel;
-        //        }
-        //        viewModel.LastModified = new FileInfo(logFilePath).LastWriteTime;
-
-        //        using (var fileStream = new FileStream(logFilePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
-        //        using (var textReader = new StreamReader(fileStream))
-        //        {
-        //            viewModel.FileDump = textReader.ReadToEnd();
-        //        }
-        //        viewModel.Message = "File read successful";
-        //        return viewModel;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        viewModel.Message = String.Format("Unable to read file: {0} - Exception: {1}", logFilePath, ex.ToString());
-        //        return viewModel;
-        //    }
-        //}
     }
 }

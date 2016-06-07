@@ -35,9 +35,6 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
         [System.Web.Mvc.HttpPost]
         public async Task<JsonResult> SavePriceOverrides([FromBody] OverridePricePostViewModel[] postbackKey1 = null)
         {
-            var _logger = new Log4NetSessionLogger(this.Session);
-
-            _logger.Information("Started: SavePriceOverrides()");
             try
             {
                 if (postbackKey1 != null)
@@ -46,15 +43,9 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
                     //postbackKey1[0].OverridePrice = "abc"; // force error
                     if (ModelState.IsValid)
                     {
-                        _logger.Information("ModelState.IsValid");
                         //var siteOverridePriceList = siteOverridePrices;
-                        _logger.Information("Started: _serviceFacade.SaveOverridePricesAsync");
                         var response = await _serviceFacade.SaveOverridePricesAsync(siteOverridePriceList);
 
-                        if (response == null || response.Any() == false)
-                            _logger.Information("response is null or empty");
-                        else
-                            _logger.Information("response has data");
                         return (response == null || !response.Any())
                             ? new HttpResponseMessage(HttpStatusCode.BadRequest).ToJsonResult(postbackKey1, null, "ApiFail", "Invalid postback data")
                             : new HttpResponseMessage(HttpStatusCode.OK).ToJsonResult(response, null, "ApiSuccess");
@@ -64,16 +55,13 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
                     {
                         StatusCode = HttpStatusCode.BadRequest
                     };
-                    _logger.Information("UIValidationErrors");
                     // key and string of arrays
                     return badRequestResponse.ToJsonResult(postbackKey1, errArray, "UIValidationErrors");
                 }
-                _logger.Information("ApiSuccess");
                 return new HttpResponseMessage(HttpStatusCode.OK).ToJsonResult(null, null, "ApiSuccess");
             }
             catch (Exception ex)
             {
-                _logger.Error(ex);
                 return new HttpResponseMessage(HttpStatusCode.BadRequest).ToJsonResult(postbackKey1, null, "ApiFail",
                     ex.Message);
             }
