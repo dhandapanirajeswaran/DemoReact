@@ -13,23 +13,27 @@ using Microsoft.Owin.Security.Cookies;
 using Microsoft.Owin.Security.OpenIdConnect;
 using System.Diagnostics;
 using JsPlc.Ssc.PetrolPricing.Portal.Helper.Extensions;
+using log4net;
 
 namespace JsPlc.Ssc.PetrolPricing.Portal
 {
     public class MvcApplication : System.Web.HttpApplication
     {
+        private static ILog logger = LogManager.GetLogger(typeof(MvcApplication));
 
-       
         protected void Application_Start()
         {
             AreaRegistration.RegisterAllAreas();
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
-
             //RepositoryInit.InitializeDatabase();
         }
 
+        protected void Application_Error(Object sender, EventArgs e)
+        {
+            logger.Error("MvcApplicationError", Server.GetLastError());
+        }
 
         protected void Application_PostAuthenticateRequest(Object sender, EventArgs e)
         {

@@ -55,6 +55,10 @@
       <HintPath>..\packages\Kentor.OwinCookieSaver.1.1.0\lib\net45\Kentor.OwinCookieSaver.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="log4net, Version=1.2.15.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <HintPath>..\packages\log4net.2.0.5\lib\net45-full\log4net.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Microsoft.AspNet.Identity.Core, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.Identity.Core.2.2.1\lib\net45\Microsoft.AspNet.Identity.Core.dll</HintPath>
       <Private>True</Private>
@@ -82,6 +86,10 @@
     </Reference>
     <Reference Include="Microsoft.Owin.Security.OpenIdConnect, Version=3.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Owin.Security.OpenIdConnect.3.0.1\lib\net45\Microsoft.Owin.Security.OpenIdConnect.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.3.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\CommonServiceLocator.1.3\lib\portable-net4+sl5+netcore45+wpa81+wp8\Microsoft.Practices.ServiceLocation.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json">
@@ -194,6 +202,7 @@
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AdminController.cs" />
+    <Compile Include="Controllers\Log4NetController.cs" />
     <Compile Include="Controllers\PPUsersController.cs" />
     <Compile Include="Controllers\PriceReportsController.cs" />
     <Compile Include="Controllers\SitesController.cs" />
@@ -207,6 +216,7 @@
     <Compile Include="Helper\Extensions\UiHelper.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\IdentityModels.cs" />
+    <Compile Include="Models\Log4NetViewModel.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Facade\ServiceFacade.cs" />
@@ -256,6 +266,7 @@
     <Content Include="images\logo.png" />
     <Content Include="images\report.png" />
     <Content Include="images\sainsbury_s_live_well_for_less.jpg" />
+    <Content Include="Logs\placeholder.txt" />
     <Content Include="Scripts\App\common.js" />
     <Content Include="Scripts\App\ViewScripts\SitePricing.js" />
     <Content Include="Scripts\App\Services\PetrolPricingService.js" />
@@ -421,6 +432,7 @@
     <Content Include="deploy.ps1" />
     <Content Include="Views\PriceReports\CompetitorsPriceRangeByCompany.cshtml" />
     <Content Include="Views\PPUsers\Index.cshtml" />
+    <Content Include="Views\Log4Net\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\uploads\" />
@@ -433,6 +445,10 @@
     <ProjectReference Include="..\JsPlc.Ssc.PetrolPricing.Core\JsPlc.Ssc.PetrolPricing.Core.csproj">
       <Project>{a63fb2ae-7013-41ba-bb14-082ac91a26b7}</Project>
       <Name>JsPlc.Ssc.PetrolPricing.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\JsPlc.Ssc.PetrolPricing.IoC\JsPlc.Ssc.PetrolPricing.IoC.csproj">
+      <Project>{623e947f-5b62-48be-9315-2dec07191916}</Project>
+      <Name>JsPlc.Ssc.PetrolPricing.IoC</Name>
     </ProjectReference>
     <ProjectReference Include="..\JsPlc.Ssc.PetrolPricing.Models\JsPlc.Ssc.PetrolPricing.Models.csproj">
       <Project>{b9b43a8b-6916-431d-bc1b-6595a1a0f029}</Project>

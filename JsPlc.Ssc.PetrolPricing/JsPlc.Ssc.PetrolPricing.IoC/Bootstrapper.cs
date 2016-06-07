@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using JsPlc.Ssc.PetrolPricing.Core;
+using JsPlc.Ssc.PetrolPricing.Core.Interfaces;
 using Microsoft.Practices.ServiceLocation;
 using Microsoft.Practices.Unity;
 using System;
@@ -29,6 +30,8 @@ namespace JsPlc.Ssc.PetrolPricing.IoC
             //TO DO: add shared configuration logic when required
 
             ServiceLocator.SetLocatorProvider(() => new UnityServiceLocator(container));
+
+            Container.RegisterType<ILogger, PetrolPricingLogger>(new TransientLifetimeManager());
         }
 
         /// <summary>

@@ -1,0 +1,30 @@
+﻿@model JsPlc.Ssc.PetrolPricing.Portal.Models.Log4NetViewModel
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Log4Net debug page</title>
+</head>
+<body>
+    <h1>Log4Net</h1>
+    <div> 
+        <dl>
+            <dt>FileName</dt>
+            <dd>@Model.FileName&nbsp;</dd>
+            <dt>LastModified</dt>
+            <dd>@Model.LastModified&nbsp;</dd>
+            <dt>Message</dt>
+            <dd>@Model.Message&nbsp;</dd>
+        </dl>
+
+        <pre style="width: 100%; overflow: auto;">
+            @Model.FileDump
+        </pre>
+    </div>
+</body>
+</html>
