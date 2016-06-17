@@ -254,12 +254,15 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 
             var sortedCompetitors = model.Competitors.Where(c => c.IsSainsburysSite == false).OrderBy(c => c.SiteName).ToList();
 
-            sortedCompetitors.Insert(0, new SiteViewModel
+            /*sortedCompetitors.Insert(0, new SiteViewModel
             {
                 SiteName = "Not specified"
-            });
+            });*/
+
+            model.ExcludeCompetitors = model.ExcludeCompetitors.Distinct().ToList();
 
             model.Competitors = sortedCompetitors;
+            model.ExcludeCompetitorsOrg = model.ExcludeCompetitors;
 
             return View(model);
         }
@@ -271,13 +274,10 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 
 			var sortedCompetitors = model.Competitors.Where(c => c.IsSainsburysSite == false).OrderBy(c => c.SiteName).ToList();
 
-			sortedCompetitors.Insert(0, new SiteViewModel
-			{
-				SiteName = "Not specified"
-			});
-			
-			site.Competitors = sortedCompetitors;
 
+            model.ExcludeCompetitors = model.ExcludeCompetitors.Distinct().ToList();
+			site.Competitors = sortedCompetitors;
+            site.ExcludeCompetitorsOrg = model.ExcludeCompetitors;
             if (!ModelState.IsValid)
             {
                 ViewBag.ErrorMessage = "Please check for validation errors under each field.";

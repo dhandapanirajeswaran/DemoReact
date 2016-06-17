@@ -132,18 +132,25 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
 
 		[System.Web.Http.HttpPut] // Edit new site
 		public async Task<IHttpActionResult> Update(SiteViewModel siteViewModel)
-		{
-			if (siteViewModel == null)
-			{
-				return BadRequest("Invalid passed data: site");
-			}
+        {
+            if (siteViewModel == null)
+            {
+                return BadRequest("Invalid passed data: site");
+            }
 
-			var site = Mapper.Map<Site>(siteViewModel);
+            var site = Mapper.Map<Site>(siteViewModel);
 
-			if (false == _siteService.IsUnique(site))
-			{
-				return BadRequest("Site with this Name, Pfs Number and Store Number already exists. Please try again.");
-			}
+            var list_intersect = siteViewModel.ExcludeCompetitors.Intersect(siteViewModel.ExcludeCompetitorsOrg).ToList();
+            foreach (int competitorID in list_intersect)
+            {
+                siteViewModel.ExcludeCompetitors.Remove(competitorID);
+                siteViewModel.ExcludeCompetitorsOrg.Remove(competitorID);
+            }
+
+            /*if (false == _siteService.IsUnique(site))
+            {
+                return BadRequest("Site with this Name, Pfs Number and Store Number already exists. Please try again.");
+            }*/
 
             if (_siteService.HasDuplicateEmailAddresses(Mapper.Map<Site>(site)))
             {
@@ -151,16 +158,32 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
             }
 
             try
-			{
-				_siteService.UpdateSite(site);
+            {
+               
 
-				return Ok(siteViewModel);
-			}
-			catch (Exception ex)
-			{
-				return new ExceptionResult(ex, this);
-			}
-		}
+                //ToUpdate Exclude Competitors
+                List<SiteToCompetitor> itemsToUpdate = new List<SiteToCompetitor>();
+                foreach (int competitorID in siteViewModel.ExcludeCompetitors)
+                {
+                    SiteToCompetitor siteToComp = _siteService.GetCompetitor(siteViewModel.Id, competitorID);
+                    siteToComp.IsExcluded = 1;
+                    itemsToUpdate.Add(siteToComp);
+                }
+                foreach (int competitorID in siteViewModel.ExcludeCompetitorsOrg)
+                {
+                    SiteToCompetitor siteToComp = _siteService.GetCompetitor(siteViewModel.Id, competitorID);
+                    siteToComp.IsExcluded = 0;
+                    itemsToUpdate.Add(siteToComp);
+                }
+                if (itemsToUpdate.Count > 0)  site.Competitors = itemsToUpdate;
+                _siteService.UpdateSite(site);
+                return Ok(siteViewModel);
+            }
+            catch (Exception ex)
+            {
+                return new ExceptionResult(ex, this);
+            }
+        }
 
 		[System.Web.Http.HttpPut]
 		[System.Web.Http.Route("api/SaveOverridePrices/")]

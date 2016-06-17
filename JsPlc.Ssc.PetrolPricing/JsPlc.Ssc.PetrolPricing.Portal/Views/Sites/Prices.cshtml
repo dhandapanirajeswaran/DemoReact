@@ -23,7 +23,7 @@
 <h1>Market comparison and planner</h1>
 <hr />
 <!-- knockout binds here -->
-<div id="petrolpricingpage">
+<div id="petrolpricingpage" >
     <!-- Email ALL popup within knockout -->
     <div class="modal fade" id="emailAllSites" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
          data-bind="with: emailAllPopupSiteItemModel, visible: showEmailAllPopup">
@@ -106,7 +106,7 @@
     </div>
     <!-- End Email popup within knockout -->
     <!-- Submit disabled, all work done thru ajax calls -->
-    <form id="myform" method="post" data-bind="submit: savePetrolPricingForm" xclass="input-group-sm" action="sites/PostPrices" onsubmit="return false;">
+    <form id="myform" method="post" data-bind="submit: savePetrolPricingForm" xclass="input-group-sm" action="sites/PostPrices" onsubmit="    return false;" onclick="    IsSitePriceFormClicked=1; " >
         <div class="row">
             <!-- Date Picker -->
             <div class="col-md-1">
@@ -291,8 +291,8 @@
                     <!-- ko foreach: sites -->
                     <tr class="panel-heading" role="tab" data-bind="id:('Heading' + SiteId)">
                         <td>
-                            <a role="button" data-toggle="collapse" data-parent="#accordion"
-                               data-bind="attr:{href:('#CollapseCompetitorsforsite' + SiteId)}, click: getCompetitorDataClick"><i class="fa fa-plus-square-o" data-bind="css: showingComps() ? 'fa fa-minus-square-o' : 'fa fa-plus-square-o'"></i></a>
+                            <a   role="button" data-toggle="collapse" data-parent="#accordion"
+                               data-bind="attr:{href:('#CollapseCompetitorsforsite' + SiteId)}, click: getCompetitorDataClick"><i  class="fa fa-minus-square-o" data-bind="css: showingComps() ? 'fa fa-minus-square-o' : 'fa fa-plus-square-o'"></i></a>
                         </td>
                         <td><span data-bind="text: StoreNo"></span></td>
                         <!-- Email envelope... -->
@@ -376,9 +376,9 @@
                                         <th class="tblHighlight"><span>Yesterday</span></th>
                                         <th class="tblHighlight"><span>Today</span></th>
                                         <th><span>Yesterday</span></th>
-										<th><span>Today</span></th>
+                                        <th><span>Today</span></th>
                                         <th class="tblHighlight"><span>Yesterday</span></th>
-										<th class="tblHighlight"><span>Today</span></th>
+                                        <th class="tblHighlight"><span>Today</span></th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -404,21 +404,21 @@
                                         <!-- ko foreach: FuelPricesToDisplay -->
                                         <!-- ko if: siteSupportsFuel -->
                                         <td style="border-left: 1px solid #ccc"><span data-bind="text: FuelPrice.YestPrice"></span></td>
-										<td style="border-left: 1px solid #ccc;" class="tblHighlight text-nowrap text-right">
-											<span data-bind="text: FuelPrice.TodayPrice"></span>
+                                        <td style="border-left: 1px solid #ccc;" class="tblHighlight text-nowrap text-right">
+                                            <span data-bind="text: FuelPrice.TodayPrice"></span>
 
-											
-												<i data-bind="attr: {
+
+                                            <i data-bind="attr: {
                                     class: (FuelPrice.Difference == 0 || FuelPrice.Difference == '-') ? 'fa fa-arrow-circle-o-right'
                                             : (FuelPrice.Difference <= 0.1) ? 'fa fa-arrow-circle-o-down': 'fa fa-arrow-circle-o-up',
                                     style: (FuelPrice.Difference == 0 || FuelPrice.Difference == '-') ? 'color: grey'
                                             : (FuelPrice.Difference <= 0.1) ? 'color: red': 'color: green',
                                             }"></i>
-												&nbsp;<span data-bind="text: (FuelPrice.Difference == 0 || FuelPrice.Difference == '-') ? '-' :
+                                            &nbsp;<span data-bind="text: (FuelPrice.Difference == 0 || FuelPrice.Difference == '-') ? '-' :
                                                            (FuelPrice.Difference/10)"></span>
-											
 
-										</td>
+
+                                        </td>
                                         <!-- /ko -->
                                         <!-- ko if: !siteSupportsFuel -->
                                         <td style="border-left: 1px solid #ccc" colspan="2">n/a</td>
@@ -459,4 +459,7 @@
                 todayHighlight: true
             });
     });
+     
+    
+   
 </script>

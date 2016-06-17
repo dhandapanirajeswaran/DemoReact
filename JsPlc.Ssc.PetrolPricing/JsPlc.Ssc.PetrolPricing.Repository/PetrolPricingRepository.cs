@@ -13,6 +13,7 @@ using System.Data.Entity.Validation;
 using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using EntityState = System.Data.Entity.EntityState;
 
@@ -313,6 +314,8 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             int siteId = 0, int pageNo = 1,
             int pageSize = Constants.PricePageSize)
         {
+            try
+            {
             //@siteId int,
             //@forDate DateTime,
             //@skipRecs int,
@@ -373,6 +376,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                 using (var command = new SqlCommand(spName, connection))
                 {
                     command.CommandType = CommandType.StoredProcedure;
+                    command.CommandTimeout = 0;
                     command.Parameters.AddRange(sqlParams.ToArray());
 
                     connection.Open();
@@ -412,16 +416,31 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                         if (!Convert.IsDBNull(pgRow["FuelTypeId"]))
                         {
                             var competitorPriceOffset = pgRow["CompetitorPriceOffset"].ToString().ToNullable<double>();
-
+                                int TrialPrice = (competitorPriceOffset.HasValue && competitorPriceOffset.Value > 0) ? Convert.ToInt32(competitorPriceOffset.Value) : 0;
+                                TrialPrice = TrialPrice * 10;
 
                             var AutoPrice = pgRow["SuggestedPrice"].ToString().ToNullable<int>();
-                            if (AutoPrice.HasValue && AutoPrice.Value > 0) AutoPrice = (AutoPrice / 10) * 10 + 9;                           
+                                if (AutoPrice.HasValue && AutoPrice.Value > 0)
+                                {
+                                    AutoPrice += TrialPrice;
+                                    AutoPrice = (AutoPrice / 10) * 10 + 9;
+                                }
                             var OverridePrice = pgRow["OverriddenPrice"].ToString().ToNullable<int>();
-                            if (OverridePrice.HasValue && OverridePrice.Value > 0) OverridePrice = (OverridePrice / 10) * 10 + 9;                           
+                                if (OverridePrice.HasValue && OverridePrice.Value > 0)
+                                {
+                                    OverridePrice += TrialPrice;
+                                    OverridePrice = (OverridePrice / 10) * 10 + 9;
+                                }
                             var OverriddenPriceToday = pgRow["OverriddenPriceToday"].ToString().ToNullable<int>();
-                            if (OverriddenPriceToday.HasValue && OverriddenPriceToday.Value > 0) OverriddenPriceToday = (OverriddenPriceToday / 10) * 10 + 9;      
+                                if (OverriddenPriceToday.HasValue && OverriddenPriceToday.Value > 0)
+                                {
+                                    OverriddenPriceToday = (OverriddenPriceToday / 10) * 10 + 9;
+                                }
                             var SuggestedPriceToday = pgRow["SuggestedPriceToday"].ToString().ToNullable<int>();
-                            if (SuggestedPriceToday.HasValue && SuggestedPriceToday.Value > 0) SuggestedPriceToday = (SuggestedPriceToday / 10) * 10 + 9;     
+                                if (SuggestedPriceToday.HasValue && SuggestedPriceToday.Value > 0)
+                                {
+                                    SuggestedPriceToday = (SuggestedPriceToday / 10) * 10 + 9;
+                                }
                             var TodayPrice = (OverriddenPriceToday.HasValue && OverriddenPriceToday.Value != 0)
                                 ? OverriddenPriceToday.Value
                                 : (SuggestedPriceToday.HasValue) ? SuggestedPriceToday.Value : 0;
@@ -443,7 +462,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                                 competitorName = string.Format("{0}/{1}", competitorSite.Brand, competitorSite.SiteName);
                             }
 
-                            var trailPriceCompetitorId = pgRow["TrailPriceCompetitorId"].ToString().ToNullable<bool>();
+                          //      var trailPriceCompetitorId = pgRow["TrailPriceCompetitorId"].ToString().ToNullable<bool>();
 
                             sitePriceRow.FuelPrices.Add(new FuelPriceViewModel
                             {
@@ -457,8 +476,8 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                                 Markup = Markup,
                                 CompetitorName = competitorName,
                                 IsTrailPrice = IsTrailPrice.HasValue ? IsTrailPrice.Value : false,
-                                CompetitorPriceOffset = competitorPriceOffset.HasValue ? competitorPriceOffset.Value : 0,
-                                IsBasedOnCompetitor = trailPriceCompetitorId.HasValue
+                                    CompetitorPriceOffset = competitorPriceOffset.HasValue ? competitorPriceOffset.Value : 0
+                                  //  IsBasedOnCompetitor = trailPriceCompetitorId.HasValue
                             });
                         }
                     }
@@ -466,7 +485,12 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                     Apply5PMarkupForSuperUnleadedForNonCompetitorSites(dbList);
 
                     return dbList;
+                    }
                 }
+            }
+            catch(Exception ce)
+            {
+                return null;
             }
         }
         /// <summary>
@@ -478,13 +502,16 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             foreach (var site in dbList)
             {
                 var unleaded = site.FuelPrices.FirstOrDefault(x => x.FuelTypeId == (int)FuelTypeItem.Unleaded);
-                if (unleaded != null && unleaded.IsBasedOnCompetitor == false)
+                //if (unleaded != null && unleaded.IsBasedOnCompetitor == false)
+                if (unleaded != null)
                 {
                     var superunleaded = site.FuelPrices.FirstOrDefault(x => x.FuelTypeId == (int)FuelTypeItem.Super_Unleaded);
-                    if (superunleaded != null && superunleaded.IsBasedOnCompetitor == false && unleaded.AutoPrice.HasValue && unleaded.AutoPrice.Value > 0)
+                    //if (superunleaded != null && superunleaded.IsBasedOnCompetitor == false && unleaded.AutoPrice.HasValue && unleaded.AutoPrice.Value > 0)
+                    if (superunleaded != null && unleaded.AutoPrice.HasValue && unleaded.AutoPrice.Value > 0)
                     {
                         superunleaded.Markup = 5;
                         superunleaded.AutoPrice = unleaded.AutoPrice.Value + 50;
+                        superunleaded.AutoPrice = (superunleaded.AutoPrice / 10) * 10 + 9;     
                     }
                 }
             }
@@ -673,14 +700,16 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
         public bool UpdateSite(Site site)
         {
+           // _context.SaveChanges();
             _context.Entry(site).State = EntityState.Modified;
 
             try
             {
                 _context.Sites.Attach(site);
                 UpdateSiteEmails(site);
+                UpdateSiteCompetitors(site);
                 _context.Entry(site).State = EntityState.Modified;
-                _context.SaveChanges();
+                int nReturn=_context.SaveChanges();
 
                 return true;
             }
@@ -689,6 +718,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                 return false;
             }
         }
+               
 
         /// <summary>
         /// Demo 22/12/15 new requirement: Create SitePrices for SuperUnleaded with Markup
@@ -940,6 +970,29 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             }
         }
 
+
+        private void UpdateSiteCompetitors(Site site)
+        {
+            var Competitors = site.Competitors.ToList();
+
+         /*   var siteOrig = GetSite(site.Id);
+            if (siteOrig.Competitors.Any())
+            {
+                var deletedCompetitors = siteOrig.Competitors.Where(x => !Competitors.Contains(x)).ToList();
+                foreach (var delCompetitor in deletedCompetitors)
+                {
+                    _context.Entry(delCompetitor).State = EntityState.Deleted;
+                }
+            }
+            */
+
+            foreach (var competitor in Competitors)
+            {
+                _context.Entry(competitor).State = EntityState.Modified;
+              //  if (competitor.Id == 0) _context.Entry(competitor).State = EntityState.Added;
+              //  if (competitor.Id != 0) _context.Entry(competitor).State = EntityState.Modified;
+            }
+        }
         /// <summary>
         /// Delete all QuarterlyUploadStaging records prior to starting Import of QuarterlyUploadStaging
         /// </summary>

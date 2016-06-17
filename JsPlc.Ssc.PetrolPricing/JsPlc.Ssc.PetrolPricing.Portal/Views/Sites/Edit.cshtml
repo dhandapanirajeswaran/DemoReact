@@ -79,17 +79,16 @@
                     </div>
 
                     <div class="form-group">
-                        @Html.LabelFor(model => model.TrailPriceCompetitorId, htmlAttributes: new { @class = "control-label col-md-2" })
+                        @Html.LabelFor(model => model.ExcludeCompetitors, htmlAttributes: new { @class = "control-label col-md-2" })
                         <div class="col-md-10">
-                            @Html.DropDownListFor(model => model.TrailPriceCompetitorId, Model.Competitors.Select(c => new SelectListItem { Value = c.Id > 0 ? c.Id.ToString() : string.Empty, Text = c.SiteName.ToString(), Selected = c.Id == Model.TrailPriceCompetitorId }), new { @class = "form-control" })
-                            @Html.ValidationMessageFor(model => model.TrailPriceCompetitorId, "", new { @class = "text-danger" })
-                        </div>
+                            @Html.ListBoxFor(model => model.ExcludeCompetitors, new MultiSelectList(Model.Competitors, "Id", "SiteName"), new { @data_placeholder = "Select Competitors...", @class = "chosen-select", style = "width: 430px;", id = "lstbxexcludecompetitors" })                            
+                          </div>
                     </div>
 
                     <div class="form-group">
                         @Html.LabelFor(model => model.CompetitorPriceOffset, htmlAttributes: new { @class = "control-label col-md-2"})
                         <div class="col-md-10">
-                            @Html.EditorFor(model => model.CompetitorPriceOffset, new { htmlAttributes = new {@class="form-control", @maxlength="8" } })
+                            @Html.EditorFor(model => model.CompetitorPriceOffset, new { htmlAttributes = new { @class = "form-control", @maxlength = "8", onkeydown = "return ValidateNumber(event);" } })
                             @Html.ValidationMessageFor(model => model.CompetitorPriceOffset, "", new { @class="text-danger"})
                         </div>
                     </div>

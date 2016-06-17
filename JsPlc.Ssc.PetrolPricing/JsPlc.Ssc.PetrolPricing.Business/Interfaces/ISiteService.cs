@@ -35,5 +35,9 @@ namespace JsPlc.Ssc.PetrolPricing.Business
         bool HasDuplicateEmailAddresses(Site site);
 
 		bool IsUnique(Site site);
+
+        SiteToCompetitor GetCompetitor(int siteId, int competitorId);
+
+        void UpdateSiteToCompetitor(List<SiteToCompetitor> newSiteToCompetitorRecords);
     }
 }

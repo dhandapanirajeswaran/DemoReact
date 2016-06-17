@@ -79,6 +79,7 @@ namespace JsPlc.Ssc.PetrolPricing.Models.Common
                 Company = site.Company,
                 Emails = site.Emails == null ? new List<SiteEmailViewModel>() : site.Emails.ToList().ToSiteEmailViewModelList(),
                 Competitors = site.Competitors == null ? new List<SiteViewModel>() : site.Competitors.Select(x => x.Competitor).ToList().ToSiteViewModelList(),
+                ExcludeCompetitors = site.Competitors == null ? new List<int>() :   (from competitor in site.Competitors where competitor.IsExcluded==1 select competitor).Select(x => x.Competitor.Id).ToList(),
                 IsActive = site.IsActive,
                 IsSainsburysSite = site.IsSainsburysSite,
                 Ownership = site.Ownership,

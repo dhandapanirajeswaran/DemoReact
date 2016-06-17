@@ -54,4 +54,9 @@ INSERT [dbo].[PPUser] ([FirstName],[LastName],[Email]) VALUES (N'Ramaraju',N'Vit
 INSERT [dbo].[PPUser] ([FirstName],[LastName],[Email]) VALUES (N'TestAdmin',N'Admin',N'testadmin@jsCoventryDev.onmicrosoft.com')
 
 
+IF EXISTS (SELECT * FROM sys.columns WHERE Name = N'IsExcluded' AND Object_ID = Object_ID(N'SiteToCompetitor'))
+BEGIN
+ ALTER TABLE [dbo].[SiteToCompetitor] ADD [IsExcluded] int NOT NULL DEFAULT(0);
+END
+
 END

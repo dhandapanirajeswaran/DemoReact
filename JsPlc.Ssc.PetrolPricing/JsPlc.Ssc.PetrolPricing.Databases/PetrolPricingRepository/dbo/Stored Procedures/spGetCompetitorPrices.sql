@@ -70,7 +70,7 @@ else set @yestPriceDate = @phhYestDate
 	SiteToCompetitor sc
 		inner join SITE compInf --
 			on sc.CompetitorId = compInf.Id 
-	WHERE compInf.IsSainsburysSite = 0 AND compInf.IsActive = 1
+	WHERE compInf.IsSainsburysSite = 0 AND compInf.IsActive = 1 and sc.IsExcluded = 0
 ) -- select * from competitors
 ,compForSites as -- limit competitors to only selected sites
 (

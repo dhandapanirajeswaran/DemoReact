@@ -9,7 +9,8 @@ namespace JsPlc.Ssc.PetrolPricing.Portal
         public static void RegisterBundles(BundleCollection bundles)
         {
             bundles.Add(new ScriptBundle("~/bundles/jquery").Include(
-                        "~/Scripts/jquery-{version}.js"));
+                        "~/Scripts/jquery-{version}.js",
+                        "~/Scripts/chosen/chosen.jquery.js"));
 
             //Unobtrusive validation doesn't work. Temporary disabling
             bundles.Add(new ScriptBundle("~/bundles/jqueryval").Include(
@@ -26,6 +27,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal
                       "~/Scripts/respond.js"));
 
             bundles.Add(new StyleBundle("~/Content/css").Include(
+                      "~/Content/chosen.css",                                                              
                       "~/Content/bootstrap.css",
                       "~/Content/font-awesome.min.css",
                       "~/Content/bootstrap-datepicker.min.css",

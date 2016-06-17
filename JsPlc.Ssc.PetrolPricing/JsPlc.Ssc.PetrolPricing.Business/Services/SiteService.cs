@@ -94,5 +94,16 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 		{
 			return _db.UpdateSite(site);
 		}
+
+        public SiteToCompetitor GetCompetitor(int siteId, int competitorId)
+        {
+            return _db.GetCompetitor(siteId, competitorId);
+        }
+
+
+        public void UpdateSiteToCompetitor(List<SiteToCompetitor> newSiteToCompetitorRecords)
+        {
+             _db.UpdateSiteToCompetitor(newSiteToCompetitorRecords);
+        }
 	}
 }
