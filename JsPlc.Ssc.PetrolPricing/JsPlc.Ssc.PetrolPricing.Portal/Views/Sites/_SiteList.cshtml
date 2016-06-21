@@ -1,97 +1,140 @@
 ﻿@using JsPlc.Ssc.PetrolPricing.Models
 @model IEnumerable<JsPlc.Ssc.PetrolPricing.Models.Site>
 
-<table class="table table-striped">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.CatNo)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.StoreNo)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.PfsNo)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.SiteName)
-            <br />
-            (@Html.DisplayNameFor(model => model.Company))
-            <br />
-            (@Html.DisplayNameFor(model => model.Brand))
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Address)
-            <br />
-            @Html.DisplayNameFor(model => model.Suburb)
-            <br />
-            @Html.DisplayNameFor(model => model.Town)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.PostCode)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Ownership)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.IsActive)
-        </th>
-        <th></th>
-    </tr>
-    @if (Model != null)
-    { 
-    if (Model.Any() == false)
-    {
-        <tr><td colspan="14" class="noSiteData">No results found</td></tr>
+<style>
+    table {
+        width: 100%;
     }
-    foreach (var item in Model)
-    {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.CatNo)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.StoreNo)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.PfsNo)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.SiteName)
-                <br />
-                (@Html.DisplayFor(modelItem => item.Company))
-                <br />
-                (@Html.DisplayFor(modelItem => item.Brand))
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Address)
-                <br />
-                @Html.DisplayFor(modelItem => item.Suburb)
-                <br />
-                @Html.DisplayFor(modelItem => item.Town)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.PostCode)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Ownership)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IsActive)
-            </td>
-            <td>
-                @if (item.IsSainsburysSite)
-                {
-                    @Html.ActionLink("Edit", "Edit", new { id = item.Id })
-                    @(" | ")
-                }
-                @Html.ActionLink("Details", "Details", new { id = item.Id }, htmlAttributes: new { onclick = "return true;" })
-                @if (item.Emails == null || !item.Emails.Any())
-                {
-                    <br /><span style="color: red">@("No Emails..")</span>
-                }
 
-            </td>
+    thead, tbody, tr, td, th {
+        display: block;
+    }
+
+        tr:after {
+            content: ' ';
+            display: block;
+            visibility: hidden;
+            clear: both;
+        }
+
+        thead th {
+            height: 80px;
+            /*text-align: left;*/
+        }
+
+    tbody {
+        height: 500px;
+        overflow-y: auto;
+    }
+
+    thead {
+        /* fallback */
+    }
+
+
+        tbody td, thead th {
+            width: 11%;
+            float: left;
+        }
+</style>
+
+<table class="table table-striped header-fixed">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.CatNo)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.StoreNo)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PfsNo)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SiteName)
+                <br />
+                (@Html.DisplayNameFor(model => model.Company))
+                <br />
+                (@Html.DisplayNameFor(model => model.Brand))
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Address)
+                <br />
+                @Html.DisplayNameFor(model => model.Suburb)
+                <br />
+                @Html.DisplayNameFor(model => model.Town)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PostCode)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Ownership)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IsActive)
+            </th>
+            <th></th>
         </tr>
-    }
-    }
+    </thead>
+
+    <tbody>
+        @if (Model != null)
+        {
+            if (Model.Any() == false)
+            {
+                <tr><td colspan="14" class="noSiteData">No results found</td></tr>
+            }
+            foreach (var item in Model)
+            {
+                <tr>
+                    <td class="filterable-cell">
+                        @Html.DisplayFor(modelItem => item.CatNo)
+                    </td>
+                    <td class="filterable-cell">
+                        @Html.DisplayFor(modelItem => item.StoreNo)
+                    </td>
+                    <td class="filterable-cell">
+                        @Html.DisplayFor(modelItem => item.PfsNo)
+                    </td>
+                    <td class="filterable-cell">
+                        @Html.DisplayFor(modelItem => item.SiteName)
+                        <br />
+                        (@Html.DisplayFor(modelItem => item.Company))
+                        <br />
+                        (@Html.DisplayFor(modelItem => item.Brand))
+                    </td>
+                    <td class="filterable-cell">
+                        @Html.DisplayFor(modelItem => item.Address)
+                        <br />
+                        @Html.DisplayFor(modelItem => item.Suburb)
+                        <br />
+                        @Html.DisplayFor(modelItem => item.Town)
+                    </td>
+                    <td class="filterable-cell">
+                        @Html.DisplayFor(modelItem => item.PostCode)
+                    </td>
+                    <td class="filterable-cell">
+                        @Html.DisplayFor(modelItem => item.Ownership)
+                    </td>
+                    <td class="filterable-cell">
+                        @Html.DisplayFor(modelItem => item.IsActive)
+                    </td>
+                    <td class="filterable-cell">
+                        @if (item.IsSainsburysSite)
+                        {
+                            @Html.ActionLink("Edit", "Edit", new { id = item.Id })
+                            @(" | ")
+                        }
+                        @Html.ActionLink("Details", "Details", new { id = item.Id }, htmlAttributes: new { onclick = "return true;" })
+                        @if (item.Emails == null || !item.Emails.Any())
+                        {
+                            <br /><span style="color: red">@("No Emails..")</span>
+                        }
+
+                    </td>
+
+                </tr>
+            }
+        }
+    </tbody>
 </table>

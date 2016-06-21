@@ -18,6 +18,27 @@
         width: 50px;
         height: 23px;
     }
+
+     
+
+    thead, tbody{
+        display: block;
+    }
+
+           
+
+    tbody {
+        height: 500px;
+        overflow-y: auto;
+    }
+
+    .radio-button {
+	display:inline;	
+    position:relative;
+    margin-left: 0.2em;
+}
+
+
 </style>
 
 <h1>Market comparison and planner</h1>
@@ -205,15 +226,15 @@
         </div>
 
         <div class="table-responsive">
-            <table class="table table-striped table-hover" id="accordion">
+            <table class="table table-striped table">
                 <!-- HEADINGS -->
                 <thead>
                     <tr data-bind="visible: !$root.ViewingHistorical()">
                         <th colspan="7">
                             <!-- Price Change Type -->
                             <div class="col-md-4" style="margin-left: -10px"><b>Price change type:</b></div>
-                            <div class="col-md-4">
-                                <label class="radio-button"><input type="radio" value="(+/-n)" data-bind="click: switchChangeType, checked: changeType" /> (+/-n)</label>&nbsp;&nbsp;
+                            <div class="col-md-4" style="width:200px">
+                                <label class="radio-button"><input type="radio" value="(+/-n)" data-bind="click: switchChangeType, checked: changeType" /> (+/-n)</label>
                                 <label class="radio-button"><input type="radio" value="Override all" data-bind="click: switchChangeType, checked: changeType" /> Override all</label>
                             </div>
                         </th>
@@ -244,10 +265,10 @@
                         <th><span>#</span></th>
                         <th><span>Store No.</span></th>
                         <th><span></span></th>
-                        <th><span>Store Name</span></th>
-                        <th><span>Store Town</span></th>
-                        <th><span>Cat No.</span></th>
-                        <th><span>PFS No.</span></th>
+                        <th width="150"><span>Store Name</span></th>
+                        <th width="100"><span>Store Town</span></th>
+                        <th width="60"><span>Cat No.</span></th>
+                        <th width="77"><span>PFS No.</span></th>
 
                         <th width="200" colspan="2" class="text-center" style="border-left: 1px solid #ccc">
                             <h4>
@@ -286,13 +307,13 @@
                         <th width="140" style="border-left: 1px solid #ddd"><span>Tomorrow</span></th>
                     </tr>
                 </thead>
-                <tbody data-bind="with: dataModel">
+                 <tbody data-bind="with: dataModel">
                     <!-- JS Store DataRows -->
                     <!-- ko foreach: sites -->
                     <tr class="panel-heading" role="tab" data-bind="id:('Heading' + SiteId)">
                         <td>
-                            <a   role="button" data-toggle="collapse" data-parent="#accordion"
-                               data-bind="attr:{href:('#CollapseCompetitorsforsite' + SiteId)}, click: getCompetitorDataClick"><i  class="fa fa-minus-square-o" data-bind="css: showingComps() ? 'fa fa-minus-square-o' : 'fa fa-plus-square-o'"></i></a>
+                            <a role="button" data-toggle="collapse" data-parent="#accordion"
+                               data-bind="attr:{href:('#CollapseCompetitorsforsite' + SiteId)}, click: getCompetitorDataClick"><i class="fa fa-minus-square-o" data-bind="css: showingComps() ? 'fa fa-minus-square-o' : 'fa fa-plus-square-o'"></i></a>
                         </td>
                         <td><span data-bind="text: StoreNo"></span></td>
                         <!-- Email envelope... -->
@@ -310,17 +331,17 @@
                                 </a>
                             </span>
                         </td>
-                        <td><span data-bind="text: StoreName"></span></td>
-                        <td><span data-bind="text: Town"></span></td>
-                        <td><span data-bind="text: CatNo"></span></td>
-                        <td><span data-bind="text: PfsNo"></span></td>
+                        <td width="150"><span data-bind="text: StoreName"></span></td>
+                        <td width="100"><span data-bind="text: Town"></span></td>
+                        <td width="60"><span data-bind="text: CatNo"></span></td>
+                        <td width="60"><span data-bind="text: PfsNo"></span></td>
 
                         <!-- ko foreach: FuelPricesToDisplay -->
-                        <!-- ko if: siteSupportsFuel -->
-                        <td style="border-left: 1px solid #ddd">
+                        <!--  ko if: siteSupportsFuel -->
+                        <td width="60" style="border-left: 1px solid #ddd">
                             <span data-bind="text: FuelPrice.TodayPrice"></span>
                         </td>
-                        <td style="border-left: 1px solid #ddd">
+                        <td width="140" style="border-left: 1px solid #ddd">
                             &nbsp;<span data-bind="attr:{title:(FuelPrice.IsTrailPrice ? 'Trail price: ' + FuelPrice.CompetitorName : 'Competitor name: ' + FuelPrice.CompetitorName + '; Markup: ' + FuelPrice.Markup)}, text: FuelPrice.AutoPrice"></span>
                             <input type="text" data-bind="value: FuelPrice.OverridePrice, visible: !$root.ViewingHistorical(),
                                 id: ('OverridePrice_' + $parent.SiteId + '_' + FuelPrice.FuelTypeId), event:{keyup: changeProp}" class="txtPrice" maxlength="8" />
@@ -348,9 +369,10 @@
                             <table class="competitorTable table-striped table-hover full-width">
                                 <thead>
                                     <tr>
-                                        <th><span>Brand</span></th>
-                                        <th><span>Marker</span></th>
-                                        <th><span>Drive-Time</span></th>
+                                        <th ><span>Brand</span></th>
+                                        <th><span>&nbsp;&nbsp;</span></th>
+                                        <th width="160"><span>Marker</span></th>
+                                        <th  ><span>Drive-Time</span></th>
                                         <th><span>Cat No.</span></th>
 
                                         <th colspan="2" class="text-center" style="border-left: 1px solid #ccc">
@@ -360,7 +382,7 @@
                                                 </span>
                                             </h4>
                                         </th>
-                                        <th colspan="2" class="text-center" style="border-left: 1px solid #ccc">
+                                        <th colspan ="2" class="text-center" style="border-left: 1px solid #ccc">
                                             <h4>
                                                 <span class="label label-black">&nbsp;Diesel&nbsp;</span>
                                             </h4>
@@ -372,8 +394,9 @@
                                         </th>
                                     </tr>
                                     <tr>
-                                        <th colspan="4"></th>
-                                        <th class="tblHighlight"><span>Yesterday</span></th>
+                                        <th colspan="4"></th>                                      
+                                        <th><span>&nbsp;&nbsp;</span></th>
+                                        <th class="tblHighlight" ><span>Yesterday</span></th>
                                         <th class="tblHighlight"><span>Today</span></th>
                                         <th><span>Yesterday</span></th>
                                         <th><span>Today</span></th>
@@ -396,14 +419,15 @@
                                     <!-- ko if: hasCompetitors() -->
                                     <!-- ko foreach: competitors -->
                                     <tr>
-                                        <td><span data-bind="text: Brand"></span></td>
-                                        <td><span data-bind="text: StoreName"></span></td>
-                                        <td><span data-bind="text: DriveTime"></span></td>
-                                        <td><span data-bind="text: CatNo"></span></td>
-
+                                        <td ><span data-bind="text: Brand"></span></td>
+                                        <td width="170"><span data-bind="text: StoreName"></span></td>
+                                        <td width="107"><span data-bind="text: DriveTime"></span></td>
+                                        <td width="80"><span data-bind="text: CatNo"></span></td>
+                                      
                                         <!-- ko foreach: FuelPricesToDisplay -->
                                         <!-- ko if: siteSupportsFuel -->
-                                        <td style="border-left: 1px solid #ccc"><span data-bind="text: FuelPrice.YestPrice"></span></td>
+
+                                        <td  width="82" style="border-left: 1px solid #ccc"><span data-bind="text: FuelPrice.YestPrice"></span></td>
                                         <td style="border-left: 1px solid #ccc;" class="tblHighlight text-nowrap text-right">
                                             <span data-bind="text: FuelPrice.TodayPrice"></span>
 
@@ -434,6 +458,8 @@
                     </tr>
                     <!-- /ko -->
                 </tbody>
+            </table>
+            <table class="table table-striped table-hover" id="accordion">
                 <tbody data-bind="visible: $root.dataAvailable() == false" style="display: none">
                     <tr>
                         <td colspan="13" class="noSiteData">No results found</td>
