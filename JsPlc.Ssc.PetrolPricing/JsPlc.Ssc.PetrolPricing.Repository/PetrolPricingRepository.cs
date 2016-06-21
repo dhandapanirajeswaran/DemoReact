@@ -707,13 +707,13 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             {
                 _context.Sites.Attach(site);
                 UpdateSiteEmails(site);
-                UpdateSiteCompetitors(site);
+                if (site.Competitors != null) UpdateSiteCompetitors(site);
                 _context.Entry(site).State = EntityState.Modified;
                 int nReturn=_context.SaveChanges();
 
                 return true;
             }
-            catch
+            catch(Exception ce)
             {
                 return false;
             }
