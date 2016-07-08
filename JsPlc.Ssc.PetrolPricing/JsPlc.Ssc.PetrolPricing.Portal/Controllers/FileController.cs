@@ -58,10 +58,10 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 		[HttpPost]
 		public async Task<ActionResult> Upload(HttpPostedFileBase file, int uploadTypes, DateTime? uploadDate)
 		{
-			var model = new UploadViewModel
+         	var model = new UploadViewModel
 			{
 				UploadTypes = GetUploadTypes(),
-				UploadDate = DateTime.Now
+                UploadDate = uploadTypes == 2 ? DateTime.Now : uploadDate.Value
 			};
 
 			string errorMessage = string.Empty;

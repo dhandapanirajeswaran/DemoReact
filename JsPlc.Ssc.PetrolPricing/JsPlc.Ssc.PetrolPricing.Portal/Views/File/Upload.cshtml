@@ -3,6 +3,18 @@
     ViewBag.Title = "New file upload";
 }
 
+<style>
+
+
+    .TextBoxAsLabel
+{
+   border: none;
+   background-color: #fff;
+   background: transparent;
+}
+</style>
+
+
 <h1>
     New file upload
 </h1>
@@ -14,19 +26,27 @@
 <form action="" method="post" enctype="multipart/form-data">
     @if (@Model!=null)
     {
-    <div class="alert alert-info">Uploaded data will be calculated as <strong>@Model.UploadDate.ToString("MMMM dd, yyyy")</strong></div>
+    <div class="alert alert-info">Uploaded data will be calculated as <strong>  @Html.TextBoxFor(o => o.UploadDate,"{0:dd/MM/yyyy}", new { @class = "TextBoxAsLabel",@readonly = true, id = "calcultedasdate" })    </strong></div>
     }
     <div class="col-md-3">
         <div class="form-group">
             <label for="UploadTypes">Upload type:</label>
             @Html.DropDownListFor(model => model.UploadTypes, new SelectList(
-          Model.UploadTypes, "Id", "UploadTypeName"), new { @class = "form-control" })
-
-            @Html.HiddenFor(model => model.UploadDate, new { name = "uploadDateTime" })
-
-
+                            Model.UploadTypes, "Id", "UploadTypeName"), new { @class = "form-control", id = "UploadTypeName" })  
+              
+          
+        
         </div>
 
+      
+
+
+
+    </div>
+
+    <div class="col-md-1" id="datepickerctrl" style="margin-top: 24px">
+        @Html.TextBoxFor(m => m.UploadDate, "{0:dd/MM/yyyy}", new { @class = "datepicker form-control",id = "caldattimepicker", style = "width:85px;", @maxlength = "12" })
+                                                                                        
     </div>
     
     <div class="col-md-1" style="margin-top: 24px">
@@ -42,4 +62,54 @@
     </div>   
 
 </form>
+
+<script type="text/javascript">
+   
+        $('.datepicker')
+            .datepicker({
+                language: "en-GB",
+                format: 'dd/mm/yyyy',
+                orientation: 'auto top',
+                autoclose: true,
+                todayHighlight: true,
+                startDate: '-3m',
+                endDate: '1d'
+            });
+ 
+
+   
+
+
+
+$(function () {
+    $('#UploadTypeName').change(function () {
+        var value = $(this).val();
+        if (value == 1) {
+
+            $('#datepickerctrl').show();
+        } else {
+
+            var d = new Date();
+
+            var month = d.getMonth() + 1;
+            var day = d.getDate();
+
+            var output = (('' + day).length < 2 ? '0' : '') + day + '/' +
+                (('' + month).length < 2 ? '0' : '') + month + '/' +
+                d.getFullYear();
+            $('#calcultedasdate').val(output);
+            $('#datepickerctrl').hide();
+        }
+    });
+
+
+    $("#caldattimepicker").change(function () {
+
+
+     
+         $('#calcultedasdate').val($('#caldattimepicker').val());
+      
+    });
+});
+</script>
 
