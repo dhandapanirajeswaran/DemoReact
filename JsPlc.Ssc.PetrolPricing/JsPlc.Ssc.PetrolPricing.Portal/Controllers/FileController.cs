@@ -54,7 +54,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 				ViewBag.WarningMessage = StringMessages.Warning_DailyPriceFileAlreadyUploaded;
 			}
 			return View(model);
-		}
+		}   
 
 		[HttpPost]
 		public async Task<ActionResult> Upload(HttpPostedFileBase file, int uploadTypes, DateTime? uploadDate)
