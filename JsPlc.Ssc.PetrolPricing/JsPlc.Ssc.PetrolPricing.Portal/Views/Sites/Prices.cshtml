@@ -18,6 +18,8 @@
         width: 50px;
         height: 23px;
     }
+
+
 </style>
 
 <h1>Market comparison and planner</h1>
@@ -111,7 +113,7 @@
             <!-- Date Picker -->
             <div class="col-md-1">
                 <label for="viewingDate">Date:</label>
-                <input type="text" id="viewingDate" class="datepicker form-control"
+                <input type="text" id="viewingDate" class="datepicker form-control" onchange="SetDefault($(this).val());"
                        style="width: 85px" name="viewingDate" maxlength="12"
                        data-bind="value: $root.InitDate" />
             </div>
@@ -278,12 +280,12 @@
                             </button>
                         </th>
                         <th colspan="3"></th>
-                        <th width="60" style="border-left: 1px solid #ddd"><span>Today</span></th>
-                        <th width="140" style="border-left: 1px solid #ddd"><span>Tomorrow</span></th>
-                        <th width="60" style="border-left: 1px solid #ddd"><span>Today</span></th>
-                        <th width="140" style="border-left: 1px solid #ddd"><span>Tomorrow</span></th>
-                        <th width="60" style="border-left: 1px solid #ddd"><span>Today</span></th>
-                        <th width="140" style="border-left: 1px solid #ddd"><span>Tomorrow</span></th>
+                        <th width="60" style="border-left: 1px solid #ddd"><span id="today1">Today</span></th>
+                        <th width="140" style="border-left: 1px solid #ddd"><span id="tomorrow1">Tomorrow</span></th>
+                        <th width="60" style="border-left: 1px solid #ddd"><span id="today2">Today</span></th>
+                        <th width="140" style="border-left: 1px solid #ddd"><span id="tomorrow2">Tomorrow</span></th>
+                        <th width="60" style="border-left: 1px solid #ddd"><span id="today3">Today</span></th>
+                        <th width="140" style="border-left: 1px solid #ddd"><span id="tomorrow3">Tomorrow</span></th>
                     </tr>
                 </thead>
                 <tbody data-bind="with: dataModel">
@@ -291,7 +293,7 @@
                     <!-- ko foreach: sites -->
                     <tr class="panel-heading" role="tab" data-bind="id:('Heading' + SiteId)">
                         <td>
-                            <a role="button" data-toggle="collapse" data-parent="#accordion"
+                            <a role="button" data-toggle="collapse" data-parent="#accordion"   onclick="refreshDates('')"
                                data-bind="attr:{href:('#CollapseCompetitorsforsite' + SiteId)}, click: getCompetitorDataClick"><i class="fa fa-minus-square-o" data-bind="css: showingComps() ? 'fa fa-minus-square-o' : 'fa fa-plus-square-o'"></i></a>
                         </td>
                         <td><span data-bind="text: StoreNo"></span></td>
@@ -373,12 +375,12 @@
                                     </tr>
                                     <tr>
                                         <th colspan="4"></th>
-                                        <th class="tblHighlight"><span>Yesterday</span></th>
-                                        <th class="tblHighlight"><span>Today</span></th>
-                                        <th><span>Yesterday</span></th>
-                                        <th><span>Today</span></th>
-                                        <th class="tblHighlight"><span>Yesterday</span></th>
-                                        <th class="tblHighlight"><span>Today</span></th>
+                                        <th class="tblHighlight"><span class="compyday">Yesterday</span></th>
+                                        <th class="tblHighlight"><span class="comptoday">Today</span></th>
+                                        <th><span class="compyday">Yesterday</span></th>
+                                        <th><span class="comptoday">Today</span></th>
+                                        <th class="tblHighlight"><span class="compyday">Yesterday</span></th>
+                                        <th class="tblHighlight"><span class="comptoday">Today</span></th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -460,6 +462,85 @@
             });
     });
 
+      
+
+    function SetDefault(sdate){
+        refreshDates(sdate);
+        
+    }
+
+
+    function refreshDates(selectedDate)
+    {
+      
+      
+        selectedDate=selectedDate==""? $('#viewingDate').val():selectedDate;
+        var yesterday=new Date();
+        var tomorrow=new Date();
+          var strtoday="";
+        var stryday="";
+        var strtomorrow="";
+        if (selectedDate=="")
+        {
+            var d = new Date();
+
+            var month = d.getMonth() + 1;
+            var day = d.getDate();
+            var year=d.getFullYear();
+            strtoday = (('' + day).length < 2 ? '0' : '') + day + '/' +
+                (('' + month).length < 2 ? '0' : '') + month + '/' +
+                d.getFullYear();
+            yesterday=new Date(d.getFullYear(),d.getMonth(), d.getDate()-1);
+            tomorrow=new Date(d.getFullYear(),d.getMonth(), d.getDate()+1);
+           
+        }
+        else
+        {
+            strtoday=selectedDate;
+            var tmp =selectedDate.split("/");
+            var yearnum=parseInt(tmp[2]);
+            var monnum=parseInt(tmp[1])-1;
+            var daynum=parseInt(tmp[0]);
+       
+            var d=new Date(yearnum,monnum,daynum);
+            yesterday=new Date(d.getFullYear(),d.getMonth(), d.getDate()-1);
+            tomorrow=new Date(d.getFullYear(),d.getMonth(), d.getDate()+1);
+            
+           
+
+        }
+
+        var month = yesterday.getMonth() + 1;
+        var day = yesterday.getDate();
+        stryday = (('' + day).length < 2 ? '0' : '') + day + '/' +
+          (('' + month).length < 2 ? '0' : '') + month + '/' +
+          yesterday.getFullYear();
+
+        month = tomorrow.getMonth() + 1;
+        day = tomorrow.getDate();
+        strtomorrow = (('' + day).length < 2 ? '0' : '') + day + '/' +
+          (('' + month).length < 2 ? '0' : '') + month + '/' +
+          tomorrow.getFullYear();
+        $('#today1').text(strtoday);
+        $('#today2').text(strtoday);
+        $('#today3').text(strtoday);
+
+        $(".comptoday").text(strtoday);
+     
+        $('#tomorrow1').text(strtomorrow);
+        $('#tomorrow2').text(strtomorrow);
+        $('#tomorrow3').text(strtomorrow);
+        $(".compyday").text(stryday);
+
+    
+
+    }
+
+    
+    $( document ).ready(function() {
+
+        refreshDates("");
+    });
 
 
 </script>
