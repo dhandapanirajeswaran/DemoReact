@@ -63,7 +63,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             DateTime uploadtime2 = uploadDate.Value;
             if (sysFormat.ToLower() =="mm/dd/yyyy")
             {
-                uploadtime2 = new DateTime(uploadDate.Value.Year, uploadDate.Value.Day, uploadDate.Value.Month);
+                uploadtime2 = new DateTime(uploadDate.Value.Year, uploadDate.Value.Day, uploadDate.Value.Month );
             }
          	var model = new UploadViewModel
 			{
