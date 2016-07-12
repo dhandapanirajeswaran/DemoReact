@@ -61,10 +61,9 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 		{
             string sysFormat = CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern;
             DateTime uploadtime2 = uploadDate.Value;
-            if (sysFormat.ToLower() =="mm/dd/yyyy")
-            {
-                uploadtime2 = new DateTime(uploadDate.Value.Year, uploadDate.Value.Day, uploadDate.Value.Month );
-            }
+            DateTime dateFilter;
+            if (DateTime.TryParseExact(uploadDate.Value.ToString(), "dd/MM/yyyy", DateTimeFormatInfo.InvariantInfo, DateTimeStyles.None, out dateFilter))
+                uploadtime2 = dateFilter;
          	var model = new UploadViewModel
 			{
 				UploadTypes = GetUploadTypes(),
