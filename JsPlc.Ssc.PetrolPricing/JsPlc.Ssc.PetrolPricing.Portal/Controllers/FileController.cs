@@ -59,15 +59,11 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 		[HttpPost]
 		public async Task<ActionResult> Upload(HttpPostedFileBase file, int uploadTypes, DateTime? uploadDate)
 		{
-            string sysFormat = CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern;
-            DateTime uploadtime2 = uploadDate.Value;
-            DateTime dateFilter;
-            if (DateTime.TryParseExact(uploadDate.Value.ToString(), "dd/MM/yyyy", DateTimeFormatInfo.InvariantInfo, DateTimeStyles.None, out dateFilter))
-                uploadtime2 = dateFilter;
+          
          	var model = new UploadViewModel
 			{
 				UploadTypes = GetUploadTypes(),
-                UploadDate = uploadTypes == 2 ? DateTime.Now : uploadtime2
+                UploadDate = uploadTypes == 2 ? DateTime.Now : uploadDate.Value
 			};
 
 			string errorMessage = string.Empty;
