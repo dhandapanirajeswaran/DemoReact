@@ -18,6 +18,7 @@ using Microsoft.Ajax.Utilities;
 using JsPlc.Ssc.PetrolPricing.Core;
 using System.Net.Http;
 
+
 namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 {
   
@@ -58,10 +59,11 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 		[HttpPost]
 		public async Task<ActionResult> Upload(HttpPostedFileBase file, int uploadTypes, DateTime? uploadDate)
 		{
+          
          	var model = new UploadViewModel
 			{
 				UploadTypes = GetUploadTypes(),
-                UploadDate = uploadTypes == 2 ? DateTime.Now : uploadDate.Value
+                UploadDate = uploadTypes == 2 ? DateTime.Now : new DateTime(uploadDate.Value.Year, uploadDate.Value.Month, uploadDate.Value.Day)
 			};
 
 			string errorMessage = string.Empty;
