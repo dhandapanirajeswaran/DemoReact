@@ -231,7 +231,8 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 
             // model.ExcludeBrands = _serviceFacade.GetBrands().ToList();
              model.AllBrands = _serviceFacade.GetBrands().ToList();
-             model.ExcludeBrands = _serviceFacade.GetExcludeBrands().ToList();
+             var excludebrands = _serviceFacade.GetExcludeBrands();
+             model.ExcludeBrands = excludebrands != null ? excludebrands.ToList() : null;
              model.ExcludeBrandsOrg = model.ExcludeBrands;
 
            
@@ -269,7 +270,8 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 
             model.ExcludeCompetitors = model.ExcludeCompetitors.Distinct().ToList();
             model.AllBrands = _serviceFacade.GetBrands().ToList();
-            model.ExcludeBrands = _serviceFacade.GetExcludeBrands().ToList();
+            var excludebrands=_serviceFacade.GetExcludeBrands();
+            model.ExcludeBrands = excludebrands!= null ? excludebrands.ToList() : null;
             model.ExcludeBrandsOrg = model.ExcludeBrands;
 
             model.Competitors = sortedCompetitors;
@@ -286,7 +288,8 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             SiteViewModel mode2 = new SiteViewModel();
 
             mode2.AllBrands = _serviceFacade.GetBrands().ToList();
-            mode2.ExcludeBrands = _serviceFacade.GetExcludeBrands().ToList();
+            var excludebrands = _serviceFacade.GetExcludeBrands();
+            mode2.ExcludeBrands = excludebrands != null ? excludebrands.ToList() : null;
             mode2.ExcludeBrandsOrg = mode2.ExcludeBrands;
 
             return View("Prices", mode2);
