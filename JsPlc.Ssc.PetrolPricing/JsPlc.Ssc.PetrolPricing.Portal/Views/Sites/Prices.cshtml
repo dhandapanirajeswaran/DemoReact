@@ -1,4 +1,7 @@
-﻿@{
+﻿@using JsPlc.Ssc.PetrolPricing.Models
+@model JsPlc.Ssc.PetrolPricing.Models.SiteViewModel
+
+@{
     ViewBag.Title = "Site Prices";
 }
 
@@ -21,7 +24,8 @@
 
 
 </style>
-
+ @using (Html.BeginForm())
+{
 <h1>Market comparison and planner</h1>
 <hr />
 <!-- knockout binds here -->
@@ -150,6 +154,15 @@
                 <button style="margin-top: 24px" type="button" class="btn btn-default" data-bind="click: function() { reloadSearchPage('Sites/Prices?date='+$root.InitDateInUsFormat()) }">Show all</button>
             </div>
         </div>
+
+        <div class="row">
+            <div class="col-md-1" style="width:864px;">
+                <br/>
+                <label>Excluded Brands</label>
+                @Html.ListBoxFor(model => model.ExcludeBrands, new MultiSelectList(Model.AllBrands), new { @data_placeholder = "Select Brands...", @class = "chosen-select", style = "width: 430px;", id = "lstbxexcludebrands" })
+                <button type="submit" value="Update" id="bradsgo" class="btn btn-success" }">Go</button>
+            </div>
+            </div>
 
         <hr />
         <div style="display: none" class="alert alert-danger" data-bind="visible: $root.HasValidationErrors() || $root.HasErrorMessage()">
@@ -293,7 +306,7 @@
                     <!-- ko foreach: sites -->
                     <tr class="panel-heading" role="tab" data-bind="id:('Heading' + SiteId)">
                         <td>
-                            <a role="button" data-toggle="collapse" data-parent="#accordion"   onclick="refreshDates('')"
+                            <a role="button" data-toggle="collapse" data-parent="#accordion" onclick="    IsSitePriceFormClicked=1; "
                                data-bind="attr:{href:('#CollapseCompetitorsforsite' + SiteId)}, click: getCompetitorDataClick"><i class="fa fa-minus-square-o" data-bind="css: showingComps() ? 'fa fa-minus-square-o' : 'fa fa-plus-square-o'"></i></a>
                         </td>
                         <td><span data-bind="text: StoreNo"></span></td>
@@ -447,6 +460,7 @@
 </div>
 
 <br />
+}
 
 <script type="text/javascript">
     require(["SitePricing"], function (prices) {
@@ -541,6 +555,7 @@
 
         refreshDates("");
     });
+
 
 
 </script>

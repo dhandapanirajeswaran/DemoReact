@@ -227,7 +227,15 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             //var sitesViewModelsWithPrices = _serviceFacade.GetSitePrices();
             // return empty list but never null
 
-            return View("Prices"); // Razor based view
+             SiteViewModel model = new SiteViewModel();
+
+            // model.ExcludeBrands = _serviceFacade.GetBrands().ToList();
+             model.AllBrands = _serviceFacade.GetBrands().ToList();
+             model.ExcludeBrands = _serviceFacade.GetExcludeBrands().ToList();
+             model.ExcludeBrandsOrg = model.ExcludeBrands;
+
+           
+            return View("Prices",model); // Razor based view
         }
 
 
@@ -260,11 +268,28 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             });*/
 
             model.ExcludeCompetitors = model.ExcludeCompetitors.Distinct().ToList();
+            model.AllBrands = _serviceFacade.GetBrands().ToList();
+            model.ExcludeBrands = _serviceFacade.GetExcludeBrands().ToList();
+            model.ExcludeBrandsOrg = model.ExcludeBrands;
 
             model.Competitors = sortedCompetitors;
             model.ExcludeCompetitorsOrg = model.ExcludeCompetitors;
 
             return View(model);
+        }
+
+         [System.Web.Mvc.HttpPost]
+        public ActionResult Prices(SiteViewModel site)
+        {
+           _serviceFacade.UpdateExcludeBrands(site);
+
+            SiteViewModel mode2 = new SiteViewModel();
+
+            mode2.AllBrands = _serviceFacade.GetBrands().ToList();
+            mode2.ExcludeBrands = _serviceFacade.GetExcludeBrands().ToList();
+            mode2.ExcludeBrandsOrg = mode2.ExcludeBrands;
+
+            return View("Prices", mode2);
         }
 
         [System.Web.Mvc.HttpPost]

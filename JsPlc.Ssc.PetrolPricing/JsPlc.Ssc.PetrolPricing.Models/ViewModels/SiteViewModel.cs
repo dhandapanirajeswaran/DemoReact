@@ -65,6 +65,15 @@ namespace JsPlc.Ssc.PetrolPricing.Models
 
         public List<int> ExcludeCompetitorsOrg { get; set; }
 
+
+        [Display(Name = "Exclude Brands")]
+        [DefaultValue(null)]
+        public List<string> ExcludeBrands { get; set; }
+
+        public List<string> ExcludeBrandsOrg { get; set; }
+
+        public List<string> AllBrands { get; set; }
+
         [Display(Name = "Trial price (+/-)")]
         [Range(-4000, 4000)]
         public double CompetitorPriceOffset { get; set; }

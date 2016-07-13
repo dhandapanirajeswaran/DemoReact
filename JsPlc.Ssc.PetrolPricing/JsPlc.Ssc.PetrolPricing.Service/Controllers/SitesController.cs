@@ -389,5 +389,52 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
 			response.Content.Headers.ContentType = new MediaTypeHeaderValue("text/html");
 			return response;
 		}
+
+        [System.Web.Http.HttpGet]
+        [System.Web.Http.Route("api/excludebrands")]
+        public IHttpActionResult GetExcludeBrands()
+        {
+            var excludebrands = _siteService.GetExcludeBrands();
+            if (!excludebrands.Any())
+                return NotFound();
+            return Ok(excludebrands);
+        }
+
+        [System.Web.Http.HttpPut]
+        [System.Web.Http.Route("api/SaveExcludeBrands/")]
+        public async Task<IHttpActionResult> SaveExcludeBrands(SiteViewModel siteViewModel)
+        {
+            if (siteViewModel == null)
+            {
+                return BadRequest("Invalid passed data: site");
+            }
+
+            siteViewModel.ExcludeBrandsOrg = _siteService.GetExcludeBrands().ToList();
+       
+
+            var list_intersect = siteViewModel.ExcludeBrands.Intersect(siteViewModel.ExcludeBrandsOrg).ToList();
+            foreach (string brandname in list_intersect)
+            {
+                siteViewModel.ExcludeBrands.Remove(brandname);
+                siteViewModel.ExcludeBrandsOrg.Remove(brandname);
+            }
+                      
+            try
+            {
+                
+                foreach (String strBrand in siteViewModel.ExcludeBrandsOrg)
+                {
+                    _siteService.RemoveExcludeBrand(strBrand);
+                }
+
+                _siteService.SaveExcludeBrands(siteViewModel.ExcludeBrands);
+                
+                return Ok(siteViewModel);
+            }
+            catch (Exception ex)
+            {
+                return new ExceptionResult(ex, this);
+            }
+        }
 	}
 }

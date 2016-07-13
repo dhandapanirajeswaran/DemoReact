@@ -580,8 +580,12 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
                         var dbList = new List<SitePriceViewModel>();
 
+                        var listOfbrands = GetExcludeBrands();
                         foreach (DataRow pgRow in pgTable.Rows)
                         {
+                            var result = listOfbrands.Contains((string)pgRow["Brand"]);
+
+                            if (result == true) continue;
                             var loopSiteId = (int)pgRow["siteId"];
                             if (loopSiteId != lastSiteId)
                             {
@@ -1418,7 +1422,14 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
         {
             if (upload.Status == null)
             {
-                upload.Status = GetProcessStatuses().First();
+                try
+                {
+                    upload.Status = GetProcessStatuses().First();
+                }
+                catch(Exception ce)
+                {
+
+                }
             }
 
             if (upload.UploadType == null)
@@ -2027,6 +2038,44 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
             return retval;
         }
 
+
+        public bool RemoveExcludeBrand(string strBrandName)
+        {
+            ExcludeBrands brand = _context.ExcludeBrands.Find(strBrandName);
+            var returnval= _context.ExcludeBrands.Remove(brand);
+
+            return returnval!=null;
+        }
+
+        public bool SaveExcludeBrands(List<String> listOfBrands)
+        {
+            foreach(string brandName in listOfBrands)
+            {
+                ExcludeBrands excludeBrand = new ExcludeBrands();
+                excludeBrand.BrandName = brandName;
+                _context.ExcludeBrands.Add(excludeBrand);
+            }
+
+            int nRet= _context.SaveChanges();
+
+
+
+            return nRet>0;
+        }
+
+        public List<String> GetExcludeBrands()
+        {
+            try
+            {
+                var returnvalue = from item in _context.ExcludeBrands.ToList() select item.BrandName;
+                return returnvalue.ToList();
+            }
+            catch(Exception ce)
+            {
+                return null;
+            }
+        }
+
         // Move forward from the forDate and find a set of Prices which were recently uploaded..
         private DateTime? GetFirstDailyPriceDate(DateTime forDate)
         {
@@ -2137,5 +2186,8 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
 
             return result;
         }
+
+
+
     }
 }

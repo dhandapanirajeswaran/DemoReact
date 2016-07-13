@@ -690,6 +690,36 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             
         }
 
+        public IEnumerable<string> GetExcludeBrands()
+        {
+            var response = _client.Value.GetAsync("api/excludebrands").Result;
+
+            var result = response.Content.ReadAsAsync<IEnumerable<string>>().Result;
+            return (response.IsSuccessStatusCode) ? result : null;
+        }
+
+        public FacadeResponse<SiteViewModel> UpdateExcludeBrands(SiteViewModel site)
+        {
+            //TODO
+            const string apiUrl = "api/SaveExcludeBrands/";
+
+            var response = _client.Value.PutAsync(apiUrl, site, new JsonMediaTypeFormatter()).Result;
+            var result = response.Content.ReadAsAsync<SiteViewModel>().Result;
+
+            FacadeResponse<SiteViewModel> resultViewModel = new FacadeResponse<SiteViewModel>();
+
+            if (response.IsSuccessStatusCode)
+            {
+                resultViewModel.ViewModel = result;
+            }
+            else
+            {
+                JObject joResponse = JObject.Parse(response.Content.ReadAsStringAsync().Result);
+                resultViewModel.ErrorMessage = joResponse["Message"].ToString();
+            }
+
+            return resultViewModel;
+        }
 
         
     

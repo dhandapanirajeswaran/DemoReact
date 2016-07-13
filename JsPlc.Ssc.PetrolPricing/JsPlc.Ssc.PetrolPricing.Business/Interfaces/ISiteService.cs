@@ -39,5 +39,11 @@ namespace JsPlc.Ssc.PetrolPricing.Business
         SiteToCompetitor GetCompetitor(int siteId, int competitorId);
 
         void UpdateSiteToCompetitor(List<SiteToCompetitor> newSiteToCompetitorRecords);
+
+        bool RemoveExcludeBrand(string strBrandName);
+
+        bool SaveExcludeBrands(List<String> listOfBrands);
+
+        List<String> GetExcludeBrands();
     }
 }

@@ -105,5 +105,20 @@ namespace JsPlc.Ssc.PetrolPricing.Business
         {
              _db.UpdateSiteToCompetitor(newSiteToCompetitorRecords);
         }
+
+        public bool RemoveExcludeBrand(string strBrandName)
+        {
+            return _db.RemoveExcludeBrand(strBrandName);
+        }
+
+        public bool SaveExcludeBrands(List<String> listOfBrands)
+        {
+            return _db.SaveExcludeBrands(listOfBrands);
+        }
+
+        public List<String> GetExcludeBrands()
+        {
+            return _db.GetExcludeBrands();
+        }
 	}
 }

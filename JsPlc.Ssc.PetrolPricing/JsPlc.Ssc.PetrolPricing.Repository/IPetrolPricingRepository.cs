@@ -240,5 +240,11 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 		IEnumerable<ImportProcessStatus> GetProcessStatuses();
 
 		void UpdateSiteToCompetitor(List<SiteToCompetitor> newSiteToCompetitorRecords);
+
+        bool RemoveExcludeBrand(string strBrandName);
+
+        bool SaveExcludeBrands(List<String> listOfBrands);
+
+        List<String> GetExcludeBrands();
 	}
 }

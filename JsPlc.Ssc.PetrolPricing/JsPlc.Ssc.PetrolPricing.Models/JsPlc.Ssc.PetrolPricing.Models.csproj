@@ -99,6 +99,7 @@
     <Compile Include="EmailSendLog.cs" />
     <Compile Include="ImportProcessError.cs" />
     <Compile Include="PPUser.cs" />
+    <Compile Include="ExcludedBrands.cs" />
     <Compile Include="ViewModels\CompetitorSiteReportViewModel.cs" />
     <Compile Include="ViewModels\CompetitorBrandTimeViewModel.cs" />
     <Compile Include="ViewModels\CompetitorSiteViewModel.cs" />
