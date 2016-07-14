@@ -528,6 +528,8 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         private IEnumerable<SitePriceViewModel> CallCompetitorsWithPriceSproc(DateTime forDate, int siteId = 0,
             int pageNo = 1, int pageSize = Constants.PricePageSize)
         {
+
+            Site site = GetSite(siteId);
             try
             {
                 // TODO wireup params from sproc to a new DTO
@@ -617,10 +619,10 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                                     FuelTypeId = (int)pgRow["FuelTypeId"],
 
                                     // Today's prices (whatever was calculated yesterday OR last)
-                                    TodayPrice = TodayPrice,
+                                    TodayPrice = TodayPrice + loopSiteId==site.TrailPriceCompetitorId? (int)site.CompetitorPriceOffsetNew :0,
 
                                     // Today's prices (whatever was calculated yesterday OR last)
-                                    YestPrice = YestPrice,
+                                    YestPrice = YestPrice + loopSiteId == site.TrailPriceCompetitorId ? (int)site.CompetitorPriceOffsetNew : 0,
 
                                     //Difference between yesterday and today
                                     Difference = TodayPrice.HasValue && YestPrice.HasValue ? TodayPrice - YestPrice : null

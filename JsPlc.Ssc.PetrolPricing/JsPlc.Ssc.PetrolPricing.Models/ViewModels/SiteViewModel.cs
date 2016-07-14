@@ -50,7 +50,7 @@ namespace JsPlc.Ssc.PetrolPricing.Models
         [Display(Name = "Is active")]
         public bool IsActive { get; set; } // defaults to false
 
-        [Display(Name = "Inherit price from")]
+        [Display(Name = "Match competitor")]
         [DefaultValue(null)]
         public int? TrailPriceCompetitorId { get; set; }
 
@@ -77,6 +77,11 @@ namespace JsPlc.Ssc.PetrolPricing.Models
         [Display(Name = "Trial price (+/-)")]
         [Range(-4000, 4000)]
         public double CompetitorPriceOffset { get; set; }
+
+
+        [Display(Name = "Competitor Trial price (+/-)")]
+        [Range(-4000, 4000)]
+        public double CompetitorPriceOffsetNew { get; set; }        
 
         public SiteViewModel()
         {

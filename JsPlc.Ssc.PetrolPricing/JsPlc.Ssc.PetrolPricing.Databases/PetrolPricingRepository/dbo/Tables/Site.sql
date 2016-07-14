@@ -15,6 +15,7 @@
     [IsActive]               BIT            NOT NULL,
     [TrailPriceCompetitorId] INT            NULL,
     [CompetitorPriceOffset] FLOAT NOT NULL DEFAULT (0), 
+	[CompetitorPriceOffsetNew] FLOAT NOT NULL DEFAULT (0), 
     CONSTRAINT [PK_dbo.Site] PRIMARY KEY CLUSTERED ([Id] ASC),
     CONSTRAINT [FK_dbo.Site_TrailPriceCompetitorId_dbo.Site_SiteId] FOREIGN KEY ([TrailPriceCompetitorId]) REFERENCES [dbo].[Site] ([Id])
 );

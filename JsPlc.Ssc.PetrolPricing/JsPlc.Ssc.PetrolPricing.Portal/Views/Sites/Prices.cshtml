@@ -358,7 +358,7 @@
                         <!-- /ko -->
                         <!-- /ko -->
                     </tr>
-                    <tr data-bind="attr:{id: ('AjaxCollapseCompetitorsforsite' + SiteId)}" class="panel-collapse collapse" role="tabpanel">
+                    <tr data-bind="attr:{id: ('AjaxCollapseCompetitorsforsite' + SiteId)}" onclick="    IsSitePriceFormClicked=1; "  class="panel-collapse collapse" role="tabpanel">
                         <td colspan="13" xalign="right" style="background-color: grey">
                             <table class="competitorTable table-striped table-hover full-width">
                                 <thead>
@@ -479,15 +479,13 @@
       
 
     function SetDefault(sdate){
-        refreshDates(sdate);
+       // refreshDates(sdate);
         
     }
 
 
     function refreshDates(selectedDate)
     {
-      
-      
         selectedDate=selectedDate==""? $('#viewingDate').val():selectedDate;
         var yesterday=new Date();
         var tomorrow=new Date();
@@ -551,10 +549,7 @@
     }
 
     
-    $( document ).ready(function() {
-
-        refreshDates("");
-    });
+   
 
 
 

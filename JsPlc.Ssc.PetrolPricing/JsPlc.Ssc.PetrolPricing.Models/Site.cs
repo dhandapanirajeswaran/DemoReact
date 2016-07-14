@@ -58,6 +58,8 @@ namespace JsPlc.Ssc.PetrolPricing.Models
         public int? TrailPriceCompetitorId { get; set; }
 
         public double CompetitorPriceOffset { get; set; }
+
+        public double CompetitorPriceOffsetNew { get; set; }
     }
 
     public class SiteEmail
