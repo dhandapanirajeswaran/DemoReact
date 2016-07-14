@@ -415,10 +415,11 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                         sitePriceRow.FuelPrices = sitePriceRow.FuelPrices ?? new List<FuelPriceViewModel>();
                         if (!Convert.IsDBNull(pgRow["FuelTypeId"]))
                         {
-                            var competitorPriceOffset = pgRow["CompetitorPriceOffset"].ToString().ToNullable<double>();
-                                int TrialPrice = (competitorPriceOffset.HasValue && competitorPriceOffset.Value > 0) ? Convert.ToInt32(competitorPriceOffset.Value) : 0;
+                            var TrialPriceOffset = pgRow["TrialPriceOffset"].ToString().ToNullable<double>();
+                            int TrialPrice = (TrialPriceOffset.HasValue && TrialPriceOffset.Value > 0) ? Convert.ToInt32(TrialPriceOffset.Value) : 0;
                                 TrialPrice = TrialPrice * 10;
 
+                            
                             var AutoPrice = pgRow["SuggestedPrice"].ToString().ToNullable<int>();
                                 if (AutoPrice.HasValue && AutoPrice.Value > 0)
                                 {
@@ -476,7 +477,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                                 Markup = Markup,
                                 CompetitorName = competitorName,
                                 IsTrailPrice = IsTrailPrice.HasValue ? IsTrailPrice.Value : false,
-                                    CompetitorPriceOffset = competitorPriceOffset.HasValue ? competitorPriceOffset.Value : 0
+                                TrialPriceOffset = TrialPriceOffset.HasValue ? TrialPriceOffset.Value : 0
                                   //  IsBasedOnCompetitor = trailPriceCompetitorId.HasValue
                             });
                         }

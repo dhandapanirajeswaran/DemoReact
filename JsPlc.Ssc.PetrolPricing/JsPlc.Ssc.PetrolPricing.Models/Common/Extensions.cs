@@ -63,7 +63,11 @@ namespace JsPlc.Ssc.PetrolPricing.Models.Common
                 SiteName = site.SiteName,
                 StoreNo = site.StoreNo,
                 Suburb = site.Suburb,
-                Town = site.Town
+                Town = site.Town,
+                TrailPriceCompetitorId=site.TrailPriceCompetitorId,
+                TrialPriceOffset=site.TrialPriceOffset
+             
+
             }));
             return sitesVm;
         }
@@ -90,7 +94,7 @@ namespace JsPlc.Ssc.PetrolPricing.Models.Common
                 Suburb = site.Suburb,
                 Town = site.Town,
                 TrailPriceCompetitorId = site.TrailPriceCompetitorId,
-                CompetitorPriceOffset = site.CompetitorPriceOffset
+                TrialPriceOffset = site.TrialPriceOffset
             };
 
             return siteVm;
@@ -116,7 +120,7 @@ namespace JsPlc.Ssc.PetrolPricing.Models.Common
                 Suburb = site.Suburb,
                 Town = site.Town,
                 TrailPriceCompetitorId = site.TrailPriceCompetitorId,
-                CompetitorPriceOffset = site.CompetitorPriceOffset
+                TrialPriceOffset = site.TrialPriceOffset
             };
 
             return siteVm;

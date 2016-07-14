@@ -60,6 +60,8 @@ namespace JsPlc.Ssc.PetrolPricing.Models.ViewModels
 
         public double CompetitorPriceOffset { get; set; }
 
+        public double TrialPriceOffset { get; set; }        
+
         public bool IsBasedOnCompetitor { get; set; }
 	}
 }

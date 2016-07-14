@@ -86,12 +86,14 @@
                     </div>
 
                     <div class="form-group">
-                        @Html.LabelFor(model => model.CompetitorPriceOffset, htmlAttributes: new { @class = "control-label col-md-2"})
+                        @Html.LabelFor(model => model.TrialPriceOffset, htmlAttributes: new { @class = "control-label col-md-2" })
                         <div class="col-md-10">
-                            @Html.EditorFor(model => model.CompetitorPriceOffset, new { htmlAttributes = new { @class = "form-control", @maxlength = "8", onkeydown = "return ValidateNumber(event);" } })
-                            @Html.ValidationMessageFor(model => model.CompetitorPriceOffset, "", new { @class="text-danger"})
+                            @Html.EditorFor(model => model.TrialPriceOffset, new { htmlAttributes = new { @class = "form-control", @maxlength = "8", onkeydown = "return ValidateNumber(event);" } })
+                            @Html.ValidationMessageFor(model => model.TrialPriceOffset, "", new { @class = "text-danger" })
                         </div>
                     </div>
+
+                 
 
                 </div>
                 <div class="col-md-6">

@@ -74,9 +74,14 @@ namespace JsPlc.Ssc.PetrolPricing.Models
 
         public List<string> AllBrands { get; set; }
 
-        [Display(Name = "Trial price (+/-)")]
+        [Display(Name = "Competitor Trial price (+/-)")]
         [Range(-4000, 4000)]
         public double CompetitorPriceOffset { get; set; }
+
+         [Display(Name = "Trial price (+/-)")]
+        [Range(-4000, 4000)]
+        public double TrialPriceOffset { get; set; }
+        
 
         public SiteViewModel()
         {
