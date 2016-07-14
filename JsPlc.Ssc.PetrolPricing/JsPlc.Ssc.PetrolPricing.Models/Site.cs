@@ -15,7 +15,7 @@ namespace JsPlc.Ssc.PetrolPricing.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
-        [Display(Name="Cat no")]
+        [Display(Name = "Cat no")]
         public int? CatNo { get; set; } // Catalist no.
 
         public string Brand { get; set; }
@@ -26,7 +26,7 @@ namespace JsPlc.Ssc.PetrolPricing.Models
         public string Address { get; set; }
 
         public string Suburb { get; set; }
-        
+
         public string Town { get; set; }
 
         [Display(Name = "Post code")]
@@ -40,15 +40,15 @@ namespace JsPlc.Ssc.PetrolPricing.Models
         public int? StoreNo { get; set; }
 
         [Display(Name = "Pfs no")]
-		[Range(1, int.MaxValue )]
+        [Range(1, int.MaxValue)]
         public int? PfsNo { get; set; }
 
         [Display(Name = "Is JS site")]
         public bool IsSainsburysSite { get; set; }
 
         [Display(Name = "Is active")]
-        public bool IsActive { get; set; } 
-        
+        public bool IsActive { get; set; }
+
         public virtual ICollection<SiteEmail> Emails { get; set; }
 
         public virtual ICollection<SitePrice> Prices { get; set; }
@@ -57,9 +57,7 @@ namespace JsPlc.Ssc.PetrolPricing.Models
 
         public int? TrailPriceCompetitorId { get; set; }
 
-        public double TrialPriceOffset { get; set; }
-
-      
+        public double CompetitorPriceOffset { get; set; }
     }
 
     public class SiteEmail

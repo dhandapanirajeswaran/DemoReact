@@ -63,11 +63,7 @@ namespace JsPlc.Ssc.PetrolPricing.Models.Common
                 SiteName = site.SiteName,
                 StoreNo = site.StoreNo,
                 Suburb = site.Suburb,
-                Town = site.Town,
-                TrailPriceCompetitorId=site.TrailPriceCompetitorId,
-                TrialPriceOffset=site.TrialPriceOffset
-             
-
+                Town = site.Town
             }));
             return sitesVm;
         }
@@ -83,7 +79,7 @@ namespace JsPlc.Ssc.PetrolPricing.Models.Common
                 Company = site.Company,
                 Emails = site.Emails == null ? new List<SiteEmailViewModel>() : site.Emails.ToList().ToSiteEmailViewModelList(),
                 Competitors = site.Competitors == null ? new List<SiteViewModel>() : site.Competitors.Select(x => x.Competitor).ToList().ToSiteViewModelList(),
-                ExcludeCompetitors = site.Competitors == null ? new List<int>() :   (from competitor in site.Competitors where competitor.IsExcluded==1 select competitor).Select(x => x.Competitor.Id).ToList(),
+                ExcludeCompetitors = site.Competitors == null ? new List<int>() : (from competitor in site.Competitors where competitor.IsExcluded == 1 select competitor).Select(x => x.Competitor.Id).ToList(),
                 IsActive = site.IsActive,
                 IsSainsburysSite = site.IsSainsburysSite,
                 Ownership = site.Ownership,
@@ -94,7 +90,7 @@ namespace JsPlc.Ssc.PetrolPricing.Models.Common
                 Suburb = site.Suburb,
                 Town = site.Town,
                 TrailPriceCompetitorId = site.TrailPriceCompetitorId,
-                TrialPriceOffset = site.TrialPriceOffset
+                CompetitorPriceOffset = site.CompetitorPriceOffset
             };
 
             return siteVm;
@@ -120,7 +116,7 @@ namespace JsPlc.Ssc.PetrolPricing.Models.Common
                 Suburb = site.Suburb,
                 Town = site.Town,
                 TrailPriceCompetitorId = site.TrailPriceCompetitorId,
-                TrialPriceOffset = site.TrialPriceOffset
+                CompetitorPriceOffset = site.CompetitorPriceOffset
             };
 
             return siteVm;

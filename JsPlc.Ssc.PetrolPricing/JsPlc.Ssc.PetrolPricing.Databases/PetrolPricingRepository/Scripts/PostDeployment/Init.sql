@@ -59,10 +59,4 @@ BEGIN
  ALTER TABLE [dbo].[SiteToCompetitor] ADD [IsExcluded] int NOT NULL DEFAULT(0);
 END
 
-IF EXISTS (SELECT * FROM sys.columns WHERE Name = N'CompetitorPriceOffset' AND Object_ID = Object_ID(N'Site'))
-BEGIN
-  EXEC sp_rename '[PetrolPricingRepository].[dbo].[Site].CompetitorPriceOffset', 'TrialPriceOffset', 'COLUMN'; 
-END
-
-
 END

@@ -24,7 +24,7 @@ namespace JsPlc.Ssc.PetrolPricing.Models
 
         public string Address { get; set; }
         public string Suburb { get; set; }
-        
+
         [Required]
         public string Town { get; set; }
 
@@ -35,18 +35,18 @@ namespace JsPlc.Ssc.PetrolPricing.Models
 
         [Required]
         [Display(Name = "Store no")]
-		[Range(1, int.MaxValue)]
+        [Range(1, int.MaxValue)]
         public int? StoreNo { get; set; }
 
         [Required]
         [Display(Name = "Pfs no")]
-		[Range(1, int.MaxValue)]
+        [Range(1, int.MaxValue)]
         public int? PfsNo { get; set; }
 
         [DefaultValue(true)]
         [Display(Name = "Is JS site")]
         public bool IsSainsburysSite { get; set; } // defaults to false
-        
+
         [Display(Name = "Is active")]
         public bool IsActive { get; set; } // defaults to false
 
@@ -60,7 +60,7 @@ namespace JsPlc.Ssc.PetrolPricing.Models
 
 
         [Display(Name = "Exclude Competitors")]
-        [DefaultValue(null)]    
+        [DefaultValue(null)]
         public List<int> ExcludeCompetitors { get; set; }
 
         public List<int> ExcludeCompetitorsOrg { get; set; }
@@ -74,14 +74,9 @@ namespace JsPlc.Ssc.PetrolPricing.Models
 
         public List<string> AllBrands { get; set; }
 
-        [Display(Name = "Competitor Trial price (+/-)")]
+        [Display(Name = "Trial price (+/-)")]
         [Range(-4000, 4000)]
         public double CompetitorPriceOffset { get; set; }
-
-         [Display(Name = "Trial price (+/-)")]
-        [Range(-4000, 4000)]
-        public double TrialPriceOffset { get; set; }
-        
 
         public SiteViewModel()
         {

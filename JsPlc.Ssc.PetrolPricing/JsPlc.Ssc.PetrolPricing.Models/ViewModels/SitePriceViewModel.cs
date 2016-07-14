@@ -56,12 +56,10 @@ namespace JsPlc.Ssc.PetrolPricing.Models.ViewModels
 
         public bool IsTrailPrice { get; set; }
 
-		public int? Difference { get; set; }
+        public int? Difference { get; set; }
 
         public double CompetitorPriceOffset { get; set; }
 
-        public double TrialPriceOffset { get; set; }        
-
         public bool IsBasedOnCompetitor { get; set; }
-	}
+    }
 }
