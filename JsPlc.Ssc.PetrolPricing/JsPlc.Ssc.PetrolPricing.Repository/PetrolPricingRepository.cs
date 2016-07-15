@@ -529,7 +529,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             int pageNo = 1, int pageSize = Constants.PricePageSize)
         {
 
-            Site site = GetSite(siteId);
+          //  Site site = GetSite(siteId);
             try
             {
                 // TODO wireup params from sproc to a new DTO
@@ -619,10 +619,10 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                                     FuelTypeId = (int)pgRow["FuelTypeId"],
 
                                     // Today's prices (whatever was calculated yesterday OR last)
-                                    TodayPrice = TodayPrice + loopSiteId==site.TrailPriceCompetitorId? (int)site.CompetitorPriceOffsetNew :0,
+                                    TodayPrice = TodayPrice,// + loopSiteId==site.TrailPriceCompetitorId? (int)site.CompetitorPriceOffsetNew :0,
 
                                     // Today's prices (whatever was calculated yesterday OR last)
-                                    YestPrice = YestPrice + loopSiteId == site.TrailPriceCompetitorId ? (int)site.CompetitorPriceOffsetNew : 0,
+                                    YestPrice = YestPrice,// + loopSiteId == site.TrailPriceCompetitorId ? (int)site.CompetitorPriceOffsetNew : 0,
 
                                     //Difference between yesterday and today
                                     Difference = TodayPrice.HasValue && YestPrice.HasValue ? TodayPrice - YestPrice : null
