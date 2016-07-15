@@ -273,11 +273,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         public IEnumerable<SitePriceViewModel> GetCompetitorsWithPrices(DateTime forDate, int siteId = 0, int pageNo = 1,
             int pageSize = Constants.PricePageSize)
         {
-            Task<IEnumerable<SitePriceViewModel>> task = Task<IEnumerable<SitePriceViewModel>>.Factory.StartNew(() =>
-            {
-                return CallCompetitorsWithPriceSproc(forDate, siteId, pageNo, pageSize);
-            });
-            return task.Result;
+            return CallCompetitorsWithPriceSproc(forDate, siteId, pageNo, pageSize);
         }
 
         public SitePriceViewModel GetASiteWithPrices(int siteId, DateTime forDate, string storeName)
