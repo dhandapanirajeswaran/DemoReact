@@ -530,7 +530,6 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         {
 
           
-            Site site = GetSites().Where(x => x.Id == siteId).FirstOrDefault();
            
             
             try
@@ -586,6 +585,9 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                         var dbList = new List<SitePriceViewModel>();
 
                         var listOfbrands = GetExcludeBrands();
+
+                        Site site = GetSites().Where(x => x.Id == siteId).FirstOrDefault();
+           
                         foreach (DataRow pgRow in pgTable.Rows)
                         {
                             var result = listOfbrands.Contains((string)pgRow["Brand"]);
