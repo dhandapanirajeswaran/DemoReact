@@ -529,14 +529,10 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             int pageNo = 1, int pageSize = Constants.PricePageSize)
         {
 
-            try
-            {
-                Site site = GetSite(siteId);
-            }
-            catch(Exception ex)
-            {
-                throw ex;
-            }
+          
+            Site site = GetSites().Where(x => x.Id == siteId).FirstOrDefault();
+           
+            
             try
             {
                 // TODO wireup params from sproc to a new DTO
