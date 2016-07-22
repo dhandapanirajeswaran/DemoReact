@@ -45,6 +45,16 @@ namespace JsPlc.Ssc.PetrolPricing.Core
         public const string CALLOW = "CALLOW";
         public const string BWOC = "BWOC";
         public const string BATA = "BATA";
+        public const string TESCOEXPRESS = "TESCO EXPRESS";
+        public const string TESCOEXTRA = "TESCO EXTRA";
+        public const string TESCO = "TESCO";
+        public const string MORRISONS = "MORRISONS";
+        public const string ASDA = "ASDA";
+        public const string UK = "UK";
+        public const string SHELL = "SHELL";
+        public const string ESSO = "ESSO";
+        public const string TOTAL = "TOTAL";
+        public const string BP = "BP";
 
       
 	}

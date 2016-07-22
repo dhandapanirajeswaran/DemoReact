@@ -7,6 +7,7 @@ using System.Net.Mail;
 using System.Threading;
 using JsPlc.Ssc.PetrolPricing.Models.Dtos;
 using JsPlc.Ssc.PetrolPricing.Models.ViewModels;
+using System.Globalization;
 
 namespace JsPlc.Ssc.PetrolPricing.Models.Common
 {
@@ -391,56 +392,62 @@ namespace JsPlc.Ssc.PetrolPricing.Models.Common
             this NationalAverageReportContainerViewModel reportContainer, string tableName = "National Average")
         {
             var dt = new DataTable(tableName);
-            dt.Columns.Add("FuelType");
-
+            dt.Columns.Add("   -   ");
+            dt.Columns.Add("   -        ");
+            foreach (var brand in reportContainer.NationalAverageReport.Fuels.First().Brands)
+            {
+                dt.Columns.Add(brand.BrandName);
+                dt.Columns.Add(brand.BrandName+" ");
+            }
+            DataRow dr = dt.NewRow();
+            dr[0]="Date";
+            dr[1]="Day";
             if (!reportContainer.NationalAverageReport.Fuels.First().Brands.Any())
             {
                 dt.Columns.Add("Status");
             }
 
+
+            int i = 2;
             // Setup Table Columns - Fuel Type Brand1   Brand2   Brand3...
             foreach (var brand in reportContainer.NationalAverageReport.Fuels.First().Brands)
             {
-                dt.Columns.Add(brand.BrandName);
+               dr[i]= brand.BrandName.Replace("SAINSBURYS","JS") + " D";
+               dr[i + 1] = brand.BrandName.Replace("SAINSBURYS", "JS") + " U";
+               i = i + 2;
             }
+            dt.Rows.Add(dr);
 
-            // Data Rows
+            dr = dt.NewRow();
+            dr[0] = reportContainer.ForDate.Value.ToString("dd-MMM");
+            dr[1] = reportContainer.ForDate.Value.DayOfWeek;
+            i = 2;
             foreach (var fuelType in reportContainer.NationalAverageReport.Fuels)
             {
-                //average fuel price row
-                DataRow dr = dt.NewRow();
-                dr[0] = fuelType.FuelName;
-                var i = 1;
-
-                if (!fuelType.Brands.Any())
-                {
-                    dr[1] = "There is no data available";
-                }
                 foreach (var brand in fuelType.Brands)
                 {
                     dr[i] = (brand.Average / 10.0).ToString("###0.0");
-                    i += 1;
+                    i += 2;
                 }
-                dt.Rows.Add(dr);
+                i = 3;
+            }
+            dt.Rows.Add(dr);
 
-                //price difference row
-                dr = dt.NewRow();
-                dr[0] = "Difference";
-
-                i = 1;
-
-                if (!fuelType.Brands.Any())
-                {
-                    dr[1] = "There is no data available";
-                }
+            dr = dt.NewRow();
+            i = 4;
+            foreach (var fuelType in reportContainer.NationalAverageReport.Fuels)
+            {
                 foreach (var brand in fuelType.Brands)
                 {
+                    if (brand.BrandName == "SAINSBURYS") continue;
                     int diff = brand.Average > 0 ? (brand.Average - fuelType.SainsburysPrice) : 0;
                     dr[i] = (diff / 10.0).ToString("###0.0");
-                    i += 1;
+                    i += 2;
                 }
-                dt.Rows.Add(dr);
+                i = 5;
             }
+
+            dt.Rows.Add(dr);
             return dt;
         }
 

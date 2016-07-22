@@ -454,9 +454,12 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 
 			using (var wb = new XLWorkbook())
 			{
+
 				foreach (var dt in tables)
 				{
-					wb.Worksheets.Add(dt);
+					var ws=wb.Worksheets.Add(dt);
+                    if (fileName == "NationalAverageReport2") ws.Tables.FirstOrDefault().ShowAutoFilter = false;
+                 
 				}
 				wb.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
 				wb.Style.Font.Bold = true;
