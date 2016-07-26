@@ -21,3 +21,14 @@ GO
 CREATE NONCLUSTERED INDEX [IX_CompetitorId]
     ON [dbo].[SiteToCompetitor]([CompetitorId] ASC);
 
+GO
+CREATE NONCLUSTERED INDEX [IX_SiteId_IsExcluded_CompetitorId_Rank_DriveTime_Id] ON [dbo].[SiteToCompetitor]
+(
+	[SiteId] ASC,
+	[IsExcluded] ASC,
+	[CompetitorId] ASC,
+	[Rank] ASC,
+	[DriveTime] ASC,
+	[Id] ASC
+)
+INCLUDE ( 	[Distance]) WITH (SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF) ON [PRIMARY]

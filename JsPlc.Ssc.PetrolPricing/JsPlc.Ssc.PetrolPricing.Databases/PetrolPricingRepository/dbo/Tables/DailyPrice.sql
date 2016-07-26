@@ -21,3 +21,11 @@ GO
 CREATE NONCLUSTERED INDEX [IX_FuelTypeId]
     ON [dbo].[DailyPrice]([FuelTypeId] ASC);
 
+GO
+CREATE NONCLUSTERED INDEX [IX_CatNo_FuleTypeId_DailyUploadId] ON [dbo].[DailyPrice]
+(
+	[CatNo] ASC,
+	[FuelTypeId] ASC,
+	[DailyUploadId] ASC
+)
+INCLUDE ( 	[ModalPrice]) WITH (SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF) ON [PRIMARY]
