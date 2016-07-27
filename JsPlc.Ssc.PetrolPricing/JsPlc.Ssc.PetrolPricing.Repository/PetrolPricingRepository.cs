@@ -617,15 +617,24 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                             {
                                 var TodayPrice = pgRow["ModalPrice"].ToString().ToNullable<int>();
                                 var YestPrice = pgRow["ModalPriceYest"].ToString().ToNullable<int>();
+                                int todayp = TodayPrice.HasValue ? TodayPrice.Value : 0;
+                                todayp += loopSiteId == site.TrailPriceCompetitorId ? (int)site.CompetitorPriceOffsetNew : 0;
+
+                                int yesterdayp = YestPrice.HasValue ? YestPrice.Value : 0;
+                                yesterdayp += loopSiteId == site.TrailPriceCompetitorId ? (int)site.CompetitorPriceOffsetNew : 0;
+
+
                                 sitePriceRow.FuelPrices.Add(new FuelPriceViewModel
                                 {
                                     FuelTypeId = (int)pgRow["FuelTypeId"],
 
-                                    // Today's prices (whatever was calculated yesterday OR last)
-                                    TodayPrice = TodayPrice+ loopSiteId==site.TrailPriceCompetitorId? (int)site.CompetitorPriceOffsetNew :0,
+
 
                                     // Today's prices (whatever was calculated yesterday OR last)
-                                    YestPrice = YestPrice+ loopSiteId == site.TrailPriceCompetitorId ? (int)site.CompetitorPriceOffsetNew : 0,
+                                    TodayPrice = todayp,
+
+                                    // Today's prices (whatever was calculated yesterday OR last)
+                                    YestPrice = yesterdayp,
 
                                     //Difference between yesterday and today
                                     Difference = TodayPrice.HasValue && YestPrice.HasValue ? TodayPrice - YestPrice : null
