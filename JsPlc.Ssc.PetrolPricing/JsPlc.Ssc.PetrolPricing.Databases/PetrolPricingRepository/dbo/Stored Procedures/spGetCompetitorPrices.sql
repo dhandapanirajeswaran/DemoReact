@@ -47,8 +47,17 @@ else set @yestPriceDate = @phhYestDate
 
 --Select @todayPriceDate, @yestPriceDate
 
-;With
-competitors AS -- competitor information with alongside respective JsSiteId (expand SiteToComp with CompInfo)
+;With sites as
+(
+	Select Id
+	FROM Site s
+	Where (@siteId = 0 OR s.Id = @siteId)
+			AND s.IsSainsburysSite = 1 AND s.IsActive = 1 
+	Order By Id
+	Offset @skipRecs ROWS
+	Fetch Next @takeRecs ROWS ONLY
+) -- select * from sites
+,competitors AS -- competitor information with alongside respective JsSiteId (expand SiteToComp with CompInfo)
 (
 	Select 
 		sc.CompetitorId, sc.SiteId as JsSiteId, 
@@ -60,10 +69,16 @@ competitors AS -- competitor information with alongside respective JsSiteId (exp
 	FROM
 	SiteToCompetitor sc
 		inner join SITE compInf --
-			on sc.CompetitorId = compInf.Id   and sc.SiteId=@siteId
+			on sc.CompetitorId = compInf.Id 
 	WHERE compInf.IsSainsburysSite = 0 AND compInf.IsActive = 1 and sc.IsExcluded = 0
 ) -- select * from competitors
-
+,compForSites as -- limit competitors to only selected sites
+(
+	Select * 
+		from competitors c
+			inner join sites s 
+			On c.JsSiteId = s.Id
+) --select * from compForSites
 -- IMPORTANT BELOW CTE could result in nulls for FuelInfo if DP table is empty (but each comp is still there)
 ,compFuels as -- Note: if no dailyPrices, we cannot say what fuels each comp supports (no other source for such info)
 (
@@ -71,7 +86,7 @@ competitors AS -- competitor information with alongside respective JsSiteId (exp
 		c.CompetitorId,
 		dp.FuelTypeId, ft.FuelTypeName -- might be null
    from 
-		competitors c 
+		compForSites c 
 		Left Join DailyPrice dp
 			On c.CatNo = dp.CatNo 
 		Left join FuelType ft
@@ -85,7 +100,7 @@ competitors AS -- competitor information with alongside respective JsSiteId (exp
 
 		cf.FuelTypeId, cf.FuelTypeName -- might be null
 	From 
-		competitors comp
+		compForSites comp
 			Inner Join compFuels cf -- since it could be null result(due to blank DP), but we still wanna show competitors
 				On comp.CompetitorId = cf.CompetitorId
 ) -- select * from compWithFuels
@@ -156,3 +171,4 @@ competitors AS -- competitor information with alongside respective JsSiteId (exp
 Select *
 from CompetitorsPrices
 Order By JsSiteId, SiteId, Rank, DriveTime
+
