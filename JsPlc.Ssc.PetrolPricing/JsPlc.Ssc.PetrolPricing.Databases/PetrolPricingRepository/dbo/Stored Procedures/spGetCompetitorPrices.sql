@@ -116,10 +116,10 @@ else set @yestPriceDate = @phhYestDate
 
 		ft.FuelTypeName
 	from 
-		DailyPrice dp, FileUpload fu, FuelType ft
+		DailyPrice dp, FileUpload fu, FuelType ft,compWithFuels cw
 	Where 
 		dp.DailyUploadId = fu.Id
-		AND dp.FuelTypeId = ft.Id
+		AND dp.FuelTypeId = ft.Id and dp.CatNo=cw.CatNo 
 ) -- select * from dailyPriceWithUploadDates
 ,dailyPricesComp as 
 (
