@@ -830,7 +830,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                 task.Wait();
                 int ncount = dbList1.Distinct().ToList().Count;
                 
-             return dbList1;
+          //   return dbList1;
 
 
                 var dbList = new List<SitePriceViewModel>();     
