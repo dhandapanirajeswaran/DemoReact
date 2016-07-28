@@ -410,15 +410,16 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
             }
 
             siteViewModel.ExcludeBrandsOrg = _siteService.GetExcludeBrands().ToList();
-       
-
-            var list_intersect = siteViewModel.ExcludeBrands.Intersect(siteViewModel.ExcludeBrandsOrg).ToList();
-            foreach (string brandname in list_intersect)
+            if (siteViewModel.ExcludeBrands != null)
             {
-                siteViewModel.ExcludeBrands.Remove(brandname);
-                siteViewModel.ExcludeBrandsOrg.Remove(brandname);
+                var list_intersect = siteViewModel.ExcludeBrands.Intersect(siteViewModel.ExcludeBrandsOrg).ToList();
+                foreach (string brandname in list_intersect)
+                {
+                    siteViewModel.ExcludeBrands.Remove(brandname);
+                    siteViewModel.ExcludeBrandsOrg.Remove(brandname);
+                }
+
             }
-                      
             try
             {
                 
