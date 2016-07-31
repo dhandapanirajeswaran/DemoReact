@@ -558,11 +558,11 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                         //Getting List Of Compitetors
                         var listOfCompitetors = _context.SiteToCompetitors.ToList().FindAll(x => x.SiteId == siteId && x.IsExcluded == 0);
                         var Compitetorssites = _context.Sites.ToList();
-                        var siteCompitetorsDetails = from comp in listOfCompitetors
+                        var siteCompitetorsDetailstmp = from comp in listOfCompitetors
                                                      join csite in Compitetorssites on comp.CompetitorId equals csite.Id
                                                      select new { comp.CompetitorId, csite.Address, csite.Suburb, csite.Town, csite.IsSainsburysSite, csite.Company, csite.Ownership, csite.Brand, csite.SiteName, comp.DriveTime, comp.Distance, comp.Rank, csite.CatNo, csite.PfsNo, csite.IsActive, comp.SiteId };
-                        siteCompitetorsDetails = siteCompitetorsDetails.Distinct().Where(x => x.IsSainsburysSite == false && x.IsActive == true);
-                        int c1 = siteCompitetorsDetails.ToList().Count;
+                        var siteCompitetorsDetails = siteCompitetorsDetailstmp.Distinct().Where(x => x.IsSainsburysSite == false && x.IsActive == true);
+                       /* int c1 = siteCompitetorsDetails.ToList().Count;
                         var compFuelstmp = from comp in siteCompitetorsDetails
                                            join dp in _context.DailyPrices
                                            on comp.CatNo equals dp.CatNo
@@ -615,7 +615,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
                         compWithFuels = compWithFuels.Distinct().ToList();
 
-
+                        */
 
                         //Getting Prices for each competitor
                         var dailyPriceWithUploadDatestmp = from dp in _context.DailyPrices
@@ -639,15 +639,15 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                                                            };
 
                         var dailyPriceWithUploadDates = dailyPriceWithUploadDatestmp.Distinct().ToList();
-                        var dailyPricesComp = from cf in compWithFuels
+                       var dailyPricesComp = from cf in siteCompitetorsDetails
                                               from dudt in dailyPriceWithUploadDates
-                                              where cf.CatNo == dudt.CatNo && cf.FuelTypeId == dudt.FuelTypeId && (dudt.StatusId == 10 || dudt.StatusId == 11)
+                                              where cf.CatNo == dudt.CatNo &&  (dudt.StatusId == 10 || dudt.StatusId == 11)
                                               select new
                                               {
                                                   cf.CompetitorId,
                                                   cf.CatNo,
                                                   cf.SiteName,
-                                                  cf.FuelTypeId,
+                                                  dudt.FuelTypeId,
                                                   dudt.AllStarMerchantNo,
                                                   dudt.DailyUploadId,
                                                   dudt.DateOfPrice,
@@ -661,17 +661,17 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
                                               };
 
-                        dailyPricesComp = dailyPricesComp.Distinct();
+                      //  dailyPricesComp = dailyPricesComp.Distinct();
                         timePerParse.Stop();
                         int nSec = timePerParse.Elapsed.Seconds;
                         timePerParse.Start();
 
-                        int count1 = compFuels.ToList().Count;
-                        var compWithFuelsdup = compWithFuels.GroupBy(x => x.CompetitorId).Select(y => y.First()).OrderBy(x=>x.CompetitorId).ThenBy(x=>x.DriveTime);
-                        int count2 = compWithFuelsdup.ToList().Count;
+                        int count1 = siteCompitetorsDetails.ToList().Count;
+                       // var compWithFuelsdup = siteCompitetorsDetails.GroupBy(x => x.CompetitorId).Select(y => y.First()).OrderBy(x => x.CompetitorId).ThenBy(x => x.DriveTime);
+                       // int count2 = compWithFuelsdup.ToList().Count;
                       
                         //Constructing SitePriceViewModel
-                        Parallel.ForEach(compWithFuelsdup, item =>
+                        Parallel.ForEach(siteCompitetorsDetails, item =>
                         {
                             var isBrandFound = listOfbrands.Contains(item.Brand);
 
