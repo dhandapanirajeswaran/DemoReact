@@ -538,21 +538,12 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                 {
                     lock (locker)
                     {
-                        int lookBackDays = 25;
                         Site JsSite = GetSites().Where(x => x.Id == siteId).FirstOrDefault();
                         var listOfbrands = GetExcludeBrands();
 
-                        var phhToday = (from fu in _context.FileUploads
-                                        join dp in _context.DailyPrices on fu.Id equals dp.DailyUploadId
-                                        where (DbFunctions.DiffDays(fu.UploadDateTime, forDate) < lookBackDays)
-                                        select new { fu.UploadDateTime }).ToList().Distinct().OrderByDescending(x => x.UploadDateTime).Take(1).FirstOrDefault();
-                        DateTime todayPriceDate = phhToday != null ? phhToday.UploadDateTime : forDate.AddDays(-1);
+                        DateTime todayPriceDate = forDate;
 
-                        var phhYestDate = (from fu in _context.FileUploads
-                                           join dp in _context.DailyPrices on fu.Id equals dp.DailyUploadId
-                                           where (fu.UploadDateTime < todayPriceDate && DbFunctions.DiffDays(fu.UploadDateTime, forDate) < lookBackDays)
-                                           select new { fu.UploadDateTime }).ToList().Distinct().OrderByDescending(x => x.UploadDateTime).Take(1).FirstOrDefault();
-                        DateTime yestPriceDate = phhYestDate != null ? phhYestDate.UploadDateTime : forDate.AddDays(-2);
+                        DateTime yestPriceDate =  forDate.AddDays(-1);
 
 
                         //Getting List Of Compitetors

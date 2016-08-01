@@ -30,13 +30,7 @@ Select  DateDiff(day, @anotherDt, @thedate) -- (gives 2nd param - 1st param)
 Declare @lookBackDays int = 25
 
 Declare @todayPriceDate DateTime, @lastPriceDate DateTime = null
-Set @lastPriceDate = (Select Distinct Top 1 DateOfCalc
-						from SitePrice 
-						where DateDiff(day, DateOfCalc, @forDate) Between 0 and @lookBackDays -- go 25 days back at most for eff.
-						Order By DateOfCalc Desc)
-
-if (@lastPriceDate is null) Set @todayPriceDate = DateAdd(day, -1, @forDate)
-else set @todayPriceDate = @lastPriceDate
+set @todayPriceDate =@forDate
 --Select @todayPriceDate
 
 ;With sites as
