@@ -607,12 +607,12 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                         //Constructing SitePriceViewModel
                        foreach(var item in siteCompitetorsDetails)
                         {
-                            var isBrandFound = listOfbrands.Contains(item.Brand);
+                            var isBrandFound =  listOfbrands.Find(x=>x.ToUpper()== item.Brand.ToUpper());
 
-                            if (isBrandFound == true) return;
+                            if (isBrandFound != null) continue;
 
                             var foundItem = dbList.Find(x => x.SiteId == item.CompetitorId);
-                            if (foundItem != null) return;
+                            if (foundItem != null) continue;
                             var sitePriceRow = new SitePriceViewModel();
                             sitePriceRow.SiteId = item.CompetitorId; // CompetitorId
                             sitePriceRow.JsSiteId = siteId;
@@ -626,7 +626,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
 
 
-                          /*  var todaysPrices = todaysPricesMain.Where(x => x.CatNo == item.CatNo).ToList();
+                           var todaysPrices = todaysPricesMain.Where(x => x.CatNo == item.CatNo).ToList();
 
                             var yesterdaysPrices = yesterDayPricesMain.Where(x => x.CatNo == item.CatNo).ToList();
 
@@ -683,7 +683,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                                     fPrice.Difference = fPrice.TodayPrice > 0 && fPrice.YestPrice > 0 ? fPrice.TodayPrice - fPrice.YestPrice : null;
                                     sitePriceRow.FuelPrices.Add(fPrice);
                                 }
-                            }*/
+                            }
 
                             dbList.Add(sitePriceRow);
                         }
