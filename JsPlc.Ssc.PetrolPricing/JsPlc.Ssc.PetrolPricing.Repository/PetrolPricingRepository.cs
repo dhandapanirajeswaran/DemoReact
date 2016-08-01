@@ -626,7 +626,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
 
 
-                            var todaysPrices = todaysPricesMain.Where(x => x.CatNo == item.CatNo).ToList();
+                          /*  var todaysPrices = todaysPricesMain.Where(x => x.CatNo == item.CatNo).ToList();
 
                             var yesterdaysPrices = yesterDayPricesMain.Where(x => x.CatNo == item.CatNo).ToList();
 
@@ -683,7 +683,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                                     fPrice.Difference = fPrice.TodayPrice > 0 && fPrice.YestPrice > 0 ? fPrice.TodayPrice - fPrice.YestPrice : null;
                                     sitePriceRow.FuelPrices.Add(fPrice);
                                 }
-                            }
+                            }*/
 
                             dbList.Add(sitePriceRow);
                         }
