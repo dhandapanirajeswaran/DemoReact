@@ -2,6 +2,27 @@
 @{
 	ViewBag.Title = "Report - Competitors Price Range by company";
 }
+
+<style>
+    .actualdata {
+        height: 500px;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+     .alternativerow:nth-child(2n+1){
+    background:#F5F5F5;
+    
+}
+        .alternativerow
+        {
+          
+           
+    border-bottom:1px solid #b9b2b2
+        }
+    
+</style>
+
 <div class="row">
     <div class="col-md-6">
         <h1>@ViewBag.Title.</h1>
@@ -50,98 +71,110 @@
 {
     <!-- Report Data -->
 
-    <table class="table table-hover table-responsive table-striped" id="tblBrands">
-        <thead>
-            <tr>
-                <td></td>
-                <td colspan="2"><strong>Avg retails</strong></td>
-                <td colspan="2"><strong>Difference</strong></td>
-                <td colspan="2"><strong>Pricing range</strong></td>
-            </tr>
-            <tr>
-                <td><strong>@Model.Date.ToString("dd-MMM-yyyy")</strong></td>
-                @for (int i = 0; i < 3; i++)
-                {
-                    foreach (var fuelType in Model.FuelTypes)
-                    {
-                <td><strong>@fuelType.FuelTypeName</strong></td>
-                    }
-                }
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var company in Model.ReportCompanies)
+    <div class="divtable" >
+       
+            <div class="row">
+                <div class="col-md-2" style="width:280px"></div>
+                <div class="col-md-2" style="width:280px"><strong>Avg retails</strong></div>
+                <div class="col-md-2" style="width:280px">
+                    <strong>Difference</strong>
+                </div>
+                <div class="col-md-2" style="width:280px">
+                    <strong>Pricing range</strong>
+                </div>
+            </div>
+        <hr/>
+        <div class="row">
+            <div class="col-md-1" style="width:280px"><strong>@Model.Date.ToString("dd-MMM-yyyy")</strong></div>
+            @for (int i = 0; i < 3; i++)
             {
-                if (company.Brands.Any() == false)
+                foreach (var fuelType in Model.FuelTypes)
                 {
-                    continue;
-                }
-            <tr>
-                <td colspan="7">
-                    <strong>@company.CompanyName</strong>
-                </td>
-            </tr>
-                foreach (var brand in company.Brands)
-                {
-            <tr class="small">
-                <td>@(brand.BrandName) (£)</td>
-                @* Average *@
-                @foreach (var fuelType in Model.FuelTypes)
-                        {
-                            var fuelBrand = brand.Fuels.FirstOrDefault(f => f.FuelTypeId == fuelType.Id);
-                            if (fuelBrand == null)
-                            {
-                        <td>n/a</td>
-                            }
-                            else
-                            {
-                        <td>@((fuelBrand.Average / 10.0).ToString("###0.0"))</td>
-                            }
-                        }
-                @* Difference *@
-                @foreach (var fuelType in Model.FuelTypes)
-                        {
-                            var fuelBrand = brand.Fuels.FirstOrDefault(f => f.FuelTypeId == fuelType.Id);
-
-                            if (fuelBrand == null || Model.SainsburysPrices.ContainsKey(fuelType.Id) == false)
-                            {
-                        <td>n/a</td>
-                            }
-                            else
-                            {
-                                int diff = fuelBrand.Average > 0 ? (fuelBrand.Average - Model.SainsburysPrices[fuelType.Id]) : 0;
-                                string color = "";
-                                if (diff < 0)
-                                {
-                                    color = "red";
-                                }
-                                else if (diff > 0)
-                                {
-                                    color = "green";
-                                }
-                        <td style="color: @color">@((diff / 10.0).ToString("###0.0"))</td>
-                            }
-                        }
-
-                @* Range *@
-                @foreach (var fuelType in Model.FuelTypes)
-                        {
-                            var fuelBrand = brand.Fuels.FirstOrDefault(f => f.FuelTypeId == fuelType.Id);
-                            if (fuelBrand == null)
-                            {
-                        <td>n/a</td>
-                            }
-                            else
-                            {
-                        <td>@((fuelBrand.Min / 10.0).ToString("###0.0")) - @((fuelBrand.Max / 10.0).ToString("###0.0"))</td>
-                            }
-                        }
-            </tr>
+                    <div class="col-md-1" style="width:140px"><strong>@fuelType.FuelTypeName</strong></div>
                 }
             }
+        </div>
+        <hr />
+        <div class="actualdata">
+                     @foreach (var company in Model.ReportCompanies)
+                     {
+                         if (company.Brands.Any() == false)
+                         {
+                             continue;
+                         }
+                        <div class="alternativerow">
+                            <div class="row" style="width:1120px">
+                                <div class="col-md-5">
+                                    <strong>@company.CompanyName</strong>
+                                </div>
+                            </div>
+                            @foreach (var brand in company.Brands)
+                            {
+                                <div class="row">
+                                    <div class="col-md-1" style="width:280px">@(brand.BrandName) (£)</div>
+                                    @* Average *@
+                                    @foreach (var fuelType in Model.FuelTypes)
+                                    {
+                                        var fuelBrand = brand.Fuels.FirstOrDefault(f => f.FuelTypeId == fuelType.Id);
+                                        if (fuelBrand == null)
+                                        {
+                                            <div class="col-md-1" style="width:140px">n/a</div>
+                                        }
+                                        else
+                                        {
+                                            <div class="col-md-1" style="width:140px">@((fuelBrand.Average / 10.0).ToString("###0.0"))</div>
+                                        }
+                                    }
+                                    @* Difference *@
+                                    @foreach (var fuelType in Model.FuelTypes)
+                                    {
+                                        var fuelBrand = brand.Fuels.FirstOrDefault(f => f.FuelTypeId == fuelType.Id);
 
-        </tbody>
-    </table>
+                                        if (fuelBrand == null || Model.SainsburysPrices.ContainsKey(fuelType.Id) == false)
+                                        {
+                                            <div class="col-md-1" style="width:140px">n/a</div>
+                                        }
+                                        else
+                                        {
+                                            int diff = fuelBrand.Average > 0 ? (fuelBrand.Average - Model.SainsburysPrices[fuelType.Id]) : 0;
+                                            string color = "";
+                                            if (diff < 0)
+                                            {
+                                                color = "red";
+                                            }
+                                            else if (diff > 0)
+                                            {
+                                                color = "green";
+                                            }
+                                            <div class="col-md-1" style="color: @color;width:140px">@((diff / 10.0).ToString("###0.0"))</div>
+                                        }
+                                    }
+
+                                    @* Range *@
+                                    @foreach (var fuelType in Model.FuelTypes)
+                                    {
+                                        var fuelBrand = brand.Fuels.FirstOrDefault(f => f.FuelTypeId == fuelType.Id);
+                                        if (fuelBrand == null)
+                                        {
+                                            <div class="col-md-1" style="width:140px">n/a</div>
+                                        }
+                                        else
+                                        {
+                                            <div class="col-md-1" style="width:140px">@((fuelBrand.Min / 10.0).ToString("###0.0")) - @((fuelBrand.Max / 10.0).ToString("###0.0"))</div>
+                                        }
+                                    }
+                                </div>
+                            }
+
+            </div>
+
+
+
+         }
+        </div>
+
+    
+        </div>
 }
 
 @section scripts {

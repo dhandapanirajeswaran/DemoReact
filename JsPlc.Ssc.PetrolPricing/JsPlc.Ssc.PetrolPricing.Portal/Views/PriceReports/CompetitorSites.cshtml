@@ -5,6 +5,35 @@
 <h1>@ViewBag.Title.</h1>
 <hr />
 
+<style>
+  
+
+        .actualdata {
+    height: 500px;
+        overflow-y: auto;
+        overflow-x: hidden; 
+}
+
+        .col-md-1 
+        {
+            width:130px;
+        }
+
+        .alternativerow:nth-child(2n+1){
+    background:#F5F5F5;
+    
+}
+        .alternativerow
+        {
+            height:35px;
+           
+    border-bottom:1px solid #b9b2b2
+        }
+
+      
+
+     
+</style>
 @using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
@@ -18,57 +47,85 @@
             }
         </div>
     </div>
-    <hr />
+    
 }
 
 
-@if (Model!=null && Model.Report.BrandTimes.Any())
+@if (Model != null && Model.Report.BrandTimes.Any())
 {
-    <table class="table table-hover table-responsive table-striped ">
-        <thead>
-            <tr>
-                <th>
-                    Brand Name
-                </th>
-                <th>
-                    0 - 5
-                </th>
-                <th>
-                    5 - 10
-                </th>
-                <th>
-                    10 - 15
-                </th>
-                <th>
-                    15 - 20
-                </th>
-                <th>
-                    20 - 25
-                </th>
-                <th>
-                    25 - 30
-                </th>
-                <th>
-                    > 30
-                </th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model.Report.BrandTimes)
-            {
-                <tr>
-                    <td>@item.BrandName</td>
-                    <td>@item.Count0To5</td>
-                    <td>@item.Count5To10</td>
-                    <td>@item.Count10To15</td>
-                    <td>@item.Count15To20</td>
-                    <td>@item.Count20To25</td>
-                    <td>@item.Count25To30</td>
-                    <td>@item.CountMoreThan30</td>
-                </tr>
-            }
-        </tbody>
-    </table>
+    <hr style="border-width:3px;" />
+    <div class="row" style="font-weight: bold">
+        <div class="divheader">
+            <div class="col-md-1" style="width:200px;">
+                Brand Name
+            </div>
+            <div class="col-md-1">
+                0 - 5
+            </div>
+            <div class="col-md-1">
+                5 - 10
+            </div>
+            <div class="col-md-1">
+                10 - 15
+            </div>
+            <div class="col-md-1">
+                15 - 20
+            </div>
+            <div class="col-md-1">
+                20 - 25
+            </div>
+            <div class="col-md-1">
+                25 - 30
+            </div>
+            <div class="col-md-1">
+                > 30
+            </div>
+        </div>
+    </div>
+    <hr style="border-width:3px; margin: 0.5px;" />
+    <div class="actualdata">
+        
+    @foreach (var item in Model.Report.BrandTimes)
+    { 
+          <div class="alternativerow">
+
+          
+        <div class="row">
+                <div class="col-md-1" style="width:200px;">
+                @item.BrandName
+            </div>
+            <div class="col-md-1">
+                @item.Count0To5
+            </div>
+            <div class="col-md-1">
+                @item.Count5To10
+            </div>
+            <div class="col-md-1">
+                @item.Count10To15
+            </div>
+            <div class="col-md-1">
+                @item.Count15To20
+            </div>
+            <div class="col-md-1">
+                @item.Count20To25
+            </div>
+            <div class="col-md-1">
+                @item.Count25To30
+            </div>
+            <div class="col-md-1">
+                @item.CountMoreThan30
+            </div>
+            
+        </div>           
+
+           
+        </div>
+  
+
+    }
+
+
+    </div>
 }
 else if (Model != null && Model.SiteId > 0)
 {

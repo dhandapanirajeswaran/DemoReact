@@ -16,6 +16,32 @@
     var requestedToDate = Model != null ? @Model.ToDate.Value.Date.ToString("dd-MMM-yyyy"): null;
 }
 
+<style>
+      .table  {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+}
+
+.table {
+    max-height: 500px;
+    overflow-y: auto;
+    display: block;   
+    width: 100%;
+    table-layout: fixed;
+}
+
+.table  tr {
+    display: table;
+    table-layout: fixed;
+    width: 100%;
+}
+
+.table t td {
+    height: 47px; 
+}
+</style>
+
 <div class="row">
     <div class="col-md-6">
         <h1>@ViewBag.Title</h1>
