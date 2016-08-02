@@ -28,22 +28,12 @@ Declare @lookBackDays int = 25
 Declare @phhToday DateTime = null, @phhYestDate DateTime = null
 Declare @todayPriceDate DateTime, @yestPriceDate DateTime 
 
-Set @phhToday = (Select Distinct Top 1 UploadDateTime
-						from DailyPrice dp, FileUpload fu where dp.DailyUploadId = fu.ID
-							AND DateDiff(day, UploadDateTime, @forDate) Between 0 and @lookBackDays -- go 25 days back at most for eff.
-						Order By UploadDateTime Desc)
+Set @phhToday = @forDate
+set @todayPriceDate = @phhToday
 
-if (@phhToday is null) Set @todayPriceDate = DateAdd(day, -1, @forDate) -- by default go back 1 days
-else set @todayPriceDate = @phhToday
+Set @phhYestDate = DateAdd(day, -1, @forDate) 
 
-Set @phhYestDate = (Select Distinct Top 1 UploadDateTime
-						from DailyPrice dp, FileUpload fu where dp.DailyUploadId = fu.ID
-							AND UploadDateTime < @todayPriceDate -- look back from @phhtoday
-							AND  DateDiff(day, UploadDateTime, @forDate) Between 1 and @lookBackDays -- go 25 days back at most for eff.
-						Order By UploadDateTime Desc)
-
-if (@phhYestDate is null) Set @yestPriceDate = DateAdd(day, -2, @forDate) -- by default go back 2 days
-else set @yestPriceDate = @phhYestDate
+set @yestPriceDate = @phhYestDate
 
 --Select @todayPriceDate, @yestPriceDate
 
@@ -72,38 +62,21 @@ else set @yestPriceDate = @phhYestDate
 			on sc.CompetitorId = compInf.Id and sc.SiteId=@siteId
 	WHERE compInf.IsSainsburysSite = 0 AND compInf.IsActive = 1 and sc.IsExcluded = 0
 ) -- select * from competitors
-,compForSites as -- limit competitors to only selected sites
-(
-	Select * 
-		from competitors c
-			inner join sites s 
-			On c.JsSiteId = s.Id
-) --select * from compForSites
+ --select * from compForSites
 -- IMPORTANT BELOW CTE could result in nulls for FuelInfo if DP table is empty (but each comp is still there)
 ,compFuels as -- Note: if no dailyPrices, we cannot say what fuels each comp supports (no other source for such info)
 (
    Select Distinct 
-		c.CompetitorId,
+		c.*,
 		dp.FuelTypeId, ft.FuelTypeName -- might be null
    from 
-		compForSites c 
+		competitors c 
 		Left Join DailyPrice dp
 			On c.CatNo = dp.CatNo 
 		Left join FuelType ft
 			On dp.FuelTypeId = ft.Id
 ) -- select * from compFuels
-,compWithFuels as -- full comp and (possibly null) fuel info
-(
-	Select 
-		comp.CompetitorId, comp.JsSiteId, comp.CatNo, comp.SiteName, comp.Address, comp.Suburb, comp.Town,  
-		comp.IsSainsburysSite, comp.Brand, comp.Company, comp.Ownership, comp.DriveTime, comp.Distance, comp.Rank,
 
-		cf.FuelTypeId, cf.FuelTypeName -- might be null
-	From 
-		compForSites comp
-			Inner Join compFuels cf -- since it could be null result(due to blank DP), but we still wanna show competitors
-				On comp.CompetitorId = cf.CompetitorId
-) -- select * from compWithFuels
 
 -- ## DAILY PRICES from here
 ,dailyPriceWithUploadDates as -- Daily prices annotated with UploadDates (whole set could be null)
@@ -128,7 +101,7 @@ else set @yestPriceDate = @phhYestDate
 
 		dudt.* -- all price data for competitors (maybe null)
 	FROM 
-		compWithFuels cf
+		compFuels cf
 		Left Join dailyPriceWithUploadDates dudt -- might be a null set 
 			On cf.CatNo = dudt.CompCatNo And cf.FuelTypeId = dudt.FuelTypeId
 	Where 1=1
@@ -157,7 +130,7 @@ else set @yestPriceDate = @phhYestDate
 
 		yestp.DailyUploadId as DailyUploadIdYest, yestp.UploadDateTime UploadDateTimeYest, yestp.ModalPrice ModalPriceYest -- could be null
 				
-	From compWithFuels cs
+	From compFuels cs
 		Left Outer Join todaysPrices todp
 			On cs.CompetitorId = todp.CompetitorId
 			And todp.FuelTypeId = cs.FuelTypeId
