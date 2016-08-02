@@ -7,7 +7,9 @@
         autoClose: true,
         format: 'd-M-yyyy',
         todayBtn: "linked",
-        todayHighlight: true
+        todayHighlight: true,
+        orientation: 'auto top',
+        endDate: '1d'
     });
 
     $("#btnViewReport").click(function () {
