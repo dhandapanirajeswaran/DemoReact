@@ -609,22 +609,23 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                             // any other fields for UI extract here
 
                             sitePriceRow.FuelPrices = sitePriceRow.FuelPrices ?? new List<FuelPriceViewModel>();
+                            int nOffSet = loopSiteId == site.TrailPriceCompetitorId ? (int)site.CompetitorPriceOffsetNew : 0;
                             if (!Convert.IsDBNull(pgRow["FuelTypeId"]))
                             {
-                                var TodayPrice = pgRow["ModalPrice"].ToString().ToNullable<int>();
-                                var YestPrice = pgRow["ModalPriceYest"].ToString().ToNullable<int>();
+                                var todayPrice = pgRow["ModalPrice"].ToString().ToNullable<int>();
+                                var yestPrice = pgRow["ModalPriceYest"].ToString().ToNullable<int>();
                                 sitePriceRow.FuelPrices.Add(new FuelPriceViewModel
                                 {
                                     FuelTypeId = (int)pgRow["FuelTypeId"],
 
                                     // Today's prices (whatever was calculated yesterday OR last)
-                                    TodayPrice = TodayPrice + loopSiteId == site.TrailPriceCompetitorId ? (int)site.CompetitorPriceOffsetNew : 0,
+                                    TodayPrice =todayPrice.HasValue ? todayPrice.Value : 0 + nOffSet,
 
                                     // Today's prices (whatever was calculated yesterday OR last)
-                                    YestPrice = YestPrice + loopSiteId == site.TrailPriceCompetitorId ? (int)site.CompetitorPriceOffsetNew : 0,
+                                    YestPrice =  yestPrice.HasValue?  yestPrice.Value : 0 + nOffSet,
 
                                     //Difference between yesterday and today
-                                    Difference = TodayPrice.HasValue && YestPrice.HasValue ? TodayPrice - YestPrice : null
+                                    Difference = todayPrice.HasValue && yestPrice.HasValue ? todayPrice - yestPrice : null
                                 });
                             }
                         }

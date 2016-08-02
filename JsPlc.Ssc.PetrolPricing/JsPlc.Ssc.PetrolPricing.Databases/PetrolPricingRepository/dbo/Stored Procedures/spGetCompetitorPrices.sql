@@ -29,11 +29,8 @@ Declare @phhToday DateTime = null, @phhYestDate DateTime = null
 Declare @todayPriceDate DateTime, @yestPriceDate DateTime 
 
 Set @phhToday = @forDate
-set @todayPriceDate = @phhToday
 
-Set @phhYestDate = DateAdd(day, -1, @forDate) 
-
-set @yestPriceDate = @phhYestDate
+Set @phhYestDate = DateAdd(day, -1, @forDate)
 
 --Select @todayPriceDate, @yestPriceDate
 
