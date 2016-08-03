@@ -15,6 +15,7 @@ using System;
 using System.Linq;
 using System.Web.Mvc;
 
+
 namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 {
   
@@ -459,7 +460,16 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 				{
 					var ws=wb.Worksheets.Add(dt);
                     if (fileName == "NationalAverageReport2") ws.Tables.FirstOrDefault().ShowAutoFilter = false;
-                 
+                    if (fileName == "PricePointsReport")
+                    {
+                        var rangeAddress = ws.Tables.FirstOrDefault().RangeAddress;
+                        var cellrange = string.Format("{0}:{1}{2}", rangeAddress.FirstAddress, rangeAddress.LastAddress.ColumnLetter, rangeAddress.FirstAddress.ColumnNumber);
+
+                      
+                        ws.Range(cellrange).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Left;
+                       ws.Range(cellrange).Style.Alignment.Vertical = XLAlignmentVerticalValues.Center;
+                        ws.Range(cellrange).Style.Alignment.TextRotation = 90;
+                    }
 				}
 				wb.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
 				wb.Style.Font.Bold = true;

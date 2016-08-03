@@ -1621,6 +1621,7 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
                 var distinctCatNos = dailyPrices.Select(x => x.CatNo).Distinct().ToList();
                 var competitorSites = _context.Sites.Where(x => distinctCatNos.Contains(x.CatNo.Value) && !x.IsSainsburysSite).ToList();
                 var distinctBrands = competitorSites.Select(x => x.Brand).Distinct().OrderBy(x => x).ToList();
+                
 
                 #region original code
 
@@ -1652,7 +1653,7 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
                                     };
                                     reportRowItem.PricePointBrands.Add(b);
                                 }
-                                b.Count += competitorSites.Count(x => x.Brand == distinctBrand && x.CatNo == dailyPrice.CatNo);
+                                b.Count += competitorSites.Count(x => x.Brand == distinctBrand && x.CatNo == dailyPrice.CatNo);                               
                             }
                         }
                     }
@@ -1663,6 +1664,7 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
 
                 if (useRefactoredCode)
                 {
+                    distinctBrands.Insert(0, "Summary");
                     var priceRowIndexes = new Dictionary<int, int>();
                     var brandColumnIndexes = new Dictionary<string, int>();
                     var tableCells = new int?[distinctPrices.Count(), distinctBrands.Count()];
@@ -1693,9 +1695,20 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
                         var cell = tableCells[rowIndex, columnIndex];
 
                         if (cell.HasValue)
+                        {
                             tableCells[rowIndex, columnIndex]++;
+                            var columnIndex2 = brandColumnIndexes["Summary"];
+                            tableCells[rowIndex, columnIndex2] = tableCells[rowIndex, columnIndex2].HasValue ? tableCells[rowIndex, columnIndex2].Value + 1 : tableCells[rowIndex, columnIndex];
+        
+                        }
                         else
+                        {
                             tableCells[rowIndex, columnIndex] = 1;
+                            columnIndex = brandColumnIndexes["Summary"];
+                            tableCells[rowIndex, columnIndex] = tableCells[rowIndex, columnIndex].HasValue ? tableCells[rowIndex, columnIndex].Value + 1 : 1;
+                        }
+
+                        
                     }
 
                     // construct the view model
@@ -1709,6 +1722,7 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
                         result.PricePointReportRows.Add(reportRowItem);
 
                         columnCounter = 0;
+
                         foreach (var brand in distinctBrands)
                         {
                             var count = tableCells[rowCounter, columnCounter];
