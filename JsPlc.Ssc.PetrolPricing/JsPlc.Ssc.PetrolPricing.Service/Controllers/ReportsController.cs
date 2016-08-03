@@ -102,10 +102,10 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
         /// <param name="fuelTypeId"></param>
         /// <returns></returns>
         [HttpGet]
-        [Route("api/GetPriceMovement/{from}/{to}/{fuelTypeId}/{brandName}")]
-        public IHttpActionResult GetPriceMovement([FromUri]string brandName, [FromUri]DateTime from, [FromUri]DateTime to, [FromUri]int fuelTypeId)
+        [Route("api/GetPriceMovement/{from}/{to}/{fuelTypeId}/{brandName}/{siteName}")]
+        public IHttpActionResult GetPriceMovement([FromUri]string brandName, [FromUri]DateTime from, [FromUri]DateTime to, [FromUri]int fuelTypeId, [FromUri]string siteName)
         {
-            var result = _reportService.GetReportPriceMovement(brandName, from, to, fuelTypeId);
+            var result = _reportService.GetReportPriceMovement(brandName, from, to, fuelTypeId, siteName);
             return Ok(result);
         }
     }

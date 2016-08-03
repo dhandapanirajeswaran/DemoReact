@@ -68,9 +68,9 @@ namespace JsPlc.Ssc.PetrolPricing.Business
         /// <param name="to"></param>
         /// <param name="fuelTypeId"></param>
         /// <returns></returns>
-        public PriceMovementReportViewModel GetReportPriceMovement(string brandName, DateTime from, DateTime to, int fuelTypeId)
+        public PriceMovementReportViewModel GetReportPriceMovement(string brandName, DateTime from, DateTime to, int fuelTypeId,string siteName)
         {
-            var cacheKey = MakeCacheKey("[{0}], [{1}-{2}-{3}-{4}]", "PriceMovementReport", @from.ToString("R"), @to.ToString("R"), fuelTypeId, brandName);
+            var cacheKey = MakeCacheKey("[{0}], [{1}-{2}-{3}-{4}-{5}]", "PriceMovementReport", @from.ToString("R"), @to.ToString("R"), fuelTypeId, brandName, siteName);
             PriceMovementReportViewModel retval;
 
             var reportCached = PetrolPricingCache.CacheObj.Get(cacheKey);
@@ -79,7 +79,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
                 retval = reportCached as PriceMovementReportViewModel;
                 return retval;
             }
-            var report = _db.GetReportPriceMovement(brandName, from, to, fuelTypeId);
+            var report = _db.GetReportPriceMovement(brandName, from, to, fuelTypeId, siteName);
             var cacheItem = new CacheItem(cacheKey, report);
             PetrolPricingCache.CacheObj.Add(cacheItem, PetrolPricingCache.ReportsCacheExpirationPolicy(0.5));
             retval = report;

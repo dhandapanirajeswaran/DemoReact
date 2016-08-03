@@ -618,11 +618,11 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             return null;
         }
 
-        public PriceMovementReportViewModel GetPriceMovement(string brandName, DateTime fromDate, DateTime toDate, int fuelTypeId)
+        public PriceMovementReportViewModel GetPriceMovement(string brandName, DateTime fromDate, DateTime toDate, int fuelTypeId,string siteName)
         {
             try
             {
-                var url = string.Format("api/GetPriceMovement/{0}/{1}/{2}/{3}", fromDate.ToString("ddMMMyyyy"), toDate.ToString("ddMMMyyyy"), fuelTypeId, brandName);
+                var url = string.Format("api/GetPriceMovement/{0}/{1}/{2}/{3}/{4}", fromDate.ToString("ddMMMyyyy"), toDate.ToString("ddMMMyyyy"), fuelTypeId, brandName, siteName==null? "empty": siteName);
 
                 var response = _client.Value.GetAsync(url).Result;
              

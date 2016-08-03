@@ -214,7 +214,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 		/// <param name="toDt"></param>
 		/// <param name="fuelTypeId"></param>
 		/// <returns></returns>
-		PriceMovementReportViewModel GetReportPriceMovement(string brandName, DateTime fromDt, DateTime toDt, int fuelTypeId);
+		PriceMovementReportViewModel GetReportPriceMovement(string brandName, DateTime fromDt, DateTime toDt, int fuelTypeId,string siteName);
 
 		/// <summary>
 		/// Get Competitors Price Range Report by Companies

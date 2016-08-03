@@ -1945,7 +1945,7 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
             return result;
         }
 
-        public PriceMovementReportViewModel GetReportPriceMovement(string brandName, DateTime fromDt, DateTime toDt, int fuelTypeId)
+        public PriceMovementReportViewModel GetReportPriceMovement(string brandName, DateTime fromDt, DateTime toDt, int fuelTypeId,string siteName)
         {
             var retval = new PriceMovementReportViewModel();
             var dates = new List<DateTime>();
@@ -1960,6 +1960,7 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
                 : GetBrandWithDailyPricesAsPrices(brandName, fromDt, toDt).ToList();
 
             var sortedSitesWithPrices = from site in sitesWithPrices
+                                        where site.SiteName.ToUpper().Trim() == siteName.ToUpper().Trim() || siteName.Trim() == "empty"
                                         orderby site.SiteName
                                         select site;
 

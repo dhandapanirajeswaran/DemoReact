@@ -19,7 +19,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 
         CompetitorsPriceRangeByCompanyViewModel GetReportCompetitorsPriceRangeByCompany(DateTime when, string companyName, string brandName);
 
-        PriceMovementReportViewModel GetReportPriceMovement(string brandName, DateTime from, DateTime to, int fuelTypeId);
+        PriceMovementReportViewModel GetReportPriceMovement(string brandName, DateTime from, DateTime to, int fuelTypeId,string siteName);
 
         ComplianceReportViewModel GetReportCompliance(DateTime forDate);
     }

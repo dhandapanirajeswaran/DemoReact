@@ -191,7 +191,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 		}
 
 		[System.Web.Mvc.HttpGet]
-		public ActionResult PriceMovement([FromUri]DateTime? DateFrom, [FromUri]DateTime? DateTo, [FromUri]int FuelTypeId = 0, [FromUri]string BrandName = "")
+		public ActionResult PriceMovement([FromUri]DateTime? DateFrom, [FromUri]DateTime? DateTo, [FromUri]int FuelTypeId = 0, [FromUri]string BrandName = "", [FromUri]string SiteName = "")
 		{
             try
             {
@@ -212,6 +212,11 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
                 if (string.IsNullOrWhiteSpace(BrandName) == false)
                 {
                     model.Brand = BrandName;
+                }
+
+                if (string.IsNullOrWhiteSpace(SiteName) == false)
+                {
+                    model.SiteName = SiteName;
                 }
 
                 if (FuelTypeId > 0)
@@ -397,7 +402,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 				if (model.FuelTypes.ContainsKey(model.FuelTypeId))
 				{
 					model.FuelTypeName = model.FuelTypes[model.FuelTypeId];
-					model.PriceMovementReport = _serviceFacade.GetPriceMovement(model.Brand, model.FromDate.Value, model.ToDate.Value, model.FuelTypeId);
+                    model.PriceMovementReport = _serviceFacade.GetPriceMovement(model.Brand, model.FromDate.Value, model.ToDate.Value, model.FuelTypeId, model.SiteName);
 				}
 			}
 

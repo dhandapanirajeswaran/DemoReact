@@ -23,6 +23,8 @@ namespace JsPlc.Ssc.PetrolPricing.Models.ViewModels
 
         public string Brand { get; set; }
 
+        public string SiteName { get; set; }
+
         public Dictionary<int, string> FuelTypes { get; set; }
 
         public List<string> Brands { get; set; }

@@ -24,6 +24,7 @@
 
         var id = $('#FuelTypeId').val();
         var brandName = $('#Brand').val();
+        var siteName = $('#SiteName').val();
         var dt1 = forDp ? forDp.val() : $('#DateFrom').val();
         var dt2 = toDp ? toDp.val() : $('#DateTo').val();
         if (id == 0) {
@@ -32,7 +33,7 @@
             return false;
         }
         
-        window.location.href = rootFolder + '/PriceReports/PriceMovement?DateFrom=' + dt1 + "&DateTo=" + dt2 + "&FuelTypeId=" + id + "&BrandName=" + brandName;
+        window.location.href = rootFolder + '/PriceReports/PriceMovement?DateFrom=' + dt1 + "&DateTo=" + dt2 + "&FuelTypeId=" + id + "&BrandName=" + brandName + "&SiteName=" + siteName;
         return true;
     });
     $("#btnExportReport").click(function () {
