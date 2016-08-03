@@ -1960,7 +1960,7 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
                 : GetBrandWithDailyPricesAsPrices(brandName, fromDt, toDt).ToList();
 
             var sortedSitesWithPrices = from site in sitesWithPrices
-                                        where site.SiteName.ToUpper().Trim() == siteName.ToUpper().Trim() || siteName.Trim() == "empty"
+                                        where site.SiteName.ToUpper().Trim().Contains(siteName.ToUpper().Trim()) || siteName.Trim() == "empty"
                                         orderby site.SiteName
                                         select site;
 
@@ -2004,12 +2004,7 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
             var sites = GetJsSites();
             var reportFuels = GetFuelTypes().Where(x => fuelTypesList.Contains(x.Id)).ToList();
 
-            Task<IEnumerable<SitePriceViewModel>> task = Task<IEnumerable<SitePriceViewModel>>.Factory.StartNew(() =>
-            {
-                return CallSitePriceSproc(forDate);
-            });
-
-            var sitePrices = task.Result;
+            var sitePrices = CallSitePriceSproc(forDate); ;
 
             var dailyPrices = new List<DailyPrice>();
             if (catPriceDateLookingForward != null)
