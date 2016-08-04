@@ -71,7 +71,11 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                 Const.BWOC,
                 Const.BATA,
                 Const.TESCOEXPRESS,
-                Const.TESCOEXTRA
+                Const.TESCOEXTRA,
+                Const.COOKE,
+                Const.HELTOR,
+                Const.LOCALFUELS
+        
             };
 
         }

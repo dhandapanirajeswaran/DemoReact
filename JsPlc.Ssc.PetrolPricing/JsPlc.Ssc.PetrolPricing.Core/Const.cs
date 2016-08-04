@@ -55,7 +55,10 @@ namespace JsPlc.Ssc.PetrolPricing.Core
         public const string ESSO = "ESSO";
         public const string TOTAL = "TOTAL";
         public const string BP = "BP";
-
+        public const string COOKE="COOKE";
+        public const string HELTOR = "HELTOR";
+        public const string LOCALFUELS = "LOCALFUELS";
+        
       
 	}
 }
