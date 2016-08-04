@@ -1788,7 +1788,7 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
 
         public NationalAverageReportViewModel GetReportNationalAverage2(DateTime when)
         {
-            var result = new NationalAverageReportViewModel();
+            var result = new NationalAverageReportViewModel();    
 
             var fuelTypeIds = new List<int> { (int)FuelTypeItem.Diesel, (int)FuelTypeItem.Unleaded };
 
