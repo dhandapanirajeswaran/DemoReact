@@ -4,13 +4,13 @@ namespace JsPlc.Ssc.PetrolPricing.Models.ViewModels
 {
     public class PricePointReportRowViewModel
     {
-        public decimal Price { get; set; }
+        public string Brand { get; set; }
 
-        public List<PricePointBrandViewModel> PricePointBrands { get; set; }
+        public List<PricePointPriceViewModel> PricePointPrices { get; set; }
 
         public PricePointReportRowViewModel()
         {
-            PricePointBrands = new List<PricePointBrandViewModel>();
+            PricePointPrices = new List<PricePointPriceViewModel>();
         }
     }
 }

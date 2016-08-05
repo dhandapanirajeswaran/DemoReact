@@ -270,23 +270,23 @@ namespace JsPlc.Ssc.PetrolPricing.Models.Common
                     continue;
                 }
 
-                dt.Columns.Add("Price (£)");
+                dt.Columns.Add("Brands");
                 // Setup Table Columns - Price(£) Brand1    Brand2   Brand3...
-                foreach (var brand in report.PricePointReportRows.First().PricePointBrands)
+                foreach (var priceVM in report.PricePointReportRows.First().PricePointPrices)
                 {
-                    dt.Columns.Add(brand.Name);
+                    dt.Columns.Add(((priceVM.Price / 10).ToString("###0.0")));
                 }
                 // Add row data to table..
                 foreach (var row in report.PricePointReportRows)
                 {
                     DataRow dr = dt.NewRow();
                     // 1st column is Price value
-                    dr[0] = ((row.Price / 10).ToString("###0.0"));
+                    dr[0] = row.Brand;
                     var i = 1;
                     // 2nd col onwards are brand counts
-                    foreach (PricePointBrandViewModel brand in row.PricePointBrands)
+                    foreach (PricePointPriceViewModel priceVM in row.PricePointPrices)
                     {
-                        dr[i] = brand.Count;
+                        dr[i] = priceVM.Count;
                         i += 1;
                     }
                     dt.Rows.Add(dr);

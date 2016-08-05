@@ -474,6 +474,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
                         ws.Range(cellrange).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Left;
                        ws.Range(cellrange).Style.Alignment.Vertical = XLAlignmentVerticalValues.Center;
                         ws.Range(cellrange).Style.Alignment.TextRotation = 90;
+                        ws.Range(string.Format("{0}",rangeAddress.FirstAddress)).Style.Alignment.TextRotation = 45;
                     }
 				}
 				wb.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;

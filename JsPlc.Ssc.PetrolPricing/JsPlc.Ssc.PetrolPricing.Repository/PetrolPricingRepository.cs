@@ -1605,149 +1605,156 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
 
         public PricePointReportViewModel GetReportPricePoints(DateTime when, int fuelTypeId)
         {
-            const bool useRefactoredCode = true;
-
-            var result = new PricePointReportViewModel();
-
-            var f = _context.FuelType.FirstOrDefault(x => x.Id == fuelTypeId);
-            if (f != null)
+            try
             {
-                result.FuelTypeName = f.FuelTypeName;
+                const bool useRefactoredCode = true;
 
-                // Ignore this approach.. which uses Date Of Price from DailyPrice, instead see next line..
-                //var dailyPrices = _context.DailyPrices.Where(x => DbFunctions.DiffDays(x.DateOfPrice, when) == 0 && x.FuelTypeId == fuelTypeId).ToList();
+                var result = new PricePointReportViewModel();
 
-
-                // Report uses Prices as per date of upload..(not date of Price in DailyPrice)..
-                var dailyPrices = _context.DailyPrices.Where(x => DbFunctions.DiffDays(x.DailyUpload.UploadDateTime, when) == 0 && x.FuelTypeId == fuelTypeId).ToList();
-
-                var distinctPrices = dailyPrices.Select(x => x.ModalPrice).Distinct().OrderBy(x => x).ToList();
-                var distinctCatNos = dailyPrices.Select(x => x.CatNo).Distinct().ToList();
-                var competitorSites = _context.Sites.Where(x => distinctCatNos.Contains(x.CatNo.Value) && !x.IsSainsburysSite).ToList();
-                var distinctBrands = competitorSites.Select(x => x.Brand).Distinct().OrderBy(x => x).ToList();
-                
-
-                #region original code
-
-                if (useRefactoredCode == false)
+                var f = _context.FuelType.FirstOrDefault(x => x.Id == fuelTypeId);
+                if (f != null)
                 {
-                    foreach (var distinctPrice in distinctPrices)
+                    result.FuelTypeName = f.FuelTypeName;
+
+                    // Ignore this approach.. which uses Date Of Price from DailyPrice, instead see next line..
+                    //var dailyPrices = _context.DailyPrices.Where(x => DbFunctions.DiffDays(x.DateOfPrice, when) == 0 && x.FuelTypeId == fuelTypeId).ToList();
+
+
+                    // Report uses Prices as per date of upload..(not date of Price in DailyPrice)..
+                    var dailyPrices = _context.DailyPrices.Where(x => DbFunctions.DiffDays(x.DailyUpload.UploadDateTime, when) == 0 && x.FuelTypeId == fuelTypeId).ToList();
+
+                    var distinctPrices = dailyPrices.Select(x => x.ModalPrice).Distinct().OrderBy(x => x).ToList();
+                    var distinctCatNos = dailyPrices.Select(x => x.CatNo).Distinct().ToList();
+                    var competitorSites = _context.Sites.Where(x => distinctCatNos.Contains(x.CatNo.Value) && !x.IsSainsburysSite).ToList();
+                    var distinctBrands = competitorSites.Select(x => x.Brand).Distinct().OrderBy(x => x).ToList();
+
+
+                    /*   #region original code
+
+                       if (useRefactoredCode == false)
+                       {
+                           foreach (var distinctPrice in distinctPrices)
+                           {
+                               var matchingDailyPrices = dailyPrices.Where(x => x.ModalPrice == distinctPrice).ToList();
+                               foreach (var dailyPrice in matchingDailyPrices)
+                               {
+                                   var reportRowItem = result.PricePointReportRows.FirstOrDefault(x => x.Price == distinctPrice);
+                                   if (reportRowItem == null)
+                                   {
+                                       reportRowItem = new PricePointReportRowViewModel
+                                       {
+                                           Price = distinctPrice
+                                       };
+                                       result.PricePointReportRows.Add(reportRowItem);
+                                   }
+
+                                   foreach (var distinctBrand in distinctBrands)
+                                   {
+                                       var b = reportRowItem.PricePointBrands.FirstOrDefault(x => x.Name == distinctBrand);
+                                       if (b == null)
+                                       {
+                                           b = new PricePointBrandViewModel
+                                           {
+                                               Name = distinctBrand
+                                           };
+                                           reportRowItem.PricePointBrands.Add(b);
+                                       }
+                                       b.Count += competitorSites.Count(x => x.Brand == distinctBrand && x.CatNo == dailyPrice.CatNo);                               
+                                   }
+                               }
+                           }
+                       }
+                       #endregion original code*/
+
+                    #region new code
+
+                    if (useRefactoredCode)
                     {
-                        var matchingDailyPrices = dailyPrices.Where(x => x.ModalPrice == distinctPrice).ToList();
-                        foreach (var dailyPrice in matchingDailyPrices)
+                        distinctBrands.Insert(0, "Summary");
+                        var priceColumnIndexes = new Dictionary<int, int>();
+                        var brandRowIndexes = new Dictionary<string, int>();
+                        var tableCells = new int?[distinctBrands.Count(), distinctPrices.Count()];
+
+                        // build row and column index lookup tables
+                        var rowCounter = 0;
+                        foreach (var brand in distinctBrands)
+                            brandRowIndexes[brand] = rowCounter++;
+
+                        var columnCounter = 0;
+                        foreach (var price in distinctPrices)
+                            priceColumnIndexes[price] = columnCounter++;
+
+                        // loop and count each brand, price combination
+                        foreach (var daily in dailyPrices)
                         {
-                            var reportRowItem = result.PricePointReportRows.FirstOrDefault(x => x.Price == distinctPrice);
-                            if (reportRowItem == null)
+                            var price = daily.ModalPrice;
+                            var competitor = competitorSites.FirstOrDefault(x => x.CatNo.Value == daily.CatNo);
+
+                            if (competitor == null)
+                                continue;
+
+                            var brand = competitor.Brand;
+
+                            var rowIndex = brandRowIndexes[brand];
+                            var columnIndex = priceColumnIndexes[price];
+
+                            var cell = tableCells[rowIndex, columnIndex];
+
+                            if (cell.HasValue)
                             {
-                                reportRowItem = new PricePointReportRowViewModel
-                                {
-                                    Price = distinctPrice
-                                };
-                                result.PricePointReportRows.Add(reportRowItem);
+                                tableCells[rowIndex, columnIndex]++;
+                                var rowIndex2 = brandRowIndexes["Summary"];
+                                tableCells[rowIndex2, columnIndex] = tableCells[rowIndex2, columnIndex].HasValue ? tableCells[rowIndex2, columnIndex].Value + 1 : tableCells[rowIndex, columnIndex];
+
+                            }
+                            else
+                            {
+                                tableCells[rowIndex, columnIndex] = 1;
+                                rowIndex = brandRowIndexes["Summary"];
+                                tableCells[rowIndex, columnIndex] = tableCells[rowIndex, columnIndex].HasValue ? tableCells[rowIndex, columnIndex].Value + 1 : 1;
                             }
 
-                            foreach (var distinctBrand in distinctBrands)
-                            {
-                                var b = reportRowItem.PricePointBrands.FirstOrDefault(x => x.Name == distinctBrand);
-                                if (b == null)
-                                {
-                                    b = new PricePointBrandViewModel
-                                    {
-                                        Name = distinctBrand
-                                    };
-                                    reportRowItem.PricePointBrands.Add(b);
-                                }
-                                b.Count += competitorSites.Count(x => x.Brand == distinctBrand && x.CatNo == dailyPrice.CatNo);                               
-                            }
-                        }
-                    }
-                }
-                #endregion original code
 
-                #region new code
-
-                if (useRefactoredCode)
-                {
-                    distinctBrands.Insert(0, "Summary");
-                    var priceRowIndexes = new Dictionary<int, int>();
-                    var brandColumnIndexes = new Dictionary<string, int>();
-                    var tableCells = new int?[distinctPrices.Count(), distinctBrands.Count()];
-
-                    // build row and column index lookup tables
-                    var rowCounter = 0;
-                    foreach (var price in distinctPrices)
-                        priceRowIndexes[price] = rowCounter++;
-
-                    var columnCounter = 0;
-                    foreach (var brand in distinctBrands)
-                        brandColumnIndexes[brand] = columnCounter++;
-
-                    // loop and count each brand, price combination
-                    foreach (var daily in dailyPrices)
-                    {
-                        var price = daily.ModalPrice;
-                        var competitor = competitorSites.FirstOrDefault(x => x.CatNo.Value == daily.CatNo);
-
-                        if (competitor == null)
-                            continue;
-
-                        var brand = competitor.Brand;
-
-                        var rowIndex = priceRowIndexes[price];
-                        var columnIndex = brandColumnIndexes[brand];
-
-                        var cell = tableCells[rowIndex, columnIndex];
-
-                        if (cell.HasValue)
-                        {
-                            tableCells[rowIndex, columnIndex]++;
-                            var columnIndex2 = brandColumnIndexes["Summary"];
-                            tableCells[rowIndex, columnIndex2] = tableCells[rowIndex, columnIndex2].HasValue ? tableCells[rowIndex, columnIndex2].Value + 1 : tableCells[rowIndex, columnIndex];
-        
-                        }
-                        else
-                        {
-                            tableCells[rowIndex, columnIndex] = 1;
-                            columnIndex = brandColumnIndexes["Summary"];
-                            tableCells[rowIndex, columnIndex] = tableCells[rowIndex, columnIndex].HasValue ? tableCells[rowIndex, columnIndex].Value + 1 : 1;
                         }
 
-                        
-                    }
-
-                    // construct the view model
-                    rowCounter = 0;
-                    foreach (var price in distinctPrices)
-                    {
-                        var reportRowItem = new PricePointReportRowViewModel
-                        {
-                            Price = price
-                        };
-                        result.PricePointReportRows.Add(reportRowItem);
-
-                        columnCounter = 0;
-
+                        // construct the view model
+                        rowCounter = 0;
                         foreach (var brand in distinctBrands)
                         {
-                            var count = tableCells[rowCounter, columnCounter];
-
-                            var reportColumnItem = new PricePointBrandViewModel
+                            var reportRowItem = new PricePointReportRowViewModel
                             {
-                                Name = brand,
-                                Count = count.HasValue ? count.Value : 0
+                                Brand = brand
                             };
-                            reportRowItem.PricePointBrands.Add(reportColumnItem);
-                            columnCounter++;
+                            result.PricePointReportRows.Add(reportRowItem);
+
+                            columnCounter = 0;
+
+                            foreach (var price in distinctPrices)
+                            {
+                                var count = tableCells[rowCounter, columnCounter];
+
+                                var reportColumnItem = new PricePointPriceViewModel
+                                {
+                                    Price = price,
+                                    Count = count.HasValue ? count.Value : 0
+                                };
+                                reportRowItem.PricePointPrices.Add(reportColumnItem);
+                                columnCounter++;
+                            }
+                            rowCounter++;
                         }
-                        rowCounter++;
                     }
+                    #endregion new code
                 }
-                #endregion new code
+
+                result.PricePointReportRows = result.PricePointReportRows.Where(x => x.PricePointPrices.Any(b => b.Count > 0)).ToList();
+
+                return result;
             }
-
-            result.PricePointReportRows = result.PricePointReportRows.Where(x => x.PricePointBrands.Any(b => b.Count > 0)).ToList();
-
-            return result;
+            catch(Exception ce)
+            {
+                return null;
+            }
         }
 
         public NationalAverageReportViewModel GetReportNationalAverage(DateTime when)
