@@ -395,6 +395,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 		{
 			model.FuelTypes = LoadFuels(new[] { 1, 2, 6 });
 			model.Brands = _serviceFacade.GetBrands().ToList();
+            model.Brands.Insert(0,"All");
 
 			if (model.FuelTypeId > 0 && model.ToDate >= model.FromDate)
 			{

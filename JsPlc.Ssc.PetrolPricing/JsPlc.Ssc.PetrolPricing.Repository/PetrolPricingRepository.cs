@@ -235,7 +235,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             var sites = new List<Site>();
 
             var retval = _context.Sites
-                .Where(x => x.IsActive && x.Brand == brandName)
+                .Where(x => x.IsActive && (brandName=="All" ? true:  x.Brand == brandName))
                 .OrderBy(q => q.SiteName).ToList();
 
             int daysBetweenFromAndTo =
