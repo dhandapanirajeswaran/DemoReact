@@ -567,6 +567,32 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             return null;
         }
 
+        public NationalAverageReportViewModel CompetitorsPriceRangeData(DateTime when)
+        {
+            try
+            {
+                var url = string.Format("api/GetReportcompetitorsPriceRange/{0}", when.ToString("ddMMMyyyy"));
+                var response = _client.Value.GetAsync(url).Result;
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var result = response.Content.ReadAsAsync<NationalAverageReportViewModel>().Result;
+                    return result;
+                }
+                else
+                {
+                    return null;
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Exception in Reports Generation. Contact support team." + System.Environment.NewLine + ex.Message, ex);
+            }
+            return null;
+        }
+
         public NationalAverageReportViewModel GetNationalAverage2(DateTime when)
         {
             try

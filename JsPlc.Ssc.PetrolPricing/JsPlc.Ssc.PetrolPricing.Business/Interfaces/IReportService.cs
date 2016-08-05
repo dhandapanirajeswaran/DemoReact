@@ -17,6 +17,8 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 
         NationalAverageReportViewModel GetReportNationalAverage2(DateTime when);
 
+        NationalAverageReportViewModel GetReportcompetitorsPriceRange(DateTime when);        
+
         CompetitorsPriceRangeByCompanyViewModel GetReportCompetitorsPriceRangeByCompany(DateTime when, string companyName, string brandName);
 
         PriceMovementReportViewModel GetReportPriceMovement(string brandName, DateTime from, DateTime to, int fuelTypeId,string siteName);

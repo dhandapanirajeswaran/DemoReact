@@ -1797,6 +1797,61 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
             return result;
         }
 
+        public NationalAverageReportViewModel GetReportcompetitorsPriceRange(DateTime when)
+        {
+            var result = new NationalAverageReportViewModel();
+
+            var fuelTypeIds = new List<int> { (int)FuelTypeItem.Diesel, (int)FuelTypeItem.Unleaded };
+
+            // Report uses Prices as per date of upload..(not date of Price in DailyPrice)..
+            var dailyPrices = _context.DailyPrices.Where(x => DbFunctions.DiffDays(x.DailyUpload.UploadDateTime, when) == 0 && fuelTypeIds.Contains(x.FuelTypeId)).ToList();
+
+            var fuels = _context.FuelType.ToList();
+
+            var distinctCatNos = dailyPrices.Select(x => x.CatNo).Distinct().ToList();
+            var competitorSites = _context.Sites.Where(x => distinctCatNos.Contains(x.CatNo.Value)).ToList();
+
+            //calculating by brands
+            var distinctBrands = competitorSites.Select(x => x.Brand).Distinct().OrderBy(x => x).ToList();
+
+            distinctBrands.Remove(Const.SAINSBURYS);
+            distinctBrands.Insert(0, Const.SAINSBURYS);
+
+            foreach (var fuelType in fuelTypeIds)
+            {
+                var f = fuels.FirstOrDefault(x => x.Id == fuelType);
+                if (f == null) continue;
+
+                var fuelRow = new NationalAverageReportFuelViewModel();
+                result.Fuels.Add(fuelRow);
+                fuelRow.FuelName = f.FuelTypeName;
+
+                foreach (var brand in distinctBrands)
+                {
+                    var brandAvg = new NationalAverageReportBrandViewModel();
+                    fuelRow.Brands.Add(brandAvg);
+                    brandAvg.BrandName = brand;
+
+                    var brandCatsNos = competitorSites.Where(x => x.Brand == brand).Where(x => x.CatNo.HasValue).Select(x => x.CatNo.Value).ToList();
+                    var pricesList = dailyPrices.Where(x => x.FuelTypeId == fuelType && brandCatsNos.Contains(x.CatNo)).ToList();
+
+                    if (pricesList.Any())
+                    {
+                        brandAvg.Min = (int)pricesList.Min(x => x.ModalPrice);
+                        brandAvg.Average = (int)pricesList.Average(x => x.ModalPrice);
+                        brandAvg.Max = (int)pricesList.Max(x => x.ModalPrice);
+                    }
+
+                    if (brand.Equals(Const.Sainsburys, StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        fuelRow.SainsburysPrice = brandAvg.Average;
+                    }
+                }
+            }
+
+            return result;
+        }
+
         public NationalAverageReportViewModel GetReportNationalAverage2(DateTime when)
         {
             var result = new NationalAverageReportViewModel();    

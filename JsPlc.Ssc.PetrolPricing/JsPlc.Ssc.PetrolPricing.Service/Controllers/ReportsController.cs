@@ -67,6 +67,21 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
             return Ok(result);
         }
 
+         /// <summary>
+        /// GetReportcompetitorsPriceRange report
+        /// </summary>
+        /// <param name="when"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("api/GetReportcompetitorsPriceRange/{when}")]
+        public IHttpActionResult GetReportcompetitorsPriceRange([FromUri]DateTime when)
+        {
+            var result = _reportService.GetReportcompetitorsPriceRange(when);
+            return Ok(result);
+        }
+
+
+        
         /// <summary>
         /// Competitors Price Range By Company report
         /// </summary>

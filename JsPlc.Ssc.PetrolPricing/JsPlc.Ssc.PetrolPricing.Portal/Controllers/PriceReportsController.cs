@@ -134,7 +134,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 		{
             try
             {
-                var item = GetNationalAverage2Data(For);
+                var item = CompetitorsPriceRangeData(For);
 
                 return View(item);
             }
@@ -432,6 +432,20 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 		{
 			item.Sites = _serviceFacade.GetSites().OrderBy(x => x.SiteName).ToList();
 		}
+
+        private NationalAverageReportContainerViewModel CompetitorsPriceRangeData(string For)
+        {
+            DateTime forDate;
+            if (!DateTime.TryParse(For, out forDate))
+                forDate = DateTime.Now;
+
+            var item = new NationalAverageReportContainerViewModel
+            {
+                ForDate = forDate,
+                NationalAverageReport = _serviceFacade.CompetitorsPriceRangeData(forDate)
+            };
+            return item;
+        }
 
 		private NationalAverageReportContainerViewModel GetNationalAverage2Data(string For)
 		{
