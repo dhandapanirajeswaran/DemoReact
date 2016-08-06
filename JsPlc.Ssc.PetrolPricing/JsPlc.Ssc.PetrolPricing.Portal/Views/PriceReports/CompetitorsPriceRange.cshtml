@@ -10,6 +10,30 @@
 	var requestedDate = Model !=null ? @Model.ForDate.Value.Date.ToString("dd-MMM-yyyy"): null;
 }
 
+<style>
+
+      .actualdata {
+    height: 500px;
+        overflow-y: auto;
+        overflow-x: hidden; 
+}
+
+       
+
+        .alternativerow:nth-child(2n+1){
+    background:#F5F5F5;
+    
+}
+        .alternativerow
+        {
+            height:35px;
+           
+    border-bottom:1px solid #b9b2b2
+        }
+
+
+</style>
+
 <div class="row">
     <div class="col-md-6">
         <h1>@ViewBag.Title.</h1>
@@ -34,42 +58,42 @@
     <hr />
 }
 
-@if (Model != null && Model.NationalAverageReport != null && Model.NationalAverageReport.Fuels.Any())
+@if (Model != null && Model.NationalAverageReport != null && Model.NationalAverageReport.Fuels.Any() && Model.NationalAverageReport.Fuels.First().Brands.Any())
 {
     <!-- Report Data -->
 
-    <table class="table table-hover table-responsive table-striped" id="tblBrands">
-        <thead>
-            <tr>
-                <td></td>
-                <td colspan="2"><strong>Avg retails</strong></td>
-                <td colspan="2"><strong>Difference</strong></td>
-                <td colspan="2"><strong>Pricing range</strong></td>
-            </tr>
-            <tr>
-                <td><strong>@requestedDate</strong></td>
+    <div class="divtable" id="tblBrands" >
+       
+            <div class="row" >
+                <div class="col-md-1"  style="width:180px"></div>
+                <div class="col-md-1" style="width:290px; text-align:center"> <strong>Avg retails</strong></div>
+                <div class="col-md-1" style="width:290px; text-align:center"> <strong>Difference</strong></div>
+                <div class="col-md-1" style="width:290px; text-align:center"> <strong>Pricing range</strong></div>
+             </div>
+            <div class="row">
+                <div class="col-md-1" style="width:190px"><strong>@requestedDate</strong></div>
                 @for (int i = 0; i < 3; i++)
                 {
                     foreach (var fuelType in Model.NationalAverageReport.Fuels)
                     {
-                        <td><strong>@fuelType.FuelName</strong></td>
+                        <div class="col-md-1" style="width:155px"><strong>@fuelType.FuelName</strong></div>
                     }
                 }
-            </tr>
-        </thead>
-        <tbody>
+            </div>
+        <div class="actualdata">
             @foreach (var brand in Model.NationalAverageReport.Fuels.First().Brands)
             {
-                <tr>
-                    <td><strong>@(brand.BrandName) (£)</strong></td>
-                    @* Average *@
-                    @foreach (var fuelType in Model.NationalAverageReport.Fuels)
+                <div class="alternativerow">
+                    <div class="row">
+                        <div class="col-md-1" style="width:190px"><strong>@(brand.BrandName) (£)</strong></div>
+                        @* Average *@
+                        @foreach (var fuelType in Model.NationalAverageReport.Fuels)
                     {
                         var fuelBrand = fuelType.Brands.First(b => b.BrandName == brand.BrandName);
-                        <td>@((fuelBrand.Average / 10.0).ToString("###0.0"))</td>
+                    <div class="col-md-1" style="width:155px">@((fuelBrand.Average / 10.0).ToString("###0.0"))</div>
                     }
-                    @* Difference *@
-                    @foreach (var fuelType in Model.NationalAverageReport.Fuels)
+                        @* Difference *@
+                        @foreach (var fuelType in Model.NationalAverageReport.Fuels)
                     {
                         var fuelBrand = fuelType.Brands.First(b => b.BrandName.Equals(brand.BrandName, StringComparison.InvariantCultureIgnoreCase));
 
@@ -84,22 +108,27 @@
                             color = "green";
                         }
 
-                        <td style="color: @color">@((diff / 10.0).ToString("###0.0"))</td>
+                    <div class="col-md-1" style="width:155px; color: @color; ">@((diff / 10.0).ToString("###0.0"))</div>
                     }
 
-                    @* Range *@
-                    @foreach (var fuelType in Model.NationalAverageReport.Fuels)
+                        @* Range *@
+                        @foreach (var fuelType in Model.NationalAverageReport.Fuels)
                     {
                         var fuelBrand = fuelType.Brands.First(b => brand.BrandName.Equals(b.BrandName, StringComparison.InvariantCultureIgnoreCase));
-                        <td>@((fuelBrand.Min / 10.0).ToString("###0.0")) - @((fuelBrand.Max / 10.0).ToString("###0.0"))</td>
+                    <div class="col-md-1" style="width:155px">@((fuelBrand.Min / 10.0).ToString("###0.0")) - @((fuelBrand.Max / 10.0).ToString("###0.0"))</div>
                     }
-                </tr>
+                    </div>
+                </div>
             }
 
-        </tbody>
-    </table>
+        </div>
+    </div>
 }
-
+else
+{
+   
+    <div class="alert alert-info" role="alert">No data found at @requestedDate</div>
+}
 @section scripts {
     <script src="~/Scripts/bootstrap-datepicker.min.js"></script>
     <script src="~/Scripts/PriceReports/competitorsPriceRange.js?v=1"></script>

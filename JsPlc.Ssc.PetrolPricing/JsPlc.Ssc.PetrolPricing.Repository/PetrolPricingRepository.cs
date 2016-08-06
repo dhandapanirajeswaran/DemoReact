@@ -1814,8 +1814,11 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
             //calculating by brands
             var distinctBrands = competitorSites.Select(x => x.Brand).Distinct().OrderBy(x => x).ToList();
 
-            distinctBrands.Remove(Const.SAINSBURYS);
-            distinctBrands.Insert(0, Const.SAINSBURYS);
+            if (distinctBrands.Count > 0)
+            {
+                distinctBrands.Remove(Const.SAINSBURYS);
+                distinctBrands.Insert(0, Const.SAINSBURYS);
+            }
 
             foreach (var fuelType in fuelTypeIds)
             {
