@@ -67,7 +67,7 @@
     }
 }
 
-@if (Model!=null && Model.ReportCompanies.Any())
+@if (Model!=null && Model.ReportCompanies[0].Brands.Count>0)
 {
     <!-- Report Data -->
 
@@ -75,11 +75,11 @@
        
             <div class="row">
                 <div class="col-md-2" style="width:280px"></div>
-                <div class="col-md-2" style="width:280px"><strong>Avg retails</strong></div>
-                <div class="col-md-2" style="width:280px">
+                <div class="col-md-2" style="width:270px; text-align:center;"><strong>Avg retails</strong></div>
+                <div class="col-md-2" style="width:270px;text-align:center;">
                     <strong>Difference</strong>
                 </div>
-                <div class="col-md-2" style="width:280px">
+                <div class="col-md-2" style="width:270px; text-align:center;">
                     <strong>Pricing range</strong>
                 </div>
             </div>
@@ -94,7 +94,7 @@
                 }
             }
         </div>
-        <hr />
+        <hr/>
         <div class="actualdata">
                      @foreach (var company in Model.ReportCompanies)
                      {
@@ -175,6 +175,11 @@
 
     
         </div>
+}
+else
+{
+
+    <div class="alert alert-info" role="alert">No data found at @Model.Date.ToString("dd-MMM-yyyy")</div>
 }
 
 @section scripts {
