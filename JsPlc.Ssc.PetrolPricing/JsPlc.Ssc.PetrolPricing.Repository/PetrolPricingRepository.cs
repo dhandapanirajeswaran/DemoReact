@@ -2081,6 +2081,7 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
                 dailyPrices = GetDailyPricesForDate(catPriceDateLookingForward.Value);
             }
 
+            if (dailyPrices.Count == 0) return null;
             foreach (var site in sites)
             {
                 Site site1 = site;
@@ -2200,7 +2201,7 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
             {
                 var priceDates = db.DailyPrices.Include(x => x.DailyUpload)
                     .Where(x => x.DailyUpload.Status.Id == 10
-                    && DbFunctions.DiffDays(forDate, x.DailyUpload.UploadDateTime) >= 1)
+                    && DbFunctions.DiffDays(forDate, x.DailyUpload.UploadDateTime) == 0)
                     .DistinctBy(x => x.DailyUpload.UploadDateTime).OrderBy(x => x.DailyUpload.UploadDateTime).Take(5); // ascending order
 
                 // success status
