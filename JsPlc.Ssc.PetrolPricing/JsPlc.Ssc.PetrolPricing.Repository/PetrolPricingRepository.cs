@@ -2109,7 +2109,7 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
                     SiteName = "test",
                     DataItems = new List<ComplianceReportDataItem>()
                 });
-        
+                return retval;
                 foreach (var site in sites)
                 {
                     Site site1 = site;
