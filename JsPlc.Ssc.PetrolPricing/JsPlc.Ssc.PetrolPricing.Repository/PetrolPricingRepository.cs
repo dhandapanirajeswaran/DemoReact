@@ -2099,6 +2099,17 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
         
                     return retval;
                 }
+
+                retval.ReportRows.Add(new ComplianceReportRow
+                {
+                    SiteId = -1,
+                    PfsNo = sites.Count().ToString(),
+                    StoreNo = "test",
+                    CatNo = "test",
+                    SiteName = "test",
+                    DataItems = new List<ComplianceReportDataItem>()
+                });
+        
                 foreach (var site in sites)
                 {
                     Site site1 = site;
