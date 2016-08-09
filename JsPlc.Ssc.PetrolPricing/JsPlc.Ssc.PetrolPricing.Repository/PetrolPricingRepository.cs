@@ -2074,6 +2074,7 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
                 DateTime? catPriceDateLookingForward = GetFirstDailyPriceDate(forDate);
 
                 var sites = GetJsSites();
+
                 var reportFuels = GetFuelTypes().Where(x => fuelTypesList.Contains(x.Id)).ToList();
 
                 var sitePrices = CallSitePriceSproc(forDate); ;
@@ -2087,29 +2088,11 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
                 
                 if (dailyPrices.Count == 0)
                 {
-                    retval.ReportRows.Add(new ComplianceReportRow
-                    {
-                        SiteId = -1,
-                        PfsNo = "test",
-                        StoreNo = "test",
-                        CatNo = "test",
-                        SiteName = "test",
-                        DataItems = new List<ComplianceReportDataItem>()
-                    });
-        
-                    return retval;
+                          
+                    return null;
                 }
 
-                retval.ReportRows.Add(new ComplianceReportRow
-                {
-                    SiteId = -1,
-                    PfsNo = sites.Count().ToString(),
-                    StoreNo = "test",
-                    CatNo = "test",
-                    SiteName = "test",
-                    DataItems = new List<ComplianceReportDataItem>()
-                });
-                return retval;
+             
                 foreach (var site in sites)
                 {
                     Site site1 = site;
