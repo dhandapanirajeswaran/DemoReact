@@ -2132,7 +2132,21 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
                     {
                         FuelType fuel = reportFuels.FirstOrDefault(x => x.Id == fuelId);
 
-                        if (fuel == null) throw new ApplicationException("FuelId:" + fuelId + " not found in database.");
+                        if (fuel == null)
+                        {
+                            retval.ReportRows.Add(new ComplianceReportRow
+                            {
+                                SiteId = -1,
+                                PfsNo = "FuelId:" + fuelId + " not found in database.",
+                                StoreNo = "Test",
+                                CatNo = "test",
+                                SiteName = "test",
+                                DataItems = new List<ComplianceReportDataItem>()
+                            });
+
+                            return retval;
+                            throw new ApplicationException("FuelId:" + fuelId + " not found in database.");
+                        }
 
                         var dataItem = new ComplianceReportDataItem
                         {
