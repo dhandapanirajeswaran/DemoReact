@@ -2064,79 +2064,111 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
         /// <returns></returns>
         public ComplianceReportViewModel GetReportCompliance(DateTime forDate)
         {
-            var fuelTypesList = new[] { 2, 6, 1 }; // Unl, Diesel, Super
             var retval = new ComplianceReportViewModel();
-
-            //DateTime? sitePriceDateLookingBack = GetLastSitePriceDate(forDate);
-            DateTime? catPriceDateLookingForward = GetFirstDailyPriceDate(forDate);
-
-            var sites = GetJsSites();
-            var reportFuels = GetFuelTypes().Where(x => fuelTypesList.Contains(x.Id)).ToList();
-
-            var sitePrices = CallSitePriceSproc(forDate); ;
-
-            var dailyPrices = new List<DailyPrice>();
-            if (catPriceDateLookingForward != null)
+            try
             {
-                dailyPrices = GetDailyPricesForDate(catPriceDateLookingForward.Value);
-            }
+                var fuelTypesList = new[] { 2, 6, 1 }; // Unl, Diesel, Super
+               
 
-            if (dailyPrices.Count == 0) return null;
-            foreach (var site in sites)
-            {
-                Site site1 = site;
-                var dataRow = new ComplianceReportRow
+                //DateTime? sitePriceDateLookingBack = GetLastSitePriceDate(forDate);
+                DateTime? catPriceDateLookingForward = GetFirstDailyPriceDate(forDate);
+
+                var sites = GetJsSites();
+                var reportFuels = GetFuelTypes().Where(x => fuelTypesList.Contains(x.Id)).ToList();
+
+                var sitePrices = CallSitePriceSproc(forDate); ;
+
+                var dailyPrices = new List<DailyPrice>();
+                if (catPriceDateLookingForward != null)
                 {
-                    SiteId = site1.Id,
-                    PfsNo = site1.PfsNo.ToString(),
-                    StoreNo = site1.StoreNo.ToString(),
-                    CatNo = site1.CatNo.ToString(),
-                    SiteName = site1.SiteName,
-                    DataItems = new List<ComplianceReportDataItem>()
-                };
-                retval.ReportRows.Add(dataRow);
-                var dataItems = dataRow.DataItems;
-
-                var sitePriceViewModels = sitePrices as SitePriceViewModel[] ?? sitePrices;
-                var sitePriceViewModel = sitePriceViewModels.FirstOrDefault(x => x.SiteId == site1.Id);
-
-                foreach (var fuelId in fuelTypesList) // report order as per array - Unl, Diesel, Super
-                {
-                    FuelType fuel = reportFuels.FirstOrDefault(x => x.Id == fuelId);
-
-                    if (fuel == null) throw new ApplicationException("FuelId:" + fuelId + " not found in database.");
-
-                    var dataItem = new ComplianceReportDataItem
-                    {
-                        FuelTypeId = fuel.Id,
-                        FuelTypeName = fuel.FuelTypeName
-                    };
-                    dataItems.Add(dataItem);
-
-                    // Find the ExpectedPrice
-                    if (sitePriceViewModel != null)
-                    {
-                        int sitePrice = GetSitePriceForFuel(sitePriceViewModel, fuel.Id);
-                        if (sitePrice > 0)
-                        {
-                            dataItem.FoundExpectedPrice = true;
-                            dataItem.ExpectedPriceValue = sitePrice;
-                        }
-                    }
-
-                    var dailyPrice = dailyPrices.FirstOrDefault(x => x.CatNo.Equals(site1.CatNo) && x.FuelTypeId == fuel.Id);
-                    if (dailyPrice != null)
-                    {
-                        dataItem.CatPriceValue = dailyPrice.ModalPrice;
-                        dataItem.FoundCatPrice = true;
-                    }
-                    if (!dataItem.FoundCatPrice || !dataItem.FoundExpectedPrice) continue;
-
-                    dataItem.Diff = (dataItem.CatPriceValue - dataItem.ExpectedPriceValue) / 10;
-                    dataItem.DiffValid = true;
+                    dailyPrices = GetDailyPricesForDate(catPriceDateLookingForward.Value);
                 }
+        
+                
+                if (dailyPrices.Count == 0)
+                {
+                    retval.ReportRows.Add(new ComplianceReportRow
+                    {
+                        SiteId = -1,
+                        PfsNo = "test",
+                        StoreNo = "test",
+                        CatNo = "test",
+                        SiteName = "test",
+                        DataItems = new List<ComplianceReportDataItem>()
+                    });
+        
+                    return retval;
+                }
+                foreach (var site in sites)
+                {
+                    Site site1 = site;
+                    var dataRow = new ComplianceReportRow
+                    {
+                        SiteId = site1.Id,
+                        PfsNo = site1.PfsNo.ToString(),
+                        StoreNo = site1.StoreNo.ToString(),
+                        CatNo = site1.CatNo.ToString(),
+                        SiteName = site1.SiteName,
+                        DataItems = new List<ComplianceReportDataItem>()
+                    };
+                    retval.ReportRows.Add(dataRow);
+                    var dataItems = dataRow.DataItems;
+
+                    var sitePriceViewModels = sitePrices as SitePriceViewModel[] ?? sitePrices;
+                    var sitePriceViewModel = sitePriceViewModels.FirstOrDefault(x => x.SiteId == site1.Id);
+
+                    foreach (var fuelId in fuelTypesList) // report order as per array - Unl, Diesel, Super
+                    {
+                        FuelType fuel = reportFuels.FirstOrDefault(x => x.Id == fuelId);
+
+                        if (fuel == null) throw new ApplicationException("FuelId:" + fuelId + " not found in database.");
+
+                        var dataItem = new ComplianceReportDataItem
+                        {
+                            FuelTypeId = fuel.Id,
+                            FuelTypeName = fuel.FuelTypeName
+                        };
+                        dataItems.Add(dataItem);
+
+                        // Find the ExpectedPrice
+                        if (sitePriceViewModel != null)
+                        {
+                            int sitePrice = GetSitePriceForFuel(sitePriceViewModel, fuel.Id);
+                            if (sitePrice > 0)
+                            {
+                                dataItem.FoundExpectedPrice = true;
+                                dataItem.ExpectedPriceValue = sitePrice;
+                            }
+                        }
+
+                        var dailyPrice = dailyPrices.FirstOrDefault(x => x.CatNo.Equals(site1.CatNo) && x.FuelTypeId == fuel.Id);
+                        if (dailyPrice != null)
+                        {
+                            dataItem.CatPriceValue = dailyPrice.ModalPrice;
+                            dataItem.FoundCatPrice = true;
+                        }
+                        if (!dataItem.FoundCatPrice || !dataItem.FoundExpectedPrice) continue;
+
+                        dataItem.Diff = (dataItem.CatPriceValue - dataItem.ExpectedPriceValue) / 10;
+                        dataItem.DiffValid = true;
+                    }
+                }
+                return retval;
             }
-            return retval;
+            catch (Exception ce)
+            {
+                retval.ReportRows.Add(new ComplianceReportRow
+                {
+                    SiteId = -1,
+                    PfsNo = ce.Message,
+                    StoreNo = ce.InnerException.Message,
+                    CatNo = "test",
+                    SiteName = "test",
+                    DataItems = new List<ComplianceReportDataItem>()
+                });
+
+                return retval;
+            }
         }
 
 
