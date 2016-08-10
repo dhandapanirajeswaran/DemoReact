@@ -2087,8 +2087,7 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
         
                 
                 if (dailyPrices.Count == 0)
-                {
-                          
+                {                          
                     return null;
                 }
 
@@ -2117,18 +2116,7 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
 
                         if (fuel == null)
                         {
-                            retval.ReportRows.Add(new ComplianceReportRow
-                            {
-                                SiteId = -1,
-                                PfsNo = "FuelId:" + fuelId + " not found in database.",
-                                StoreNo = "Test",
-                                CatNo = "test",
-                                SiteName = "test",
-                                DataItems = new List<ComplianceReportDataItem>()
-                            });
-
-                            return retval;
-                            throw new ApplicationException("FuelId:" + fuelId + " not found in database.");
+                           throw new ApplicationException("FuelId:" + fuelId + " not found in database.");
                         }
 
                         var dataItem = new ComplianceReportDataItem
@@ -2166,17 +2154,7 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
             }
             catch (Exception ce)
             {
-                retval.ReportRows.Add(new ComplianceReportRow
-                {
-                    SiteId = -1,
-                    PfsNo = ce.Message,
-                    StoreNo = ce.InnerException.Message,
-                    CatNo = "test",
-                    SiteName = "test",
-                    DataItems = new List<ComplianceReportDataItem>()
-                });
-
-                return retval;
+                return null;
             }
         }
 
