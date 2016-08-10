@@ -8,7 +8,45 @@
     }
 
     var requestedDate = Model != null ? @Model.ForDate.Value.Date.ToString("dd-MMM-yyyy") : null;
+    var hasData = (Model != null && Model.NationalAverageReport != null && Model.NationalAverageReport.Fuels.First().Brands.Any());
 }
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+
+        if ("@hasData" == "True") {
+            $("#btnExportReport").prop("disabled", false);
+        }
+        else {
+            $("#btnExportReport").prop("disabled", true);
+        }
+
+    });
+
+
+</script>
+
+<style>
+            .actualdata {
+    height: 500px;
+        overflow-y: auto;
+        overflow-x: hidden; 
+}
+
+
+        .alternativerow:nth-child(2n+1){
+    background:#F5F5F5;
+    
+}
+        .alternativerow
+        {       
+            border-bottom:1px solid #b9b2b2
+        }
+
+      
+
+</style>
 <div class="row">
     <div class="col-md-6">
         <h1>@ViewBag.Title.</h1>
@@ -35,47 +73,52 @@
     <hr />
 }
 
-@if (Model != null && Model.NationalAverageReport != null && Model.NationalAverageReport.Fuels.Any())
+@if (Model != null && Model.NationalAverageReport != null && Model.NationalAverageReport.Fuels.First().Brands.Any())
 {
     <!-- Report Data -->
-    <div class="horz-auto-scroll">
-        <table class="table table-hover table-responsive table-striped">
-            <thead>
-                <tr>
-                    <th>Fuel Type</th>
-                    @if (!Model.NationalAverageReport.Fuels.First().Brands.Any())
-                {
-                        <th>Status</th>
-                    }
-                    else
+    
+        <div  class="divtable" style="width:380px">
+            
+                <div class="row" style="font-weight:bold">
+                    <div class="col-md-1" style="width:150px">Brands</div>
+                    @if (Model.NationalAverageReport.Fuels.First().Brands.Any())
                     {
-                        foreach (var brand in Model.NationalAverageReport.Fuels.First().Brands)
+                        foreach (var fuelType in Model.NationalAverageReport.Fuels)
                         {
-                            <th>@(brand.BrandName)(£)</th>
+                            <div class="col-md-1" style="width:100px">@fuelType.FuelName</div>
                         }
                     }
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var fuelType in Model.NationalAverageReport.Fuels)
-                {
-                    <tr>
-                        <td>
-                            @fuelType.FuelName
-                        </td>
-                        @if (!fuelType.Brands.Any())
-                    {
-                            <td>No data available for specified date</td>
+                </div>
+               <div class="actualdata">
+
+                        @foreach (var brand in Model.NationalAverageReport.Fuels.First().Brands)
+                        {
+                            <div class="alternativerow">
+                                <div class="row">
+                                    <div class="col-md-1" style="width:150px">@brand.BrandName (£)</div>
+                                    @foreach (var fuelType in Model.NationalAverageReport.Fuels)
+                                    {
+                                        var prices = @fuelType.Brands.Where(x => x.BrandName == @brand.BrandName);
+                                        <div class="col-md-1" style="width:100px">@(  (brand.Average / 10.0).ToString("###0.0"))</div>
+                                    }
+                                </div>
+                            </div>
+                           
                         }
-                        @foreach (var brand in fuelType.Brands)
-                    {
-                            <td>@(  (brand.Average / 10.0).ToString("###0.0"))</td>
-                        }
-                    </tr>
-                }
-            </tbody>
-        </table>
-    </div>
+
+               </div>
+            
+          
+        </div>
+
+}
+else
+{
+    foreach (var fuelType in Model.NationalAverageReport.Fuels)
+    { 
+        <div class="alert alert-info" role="alert">No @fuelType.FuelName data found at @requestedDate</div>
+       
+    }
 }
 
 @section scripts {
