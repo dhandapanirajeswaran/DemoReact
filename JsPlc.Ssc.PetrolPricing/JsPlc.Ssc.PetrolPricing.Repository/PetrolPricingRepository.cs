@@ -2108,8 +2108,9 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
                     retval.ReportRows.Add(dataRow);
                    
                     var dataItems = dataRow.DataItems;
-                    return retval;
                     var sitePriceViewModels = sitePrices as SitePriceViewModel[] ?? sitePrices;
+                    return retval;
+                  
                     var sitePriceViewModel = sitePriceViewModels.FirstOrDefault(x => x.SiteId == site1.Id);
                  
                     foreach (var fuelId in fuelTypesList) // report order as per array - Unl, Diesel, Super
