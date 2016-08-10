@@ -1881,30 +1881,32 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
             //calculating by brands
             var distinctBrands = competitorSites.Select(x => x.Brand).Distinct().OrderBy(x => x).ToList();
 
-            distinctBrands.Remove(Const.SAINSBURYS);
-            distinctBrands.Insert(0, Const.SAINSBURYS);
+            if (distinctBrands.Count > 0)
+            {
+                distinctBrands.Remove(Const.SAINSBURYS);
+                distinctBrands.Insert(0, Const.SAINSBURYS);
 
-            foreach (var band in LstOfBandsToRemoveInNA2)
-                distinctBrands.Remove(band);
+                foreach (var band in LstOfBandsToRemoveInNA2)
+                    distinctBrands.Remove(band);
 
 
-            distinctBrands.Remove(Const.TESCO);
-            distinctBrands.Insert(1, Const.TESCO);
-            distinctBrands.Remove(Const.MORRISONS);
-            distinctBrands.Insert(2, Const.MORRISONS);
-            distinctBrands.Remove(Const.ASDA);
-            distinctBrands.Insert(3, Const.ASDA);
-            distinctBrands.Remove(Const.UK);
-            distinctBrands.Insert(4, Const.UK);
-            distinctBrands.Remove(Const.SHELL);
-            distinctBrands.Insert(5, Const.SHELL);
-            distinctBrands.Remove(Const.ESSO);
-            distinctBrands.Insert(6, Const.ESSO);
-            distinctBrands.Remove(Const.TOTAL);
-            distinctBrands.Insert(7, Const.TOTAL);
-            distinctBrands.Remove(Const.BP);
-            distinctBrands.Insert(8, Const.BP);
-
+                distinctBrands.Remove(Const.TESCO);
+                distinctBrands.Insert(1, Const.TESCO);
+                distinctBrands.Remove(Const.MORRISONS);
+                distinctBrands.Insert(2, Const.MORRISONS);
+                distinctBrands.Remove(Const.ASDA);
+                distinctBrands.Insert(3, Const.ASDA);
+                distinctBrands.Remove(Const.UK);
+                distinctBrands.Insert(4, Const.UK);
+                distinctBrands.Remove(Const.SHELL);
+                distinctBrands.Insert(5, Const.SHELL);
+                distinctBrands.Remove(Const.ESSO);
+                distinctBrands.Insert(6, Const.ESSO);
+                distinctBrands.Remove(Const.TOTAL);
+                distinctBrands.Insert(7, Const.TOTAL);
+                distinctBrands.Remove(Const.BP);
+                distinctBrands.Insert(8, Const.BP);
+            }
 
             foreach (var fuelType in fuelTypeIds)
             {
