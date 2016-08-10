@@ -8,7 +8,24 @@
     }
 
     var requestedDate = Model != null ? Model.ForDate.Value.Date.ToString("dd-MMM-yyyy"): null;
+    var hasData = (Model != null && Model.NationalAverageReport != null && Model.NationalAverageReport.Fuels.First().Brands.Any());
 }
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+
+        if ("@hasData" == "True") {
+            $("#btnExportReport").prop("disabled", false);
+        }
+        else {
+            $("#btnExportReport").prop("disabled", true);
+        }
+
+    });
+
+
+</script>
 <div class="row">
     <div class="col-md-6">
         <h1>@ViewBag.Title.</h1>
