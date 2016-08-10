@@ -10,15 +10,68 @@
     var requestedDate = Model != null ? @Model.ForDate.Value.Date.ToString("dd-MMM-yyyy"): null;
 }
 
+<script type="text/javascript">
+
+    function openTab(evt, tabName) {
+        var i, tabcontent, tablinks, tabactive;
+        tabcontent = document.getElementsByClassName("tabcontent");
+        for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].style.display = "none";
+        }
+        tablinks = document.getElementsByClassName("tablinks");
+        for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].className = "";
+        }
+
+        if (evt!=null)
+        {
+            tabactive = document.getElementsByClassName("activetab");
+            for (i = 0; i < tabactive.length; i++) {
+                tabactive[i].className = "tablinks";
+            }
+        }
+        document.getElementById(tabName).style.display = "block";
+        if (evt != null) evt.currentTarget.className += " activetab";
+
+
+
+    }
+
+
+
+    function settabsWidth(){
+
+        $("#divtable-Diesel").width(getDieselTabWidth());
+        $("#divtable-Unleaded").width(getUnleadedTabWidth());
+
+        openTab(null, 'Diesel');
+        $('#tab-Diesel').addClass('activetab');
+    }
+
+    function getDieselTabWidth() {
+
+        return  @Model.PricePointReports[0].PricePointReportRows.FirstOrDefault().PricePointPrices.Count*50+130;
+    }
+
+    function getUnleadedTabWidth() {
+        return @Model.PricePointReports[1].PricePointReportRows.FirstOrDefault().PricePointPrices.Count*50+130;
+    }
+
+
+    $(function(){
+        $('div[onload]').trigger('onload');
+    });
+
+
+
+
+</script>
+
 <style>
 
-        .actualdata {
-    height: 500px;
-        overflow-y: auto;
-        overflow-x: hidden; 
-}
+       
         .divtable {
-    width: 1000px;
+   
         overflow-y: hidden;
         overflow-x: auto; 
 }
@@ -32,6 +85,61 @@
         {
                border-bottom:1px solid #b9b2b2
         }
+
+
+
+    .activetab{
+        background-color: #910048;
+         color:white;
+        
+    }
+
+   
+        
+ul.tab {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    border: 1px solid #ccc;
+    background-color: #F5F5F5;
+}
+
+
+ul.tab li {float: left; }
+
+
+ul.tab li a {
+    display: inline-block;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    transition: 0.3s;
+    font-size: 17px;
+}
+
+
+ul.tab li a:hover {
+    background-color: #910048;
+     color:white;
+}
+
+
+ul.tab li a:focus, .active  {
+    background-color: #910048;
+    color:white;
+}
+
+
+
+
+.tabcontent {
+    display: none;
+    -webkit-animation: fadeEffect 1s;
+    animation: fadeEffect 1s;
+}
+
+
 
 </style>
 <div class="row">
@@ -61,20 +169,37 @@
     </div>
 }
 
-@if (Model !=null)
-{ 
-foreach (var report in Model.PricePointReports)
+@if (Model != null)
 {
-    <hr />
-    <h4>@report.FuelTypeName</h4>
-
-        if (report.PricePointReportRows.Any())
+    <hr/>
+    <ul class="tab">
+        @foreach (var report in Model.PricePointReports)
         {
-            <div >
-                <div class="divtable">
-                    <div style="width:4100px">
+            if (@report.PricePointReportRows[0].PricePointPrices.Count>2)
+            {
+                <li><a id="tab-@report.FuelTypeName" href="javascript:void(0);" class="tablinks" onclick="openTab(event,'@report.FuelTypeName')">@report.FuelTypeName</a></li>
+            }
+            else
+            {
+                <h4>@report.FuelTypeName</h4>
+                <div class="alert alert-info" role="alert">No @report.FuelTypeName data found at @requestedDate</div>
+            }
+        }
+
+    </ul>
+
+
+    foreach (var report in Model.PricePointReports)
+    {
+        if (@report.PricePointReportRows[0].PricePointPrices.Count > 2)
+        { 
+        <div id="@report.FuelTypeName" class="tabcontent">
+            <h4>@report.FuelTypeName</h4>
+            <div>
+                <div class="divtable" onload="settabsWidth()">
+                    <div id="divtable-@report.FuelTypeName">
                         <div class="row" style="font-weight:bold">
-                            <div class="col-md-1" style="width:100px">Brands</div>
+                            <div class="col-md-1" style="width:130px">Brands</div>
                             @foreach (var price in report.PricePointReportRows.First().PricePointPrices)
                             {
                                 <div class="col-md-1" style="width:50px">@(  (@price.Price / 10).ToString("###0.0"))</div>
@@ -86,7 +211,7 @@ foreach (var report in Model.PricePointReports)
                             {
                                 <div class="alternativerow">
                                     <div class="row">
-                                        <div class="col-md-1" style="width:100px">@row.Brand</div>
+                                        <div class="col-md-1" style="width:130px">@row.Brand</div>
                                         @foreach (var price in row.PricePointPrices)
                                         {
                                             <div class="col-md-1" style="width:50px">@price.Count</div>
@@ -98,17 +223,22 @@ foreach (var report in Model.PricePointReports)
                     </div>
                 </div>
 
-               
-                </div>
-                }
-                else
-                {
-                <div class="alert alert-info" role="alert">No @report.FuelTypeName data found at @requestedDate</div>
-                }
-                }
-                }
 
-                @section scripts {
-                    <script src="~/Scripts/bootstrap-datepicker.min.js"></script>
-                    <script src="~/Scripts/PriceReports/pricePoints.js"></script>
-                }
+            </div>
+           
+
+
+        </div>
+}
+
+    }
+
+
+}
+
+            @section scripts {
+                <script src="~/Scripts/bootstrap-datepicker.min.js"></script>
+                <script src="~/Scripts/PriceReports/pricePoints.js"></script>
+
+
+            }
