@@ -2092,7 +2092,7 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
                     return null;
                 }
 
-             
+                int nCount = 0;
                 foreach (var site in sites)
                 {
                     Site site1 = site;
@@ -2160,6 +2160,12 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
                         dataItem.Diff = (dataItem.CatPriceValue - dataItem.ExpectedPriceValue) / 10;
                         dataItem.DiffValid = true;
                     }
+                    if (nCount == 100)
+                    {
+                        return retval;
+                    }
+
+                    nCount++;
                 }
                 return retval;
             }
