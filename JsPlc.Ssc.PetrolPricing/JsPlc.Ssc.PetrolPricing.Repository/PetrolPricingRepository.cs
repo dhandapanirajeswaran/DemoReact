@@ -2160,7 +2160,7 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
                         dataItem.Diff = (dataItem.CatPriceValue - dataItem.ExpectedPriceValue) / 10;
                         dataItem.DiffValid = true;
                     }
-                    if (nCount == 100)
+                    if (nCount == 0)
                     {
                         return retval;
                     }
