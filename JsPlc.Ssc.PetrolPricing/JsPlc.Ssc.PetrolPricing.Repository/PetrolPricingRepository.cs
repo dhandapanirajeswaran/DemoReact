@@ -2092,7 +2092,6 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
                     return null;
                 }
 
-                int nCount = 0;
                 foreach (var site in sites)
                 {
                     Site site1 = site;
@@ -2109,9 +2108,8 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
                    
                     var dataItems = dataRow.DataItems;
                     var sitePriceViewModels = sitePrices as SitePriceViewModel[] ?? sitePrices;
-                    return retval;
-                  
-                    var sitePriceViewModel = sitePriceViewModels.FirstOrDefault(x => x.SiteId == site1.Id);
+                   
+                    var sitePriceViewModel = sitePriceViewModels==null? null: sitePriceViewModels.FirstOrDefault(x => x.SiteId == site1.Id);
                  
                     foreach (var fuelId in fuelTypesList) // report order as per array - Unl, Diesel, Super
                     {
@@ -2162,12 +2160,7 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
                         dataItem.Diff = (dataItem.CatPriceValue - dataItem.ExpectedPriceValue) / 10;
                         dataItem.DiffValid = true;
                     }
-                    if (nCount == 0)
-                    {
-                        return retval;
-                    }
-
-                    nCount++;
+                                       
                 }
                 return retval;
             }
