@@ -1741,6 +1741,15 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
                                 reportRowItem.PricePointPrices.Add(reportColumnItem);
                                 columnCounter++;
                             }
+                            if (distinctPrices.Count ==0)
+                            {
+                                var reportColumnItem = new PricePointPriceViewModel
+                                {
+                                    Price = 0.0,
+                                    Count = 2
+                                };
+                                reportRowItem.PricePointPrices.Add(reportColumnItem);
+                            }
                             rowCounter++;
                         }
                     }
