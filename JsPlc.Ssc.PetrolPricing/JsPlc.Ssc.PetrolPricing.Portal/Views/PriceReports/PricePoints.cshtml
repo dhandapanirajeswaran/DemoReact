@@ -46,6 +46,8 @@
 
         openTab(null, 'Diesel');
         $('#tab-Diesel').addClass('activetab');
+
+
     }
 
     function getDieselTabWidth() {
@@ -62,7 +64,10 @@
         $('div[onload]').trigger('onload');
     });
 
+    $( document ).ready(function() {
+        $("#btnExportReport").prop( "disabled",  @Model.PricePointReports[0].PricePointReportRows.FirstOrDefault().PricePointPrices.Count==1 );
 
+    });
 
 
 </script>
@@ -183,6 +188,7 @@ ul.tab li a:focus, .active  {
             {
                 <h4>@report.FuelTypeName</h4>
                 <div class="alert alert-info" role="alert">No @report.FuelTypeName data found at @requestedDate</div>
+            
             }
         }
 

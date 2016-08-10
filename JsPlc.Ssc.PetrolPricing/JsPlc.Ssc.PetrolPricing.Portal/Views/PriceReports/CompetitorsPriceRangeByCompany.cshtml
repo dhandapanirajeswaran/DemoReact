@@ -1,7 +1,28 @@
 ﻿@model JsPlc.Ssc.PetrolPricing.Models.ViewModels.CompetitorsPriceRangeByCompanyViewModel
 @{
 	ViewBag.Title = "Report - Competitors Price Range by company";
+    var hasData = (Model != null && Model.ReportCompanies[0].Brands.Count > 0);
+
 }
+
+
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+
+        if ("@hasData" == "True") {
+            $("#btnExportReport").prop("disabled", false);
+        }
+        else {
+            $("#btnExportReport").prop("disabled", true);
+        }
+
+    });
+
+
+</script>
+
 
 <style>
     .actualdata {
@@ -32,7 +53,7 @@
         {
             using (Html.BeginForm("ExportCompetitorsPriceRangeByCompany", "PriceReports", FormMethod.Get))
             {
-                <input type="submit" class="btn btn-primary" value="Export to Excel" />
+        <input type="submit" id="btnExportReport" class="btn btn-primary" value="Export to Excel" />
                 <input type="hidden" id="DateForCopy" name="DateFor" />
                 <input type="hidden" id="SelectedCompanyNameCopy" name="SelectedCompanyName" />
                 <input type="hidden" id="SelectedBrandNameCopy" name="SelectedBrandName" />
