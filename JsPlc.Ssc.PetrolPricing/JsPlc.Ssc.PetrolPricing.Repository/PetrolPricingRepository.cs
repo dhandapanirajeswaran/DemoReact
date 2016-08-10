@@ -2106,6 +2106,7 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
                         DataItems = new List<ComplianceReportDataItem>()
                     };
                     retval.ReportRows.Add(dataRow);
+                    return retval;
                     var dataItems = dataRow.DataItems;
 
                     var sitePriceViewModels = sitePrices as SitePriceViewModel[] ?? sitePrices;
