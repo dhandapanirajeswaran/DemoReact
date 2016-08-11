@@ -10,6 +10,22 @@
     var requestedDate = Model != null ? Model.ForDate.Value.Date.ToString("dd-MMM-yyyy"): null;
     var hasData = (Model != null && Model.NationalAverageReport != null && Model.NationalAverageReport.Fuels.First().Brands.Any());
 }
+<style>
+    .actualdata {
+        height: 500px;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+
+    .alternativerow:nth-child(2n+1) {
+        background: #F5F5F5;
+    }
+
+    .alternativerow {
+        border-bottom: 1px solid #b9b2b2;
+    }
+</style>
 
 <script type="text/javascript">
 
@@ -55,59 +71,55 @@
 @if (Model != null && Model.NationalAverageReport != null && Model.NationalAverageReport.Fuels.First().Brands.Any())
 {
     <!-- Report Data -->
-    <div class="horz-auto-scroll">
+    <div class="divtable" style="width:700px;">
+        <div class="row" style="font-weight:bold">
 
-        <table class="table table-hover table-responsive table-striped">
-            <thead>
-                <tr>
-                    <th>Fuel Type</th>
-                    @if (Model.NationalAverageReport.Fuels.First().Brands.Any())                
-                    {
-                        foreach (var brand in Model.NationalAverageReport.Fuels.First().Brands)
-                        {
-                            <th>@(brand.BrandName)(£)</th>
-                        }
-                    }
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var fuelType in Model.NationalAverageReport.Fuels)
-                {
-                    <tr>
-                        <td>
-                            <strong>@fuelType.FuelName</strong>
-                        </td>
-                         @foreach (var brand in fuelType.Brands)
-                        {
-                            <td>@((brand.Average / 10.0).ToString("###0.0"))</td>
-                        }
-                    </tr>
-                    <tr>
-                        <td>Difference</td>                       
-                        @foreach (var brand in fuelType.Brands)
-                    {
-                        int diff = brand.Average > 0 ? (brand.Average - fuelType.SainsburysPrice) : 0;
-                        string color = "";
-                        if (diff < 0)
-                        {
-                            color = "red";
-                        }
-                        else if (diff > 0)
-                        {
-                            color = "green";
-                        }
+            <div class="col-md-1" style="width:150px">Brands</div>
+            @foreach (var fuelType in Model.NationalAverageReport.Fuels)
+            {
+                <div class="col-md-1" style="width:140px">@fuelType.FuelName (£)</div>
+                <div class="col-md-1" style="width:140px">Difference (£)</div>
+            }
 
-                        <td style="color: @color">@((diff / 10.0).ToString("###0.0"))</td>
-                        }
-                    </tr>
-                }
-            </tbody>
-        </table>
         </div>
+        <div class="actualdata">
+            @foreach (var brand in Model.NationalAverageReport.Fuels.First().Brands)
+            {
+                <div class="alternativerow">
+                    <div class="row">
+                        <div class="col-md-1" style="width:150px"> @brand.BrandName </div>
+                        @foreach (var fuelType in Model.NationalAverageReport.Fuels)
+                        {
+                            var brandfromFType = @fuelType.Brands.Where(x => x.BrandName == @brand.BrandName).FirstOrDefault();
+
+                            <div class="col-md-1" style="width:140px"> @((brandfromFType.Average / 10.0).ToString("###0.0")) </div>
+                            int diff = brandfromFType.Average > 0 ? (brandfromFType.Average - fuelType.SainsburysPrice) : 0;
+                            string color = "";
+                            if (diff < 0)
+                            {
+                                color = "red";
+                            }
+                            else if (diff > 0)
+                            {
+                                color = "green";
+                            }
+                            <div class="col-md-1" style="width:140px;color:@color">@((diff / 10.0).ToString("###0.0"))</div>
+                        }
+
+                    </div>
+                </div>
+            }
+
+
+        </div>
+
+
+
+    </div>
 }
 else
 {
-   
+
     foreach (var fuelType in Model.NationalAverageReport.Fuels)
     {
         <div class="alert alert-info" role="alert">No @fuelType.FuelName data found at @requestedDate</div>
