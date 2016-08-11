@@ -129,6 +129,21 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             }
 		}
 
+        [System.Web.Mvc.HttpGet]
+        public ActionResult NationalAverage3(string For = "")
+        {
+            try
+            {
+                var item = GetNationalAverage2Data(For,true);
+
+                return View(item);
+            }
+            catch (Exception ce)
+            {
+                return View();
+            }
+        }
+
 		[System.Web.Mvc.HttpGet]
 		public ActionResult CompetitorsPriceRange(string For = "")
 		{
@@ -314,7 +329,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 		}
 
 		[System.Web.Mvc.HttpGet]
-		public ActionResult ExportNationalAverage2(string For = "")
+		public ActionResult ExportNationalAverage2(string For = "",bool  viewAllCompitetors=false)
 		{
 			DateTime forDate;
 			if (!DateTime.TryParse(For, out forDate))
@@ -323,7 +338,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 			var reportContainer = new NationalAverageReportContainerViewModel
 			{
 				ForDate = forDate,
-				NationalAverageReport = _serviceFacade.GetNationalAverage2(forDate)
+                NationalAverageReport = _serviceFacade.GetNationalAverage2(forDate, viewAllCompitetors)
 			};
 
 			var dt = reportContainer.ToNationalAverageReport2DataTable();
@@ -447,7 +462,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             return item;
         }
 
-		private NationalAverageReportContainerViewModel GetNationalAverage2Data(string For)
+		private NationalAverageReportContainerViewModel GetNationalAverage2Data(string For,bool bViewAllCompetitors=false)
 		{
 			DateTime forDate;
 			if (!DateTime.TryParse(For, out forDate))
@@ -456,7 +471,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 			var item = new NationalAverageReportContainerViewModel
 			{
 				ForDate = forDate,
-				NationalAverageReport = _serviceFacade.GetNationalAverage2(forDate)
+                NationalAverageReport = _serviceFacade.GetNationalAverage2(forDate, bViewAllCompetitors)
 			};
 			return item;
 		}

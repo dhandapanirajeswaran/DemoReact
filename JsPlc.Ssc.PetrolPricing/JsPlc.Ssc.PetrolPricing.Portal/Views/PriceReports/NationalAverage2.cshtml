@@ -107,11 +107,14 @@
 }
 else
 {
+   
     foreach (var fuelType in Model.NationalAverageReport.Fuels)
     {
         <div class="alert alert-info" role="alert">No @fuelType.FuelName data found at @requestedDate</div>
 
     }
+   
+   
 }
 
         @section scripts {

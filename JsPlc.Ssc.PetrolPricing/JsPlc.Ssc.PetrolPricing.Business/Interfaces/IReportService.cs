@@ -15,7 +15,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 
         NationalAverageReportViewModel GetReportNationalAverage(DateTime when);
 
-        NationalAverageReportViewModel GetReportNationalAverage2(DateTime when);
+        NationalAverageReportViewModel GetReportNationalAverage2(DateTime when,bool ViewAllCompetitors = false);
 
         NationalAverageReportViewModel GetReportcompetitorsPriceRange(DateTime when);        
 

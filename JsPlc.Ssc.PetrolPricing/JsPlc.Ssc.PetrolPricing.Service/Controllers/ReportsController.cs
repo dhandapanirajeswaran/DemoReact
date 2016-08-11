@@ -57,13 +57,13 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
         /// <summary>
         /// National average 2 report
         /// </summary>
-        /// <param name="when"></param>
+        /// <param name="when",name="ViewAllCompetitors"></param>
         /// <returns></returns>
         [HttpGet]
-        [Route("api/GetNationalAverage2/{when}")]
-        public IHttpActionResult GetNationalAverage2([FromUri]DateTime when)
+        [Route("api/GetNationalAverage2/{when}/{ViewAllCompetitors}")]
+        public IHttpActionResult GetNationalAverage2([FromUri]DateTime when, [FromUri]bool ViewAllCompetitors)
         {
-            var result = _reportService.GetReportNationalAverage2(when);
+            var result = _reportService.GetReportNationalAverage2(when, ViewAllCompetitors);
             return Ok(result);
         }
 

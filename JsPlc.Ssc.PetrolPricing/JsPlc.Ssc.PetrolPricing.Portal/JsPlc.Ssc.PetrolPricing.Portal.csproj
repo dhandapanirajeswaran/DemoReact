@@ -358,6 +358,7 @@
     <Content Include="Scripts\moment.js" />
     <Content Include="Scripts\moment.min.js" />
     <Content Include="Scripts\pricereports\competitorsPriceRange.js" />
+    <Content Include="Scripts\pricereports\nationalAverage3.js" />
     <Content Include="Scripts\pricereports\nationalAverage2.js" />
     <Content Include="Scripts\r.js" />
     <Content Include="Scripts\pricereports\nationalAverage.js" />
@@ -439,6 +440,7 @@
     <Content Include="Views\PriceReports\CompetitorsPriceRangeByCompany.cshtml" />
     <Content Include="Views\PPUsers\Index.cshtml" />
     <Content Include="Views\Log4Net\Index.cshtml" />
+    <Content Include="Views\PriceReports\NationalAverage3.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\uploads\" />

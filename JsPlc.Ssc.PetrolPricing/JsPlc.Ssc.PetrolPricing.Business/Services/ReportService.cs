@@ -51,9 +51,9 @@ namespace JsPlc.Ssc.PetrolPricing.Business
             return _db.GetReportNationalAverage(when);
         }
 
-        public NationalAverageReportViewModel GetReportNationalAverage2(DateTime when)
+        public NationalAverageReportViewModel GetReportNationalAverage2(DateTime when, bool ViewAllCompetitors=false)
         {
-            return _db.GetReportNationalAverage2(when);
+            return _db.GetReportNationalAverage2(when,ViewAllCompetitors);
         }
 
         public NationalAverageReportViewModel GetReportcompetitorsPriceRange(DateTime when)
