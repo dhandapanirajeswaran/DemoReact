@@ -304,8 +304,13 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             int catNo = 0, int storeNo = 0,
             string storeTown = "", int siteId = 0)
          {
-             DateTime forDate;
-             if (!DateTime.TryParse(date, out forDate)) forDate = DateTime.Now;
+             DateTime forDate = DateTime.Now;
+             if (!DateTime.TryParse(date, out forDate)) 
+             {
+                   string[] tokenize = date.Split('/');
+                   date = tokenize[2]+"/"+ tokenize[1]+ "/" + tokenize[0];
+                   forDate = new DateTime(Convert.ToInt16(tokenize[2]), Convert.ToInt16(tokenize[1]), Convert.ToInt16(tokenize[0]));
+             }
              IEnumerable<SitePriceViewModel> sitesViewModelsWithPrices = _serviceFacade.GetSitePrices(forDate, storeName, catNo, storeNo, storeTown, siteId, 1, 2000);
              Dictionary<int, int> dicgroupRows = new Dictionary<int, int>();
              var dt = SitePricesToDataTable(forDate, sitesViewModelsWithPrices, ref  dicgroupRows);
