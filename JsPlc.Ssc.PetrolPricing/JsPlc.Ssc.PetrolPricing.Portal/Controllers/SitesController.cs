@@ -350,12 +350,15 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
                  dicColtoFType.Add(2,5);
                  dicColtoFType.Add(6,7);
                  dicColtoFType.Add(1,9);
-                 foreach(var fp in siteVM.FuelPrices)
+                 if (siteVM.FuelPrices != null)
                  {
-                     if (dicColtoFType.ContainsKey(fp.FuelTypeId))
+                     foreach (var fp in siteVM.FuelPrices)
                      {
-                         dr[dicColtoFType[fp.FuelTypeId]] = (fp.TodayPrice / 10.0).ToString();
-                         dr[dicColtoFType[fp.FuelTypeId] + 1] = (fp.AutoPrice / 10.0).ToString();
+                         if (dicColtoFType.ContainsKey(fp.FuelTypeId))
+                         {
+                             dr[dicColtoFType[fp.FuelTypeId]] = (fp.TodayPrice / 10.0).ToString();
+                             dr[dicColtoFType[fp.FuelTypeId] + 1] = (fp.AutoPrice / 10.0).ToString();
+                         }
                      }
                  }
                  dt.Rows.Add(dr);
@@ -392,12 +395,15 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
                          dr[2] = compitetorVM.StoreName;
                          dr[3] = compitetorVM.DriveTime;
                          dr[4] = compitetorVM.CatNo;
-                         foreach (var fp in compitetorVM.FuelPrices)
+                         if (compitetorVM.FuelPrices != null)
                          {
-                             if (dicColtoFType.ContainsKey(fp.FuelTypeId))
+                             foreach (var fp in compitetorVM.FuelPrices)
                              {
-                                 dr[dicColtoFType[fp.FuelTypeId]] = (fp.YestPrice / 10.0).ToString();
-                                 dr[dicColtoFType[fp.FuelTypeId] + 1] = (fp.TodayPrice / 10.0).ToString();
+                                 if (dicColtoFType.ContainsKey(fp.FuelTypeId))
+                                 {
+                                     dr[dicColtoFType[fp.FuelTypeId]] = (fp.YestPrice / 10.0).ToString();
+                                     dr[dicColtoFType[fp.FuelTypeId] + 1] = (fp.TodayPrice / 10.0).ToString();
+                                 }
                              }
                          }
                          dt.Rows.Add(dr);
