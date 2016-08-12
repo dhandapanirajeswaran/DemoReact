@@ -581,7 +581,7 @@
     $("#btnExportReport").click(function () {
 
         
-
+        alert($('#viewingDate').val());
         var url = "Sites/ExportPrices?date=" + $('#viewingDate').val()
               + "&storeName=" + $('#viewingStoreName').val()
               + "&catNo=" + $('#viewingCatNo').val()
