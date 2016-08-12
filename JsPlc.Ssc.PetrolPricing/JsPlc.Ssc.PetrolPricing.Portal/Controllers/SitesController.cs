@@ -352,8 +352,11 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
                  dicColtoFType.Add(1,9);
                  foreach(var fp in siteVM.FuelPrices)
                  {
-                     dr[dicColtoFType[fp.FuelTypeId]] = (fp.TodayPrice / 10.0).ToString();
-                     dr[dicColtoFType[fp.FuelTypeId] + 1] = (fp.AutoPrice / 10.0).ToString();
+                     if (dicColtoFType.ContainsKey(fp.FuelTypeId))
+                     {
+                         dr[dicColtoFType[fp.FuelTypeId]] = (fp.TodayPrice / 10.0).ToString();
+                         dr[dicColtoFType[fp.FuelTypeId] + 1] = (fp.AutoPrice / 10.0).ToString();
+                     }
                  }
                  dt.Rows.Add(dr);
                  nRow = nRow+1;
