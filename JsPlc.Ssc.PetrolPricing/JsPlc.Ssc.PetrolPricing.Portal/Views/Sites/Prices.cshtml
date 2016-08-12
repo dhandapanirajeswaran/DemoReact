@@ -130,7 +130,7 @@
                 <!-- Date Picker -->
                 <div class="col-md-1">
                     <label for="viewingDate">Date:</label>
-                    <input type="text" id="viewingDate" class="datepicker form-control" onchange=" IsSitePriceFormClicked=1; " onmousedown="    IsSitePriceFormClicked=1; " onclick="    IsSitePriceFormClicked=1; "
+                    <input type="text" id="viewingDate" class="datepicker form-control"  onmousedown="    IsSitePriceFormClicked=1; " onclick="    IsSitePriceFormClicked=1; "
                            style="width: 85px" name="viewingDate" maxlength="12"
                            data-bind="value: $root.InitDate" />
                 </div>
@@ -506,13 +506,15 @@
                 autoclose: true,
                 todayHighlight: true,               
                 endDate: '1d'
-            }).on('show', function(e) {
+            }).on('changeDate', function(e) {
                 IsSitePriceFormClicked=1; 
+                $("#btnExportReport").prop("disabled", true);
             });
-
+           
+       
     });
 
-      
+  
 
     function refreshDates(selectedDate)
     {
@@ -577,6 +579,8 @@
     
 
     }
+
+     
 
     $("#btnExportReport").click(function () {
 
