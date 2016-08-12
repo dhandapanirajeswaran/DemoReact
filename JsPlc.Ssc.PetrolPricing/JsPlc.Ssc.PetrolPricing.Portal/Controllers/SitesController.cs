@@ -19,6 +19,10 @@ using WebGrease.Css.Extensions;
 using JsPlc.Ssc.PetrolPricing.Core.Interfaces;
 using JsPlc.Ssc.PetrolPricing.Core;
 using JsPlc.Ssc.PetrolPricing.Portal.Helper;
+using System.Data;
+
+
+
 
 namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 {
@@ -295,6 +299,165 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             return View("Prices", mode2);
         }
 
+         [System.Web.Mvc.HttpGet]
+         public ActionResult ExportPrices(string date = null, string storeName = "",
+            int catNo = 0, int storeNo = 0,
+            string storeTown = "", int siteId = 0)
+         {
+             DateTime forDate;
+             if (!DateTime.TryParse(date, out forDate)) forDate = DateTime.Now;
+             IEnumerable<SitePriceViewModel> sitesViewModelsWithPrices = _serviceFacade.GetSitePrices(forDate, storeName, catNo, storeNo, storeTown, siteId, 1, 2000);
+             Dictionary<int, int> dicgroupRows = new Dictionary<int, int>();
+             var dt = SitePricesToDataTable(forDate, sitesViewModelsWithPrices, ref  dicgroupRows);
+             string filenameSuffix = String.Format("[{0}]", forDate.ToString("dd-MMM-yyyy"));
+             return ExcelDocumentStream(new List<DataTable> { dt }, "SitePrices", filenameSuffix, dicgroupRows);
+         }
+         public DataTable SitePricesToDataTable(DateTime forDate,
+             IEnumerable<SitePriceViewModel> sitesViewModelsWithPrices, ref  Dictionary<int, int> dicgroupRows)
+         {
+             var dt = new DataTable("Site Pricing");
+             dt.Columns.Add("StoreNo.");
+             dt.Columns.Add("Store Name");
+             dt.Columns.Add("Store Town");
+             dt.Columns.Add("Cat No.");
+             dt.Columns.Add("PFS No.");
+             dt.Columns.Add("UnLeaded ");
+             dt.Columns.Add("UnLeaded");
+             dt.Columns.Add("Diesel ");
+             dt.Columns.Add("Diesel");
+             dt.Columns.Add("Super Unleaded ");
+             dt.Columns.Add("Super Unleaded");
+             DataRow dr = dt.NewRow();
+             DateTime tomorrow = forDate.AddDays(1);
+             DateTime yday = forDate.AddDays(-1);
+             dr[5] = forDate.ToString("dd/MM/yyyy");
+             dr[6] = tomorrow.ToString("dd/MM/yyyy");
+             dr[7] = forDate.ToString("dd/MM/yyyy");
+             dr[8] = tomorrow.ToString("dd/MM/yyyy");
+             dr[9] = forDate.ToString("dd/MM/yyyy");
+             dr[10] = tomorrow.ToString("dd/MM/yyyy");
+             dt.Rows.Add(dr);
+             int nRow = 2;
+             foreach(var siteVM in sitesViewModelsWithPrices)
+             {
+                 dr = dt.NewRow();
+                 dr[0] = siteVM.StoreNo;
+                 dr[1] = siteVM.StoreName;
+                 dr[2] = siteVM.Town;
+                 dr[3] = siteVM.CatNo;
+                 dr[4] = siteVM.PfsNo;
+                 Dictionary<int,int> dicColtoFType=new Dictionary<int,int>();
+                 dicColtoFType.Add(2,5);
+                 dicColtoFType.Add(6,7);
+                 dicColtoFType.Add(1,9);
+                 foreach(var fp in siteVM.FuelPrices)
+                 {
+                     dr[dicColtoFType[fp.FuelTypeId]] = (fp.TodayPrice / 10.0).ToString();
+                     dr[dicColtoFType[fp.FuelTypeId] + 1] = (fp.AutoPrice / 10.0).ToString();
+                 }
+                 dt.Rows.Add(dr);
+                 nRow = nRow+1;
+                
+                 //Adding Competitors
+                 if (siteVM.competitors == null) siteVM.competitors = _serviceFacade.GetCompetitorsWithPrices(forDate,siteVM.SiteId,1,2000).OrderBy(x=>x.DriveTime).ToList();
+                 if (siteVM.competitors != null)
+                 {
+                     dr = dt.NewRow();
+                     dr[1] = "Brand";
+                     dr[2] = "Maker";
+                     dr[3] = "Drive-Time";
+                     dr[4] = "Cat No.";
+                     dr[5] = "UnLeaded";
+                     dr[6] = "UnLeaded ";
+                     dr[7] = "Diesel";
+                     dr[8] = "Diesel ";
+                     dr[9] = "Super Unleaded";
+                     dr[10] = "Super Unleaded ";
+                     dt.Rows.Add(dr);
+                     dr = dt.NewRow();
+                     dr[5] = yday.ToString("dd/MM/yyyy");
+                     dr[6] = forDate.ToString("dd/MM/yyyy");
+                     dr[7] = yday.ToString("dd/MM/yyyy");
+                     dr[8] = forDate.ToString("dd/MM/yyyy");
+                     dr[9] = yday.ToString("dd/MM/yyyy");
+                     dr[10] = forDate.ToString("dd/MM/yyyy");
+                     dt.Rows.Add(dr);
+                      foreach (var compitetorVM in siteVM.competitors)
+                     {
+                         dr = dt.NewRow();
+                         dr[1] = compitetorVM.Brand;
+                         dr[2] = compitetorVM.StoreName;
+                         dr[3] = compitetorVM.DriveTime;
+                         dr[4] = compitetorVM.CatNo;
+                         foreach (var fp in compitetorVM.FuelPrices)
+                         {
+                             if (dicColtoFType.ContainsKey(fp.FuelTypeId))
+                             {
+                                 dr[dicColtoFType[fp.FuelTypeId]] = (fp.YestPrice / 10.0).ToString();
+                                 dr[dicColtoFType[fp.FuelTypeId] + 1] = (fp.TodayPrice / 10.0).ToString();
+                             }
+                         }
+                         dt.Rows.Add(dr);
+                        
+                     }
+                      dr = dt.NewRow();
+                      dt.Rows.Add(dr);
+                     dicgroupRows.Add(nRow, siteVM.competitors.Count+2);
+                 }
+
+                
+             }
+             return dt;
+         }
+         private ActionResult ExcelDocumentStream(List<DataTable> tables, string fileName, string fileNameSuffix, Dictionary<int, int> dicgroupRows)
+         {
+             using (var wb = new ClosedXML.Excel.XLWorkbook())
+             {
+                 foreach (var dt in tables)
+                 {
+                     var ws = wb.Worksheets.Add(dt);
+                     int TotalRows = ws.RowCount();
+                     
+                     int nSiteRow = 3;
+                     int nRow = 3;
+                     while (dicgroupRows.ContainsKey(nRow))
+                     {
+                         int nCompitetors = dicgroupRows[nRow] ;
+
+                         var cellrange = string.Format("A{0}:K{1}", nSiteRow + 1, nSiteRow + nCompitetors);
+                         var cellrangesecondRow = "A2:K2";
+                         ws.Range(cellrangesecondRow).Style.Fill.SetBackgroundColor(ClosedXML.Excel.XLColor.LightGray);
+                         ws.Range(cellrange).Style.Fill.SetBackgroundColor(ClosedXML.Excel.XLColor.LightGray);
+                         ws.Range(cellrange).Style.Border.OutsideBorder = ClosedXML.Excel.XLBorderStyleValues.Thick;
+                         ws.Range(cellrange).Style.Border.OutsideBorderColor = ClosedXML.Excel.XLColor.Gray;
+                        
+                         ws.Rows(nSiteRow + 1, nSiteRow+nCompitetors).Group();
+                         ws.Rows(nSiteRow + 1, nSiteRow+nCompitetors).Collapse();
+                         nSiteRow += nCompitetors+2;
+                         nRow++;
+                     }
+                    
+                 }
+                 wb.Style.Alignment.Horizontal = ClosedXML.Excel.XLAlignmentHorizontalValues.Center;
+                 wb.Style.Font.Bold = true;
+                 Response.Clear();
+                 Response.Buffer = true;
+                 Response.Charset = "";
+                 Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                 string downloadHeader = String.Format("attachment;filename= {1}{0}.xlsx",
+                     fileNameSuffix,
+                     fileName);
+                 Response.AddHeader("content-disposition", downloadHeader);
+                 using (var myMemoryStream = new System.IO.MemoryStream())
+                 {
+                     wb.SaveAs(myMemoryStream);
+                     myMemoryStream.WriteTo(Response.OutputStream);
+                     Response.Flush();
+                     Response.End();
+                     return new EmptyResult();
+                 }
+             }
+         }
         [System.Web.Mvc.HttpPost]
         public ActionResult Edit(SiteViewModel site)
         {

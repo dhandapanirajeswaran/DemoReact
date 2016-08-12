@@ -175,6 +175,10 @@
                     @Html.ListBoxFor(model => model.ExcludeBrands, new MultiSelectList(Model.AllBrands), new { @data_placeholder = "Select Brands...", @class = "chosen-select", style = "width: 430px;", id = "lstbxexcludebrands" })
                     <button type="submit" value="Update" id="bradsgo" class="btn btn-success" }">Go</button>
                 </div>
+
+                <div class="col-md-1" style="padding-top: 20px">
+                    <input type="button" class="btn btn-primary" id="btnExportReport" value="Export to Excel" />
+                </div>
             </div>
 
             <hr />
@@ -479,32 +483,6 @@
 
                     </div>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
                     <!-- /ko -->
                 </div>
 
@@ -600,7 +578,21 @@
 
     }
 
-   
+    $("#btnExportReport").click(function () {
+
+        
+
+        var url = "Sites/ExportPrices?date=" + $('#viewingDate').val()
+              + "&storeName=" + $('#viewingStoreName').val()
+              + "&catNo=" + $('#viewingCatNo').val()
+              + "&storeNo=" + $('#viewingStoreNo').val()
+              + "&storeTown=" + $('#viewingStoreTown').val();
+
+      
+        var rootFolder = /\/petrolpricing\//i.test(window.location.href) ? "/petrolpricing/" : "/";
+       
+        window.location.href = rootFolder + url;
+    });
 
 
 </script>
