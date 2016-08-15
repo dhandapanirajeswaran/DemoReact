@@ -2177,8 +2177,8 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
             try
             {
                 ExcludeBrands brand = _context.ExcludeBrands.ToList().Find(x => x.BrandName == strBrandName);
-                var returnval = _context.ExcludeBrands.Remove(brand);
-
+               _context.ExcludeBrands.Remove(brand);
+                var returnval = _context.SaveChanges();
                 return returnval != null;
             }
             catch (Exception ce)
@@ -2201,6 +2201,7 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
             {
                 foreach (string brandName in listOfBrands)
                 {
+                    if (brandName == null) continue;
                     ExcludeBrands excludeBrand = new ExcludeBrands();
                     excludeBrand.BrandName = brandName;
                     _context.ExcludeBrands.Add(excludeBrand);

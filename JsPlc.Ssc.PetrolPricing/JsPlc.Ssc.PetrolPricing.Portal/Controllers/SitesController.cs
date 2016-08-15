@@ -284,19 +284,13 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             return View(model);
         }
 
-         [System.Web.Mvc.HttpPost]
-        public ActionResult Prices(SiteViewModel site)
+         [System.Web.Mvc.HttpGet]
+        public ActionResult SaveExcludeBrands(string excludbrands)
         {
-           _serviceFacade.UpdateExcludeBrands(site);
-
-            SiteViewModel mode2 = new SiteViewModel();
-
-            mode2.AllBrands = _serviceFacade.GetBrands().ToList();
-            var excludebrands = _serviceFacade.GetExcludeBrands();
-            mode2.ExcludeBrands = excludebrands != null ? excludebrands.ToList() : null;
-            mode2.ExcludeBrandsOrg = mode2.ExcludeBrands;
-
-            return View("Prices", mode2);
+            SiteViewModel site = new SiteViewModel();
+            site.ExcludeBrands = excludbrands.Split(',').ToList();
+            _serviceFacade.UpdateExcludeBrands(site);
+            return Json("Saved");
         }
 
          [System.Web.Mvc.HttpGet]

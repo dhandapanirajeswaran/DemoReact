@@ -412,7 +412,25 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
             siteViewModel.ExcludeBrandsOrg = _siteService.GetExcludeBrands().ToList();
             if (siteViewModel.ExcludeBrands != null)
             {
+
+
+
+
                 var list_intersect = siteViewModel.ExcludeBrands.Intersect(siteViewModel.ExcludeBrandsOrg).ToList();
+                bool bIsChangeInList = siteViewModel.ExcludeBrands.Count != siteViewModel.ExcludeBrandsOrg.Count;
+                if (siteViewModel.ExcludeBrands.Count == siteViewModel.ExcludeBrandsOrg.Count)
+                {
+                    foreach (string brandname in siteViewModel.ExcludeBrands)
+                    {
+                        if (!siteViewModel.ExcludeBrandsOrg.Contains(brandname))
+                        {
+                            bIsChangeInList = true;
+                            break;
+                        }
+                      }
+                }
+
+                if (!bIsChangeInList) return Ok(siteViewModel);
                 foreach (string brandname in list_intersect)
                 {
                     siteViewModel.ExcludeBrands.Remove(brandname);
@@ -428,7 +446,7 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
                     _siteService.RemoveExcludeBrand(strBrand);
                 }
 
-                _siteService.SaveExcludeBrands(siteViewModel.ExcludeBrands);
+               if (siteViewModel.ExcludeBrands.Count>0) _siteService.SaveExcludeBrands(siteViewModel.ExcludeBrands);
                 
                 return Ok(siteViewModel);
             }

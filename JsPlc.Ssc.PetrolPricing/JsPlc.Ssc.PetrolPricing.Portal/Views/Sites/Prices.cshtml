@@ -137,7 +137,7 @@
                 <!-- Store No -->
                 <div class="col-md-2">
                     <label for="viewingStoreNo">Store No:</label>
-                    <input type="text" id="viewingStoreNo" class="form-control" maxlength="9" onclick=" IsSitePriceFormClicked=1; "
+                    <input type="text" id="viewingStoreNo" class="form-control" maxlength="9"   onclick="    IsSitePriceFormClicked=1; "
                            name="viewingStoreNo" data-bind="numeric, value: $root.StoreNo" />
                 </div>
                 <!-- Store Name -->
@@ -163,22 +163,25 @@
                     <button style="margin-top: 24px" type="button" class="btn btn-success" data-bind="click: loadPageWithParams">Go</button>
                 </div>
                 <!-- show all button -->
-                <div class="col-md-1">
+                <div class="col-md-1" style="margin-left:-40px">
                     <button style="margin-top: 24px" type="button" class="btn btn-default" data-bind="click: function() { reloadSearchPage('Sites/Prices?date='+$root.InitDateInUsFormat()) }">Show all</button>
                 </div>
+                <!-- ExportToExcel button -->
+                <div class="col-md-1" >
+                    <input type="button" style="margin-top: 24px;margin-left:0px " class="btn btn-primary" id="btnExportReport" value="Export to Excel" />
+                </div>
+               
             </div>
 
             <div class="row">
                 <div class="col-md-1" style="width:864px;">
                     <br />
                     <label>Excluded Brands</label>
-                    @Html.ListBoxFor(model => model.ExcludeBrands, new MultiSelectList(Model.AllBrands), new { @data_placeholder = "Select Brands...", @class = "chosen-select", style = "width: 430px;", id = "lstbxexcludebrands" })
-                    <button type="submit" value="Update" id="bradsgo" class="btn btn-success" }">Go</button>
+                    @Html.ListBoxFor(model => model.ExcludeBrands, new MultiSelectList(Model.AllBrands), new { @data_placeholder = "Select Brands...", @class = "chosen-select", style = "width: 400px;", id = "lstbxexcludebrands" })
+                  
                 </div>
 
-                <div class="col-md-1" style="padding-top: 20px">
-                    <input type="button" class="btn btn-primary" id="btnExportReport" value="Export to Excel" />
-                </div>
+                
             </div>
 
             <hr />
@@ -580,8 +583,26 @@
 
     }
 
-     
+    
+    $("#viewingStoreNo").change(function () {
+       
+        $("#btnExportReport").prop("disabled", true);
+    });
 
+    $("#viewingStoreName").change(function () {
+       
+        $("#btnExportReport").prop("disabled", true);
+    });
+
+    $("#viewingStoreNo").change(function () {
+       
+        $("#btnExportReport").prop("disabled", true);
+    });
+
+    $("#viewingStoreTown").change(function () {
+       
+        $("#btnExportReport").prop("disabled", true);
+    });
     $("#btnExportReport").click(function () {
 
         
