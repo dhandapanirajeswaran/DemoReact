@@ -299,38 +299,40 @@ namespace JsPlc.Ssc.PetrolPricing.Models.Common
         public static DataTable ToNationalAverageReportDataTable(
             this NationalAverageReportContainerViewModel reportContainer, string tableName = "National Average")
         {
+           
             var dt = new DataTable(tableName);
-            dt.Columns.Add("FuelType");
+            dt.Columns.Add("Date");
+            dt.Columns.Add("Day");
+            dt.Columns.Add("Brands");
 
-            if (!reportContainer.NationalAverageReport.Fuels.First().Brands.Any())
+            foreach (var fuelType in reportContainer.NationalAverageReport.Fuels)
             {
-                dt.Columns.Add("Status");
+                dt.Columns.Add(fuelType.FuelName + " (£)");               
             }
 
+            DataRow dr = dt.NewRow();
+
+            dr[0] = reportContainer.ForDate.Value.ToString("dd-MMM");
+            dr[1] = reportContainer.ForDate.Value.DayOfWeek;
+
+
+            int nRowCount = 0;
             // Setup Table Columns - Fuel Type Brand1   Brand2   Brand3...
             foreach (var brand in reportContainer.NationalAverageReport.Fuels.First().Brands)
             {
-                dt.Columns.Add(brand.BrandName);
-            }
-
-            // Data Rows
-            foreach (var fuelType in reportContainer.NationalAverageReport.Fuels)
-            {
-                DataRow dr = dt.NewRow();
-                dr[0] = fuelType.FuelName;
-                var i = 1;
-
-                if (!fuelType.Brands.Any())
+                int i = 2;
+                if (nRowCount > 0) dr = dt.NewRow();
+                dr[i++] = brand.BrandName;
+                foreach (var fuelType in reportContainer.NationalAverageReport.Fuels)
                 {
-                    dr[1] = "There is no data available";
-                }
-                foreach (var brand in fuelType.Brands)
-                {
-                    dr[i] = (brand.Average / 10.0).ToString("###0.0");
-                    i += 1;
+                    var brandfromFType = fuelType.Brands.Where(x => x.BrandName == @brand.BrandName).FirstOrDefault();
+                    dr[i++] = ((brandfromFType.Average / 10.0).ToString("###0.0"));
+                  
                 }
                 dt.Rows.Add(dr);
+                nRowCount++;
             }
+
             return dt;
         }
 
@@ -428,6 +430,36 @@ namespace JsPlc.Ssc.PetrolPricing.Models.Common
                 nRowCount++;
             }
            
+            return dt;
+        }
+
+        public static DataTable ToCompetitorSitesDataTable(
+          this CompetitorSiteReportViewModel reportContainer, string tableName = "CompetitorSites")
+        {
+            var dt = new DataTable(tableName);
+            dt.Columns.Add("Brand Name");
+            dt.Columns.Add("0-5");
+            dt.Columns.Add("5-10");
+            dt.Columns.Add("10-15");
+            dt.Columns.Add("15-20");
+            dt.Columns.Add("20-25");
+            dt.Columns.Add("25-30");
+            dt.Columns.Add(">30");
+
+            foreach (var brandTimes in reportContainer.BrandTimes)
+            {
+                DataRow dr = dt.NewRow();
+                dr[0] = brandTimes.BrandName;
+                dr[1] = brandTimes.Count0To5;
+                dr[2] = brandTimes.Count5To10;
+                dr[3] = brandTimes.Count10To15;
+                dr[4] = brandTimes.Count15To20;
+                dr[5] = brandTimes.Count20To25;
+                dr[6] = brandTimes.Count25To30;
+                dr[7] = brandTimes.CountMoreThan30;
+                dt.Rows.Add(dr);
+            }
+            
             return dt;
         }
 

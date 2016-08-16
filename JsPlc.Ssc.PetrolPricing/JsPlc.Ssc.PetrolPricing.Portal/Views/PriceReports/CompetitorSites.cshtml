@@ -2,7 +2,14 @@
 @{
 	ViewBag.Title = "Report - View Competitor Sites By Driving Time in Minutes";
 }
-<h1>@ViewBag.Title.</h1>
+<div class="row">
+    <div class="col-md-6">
+        <h1>@ViewBag.Title.</h1>
+    </div>
+    <div class="col-md-6 text-right" style="padding-top: 20px">
+        <input type="button" class="btn btn-primary" id="btnExportReport" value="Export to Excel" />
+    </div>
+</div>
 <hr />
 
 <style>
@@ -46,8 +53,8 @@
                 @Html.DropDownList("SiteId", new SelectList(Model.Sites, "Id", "SiteName", Model.SiteId), new { @class = "form-control" })
             }
         </div>
+       
     </div>
-    
 }
 
 

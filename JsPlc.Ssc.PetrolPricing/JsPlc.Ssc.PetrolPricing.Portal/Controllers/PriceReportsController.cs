@@ -348,6 +348,23 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 			return ExcelDocumentStream(new List<DataTable> { dt }, "NationalAverageReport2", filenameSuffix);
 		}
 
+        [System.Web.Mvc.HttpGet]
+        public ActionResult ExportCompetitorSites(int siteId)
+		{
+            var reportContainer = _serviceFacade.GetCompetitorSites(siteId);
+
+            DateTime forDate = DateTime.Now;
+          
+            var dt = reportContainer.ToCompetitorSitesDataTable();
+
+			string filenameSuffix = String.Format("[{0}]", forDate.ToString("dd-MMM-yyyy"));
+
+            return ExcelDocumentStream(new List<DataTable> { dt }, "CompetitorSites", filenameSuffix);
+		}
+
+
+        
+
 		[System.Web.Mvc.HttpGet]
 		public ActionResult ExportCompetitorsPriceRange(string For = "")
 		{
@@ -358,7 +375,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 			var reportContainer = new NationalAverageReportContainerViewModel
 			{
 				ForDate = forDate,
-				NationalAverageReport = _serviceFacade.GetNationalAverage2(forDate)
+				NationalAverageReport = _serviceFacade.GetNationalAverage2(forDate,true)
 			};
 
 			var dtByBrand = reportContainer.ToCompetitorsPriceRangeByBrandDataTable(); // default tableName = PriceMovementReport (also becomes sheet name in Xlsx)
@@ -494,13 +511,17 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 				foreach (var dt in tables)
 				{
 					var ws=wb.Worksheets.Add(dt);
-                    if (fileName == "NationalAverageReport2") ws.Tables.FirstOrDefault().ShowAutoFilter = false;
+                    if (fileName == "NationalAverageReport2" || fileName == "CompetitorSites" || fileName == "NationalAverageReport" || fileName == "CompetitorsPriceRange" || fileName.Contains("PriceMovementReport"))
+                    {
+                        ws.Rows().AdjustToContents();
+                        ws.Tables.FirstOrDefault().ShowAutoFilter = false;
+                    }
                     if (fileName == "PricePointsReport")
                     {
                         var rangeAddress = ws.Tables.FirstOrDefault().RangeAddress;
                         var cellrange = string.Format("{0}:{1}{2}", rangeAddress.FirstAddress, rangeAddress.LastAddress.ColumnLetter, rangeAddress.FirstAddress.ColumnNumber);
 
-                      
+                     
                         ws.Range(cellrange).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Left;
                        ws.Range(cellrange).Style.Alignment.Vertical = XLAlignmentVerticalValues.Center;
                         ws.Range(cellrange).Style.Alignment.TextRotation = 90;
