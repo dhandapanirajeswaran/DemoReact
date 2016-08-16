@@ -172,18 +172,29 @@
                 </div>
                
             </div>
-
+            <hr/>
             <div class="row">
-                <div class="col-md-1" style="width:864px;">
-                    <br />
+                <div class="col-md-1" style="width:400px;">
+                    
                     <label>Excluded Brands</label>
                     @Html.ListBoxFor(model => model.ExcludeBrands, new MultiSelectList(Model.AllBrands), new { @data_placeholder = "Select Brands...", @class = "chosen-select", style = "width: 400px;", id = "lstbxexcludebrands" })
                   
                 </div>
+                <div class="col-md-1" style="width:750px;margin-top:24px;margin-left:10px">
+                    <fieldset >
 
-                
+
+
+
+                        <legend style="border: 1px gray solid">
+                            <font size="2">&nbsp&nbsp <a>Price Difference :</a> </font>  <font size="2" data-bind="foreach: PriceDifferences"> &nbsp&nbsp&nbsp&nbsp <b><b data-bind="text: key"></b>:-&nbsp</b>       <b style="color:blue"><b data-bind="text: value"></b>&nbsp sites</b>  </font>
+                        </legend>
+                        
+                    
+                    
+                    </fieldset>
+                </div>
             </div>
-
             <hr />
             <div style="display: none" class="alert alert-danger" data-bind="visible: $root.HasValidationErrors() || $root.HasErrorMessage()">
                 <div class="col-md-1 text-center"><i class="fa fa-exclamation-triangle fa-2x"></i></div>
@@ -217,7 +228,7 @@
                 </div>
                 <div class="col-md-1 pull-right">
                     <span class="clickable btn btn-default" data-bind="click:closeWarningPanel">
-                        <i class="fa fa-close"></i> Close
+                       <i class="fa fa-close"></i> Close
                     </span>
                 </div>
                 <div class="clearfix"></div>
