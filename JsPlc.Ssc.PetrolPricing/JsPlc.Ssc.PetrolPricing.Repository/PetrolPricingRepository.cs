@@ -1770,7 +1770,7 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
         {
             var result = new NationalAverageReportViewModel();
 
-            var fuelTypeIds = new List<int> { (int)FuelTypeItem.Diesel, (int)FuelTypeItem.Unleaded };
+            var fuelTypeIds = new List<int> { (int)FuelTypeItem.Unleaded,(int)FuelTypeItem.Diesel };
 
             // Report uses Prices as per date of upload..(not date of Price in DailyPrice)..
             var dailyPrices = _context.DailyPrices.Where(x => DbFunctions.DiffDays(x.DailyUpload.UploadDateTime, when) == 0 && fuelTypeIds.Contains(x.FuelTypeId)).ToList();
@@ -1921,9 +1921,9 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
 
         public NationalAverageReportViewModel GetReportNationalAverage2(DateTime when, bool ViewAllCompetitors)
         {
-            var result = new NationalAverageReportViewModel();    
+            var result = new NationalAverageReportViewModel();
 
-            var fuelTypeIds = new List<int> { (int)FuelTypeItem.Diesel, (int)FuelTypeItem.Unleaded };
+            var fuelTypeIds = new List<int> { (int)FuelTypeItem.Unleaded, (int)FuelTypeItem.Diesel };
 
             // Report uses Prices as per date of upload..(not date of Price in DailyPrice)..
             var dailyPrices = _context.DailyPrices.Where(x => DbFunctions.DiffDays(x.DailyUpload.UploadDateTime, when) == 0 && fuelTypeIds.Contains(x.FuelTypeId)).ToList();

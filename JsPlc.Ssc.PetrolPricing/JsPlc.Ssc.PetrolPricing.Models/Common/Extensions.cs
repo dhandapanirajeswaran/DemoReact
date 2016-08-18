@@ -433,8 +433,16 @@ namespace JsPlc.Ssc.PetrolPricing.Models.Common
             // Setup Table Columns - Fuel Type Brand1   Brand2   Brand3...
             foreach (var brand in reportContainer.NationalAverageReport.Fuels.First().Brands)
             {
-                dr[i] = brand.BrandName.Replace("SAINSBURYS", "JS") + " D";
-                dr[i + 1] = brand.BrandName.Replace("SAINSBURYS", "JS") + " U";
+                if (i <= 8)
+                {
+                    dr[i] = brand.BrandName.Replace("SAINSBURYS", "JS") + " Unl";
+                    dr[i + 1] = brand.BrandName.Replace("SAINSBURYS", "JS") + " Derv";
+                }
+                else
+                {
+                    dr[i] = brand.BrandName + " U";
+                    dr[i + 1] = brand.BrandName + " D";
+                }
                 i = i + 2;
             }
             dt.Rows.Add(dr);
