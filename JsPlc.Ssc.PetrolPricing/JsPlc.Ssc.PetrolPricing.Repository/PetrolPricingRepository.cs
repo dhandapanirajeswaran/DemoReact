@@ -1778,8 +1778,24 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
             var fuels = _context.FuelType.ToList();
 
             var distinctCatNos = dailyPrices.Select(x => x.CatNo).Distinct().ToList();
-            var competitorSites = _context.Sites.Where(x => distinctCatNos.Contains(x.CatNo.Value) && !x.IsSainsburysSite).ToList();
+            var competitorSites = _context.Sites.Where(x => distinctCatNos.Contains(x.CatNo.Value)).ToList();
+
+            //calculating by brands
             var distinctBrands = competitorSites.Select(x => x.Brand).Distinct().OrderBy(x => x).ToList();
+
+            if (distinctBrands.Count > 0)
+            {
+                distinctBrands.Remove(Const.SAINSBURYS);
+                distinctBrands.Insert(0, Const.SAINSBURYS);
+                distinctBrands.Remove(Const.ASDA);
+                distinctBrands.Insert(1, Const.ASDA);
+                distinctBrands.Remove(Const.TESCO);
+                distinctBrands.Insert(2, Const.TESCO);
+                distinctBrands.Remove(Const.MORRISONS);
+                distinctBrands.Insert(3, Const.MORRISONS);
+
+            }
+            else return null;
 
             foreach (var fuelType in fuelTypeIds)
             {
@@ -1789,7 +1805,10 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
                 var fuelRow = new NationalAverageReportFuelViewModel();
                 result.Fuels.Add(fuelRow);
                 fuelRow.FuelName = f.FuelTypeName;
-
+                int nTotalIndependentsMin = 0;
+                int nTotalIndependentsMax = 0;
+                int nTotalIndependentsAvg = 0;
+                int nCount = 0;
                 foreach (var brand in distinctBrands)
                 {
                     var brandAvg = new NationalAverageReportBrandViewModel();
@@ -1799,8 +1818,41 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
                     var brandCatsNos = competitorSites.Where(x => x.Brand == brand).Where(x => x.CatNo.HasValue).Select(x => x.CatNo.Value).ToList();
                     var pricesList = dailyPrices.Where(x => x.FuelTypeId == fuelType && brandCatsNos.Contains(x.CatNo)).ToList();
 
-                    brandAvg.Average = pricesList.Any() ? (int)pricesList.Average(x => x.ModalPrice) : 0;
+                    if (pricesList.Any())
+                    {
+                        brandAvg.Min = (int)pricesList.Min(x => x.ModalPrice);
+                        brandAvg.Average = (int)pricesList.Average(x => x.ModalPrice);
+                        brandAvg.Max = (int)pricesList.Max(x => x.ModalPrice);
+                        if (!brand.Equals(Const.Sainsburys, StringComparison.InvariantCultureIgnoreCase)
+                            || !brand.Equals(Const.ASDA, StringComparison.InvariantCultureIgnoreCase)
+                            || !brand.Equals(Const.TESCO, StringComparison.InvariantCultureIgnoreCase)
+                            || !brand.Equals(Const.MORRISONS, StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            nTotalIndependentsMin = nTotalIndependentsMin > brandAvg.Min ? brandAvg.Min : nTotalIndependentsMin;
+                            nTotalIndependentsMax = nTotalIndependentsMax < brandAvg.Max ? brandAvg.Max : nTotalIndependentsMax;
+                            nTotalIndependentsAvg += brandAvg.Average;
+                            nCount++;
+                        }
+                    }
+
+                    if (brand.Equals(Const.Sainsburys, StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        fuelRow.SainsburysPrice = brandAvg.Average;
+                    }
                 }
+                var brandIndependent = new NationalAverageReportBrandViewModel();
+                fuelRow.Brands.Insert(4, brandIndependent);
+                brandIndependent.BrandName = "Total Independents";
+                brandIndependent.Min = nTotalIndependentsMin;
+                brandIndependent.Max = nTotalIndependentsMax;
+                brandIndependent.Average = nTotalIndependentsAvg / nCount;
+                var temp1 = new NationalAverageReportBrandViewModel();
+                fuelRow.Brands.Insert(5, temp1);
+
+                var temp2 = new NationalAverageReportBrandViewModel();
+                temp2.BrandName = "All other independent brands";
+                fuelRow.Brands.Insert(6, temp2);
+
             }
 
             return result;
@@ -1944,6 +1996,7 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
 
             return result;
         }
+
 
         public CompetitorsPriceRangeByCompanyViewModel GetReportCompetitorsPriceRangeByCompany(DateTime when, string companyName, string brandName)
         {

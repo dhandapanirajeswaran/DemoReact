@@ -549,6 +549,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             {
                 var url = string.Format("api/GetNationalAverage/{0}", when.ToString("ddMMMyyyy"));
                 var response = _client.Value.GetAsync(url).Result;
+
                 if (response.IsSuccessStatusCode)
                 {
                     var result = response.Content.ReadAsAsync<NationalAverageReportViewModel>().Result;
@@ -557,8 +558,9 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
                 else
                 {
                     return null;
-                }   
-                
+                }
+
+
             }
             catch (Exception ex)
             {
@@ -619,6 +621,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             return null;
         }
 
+    
         public CompetitorsPriceRangeByCompanyViewModel GetCompetitorsPriceRangeByCompany(DateTime when, string companyName, string brandName)
         {
             try

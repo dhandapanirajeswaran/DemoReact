@@ -66,6 +66,7 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
             var result = _reportService.GetReportNationalAverage2(when, ViewAllCompetitors);
             return Ok(result);
         }
+               
 
          /// <summary>
         /// GetReportcompetitorsPriceRange report

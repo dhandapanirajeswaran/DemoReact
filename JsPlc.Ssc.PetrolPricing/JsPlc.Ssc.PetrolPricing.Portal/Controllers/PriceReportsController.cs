@@ -96,15 +96,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 		{
             try
             {
-                DateTime forDate;
-                if (!DateTime.TryParse(For, out forDate))
-                    forDate = DateTime.Now;
-
-                var item = new NationalAverageReportContainerViewModel
-                {
-                    ForDate = forDate,
-                    NationalAverageReport = _serviceFacade.GetNationalAverage(forDate)
-                };
+                var item = GetNationalAverageData(For);
 
                 return View(item);
             }
@@ -128,21 +120,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
                 return View();
             }
 		}
-
-        [System.Web.Mvc.HttpGet]
-        public ActionResult NationalAverage3(string For = "")
-        {
-            try
-            {
-                var item = GetNationalAverage2Data(For,true);
-
-                return View(item);
-            }
-            catch (Exception ce)
-            {
-                return View();
-            }
-        }
+            
 
 		[System.Web.Mvc.HttpGet]
 		public ActionResult CompetitorsPriceRange(string For = "")
@@ -493,6 +471,20 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 			return item;
 		}
 
+        private NationalAverageReportContainerViewModel GetNationalAverageData(string For)
+        {
+            DateTime forDate;
+            if (!DateTime.TryParse(For, out forDate))
+                forDate = DateTime.Now;
+
+            var item = new NationalAverageReportContainerViewModel
+            {
+                ForDate = forDate,
+                NationalAverageReport = _serviceFacade.GetNationalAverage(forDate)
+            };
+            return item;
+        }
+
 		private ActionResult ExcelDocumentStream(List<DataTable> tables, string fileName, string fileNameSuffix)
 		{
 			//if (!tables.Any())
@@ -526,6 +518,80 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
                        ws.Range(cellrange).Style.Alignment.Vertical = XLAlignmentVerticalValues.Center;
                         ws.Range(cellrange).Style.Alignment.TextRotation = 90;
                         ws.Range(string.Format("{0}",rangeAddress.FirstAddress)).Style.Alignment.TextRotation = 45;
+                    }
+                    if (fileName == "NationalAverageReport")
+                    {
+                       int nCount= ws.Rows().Count();
+                       for(int i=2;i<=nCount;i++)
+                       {
+                           var Cell_DieselVariance = "F" + i.ToString();
+                           var Cell_UnleadedVariance = "G" + i.ToString();
+                           var Cell_AveragelVariance = "H" + i.ToString();
+                           object value_DieselVariance = ws.Cell(Cell_DieselVariance).Value;
+                           object value_UnleadedVariance = ws.Cell(Cell_UnleadedVariance).Value;
+                           object value_AveragelVariance = ws.Cell(Cell_AveragelVariance).Value;
+                           if (value_DieselVariance.ToString() != "")
+                           {
+                               if (Convert.ToDouble(value_DieselVariance) > 0.0)
+                               {
+                                   ws.Cell(Cell_DieselVariance).Style.Font.FontColor = XLColor.Green;
+                               }
+                               else if (Convert.ToDouble(value_DieselVariance) < 0.0)
+                               {
+                                   ws.Cell(Cell_DieselVariance).Style.Font.FontColor = XLColor.Red;
+                               }
+                           }
+
+                           if (value_UnleadedVariance.ToString() != "")
+                           {
+                               if (Convert.ToDouble(value_UnleadedVariance) > 0.0)
+                               {
+                                   ws.Cell(Cell_UnleadedVariance).Style.Font.FontColor = XLColor.Green;
+                               }
+                               else if (Convert.ToDouble(value_UnleadedVariance) < 0.0)
+                               {
+                                   ws.Cell(Cell_UnleadedVariance).Style.Font.FontColor = XLColor.Red;
+                               }
+                           }
+
+                           if (value_AveragelVariance.ToString() != "")
+                           {
+                               if (Convert.ToDouble(value_AveragelVariance) > 0.0)
+                               {
+                                   ws.Cell(Cell_AveragelVariance).Style.Font.FontColor = XLColor.Green;
+                               }
+                               else if (Convert.ToDouble(value_AveragelVariance) < 0.0)
+                               {
+                                   ws.Cell(Cell_AveragelVariance).Style.Font.FontColor = XLColor.Red;
+                               }
+                           }
+                       }
+
+                    }
+
+                    if (fileName == "NationalAverageReport2")
+                    {
+                        int nColCount = ws.Columns().Count();
+                        char cellAlphabet = 'E';
+                        for(int i=4;i<=nColCount;i++)
+                        {
+                            string cell = string.Format("{0}4", cellAlphabet);
+                            object cell_value = ws.Cell(cell).Value;
+                            if (cell_value.ToString() != "")
+                            {
+                                if (Convert.ToDouble(cell_value) > 0.0)
+                                {
+                                    ws.Cell(cell).Style.Font.FontColor = XLColor.Green;
+                                }
+                                else if (Convert.ToDouble(cell_value) < 0.0)
+                                {
+                                    ws.Cell(cell).Style.Font.FontColor = XLColor.Red;
+                                }
+                            }
+                            cellAlphabet++;
+
+                        }
+
                     }
 				}
 				wb.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;

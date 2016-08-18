@@ -204,7 +204,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 		/// </summary>
 		/// <param name="when"></param>
 		/// <returns></returns>
-        NationalAverageReportViewModel GetReportNationalAverage2(DateTime when, bool ViewAllCompetitors);
+        NationalAverageReportViewModel GetReportNationalAverage2(DateTime when, bool ViewAllCompetitors);        
         NationalAverageReportViewModel GetReportcompetitorsPriceRange(DateTime when);
 
         
