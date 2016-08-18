@@ -1795,7 +1795,7 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
                 distinctBrands.Insert(3, Const.MORRISONS);
 
             }
-            else return null;
+          
 
             foreach (var fuelType in fuelTypeIds)
             {
@@ -1809,49 +1809,52 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
                 int nTotalIndependentsMax = 0;
                 int nTotalIndependentsAvg = 0;
                 int nCount = 0;
-                foreach (var brand in distinctBrands)
+                if (distinctBrands.Count > 0)
                 {
-                    var brandAvg = new NationalAverageReportBrandViewModel();
-                    fuelRow.Brands.Add(brandAvg);
-                    brandAvg.BrandName = brand;
-
-                    var brandCatsNos = competitorSites.Where(x => x.Brand == brand).Where(x => x.CatNo.HasValue).Select(x => x.CatNo.Value).ToList();
-                    var pricesList = dailyPrices.Where(x => x.FuelTypeId == fuelType && brandCatsNos.Contains(x.CatNo)).ToList();
-
-                    if (pricesList.Any())
+                    foreach (var brand in distinctBrands)
                     {
-                        brandAvg.Min = (int)pricesList.Min(x => x.ModalPrice);
-                        brandAvg.Average = (int)pricesList.Average(x => x.ModalPrice);
-                        brandAvg.Max = (int)pricesList.Max(x => x.ModalPrice);
-                        if (!brand.Equals(Const.Sainsburys, StringComparison.InvariantCultureIgnoreCase)
-                            || !brand.Equals(Const.ASDA, StringComparison.InvariantCultureIgnoreCase)
-                            || !brand.Equals(Const.TESCO, StringComparison.InvariantCultureIgnoreCase)
-                            || !brand.Equals(Const.MORRISONS, StringComparison.InvariantCultureIgnoreCase))
+                        var brandAvg = new NationalAverageReportBrandViewModel();
+                        fuelRow.Brands.Add(brandAvg);
+                        brandAvg.BrandName = brand;
+
+                        var brandCatsNos = competitorSites.Where(x => x.Brand == brand).Where(x => x.CatNo.HasValue).Select(x => x.CatNo.Value).ToList();
+                        var pricesList = dailyPrices.Where(x => x.FuelTypeId == fuelType && brandCatsNos.Contains(x.CatNo)).ToList();
+
+                        if (pricesList.Any())
                         {
-                            nTotalIndependentsMin = nTotalIndependentsMin > brandAvg.Min ? brandAvg.Min : nTotalIndependentsMin;
-                            nTotalIndependentsMax = nTotalIndependentsMax < brandAvg.Max ? brandAvg.Max : nTotalIndependentsMax;
-                            nTotalIndependentsAvg += brandAvg.Average;
-                            nCount++;
+                            brandAvg.Min = (int)pricesList.Min(x => x.ModalPrice);
+                            brandAvg.Average = (int)pricesList.Average(x => x.ModalPrice);
+                            brandAvg.Max = (int)pricesList.Max(x => x.ModalPrice);
+                            if (!brand.Equals(Const.Sainsburys, StringComparison.InvariantCultureIgnoreCase)
+                                || !brand.Equals(Const.ASDA, StringComparison.InvariantCultureIgnoreCase)
+                                || !brand.Equals(Const.TESCO, StringComparison.InvariantCultureIgnoreCase)
+                                || !brand.Equals(Const.MORRISONS, StringComparison.InvariantCultureIgnoreCase))
+                            {
+                                nTotalIndependentsMin = nTotalIndependentsMin > brandAvg.Min ? brandAvg.Min : nTotalIndependentsMin;
+                                nTotalIndependentsMax = nTotalIndependentsMax < brandAvg.Max ? brandAvg.Max : nTotalIndependentsMax;
+                                nTotalIndependentsAvg += brandAvg.Average;
+                                nCount++;
+                            }
+                        }
+
+                        if (brand.Equals(Const.Sainsburys, StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            fuelRow.SainsburysPrice = brandAvg.Average;
                         }
                     }
+                    var brandIndependent = new NationalAverageReportBrandViewModel();
+                    fuelRow.Brands.Insert(4, brandIndependent);
+                    brandIndependent.BrandName = "Total Independents";
+                    brandIndependent.Min = nTotalIndependentsMin;
+                    brandIndependent.Max = nTotalIndependentsMax;
+                    brandIndependent.Average = nTotalIndependentsAvg / nCount;
+                    var temp1 = new NationalAverageReportBrandViewModel();
+                    fuelRow.Brands.Insert(5, temp1);
 
-                    if (brand.Equals(Const.Sainsburys, StringComparison.InvariantCultureIgnoreCase))
-                    {
-                        fuelRow.SainsburysPrice = brandAvg.Average;
-                    }
+                    var temp2 = new NationalAverageReportBrandViewModel();
+                    temp2.BrandName = "All other independent brands";
+                    fuelRow.Brands.Insert(6, temp2);
                 }
-                var brandIndependent = new NationalAverageReportBrandViewModel();
-                fuelRow.Brands.Insert(4, brandIndependent);
-                brandIndependent.BrandName = "Total Independents";
-                brandIndependent.Min = nTotalIndependentsMin;
-                brandIndependent.Max = nTotalIndependentsMax;
-                brandIndependent.Average = nTotalIndependentsAvg / nCount;
-                var temp1 = new NationalAverageReportBrandViewModel();
-                fuelRow.Brands.Insert(5, temp1);
-
-                var temp2 = new NationalAverageReportBrandViewModel();
-                temp2.BrandName = "All other independent brands";
-                fuelRow.Brands.Insert(6, temp2);
 
             }
 

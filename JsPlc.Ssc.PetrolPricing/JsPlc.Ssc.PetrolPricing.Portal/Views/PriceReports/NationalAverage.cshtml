@@ -141,11 +141,15 @@
             </div>
 
   </div>
-        }
-        else
-        {
-            <div class="alert alert-info" role="alert">No data found at @requestedDate</div>
-        }
+}
+else
+{
+    foreach (var fuelType in Model.NationalAverageReport.Fuels)
+    {
+        <div class="alert alert-info" role="alert">No @fuelType.FuelName data found at @requestedDate</div>
+
+    }
+}
 
 @section scripts {
     <script src="~/Scripts/bootstrap-datepicker.min.js"></script>
