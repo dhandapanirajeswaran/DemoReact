@@ -459,9 +459,15 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 
 		private NationalAverageReportContainerViewModel GetNationalAverage2Data(string For,bool bViewAllCompetitors=false)
 		{
-			DateTime forDate;
-			if (!DateTime.TryParse(For, out forDate))
-				forDate = DateTime.Now;
+            DateTime forDate = DateTime.Now;
+            if (For != "")
+            {
+                if (!DateTime.TryParse(For, out forDate))
+                {
+                    string[] tokenize = For.Split('/');
+                    forDate = new DateTime(Convert.ToInt16(tokenize[2]), Convert.ToInt16(tokenize[1]), Convert.ToInt16(tokenize[0]));
+                }
+            }
 
 			var item = new NationalAverageReportContainerViewModel
 			{
@@ -473,10 +479,15 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 
         private NationalAverageReportContainerViewModel GetNationalAverageData(string For)
         {
-            DateTime forDate;
-            if (!DateTime.TryParse(For, out forDate))
-                forDate = DateTime.Now;
-
+            DateTime forDate=DateTime.Now;
+            if (For != "")
+            {
+                if (!DateTime.TryParse(For, out forDate) && For != "")
+                {
+                    string[] tokenize = For.Split('/');
+                    forDate = new DateTime(Convert.ToInt16(tokenize[2]), Convert.ToInt16(tokenize[1]), Convert.ToInt16(tokenize[0]));
+                }
+            }
             var item = new NationalAverageReportContainerViewModel
             {
                 ForDate = forDate,
