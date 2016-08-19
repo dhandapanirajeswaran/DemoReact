@@ -233,9 +233,9 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             if (!toPriceDate.HasValue) toPriceDate = DateTime.Now.AddDays(3);
 
             var sites = new List<Site>();
-
-            var retval = _context.Sites
-                .Where(x => x.IsActive && (brandName=="All" ? true:  x.Brand == brandName))
+            var sites_tmp = _context.Sites;
+            var retval =brandName=="All"?   sites_tmp.Where(x => x.IsActive) .OrderBy(q => q.SiteName).ToList() : sites_tmp
+                .Where(x => x.IsActive && x.Brand == brandName)
                 .OrderBy(q => q.SiteName).ToList();
 
             int daysBetweenFromAndTo =
@@ -251,18 +251,22 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             var getPricesForSite = new Func<int, List<DailyPrice>>(i =>
                 rangedDatePrices.Where(p => p.CatNo == i).ToList());
 
-            foreach (var site in retval)
+            
+
+            foreach(var site in retval)
             {
                 if (site.CatNo.HasValue == false)
                     continue;
 
                 site.Prices = new List<SitePrice>();
-                site.Prices = transformToPrices(getPricesForSite(site.CatNo.Value), site);
+                site.Prices =  transformToPrices(getPricesForSite(site.CatNo.Value), site);
 
                 sites.Add(site);
 
                 //_context.Entry(site).State = EntityState.Detached;
-            }
+            };
+         
+          
             return sites;
         }
 
@@ -2086,39 +2090,44 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
         public PriceMovementReportViewModel GetReportPriceMovement(string brandName, DateTime fromDt, DateTime toDt, int fuelTypeId,string siteName)
         {
             var retval = new PriceMovementReportViewModel();
-            var dates = new List<DateTime>();
-            for (var d = fromDt; d <= toDt; d = d.AddDays(1))
+
+            Task task = Task.Factory.StartNew(() =>
             {
-                dates.Add(d);
-            }
-            retval.Dates = dates;
-
-            var sitesWithPrices = brandName == "SAINSBURYS"
-                ? GetSitesWithEmailsAndPrices(fromDt, toDt).ToList()
-                : GetBrandWithDailyPricesAsPrices(brandName, fromDt, toDt).ToList();
-
-            var sortedSitesWithPrices = from site in sitesWithPrices
-                                        where site.SiteName.ToUpper().Trim().Contains(siteName.ToUpper().Trim()) || siteName.Trim() == "empty"
-                                        orderby site.SiteName
-                                        select site;
-
-            foreach (var s in sortedSitesWithPrices)
-            {
-                var dataRow = new PriceMovementReportRows
+                var dates = new List<DateTime>();
+                for (var d = fromDt; d <= toDt; d = d.AddDays(1))
                 {
-                    SiteId = s.Id,
-                    SiteName = s.SiteName,
-                    DataItems = new List<PriceMovementReportDataItems>()
-                };
-                retval.ReportRows.Add(dataRow);
-                var dataItems = dataRow.DataItems;
+                    dates.Add(d);
+                }
+                retval.Dates = dates;
 
-                dataItems.AddRange(dates.Select(d => new PriceMovementReportDataItems
+                var sitesWithPrices = brandName == "SAINSBURYS"
+                    ? GetSitesWithEmailsAndPrices(fromDt, toDt).ToList()
+                    : GetBrandWithDailyPricesAsPrices(brandName, fromDt, toDt).ToList();
+
+                var sortedSitesWithPrices = siteName.Trim() == "empty" ? sitesWithPrices.OrderBy(x => x.SiteName) : sitesWithPrices.Where(x => x.SiteName.ToUpper().Trim().Contains(siteName.ToUpper().Trim())).OrderBy(x => x.SiteName);
+
+                foreach (var s in sortedSitesWithPrices)
                 {
-                    PriceDate = d,
-                    PriceValue = GetSitePriceOnDate(s.Prices, d, fuelTypeId)
-                }));
-            }
+                    var dataRow = new PriceMovementReportRows
+                    {
+                        SiteId = s.Id,
+                        SiteName = s.SiteName,
+                        DataItems = new List<PriceMovementReportDataItems>()
+                    };
+                    retval.ReportRows.Add(dataRow);
+                    var dataItems = dataRow.DataItems;
+
+                    dataItems.AddRange(dates.Select(d => new PriceMovementReportDataItems
+                    {
+                        PriceDate = d,
+                        PriceValue = GetSitePriceOnDate(s.Prices, d, fuelTypeId)
+                    }));
+                }
+            });
+            task.Wait();
+
+
+            
             return retval;
         }
 
@@ -2381,7 +2390,7 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
         {
             List<SitePrice> result = new List<SitePrice>();
 
-            dailyPrices.ForEach(dp => result.Add(new SitePrice
+            Parallel.ForEach(dailyPrices,dp => result.Add(new SitePrice
             {
                 SiteId = site.Id,
                 FuelTypeId = dp.FuelTypeId,

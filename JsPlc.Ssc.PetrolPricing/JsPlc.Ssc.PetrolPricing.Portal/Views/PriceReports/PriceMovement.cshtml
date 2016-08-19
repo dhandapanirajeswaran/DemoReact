@@ -17,11 +17,34 @@
     
 }
 
+
+<script type="text/javascript">
+
+
+
+    $(document).ready(function () {
+
+    
+        $("#tableDiv").width(@Model.PriceMovementReport.ReportRows.First().DataItems.Select(x => x.PriceDate).Count()*150+250);
+
+    });
+
+
+
+
+</script>
+
 <style>
        .actualdata {
     height: 500px;
         overflow-y: auto;
         overflow-x: hidden; 
+}
+
+       .divtable {
+   
+        overflow-y: hidden;
+        overflow-x: auto; 
 }
 
         .col-md-1 
@@ -79,7 +102,7 @@
 
                 </div>
                 <div class="col-md-2">
-                    <label for="SiteName">SiteName:</label>
+                    <label for="SiteName">Marker:</label>
                     <input type="text" class="form-control" id="SiteName" name="SiteName" value='@Model.SiteName'>
 
                 </div>
@@ -105,47 +128,47 @@
         if (Model.PriceMovementReport != null)
         { 
             <!-- Report Data -->
-            <div class="divtable">
-               
-                    <div class="row" style="font-weight:bold">
-                        <div class="col-md-1">Sites</div>
+    <div  class="divtable" >
+        <div id="tableDiv">
+            <div class="row" style="font-weight:bold">
+                <div class="col-md-1" style="width:250px">Sites</div>
 
-                        @if (Model.PriceMovementReport.ReportRows.Count == 0 || !Model.PriceMovementReport.ReportRows.First().DataItems.Any())
-                        {
-                            <div class="col-md-1">Status</div>
-                        }
-                        else
-                        {
-                            foreach (var date in Model.PriceMovementReport.ReportRows.First().DataItems.Select(x => x.PriceDate))
-                            {
-                                <div class="col-md-1">@(date.ToString("dd-MMM-yy"))</div>
-                            }
-                        }
-                    </div>
-                <div class="actualdata">
-                    @foreach (var siteRow in Model.PriceMovementReport.ReportRows)
+                @if (Model.PriceMovementReport.ReportRows.Count == 0 || !Model.PriceMovementReport.ReportRows.First().DataItems.Any())
+                {
+                    <div class="col-md-1">Status</div>
+                }
+                else
+                {
+                    foreach (var date in Model.PriceMovementReport.ReportRows.First().DataItems.Select(x => x.PriceDate))
                     {
-                        <div class="alternativerow">
-
-                            <div class="row">
-                                <div class="col-md-1">
-                                    @siteRow.SiteName
-                                </div>
-                                @if (!siteRow.DataItems.Any())
-                                {
-                                    <div class="col-md-1" style="width:1100px">There is no data available</div>
-                                }
-                                @foreach (var dataItem in siteRow.DataItems)
-                                {
-                                    <div class="col-md-1">@(  (dataItem.PriceValue / 10.0).ToString("###0.0"))</div>
-                                }
-                            </div>
-                        </div>
+                        <div class="col-md-1" style="width:150px">@(date.ToString("dd-MMM-yy"))</div>
                     }
-                </div>
-               
+                }
             </div>
-       }
+            <div class="actualdata">
+                @foreach (var siteRow in Model.PriceMovementReport.ReportRows)
+                {
+                    <div class="alternativerow">
+
+                        <div class="row">
+                            <div class="col-md-1" style="width:250px">
+                                @siteRow.SiteName
+                            </div>
+                            @if (!siteRow.DataItems.Any())
+                            {
+                                <div class="col-md-1" style="width:1100px">There is no data available</div>
+                            }
+                            @foreach (var dataItem in siteRow.DataItems)
+                            {
+                                <div class="col-md-1" style="width:150px">@(  (dataItem.PriceValue / 10.0).ToString("###0.0"))</div>
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+        }
     }
 </div>
 
