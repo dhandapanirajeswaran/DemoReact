@@ -246,25 +246,32 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                 .Select(x => x.Id).ToArray();
 
             var rangedDatePrices = _context.DailyPrices.Include(x => x.DailyUpload)
-                .Where(x => fileUploads.Contains(x.DailyUploadId.Value));
+                .Where(x => fileUploads.Contains(x.DailyUploadId.Value)).ToList();
 
             var getPricesForSite = new Func<int, List<DailyPrice>>(i =>
                 rangedDatePrices.Where(p => p.CatNo == i).ToList());
 
-            
 
-            foreach(var site in retval)
+
+            Parallel.ForEach(retval, site =>
             {
-                if (site.CatNo.HasValue == false)
-                    continue;
+                try
+                {
+                    if (site.CatNo.HasValue == false)
+                        return;
 
-                site.Prices = new List<SitePrice>();
-                site.Prices =  transformToPrices(getPricesForSite(site.CatNo.Value), site);
+                    site.Prices = new List<SitePrice>();
+                    var siteprices = getPricesForSite(site.CatNo.Value);
+                    site.Prices = transformToPrices(siteprices, site);
 
-                sites.Add(site);
-
+                    sites.Add(site);
+                }
+                catch (Exception ce)
+                {
+                    string str = ce.InnerException.Message;
+                }
                 //_context.Entry(site).State = EntityState.Detached;
-            };
+            });
          
           
             return sites;
