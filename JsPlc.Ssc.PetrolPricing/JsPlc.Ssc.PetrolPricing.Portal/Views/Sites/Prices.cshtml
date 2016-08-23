@@ -545,9 +545,11 @@
             var month = d.getMonth() + 1;
             var day = d.getDate();
             var year=d.getFullYear();
+            d=new Date(yearnum,monnum,daynum-1);
             strtoday = (('' + day).length < 2 ? '0' : '') + day + '/' +
                 (('' + month).length < 2 ? '0' : '') + month + '/' +
                 d.getFullYear();
+           
             yesterday=new Date(d.getFullYear(),d.getMonth(), d.getDate()-1);
             tomorrow=new Date(d.getFullYear(),d.getMonth(), d.getDate()+1);
            
@@ -559,15 +561,21 @@
             var yearnum=parseInt(tmp[2]);
             var monnum=parseInt(tmp[1])-1;
             var daynum=parseInt(tmp[0]);
-       
-            var d=new Date(yearnum,monnum,daynum);
-            yesterday=new Date(d.getFullYear(),d.getMonth(), d.getDate()-1);
-            tomorrow=new Date(d.getFullYear(),d.getMonth(), d.getDate()+1);
-            
            
+            var d=new Date(yearnum,monnum,daynum-1);
+            yesterday=new Date(d.getFullYear(),d.getMonth(), d.getDate()-1);
+            tomorrow=new Date(d.getFullYear(),d.getMonth(), d.getDate()+2);
+
+            var month1 = d.getMonth() + 1;
+            var day1 = d.getDate();
+            var year1=d.getFullYear();
+            strtoday = (('' + day1).length < 2 ? '0' : '') + day1 + '/' +
+                 (('' + month1).length < 2 ? '0' : '') + month1 + '/' +
+                 d.getFullYear();
+         
 
         }
-
+      
         var month = yesterday.getMonth() + 1;
         var day = yesterday.getDate();
         stryday = (('' + day).length < 2 ? '0' : '') + day + '/' +
