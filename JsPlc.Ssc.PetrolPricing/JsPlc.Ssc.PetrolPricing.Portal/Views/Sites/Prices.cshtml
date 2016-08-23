@@ -125,19 +125,19 @@
         </div>
         <!-- End Email popup within knockout -->
         <!-- Submit disabled, all work done thru ajax calls -->
-        <form id="myform" method="post" data-bind="submit: savePetrolPricingForm" xclass="input-group-sm" action="sites/PostPrices" onsubmit="    return false;" onclick="    IsSitePriceFormClicked=1; ">
+        <form id="myform" method="post" data-bind="submit: savePetrolPricingForm" xclass="input-group-sm" action="sites/PostPrices" onsubmit="    return false;" onclick="    IsSitePriceFormClicked=1; " style="width: 1150px;">
             <div class="row" onclick=" IsSitePriceFormClicked=1; ">
                 <!-- Date Picker -->
                 <div class="col-md-1">
                     <label for="viewingDate">Date:</label>
-                    <input type="text" id="viewingDate" class="datepicker form-control"  onmousedown="    IsSitePriceFormClicked=1; " onclick="    IsSitePriceFormClicked=1; "
+                    <input type="text" id="viewingDate" class="datepicker form-control" onmousedown="    IsSitePriceFormClicked=1; " onclick="    IsSitePriceFormClicked=1; "
                            style="width: 85px" name="viewingDate" maxlength="12"
                            data-bind="value: $root.InitDate" />
                 </div>
                 <!-- Store No -->
                 <div class="col-md-2">
                     <label for="viewingStoreNo">Store No:</label>
-                    <input type="text" id="viewingStoreNo" class="form-control" maxlength="9"   onclick="    IsSitePriceFormClicked=1; "
+                    <input type="text" id="viewingStoreNo" class="form-control" maxlength="9" onclick="    IsSitePriceFormClicked=1; "
                            name="viewingStoreNo" data-bind="numeric, value: $root.StoreNo" />
                 </div>
                 <!-- Store Name -->
@@ -167,21 +167,21 @@
                     <button style="margin-top: 24px" type="button" class="btn btn-default" data-bind="click: function() { reloadSearchPage('Sites/Prices?date='+$root.InitDateInUsFormat()) }">Show all</button>
                 </div>
                 <!-- ExportToExcel button -->
-                <div class="col-md-1" >
+                <div class="col-md-1">
                     <input type="button" style="margin-top: 24px;margin-left:0px " class="btn btn-primary" id="btnExportReport" value="Export to Excel" />
                 </div>
-               
+
             </div>
-            <hr/>
+            <hr />
             <div class="row">
                 <div class="col-md-1" style="width:400px;">
-                    
+
                     <label>Excluded Brands</label>
                     @Html.ListBoxFor(model => model.ExcludeBrands, new MultiSelectList(Model.AllBrands), new { @data_placeholder = "Select Brands...", @class = "chosen-select", style = "width: 400px;", id = "lstbxexcludebrands" })
-                  
+
                 </div>
                 <div class="col-md-1" style="width:750px;margin-top:24px;margin-left:10px">
-                    <fieldset >
+                    <fieldset>
 
 
 
@@ -189,9 +189,9 @@
                         <legend style="border: 1px gray solid">
                             <font size="2">&nbsp&nbsp <a>Price Difference :</a> </font>  <font size="2" data-bind="foreach: PriceDifferences"> &nbsp&nbsp&nbsp&nbsp <b><b data-bind="text: key"></b>:-&nbsp</b>       <b style="color:blue"><b data-bind="text: value"></b>&nbsp sites</b>  </font>
                         </legend>
-                        
-                    
-                    
+
+
+
                     </fieldset>
                 </div>
             </div>
@@ -228,7 +228,7 @@
                 </div>
                 <div class="col-md-1 pull-right">
                     <span class="clickable btn btn-default" data-bind="click:closeWarningPanel">
-                       <i class="fa fa-close"></i> Close
+                        <i class="fa fa-close"></i> Close
                     </span>
                 </div>
                 <div class="clearfix"></div>
@@ -250,7 +250,7 @@
                 <div class="clearfix"></div>
             </div>
 
-            <div class="table-responsive" onclick="    IsSitePriceFormClicked=1; ">
+            <div class="table-responsive" onclick="    IsSitePriceFormClicked=1; " style="width: 1150px;">
 
 
                 <div class="row" data-bind="visible: !$root.ViewingHistorical()">
