@@ -523,8 +523,10 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                     if (superunleaded != null && unleaded.AutoPrice.HasValue && unleaded.AutoPrice.Value > 0)
                     {
                         superunleaded.Markup = 5;
-                        superunleaded.AutoPrice = unleaded.AutoPrice.Value + 50;
+                        superunleaded.AutoPrice = unleaded.AutoPrice.Value + 50;                        
                         superunleaded.AutoPrice = (superunleaded.AutoPrice / 10) * 10 + 9;
+                        superunleaded.TodayPrice = unleaded.AutoPrice.Value + 50;
+                        superunleaded.TodayPrice = (superunleaded.AutoPrice / 10) * 10 + 9;
                     }
                 }
             }
