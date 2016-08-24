@@ -51,20 +51,53 @@
     
     <div class="col-md-1" style="margin-top: 24px">
         <span class="btn btn-success btn-file">
-            Select file
-            <input type="file" name="file" id="file" />
+             Select file
+            <input type="file" name="file" id="file" class="inputfile"  accept=".csv,.txt" />
+
         </span>
     </div>
-    <div class="col-md-1" style="margin-top: 24px">
+    
+    <div id="divuploadbtn" class="col-md-1" style="margin-top: 24px;display: none;" >
         <div class="form-group">
             <input type="submit" value="Upload file" class="btn btn-primary" />
         </div>
     </div>   
-
+    <div id="divfilenameplusicon" class="col-md-1" style="margin-top: 24px;width:500px;display: none;">
+        <img id="fileimage" src="images/defaultfileicon.png" />
+        <label id="filename" style="width:500px;"></label>
+    </div>
 </form>
 
 <script type="text/javascript">
    
+    $("input[type=file]").on('change', function () {
+      
+     
+
+        var ext = this.files[0].name.split(".");
+        ext = ext[ext.length - 1].toLowerCase();
+       
+        if (ext=="txt")
+        {
+            $('#divfilenameplusicon').show();
+            $('#divuploadbtn').show();
+            $("#fileimage").attr("src", "images/txtfileicon.png");
+        }
+        else if (ext=="csv")
+        {
+            $('#divfilenameplusicon').show();
+            $('#divuploadbtn').show();
+            $("#fileimage").attr("src", "images/excelcsvicon.png");
+        }
+        else
+        {
+            alert("Please Select valid file.");
+            $('#divfilenameplusicon').hide();
+            $('#divuploadbtn').hide();
+        }
+        $('#filename').text(this.files[0].name);
+    });
+
         $('.datepicker')
             .datepicker({
                 language: "en-GB",
