@@ -40,7 +40,7 @@
  @using (Html.BeginForm())
 {
 <h1>Market comparison and planner</h1>
-<hr />
+    <hr style="width:1180px;" />
 <!-- knockout binds here -->
     <div id="petrolpricingpage" onclick="    IsSitePriceFormClicked=1; ">
         <!-- Email ALL popup within knockout -->
@@ -125,8 +125,8 @@
         </div>
         <!-- End Email popup within knockout -->
         <!-- Submit disabled, all work done thru ajax calls -->
-        <form id="myform" method="post" data-bind="submit: savePetrolPricingForm" xclass="input-group-sm" action="sites/PostPrices" onsubmit="    return false;" onclick="    IsSitePriceFormClicked=1; " style="width: 1157px;">
-            <div class="row" onclick=" IsSitePriceFormClicked=1; ">
+        <form id="myform" method="post" data-bind="submit: savePetrolPricingForm" xclass="input-group-sm" action="sites/PostPrices" onsubmit="    return false;" onclick="    IsSitePriceFormClicked=1; " style="width: 1180px;">
+            <div class="row" onclick=" IsSitePriceFormClicked=1; " style="width:1180px;">
                 <!-- Date Picker -->
                 <div class="col-md-1">
                     <label for="viewingDate">Date:</label>
@@ -160,10 +160,10 @@
                 </div>
                 <!-- go button -->
                 <div class="col-md-1">
-                    <button style="margin-top: 24px" type="button" class="btn btn-success" data-bind="click: loadPageWithParams">Go</button>
+                    <button style="margin-top: 24px;margin-left:10px;" type="button" class="btn btn-success" data-bind="click: loadPageWithParams">Go</button>
                 </div>
                 <!-- show all button -->
-                <div class="col-md-1" style="margin-left:-40px">
+                <div class="col-md-1" style="margin-left:-10px">
                     <button style="margin-top: 24px" type="button" class="btn btn-default" data-bind="click: function() { reloadSearchPage('Sites/Prices?date='+$root.InitDateInUsFormat()) }">Show all</button>
                 </div>
                 <!-- ExportToExcel button -->
@@ -172,9 +172,9 @@
                 </div>
 
             </div>
-            <hr />
-            <div class="row">
-                <div class="col-md-1" style="width:400px;">
+            <hr style="width:1180px;" />
+            <div class="row" >
+                <div class="col-md-1" style="width:410px;">
 
                     <label>Excluded Brands</label>
                     @Html.ListBoxFor(model => model.ExcludeBrands, new MultiSelectList(Model.AllBrands), new { @data_placeholder = "Select Brands...", @class = "chosen-select", style = "width: 400px;", id = "lstbxexcludebrands" })
@@ -195,7 +195,7 @@
                     </fieldset>
                 </div>
             </div>
-            <hr />
+            <hr style="width:1180px;" />
             <div style="display: none" class="alert alert-danger" data-bind="visible: $root.HasValidationErrors() || $root.HasErrorMessage()">
                 <div class="col-md-1 text-center"><i class="fa fa-exclamation-triangle fa-2x"></i></div>
                 <div class="col-md-8" style="padding-top: 2px"><strong><span id="msgError"></span></strong></div>
@@ -250,7 +250,7 @@
                 <div class="clearfix"></div>
             </div>
 
-            <div class="table-responsive" onclick="    IsSitePriceFormClicked=1; " style="width: 1157px;">
+            <div class="table-responsive" onclick="    IsSitePriceFormClicked=1; " style="width: 1180px;">
 
 
                 <div class="row" data-bind="visible: !$root.ViewingHistorical()">
@@ -294,19 +294,19 @@
                     <div class="col-sm-1" style="width:50px"><span>Cat No.</span></div>
                     <div class="col-sm-1" style="width:50px"><span>PFS No.</span></div>
 
-                    <div class="col-sm-1" style="border-left: 1px solid #ccc;width:212px;text-align:center;height:60px">
+                    <div class="col-sm-1" style="border-left: 1px solid #ccc;width:220px;text-align:center;height:60px">
                         <h4>
                             <span class="label label-success">
                                 &nbsp;Unleaded&nbsp;
                             </span>
                         </h4>
                     </div>
-                    <div class="col-sm-1" style="border-left: 1px solid #ccc;width:212px;text-align:center;height:60px">
+                    <div class="col-sm-1" style="border-left: 1px solid #ccc;width:220px;text-align:center;height:60px">
                         <h4>
                             <span class="label label-black">&nbsp;Diesel&nbsp;</span>
                         </h4>
                     </div>
-                    <div class="col-sm-1" style="border-left: 1px solid #ccc;width:212px;text-align:center;height:60px">
+                    <div class="col-sm-1" style="border-left: 1px solid #ccc;width:220px;text-align:center;height:60px">
                         <h4>
                             <span class="label label-success-inverted">&nbsp;Super Unleaded&nbsp;</span>
                         </h4>
@@ -325,11 +325,11 @@
                     </div>
 
                     <div class="col-sm-1" style="border-left: 1px solid #ddd; width:83px;height:60px;text-align:left"><br /><span id="today1">Today</span></div>
-                    <div class="col-sm-1" style="border-left: 1px solid #ddd;width:129px;height:60px;text-align:left"><br /><span id="tomorrow1">Tomorrow</span></div>
+                    <div class="col-sm-1" style="border-left: 1px solid #ddd;width:135px;height:60px;text-align:left"><br /><span id="tomorrow1">Tomorrow</span></div>
                     <div class="col-sm-1" style="border-left: 1px solid #ddd;width:83px;height:60px;text-align:left"><br /><span id="today2">Today</span></div>
-                    <div class="col-sm-1" style="border-left: 1px solid #ddd;width:129px;height:60px;text-align:left;"><br /><span id="tomorrow2">Tomorrow</span></div>
+                    <div class="col-sm-1" style="border-left: 1px solid #ddd;width:135px;height:60px;text-align:left;"><br /><span id="tomorrow2">Tomorrow</span></div>
                     <div class="col-sm-1" style="border-left: 1px solid #ddd;width:83px;height:60px;text-align:left"><br /><span id="today3">Today</span></div>
-                    <div class="col-sm-1" style="border-left: 1px solid #ddd;width:129px;height:60px;text-align:left;"><br /><span id="tomorrow3">Tomorrow</span></div>
+                    <div class="col-sm-1" style="border-left: 1px solid #ddd;width:135px;height:60px;text-align:left;"><br /><span id="tomorrow3">Tomorrow</span></div>
                 </div>
 
                 <hr style="padding:0px;margin:0px" />
@@ -368,8 +368,8 @@
                         <div class="col-sm-1" style="border-left: 1px solid #ddd;width:83px;height:45px">
                             <span data-bind="text: FuelPrice.TodayPrice"></span>
                         </div>
-                        <div class="col-sm-1" style="border-left: 1px solid #ddd;width:129px;height:45px">
-                            &nbsp;<span data-bind="attr:{title:(FuelPrice.IsTrailPrice ? 'Trail price: ' + FuelPrice.CompetitorName : 'Competitor name: ' + FuelPrice.CompetitorName + '; Markup: ' + FuelPrice.Markup)}, text: FuelPrice.AutoPrice"></span>
+                        <div class="col-sm-1" align="left" style="border-left: 1px solid #ddd;margin-left:0px; width:135px;height:45px">
+                            <span data-bind="attr:{title:(FuelPrice.IsTrailPrice ? 'Trail price: ' + FuelPrice.CompetitorName : 'Competitor name: ' + FuelPrice.CompetitorName + '; Markup: ' + FuelPrice.Markup)}, text: FuelPrice.AutoPrice"></span>
                             <input type="text" data-bind="value: FuelPrice.OverridePrice, visible: !$root.ViewingHistorical(),
                                 id: ('OverridePrice_' + $parent.SiteId + '_' + FuelPrice.FuelTypeId), event:{keyup: changeProp}" class="txtPrice" maxlength="8" />
                             <span style="color: red">
@@ -382,7 +382,7 @@
                                     style: (!UpDownValue() || UpDownValue() == 0 || UpDownValue() == '-') ? 'color: grey'
                                             : (UpDownValue() <= 0.1) ? 'color: red': 'color: green',
                                             }"></i>
-                            &nbsp;<span style="width:10px;" data-bind="text: (!UpDownValue() || UpDownValue() == 0 || UpDownValue() == '-') ? '-' :
+                            &nbsp;<span data-bind="text: (!UpDownValue() || UpDownValue() == 0 || UpDownValue() == '-') ? '-' :
                                                            (UpDownValue()/10)"></span>
                         </div>
                         <!-- /ko -->

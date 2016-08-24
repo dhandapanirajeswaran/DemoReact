@@ -128,7 +128,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 							lineNumber++;
 
 							string line = file.ReadLine();
-
+                            if (line.Trim() == "") continue;
 							try
 							{
 								var newDailyPrice = parseDailyLineValues(line, lineNumber, aFile);
