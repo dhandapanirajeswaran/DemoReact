@@ -20,15 +20,15 @@
     }
 
     .diffNegative {
-        background-color: lightcoral;
+        background-color: red;
     }
 
     .diffPositive {
-        background-color: orange;
+        background-color: green;
     }
 
     .diffZero {
-        background-color: lightgreen;
+        background-color: orange;
     }
 
     .spacedLeftRight5px td {
@@ -153,11 +153,14 @@
                                 dataItem.Diff > 0 ? "diffPositive"
                                 :
                                 dataItem.Diff < 0 ? "diffNegative" : "diffZero"; // diffNa, diffNegative, diffPositive, diffZero
+                                string color =dataItem.DiffValid ? ( 0 > dataItem.Diff ? "red" : dataItem.Diff > 0 ? "green" : "orange") : "gray";
                         <div class="col-sm-3" style="width:230px">
                             <div class="row">
                                 <div class="col-sm-1" style="width:100px">@( dataItem.FoundCatPrice ? (dataItem.CatPriceValue / 10.0).ToString("###0.0") : "n/a")</div>
                                 <div class="col-sm-1" style="width:70px">@( dataItem.FoundExpectedPrice ? (dataItem.ExpectedPriceValue / 10.0).ToString("###0.0") : "n/a")</div>
-                                <div class="col-sm-1" style="width:60px">@( dataItem.DiffValid ? dataItem.Diff.ToString("0.0") : "n/a")</div>
+
+
+                                <div class="col-sm-1" style="width:60px;color:@color;">@( dataItem.DiffValid ? dataItem.Diff.ToString("0.0") : "n/a")</div>
                             </div>
                         </div>
                         }
