@@ -2201,11 +2201,11 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
                     retval.ReportRows.Add(dataRow);
                    
                     var dataItems = dataRow.DataItems;
-                    var sitePriceViewModels = sitePrices as SitePriceViewModel[] ?? sitePrices;
+                 /*   var sitePriceViewModels = sitePrices as SitePriceViewModel[] ?? sitePrices;
                     var sitePriceViewModels_nextday = sitePrices_nextday as SitePriceViewModel[] ?? sitePrices_nextday;
                    
                     var sitePriceViewModel = sitePriceViewModels==null? null: sitePriceViewModels.FirstOrDefault(x => x.SiteId == site1.Id);
-                    var sitePriceViewModel_nextday = sitePriceViewModels_nextday == null ? null : sitePriceViewModels_nextday.FirstOrDefault(x => x.SiteId == site1.Id);
+                    var sitePriceViewModel_nextday = sitePriceViewModels_nextday == null ? null : sitePriceViewModels_nextday.FirstOrDefault(x => x.SiteId == site1.Id);*/
                  
                     foreach (var fuelId in fuelTypesList) // report order as per array - Unl, Diesel, Super
                     {
@@ -2223,15 +2223,12 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
                         };
                         dataItems.Add(dataItem);
 
+                        var dailyPrice_nextday = dailyPrices_nextday.FirstOrDefault(x => x.CatNo.Equals(site1.CatNo) && x.FuelTypeId == fuel.Id);
                         // Find the ExpectedPrice
-                        if (sitePriceViewModel != null)
-                        {
-                            int sitePrice = GetSitePriceForFuel(sitePriceViewModel_nextday, fuel.Id);
-                            if (sitePrice > 0)
-                            {
-                                dataItem.FoundExpectedPrice = true;
-                                dataItem.ExpectedPriceValue = sitePrice;
-                            }
+                        if (dailyPrice_nextday != null)
+                        {  
+                            dataItem.FoundExpectedPrice = true;
+                            dataItem.ExpectedPriceValue = dailyPrice_nextday.ModalPrice;                          
                         }
 
                         var dailyPrice = dailyPrices.FirstOrDefault(x => x.CatNo.Equals(site1.CatNo) && x.FuelTypeId == fuel.Id);
