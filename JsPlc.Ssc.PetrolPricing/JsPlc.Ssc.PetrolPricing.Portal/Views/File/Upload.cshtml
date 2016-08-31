@@ -52,7 +52,7 @@
     <div class="col-md-1" style="margin-top: 24px">
         <span class="btn btn-success btn-file">
              Select file
-            <input type="file" name="file" id="file" class="inputfile"  accept=".csv,.txt" />
+            <input type="file" name="file" id="file" class="inputfile"  accept=".csv,.txt,.xls, .xlsx" />
 
         </span>
     </div>
@@ -66,34 +66,60 @@
         <img id="fileimage" src="images/defaultfileicon.png" />
         <label id="filename" style="width:500px;"></label>
     </div>
+    <br/>
+    <br />
+    <br />
+    <br />
+    <div id="diverror" class="alert alert-info" style="display: none;background-color:lightgray;position:absolute;color:red;width:1140px;"></div>
 </form>
 
 <script type="text/javascript">
    
+    $('#UploadTypeName').change(function () {
+        $('#divfilenameplusicon').hide();
+        $('#divuploadbtn').hide();
+    });
+
+
+    $("input[type=file]").on('click', function () {
+        this.value = null;
+    });
+
     $("input[type=file]").on('change', function () {
       
-     
-
+       
+        var uploadtype=$('#UploadTypeName').val();
         var ext = this.files[0].name.split(".");
         ext = ext[ext.length - 1].toLowerCase();
-       
-        if (ext=="txt")
+        $("#diverror").hide();
+        if (ext == "txt" && uploadtype == 1)
         {
             $('#divfilenameplusicon').show();
             $('#divuploadbtn').show();
             $("#fileimage").attr("src", "images/txtfileicon.png");
         }
-        else if (ext=="csv")
+        else if (ext == "csv" && uploadtype == 1)
         {
             $('#divfilenameplusicon').show();
             $('#divuploadbtn').show();
             $("#fileimage").attr("src", "images/excelcsvicon.png");
         }
+        else if ((ext == "xlsx" || ext == "xls") && uploadtype==2) {
+            $('#divfilenameplusicon').show();
+            $('#divuploadbtn').show();
+            $("#fileimage").attr("src", "images/excelicon.png");
+        }
         else
         {
-            alert("Please Select valid file.");
+         
+            $("#diverror").show();
+            $("#diverror").text("Please Select valid file...");
+            $('#diverror').delay(3000).fadeOut();
             $('#divfilenameplusicon').hide();
             $('#divuploadbtn').hide();
+            this.value = null;
+          //  $(this).attr("value", "");
+          //  $(this).val("");
         }
         $('#filename').text(this.files[0].name);
     });

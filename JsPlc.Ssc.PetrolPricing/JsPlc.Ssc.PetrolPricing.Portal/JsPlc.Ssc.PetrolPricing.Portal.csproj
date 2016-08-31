@@ -269,6 +269,7 @@
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="images\defaultfileicon.png" />
     <Content Include="images\excelcsvicon.png" />
+    <Content Include="images\excelicon.png" />
     <Content Include="images\logo.png" />
     <Content Include="images\report.png" />
     <Content Include="images\sainsbury_s_live_well_for_less.jpg" />
