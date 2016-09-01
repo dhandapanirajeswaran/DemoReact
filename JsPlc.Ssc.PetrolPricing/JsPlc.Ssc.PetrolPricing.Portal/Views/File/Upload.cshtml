@@ -52,7 +52,7 @@
     <div class="col-md-1" style="margin-top: 24px">
         <span class="btn btn-success btn-file">
              Select file
-            <input type="file" name="file" id="file" class="inputfile"  accept=".csv,.txt,.xls, .xlsx" />
+            <input type="file" name="file" id="file" class="inputfile"  accept=".csv,.txt" />
 
         </span>
     </div>
@@ -78,6 +78,19 @@
     $('#UploadTypeName').change(function () {
         $('#divfilenameplusicon').hide();
         $('#divuploadbtn').hide();
+        var uploadtype = $('#UploadTypeName').val();
+        if (uploadtype == 1) {
+            $("#file").attr({
+                "accept": ".csv,.txt"
+
+            });
+        }
+        else if (uploadtype == 2) {
+            $("#file").attr({
+                "accept": ".xls, .xlsx"
+
+            });
+        }
     });
 
 
@@ -87,7 +100,7 @@
 
     $("input[type=file]").on('change', function () {
       
-       
+        
         var uploadtype=$('#UploadTypeName').val();
         var ext = this.files[0].name.split(".");
         ext = ext[ext.length - 1].toLowerCase();
