@@ -180,7 +180,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 					if (hasWarning && aFile.StatusId == (int)ImportProcessStatuses.Success)
 						aFile.StatusId = (int)ImportProcessStatuses.Warning; // Warning
 
-					_db.UpdateImportProcessStatus(aFile.StatusId, aFile);
+					_db.UpdateImportProcessStatus(aFile.StatusId, aFile);    
 
 					
 				}
