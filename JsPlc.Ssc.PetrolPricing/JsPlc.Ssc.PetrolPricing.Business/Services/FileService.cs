@@ -182,22 +182,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 
 					_db.UpdateImportProcessStatus(aFile.StatusId, aFile);
 
-					if (aFile.StatusId == (int)ImportProcessStatuses.Success
-						|| aFile.StatusId == (int)ImportProcessStatuses.Warning)
-					{
-						try
-						{
-							// We clear out the dailyPrices for older imports and keep ONLY Latest set of DailyPrices
-							// Reason - To keep DailyPrice table lean. Otherwise CalcPrice will take a long time to troll through a HUGE table
-							_db.DeleteRecordsForOlderImportsOfDate(DateTime.Today, aFile.Id);
-							// Exit on first Successful Calc
-							break; // exit foreach 
-						}
-						catch (Exception ex)
-						{
-							throw new ApplicationException("Unable to delete today loaded Daily Prices. Contact support team.", ex);
-						}
-					}
+					
 				}
 				catch (Exception ex)
 				{
