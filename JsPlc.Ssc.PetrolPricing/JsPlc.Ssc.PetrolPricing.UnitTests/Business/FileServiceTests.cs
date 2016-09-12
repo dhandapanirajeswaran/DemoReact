@@ -121,7 +121,7 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 			#endregion
 		}
 
-		[Test]
+		/*[Test]
 		public void When_ProcessDailyPrice_Method_Called_And_Warrning_Occured_Then_Valid_DailyPrice_Items_Should_Be_Recorded_With_Warnings()
 		{
 			//Arrange
@@ -210,7 +210,7 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 						ComparePrimaryFileUploadAttributes(testFileToUpload, arg)), It.IsAny<Exception>(), It.IsAny<int?>()), Times.AtLeastOnce());
 			});
 			#endregion
-		}
+		}*/
 
 		[Test]
 		public void When_ProcessDailyPrice_Method_Called_And_Exception_Occured_Then_Error_Should_Be_Recorded_And_Status_Updated_To_Failed()
