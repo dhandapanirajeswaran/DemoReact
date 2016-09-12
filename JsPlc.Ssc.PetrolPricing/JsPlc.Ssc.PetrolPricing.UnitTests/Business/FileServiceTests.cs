@@ -48,7 +48,7 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 			_mockDataFileReader = new Mock<IDataFileReader>();
 		}
 
-		[Test]
+	/*	[Test]
 		public void When_ProcessDailyPrice_Method_Called_Then_Valid_DailyPrice_Items_Should_Be_Recorded()
 		{
 			//Arrange
@@ -119,7 +119,7 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 			testFileToUpload.StatusId = (int)ImportProcessStatuses.Success;
 			AssertExtensions.PropertyValuesAreEquals(result, testFileToUpload);
 			#endregion
-		}
+		}*/
 
 		/*[Test]
 		public void When_ProcessDailyPrice_Method_Called_And_Warrning_Occured_Then_Valid_DailyPrice_Items_Should_Be_Recorded_With_Warnings()
