@@ -120,7 +120,7 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 			AssertExtensions.PropertyValuesAreEquals(result, testFileToUpload);
 			#endregion
 		}*/
-
+            
 		/*[Test]
 		public void When_ProcessDailyPrice_Method_Called_And_Warrning_Occured_Then_Valid_DailyPrice_Items_Should_Be_Recorded_With_Warnings()
 		{

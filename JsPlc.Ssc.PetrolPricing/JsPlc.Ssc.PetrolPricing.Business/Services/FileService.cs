@@ -181,7 +181,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 						aFile.StatusId = (int)ImportProcessStatuses.Warning; // Warning
 
 					_db.UpdateImportProcessStatus(aFile.StatusId, aFile);    
-
+                     
 					
 				}
 				catch (Exception ex)
