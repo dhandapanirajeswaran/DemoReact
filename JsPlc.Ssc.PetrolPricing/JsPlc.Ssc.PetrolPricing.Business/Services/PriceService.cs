@@ -294,25 +294,50 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 
 		private void calculatePrices(PriceCalculationTaskData calcTaskData)
 		{
-			var forDate = calcTaskData.ForDate;
+		    try
+		    {
+		        var forDate = calcTaskData.ForDate;
 
-			var sites = _db.GetJsSites().Where(x => x.IsActive).AsQueryable().AsNoTracking();
+		        var sites = _db.GetJsSites().Where(x => x.IsActive).AsQueryable().AsNoTracking();
 
-			var fuels = _lookupService.GetFuelTypes().Where(x => _fuelSelectionArray.Contains(x.Id)).AsQueryable().AsNoTracking().ToList(); // Limit calc iterations to known fuels
+		        var fuels =
+		            _lookupService.GetFuelTypes()
+		                .Where(x => _fuelSelectionArray.Contains(x.Id))
+		                .AsQueryable()
+		                .AsNoTracking()
+		                .ToList(); // Limit calc iterations to known fuels
 
-			Parallel.ForEach(sites, (site) =>
-			{
-				var db = _factory.Create<IPetrolPricingRepository>(CreationMethod.ServiceLocator, null);
-				
-				foreach (var fuel in fuels.ToList())
-				{
-					var priceService = new PriceService(db, _appSettings, _lookupService, _factory);
+		       /* Parallel.ForEach(sites, (site) =>
+		        {
+		            var db = _factory.Create<IPetrolPricingRepository>(CreationMethod.ServiceLocator, null);
 
-					priceService.CalcPrice(db, site, fuel.Id, calcTaskData);
-				}
-			});
+		            foreach (var fuel in fuels.ToList())
+		            {
+		                var priceService = new PriceService(db, _appSettings, _lookupService, _factory);
 
-			createMissingSuperUnleadedFromUnleaded(forDate); // for performance, run for all sites
+		                priceService.CalcPrice(db, site, fuel.Id, calcTaskData);
+		            }
+		        });*/
+
+                foreach (var site in sites)
+		        {
+                    var db = _factory.Create<IPetrolPricingRepository>(CreationMethod.ServiceLocator, null);
+
+                    foreach (var fuel in fuels.ToList())
+                    {
+                        var priceService = new PriceService(db, _appSettings, _lookupService, _factory);
+
+                        priceService.CalcPrice(db, site, fuel.Id, calcTaskData);
+                    }
+		            
+		        }
+
+		        createMissingSuperUnleadedFromUnleaded(forDate); // for performance, run for all sites
+		    }
+		    catch (Exception ce)
+		    {
+		        int j = 0;
+		    }
 		}
 
 		#endregion
