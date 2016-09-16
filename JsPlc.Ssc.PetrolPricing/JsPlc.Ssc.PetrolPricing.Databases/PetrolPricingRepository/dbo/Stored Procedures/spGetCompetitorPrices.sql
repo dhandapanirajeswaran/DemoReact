@@ -57,7 +57,7 @@ Set @phhYestDate = DateAdd(day, -1, @forDate)
 	SiteToCompetitor sc
 		inner join SITE compInf --
 			on sc.CompetitorId = compInf.Id and sc.SiteId=@siteId
-	WHERE compInf.IsSainsburysSite = 0 AND compInf.IsActive = 1 and sc.IsExcluded = 0
+	WHERE compInf.IsActive = 1 and sc.IsExcluded = 0
 ) -- select * from competitors
  --select * from compForSites
 -- IMPORTANT BELOW CTE could result in nulls for FuelInfo if DP table is empty (but each comp is still there)
