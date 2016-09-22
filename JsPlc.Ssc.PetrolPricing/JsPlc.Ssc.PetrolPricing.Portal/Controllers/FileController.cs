@@ -99,8 +99,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 
 
 				var fum = new FileUploadModel(fu, new ServiceFacade());
-                return RedirectToAction("Upload", new { errMsg = "Test Message" });
-				var status = await fum.UploadFile(file);
+              	var status = await fum.UploadFile(file);
              
 				switch (status) // Store fu to state
 				{
@@ -288,10 +287,12 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 			}
 			else
 			{
-                _uploadStatus = PersistToSaveFile();
+              //  _uploadStatus = PersistToSaveFile();
 
-                FileUpload fileUpload=RecordUpload();
-                if (fileUpload == null) _uploadStatus = FileUploadStatus.InvalidUpload;
+             //   FileUpload fileUpload=RecordUpload();
+               // if (fileUpload == null) _uploadStatus = FileUploadStatus.InvalidUpload;
+
+                _uploadStatus = FileUploadStatus.InvalidUpload;
 			}
 
 			// Simply save the file to Hold or Save path
