@@ -287,7 +287,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 			}
 			else
 			{
-              //  _uploadStatus = PersistToSaveFile();
+                _uploadStatus = PersistToSaveFile();
 
              //   FileUpload fileUpload=RecordUpload();
                // if (fileUpload == null) _uploadStatus = FileUploadStatus.InvalidUpload;
