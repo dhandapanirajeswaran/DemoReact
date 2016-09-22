@@ -99,9 +99,9 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 
 
 				var fum = new FileUploadModel(fu, new ServiceFacade());
-
+                return RedirectToAction("Upload", new { errMsg = "Test Message" });
 				var status = await fum.UploadFile(file);
-                return RedirectToAction("Upload", new { errMsg = "Test Message"});
+             
 				switch (status) // Store fu to state
 				{
 					case FileUploadStatus.InvalidUpload:
