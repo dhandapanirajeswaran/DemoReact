@@ -76,7 +76,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 				{
 					throw new ApplicationException(StringMessages.Error_UploadedFileIsEmpty);
 				}
-                else if (file.ContentLength>3145728)
+                else if (file.ContentLength > 3145728 && uploadTypes==1)
                 {
                     throw new ApplicationException(StringMessages.Error_UploadedFileLengthGreaterThanMaxSize);
                 }
