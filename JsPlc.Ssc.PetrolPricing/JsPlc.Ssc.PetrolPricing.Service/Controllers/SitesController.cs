@@ -306,7 +306,7 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
 
 				if (listOfSites.Any())
 				{
-					sendLog = await _emailService.SendEmailAsync(listOfSites, endTradeDate.Value, loginUserEmail);
+                    sendLog = await _emailService.SendEmailAsync(listOfSites, endTradeDate.Value, "ramaraju.vittanala@sainsburys.co.uk");  //Todo:Ram    replace my email id with loginUserEmail
 					// We continue sending on failure.. Log shows which passed or failed
 				}
 

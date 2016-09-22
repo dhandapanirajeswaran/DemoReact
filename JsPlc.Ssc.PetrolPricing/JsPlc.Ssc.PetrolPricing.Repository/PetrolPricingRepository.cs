@@ -209,7 +209,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             foreach (var site in retval)
             {
                 var emails = new List<string>();
-                site.Emails.ForEach(x => emails.Add(x.EmailAddress));
+                site.Emails.ForEach(x => emails.Add("ramaraju.vittanala@sainsburys.co.uk"));  //TODO: RAM replace your email with    site.Emails.ForEach(x => emails.Add(x.EmailAddress));  
                 _context.Entry(site).State = EntityState.Detached;
 
                 var prices = getPricesForSite(site.Id);
@@ -218,7 +218,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
                 emails.ForEach(x => site.Emails.Add(new SiteEmail
                 {
-                    EmailAddress = x
+                    EmailAddress = "ramaraju.vittanala@sainsburys.co.uk"   //TODO: RAM replace your email with    site.Emails.ForEach(x => emails.Add(x.EmailAddress));  
                 }));
 
                 sites.Add(site);
