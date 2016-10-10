@@ -62,7 +62,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal" data-bind="click: emailAllCloseClick">Cancel</button>
-                        <button type="submit" class="btn btn-primary" data-dismiss="modal" data-bind="click: emailAllClick">Email All Sites</button>
+                        <button type="button" class="btn btn-primary" data-dismiss="modal" data-bind="click: emailAllClick">Email All Sites</button>
                     </div>
                 </div>
             </div>
@@ -137,30 +137,30 @@
                 <!-- Store No -->
                 <div class="col-md-2">
                     <label for="viewingStoreNo">Store No:</label>
-                    <input type="text" id="viewingStoreNo" class="form-control" maxlength="9" onclick="    IsSitePriceFormClicked=1; "
+                    <input type="text" id="viewingStoreNo" class="form-control" maxlength="9" 
                            name="viewingStoreNo" data-bind="numeric, value: $root.StoreNo" />
                 </div>
                 <!-- Store Name -->
                 <div class="col-md-2">
                     <label for="viewingStoreName">Store Name:</label>
-                    <input type="text" id="viewingStoreName" class="form-control" maxlength="50" onclick=" IsSitePriceFormClicked=1; "
+                    <input type="text" id="viewingStoreName" class="form-control" maxlength="50" 
                            name="viewingStoreName" data-bind="value: $root.StoreName" />
                 </div>
                 <!-- Store Town -->
                 <div class="col-md-2">
                     <label for="viewingStoreTown">Store Town:</label>
-                    <input type="text" id="viewingStoreTown" class="form-control" maxlength="50" onclick=" IsSitePriceFormClicked=1; "
+                    <input type="text" id="viewingStoreTown" class="form-control" maxlength="50" 
                            name="viewingStoreTown" data-bind="value: $root.StoreTown" />
                 </div>
                 <!-- Catalist No -->
                 <div class="col-md-2">
                     <label for="viewingCatNo">Catalist No:</label>
-                    <input type="text" id="viewingCatNo" class="form-control" maxlength="9" onclick=" IsSitePriceFormClicked=1; "
+                    <input type="text" id="viewingCatNo" class="form-control" maxlength="9" 
                            name="viewingCatNo" data-bind="numeric, value: $root.CatNo" />
                 </div>
                 <!-- go button -->
                 <div class="col-md-1">
-                    <button style="margin-top: 24px;margin-left:10px;" type="button" class="btn btn-success" data-bind="click: loadPageWithParams">Go</button>
+                    <button style="margin-top: 24px;margin-left:10px;" type="button" id="btnGO" class="btn btn-success" data-bind="click: loadPageWithParams">Go</button>
                 </div>
                 <!-- show all button -->
                 <div class="col-md-1" style="margin-left:-10px">
@@ -509,6 +509,34 @@
 }
 
 <script type="text/javascript">
+    
+    $("#viewingStoreNo").keyup(function(event){
+        if(event.keyCode == 13){
+            $("#btnGO").click();
+        }
+    });
+
+    $("#viewingStoreName").keyup(function(event){
+        if(event.keyCode == 13){
+            $("#btnGO").click();
+        }
+    });
+
+    
+    $("#viewingStoreTown").keyup(function(event){
+        if(event.keyCode == 13){
+            $("#btnGO").click();
+        }
+    });
+
+    $("#viewingCatNo").keyup(function(event){
+        if(event.keyCode == 13){
+            $("#btnGO").click();
+        }
+    });
+
+    
+
     require(["SitePricing"], function (prices) {
         prices.go();
 
@@ -535,7 +563,7 @@
         selectedDate=selectedDate==""? $('#viewingDate').val():selectedDate;
         var yesterday=new Date();
         var tomorrow=new Date();
-          var strtoday="";
+        var strtoday="";
         var stryday="";
         var strtomorrow="";
         if (selectedDate=="")
@@ -570,8 +598,8 @@
             var day1 = d.getDate();
             var year1=d.getFullYear();
             strtoday = (('' + day1).length < 2 ? '0' : '') + day1 + '/' +
-                 (('' + month1).length < 2 ? '0' : '') + month1 + '/' +
-                 d.getFullYear();
+                (('' + month1).length < 2 ? '0' : '') + month1 + '/' +
+                d.getFullYear();
          
 
         }
@@ -579,14 +607,14 @@
         var month = yesterday.getMonth() + 1;
         var day = yesterday.getDate();
         stryday = (('' + day).length < 2 ? '0' : '') + day + '/' +
-          (('' + month).length < 2 ? '0' : '') + month + '/' +
-          yesterday.getFullYear();
+            (('' + month).length < 2 ? '0' : '') + month + '/' +
+            yesterday.getFullYear();
 
         month = tomorrow.getMonth() + 1;
         day = tomorrow.getDate();
         strtomorrow = (('' + day).length < 2 ? '0' : '') + day + '/' +
-          (('' + month).length < 2 ? '0' : '') + month + '/' +
-          tomorrow.getFullYear();
+            (('' + month).length < 2 ? '0' : '') + month + '/' +
+            tomorrow.getFullYear();
         $('#today1').text(strtoday);
         $('#today2').text(strtoday);
         $('#today3').text(strtoday);
@@ -625,11 +653,11 @@
     $("#btnExportReport").click(function () {
 
         
-       var url = "Sites/ExportPrices?date=" + $('#viewingDate').val()
-              + "&storeName=" + $('#viewingStoreName').val()
-              + "&catNo=" + $('#viewingCatNo').val()
-              + "&storeNo=" + $('#viewingStoreNo').val()
-              + "&storeTown=" + $('#viewingStoreTown').val();
+        var url = "Sites/ExportPrices?date=" + $('#viewingDate').val()
+            + "&storeName=" + $('#viewingStoreName').val()
+            + "&catNo=" + $('#viewingCatNo').val()
+            + "&storeNo=" + $('#viewingStoreNo').val()
+            + "&storeTown=" + $('#viewingStoreTown').val();
 
       
         var rootFolder = /\/petrolpricing\//i.test(window.location.href) ? "/petrolpricing/" : "/";
