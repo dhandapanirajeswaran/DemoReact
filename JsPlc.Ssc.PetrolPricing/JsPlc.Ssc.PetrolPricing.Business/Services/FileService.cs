@@ -410,6 +410,12 @@ namespace JsPlc.Ssc.PetrolPricing.Business
                 site.Town = newSiteRecord.SainsSiteTown;
                 site.IsSainsburysSite = true;
                 site.IsActive = true;
+                site.Address = "";
+                site.Suburb = "";
+                site.PostCode = "";
+                site.Company = "J SAINSBURY PLC";
+                site.Ownership = "";
+              
               //  site.StoreNo = newSiteRecord.SainsSiteCatNo;
                 result.Add(site);
             }
