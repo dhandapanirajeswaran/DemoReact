@@ -318,11 +318,11 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 			});
 
 			//verify DeleteRecordsForQuarterlyUploadStaging call
-			Assert.DoesNotThrow(delegate
+			/*Assert.DoesNotThrow(delegate
 			{
 				_mockRepository
 					.Verify(v => v.TruncateQuarterlyUploadStaging(), Times.Once());
-			});
+			});*/
 
 			//verify FIRST batch has been uploaded
 			Assert.DoesNotThrow(delegate
@@ -467,11 +467,11 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 			});
 
 			//verify DeleteRecordsForQuarterlyUploadStaging call
-			Assert.DoesNotThrow(delegate
+			/*Assert.DoesNotThrow(delegate
 			{
 				_mockRepository
 					.Verify(v => v.TruncateQuarterlyUploadStaging(), Times.Once());
-			});
+			});*/
 
 			//verify FIRST batch has been uploaded
 			Assert.DoesNotThrow(delegate
@@ -616,7 +616,7 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 			//verify LogImportError call
 			switch (quarterlyFileUploadExceptionCase)
 			{
-				case QuarterlyFileUploadExceptionCases.TruncateQuarterlyUploadStaging:
+				/*case QuarterlyFileUploadExceptionCases.TruncateQuarterlyUploadStaging:
 					Assert.DoesNotThrow(delegate
 					{
 						_mockRepository
@@ -624,7 +624,7 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 								It.Is<Models.FileUpload>(arg =>
 								ComparePrimaryFileUploadAttributes(testFileToUpload, arg)), It.IsAny<Exception>(), It.IsAny<int?>()), Times.AtLeastOnce());
 					});
-					break;
+					break;*/
 				case QuarterlyFileUploadExceptionCases.CatalistNumberUpdateException:
 					Assert.DoesNotThrow(delegate
 					{
