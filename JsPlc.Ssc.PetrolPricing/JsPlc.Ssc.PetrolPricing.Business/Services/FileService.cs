@@ -408,6 +408,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
                 site.Brand = Const.SAINSBURYS;
                 site.SiteName = newSiteRecord.SainsSiteName;
                 site.Town = newSiteRecord.SainsSiteTown;
+                site.IsSainsburysSite = true;
               //  site.StoreNo = newSiteRecord.SainsSiteCatNo;
                 result.Add(site);
             }
