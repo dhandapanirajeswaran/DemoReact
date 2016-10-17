@@ -510,6 +510,13 @@
 
 <script type="text/javascript">
     
+  $("#viewingDate").keyup(function(event){
+        if(event.keyCode == 13){
+            $("#btnGO").click();
+        }
+    });
+
+
     $("#viewingStoreNo").keyup(function(event){
         if(event.keyCode == 13){
             $("#btnGO").click();

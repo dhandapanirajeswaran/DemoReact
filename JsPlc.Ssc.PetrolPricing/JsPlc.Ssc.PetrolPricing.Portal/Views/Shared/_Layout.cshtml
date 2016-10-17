@@ -44,7 +44,7 @@
 
 
         if (locationPath == "/sites/prices" && IsPriceCollapsed == 1 && IsSitePriceFormClicked == 0) {
-            window.location.href = '@Url.Action("Prices", "Sites")';
+           // window.location.href = '@Url.Action("Prices", "Sites")';
             IsPriceCollapsed = 0;
            // alert("@(ConfigurationManager.AppSettings["ServicesBaseUrl"])");
 
@@ -60,7 +60,7 @@
     @RenderSection("head", false)
 </head>
 <body onclick="ReloadMe()">
-    <div class="navbar navbar-inverse navbar-fixed-top">
+    <div class="navbar navbar-inverse navbar-fixed-top" >
         <div class="container">
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">

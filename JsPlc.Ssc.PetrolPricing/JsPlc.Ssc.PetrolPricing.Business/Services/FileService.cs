@@ -226,7 +226,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 				}
 
 				// Delete older rows before import
-				_db.TruncateQuarterlyUploadStaging();
+			//	_db.TruncateQuarterlyUploadStaging();
 
 				bool gotWarning = false;
 
@@ -242,6 +242,8 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 
 				var newQuarterlyRecords = _db.GetQuarterlyRecords();
 
+
+
 				try
 				{
 					var sitesToUpdateCatNo = updateExistingSainsburysSitesWithNewCatalistNo(newQuarterlyRecords);
@@ -253,6 +255,9 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 					throw new CatalistNumberUpdateException("Unable update Catalist Numbers. Contact support team.", ex);
 				}
 
+
+
+                //Adding All Competitors Sites 
 				try
 				{
 					var newSitesToAdd = addNewSites(newQuarterlyRecords);
@@ -264,6 +269,21 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 				{
 					throw new NewSiteException("Unable to add new Sites. Contact support team.", ex);
 				}
+
+                //Adding new Sainsburys Sites if any
+                try
+				{
+                    var newSitesToAdd = addNewSainsburysSites(newQuarterlyRecords);
+
+					_db.NewSites(newSitesToAdd);
+
+				}
+				catch (Exception ex)
+				{
+					throw new NewSiteException("Unable to add new sainsburys Sites. Contact support team.", ex);
+				}
+
+                
 
 				try
 				{
@@ -363,6 +383,37 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 
 			return result;
 		}
+
+
+        private List<Site> addNewSainsburysSites(IEnumerable<QuarterlyUploadStaging> allQuarterlyRecords)
+        {
+            var allSites = _db.GetSites();
+
+            var allExistingCatNo = allSites
+                .Where(s => s.CatNo.HasValue)
+                .Select(s => s.CatNo)
+                .Distinct()
+                .ToArray();
+
+            var newSiteRecords = allQuarterlyRecords
+                .Where(ns => allExistingCatNo.Contains(ns.SainsSiteCatNo) == false)
+                .Select(s => new { s.SainsSiteName,s.SainsSiteTown, s.SainsSiteCatNo}).Distinct();
+
+            var result = new List<Site>();
+
+            foreach (var newSiteRecord in newSiteRecords)
+            {
+                Site site=new Site();
+                site.CatNo = newSiteRecord.SainsSiteCatNo;
+                site.Brand = Const.SAINSBURYS;
+                site.SiteName = newSiteRecord.SainsSiteName;
+                site.Town = newSiteRecord.SainsSiteTown;
+              //  site.StoreNo = newSiteRecord.SainsSiteCatNo;
+                result.Add(site);
+            }
+
+            return result;
+        }
 
 		private List<Site> updateExistingSitesWithNewDataByCatNo(IEnumerable<QuarterlyUploadStaging> allQuarterlyRecords)
 		{

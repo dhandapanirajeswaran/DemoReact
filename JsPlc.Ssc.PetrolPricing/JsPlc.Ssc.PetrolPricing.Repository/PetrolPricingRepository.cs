@@ -803,7 +803,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             int startingLineNumber)
         {
             int addingEntryLineNo = startingLineNumber;
-
+          
             using (var newDbContext = new RepositoryContext())
             {
                 using (var tx = newDbContext.Database.BeginTransaction())
@@ -811,37 +811,46 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                     newDbContext.Configuration.AutoDetectChangesEnabled = false;
                     try
                     {
-                        foreach (CatalistQuarterly fileRecord in siteCatalistData)
+                        var exitingSiteCatalistData=newDbContext.QuarterlyUploadStaging.ToList();
+
+                        siteCatalistData.RemoveAll(
+                            x =>
+                                exitingSiteCatalistData.Any(y => y.SainsSiteCatNo == (int) x.SainsCatNo) &&
+                                exitingSiteCatalistData.Any(y => y.CatNo == (int) x.CatNo));
+                        if (siteCatalistData.Count > 0)
                         {
-                            var dbRecord = new QuarterlyUploadStaging();
-                            dbRecord.QuarterlyUploadId = fileDetails.Id;
+                            foreach (CatalistQuarterly fileRecord in siteCatalistData)
+                            {
+                                var dbRecord = new QuarterlyUploadStaging();
+                                dbRecord.QuarterlyUploadId = fileDetails.Id;
 
-                            dbRecord.SainsSiteCatNo = (int)fileRecord.SainsCatNo;
-                            dbRecord.SainsSiteName = fileRecord.SainsSiteName;
-                            dbRecord.SainsSiteTown = fileRecord.SainsSiteTown;
+                                dbRecord.SainsSiteCatNo = (int) fileRecord.SainsCatNo;
+                                dbRecord.SainsSiteName = fileRecord.SainsSiteName;
+                                dbRecord.SainsSiteTown = fileRecord.SainsSiteTown;
 
-                            dbRecord.Rank = (int)fileRecord.Rank;
-                            dbRecord.DriveDist = (float)fileRecord.DriveDistanceMiles;
-                            dbRecord.DriveTime = (float)fileRecord.DriveTimeMins;
-                            dbRecord.CatNo = (int)fileRecord.CatNo;
+                                dbRecord.Rank = (int) fileRecord.Rank;
+                                dbRecord.DriveDist = (float) fileRecord.DriveDistanceMiles;
+                                dbRecord.DriveTime = (float) fileRecord.DriveTimeMins;
+                                dbRecord.CatNo = (int) fileRecord.CatNo;
 
-                            dbRecord.Brand = fileRecord.Brand;
-                            dbRecord.SiteName = fileRecord.SiteName;
-                            dbRecord.Addr = fileRecord.Address;
-                            dbRecord.Suburb = fileRecord.Suburb;
+                                dbRecord.Brand = fileRecord.Brand;
+                                dbRecord.SiteName = fileRecord.SiteName;
+                                dbRecord.Addr = fileRecord.Address;
+                                dbRecord.Suburb = fileRecord.Suburb;
 
-                            dbRecord.Town = fileRecord.Town;
-                            dbRecord.PostCode = fileRecord.Postcode;
-                            dbRecord.Company = fileRecord.CompanyName;
-                            dbRecord.Ownership = fileRecord.Ownership;
+                                dbRecord.Town = fileRecord.Town;
+                                dbRecord.PostCode = fileRecord.Postcode;
+                                dbRecord.Company = fileRecord.CompanyName;
+                                dbRecord.Ownership = fileRecord.Ownership;
 
-                            newDbContext.QuarterlyUploadStaging.Add(dbRecord);
-                            addingEntryLineNo += 1;
+                                newDbContext.QuarterlyUploadStaging.Add(dbRecord);
+                                addingEntryLineNo += 1;
+
+                            }
+
+                            newDbContext.SaveChanges();
+                            tx.Commit();
                         }
-
-                        newDbContext.SaveChanges();
-
-                        tx.Commit();
                         return true;
                     }
                     catch (DbUpdateException e)
@@ -1101,18 +1110,23 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
                     try
                     {
-                        //truncat SiteToCompetitor
-                        transactionContext.Database.ExecuteSqlCommand("Truncate table SiteToCompetitor");
+                        var existingSiteToCompetitorRecords = transactionContext.SiteToCompetitors.ToList();
+                        newSiteToCompetitorRecords.RemoveAll(x =>
+                       existingSiteToCompetitorRecords.Any(y => y.SiteId == (int)x.SiteId) &&
+                       existingSiteToCompetitorRecords.Any(y => y.CompetitorId == (int)x.CompetitorId));
 
-                        //add new site to competitor records
-                        foreach (var newSiteToCompetitor in newSiteToCompetitorRecords)
+                        if (newSiteToCompetitorRecords.Count > 0)
                         {
-                            transactionContext.SiteToCompetitors.Add(newSiteToCompetitor);
+                            //add new site to competitor records
+                            foreach (var newSiteToCompetitor in newSiteToCompetitorRecords)
+                            {
+                                transactionContext.SiteToCompetitors.Add(newSiteToCompetitor);
+                            }
+
+                            transactionContext.SaveChanges();
+
+                            transaction.Commit();
                         }
-
-                        transactionContext.SaveChanges();
-
-                        transaction.Commit();
                     }
                     catch (Exception)
                     {

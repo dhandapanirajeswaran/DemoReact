@@ -52,7 +52,7 @@
     </div>
 
     <div class="col-md-1">
-        <button style="margin-top: 24px" type="button" class="btn btn-success" data-bind="click: searchSainsburysStores">Go</button>
+        <button style="margin-top: 24px" type="button" id="btnGO" class="btn btn-success" data-bind="click: searchSainsburysStores">Go</button>
     </div>
 
     <div class="col-md-3">
@@ -68,6 +68,31 @@
 
 
 <script type="text/javascript">
+    
+    $("#viewingStoreTown").keyup(function(event){
+        if(event.keyCode == 13){
+            $("#btnGO").click();
+        }
+    });
+
+    $("#viewingStoreName").keyup(function(event){
+        if(event.keyCode == 13){
+            $("#btnGO").click();
+        }
+    });
+
+    $("#viewingStoreNo").keyup(function(event){
+        if(event.keyCode == 13){
+            $("#btnGO").click();
+        }
+    });
+
+    $("#viewingCatNo").keyup(function(event){
+        if(event.keyCode == 13){
+            $("#btnGO").click();
+        }
+    });
+
     require(["SitePricing"], function (prices) {
         prices.go();
     });
