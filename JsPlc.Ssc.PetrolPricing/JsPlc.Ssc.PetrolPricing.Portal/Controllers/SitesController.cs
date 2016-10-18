@@ -105,7 +105,14 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
                 int pageSize = Constants.PricePageSize, int getCompetitor = 0)
         {
             DateTime forDate;
-            if (!DateTime.TryParse(date, out forDate)) forDate = DateTime.Now;
+            if (!DateTime.TryParse(date, out forDate))
+            {
+                forDate = DateTime.Now.AddDays(-1);
+            }
+            else
+            {
+                forDate=forDate.AddDays(-1);
+            }
             // POST scenarios use : JsonConvert.SerializeObject(siteView);
             IEnumerable<SitePriceViewModel> sitesViewModelsWithPrices = (getCompetitor != 1)
                 ? _serviceFacade.GetSitePrices(forDate, storeName, catNo, storeNo, storeTown, siteId, pageNo, pageSize)
