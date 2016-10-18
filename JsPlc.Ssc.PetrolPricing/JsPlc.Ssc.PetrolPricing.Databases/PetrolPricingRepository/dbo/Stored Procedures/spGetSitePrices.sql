@@ -52,11 +52,11 @@ set @todayPriceDate =@forDate
 (
    Select Distinct s.Id as SiteId, dp.FuelTypeId,dp.ModalPrice, ft.FuelTypeName, s.CompetitorPriceOffset
    from sites s, DailyPrice dp, FuelType ft
-   Where s.CatNo = dp.CatNo and dp.FuelTypeId = ft.Id
+   Where s.CatNo = dp.CatNo and dp.FuelTypeId = ft.Id and DateDiff(day, dp.DateOfPrice, @forDate) = 0
    Union 
    Select Distinct s.Id as SiteId, sp.FuelTypeId,sp.SuggestedPrice, ft.FuelTypeName, s.CompetitorPriceOffset
    from sites s, SitePrice sp, FuelType ft
-   Where s.Id = sp.SiteId and sp.FuelTypeId = ft.Id
+   Where s.Id = sp.SiteId and sp.FuelTypeId = ft.Id and DateDiff(day, sp.DateOfPrice, @forDate) = 0 
 ) -- select * from siteFuels
 ,sitesWithFuels as
 (
