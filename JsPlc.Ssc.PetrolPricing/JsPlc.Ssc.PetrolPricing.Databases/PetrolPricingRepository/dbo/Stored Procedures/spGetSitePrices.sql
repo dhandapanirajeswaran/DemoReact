@@ -33,6 +33,8 @@ Declare @todayPriceDate DateTime, @lastPriceDate DateTime = null
 set @todayPriceDate =@forDate
 --Select @todayPriceDate
 
+Declare @DataExits INT=(select COUNT(*) from SitePrice where DateDiff(day, DateOfPrice, @forDate) = 0)
+
 ;With sites as
 (
 	Select *
@@ -50,13 +52,16 @@ set @todayPriceDate =@forDate
 ) -- select * from sites
 ,siteFuels as
 (
+
    Select Distinct s.Id as SiteId, dp.FuelTypeId,dp.ModalPrice, ft.FuelTypeName, s.CompetitorPriceOffset
    from sites s, DailyPrice dp, FuelType ft
-   Where s.CatNo = dp.CatNo and dp.FuelTypeId = ft.Id and DateDiff(day, dp.DateOfPrice, @forDate) = 0
+   Where s.CatNo = dp.CatNo and dp.FuelTypeId = ft.Id and (@DataExits=0 or (@DataExits>0 and DateDiff(day, dp.DateOfPrice, @forDate) = 0))
    Union 
    Select Distinct s.Id as SiteId, sp.FuelTypeId,sp.SuggestedPrice, ft.FuelTypeName, s.CompetitorPriceOffset
    from sites s, SitePrice sp, FuelType ft
-   Where s.Id = sp.SiteId and sp.FuelTypeId = ft.Id and DateDiff(day, sp.DateOfPrice, @forDate) = 0 
+   Where s.Id = sp.SiteId and sp.FuelTypeId = ft.Id and     (@DataExits=0 or (@DataExits>0 and DateDiff(day, sp.DateOfPrice, @forDate) = 0))  
+  
+
 ) -- select * from siteFuels
 ,sitesWithFuels as
 (
