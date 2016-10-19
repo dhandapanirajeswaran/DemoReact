@@ -142,7 +142,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                 .Include(x => x.Emails)
                 .Include(x => x.Prices)
                 .Where(x => x.IsActive)
-                .Where(x => x.Prices.All(p => p.DateOfCalc.Equals(forDate)));
+                .Where(x => x.Prices.All(p => p.DateOfPrice.Equals(forDate)));
         }
 
         private static object cachedCompetitorsLock = new Object();
@@ -191,10 +191,10 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
             var rangedDatePrices = _context.SitePrices.Select(x => new
             {
-                DiffFromDays = DbFunctions.DiffDays(fromPriceDate.Value, x.DateOfCalc),
-                DiffToDays = DbFunctions.DiffDays(x.DateOfCalc, toPriceDate.Value),
+                DiffFromDays = DbFunctions.DiffDays(fromPriceDate.Value, x.DateOfPrice),
+                DiffToDays = DbFunctions.DiffDays(x.DateOfPrice, toPriceDate.Value),
                 FromDate = fromPriceDate.Value,
-                DateOfCalc = x.DateOfCalc,
+                DateOfCalc = x.DateOfPrice,
                 ToDate = toPriceDate.Value,
                 Price = x
             }).Where(x => x.DiffFromDays >= 0 && x.DiffToDays <= daysBetweenFromAndTo);
@@ -681,7 +681,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                     {
                         // If multiple uploads, needs to be handled here, but we assume one for now.
                         dailyPricesCache = _context.DailyPrices.Include(x => x.DailyUpload)
-                            .Where(x => DbFunctions.TruncateTime(x.DailyUpload.UploadDateTime) == usingPricesforDate.Date)
+                            .Where(x => DbFunctions.TruncateTime(x.DateOfPrice) == usingPricesforDate.Date)
                             .ToDictionary(k => string.Format("{0}_{1}", k.FuelTypeId, k.CatNo), v => v);
 
                         PetrolPricingRepositoryMemoryCache.CacheObj.Add(cacheKey, dailyPricesCache, PetrolPricingRepositoryMemoryCache.ReportsCacheExpirationPolicy(20));
@@ -1189,7 +1189,7 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
                     {
                         cachedAnyDailyPricesForFuelOnDate = _context.DailyPrices
                             .Include(x => x.DailyUpload)
-                            .Where(x => DbFunctions.TruncateTime(x.DailyUpload.UploadDateTime) == usingPricesforDate.Date)
+                            .Where(x => DbFunctions.TruncateTime(x.DateOfPrice) == usingPricesforDate.Date)
                             .Select(x => x.FuelTypeId).Distinct().ToList();
 
                         PetrolPricingRepositoryMemoryCache.CacheObj.Add(cacheKey, cachedAnyDailyPricesForFuelOnDate, PetrolPricingRepositoryMemoryCache.ReportsCacheExpirationPolicy(5));
@@ -1232,7 +1232,7 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
             var existingPriceRecord = _context.SitePrices.AsNoTracking().FirstOrDefault(
                 x => x.SiteId == calculatedSitePrice.SiteId
                      && x.FuelTypeId == calculatedSitePrice.FuelTypeId
-                     && DbFunctions.TruncateTime(x.DateOfCalc) == calculatedSitePrice.DateOfCalc.Date);
+                     && DbFunctions.TruncateTime(x.DateOfPrice) == calculatedSitePrice.DateOfPrice.Date);
 
             if (existingPriceRecord == null)
             {
@@ -1273,7 +1273,7 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
                 {
                     //
                     var dbPricesForDate =
-                        db.SitePrices.Where(x => DbFunctions.DiffDays(x.DateOfCalc, forDate) == 0)
+                        db.SitePrices.Where(x => DbFunctions.DiffDays(x.DateOfPrice, forDate) == 0)
                             .AsNoTracking()
                             .ToList();
 
@@ -1648,7 +1648,7 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
 
 
                     // Report uses Prices as per date of upload..(not date of Price in DailyPrice)..
-                    var dailyPrices = _context.DailyPrices.Where(x => DbFunctions.DiffDays(x.DailyUpload.UploadDateTime, when) == 0 && x.FuelTypeId == fuelTypeId).ToList();
+                    var dailyPrices = _context.DailyPrices.Where(x => DbFunctions.DiffDays(x.DateOfPrice, when) == 0 && x.FuelTypeId == fuelTypeId).ToList();
 
                     var distinctPrices = dailyPrices.Select(x => x.ModalPrice).Distinct().OrderBy(x => x).ToList();
                     var distinctCatNos = dailyPrices.Select(x => x.CatNo).Distinct().ToList();
@@ -1800,7 +1800,7 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
             var fuelTypeIds = new List<int> { (int)FuelTypeItem.Unleaded,(int)FuelTypeItem.Diesel };
 
             // Report uses Prices as per date of upload..(not date of Price in DailyPrice)..
-            var dailyPrices = _context.DailyPrices.Where(x => DbFunctions.DiffDays(x.DailyUpload.UploadDateTime, when) == 0 && fuelTypeIds.Contains(x.FuelTypeId)).ToList();
+            var dailyPrices = _context.DailyPrices.Where(x => DbFunctions.DiffDays(x.DateOfPrice, when) == 0 && fuelTypeIds.Contains(x.FuelTypeId)).ToList();
 
             var fuels = _context.FuelType.ToList();
 
@@ -1895,7 +1895,7 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
             var fuelTypeIds = new List<int> { (int)FuelTypeItem.Diesel, (int)FuelTypeItem.Unleaded };
 
             // Report uses Prices as per date of upload..(not date of Price in DailyPrice)..
-            var dailyPrices = _context.DailyPrices.Where(x => DbFunctions.DiffDays(x.DailyUpload.UploadDateTime, when) == 0 && fuelTypeIds.Contains(x.FuelTypeId)).ToList();
+            var dailyPrices = _context.DailyPrices.Where(x => DbFunctions.DiffDays(x.DateOfPrice, when) == 0 && fuelTypeIds.Contains(x.FuelTypeId)).ToList();
 
             var fuels = _context.FuelType.ToList();
 
@@ -1953,7 +1953,7 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
             var fuelTypeIds = new List<int> { (int)FuelTypeItem.Unleaded, (int)FuelTypeItem.Diesel };
 
             // Report uses Prices as per date of upload..(not date of Price in DailyPrice)..
-            var dailyPrices = _context.DailyPrices.Where(x => DbFunctions.DiffDays(x.DailyUpload.UploadDateTime, when) == 0 && fuelTypeIds.Contains(x.FuelTypeId)).ToList();
+            var dailyPrices = _context.DailyPrices.Where(x => DbFunctions.DiffDays(x.DateOfPrice, when) == 0 && fuelTypeIds.Contains(x.FuelTypeId)).ToList();
 
             var fuels = _context.FuelType.ToList();
 
@@ -2033,7 +2033,7 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
             var result = new CompetitorsPriceRangeByCompanyViewModel();
             result.Date = when;
             // Report uses Prices as per date of upload..(not date of Price in DailyPrice)..
-            var dailyPrices = _context.DailyPrices.Where(x => DbFunctions.DiffDays(x.DailyUpload.UploadDateTime, when) == 0 && result.FuelTypeIds.Contains(x.FuelTypeId)).ToList();
+            var dailyPrices = _context.DailyPrices.Where(x => DbFunctions.DiffDays(x.DateOfPrice, when) == 0 && result.FuelTypeIds.Contains(x.FuelTypeId)).ToList();
 
             var fuels = _context.FuelType.ToList();
 
@@ -2174,6 +2174,8 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
                 //DateTime? sitePriceDateLookingBack = GetLastSitePriceDate(forDate);
                 DateTime? catPriceDateLookingForward = GetFirstDailyPriceDate(forDate);
                 DateTime? catPriceDateLookingForward_nextday = GetFirstDailyPriceDate(nextday);
+
+                if (catPriceDateLookingForward == null || catPriceDateLookingForward_nextday == null) return null;
 
                 var sites = GetJsSites();
 
@@ -2332,14 +2334,14 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
                     && DbFunctions.DiffDays(forDate, x.DailyUpload.UploadDateTime) == 0)
                     .DistinctBy(x => x.DailyUpload.UploadDateTime).OrderBy(x => x.DailyUpload.UploadDateTime).Take(5); // ascending order*/
 
-                var priceDates = db.FileUploads.Where(x => x.Status.Id == 10 && DbFunctions.DiffDays(forDate, x.UploadDateTime) == 0).OrderBy(x => x.UploadDateTime).Take(5);
+                var priceDates = db.DailyPrices.Where(x => x.DailyUpload.Status.Id == 10 && DbFunctions.DiffDays(forDate, x.DateOfPrice) == 0).OrderBy(x => x.DateOfPrice).Take(5);
 
                 // success status
                 //.Select(x => x.DailyUpload.UploadDateTime)
                 //.Where(x => DbFunctions.DiffDays(x, forDate) >= 1) // UploadDate - forDate >= 1
                 if (priceDates.Any())
                 {
-                    return priceDates.First().UploadDateTime;
+                    return priceDates.First().DateOfPrice;
                 }
                 return null;
             }
@@ -2355,15 +2357,8 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
             List<DailyPrice> retval = new List<DailyPrice>();
             using (var db = new RepositoryContext())
             {
-                var fileUploadID = db.FileUploads.Where(x=> DbFunctions.DiffDays(forUploadDate, x.UploadDateTime) == 0 && x.StatusId==10).OrderByDescending(x=>x.Id).Select(x=>x.Id);
-
-
-                var prices = from dp in db.DailyPrices
-                             where dp.DailyUploadId == fileUploadID.FirstOrDefault()
-                             select dp;
-
-
-
+                var prices = db.DailyPrices.Where(x => DbFunctions.DiffDays(forUploadDate, x.DateOfPrice) == 0 && x.DailyUpload.StatusId == 10).OrderByDescending(x => x.Id);
+                
                 retval.AddRange(prices);
                 return retval;
             }
@@ -2379,7 +2374,7 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
 
         private static int GetSitePriceOnDate(IEnumerable<SitePrice> sitePrices, DateTime d, int fuelId)
         {
-            var price = sitePrices.FirstOrDefault(x => x.DateOfCalc.Equals(d) && x.FuelTypeId == fuelId);
+            var price = sitePrices.FirstOrDefault(x => x.DateOfPrice.Equals(d) && x.FuelTypeId == fuelId);
             return (price == null)
                 ? 0
                 : (price.OverriddenPrice == 0) ? price.SuggestedPrice : price.OverriddenPrice;
@@ -2387,7 +2382,7 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
 
         private static int GetDailyPriceOnDate(IEnumerable<DailyPrice> dailyPrices, DateTime d, int fuelId)
         {
-            var price = dailyPrices.FirstOrDefault(x => x.DailyUpload.UploadDateTime.Date.Equals(d) && x.FuelTypeId == fuelId);
+            var price = dailyPrices.FirstOrDefault(x => x.DateOfPrice.Date.Equals(d) && x.FuelTypeId == fuelId);
             return (price == null)
                 ? 0
                 : price.ModalPrice;
@@ -2434,7 +2429,7 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
                 FuelTypeId = dp.FuelTypeId,
                 FuelType = dp.FuelType,
                 DateOfCalc = dp.DailyUpload.UploadDateTime.Date,
-                DateOfPrice = dp.DailyUpload.UploadDateTime.Date,
+                DateOfPrice = dp.DateOfPrice.Date,
                 SuggestedPrice = dp.ModalPrice
             }));
 
