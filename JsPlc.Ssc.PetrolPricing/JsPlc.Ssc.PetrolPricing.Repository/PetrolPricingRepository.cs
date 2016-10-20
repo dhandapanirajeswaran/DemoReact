@@ -668,6 +668,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         public IEnumerable<DailyPrice> GetDailyPricesForFuelByCompetitors(IEnumerable<int> competitorCatNos, int fuelId,
             DateTime usingPricesforDate)
         {
+
             string cacheKey = usingPricesforDate.Ticks.ToString();
             Dictionary<string, DailyPrice> dailyPricesCache = PetrolPricingRepositoryMemoryCache.CacheObj.Get(cacheKey) as Dictionary<string, DailyPrice>;
 
@@ -1179,13 +1180,18 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
 
             List<int> cachedAnyDailyPricesForFuelOnDate = PetrolPricingRepositoryMemoryCache.CacheObj.Get(cacheKey) as List<int>;
 
-            if (cachedAnyDailyPricesForFuelOnDate == null)
+            bool isCacheFound = cachedAnyDailyPricesForFuelOnDate == null
+                ? false
+                : cachedAnyDailyPricesForFuelOnDate.Count != 0;
+            if (!isCacheFound)
             {
                 lock (cachedAnyDailyPricesForFuelOnDateLock)
                 {
                     cachedAnyDailyPricesForFuelOnDate = PetrolPricingRepositoryMemoryCache.CacheObj.Get(cacheKey) as List<int>;
-
-                    if (cachedAnyDailyPricesForFuelOnDate == null)
+                    bool isFound = cachedAnyDailyPricesForFuelOnDate == null
+                ? false
+                : cachedAnyDailyPricesForFuelOnDate.Count != 0;
+                    if (!isFound)
                     {
                         cachedAnyDailyPricesForFuelOnDate = _context.DailyPrices
                             .Include(x => x.DailyUpload)

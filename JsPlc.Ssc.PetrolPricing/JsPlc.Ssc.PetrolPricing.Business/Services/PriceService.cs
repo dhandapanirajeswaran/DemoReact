@@ -66,7 +66,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 
 				calculatePrices(new PriceCalculationTaskData
 				{
-					ForDate = forDate.Value,
+					ForDate = forDate.Value.AddDays(-1),
 					FileUpload = dpFile
 				});
 
@@ -157,7 +157,8 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 					float nextMin = f * 5;
 					var currentCompetitor = getCheapestPriceUsingParams(db, site, nextMin, nextMin + 4.99f, fuelId,
 					usingPricesforDate, (int)f);
-
+                    
+                    
 					if (currentCompetitor.HasValue)
 						allCompetitors.Add(currentCompetitor.Value);
 				}
