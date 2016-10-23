@@ -58,8 +58,8 @@ Set @phhYestDate = DateAdd(day, -1, @forDate)
 	FROM
 	SiteToCompetitor sc
 		inner join SITE compInf --
-			on sc.CompetitorId = compInf.Id and sc.SiteId=@siteId
-	WHERE compInf.IsActive = 1 and sc.IsExcluded = 0 and sc.DriveTime<26
+			on sc.CompetitorId = compInf.Id and ( sc.SiteId=@siteId OR @siteId=0)
+	WHERE compInf.IsActive = 1 and sc.IsExcluded = 0 and sc.DriveTime<25
 ) -- select * from competitors
  --select * from compForSites
 -- IMPORTANT BELOW CTE could result in nulls for FuelInfo if DP table is empty (but each comp is still there)
@@ -71,7 +71,7 @@ Set @phhYestDate = DateAdd(day, -1, @forDate)
    from 
 		competitors c 
 		Left Join DailyPrice dp
-			On c.CatNo = dp.CatNo 
+			On c.CatNo = dp.CatNo  and  ( DateDiff(day, dp.DateOfPrice, @phhToday) = 0 OR DateDiff(day, dp.DateOfPrice, @phhYestDate) = 0 ) AND ModalPrice>0
 		Left join FuelType ft
 			On dp.FuelTypeId = ft.Id
 ) -- select * from compFuels

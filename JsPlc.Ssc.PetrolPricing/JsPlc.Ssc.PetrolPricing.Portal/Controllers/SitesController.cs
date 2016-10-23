@@ -20,8 +20,7 @@ using JsPlc.Ssc.PetrolPricing.Core.Interfaces;
 using JsPlc.Ssc.PetrolPricing.Core;
 using JsPlc.Ssc.PetrolPricing.Portal.Helper;
 using System.Data;
-
-
+using ClosedXML.Excel;
 
 
 namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
@@ -207,7 +206,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             }
             site.IsSainsburysSite = true;
             var nonBlankVals = new List<SiteEmailViewModel>();
-            site.Emails.ForEach(x =>
+            ListExtensions.ForEach(site.Emails, x =>
             {
                 if (!x.EmailAddress.IsNullOrWhiteSpace()) nonBlankVals.Add(x);
             });
@@ -312,10 +311,11 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
                    date = tokenize[2]+"/"+ tokenize[1]+ "/" + tokenize[0];
                    forDate = new DateTime(Convert.ToInt16(tokenize[2]), Convert.ToInt16(tokenize[1]), Convert.ToInt16(tokenize[0]));
              }
+             forDate = forDate.AddDays(-1);
              IEnumerable<SitePriceViewModel> sitesViewModelsWithPrices = _serviceFacade.GetSitePrices(forDate, storeName, catNo, storeNo, storeTown, siteId, 1, 2000);
              Dictionary<int, int> dicgroupRows = new Dictionary<int, int>();
-             var dt = SitePricesToDataTable(forDate, sitesViewModelsWithPrices, ref  dicgroupRows);
-             string filenameSuffix = String.Format("[{0}]", forDate.ToString("dd-MMM-yyyy"));
+             var dt = SitePricesToDataTable(forDate.AddDays(1), sitesViewModelsWithPrices, ref  dicgroupRows);
+             string filenameSuffix = String.Format("[{0}]", forDate.AddDays(1).ToString("dd-MMM-yyyy"));
              return ExcelDocumentStream(new List<DataTable> { dt }, "SitePrices", filenameSuffix, dicgroupRows);
          }
          public DataTable SitePricesToDataTable(DateTime forDate,
@@ -329,22 +329,31 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
              dt.Columns.Add("PFS No.");
              dt.Columns.Add("UnLeaded ");
              dt.Columns.Add("UnLeaded");
+             dt.Columns.Add("Diff");
              dt.Columns.Add("Diesel ");
              dt.Columns.Add("Diesel");
+             dt.Columns.Add("Diff ");
              dt.Columns.Add("Super Unleaded ");
              dt.Columns.Add("Super Unleaded");
+             dt.Columns.Add("Diff  ");
              DataRow dr = dt.NewRow();
              DateTime tomorrow = forDate.AddDays(1);
              DateTime yday = forDate.AddDays(-1);
-             dr[5] = forDate.ToString("dd/MM/yyyy");
+             DateTime daybyday = yday.AddDays(-1);
+             dr[5] = yday.ToString("dd/MM/yyyy");
              dr[6] = tomorrow.ToString("dd/MM/yyyy");
-             dr[7] = forDate.ToString("dd/MM/yyyy");
-             dr[8] = tomorrow.ToString("dd/MM/yyyy");
-             dr[9] = forDate.ToString("dd/MM/yyyy");
-             dr[10] = tomorrow.ToString("dd/MM/yyyy");
+             dr[8] = yday.ToString("dd/MM/yyyy");
+             dr[9] = tomorrow.ToString("dd/MM/yyyy");
+             dr[11] = yday.ToString("dd/MM/yyyy");
+             dr[12] = tomorrow.ToString("dd/MM/yyyy");
              dt.Rows.Add(dr);
              int nRow = 2;
-             foreach(var siteVM in sitesViewModelsWithPrices)
+             Dictionary<int, int> dicColtoFType = new Dictionary<int, int>();
+             dicColtoFType.Add(2, 5);
+             dicColtoFType.Add(6, 8);
+             dicColtoFType.Add(1, 11);
+
+            foreach(var siteVM in sitesViewModelsWithPrices)
              {
                  dr = dt.NewRow();
                  dr[0] = siteVM.StoreNo;
@@ -352,18 +361,19 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
                  dr[2] = siteVM.Town;
                  dr[3] = siteVM.CatNo;
                  dr[4] = siteVM.PfsNo;
-                 Dictionary<int,int> dicColtoFType=new Dictionary<int,int>();
-                 dicColtoFType.Add(2,5);
-                 dicColtoFType.Add(6,7);
-                 dicColtoFType.Add(1,9);
+                
                  if (siteVM.FuelPrices != null)
                  {
                      foreach (var fp in siteVM.FuelPrices)
                      {
                          if (dicColtoFType.ContainsKey(fp.FuelTypeId))
                          {
-                             dr[dicColtoFType[fp.FuelTypeId]] = (fp.TodayPrice / 10.0).ToString();
-                             dr[dicColtoFType[fp.FuelTypeId] + 1] = (fp.AutoPrice / 10.0).ToString();
+                             if (System.DBNull.Value == dr[dicColtoFType[fp.FuelTypeId]]) dr[dicColtoFType[fp.FuelTypeId]] = (fp.TodayPrice / 10.0).ToString();
+                             if (System.DBNull.Value == dr[dicColtoFType[fp.FuelTypeId] + 1]) dr[dicColtoFType[fp.FuelTypeId] + 1] = (fp.AutoPrice / 10.0).ToString();
+                             if (System.DBNull.Value == dr[dicColtoFType[fp.FuelTypeId] + 2])
+                             {
+                                 dr[dicColtoFType[fp.FuelTypeId] + 2] = fp.AutoPrice > 0 && fp.TodayPrice>0 ? ((fp.AutoPrice - fp.TodayPrice) / 10.0).ToString() : "n/a";
+                             }
                          }
                      }
                  }
@@ -371,7 +381,8 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
                  nRow = nRow+1;
                 
                  //Adding Competitors
-                 if (siteVM.competitors == null) siteVM.competitors = _serviceFacade.GetCompetitorsWithPrices(forDate,siteVM.SiteId,1,2000).OrderBy(x=>x.DriveTime).ToList();
+                 if (siteVM.competitors == null) siteVM.competitors = _serviceFacade.GetCompetitorsWithPrices(forDate.AddDays(-1), siteVM.SiteId, 1, 2000).OrderBy(x => x.DriveTime).ToList();
+           
                  if (siteVM.competitors != null)
                  {
                      dr = dt.NewRow();
@@ -381,18 +392,21 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
                      dr[4] = "Cat No.";
                      dr[5] = "UnLeaded";
                      dr[6] = "UnLeaded ";
-                     dr[7] = "Diesel";
-                     dr[8] = "Diesel ";
-                     dr[9] = "Super Unleaded";
-                     dr[10] = "Super Unleaded ";
+                     dr[7] = "Diff";
+                     dr[8] = "Diesel";
+                     dr[9] = "Diesel ";
+                     dr[10] = "Diff ";
+                     dr[11] = "Super Unleaded";
+                     dr[12] = "Super Unleaded ";
+                     dr[13] = "Diff  ";
                      dt.Rows.Add(dr);
                      dr = dt.NewRow();
-                     dr[5] = yday.ToString("dd/MM/yyyy");
-                     dr[6] = forDate.ToString("dd/MM/yyyy");
-                     dr[7] = yday.ToString("dd/MM/yyyy");
-                     dr[8] = forDate.ToString("dd/MM/yyyy");
+                     dr[5] = daybyday.ToString("dd/MM/yyyy");
+                     dr[6] = yday.ToString("dd/MM/yyyy");
+                     dr[8] = daybyday.ToString("dd/MM/yyyy");
                      dr[9] = yday.ToString("dd/MM/yyyy");
-                     dr[10] = forDate.ToString("dd/MM/yyyy");
+                     dr[11] = daybyday.ToString("dd/MM/yyyy");
+                     dr[12] = yday.ToString("dd/MM/yyyy");
                      dt.Rows.Add(dr);
                       foreach (var compitetorVM in siteVM.competitors)
                      {
@@ -407,8 +421,12 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
                              {
                                  if (dicColtoFType.ContainsKey(fp.FuelTypeId))
                                  {
-                                     dr[dicColtoFType[fp.FuelTypeId]] = (fp.YestPrice / 10.0).ToString();
-                                     dr[dicColtoFType[fp.FuelTypeId] + 1] = (fp.TodayPrice / 10.0).ToString();
+                                     if (System.DBNull.Value == dr[dicColtoFType[fp.FuelTypeId]]) dr[dicColtoFType[fp.FuelTypeId]] = (fp.YestPrice / 10.0).ToString();
+                                     if (System.DBNull.Value == dr[dicColtoFType[fp.FuelTypeId] + 1]) dr[dicColtoFType[fp.FuelTypeId] + 1] = (fp.TodayPrice / 10.0).ToString();
+                                     if (System.DBNull.Value == dr[dicColtoFType[fp.FuelTypeId] + 2])
+                                     {
+                                         dr[dicColtoFType[fp.FuelTypeId] + 2] = fp.TodayPrice > 0 && fp.YestPrice > 0 ? ((fp.TodayPrice - fp.YestPrice) / 10.0).ToString() : "n/a";
+                                     }
                                  }
                              }
                          }
@@ -432,15 +450,23 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
                  {
                      var ws = wb.Worksheets.Add(dt);
                      int TotalRows = ws.RowCount();
-                     
+
+                     for (int i = 2; i < TotalRows; i++)
+                     {
+                          ChangeCellColor(ws.Cell(i, 8));
+                          ChangeCellColor(ws.Cell(i, 11));
+                          ChangeCellColor(ws.Cell(i, 14));
+                     }
                      int nSiteRow = 3;
                      int nRow = 3;
                      while (dicgroupRows.ContainsKey(nRow))
                      {
+                        
+
                          int nCompitetors = dicgroupRows[nRow] ;
 
-                         var cellrange = string.Format("A{0}:K{1}", nSiteRow + 1, nSiteRow + nCompitetors);
-                         var cellrangesecondRow = "A2:K2";
+                         var cellrange = string.Format("A{0}:N{1}", nSiteRow + 1, nSiteRow + nCompitetors);
+                         var cellrangesecondRow = "A2:N2";
                          ws.Range(cellrangesecondRow).Style.Fill.SetBackgroundColor(ClosedXML.Excel.XLColor.LightGray);
                          ws.Range(cellrange).Style.Fill.SetBackgroundColor(ClosedXML.Excel.XLColor.LightGray);
                          ws.Range(cellrange).Style.Border.OutsideBorder = ClosedXML.Excel.XLBorderStyleValues.Thick;
@@ -451,6 +477,8 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
                          nSiteRow += nCompitetors+2;
                          nRow++;
                      }
+
+                         
                     
                  }
                  wb.Style.Alignment.Horizontal = ClosedXML.Excel.XLAlignmentHorizontalValues.Center;
@@ -473,6 +501,28 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
                  }
              }
          }
+
+        private void ChangeCellColor(IXLCell cell)
+        {
+            int iValue = 0;
+            bool bResult=Int32.TryParse(cell.Value.ToString(), out iValue);
+            if (Convert.ToString(cell.Value).Trim() == "n/a")
+            {
+                cell.Style.Font.FontColor = ClosedXML.Excel.XLColor.Gray;
+            }
+            else if (Convert.ToString(cell.Value).Trim() == "Diff")
+            {
+               // cell.Style.Font.FontColor = ClosedXML.Excel.XLColor.Gray;
+            }
+            else if (bResult && iValue > 0)
+            {
+                cell.Style.Font.FontColor = ClosedXML.Excel.XLColor.Green;
+            }
+            else if (bResult && iValue <0)
+            {
+                cell.Style.Font.FontColor = ClosedXML.Excel.XLColor.Red;
+            }
+        }
         [System.Web.Mvc.HttpPost]
         public ActionResult Edit(SiteViewModel site)
         {
@@ -493,7 +543,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 
             var nonBlankVals = new List<SiteEmailViewModel>();
             site.IsSainsburysSite = true; //Only Sainsburys sites are editable
-            site.Emails.ForEach(x =>
+            ListExtensions.ForEach(site.Emails, x =>
             {
                 if (!x.EmailAddress.IsNullOrWhiteSpace())
                 {

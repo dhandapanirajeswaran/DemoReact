@@ -86,11 +86,11 @@ Declare @DataExits INT=(select COUNT(*) from SitePrice where DateDiff(day, DateO
 ) -- Select * from sitePrices
 ,tomorrowsPrices as
 (
-	Select distinct * from sitePrices Where DateDiff(day, DateOfPrice, @forDate) = 0
+	Select distinct * from sitePrices Where DateDiff(day, DateOfPrice, @forDate) = 0 AND ModalPrice>0
 ) -- Select * from tomorrowsPrices
 ,todaysPrices as -- treat lastPriceDate as todaysPrice
 (
-	Select distinct * from sitePrices Where DateDiff(day, DateOfPrice, @todayPriceDate) = 0
+	Select distinct * from sitePrices Where DateDiff(day, DateOfPrice, @todayPriceDate) = 0 AND ModalPrice>0
 ) -- Select * from todaysPrices
 ,sitesWithPrices As -- JS Site and Prices information
 (

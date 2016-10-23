@@ -187,7 +187,15 @@
 
 
                         <legend style="border: 1px gray solid">
-                            <font size="2">&nbsp&nbsp <a>Price Difference :</a> </font>  <font size="2" data-bind="foreach: PriceDifferences"> &nbsp&nbsp&nbsp&nbsp <b><b data-bind="text: key"></b>:-&nbsp</b>       <b style="color:blue"><b data-bind="text: value"></b>&nbsp sites</b>  </font>
+                            &nbsp&nbsp  <font size="2" data-bind="with: dataModel"><b>Total:</b> <b style="color: red"  data-bind="text: sites.length"></b></font>
+
+                            <font size="2" >
+                                &nbsp&nbsp <a>Price Difference :</a>
+                            </font>
+                            <font size="2" data-bind="foreach: PriceDifferences">
+                                &nbsp&nbsp&nbsp&nbsp <b><b data-bind="text: key"></b>:-&nbsp</b> <b style="color: blue"><b data-bind="text: value"></b>&nbsp sites</b>
+                            </font>
+
                         </legend>
 
 
@@ -512,6 +520,9 @@
 
 <script type="text/javascript">
     
+
+  
+
   $("#viewingDate").keyup(function(event){
         if(event.keyCode == 13){
             $("#btnGO").click();
@@ -558,8 +569,8 @@
                 todayHighlight: true,               
                 endDate: '1d'
             }).on('changeDate', function(e) {
-                IsSitePriceFormClicked=1; 
-                $("#btnExportReport").prop("disabled", true);
+                 $("#btnExportReport").prop("disabled", true);
+                $("#viewingDate").focus();
             });
            
        
