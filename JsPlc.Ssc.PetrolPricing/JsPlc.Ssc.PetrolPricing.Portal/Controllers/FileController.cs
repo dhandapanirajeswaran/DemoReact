@@ -59,7 +59,6 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
         [HttpPost]
         public async Task<ActionResult> Upload(HttpPostedFileBase file, int uploadTypes, DateTime? uploadDate)
         {
-            throw new ApplicationException(uploadDate.Value.ToString());
             uploadDate = uploadDate + new TimeSpan(DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second);
 
             var model = new UploadViewModel
