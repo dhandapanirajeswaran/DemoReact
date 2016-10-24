@@ -60,7 +60,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
         public async Task<ActionResult> Upload(HttpPostedFileBase file, int uploadTypes, DateTime? uploadDate)
         {
 
-            uploadDate = uploadDate.Value + new TimeSpan(DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second);
+            uploadDate = new DateTime(uploadDate.Value.Year, uploadDate.Value.Month, uploadDate.Value.Day) + new TimeSpan(DateTime.Now.Hour, DateTime.Now.Minute, DateTime.Now.Second);
 
             var model = new UploadViewModel
             {
