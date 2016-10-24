@@ -282,7 +282,29 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         {
             Task<IEnumerable<SitePriceViewModel>> task = Task<IEnumerable<SitePriceViewModel>>.Factory.StartNew(() =>
             {
-                return CallSitePriceSproc(forDate, storeName, catNo, storeNo, storeTown, siteId, pageNo, pageSize);
+                var key = "GetSitesWithPrices-"+forDate.ToString();
+                var cachedSitesWithPrices = PetrolPricingRepositoryMemoryCache.CacheObj.Get(key) as IEnumerable<SitePriceViewModel>;
+
+
+                if (cachedSitesWithPrices == null)
+                {
+                    lock (cachedCompetitorsLock)
+                    {
+                        cachedSitesWithPrices = PetrolPricingRepositoryMemoryCache.CacheObj.Get(key) as IEnumerable<SitePriceViewModel>;
+
+                        if (cachedSitesWithPrices == null)
+                        {
+                            var cachedSites = CallSitePriceSproc(forDate, storeName, catNo, storeNo, storeTown, siteId, pageNo, pageSize);
+
+                            PetrolPricingRepositoryMemoryCache.CacheObj.Add(key, cachedSites, PetrolPricingRepositoryMemoryCache.ReportsCacheExpirationPolicy(20));
+                            return cachedSites;
+                        }
+                    }
+                }
+
+
+                return cachedSitesWithPrices;
+
             });
             return task.Result;
         }
@@ -290,7 +312,39 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         public IEnumerable<SitePriceViewModel> GetCompetitorsWithPrices(DateTime forDate, int siteId = 0, int pageNo = 1,
             int pageSize = Constants.PricePageSize)
         {
-            return CallCompetitorsWithPriceSproc(forDate, siteId, pageNo, pageSize);
+            Task<IEnumerable<SitePriceViewModel>> task = Task<IEnumerable<SitePriceViewModel>>.Factory.StartNew(() =>
+            {
+                var key = "CallCompetitorsWithPriceSproc-" + forDate.ToString() + "-" + siteId.ToString();
+                var cachedCompetitorsWithPrices =
+                    PetrolPricingRepositoryMemoryCache.CacheObj.Get(key) as IEnumerable<SitePriceViewModel>;
+
+
+                if (cachedCompetitorsWithPrices == null)
+                {
+                    lock (cachedCompetitorsLock)
+                    {
+                        cachedCompetitorsWithPrices =
+                            PetrolPricingRepositoryMemoryCache.CacheObj.Get(key) as IEnumerable<SitePriceViewModel>;
+
+                        if (cachedCompetitorsWithPrices == null)
+                        {
+                            var cachedCompetitors = CallCompetitorsWithPriceSproc(forDate, siteId, pageNo, pageSize);
+
+                            PetrolPricingRepositoryMemoryCache.CacheObj.Add(key, cachedCompetitors,
+                                PetrolPricingRepositoryMemoryCache.ReportsCacheExpirationPolicy(20));
+                            return cachedCompetitors;
+                        }
+                    }
+                }
+
+
+                return cachedCompetitorsWithPrices;
+            });
+
+            return task.Result;
+
+
+
         }
 
         public SitePriceViewModel GetASiteWithPrices(int siteId, DateTime forDate, string storeName)
