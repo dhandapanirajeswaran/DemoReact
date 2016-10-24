@@ -282,7 +282,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         {
             Task<IEnumerable<SitePriceViewModel>> task = Task<IEnumerable<SitePriceViewModel>>.Factory.StartNew(() =>
             {
-                var key = "GetSitesWithPrices-"+forDate.ToString();
+                var key = "GetSitesWithPrices-" + forDate.ToString() + "-" + Convert.ToString(storeName) + "-" + Convert.ToString(catNo) + "-" + Convert.ToString(storeNo) + "-" + Convert.ToString(storeTown) + "-" + Convert.ToString(siteId) + "-" + Convert.ToString(pageNo) + "-" + Convert.ToString(pageSize);
                 var cachedSitesWithPrices = PetrolPricingRepositoryMemoryCache.CacheObj.Get(key) as IEnumerable<SitePriceViewModel>;
 
 
@@ -314,7 +314,8 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         {
             Task<IEnumerable<SitePriceViewModel>> task = Task<IEnumerable<SitePriceViewModel>>.Factory.StartNew(() =>
             {
-                var key = "CallCompetitorsWithPriceSproc-" + forDate.ToString() + "-" + siteId.ToString();
+                var key = "CallCompetitorsWithPriceSproc-" + forDate.ToString() + "-" + Convert.ToString(siteId) + "-" +
+                          Convert.ToString(pageNo) + "-" + Convert.ToString(pageSize);
                 var cachedCompetitorsWithPrices =
                     PetrolPricingRepositoryMemoryCache.CacheObj.Get(key) as IEnumerable<SitePriceViewModel>;
 
@@ -723,7 +724,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             DateTime usingPricesforDate)
         {
 
-            string cacheKey = usingPricesforDate.Ticks.ToString();
+            string cacheKey = usingPricesforDate.Ticks.ToString() ;
             Dictionary<string, DailyPrice> dailyPricesCache = PetrolPricingRepositoryMemoryCache.CacheObj.Get(cacheKey) as Dictionary<string, DailyPrice>;
 
             if (dailyPricesCache == null)
