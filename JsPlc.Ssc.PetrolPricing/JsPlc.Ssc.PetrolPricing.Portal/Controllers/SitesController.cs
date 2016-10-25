@@ -297,6 +297,75 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
         }
 
          [System.Web.Mvc.HttpGet]
+         public ActionResult ExportSiteswithPrices(string date = null, string storeName = "",
+            int catNo = 0, int storeNo = 0,
+            string storeTown = "", int siteId = 0)
+         {
+             DateTime forDate = DateTime.Now;
+             if (!DateTime.TryParse(date, out forDate))
+             {
+                 string[] tokenize = date.Split('/');
+                 date = tokenize[2] + "/" + tokenize[1] + "/" + tokenize[0];
+                 forDate = new DateTime(Convert.ToInt16(tokenize[2]), Convert.ToInt16(tokenize[1]), Convert.ToInt16(tokenize[0]));
+             }
+             // forDate = forDate.AddDays(-1);
+             IEnumerable<SitePriceViewModel> sitesViewModelsWithPrices = _serviceFacade.GetSitePrices(forDate, storeName, catNo, storeNo, storeTown, siteId, 1, 2000);
+              var dt = SitesWithPricesToDataTable(forDate, sitesViewModelsWithPrices);
+             string filenameSuffix = String.Format("[{0}]", forDate.ToString("dd-MMM-yyyy"));
+             return ExcelDocumentStream(new List<DataTable> { dt }, "SiteWithPrices", filenameSuffix, null);
+         }
+
+         public DataTable SitesWithPricesToDataTable(DateTime forDate,
+             IEnumerable<SitePriceViewModel> sitesViewModelsWithPrices)
+         {
+             var dt = new DataTable("Sites");
+             dt.Columns.Add("StoreNo.");
+             dt.Columns.Add("Store Name");
+             dt.Columns.Add("Store Town");
+             dt.Columns.Add("Cat No.");
+             dt.Columns.Add("PFS No.");
+             dt.Columns.Add("UnLeaded ");
+             dt.Columns.Add("Diesel ");
+             dt.Columns.Add("Super Unleaded ");
+             DataRow dr = dt.NewRow();
+             dr[5] = forDate.ToString("dd/MM/yyyy");
+             dt.Rows.Add(dr);
+             int nRow = 2;
+             Dictionary<int, int> dicColtoFType = new Dictionary<int, int>();
+             dicColtoFType.Add(2, 5);
+             dicColtoFType.Add(6, 6);
+             dicColtoFType.Add(1, 7);
+
+             foreach (var siteVM in sitesViewModelsWithPrices)
+             {
+                 dr = dt.NewRow();
+                 dr[0] = siteVM.StoreNo;
+                 dr[1] = siteVM.StoreName;
+                 dr[2] = siteVM.Town;
+                 dr[3] = siteVM.CatNo;
+                 dr[4] = siteVM.PfsNo;
+
+                 if (siteVM.FuelPrices != null)
+                 {
+                     foreach (var fp in siteVM.FuelPrices)
+                     {
+                         if (dicColtoFType.ContainsKey(fp.FuelTypeId))
+                         {
+                             if (System.DBNull.Value == dr[dicColtoFType[fp.FuelTypeId]]) dr[dicColtoFType[fp.FuelTypeId]] = (fp.TodayPrice / 10.0).ToString();
+                            
+                         }
+                     }
+                 }
+                 dt.Rows.Add(dr);
+                 nRow = nRow + 1;
+
+
+             }
+             return dt;
+         }
+      
+
+         [System.Web.Mvc.HttpGet]
          public ActionResult ExportPrices(string date = null, string storeName = "",
             int catNo = 0, int storeNo = 0,
             string storeTown = "", int siteId = 0)
@@ -313,7 +382,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
              Dictionary<int, int> dicgroupRows = new Dictionary<int, int>();
              var dt = SitePricesToDataTable(forDate, sitesViewModelsWithPrices, ref  dicgroupRows);
              string filenameSuffix = String.Format("[{0}]", forDate.ToString("dd-MMM-yyyy"));
-             return ExcelDocumentStream(new List<DataTable> { dt }, "SitePrices", filenameSuffix, dicgroupRows);
+             return ExcelDocumentStream(new List<DataTable> { dt }, "SitePricesWithCompetitors", filenameSuffix, dicgroupRows);
          }
          public DataTable SitePricesToDataTable(DateTime forDate,
              IEnumerable<SitePriceViewModel> sitesViewModelsWithPrices, ref  Dictionary<int, int> dicgroupRows)
@@ -454,29 +523,32 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
                           ChangeCellColor(ws.Cell(i, 11));
                           ChangeCellColor(ws.Cell(i, 14));
                      }
-                     int nSiteRow = 3;
-                     int nRow = 3;
-                     while (dicgroupRows.ContainsKey(nRow))
+                     if (dicgroupRows != null)
                      {
-                        
+                         int nSiteRow = 3;
+                         int nRow = 3;
+                         while (dicgroupRows.ContainsKey(nRow))
+                         {
 
-                         int nCompitetors = dicgroupRows[nRow] ;
 
-                         var cellrange = string.Format("A{0}:N{1}", nSiteRow + 1, nSiteRow + nCompitetors);
-                         var cellrangesecondRow = "A2:N2";
-                         ws.Range(cellrangesecondRow).Style.Fill.SetBackgroundColor(ClosedXML.Excel.XLColor.LightGray);
-                         ws.Range(cellrange).Style.Fill.SetBackgroundColor(ClosedXML.Excel.XLColor.LightGray);
-                         ws.Range(cellrange).Style.Border.OutsideBorder = ClosedXML.Excel.XLBorderStyleValues.Thick;
-                         ws.Range(cellrange).Style.Border.OutsideBorderColor = ClosedXML.Excel.XLColor.Gray;
-                        
-                         ws.Rows(nSiteRow + 1, nSiteRow+nCompitetors).Group();
-                         ws.Rows(nSiteRow + 1, nSiteRow+nCompitetors).Collapse();
-                         nSiteRow += nCompitetors+2;
-                         nRow++;
+                             int nCompitetors = dicgroupRows[nRow];
+
+                             var cellrange = string.Format("A{0}:N{1}", nSiteRow + 1, nSiteRow + nCompitetors);
+                             var cellrangesecondRow = "A2:N2";
+                             ws.Range(cellrangesecondRow)
+                                 .Style.Fill.SetBackgroundColor(ClosedXML.Excel.XLColor.LightGray);
+                             ws.Range(cellrange).Style.Fill.SetBackgroundColor(ClosedXML.Excel.XLColor.LightGray);
+                             ws.Range(cellrange).Style.Border.OutsideBorder = ClosedXML.Excel.XLBorderStyleValues.Thick;
+                             ws.Range(cellrange).Style.Border.OutsideBorderColor = ClosedXML.Excel.XLColor.Gray;
+
+                             ws.Rows(nSiteRow + 1, nSiteRow + nCompitetors).Group();
+                             ws.Rows(nSiteRow + 1, nSiteRow + nCompitetors).Collapse();
+                             nSiteRow += nCompitetors + 2;
+                             nRow++;
+                         }
                      }
 
-                         
-                    
+
                  }
                  wb.Style.Alignment.Horizontal = ClosedXML.Excel.XLAlignmentHorizontalValues.Center;
                  wb.Style.Font.Bold = true;

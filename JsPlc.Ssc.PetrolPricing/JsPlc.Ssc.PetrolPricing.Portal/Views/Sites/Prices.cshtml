@@ -135,9 +135,9 @@
                            data-bind="value: $root.InitDate" />
                 </div>
                 <!-- Store No -->
-                <div class="col-md-2">
+                <div class="col-md-1">
                     <label for="viewingStoreNo">Store No:</label>
-                    <input type="text" id="viewingStoreNo" class="form-control" maxlength="9" 
+                    <input type="text" id="viewingStoreNo" class="form-control" maxlength="9" style="width: 70px;"
                            name="viewingStoreNo" data-bind="numeric, value: $root.StoreNo" />
                 </div>
                 <!-- Store Name -->
@@ -153,9 +153,9 @@
                            name="viewingStoreTown" data-bind="value: $root.StoreTown" />
                 </div>
                 <!-- Catalist No -->
-                <div class="col-md-2">
+                <div class="col-md-1" style="width: 100px;">
                     <label for="viewingCatNo">Catalist No:</label>
-                    <input type="text" id="viewingCatNo" class="form-control" maxlength="9" 
+                    <input type="text" id="viewingCatNo" class="form-control" maxlength="9" style="width: 70px;"
                            name="viewingCatNo" data-bind="numeric, value: $root.CatNo" />
                 </div>
                 <!-- go button -->
@@ -163,13 +163,17 @@
                     <button style="margin-top: 24px;margin-left:10px;" type="button" id="btnGO" class="btn btn-success" data-bind="click: loadPageWithParams">Go</button>
                 </div>
                 <!-- show all button -->
-                <div class="col-md-1" style="margin-left:-10px">
+                <div class="col-md-1" >
                     <button style="margin-top: 24px" type="button" class="btn btn-default" data-bind="click: function() { reloadSearchPage('Sites/Prices?date='+$root.InitDateInUsFormat()) }">Show all</button>
                 </div>
                 <!-- ExportToExcel button -->
-                <div class="col-md-1">
-                    <input type="button" style="margin-top: 24px;margin-left:0px " class="btn btn-primary" id="btnExportReport" value="Export to Excel" />
+                <div class="col-md-1" style="width: 130px; margin-left: 80px;">
+                    <input type="button" style="margin-top: 24px;margin-left:0px " class="btn btn-primary" id="btnExportAll" value="Export All" />
                 </div>
+                <div class="col-md-1" style="margin-left: -20px;">
+                    <input type="button" style="margin-top: 24px;margin-left:0px " class="btn btn-primary" id="btnExportSites" value="Export Sites" />
+                </div>
+
 
             </div>
             <hr style="width:1180px;" />
@@ -569,7 +573,10 @@
                 todayHighlight: true,               
                 endDate: '1d'
             }).on('changeDate', function(e) {
-                 $("#btnExportReport").prop("disabled", true);
+                $("#btnExportAll").prop("disabled", true);
+                $("#btnExportSites").prop("disabled", true);
+
+                
                 $("#viewingDate").focus();
             });
            
@@ -653,24 +660,29 @@
     
     $("#viewingStoreNo").change(function () {
        
-        $("#btnExportReport").prop("disabled", true);
+        $("#btnExportAll").prop("disabled", true);
+        $("#btnExportSites").prop("disabled", true);
     });
 
     $("#viewingStoreName").change(function () {
        
-        $("#btnExportReport").prop("disabled", true);
+        $("#btnExportAll").prop("disabled", true);
+        $("#btnExportSites").prop("disabled", true);
     });
 
     $("#viewingStoreNo").change(function () {
        
-        $("#btnExportReport").prop("disabled", true);
+        $("#btnExportAll").prop("disabled", true);
+        $("#btnExportSites").prop("disabled", true);
     });
 
     $("#viewingStoreTown").change(function () {
        
-        $("#btnExportReport").prop("disabled", true);
+        $("#btnExportAll").prop("disabled", true);
+        $("#btnExportSites").prop("disabled", true);
+        
     });
-    $("#btnExportReport").click(function () {
+    $("#btnExportAll").click(function () {
 
         
         var url = "Sites/ExportPrices?date=" + $('#viewingDate').val()
@@ -684,6 +696,23 @@
        
         window.location.href = rootFolder + url;
     });
+
+    $("#btnExportSites").click(function () {
+
+        
+        var url = "Sites/ExportSiteswithPrices?date=" + $('#viewingDate').val()
+            + "&storeName=" + $('#viewingStoreName').val()
+            + "&catNo=" + $('#viewingCatNo').val()
+            + "&storeNo=" + $('#viewingStoreNo').val()
+            + "&storeTown=" + $('#viewingStoreTown').val();
+
+      
+        var rootFolder = /\/petrolpricing\//i.test(window.location.href) ? "/petrolpricing/" : "/";
+       
+        window.location.href = rootFolder + url;
+    });
+
+    
 
 
 </script>
