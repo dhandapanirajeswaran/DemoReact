@@ -106,12 +106,9 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             DateTime forDate;
             if (!DateTime.TryParse(date, out forDate))
             {
-                forDate = DateTime.Now.AddDays(-1);
+                forDate = DateTime.Now;
             }
-            else
-            {
-                forDate=forDate.AddDays(-1);
-            }
+           
             // POST scenarios use : JsonConvert.SerializeObject(siteView);
             IEnumerable<SitePriceViewModel> sitesViewModelsWithPrices = (getCompetitor != 1)
                 ? _serviceFacade.GetSitePrices(forDate, storeName, catNo, storeNo, storeTown, siteId, pageNo, pageSize)
@@ -311,11 +308,11 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
                    date = tokenize[2]+"/"+ tokenize[1]+ "/" + tokenize[0];
                    forDate = new DateTime(Convert.ToInt16(tokenize[2]), Convert.ToInt16(tokenize[1]), Convert.ToInt16(tokenize[0]));
              }
-             forDate = forDate.AddDays(-1);
+            // forDate = forDate.AddDays(-1);
              IEnumerable<SitePriceViewModel> sitesViewModelsWithPrices = _serviceFacade.GetSitePrices(forDate, storeName, catNo, storeNo, storeTown, siteId, 1, 2000);
              Dictionary<int, int> dicgroupRows = new Dictionary<int, int>();
-             var dt = SitePricesToDataTable(forDate.AddDays(1), sitesViewModelsWithPrices, ref  dicgroupRows);
-             string filenameSuffix = String.Format("[{0}]", forDate.AddDays(1).ToString("dd-MMM-yyyy"));
+             var dt = SitePricesToDataTable(forDate, sitesViewModelsWithPrices, ref  dicgroupRows);
+             string filenameSuffix = String.Format("[{0}]", forDate.ToString("dd-MMM-yyyy"));
              return ExcelDocumentStream(new List<DataTable> { dt }, "SitePrices", filenameSuffix, dicgroupRows);
          }
          public DataTable SitePricesToDataTable(DateTime forDate,
@@ -381,7 +378,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
                  nRow = nRow+1;
                 
                  //Adding Competitors
-                 if (siteVM.competitors == null) siteVM.competitors = _serviceFacade.GetCompetitorsWithPrices(forDate.AddDays(-1), siteVM.SiteId, 1, 2000).OrderBy(x => x.DriveTime).ToList();
+                if (siteVM.competitors == null) siteVM.competitors = _serviceFacade.GetCompetitorsWithPrices(forDate.AddDays(-1), siteVM.SiteId, 1, 2000).OrderBy(x => x.DriveTime).ToList();
            
                  if (siteVM.competitors != null)
                  {

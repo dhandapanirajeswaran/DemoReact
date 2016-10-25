@@ -272,8 +272,8 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                 }
                 //_context.Entry(site).State = EntityState.Detached;
             });
-         
-          
+
+
             return sites;
         }
 
@@ -282,28 +282,9 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         {
             Task<IEnumerable<SitePriceViewModel>> task = Task<IEnumerable<SitePriceViewModel>>.Factory.StartNew(() =>
             {
-                var key = "GetSitesWithPrices-" + forDate.ToString() + "-" + Convert.ToString(storeName) + "-" + Convert.ToString(catNo) + "-" + Convert.ToString(storeNo) + "-" + Convert.ToString(storeTown) + "-" + Convert.ToString(siteId) + "-" + Convert.ToString(pageNo) + "-" + Convert.ToString(pageSize);
-                var cachedSitesWithPrices = PetrolPricingRepositoryMemoryCache.CacheObj.Get(key) as IEnumerable<SitePriceViewModel>;
 
-
-                if (cachedSitesWithPrices == null)
-                {
-                    lock (cachedCompetitorsLock)
-                    {
-                        cachedSitesWithPrices = PetrolPricingRepositoryMemoryCache.CacheObj.Get(key) as IEnumerable<SitePriceViewModel>;
-
-                        if (cachedSitesWithPrices == null)
-                        {
-                            var cachedSites = CallSitePriceSproc(forDate, storeName, catNo, storeNo, storeTown, siteId, pageNo, pageSize);
-
-                            PetrolPricingRepositoryMemoryCache.CacheObj.Add(key, cachedSites, PetrolPricingRepositoryMemoryCache.ReportsCacheExpirationPolicy(20));
-                            return cachedSites;
-                        }
-                    }
-                }
-
-
-                return cachedSitesWithPrices;
+                return CallSitePriceSproc(forDate, storeName, catNo, storeNo, storeTown, siteId, pageNo, pageSize);
+                ;
 
             });
             return task.Result;
@@ -457,100 +438,127 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                         SitePriceViewModel sitePriceRow = null;
 
                         var dbList = new List<SitePriceViewModel>();
-
-                        foreach (DataRow pgRow in pgTable.Rows)
+                        if (pgTable.Rows.Count == 0)
                         {
-                            var loopSiteId = (int)pgRow["siteId"];
-                            if (loopSiteId != lastSiteId)
+                            var sainsburysSites = _context.Sites.Where(x => x.IsSainsburysSite == true).ToList();
+                            if (!String.IsNullOrEmpty(storeName)) sainsburysSites = sainsburysSites.Where(x => x.SiteName.Contains(storeName)).ToList();
+                            if (catNo != 0) sainsburysSites = sainsburysSites.Where(x => x.CatNo == catNo).ToList();
+                            if (storeNo != 0) sainsburysSites = sainsburysSites.Where(x => x.StoreNo == storeNo).ToList();
+                            if (siteId != 0) sainsburysSites = sainsburysSites.Where(x => x.Id == siteId).ToList();
+                            if (!String.IsNullOrEmpty(storeTown)) sainsburysSites = sainsburysSites.Where(x => x.Town.Contains(storeTown)).ToList();
+                       
+                            foreach (Site site in sainsburysSites)
                             {
                                 sitePriceRow = new SitePriceViewModel();
+                                sitePriceRow.SiteId = site.Id;
+                                sitePriceRow.CatNo = site.CatNo;
+                                sitePriceRow.StoreName = site.SiteName;
+                                sitePriceRow.Address = site.Address;
+                                sitePriceRow.Town = site.Town;
+                                sitePriceRow.PfsNo = site.PfsNo;
+                                sitePriceRow.StoreNo = site.StoreNo;
+                                sitePriceRow.FuelPrices = new List<FuelPriceViewModel>();
+                              
                                 dbList.Add(sitePriceRow);
-                                lastSiteId = loopSiteId;
+                                
                             }
-                            if (sitePriceRow == null) continue;
-
-                            sitePriceRow.SiteId = (int)pgRow["SiteId"];
-                            sitePriceRow.CatNo = Convert.IsDBNull(pgRow["CatNo"]) ? null : (int?)pgRow["CatNo"];
-                            // ToNullable<int> or ToNullable<double>
-                            sitePriceRow.StoreName = (string)pgRow["SiteName"];
-                            sitePriceRow.Address = (string)pgRow["Address"];
-                            sitePriceRow.Town = (string)pgRow["Town"];
-                            // any other fields for UI extract here
-
-                            sitePriceRow.PfsNo = pgRow["PfsNo"].ToString().ToNullable<int>();
-                            sitePriceRow.StoreNo = pgRow["StoreNo"].ToString().ToNullable<int>();
-
-                            sitePriceRow.FuelPrices = sitePriceRow.FuelPrices ?? new List<FuelPriceViewModel>();
-                            if (!Convert.IsDBNull(pgRow["FuelTypeId"]))
-                            {
-                                var competitorPriceOffset = pgRow["CompetitorPriceOffset"].ToString().ToNullable<double>();
-                                int TrialPrice = (competitorPriceOffset.HasValue && competitorPriceOffset.Value > 0) ? Convert.ToInt32(competitorPriceOffset.Value) : 0;
-                                TrialPrice = TrialPrice * 10;
-
-                                var AutoPrice = pgRow["SuggestedPrice"].ToString().ToNullable<int>();
-                                if (AutoPrice.HasValue && AutoPrice.Value > 0)
-                                {
-                                    AutoPrice += TrialPrice;
-                                    AutoPrice = (AutoPrice / 10) * 10 + 9;
-                                }
-                                var OverridePrice = pgRow["OverriddenPrice"].ToString().ToNullable<int>();
-                                if (OverridePrice.HasValue && OverridePrice.Value > 0)
-                                {
-                                    OverridePrice += TrialPrice;
-                                    OverridePrice = (OverridePrice / 10) * 10 + 9;
-                                }
-                                var OverriddenPriceToday = pgRow["OverriddenPriceToday"].ToString().ToNullable<int>();
-                                if (OverriddenPriceToday.HasValue && OverriddenPriceToday.Value > 0)
-                                {
-                                    OverriddenPriceToday = (OverriddenPriceToday / 10) * 10 + 9;
-                                }
-                                var SuggestedPriceToday = pgRow["SuggestedPriceToday"].ToString().ToNullable<int>();
-                                if (SuggestedPriceToday.HasValue && SuggestedPriceToday.Value > 0)
-                                {
-                                    SuggestedPriceToday = (SuggestedPriceToday / 10) * 10 + 9;
-                                }
-                                var TodayPrice = (OverriddenPriceToday.HasValue && OverriddenPriceToday.Value != 0)
-                                    ? OverriddenPriceToday.Value
-                                    : (SuggestedPriceToday.HasValue) ? SuggestedPriceToday.Value : 0;
-                                //    if (TodayPrice > 0) TodayPrice = (TodayPrice / 10) * 10 + 9;     
-
-
-
-                                var Markup = pgRow["Markup"].ToString().ToNullable<int>();
-                                var IsTrailPrice = pgRow["IsTrailPrice"].ToString().ToNullable<bool>();
-
-                                var competitorId = pgRow["CompetitorId"].ToString().ToNullable<int>();
-
-
-                                var competitorName = "Unknown";
-
-                                if (competitorId.HasValue)
-                                {
-                                    var competitorSite = GetSite(competitorId.Value);
-                                    competitorName = string.Format("{0}/{1}", competitorSite.Brand, competitorSite.SiteName);
-                                }
-
-                                //      var trailPriceCompetitorId = pgRow["TrailPriceCompetitorId"].ToString().ToNullable<bool>();
-
-                                sitePriceRow.FuelPrices.Add(new FuelPriceViewModel
-                                {
-                                    FuelTypeId = (int)pgRow["FuelTypeId"],
-                                    // Tomorrow's prices
-                                    AutoPrice = (!AutoPrice.HasValue) ? 0 : (AutoPrice.Value),
-                                    OverridePrice = (!OverridePrice.HasValue) ? 0 : OverridePrice.Value,
-
-                                    // Today's prices (whatever was calculated yesterday OR last)
-                                    TodayPrice = TodayPrice,
-                                    Markup = Markup,
-                                    CompetitorName = competitorName,
-                                    IsTrailPrice = IsTrailPrice.HasValue ? IsTrailPrice.Value : false,
-                                    CompetitorPriceOffset = competitorPriceOffset.HasValue ? competitorPriceOffset.Value : 0
-                                    //  IsBasedOnCompetitor = trailPriceCompetitorId.HasValue
-                                });
-                            }
+                            
                         }
+                        else
+                        {
+                            foreach (DataRow pgRow in pgTable.Rows)
+                            {
+                                var loopSiteId = (int)pgRow["Id"];
+                                if (loopSiteId != lastSiteId)
+                                {
+                                    sitePriceRow = new SitePriceViewModel();
+                                    dbList.Add(sitePriceRow);
+                                    lastSiteId = loopSiteId;
+                                }
+                                if (sitePriceRow == null) continue;
 
-                        Apply5PMarkupForSuperUnleadedForNonCompetitorSites(dbList);
+                                sitePriceRow.SiteId = (int)pgRow["Id"];
+                                sitePriceRow.CatNo = Convert.IsDBNull(pgRow["CatNo"]) ? null : (int?)pgRow["CatNo"];
+                                // ToNullable<int> or ToNullable<double>
+                                sitePriceRow.StoreName = (string)pgRow["SiteName"];
+                                sitePriceRow.Address = (string)pgRow["Address"];
+                                sitePriceRow.Town = (string)pgRow["Town"];
+                                // any other fields for UI extract here
+
+                                sitePriceRow.PfsNo = pgRow["PfsNo"].ToString().ToNullable<int>();
+                                sitePriceRow.StoreNo = pgRow["StoreNo"].ToString().ToNullable<int>();
+
+                                sitePriceRow.FuelPrices = sitePriceRow.FuelPrices ?? new List<FuelPriceViewModel>();
+                                if (!Convert.IsDBNull(pgRow["FuelTypeId"]))
+                                {
+                                    var competitorPriceOffset = pgRow["CompetitorPriceOffset"].ToString().ToNullable<double>();
+                                    int TrialPrice = (competitorPriceOffset.HasValue && competitorPriceOffset.Value > 0) ? Convert.ToInt32(competitorPriceOffset.Value) : 0;
+                                    TrialPrice = TrialPrice * 10;
+
+                                    var AutoPrice = pgRow["SuggestedPrice"].ToString().ToNullable<int>();
+                                    if (AutoPrice.HasValue && AutoPrice.Value > 0)
+                                    {
+                                        AutoPrice += TrialPrice;
+                                        AutoPrice = (AutoPrice / 10) * 10 + 9;
+                                    }
+                                    var OverridePrice = pgRow["OverriddenPrice"].ToString().ToNullable<int>();
+                                    if (OverridePrice.HasValue && OverridePrice.Value > 0)
+                                    {
+                                        OverridePrice += TrialPrice;
+                                        OverridePrice = (OverridePrice / 10) * 10 + 9;
+                                    }
+                                    /*  var OverriddenPriceToday = pgRow["OverriddenPriceToday"].ToString().ToNullable<int>();
+                                      if (OverriddenPriceToday.HasValue && OverriddenPriceToday.Value > 0)
+                                      {
+                                          OverriddenPriceToday = (OverriddenPriceToday / 10) * 10 + 9;
+                                      }*/
+                                    var SuggestedPriceToday = pgRow["SuggestedPriceToday"].ToString().ToNullable<int>();
+                                    if (SuggestedPriceToday.HasValue && SuggestedPriceToday.Value > 0)
+                                    {
+                                        SuggestedPriceToday = (SuggestedPriceToday / 10) * 10 + 9;
+                                    }
+                                    var TodayPrice = (SuggestedPriceToday.HasValue) ? SuggestedPriceToday.Value : 0;
+                                    //    if (TodayPrice > 0) TodayPrice = (TodayPrice / 10) * 10 + 9;     
+
+
+
+                                    var Markup = pgRow["Markup"].ToString().ToNullable<int>();
+                                    var IsTrailPrice = pgRow["IsTrailPrice"].ToString().ToNullable<bool>();
+
+                                    var competitorId = pgRow["CompetitorId"].ToString().ToNullable<int>();
+
+
+                                    var competitorName = "Unknown";
+
+                                    if (competitorId.HasValue)
+                                    {
+                                        var competitorSite = GetSite(competitorId.Value);
+                                        competitorName = string.Format("{0}/{1}", competitorSite.Brand, competitorSite.SiteName);
+                                    }
+
+                                    //      var trailPriceCompetitorId = pgRow["TrailPriceCompetitorId"].ToString().ToNullable<bool>();
+
+                                    sitePriceRow.FuelPrices.Add(new FuelPriceViewModel
+                                    {
+                                        FuelTypeId = (int)pgRow["FuelTypeId"],
+                                        // Tomorrow's prices
+                                        AutoPrice = (!AutoPrice.HasValue) ? 0 : (AutoPrice.Value),
+                                        OverridePrice = (!OverridePrice.HasValue) ? 0 : OverridePrice.Value,
+
+                                        // Today's prices (whatever was calculated yesterday OR last)
+                                        TodayPrice = TodayPrice,
+                                        Markup = Markup,
+                                        CompetitorName = competitorName,
+                                        IsTrailPrice = IsTrailPrice.HasValue ? IsTrailPrice.Value : false,
+                                        CompetitorPriceOffset = competitorPriceOffset.HasValue ? competitorPriceOffset.Value : 0
+                                        //  IsBasedOnCompetitor = trailPriceCompetitorId.HasValue
+                                    });
+                                }
+                            }
+
+                            Apply5PMarkupForSuperUnleadedForNonCompetitorSites(dbList);
+                        }
+                        
 
                         return dbList;
                     }

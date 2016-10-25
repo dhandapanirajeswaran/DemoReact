@@ -29,11 +29,14 @@ Select  DateDiff(day, @anotherDt, @thedate) -- (gives 2nd param - 1st param)
 -- And if we want Competitor Prices of yesterday, we look at DailyPrice UploadDateTime = 08 Dec 2015
 Declare @lookBackDays int = 25
 
-Declare @todayPriceDate DateTime, @lastPriceDate DateTime = null
+Declare @todayPriceDate DateTime, @lastPriceDate DateTime = null, @YesterDayDate Datetime=null
 set @todayPriceDate =@forDate
+set @YesterDayDate =DateAdd(day, -1, @forDate)
 --Select @todayPriceDate
 
 Declare @DataExits INT=(select COUNT(*) from SitePrice where DateDiff(day, DateOfPrice, @forDate) = 0)
+Declare @UploadID INT = (select TOP 1 Id from FileUpload where DATEPART(YY, UploadDateTime)=DATEPART(YY, @todayPriceDate) and DATEPART(MM, UploadDateTime)=DATEPART(MM, @todayPriceDate) and  DATEPART(DD, UploadDateTime)=DATEPART(DD, @todayPriceDate) and StatusId=10 and UploadTypeId=1 order by Id desc)
+
 
 ;With sites as
 (
@@ -50,73 +53,12 @@ Declare @DataExits INT=(select COUNT(*) from SitePrice where DateDiff(day, DateO
 	Offset @skipRecs ROWS
 	Fetch Next @takeRecs ROWS ONLY
 ) -- select * from sites
-,siteFuels as
-(
-
-   Select Distinct s.Id as SiteId, dp.FuelTypeId,dp.ModalPrice, ft.FuelTypeName, s.CompetitorPriceOffset
-   from sites s, DailyPrice dp, FuelType ft
-   Where s.CatNo = dp.CatNo and dp.FuelTypeId = ft.Id and (@DataExits=0 or (@DataExits>0 and DateDiff(day, dp.DateOfPrice, @forDate) = 0))
-   Union 
-   Select Distinct s.Id as SiteId, sp.FuelTypeId,sp.SuggestedPrice, ft.FuelTypeName, s.CompetitorPriceOffset
-   from sites s, SitePrice sp, FuelType ft
-   Where s.Id = sp.SiteId and sp.FuelTypeId = ft.Id and     (@DataExits=0 or (@DataExits>0 and DateDiff(day, sp.DateOfPrice, @forDate) = 0))  
-  
-
-) -- select * from siteFuels
-,sitesWithFuels as
-(
-	Select distinct s.Id as SiteId, s.CatNo, s.SiteName, s.Address, s.Suburb, s.Town,  
-		s.IsSainsburysSite, s.Brand, s.Company, s.Ownership,
-		sf.FuelTypeId, sf.FuelTypeName,sf.ModalPrice, s.PfsNo, s.StoreNo
-	From 
-		[Site] s 
-			Inner Join siteFuels sf
-				On s.Id = sf.SiteId
-) -- select * from sitesWithFuels
 ,sitePrices as
 (
-	Select 
-		distinct sf.SiteId, sf.FuelTypeId, sf.FuelTypeName, 
-
-		sp.DateOfCalc, sp.DateOfPrice, sp.EffDate,
-		sp.SuggestedPrice, sp.OverriddenPrice, sp.CompetitorId, sp.Markup, sp.IsTrailPrice,
-		sf.CompetitorPriceOffset, sf.ModalPrice
-	FROM siteFuels sf Left Join SitePrice sp
-		On sf.FuelTypeId = sp.FuelTypeId And sf.SiteId = sp.SiteId
-) -- Select * from sitePrices
-,tomorrowsPrices as
-(
-	Select distinct * from sitePrices Where DateDiff(day, DateOfPrice, @forDate) = 0 AND ModalPrice>0
-) -- Select * from tomorrowsPrices
-,todaysPrices as -- treat lastPriceDate as todaysPrice
-(
-	Select distinct * from sitePrices Where DateDiff(day, DateOfPrice, @todayPriceDate) = 0 AND ModalPrice>0
-) -- Select * from todaysPrices
-,sitesWithPrices As -- JS Site and Prices information
-(
-	SELECT  distinct swf.SiteId, swf.CatNo,
-		swf.SiteName, swf.Address, swf.Suburb, swf.Town,  
-		swf.IsSainsburysSite, swf.Brand, swf.Company, swf.Ownership,
-		swf.FuelTypeId, swf.FuelTypeName, swf.PfsNo, swf.StoreNo,
-
-		tomp.DateOfCalc, tomp.DateOfPrice, 
-		tomp.SuggestedPrice, tomp.OverriddenPrice,
-		tomp.CompetitorId, tomp.Markup, tomp.IsTrailPrice,
-
-		todp.DateOfCalc DateOfCalcForTodaysPrice, todp.DateOfPrice DateOfPriceForTodaysPrice, 
-		todp.ModalPrice SuggestedPriceToday, todp.OverriddenPrice OverriddenPriceToday,
-		todp.CompetitorPriceOffset
-	FROM 
-	sitesWithFuels swf
-		Left join tomorrowsPrices as tomp
-			On swf.SiteId = tomp.SiteId
-			And tomp.FuelTypeId = swf.FuelTypeId
-		Left join todaysPrices as todp
-			On swf.SiteId = todp.SiteId
-			And todp.FuelTypeId = swf.FuelTypeId
-	Where 
-		(tomp.DateOfPrice is null OR DateDiff(day, tomp.DateOfPrice, @forDate) = 0)
-		AND (todp.DateOfPrice is null OR DateDiff(day, todp.DateOfPrice, @todayPriceDate) = 0)
+ select s.*, ft.FuelTypeName, ft.Id as FuelTypeId, sp.SuggestedPrice, sp.OverriddenPrice,sp.CompetitorId,sp.Markup,sp.IsTrailPrice,sp.DateOfPrice as DateOfPriceForTodaysPrice, dp.ModalPrice as SuggestedPriceToday  from sites s 
+    inner join siteprice sp on  ( sp.SiteId=s.Id  and DateDiff(day, sp.DateOfPrice, @YesterDayDate) = 0 and sp.UploadId=@UploadID  )
+	 left join Dailyprice dp on  (dp.CatNo=s.CatNo and dp.DailyUploadId =@UploadID and dp.FuelTypeId=sp.FuelTypeId and DateDiff(day, dp.DateOfPrice, @YesterDayDate) = 0)
+	 inner join FuelType ft on  ft.Id= sp.FuelTypeId
 )
-Select distinct * from sitesWithPrices 
+Select distinct * from sitePrices 
 Order By SiteName
