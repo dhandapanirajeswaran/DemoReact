@@ -112,7 +112,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             // POST scenarios use : JsonConvert.SerializeObject(siteView);
             IEnumerable<SitePriceViewModel> sitesViewModelsWithPrices = (getCompetitor != 1)
                 ? _serviceFacade.GetSitePrices(forDate, storeName, catNo, storeNo, storeTown, siteId, pageNo, pageSize)
-                : _serviceFacade.GetCompetitorsWithPrices(forDate, siteId, pageNo, pageSize); // for getting comps by ajax
+                : _serviceFacade.GetCompetitorsWithPrices(forDate.AddDays(-1), siteId, pageNo, pageSize); // for getting comps by ajax
 
             if (getCompetitor == 1)
             {
