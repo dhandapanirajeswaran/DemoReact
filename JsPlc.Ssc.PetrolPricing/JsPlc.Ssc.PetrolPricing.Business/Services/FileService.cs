@@ -226,7 +226,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 				}
 
 				// Delete older rows before import
-			//	_db.TruncateQuarterlyUploadStaging();
+				_db.TruncateQuarterlyUploadStaging();
 
 				bool gotWarning = false;
 

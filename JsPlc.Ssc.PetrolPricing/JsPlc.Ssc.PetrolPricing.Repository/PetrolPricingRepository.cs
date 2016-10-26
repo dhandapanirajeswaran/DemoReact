@@ -1175,10 +1175,23 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                     try
                     {
                         var existingSiteToCompetitorRecords = transactionContext.SiteToCompetitors.ToList();
-                        newSiteToCompetitorRecords.RemoveAll(x =>
-                       existingSiteToCompetitorRecords.Any(y => y.SiteId == (int)x.SiteId) &&
-                       existingSiteToCompetitorRecords.Any(y => y.CompetitorId == (int)x.CompetitorId));
+                        var commonrecords = existingSiteToCompetitorRecords.Where(x => newSiteToCompetitorRecords.Any(y => y.SiteId == x.SiteId));
+                        var siteIdsToRemove=commonrecords.Select(x => x.SiteId).Distinct().ToList();
 
+                        foreach (var siteID in siteIdsToRemove)
+                        {
+                            var siteToCompetitorObjs =
+                                transactionContext.SiteToCompetitors.Where(x => x.SiteId == siteID);
+                            foreach (var siteToC in siteToCompetitorObjs)
+                            {
+                                transactionContext.SiteToCompetitors.Remove(siteToC);
+                            }
+                            
+                        }
+                       
+                      //  newSiteToCompetitorRecords.RemoveAll(x =>siteIdsToRemove.Any(y => y == (int)x.SiteId) ); //Remove Common Records
+
+                    
                         if (newSiteToCompetitorRecords.Count > 0)
                         {
                             //add new site to competitor records
@@ -1192,7 +1205,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                             transaction.Commit();
                         }
                     }
-                    catch (Exception)
+                    catch (Exception ce)
                     {
                         transaction.Rollback();
                         throw;
