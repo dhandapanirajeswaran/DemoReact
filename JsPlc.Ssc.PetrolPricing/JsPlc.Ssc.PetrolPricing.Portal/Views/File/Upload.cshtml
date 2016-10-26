@@ -43,7 +43,13 @@
 
 
     </div>
-
+    <div id="divdownloadbtn" class="col-md-1" style="margin-top: 60px; margin-left: -280px;display: none;">
+        <br />
+            
+        <a href="~/Content/QuarterlySiteDataTemplate.xls" class="btn btn-primary" download="QuarterlySiteDataTemplate.xls">Download Data Template</a>
+       
+       
+    </div>
     <div class="col-md-1" id="datepickerctrl" style="margin-top: 24px">
         @Html.TextBoxFor(m => m.UploadDate, "{0:dd/MM/yyyy}", new { @class = "datepicker form-control",id = "caldattimepicker", style = "width:85px;", @maxlength = "12" })
                                                                                         
@@ -66,6 +72,9 @@
         <img id="fileimage" src="images/defaultfileicon.png" />
         <label id="filename" style="width:500px;"></label>
     </div>
+   
+    
+
     <br/>
     <br />
     <br />
@@ -84,15 +93,20 @@
                 "accept": ".csv,.txt"
 
             });
+            $('#divdownloadbtn').hide();
         }
         else if (uploadtype == 2) {
             $("#file").attr({
                 "accept": ".xls, .xlsx"
 
             });
+
+            $('#divdownloadbtn').show();
         }
     });
 
+
+   
 
     $("input[type=file]").on('click', function () {
         this.value = null;
