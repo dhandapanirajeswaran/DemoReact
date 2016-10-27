@@ -480,9 +480,9 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                                 sitePriceRow.SiteId = (int)pgRow["Id"];
                                 sitePriceRow.CatNo = Convert.IsDBNull(pgRow["CatNo"]) ? null : (int?)pgRow["CatNo"];
                                 // ToNullable<int> or ToNullable<double>
-                                sitePriceRow.StoreName = (string)pgRow["SiteName"];
-                                sitePriceRow.Address = (string)pgRow["Address"];
-                                sitePriceRow.Town = (string)pgRow["Town"];
+                                sitePriceRow.StoreName =   pgRow["SiteName"]==DBNull.Value ? "": (string)pgRow["SiteName"];
+                                sitePriceRow.Address = pgRow["Address"] == DBNull.Value ? "" : (string)pgRow["Address"];
+                                sitePriceRow.Town = pgRow["Town"] == DBNull.Value ? "" : (string)pgRow["Town"];
                                 // any other fields for UI extract here
 
                                 sitePriceRow.PfsNo = pgRow["PfsNo"].ToString().ToNullable<int>();

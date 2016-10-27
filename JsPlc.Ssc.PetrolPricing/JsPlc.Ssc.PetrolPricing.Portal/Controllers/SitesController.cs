@@ -129,6 +129,14 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
                 JsonRequestBehavior = JsonRequestBehavior.AllowGet,
                 Data = jsonData
             };
+           
+            Task.Run(() =>
+            {
+                Dictionary<int, int> dicgroupRows = new Dictionary<int, int>();
+                var dt = SitePricesToDataTable(forDate, sitesViewModelsWithPrices, ref  dicgroupRows);
+
+            });
+
             return jsonResult;
         }
 
@@ -241,7 +249,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
              var excludebrands = _serviceFacade.GetExcludeBrands();
              model.ExcludeBrands = excludebrands != null ? excludebrands.ToList() : null;
              model.ExcludeBrandsOrg = model.ExcludeBrands;
-
+          
            
             return View("Prices",model); // Razor based view
         }
