@@ -363,211 +363,156 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             int siteId = 0, int pageNo = 1,
             int pageSize = Constants.PricePageSize)
         {
+
             try
             {
-                //@siteId int,
-                //@forDate DateTime,
-                //@skipRecs int,
-                //@takeRecs int
+                var sainsburysSites = _context.Sites.Where(x => x.IsSainsburysSite == true && x.IsActive == true).ToList();
+                if (!String.IsNullOrEmpty(storeName)) sainsburysSites = sainsburysSites.Where(x => x.SiteName.Contains(storeName)).ToList();
+                if (catNo != 0) sainsburysSites = sainsburysSites.Where(x => x.CatNo == catNo).ToList();
+                if (storeNo != 0) sainsburysSites = sainsburysSites.Where(x => x.StoreNo == storeNo).ToList();
+                if (siteId != 0) sainsburysSites = sainsburysSites.Where(x => x.Id == siteId).ToList();
+                if (!String.IsNullOrEmpty(storeTown)) sainsburysSites = sainsburysSites.Where(x => x.Town.Contains(storeTown)).ToList();
+                SitePriceViewModel sitePriceRow = null;
 
-                var siteIdParam = new SqlParameter("@siteId", SqlDbType.Int)
+                var fileUploadedObj = _context.FileUploads.Where(x => x.UploadDateTime.Day == forDate.Day && x.UploadDateTime.Month == forDate.Month && x.UploadDateTime.Year == forDate.Year && x.UploadTypeId==1).SingleOrDefault();
+                var dbList = new List<SitePriceViewModel>();
+                foreach (Site site in sainsburysSites)
                 {
-                    Value = siteId
-                };
-                var forDateParam = new SqlParameter("@forDate", SqlDbType.DateTime)
-                {
-                    Value = forDate
-                };
-                var skipRecsParam = new SqlParameter("@skipRecs", SqlDbType.Int)
-                {
-                    Value = (pageNo - 1) * pageSize
-                };
-                var takeRecsParam = new SqlParameter("@takeRecs", SqlDbType.Int)
-                {
-                    Value = pageSize
-                };
-                var storeNameParam = new SqlParameter("@storeName", SqlDbType.NVarChar)
-                {
-                    Value = string.IsNullOrWhiteSpace(storeName) ? "" : storeName
-                };
-                var catNoParam = new SqlParameter("@catNo", SqlDbType.Int)
-                {
-                    Value = catNo
-                };
-                var storeNoParam = new SqlParameter("@storeNo", SqlDbType.Int)
-                {
-                    Value = storeNo
-                };
-                var storeTownParam = new SqlParameter("@storeTown", SqlDbType.NVarChar)
-                {
-                    Value = string.IsNullOrWhiteSpace(storeTown) ? "" : storeTown
-                };
+                    sitePriceRow = new SitePriceViewModel();
+                    sitePriceRow.SiteId = site.Id;
+                    sitePriceRow.CatNo = site.CatNo;
+                    sitePriceRow.StoreName = site.SiteName;
+                    sitePriceRow.Address = site.Address;
+                    sitePriceRow.Town = site.Town;
+                    sitePriceRow.PfsNo = site.PfsNo;
+                    sitePriceRow.StoreNo = site.StoreNo;
+                    sitePriceRow.FuelPrices = new List<FuelPriceViewModel>();
 
-                // any other params here
+                
 
-                var sqlParams = new List<SqlParameter>
-            {
-                siteIdParam,
-                forDateParam,
-                skipRecsParam,
-                takeRecsParam,
-                storeNameParam,
-                storeTownParam,
-                catNoParam,
-                storeNoParam
-            };
-                const string spName = "dbo.spGetSitePrices";
-                // Test in SQL:     Exec dbo.spGetSitePrices 0, '2015-11-30'
-                // Output is sorted by siteId so all Fuels for a site appear together
+                    var TrialPrice = (int) site.CompetitorPriceOffset;
+                    TrialPrice = TrialPrice*10;
+                    AddSitePriceRow((int)FuelTypeItem.Diesel, site.CatNo.Value, site.Id, TrialPrice, forDate,  site.CompetitorPriceOffset,fileUploadedObj != null,
+                   sitePriceRow.FuelPrices);
 
-                using (var connection = new SqlConnection(_context.Database.Connection.ConnectionString))
-                {
-                    using (var command = new SqlCommand(spName, connection))
-                    {
-                        command.CommandType = CommandType.StoredProcedure;
-                        command.CommandTimeout = 0;
-                        command.Parameters.AddRange(sqlParams.ToArray());
+                    AddSitePriceRow((int)FuelTypeItem.Unleaded, site.CatNo.Value, site.Id, TrialPrice, forDate, site.CompetitorPriceOffset,fileUploadedObj != null,
+                    sitePriceRow.FuelPrices);
 
-                        connection.Open();
+                    AddSitePriceRow((int)FuelTypeItem.Super_Unleaded, site.CatNo.Value, site.Id, TrialPrice, forDate, site.CompetitorPriceOffset,fileUploadedObj != null,
+                        sitePriceRow.FuelPrices);
 
-                        var reader = command.ExecuteReader();
-                        var pgTable = new DataTable();
-                        pgTable.Load(reader);
-
-                        var lastSiteId = -1;
-                        SitePriceViewModel sitePriceRow = null;
-
-                        var dbList = new List<SitePriceViewModel>();
-                        if (pgTable.Rows.Count == 0)
-                        {
-                            var sainsburysSites = _context.Sites.Where(x => x.IsSainsburysSite == true).ToList();
-                            if (!String.IsNullOrEmpty(storeName)) sainsburysSites = sainsburysSites.Where(x => x.SiteName.Contains(storeName)).ToList();
-                            if (catNo != 0) sainsburysSites = sainsburysSites.Where(x => x.CatNo == catNo).ToList();
-                            if (storeNo != 0) sainsburysSites = sainsburysSites.Where(x => x.StoreNo == storeNo).ToList();
-                            if (siteId != 0) sainsburysSites = sainsburysSites.Where(x => x.Id == siteId).ToList();
-                            if (!String.IsNullOrEmpty(storeTown)) sainsburysSites = sainsburysSites.Where(x => x.Town.Contains(storeTown)).ToList();
-                       
-                            foreach (Site site in sainsburysSites)
-                            {
-                                sitePriceRow = new SitePriceViewModel();
-                                sitePriceRow.SiteId = site.Id;
-                                sitePriceRow.CatNo = site.CatNo;
-                                sitePriceRow.StoreName = site.SiteName;
-                                sitePriceRow.Address = site.Address;
-                                sitePriceRow.Town = site.Town;
-                                sitePriceRow.PfsNo = site.PfsNo;
-                                sitePriceRow.StoreNo = site.StoreNo;
-                                sitePriceRow.FuelPrices = new List<FuelPriceViewModel>();
-                              
-                                dbList.Add(sitePriceRow);
-                                
-                            }
-                            
-                        }
-                        else
-                        {
-                            foreach (DataRow pgRow in pgTable.Rows)
-                            {
-                                var loopSiteId = (int)pgRow["Id"];
-                                if (loopSiteId != lastSiteId)
-                                {
-                                    sitePriceRow = new SitePriceViewModel();
-                                    dbList.Add(sitePriceRow);
-                                    lastSiteId = loopSiteId;
-                                }
-                                if (sitePriceRow == null) continue;
-
-                                sitePriceRow.SiteId = (int)pgRow["Id"];
-                                sitePriceRow.CatNo = Convert.IsDBNull(pgRow["CatNo"]) ? null : (int?)pgRow["CatNo"];
-                                // ToNullable<int> or ToNullable<double>
-                                sitePriceRow.StoreName =   pgRow["SiteName"]==DBNull.Value ? "": (string)pgRow["SiteName"];
-                                sitePriceRow.Address = pgRow["Address"] == DBNull.Value ? "" : (string)pgRow["Address"];
-                                sitePriceRow.Town = pgRow["Town"] == DBNull.Value ? "" : (string)pgRow["Town"];
-                                // any other fields for UI extract here
-
-                                sitePriceRow.PfsNo = pgRow["PfsNo"].ToString().ToNullable<int>();
-                                sitePriceRow.StoreNo = pgRow["StoreNo"].ToString().ToNullable<int>();
-
-                                sitePriceRow.FuelPrices = sitePriceRow.FuelPrices ?? new List<FuelPriceViewModel>();
-                                if (!Convert.IsDBNull(pgRow["FuelTypeId"]))
-                                {
-                                    var competitorPriceOffset = pgRow["CompetitorPriceOffset"].ToString().ToNullable<double>();
-                                    int TrialPrice = (competitorPriceOffset.HasValue && competitorPriceOffset.Value > 0) ? Convert.ToInt32(competitorPriceOffset.Value) : 0;
-                                    TrialPrice = TrialPrice * 10;
-
-                                    var AutoPrice = pgRow["SuggestedPrice"].ToString().ToNullable<int>();
-                                    if (AutoPrice.HasValue && AutoPrice.Value > 0)
-                                    {
-                                        AutoPrice += TrialPrice;
-                                        AutoPrice = (AutoPrice / 10) * 10 + 9;
-                                    }
-                                    var OverridePrice = pgRow["OverriddenPrice"].ToString().ToNullable<int>();
-                                    if (OverridePrice.HasValue && OverridePrice.Value > 0)
-                                    {
-                                        OverridePrice += TrialPrice;
-                                        OverridePrice = (OverridePrice / 10) * 10 + 9;
-                                    }
-                                    /*  var OverriddenPriceToday = pgRow["OverriddenPriceToday"].ToString().ToNullable<int>();
-                                      if (OverriddenPriceToday.HasValue && OverriddenPriceToday.Value > 0)
-                                      {
-                                          OverriddenPriceToday = (OverriddenPriceToday / 10) * 10 + 9;
-                                      }*/
-                                    var SuggestedPriceToday = pgRow["SuggestedPriceToday"].ToString().ToNullable<int>();
-                                    if (SuggestedPriceToday.HasValue && SuggestedPriceToday.Value > 0)
-                                    {
-                                        SuggestedPriceToday = (SuggestedPriceToday / 10) * 10 + 9;
-                                    }
-                                    var TodayPrice = (SuggestedPriceToday.HasValue) ? SuggestedPriceToday.Value : 0;
-                                    //    if (TodayPrice > 0) TodayPrice = (TodayPrice / 10) * 10 + 9;     
-
-
-
-                                    var Markup = pgRow["Markup"].ToString().ToNullable<int>();
-                                    var IsTrailPrice = pgRow["IsTrailPrice"].ToString().ToNullable<bool>();
-
-                                    var competitorId = pgRow["CompetitorId"].ToString().ToNullable<int>();
-
-
-                                    var competitorName = "Unknown";
-
-                                    if (competitorId.HasValue)
-                                    {
-                                        var competitorSite = GetSite(competitorId.Value);
-                                        competitorName = string.Format("{0}/{1}", competitorSite.Brand, competitorSite.SiteName);
-                                    }
-
-                                    //      var trailPriceCompetitorId = pgRow["TrailPriceCompetitorId"].ToString().ToNullable<bool>();
-
-                                    sitePriceRow.FuelPrices.Add(new FuelPriceViewModel
-                                    {
-                                        FuelTypeId = (int)pgRow["FuelTypeId"],
-                                        // Tomorrow's prices
-                                        AutoPrice = (!AutoPrice.HasValue) ? 0 : (AutoPrice.Value),
-                                        OverridePrice = (!OverridePrice.HasValue) ? 0 : OverridePrice.Value,
-
-                                        // Today's prices (whatever was calculated yesterday OR last)
-                                        TodayPrice = TodayPrice,
-                                        Markup = Markup,
-                                        CompetitorName = competitorName,
-                                        IsTrailPrice = IsTrailPrice.HasValue ? IsTrailPrice.Value : false,
-                                        CompetitorPriceOffset = competitorPriceOffset.HasValue ? competitorPriceOffset.Value : 0
-                                        //  IsBasedOnCompetitor = trailPriceCompetitorId.HasValue
-                                    });
-                                }
-                            }
-
-                            Apply5PMarkupForSuperUnleadedForNonCompetitorSites(dbList);
-                        }
-                        
-
-                        return dbList;
-                    }
+                  
+                    dbList.Add(sitePriceRow);
                 }
+               // Apply5PMarkupForSuperUnleadedForNonCompetitorSites(dbList);
+             
+                return dbList;
+
             }
             catch (Exception ce)
             {
                 return null;
             }
+        }
+
+        private void AddSitePriceRow(int fuelType,int catNo, int siteId,  int trialPrice,DateTime forDate,double CompetitorPriceOffset,bool bIsCatalistFileExits, List<FuelPriceViewModel> list)
+        {
+            var orgFuelTypeID = fuelType;
+            if (fuelType == (int) FuelTypeItem.Super_Unleaded) fuelType = (int) FuelTypeItem.Unleaded;
+
+            var dailypriceData =
+                    _context.Set<DailyPrice>()
+                        .Where(
+                            x =>
+                                x.ModalPrice > 0 && x.CatNo == catNo &&
+                                (x.FuelTypeId == fuelType))
+                        .OrderBy(item => item.Id)
+                        .ToList();
+            var sitePriceData =
+                _context.Set<SitePrice>()
+                    .Where(
+                        x =>
+                          ( x.SuggestedPrice > 0 || x.OverriddenPrice>0)  && x.SiteId == siteId &&
+                            (x.FuelTypeId == fuelType))
+                    .OrderBy(item => item.Id)
+                    .ToList();
+
+        
+            var siteData = (from dp in dailypriceData
+                           from sp in sitePriceData
+                           where dp.FuelTypeId == fuelType && sp.FuelTypeId == fuelType
+                           select
+                           new
+                           {
+                               dp.FuelTypeId,
+                               sp.SuggestedPrice,
+                               dp.ModalPrice,
+                               sp.OverriddenPrice,
+                               sp.Markup,
+                               sp.IsTrailPrice,
+                               sp.CompetitorId,
+                               sp.DateOfPrice
+                           }).ToList();
+
+
+            //Get Diesel Price
+            if (siteData.Count > 0)
+            {
+                var autoPrice = orgFuelTypeID == (int)FuelTypeItem.Super_Unleaded ? siteData[0].SuggestedPrice + 50 : siteData[0].SuggestedPrice;
+                autoPrice += trialPrice;
+                autoPrice = (autoPrice / 10) * 10 + 9;
+
+                var overridePrice = 0;
+               
+              
+                   var dieselPriceOverride =
+                        _context.Set<SitePrice>()
+                            .Where(
+                                x =>
+                                    x.OverriddenPrice > 0 && x.SiteId == siteId && x.FuelTypeId==orgFuelTypeID && 
+                                     x.DateOfPrice.Day == forDate.Day && x.DateOfPrice.Month == forDate.Month && x.DateOfPrice.Year == forDate.Year)
+                            .OrderBy(item => item.Id).SingleOrDefault();
+
+                    if (dieselPriceOverride != null)
+                    {
+                        overridePrice =  dieselPriceOverride.OverriddenPrice;
+                        overridePrice += trialPrice;
+                        overridePrice = (overridePrice / 10) * 10 + 9;
+                       }
+              
+                
+               
+               
+                var todayPrice = orgFuelTypeID == (int)FuelTypeItem.Super_Unleaded ? siteData[0].ModalPrice + 50 : siteData[0].ModalPrice;
+                todayPrice = (todayPrice / 10) * 10 + 9;
+
+                var markUp = siteData[0].Markup;
+                var isTrailPrice = siteData[0].IsTrailPrice;
+                var competitorId = siteData[0].CompetitorId.HasValue ? siteData[0].CompetitorId.Value : 0;
+                var competitorName = "Unknown";
+                if (competitorId > 0)
+                {
+                    var competitorSite = GetSite(competitorId);
+                    competitorName = string.Format("{0}/{1}", competitorSite.Brand, competitorSite.SiteName);
+                }
+                list.Add(new FuelPriceViewModel
+                {
+                    FuelTypeId = orgFuelTypeID,
+                    AutoPrice = bIsCatalistFileExits? autoPrice: 0,
+                    OverridePrice = overridePrice,
+
+                    TodayPrice = todayPrice,
+                    Markup = markUp,
+                    CompetitorName = competitorName,
+                    IsTrailPrice = isTrailPrice,
+                    CompetitorPriceOffset = CompetitorPriceOffset
+                    //  IsBasedOnCompetitor = trailPriceCompetitorId.HasValue
+                });
+
+
+            }
+
+
         }
         /// <summary>
         /// Apply a 5P markup for Super unleaded for non-competing sites
