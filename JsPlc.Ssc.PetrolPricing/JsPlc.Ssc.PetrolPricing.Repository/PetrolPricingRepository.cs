@@ -471,17 +471,26 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                                 x =>
                                     x.OverriddenPrice > 0 && x.SiteId == siteId && x.FuelTypeId==orgFuelTypeID && 
                                      x.DateOfPrice.Day == forDate.Day && x.DateOfPrice.Month == forDate.Month && x.DateOfPrice.Year == forDate.Year)
-                            .OrderBy(item => item.Id).SingleOrDefault();
+                            .OrderBy(item => item.Id).ToList();
 
-                    if (dieselPriceOverride != null)
+                   if (dieselPriceOverride != null && dieselPriceOverride.Count>0)
                     {
-                        overridePrice =  dieselPriceOverride.OverriddenPrice;
+                        overridePrice =  dieselPriceOverride[0].OverriddenPrice;
                         overridePrice += trialPrice;
                         overridePrice = (overridePrice / 10) * 10 + 9;
                        }
-              
-                
-               
+
+                   /*  var todayPriceTmp = 0;
+                                foreach (var siteD in siteData)
+                                {
+                                    todayPriceTmp = siteD.ModalPrice;
+                                    if (todayPriceTmp < siteD.OverriddenPrice)
+                                    {
+                                        todayPriceTmp = siteD.OverriddenPrice;
+                                        break;
+                                    }
+
+                                }*/
                
                 var todayPrice = orgFuelTypeID == (int)FuelTypeItem.Super_Unleaded ? siteData[0].ModalPrice + 50 : siteData[0].ModalPrice;
                 todayPrice = (todayPrice / 10) * 10 + 9;
@@ -1294,6 +1303,7 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
         public async Task<int> SaveOverridePricesAsync(List<SitePrice> prices, DateTime? forDate = null)
         {
             if (!forDate.HasValue) forDate = DateTime.Now;
+            int rowsAffected=0;
             using (var db = new RepositoryContext())
             {
                 foreach (SitePrice p in prices)
@@ -1304,7 +1314,29 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
                             .AsNoTracking()
                             .ToList();
 
+                     rowsAffected = UpdateFuelOverridePrice(forDate, db, p);
+                    if (p.FuelTypeId == (int) FuelTypeItem.Unleaded)
+                    {
+                        p.FuelTypeId = (int) FuelTypeItem.Super_Unleaded;
+                        p.OverriddenPrice += 50;
+                        rowsAffected=UpdateFuelOverridePrice(forDate, db, p);
+                    }
+                   
+                }
+               
+                return rowsAffected;
+            }
+        }
+
+        private int UpdateFuelOverridePrice(DateTime? forDate,RepositoryContext db, SitePrice p)
+        {
+             var dbPricesForDate =
+                        db.SitePrices.Where(x => DbFunctions.DiffDays(x.DateOfPrice, forDate) == 0)
+                            .AsNoTracking()
+                            .ToList();
+
                     SitePrice p1 = p; // to prevent closure issue
+                  
                     var entry =
                         dbPricesForDate.FirstOrDefault(x => x.SiteId == p1.SiteId && x.FuelTypeId == p1.FuelTypeId);
                     if (entry == null)
@@ -1328,10 +1360,8 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
                         db.Entry(entry).State = EntityState.Modified;
                     }
                     //db.Entry(entry).Property(x => x.OverriddenPrice).IsModified = true;
-                }
-                int rowsAffected = await db.SaveChangesAsync();
-                return rowsAffected;
-            }
+                
+                return  db.SaveChanges();
         }
 
         /// <summary>
