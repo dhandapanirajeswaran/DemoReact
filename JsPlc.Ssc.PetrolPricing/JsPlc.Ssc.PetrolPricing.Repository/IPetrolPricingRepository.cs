@@ -25,7 +25,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
 		SitePriceViewModel GetASiteWithPrices(int siteId, DateTime forDate, string storeName);
 
-		Site GetSiteByCatNo(int catNo);
+		Site GetSiteByCatNo(int catNo); 
 
 		Site NewSite(Site site);
 

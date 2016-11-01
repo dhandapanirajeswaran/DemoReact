@@ -390,7 +390,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
                 
 
-                    var TrialPrice = (int) site.CompetitorPriceOffset;
+                    var TrialPrice = (int) site.CompetitorPriceOffset; 
                     TrialPrice = TrialPrice*10;
                     AddSitePriceRow((int)FuelTypeItem.Diesel,  site, TrialPrice, forDate, fileUploadedObj != null,
                    sitePriceRow.FuelPrices);

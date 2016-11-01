@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace JsPlc.Ssc.PetrolPricing.Core
-{
+{ 
 	public class FileUploadException : ApplicationException
 	{
 		public FileUploadException() { }

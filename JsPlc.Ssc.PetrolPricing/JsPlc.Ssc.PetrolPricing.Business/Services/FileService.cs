@@ -94,7 +94,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 		}
 
 		public IEnumerable<FileUpload> GetFileUploads(DateTime? date, int? uploadTypeId, int? statusId)
-		{
+		{ 
 			return _db.GetFileUploads(date, uploadTypeId, statusId);
 		}
 

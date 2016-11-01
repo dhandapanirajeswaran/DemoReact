@@ -363,7 +363,7 @@ update [dbo].[Site] set pfsno=1529, StoreNo=4529 where SiteName like '%SAINSBURY
 update [dbo].[Site] set pfsno=1340, StoreNo=2340 where SiteName like '%SAINSBURYS Wolverhampton%'
 update [dbo].[Site] set pfsno=1095, StoreNo=2095 where SiteName like '%SAINSBURYS Oakley%'
 update [dbo].[Site] set pfsno=1252, StoreNo=2252 where SiteName like '%SAINSBURYS Portishead%'
-update [dbo].[Site] set pfsno=1589, StoreNo=4589 where SiteName like '%SAINSBURYS Bristol Nags head%'
+update [dbo].[Site] set pfsno=1589, StoreNo=4589 where SiteName like '%SAINSBURYS Bristol Nags head%' 
 update [dbo].[Site] set pfsno=1289, StoreNo=2289 where SiteName like '%SAINSBURYS Waterlooville%'
 update [dbo].[Site] set pfsno=1070, StoreNo=2070 where SiteName like '%SAINSBURYS Whitehouse Farm%'
 update [dbo].[Site] set pfsno=1030, StoreNo=2030 where SiteName like '%SAINSBURYS Greenwich%'

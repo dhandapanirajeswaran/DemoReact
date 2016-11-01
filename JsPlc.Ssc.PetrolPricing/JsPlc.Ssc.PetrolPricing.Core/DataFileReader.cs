@@ -24,7 +24,7 @@ namespace JsPlc.Ssc.PetrolPricing.Core
             string[] sheetnames = GetExcelSheetNames(connectionString);
 
 		    if (!String.IsNullOrEmpty(excelFileSheetName))
-		    {
+		    { 
 		       
 		        if (sheetnames == null)
 		        {
