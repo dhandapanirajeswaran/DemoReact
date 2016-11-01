@@ -266,7 +266,8 @@
     <Content Include="fonts\fontawesome-webfont.eot" />
     <Content Include="fonts\FontAwesome.otf" />
     <Content Include="Content\chosen.css" />
-    <Content Include="Content\QuarterlySiteDataTemplate.xls" />
+    <None Include="Content\QuarterlySiteDataTemplate.xlsx" />
+    <Content Include="Content\LatestSitePriceDataTemplate.xlsx" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="images\defaultfileicon.png" />
     <Content Include="images\excelcsvicon.png" />
