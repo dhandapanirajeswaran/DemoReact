@@ -43,12 +43,19 @@
 
 
     </div>
-    <div id="divdownloadbtn" class="col-md-1" style="margin-top: 60px; margin-left: -280px;display: none;">
+    <div id="divdownloadquarterlydatabtn" class="col-md-1" style="margin-top: 60px; margin-left: -280px;display: none;">
         <br />
-            
-        <a href="~/Content/QuarterlySiteDataTemplate.xls" class="btn btn-primary" download="QuarterlySiteDataTemplate.xls">Download Data Template</a>
-       
-       
+
+        <a href="~/Content/QuarterlySiteDataTemplate.xlsx" class="btn btn-primary" download="QuarterlySiteDataTemplate.xlsx">Download Data Template</a>
+
+
+    </div>
+    <div id="divdownloadtemplatelatestpricebtn" class="col-md-1" style="margin-top: 60px; margin-left: -280px;display: none;">
+        <br />
+
+        <a href="~/Content/LatestSitePriceDataTemplate.xlsx" class="btn btn-primary" download="LatestSitePriceDataTemplate.xlsx">Download Data Template</a>
+
+
     </div>
     <div class="col-md-1" id="datepickerctrl" style="margin-top: 24px">
         @Html.TextBoxFor(m => m.UploadDate, "{0:dd/MM/yyyy}", new { @class = "datepicker form-control",id = "caldattimepicker", style = "width:85px;", @maxlength = "12" })
@@ -87,6 +94,10 @@
     $('#UploadTypeName').change(function () {
         $('#divfilenameplusicon').hide();
         $('#divuploadbtn').hide();
+        $('#divdownloadquarterlydatabtn').hide();
+        $('#divdownloadtemplatelatestpricebtn').hide();
+
+        
         var uploadtype = $('#UploadTypeName').val();
         if (uploadtype == 1) {
             $("#file").attr({
@@ -95,13 +106,22 @@
             });
             $('#divdownloadbtn').hide();
         }
-        else if (uploadtype == 2) {
+        else if (uploadtype == 2 ) {
             $("#file").attr({
                 "accept": ".xls, .xlsx"
 
             });
 
-            $('#divdownloadbtn').show();
+            $('#divdownloadquarterlydatabtn').show();
+        }
+
+        else if (uploadtype == 3) {
+            $("#file").attr({
+                "accept": ".xls, .xlsx"
+
+            });
+
+            $('#divdownloadtemplatelatestpricebtn').show();
         }
     });
 
@@ -132,6 +152,11 @@
             $("#fileimage").attr("src", "images/excelcsvicon.png");
         }
         else if ((ext == "xlsx" || ext == "xls") && uploadtype==2) {
+            $('#divfilenameplusicon').show();
+            $('#divuploadbtn').show();
+            $("#fileimage").attr("src", "images/excelicon.png");
+        }
+        else if ((ext == "xlsx" || ext == "xls") && uploadtype == 3) {
             $('#divfilenameplusicon').show();
             $('#divuploadbtn').show();
             $("#fileimage").attr("src", "images/excelicon.png");

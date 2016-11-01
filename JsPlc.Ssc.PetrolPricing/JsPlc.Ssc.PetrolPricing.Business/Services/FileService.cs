@@ -67,6 +67,15 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 					runRecalc(processedFile);
 
 					break;
+
+                case 3:
+                    processedFile = ProcessLatestPriceFileNew(newUploadList);
+
+                    if (processedFile == null)
+                        throw new FileUploadException("Upload failed. Contact support team.");
+
+
+                    break;
 				default:
 					throw new InvalidOperationException(string.Format("Unsupported file type: {0}. Contact support team." + newUpload.UploadTypeId));
 			}
@@ -93,6 +102,9 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 		{
 			return _db.GetFileUpload(id);
 		}
+
+
+
 
 		/// <summary>
 		/// Reads uploaded files one by one and imports them to DailyPrices table
@@ -325,6 +337,69 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 			return aFile;
 		}
 
+
+        //Process Quarterly File//////////////////////////////////////////////////////////////////////////////////////
+        /// <summary>
+        /// Picks the right file to Process and returns it
+        /// </summary>
+        /// <param name="uploadedFiles"></param>
+        /// <returns>The file picked for processing (only one)</returns>
+        public FileUpload ProcessLatestPriceFileNew(List<FileUpload> uploadedFiles)
+        {
+            if (!uploadedFiles.Any())
+                return null;
+
+            var aFile = uploadedFiles.OrderByDescending(x => x.UploadDateTime).ToList().First();
+
+            try
+            {
+                aFile.StatusId = (int)ImportProcessStatuses.Success;
+
+                _db.UpdateImportProcessStatus(5, aFile); //Processing 5
+
+                var rows = getXlsDataRowsLatestSiteData(aFile);
+
+                var dataRows = rows as IList<DataRow> ?? rows.ToList();
+
+                if (!dataRows.Any())
+                {
+                    throw new ApplicationException(string.Format("No rows found in the file: {0}; Date: {1}; Contact support team.",
+                                        aFile.OriginalFileName, aFile.UploadDateTime));
+                }
+
+                // Delete older rows before import
+                _db.TruncateLatestPriceData();
+
+                bool gotWarning = false;
+
+                var success = importLatestPricRecords(aFile, dataRows, out gotWarning); // dumps all rows into the quarterly staging table
+
+                if (!success)
+                {
+                    throw new ImportLatestSitePriceDataException("Unable to populate Latest Price Data table in db. Contact support team.");
+                }
+
+                if (gotWarning)
+                    aFile.StatusId = (int)ImportProcessStatuses.Warning;
+               
+
+                _db.UpdateImportProcessStatus(aFile.StatusId, aFile); //ok 10, failed 15
+            }
+            catch (ExcelParseFileException ex)
+            {
+                _db.LogImportError(aFile, ex.Message, null);
+                _db.UpdateImportProcessStatus(15, aFile); //failed 15
+                return null;
+            }
+            catch (Exception ex)
+            {
+                _db.LogImportError(aFile, ex, null);
+
+                _db.UpdateImportProcessStatus(15, aFile); //failed 15
+                return null;
+            }
+            return aFile;
+        }
 		public void CleanupIntegrationTestsData(string testUserName = "Integration tests")
 		{
 			_db.CleanupIntegrationTestsData(testUserName);
@@ -500,6 +575,17 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 			}
 		}
 
+        // Reads XLS file and returns Rows
+        private IEnumerable<DataRow> getXlsDataRowsLatestSiteData(FileUpload aFile)
+        {
+            using (DataTable dataTable = getLatestPriceData(aFile))
+            {
+                var rows = dataTable.ToDataRowsList();
+
+                return rows;
+            }
+        }
+
 		/// <summary>
 		/// Dumps all quarterly file xls records to Staging table in Batches
 		/// </summary>
@@ -533,12 +619,32 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 			return true;
 		}
 
+        private bool importLatestPricRecords(FileUpload aFile, IEnumerable<DataRow> allRows, out bool hasWarning)
+        {
+            int batchNo = 0;
+         
+            List<LatestPriceDataModel> allSites = parseLatestPrice(aFile, allRows, out hasWarning);
+            if (hasWarning) return false;
+            var batchSuccess =
+                    _db.NewLatestPriceRecords(allSites, aFile, 2);
+
+               
+           
+            return true;
+        }
 		private DataTable getQuarterlyData(FileUpload aFile)
 		{
 			var storedFilePath = _appSettings.UploadPath;
 			var filePathAndName = Path.Combine(storedFilePath, aFile.StoredFileName);
          	return _dataFileReader.GetQuarterlyData(filePathAndName, _appSettings.ExcelFileSheetName);
 		}
+
+        private DataTable getLatestPriceData(FileUpload aFile)
+        {
+            var storedFilePath = _appSettings.UploadPath;
+            var filePathAndName = Path.Combine(storedFilePath, aFile.StoredFileName);
+            return _dataFileReader.GetQuarterlyData(filePathAndName, "");
+        }
 
 		private List<CatalistQuarterly> parseSiteRowsBatch(FileUpload aFile, IEnumerable<DataRow> batchRows, int batchNo, out bool hasWarnings)
 		{
@@ -605,6 +711,50 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 
 			return siteCatalistData;
 		}
+
+        private List<LatestPriceDataModel> parseLatestPrice(FileUpload aFile, IEnumerable<DataRow> batchRows,  out bool hasWarnings)
+        {
+            List<LatestPriceDataModel> priceLatestPriceData = new List<LatestPriceDataModel>();
+
+            hasWarnings = false;
+
+            int rowCount = 0;
+
+            //starting from 2 to avoid headings held in row 1
+            foreach (DataRow row in batchRows)
+            {
+                rowCount++;
+
+                LatestPriceDataModel LatestPriceData = new LatestPriceDataModel();
+
+                try
+                {
+                    if (row[0].ToString().ToUpper() == "PFS") continue;
+                    //Sainsburys Store
+                    LatestPriceData.PfsNo = Convert.ToInt32(row[0].ToString());
+                    LatestPriceData.StoreNo = Convert.ToInt32(row[1].ToString());
+                    LatestPriceData.SiteName = row[2].ToString();
+                    LatestPriceData.UnleadedPrice = row[3].ToString();
+                    LatestPriceData.SuperUnleadedPrice = row[4].ToString();
+                    LatestPriceData.DieselPrice = row[6].ToString();
+
+
+                    priceLatestPriceData.Add(LatestPriceData);
+                }
+                catch (Exception ex)
+                {
+                    //log error and continue loading file
+                    _db.LogImportError(aFile,
+                        ex,
+                        rowCount);
+
+                    hasWarnings = true;
+                }
+
+            }
+
+            return priceLatestPriceData;
+        }
 
 		/// <summary>
 		/// Parses the CSV line to make a DailyPrice object

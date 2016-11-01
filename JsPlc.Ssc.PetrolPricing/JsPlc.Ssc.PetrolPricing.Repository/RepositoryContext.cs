@@ -24,6 +24,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
 		public IDbSet<DailyUploadStaging> DailyUploadStaging { get; set; }
 		public IDbSet<QuarterlyUploadStaging> QuarterlyUploadStaging { get; set; }
+        public IDbSet<LatestPrice> LatestPrices { get; set; }
 		public IDbSet<ImportProcessError> ImportProcessErrors { get; set; }
 
 		public IDbSet<EmailSendLog> EmailSendLogs { get; set; }
@@ -54,6 +55,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 			//modelBuilder.Entity<SiteEmail>().HasRequired(c => c.Site).WithMany(x => x.Emails).HasForeignKey(m => m.SiteId);
 
 			modelBuilder.Entity<DailyPrice>().HasRequired(m => m.FuelType).WithMany().HasForeignKey(x => x.FuelTypeId);
+            modelBuilder.Entity<LatestPrice>().HasRequired(m => m.DailyUpload).WithMany().HasForeignKey(x => x.FuelTypeId); ;
 
 			modelBuilder.Entity<FileUpload>().HasRequired(x => x.Status).WithMany().HasForeignKey(y => y.StatusId);
             modelBuilder.Entity<ExcludeBrands>();

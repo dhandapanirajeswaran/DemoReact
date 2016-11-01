@@ -42,6 +42,10 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 		bool NewQuarterlyRecords(List<CatalistQuarterly> siteCatalistData, FileUpload fileDetails,
 			int startingLineNumber);
 
+
+        bool NewLatestPriceRecords(List<LatestPriceDataModel> siteCatalistData, FileUpload fileDetails,
+            int startingLineNumber);
+
 		IEnumerable<QuarterlyUploadStaging> GetQuarterlyRecords();
 
 		/// <summary>
@@ -138,6 +142,8 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 		/// Delete all QuarterlyUploadStaging records prior to starting Import of QuarterlyUploadStaging
 		/// </summary>
 		void TruncateQuarterlyUploadStaging();
+
+	    void TruncateLatestPriceData();
 
 		void TruncateSiteToCompetitor();
 

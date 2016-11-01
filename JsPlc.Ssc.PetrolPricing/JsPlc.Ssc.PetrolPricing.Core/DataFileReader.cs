@@ -22,23 +22,28 @@ namespace JsPlc.Ssc.PetrolPricing.Core
             }
 
             string[] sheetnames = GetExcelSheetNames(connectionString);
-            
-            if (sheetnames == null)
-            {
-                throw new ExcelParseFileException("Unable to read excel file. Contact support team.", null);
-            }
 
-            List<string> FilteredSheetNames = sheetnames.Where(xx => xx.Contains(excelFileSheetName)).ToList();
+		    if (!String.IsNullOrEmpty(excelFileSheetName))
+		    {
+		       
+		        if (sheetnames == null)
+		        {
+		            throw new ExcelParseFileException("Unable to read excel file. Contact support team.", null);
+		        }
 
-            if (FilteredSheetNames.Count==0)
-            {
-                var message = string.Format("Invalid Sheet name. Expected name start with: {0}. Fix the issue and try again.", excelFileSheetName);
+		        List<string> FilteredSheetNames = sheetnames.Where(xx => xx.Contains(excelFileSheetName)).ToList();
 
-                throw new ExcelParseFileException(message, null);
-					
-            }
-          
-			using (var adapter = new OleDbDataAdapter(String.Format("SELECT * FROM [{0}]",
+		        if (FilteredSheetNames.Count == 0)
+		        {
+		            var message =
+		                string.Format("Invalid Sheet name. Expected name start with: {0}. Fix the issue and try again.",
+		                    excelFileSheetName);
+
+		            throw new ExcelParseFileException(message, null);
+
+		        }
+		    }
+		    using (var adapter = new OleDbDataAdapter(String.Format("SELECT * FROM [{0}]",
                 sheetnames[0]), connectionString))
 			{
 				using (var ds = new DataSet())

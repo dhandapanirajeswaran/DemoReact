@@ -22,6 +22,12 @@ namespace JsPlc.Ssc.PetrolPricing.Core
 		public ImportQuarterlyRecordsToStagingException() { }
 		public ImportQuarterlyRecordsToStagingException(string message) : base(message) { }
 	}
+
+    public class ImportLatestSitePriceDataException : ApplicationException
+    {
+        public ImportLatestSitePriceDataException() { }
+        public ImportLatestSitePriceDataException(string message) : base(message) { }
+    }
 	public class CatalistNumberUpdateException : ApplicationException
 	{
 		public CatalistNumberUpdateException() { }
