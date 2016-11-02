@@ -201,7 +201,7 @@ update [dbo].[Site] set pfsno=111, StoreNo=725 where SiteName like '%SAINSBURYS 
 update [dbo].[Site] set pfsno=1011, StoreNo=2023 where SiteName like '%SAINSBURYS Liphook%'
 update [dbo].[Site] set pfsno=396, StoreNo=567 where SiteName like '%SAINSBURYS London Colney%'
 update [dbo].[Site] set pfsno=452, StoreNo=706 where SiteName like '%SAINSBURYS Longwater%'
-update [dbo].[Site] set pfsno=131, StoreNo=18 where SiteName like '%SAINSBURYS Lords Hill%'
+update [dbo].[Site] set pfsno=131, StoreNo=18 where SiteName like '%SAINSBURYS LordsHill%'
 update [dbo].[Site] set pfsno=478, StoreNo=852 where SiteName like '%SAINSBURYS Loughborough%'
 update [dbo].[Site] set pfsno=108, StoreNo=433 where SiteName like '%SAINSBURYS Low Hall%'
 update [dbo].[Site] set pfsno=213, StoreNo=58 where SiteName like '%SAINSBURYS Lyons Farm%'
