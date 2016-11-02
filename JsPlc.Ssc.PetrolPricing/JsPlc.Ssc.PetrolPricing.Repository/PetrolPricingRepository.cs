@@ -456,37 +456,42 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
 
 
-          
-           
+
+
             if (siteData.Count > 0)
             {
-                var autoPrice = orgFuelTypeID == (int)FuelTypeItem.Super_Unleaded ? siteData[0].SuggestedPrice + 50 : siteData[0].SuggestedPrice;
+                var autoPrice = orgFuelTypeID == (int) FuelTypeItem.Super_Unleaded
+                    ? siteData[0].SuggestedPrice + 50
+                    : siteData[0].SuggestedPrice;
                 autoPrice += trialPrice;
-                autoPrice = (autoPrice / 10) * 10 + 9;
+                autoPrice = (autoPrice/10)*10 + 9;
 
                 var overridePrice = 0;
-               
-              
-                   var dieselPriceOverride =
-                        _context.Set<SitePrice>()
-                            .Where(
-                                x =>
-                                    x.OverriddenPrice > 0 && x.SiteId == site.Id && x.FuelTypeId == orgFuelTypeID && 
-                                     x.DateOfPrice.Day == forDate.Day && x.DateOfPrice.Month == forDate.Month && x.DateOfPrice.Year == forDate.Year)
-                            .OrderBy(item => item.Id).ToList();
 
-                   if (dieselPriceOverride != null && dieselPriceOverride.Count>0)
-                    {
-                        overridePrice =  dieselPriceOverride[0].OverriddenPrice;
-                        overridePrice += trialPrice;
-                        overridePrice = (overridePrice / 10) * 10 + 9;
-                       }
+
+                var dieselPriceOverride =
+                    _context.Set<SitePrice>()
+                        .Where(
+                            x =>
+                                x.OverriddenPrice > 0 && x.SiteId == site.Id && x.FuelTypeId == orgFuelTypeID &&
+                                x.DateOfPrice.Day == forDate.Day && x.DateOfPrice.Month == forDate.Month &&
+                                x.DateOfPrice.Year == forDate.Year)
+                        .OrderBy(item => item.Id).ToList();
+
+                if (dieselPriceOverride != null && dieselPriceOverride.Count > 0)
+                {
+                    overridePrice = dieselPriceOverride[0].OverriddenPrice;
+                    overridePrice += trialPrice;
+                    overridePrice = (overridePrice/10)*10 + 9;
+                }
 
                 //today Price Calculation
                 var todayPriceFromCalculation = GetTodayPrice(fuelType, site, forDate);
-          
-                var todayPrice = orgFuelTypeID == (int)FuelTypeItem.Super_Unleaded ? todayPriceFromCalculation + 50 : todayPriceFromCalculation;
-                todayPrice = (todayPrice / 10) * 10 + 9;
+
+                var todayPrice = orgFuelTypeID == (int) FuelTypeItem.Super_Unleaded
+                    ? todayPriceFromCalculation + 50
+                    : todayPriceFromCalculation;
+                todayPrice = (todayPrice/10)*10 + 9;
 
                 var markUp = siteData[0].Markup;
                 var isTrailPrice = siteData[0].IsTrailPrice;
@@ -500,7 +505,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                 list.Add(new FuelPriceViewModel
                 {
                     FuelTypeId = orgFuelTypeID,
-                    AutoPrice = bIsCatalistFileExits? autoPrice: 0,
+                    AutoPrice = bIsCatalistFileExits ? autoPrice : 0,
                     OverridePrice = overridePrice,
 
                     TodayPrice = todayPrice,
@@ -511,6 +516,23 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                     //  IsBasedOnCompetitor = trailPriceCompetitorId.HasValue
                 });
 
+
+            }
+            else
+            {
+                list.Add(new FuelPriceViewModel
+                {
+                    FuelTypeId = orgFuelTypeID,
+                    AutoPrice = 0,
+                    OverridePrice = 0,
+
+                    TodayPrice = 0,
+                    Markup = 0,
+                    CompetitorName = "Unknown",
+                    IsTrailPrice = false,
+                    CompetitorPriceOffset = site.CompetitorPriceOffset
+                    //  IsBasedOnCompetitor = trailPriceCompetitorId.HasValue
+                });
 
             }
 
