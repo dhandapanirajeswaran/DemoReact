@@ -103,6 +103,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             string storeTown = "", int siteId = 0, int pageNo = 1,
                 int pageSize = Constants.PricePageSize, int getCompetitor = 0)
         {
+
             DateTime forDate;
             if (!DateTime.TryParse(date, out forDate))
             {
@@ -327,32 +328,30 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
              IEnumerable<SitePriceViewModel> sitesViewModelsWithPrices)
          {
              var dt = new DataTable("Sites");
-             dt.Columns.Add("StoreNo.");
-             dt.Columns.Add("Store Name");
-             dt.Columns.Add("Store Town");
-             dt.Columns.Add("Cat No.");
-             dt.Columns.Add("PFS No.");
+             dt.Columns.Add("-");
+             dt.Columns.Add("-  ");
+             dt.Columns.Add("-   ");
              dt.Columns.Add("UnLeaded ");
-             dt.Columns.Add("Diesel ");
              dt.Columns.Add("Super Unleaded ");
+             dt.Columns.Add("4 Star");
+             dt.Columns.Add("Diesel ");
              DataRow dr = dt.NewRow();
-             dr[5] = forDate.ToString("dd/MM/yyyy");
+             dr[0] = forDate.ToString("dd/MM/yyyy");
              dt.Rows.Add(dr);
              int nRow = 2;
              Dictionary<int, int> dicColtoFType = new Dictionary<int, int>();
-             dicColtoFType.Add(2, 5);
+             dicColtoFType.Add(2, 3);
+             dicColtoFType.Add(1, 4);
              dicColtoFType.Add(6, 6);
-             dicColtoFType.Add(1, 7);
+          
 
              foreach (var siteVM in sitesViewModelsWithPrices)
              {
                  dr = dt.NewRow();
-                 dr[0] = siteVM.StoreNo;
-                 dr[1] = siteVM.StoreName;
-                 dr[2] = siteVM.Town;
-                 dr[3] = siteVM.CatNo;
-                 dr[4] = siteVM.PfsNo;
-
+                 dr[0] = siteVM.PfsNo.ToString().PadLeft(4, '0');
+                 dr[1] = siteVM.PfsNo;
+                 dr[2] = siteVM.StoreName.Replace(Const.SAINSBURYS,"");
+              
                  if (siteVM.FuelPrices != null)
                  {
                      foreach (var fp in siteVM.FuelPrices)
