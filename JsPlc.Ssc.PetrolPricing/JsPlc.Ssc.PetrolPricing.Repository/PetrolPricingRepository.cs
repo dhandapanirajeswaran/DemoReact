@@ -366,12 +366,12 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
             try
             {
-                var sainsburysSites = _context.Sites.Where(x => x.IsSainsburysSite == true && x.IsActive == true).ToList();
-                if (!String.IsNullOrEmpty(storeName)) sainsburysSites = sainsburysSites.Where(x => x.SiteName.Contains(storeName)).ToList();
+                var sainsburysSites = _context.Sites.Where(x => x.IsSainsburysSite == true && x.IsActive == true).OrderBy(x=>x.SiteName).ToList();
+                if (!String.IsNullOrEmpty(storeName)) sainsburysSites = sainsburysSites.Where(x => x.SiteName.ToLower().Contains(storeName.ToLower())).ToList();
                 if (catNo != 0) sainsburysSites = sainsburysSites.Where(x => x.CatNo == catNo).ToList();
                 if (storeNo != 0) sainsburysSites = sainsburysSites.Where(x => x.StoreNo == storeNo).ToList();
                 if (siteId != 0) sainsburysSites = sainsburysSites.Where(x => x.Id == siteId).ToList();
-                if (!String.IsNullOrEmpty(storeTown)) sainsburysSites = sainsburysSites.Where(x => x.Town.Contains(storeTown)).ToList();
+                if (!String.IsNullOrEmpty(storeTown)) sainsburysSites = sainsburysSites.Where(x => x.Town.ToLower().Contains(storeTown.ToLower())).ToList();
                 SitePriceViewModel sitePriceRow = null;
 
                 var fileUploadedObj = _context.FileUploads.Where(x => x.UploadDateTime.Day == forDate.Day && x.UploadDateTime.Month == forDate.Month && x.UploadDateTime.Year == forDate.Year && x.UploadTypeId==1).SingleOrDefault();
@@ -400,7 +400,12 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
                     AddSitePriceRow((int)FuelTypeItem.Super_Unleaded, site, TrialPrice, forDate,  fileUploadedObj != null,
                         sitePriceRow.FuelPrices);
-
+                   /* var siteToCompetitorObjs =
+                            transactionContext.SiteToCompetitors.Where(x => x.SiteId == siteID);
+                    foreach (var siteToC in siteToCompetitorObjs)
+                    {
+                        transactionContext.SiteToCompetitors.Remove(siteToC);
+                    }*/
                   
                     dbList.Add(sitePriceRow);
                 }
