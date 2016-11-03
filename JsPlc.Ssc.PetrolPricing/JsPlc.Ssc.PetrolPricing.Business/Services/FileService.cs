@@ -368,7 +368,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
                 }
 
                 // Delete older rows before import
-                _db.TruncateLatestPriceData();
+               // _db.TruncateLatestPriceData();
 
                 bool gotWarning = false;
 

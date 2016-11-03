@@ -1042,39 +1042,24 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                               
                                 if (!String.IsNullOrEmpty(LatestPriceDataModel.UnleadedPrice))
                                 {
-                                    var dbRecord = new LatestPrice();
-                                    dbRecord.UploadId = fileDetails.Id;
-                                    dbRecord.PfsNo = LatestPriceDataModel.PfsNo;
-                                    dbRecord.StoreNo = LatestPriceDataModel.StoreNo;
-                                    dbRecord.FuelTypeId =(int) FuelTypeItem.Unleaded;
-                                    dbRecord.ModalPrice =(int) Convert.ToDouble(LatestPriceDataModel.UnleadedPrice)*10;
-                                    newDbContext.LatestPrices.Add(dbRecord);
+                                    AddOrUpdateLatestPrice(newDbContext, LatestPriceDataModel, fileDetails,
+                                        (int)FuelTypeItem.Unleaded, (int)Convert.ToDouble(LatestPriceDataModel.UnleadedPrice));
+                                  
 
                                 }
                                 if (!String.IsNullOrEmpty(LatestPriceDataModel.SuperUnleadedPrice))
                                 {
-                                    var dbRecord = new LatestPrice();
-                                    dbRecord.UploadId = fileDetails.Id;
-                                    dbRecord.PfsNo = LatestPriceDataModel.PfsNo;
-                                    dbRecord.StoreNo = LatestPriceDataModel.StoreNo;
-                                    dbRecord.FuelTypeId = (int)FuelTypeItem.Super_Unleaded;
-                                    dbRecord.ModalPrice =(int) Convert.ToDouble(LatestPriceDataModel.SuperUnleadedPrice) * 10;
-                                    newDbContext.LatestPrices.Add(dbRecord);
+                                  
+                                    AddOrUpdateLatestPrice(newDbContext, LatestPriceDataModel, fileDetails,
+                                     (int)FuelTypeItem.Super_Unleaded, (int)Convert.ToDouble(LatestPriceDataModel.SuperUnleadedPrice));
+                            
 
                                 }
                                 if (!String.IsNullOrEmpty(LatestPriceDataModel.DieselPrice))
                                 {
-                                    var dbRecord = new LatestPrice();
-                                    dbRecord.UploadId = fileDetails.Id;
-                                    dbRecord.PfsNo = LatestPriceDataModel.PfsNo;
-                                    dbRecord.StoreNo = LatestPriceDataModel.StoreNo;
-                                    dbRecord.FuelTypeId = (int)FuelTypeItem.Diesel;
-                                    dbRecord.ModalPrice = (int)Convert.ToDouble(LatestPriceDataModel.DieselPrice) * 10;
-                                    newDbContext.LatestPrices.Add(dbRecord);
-
+                                     AddOrUpdateLatestPrice(newDbContext, LatestPriceDataModel, fileDetails,
+                                   (int)FuelTypeItem.Diesel, (int)Convert.ToDouble(LatestPriceDataModel.DieselPrice));
                                 }
-                               
-
                             }
 
                             newDbContext.SaveChanges();
@@ -1118,6 +1103,33 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                         return false;
                     }
                 }
+            }
+        }
+
+        public void AddOrUpdateLatestPrice(RepositoryContext newDbContext,LatestPriceDataModel latestPriceDataModel, FileUpload fileDetails,int fuelTypeId,int fuelPrice)
+        {
+            LatestPrice dbRecord = null;
+            bool iNewRecord = false;
+            dbRecord = newDbContext.LatestPrices.Where(
+                x =>
+                    x.PfsNo == latestPriceDataModel.PfsNo &&
+                    x.StoreNo == latestPriceDataModel.StoreNo &&
+                    x.FuelTypeId == fuelTypeId).SingleOrDefault();
+            if (dbRecord == null)
+            {
+                dbRecord = new LatestPrice();
+                iNewRecord = true;
+            }
+            dbRecord.UploadId = fileDetails.Id;
+            dbRecord.PfsNo = latestPriceDataModel.PfsNo;
+            dbRecord.StoreNo = latestPriceDataModel.StoreNo;
+            dbRecord.FuelTypeId = (int)FuelTypeItem.Unleaded;
+            dbRecord.ModalPrice = fuelPrice * 10;
+            if (iNewRecord) newDbContext.LatestPrices.Add(dbRecord);
+            else
+            {
+                newDbContext.LatestPrices.Attach(dbRecord);
+                newDbContext.Entry(dbRecord).State = EntityState.Modified;
             }
         }
 
