@@ -131,12 +131,12 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
                 Data = jsonData
             };
            
-           Task.Run(() =>
+         /*  Task.Run(() =>
             {
                 Dictionary<int, int> dicgroupRows = new Dictionary<int, int>();
                 var dt = SitePricesToDataTable(forDate, sitesViewModelsWithPrices, ref  dicgroupRows);
 
-            });
+            });*/
 
             return jsonResult;
         }

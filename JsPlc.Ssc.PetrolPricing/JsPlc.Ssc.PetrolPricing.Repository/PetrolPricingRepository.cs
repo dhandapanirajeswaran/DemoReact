@@ -300,7 +300,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                 var cachedCompetitorsWithPrices = CallCompetitorsWithPriceSproc(forDate, siteId, pageNo, pageSize);
                  //   PetrolPricingRepositoryMemoryCache.CacheObj.Get(key) as IEnumerable<SitePriceViewModel>;
 
-
+             
                /* if (cachedCompetitorsWithPrices == null)
                 {
                     lock (cachedCompetitorsLock)
@@ -1083,27 +1083,30 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         {
             LatestPrice dbRecord = null;
             bool iNewRecord = false;
-            dbRecord = newDbContext.LatestPrices.Where(
+            var latestPriceList = newDbContext.LatestPrices.Where(
                 x =>
                     x.PfsNo == latestPriceDataModel.PfsNo &&
                     x.StoreNo == latestPriceDataModel.StoreNo &&
-                    x.FuelTypeId == fuelTypeId).SingleOrDefault();
-            if (dbRecord == null)
+                    x.FuelTypeId == fuelTypeId).ToList();
+            dbRecord=latestPriceList.Count>0 ? latestPriceList[0] :
+            null;
+
+            if (latestPriceList.Count > 0)
             {
-                dbRecord = new LatestPrice();
-                iNewRecord = true;
+                foreach (var latestprice in latestPriceList)
+                {
+                    newDbContext.LatestPrices.Remove(latestprice);
+                }
+           
             }
+            dbRecord = new LatestPrice();
             dbRecord.UploadId = fileDetails.Id;
             dbRecord.PfsNo = latestPriceDataModel.PfsNo;
             dbRecord.StoreNo = latestPriceDataModel.StoreNo;
-            dbRecord.FuelTypeId = (int)FuelTypeItem.Unleaded;
+            dbRecord.FuelTypeId = fuelTypeId;
             dbRecord.ModalPrice = fuelPrice * 10;
-            if (iNewRecord) newDbContext.LatestPrices.Add(dbRecord);
-            else
-            {
-                newDbContext.LatestPrices.Attach(dbRecord);
-                newDbContext.Entry(dbRecord).State = EntityState.Modified;
-            }
+            newDbContext.LatestPrices.Add(dbRecord);
+            
         }
 
         public bool NewDailyPrices(List<DailyPrice> dailyPriceList, FileUpload fileDetails, int startingLineNumber)
