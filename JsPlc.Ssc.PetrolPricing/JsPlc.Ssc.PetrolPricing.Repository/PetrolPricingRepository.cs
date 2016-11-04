@@ -297,11 +297,11 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             {
                 var key = "CallCompetitorsWithPriceSproc-" + forDate.ToString() + "-" + Convert.ToString(siteId) + "-" +
                           Convert.ToString(pageNo) + "-" + Convert.ToString(pageSize);
-                var cachedCompetitorsWithPrices =
-                    PetrolPricingRepositoryMemoryCache.CacheObj.Get(key) as IEnumerable<SitePriceViewModel>;
+                var cachedCompetitorsWithPrices = CallCompetitorsWithPriceSproc(forDate, siteId, pageNo, pageSize);
+                 //   PetrolPricingRepositoryMemoryCache.CacheObj.Get(key) as IEnumerable<SitePriceViewModel>;
 
 
-                if (cachedCompetitorsWithPrices == null)
+               /* if (cachedCompetitorsWithPrices == null)
                 {
                     lock (cachedCompetitorsLock)
                     {
@@ -317,7 +317,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                             return cachedCompetitors;
                         }
                     }
-                }
+                }*/
 
 
                 return cachedCompetitorsWithPrices;
