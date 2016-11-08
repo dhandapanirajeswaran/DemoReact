@@ -28,13 +28,11 @@ Declare @lookBackDays int = 25
 Declare @phhToday DateTime = null, @phhYestDate DateTime = null
 Declare @todayPriceDate DateTime, @yestPriceDate DateTime 
 
-
 Set @phhToday = @forDate
 
 Set @phhYestDate = DateAdd(day, -1, @forDate)
 
-
-
+--Select @todayPriceDate, @yestPriceDate
 
 ;With sites as
 (
@@ -58,7 +56,7 @@ Set @phhYestDate = DateAdd(day, -1, @forDate)
 	FROM
 	SiteToCompetitor sc
 		inner join SITE compInf --
-			on sc.CompetitorId = compInf.Id and ( sc.SiteId=@siteId OR @siteId=0)
+			on sc.CompetitorId = compInf.Id and sc.SiteId=@siteId
 	WHERE compInf.IsActive = 1 and sc.IsExcluded = 0 and sc.DriveTime<25
 ) -- select * from competitors
  --select * from compForSites
@@ -71,7 +69,7 @@ Set @phhYestDate = DateAdd(day, -1, @forDate)
    from 
 		competitors c 
 		Left Join DailyPrice dp
-			On c.CatNo = dp.CatNo  and  ( DateDiff(day, dp.DateOfPrice, @phhToday) = 0 OR DateDiff(day, dp.DateOfPrice, @phhYestDate) = 0 ) AND ModalPrice>0
+			On c.CatNo = dp.CatNo 
 		Left join FuelType ft
 			On dp.FuelTypeId = ft.Id
 ) -- select * from compFuels
@@ -108,11 +106,11 @@ Set @phhYestDate = DateAdd(day, -1, @forDate)
 ) -- Select * from dailyPricesComp
 ,todaysPrices as
 (
-	Select * from dailyPricesComp where DateDiff(day, DateOfPrice, @phhToday) = 0
+	Select * from dailyPricesComp where DateDiff(day, UploadDateTime, @phhToday) = 0
 )
 ,yesterdaysPrices as
 (
-	Select * from dailyPricesComp where DateDiff(day, DateOfPrice, @phhYestDate) = 0
+	Select * from dailyPricesComp where DateDiff(day, UploadDateTime, @phhYestDate) = 0
 )
 -- ## Build FINAL Result 
 ,CompetitorsPrices AS
@@ -137,8 +135,8 @@ Set @phhYestDate = DateAdd(day, -1, @forDate)
 			On cs.CompetitorId = yestp.CompetitorId
 			And yestp.FuelTypeId = cs.FuelTypeId
 	Where 1=1
-		and (todp.UploadDateTime is null OR DateDiff(day, todp.DateOfPrice, @phhToday) = 0)
-		and (yestp.UploadDateTime is null OR DateDiff(day, yestp.DateOfPrice, @phhYestDate) = 0)
+		and (todp.UploadDateTime is null OR DateDiff(day, todp.UploadDateTime, @phhToday) = 0)
+		and (yestp.UploadDateTime is null OR DateDiff(day, yestp.UploadDateTime, @phhYestDate) = 0)
 )
 Select *
 from CompetitorsPrices
