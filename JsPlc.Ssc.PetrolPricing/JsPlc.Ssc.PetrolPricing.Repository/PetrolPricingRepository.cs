@@ -642,7 +642,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         private IEnumerable<SitePriceViewModel> CallCompetitorsWithPriceSproc(DateTime forDate, int siteId = 0,
                  int pageNo = 1, int pageSize = Constants.PricePageSize)
         {
-            try
+           try
             {
                 var siteToCompetitors = _context.SiteToCompetitors.Where(x => x.SiteId == siteId && x.DriveTime<25 && x.IsExcluded==0).OrderBy(x=>x.DriveTime);
 
@@ -691,6 +691,118 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             {
                 return null;
             }
+
+          /*  try
+            {
+                // TODO wireup params from sproc to a new DTO
+                var siteIdParam = new SqlParameter("@siteId", SqlDbType.Int)
+                {
+                    Value = siteId
+                };
+                var forDateParam = new SqlParameter("@forDate", SqlDbType.DateTime)
+                {
+                    Value = forDate
+                };
+
+                // NOTE: Below paging params are for JSSite(s), not for competitors (we get all competitors for the specified sites resultset)
+                var skipRecsParam = new SqlParameter("@skipRecs", SqlDbType.Int)
+                {
+                    Value = (pageNo - 1) * pageSize
+                };
+                var takeRecsParam = new SqlParameter("@takeRecs", SqlDbType.Int)
+                {
+                    Value = pageSize
+                };
+                // any other params here
+
+                var sqlParams = new List<SqlParameter>
+            {
+                siteIdParam,
+                forDateParam,
+                skipRecsParam,
+                takeRecsParam
+            };
+                const string spName = "dbo.spGetCompetitorPrices";
+                // Test in SQL:     Exec dbo.[spGetCompetitorPrices] 0, '2015-11-30',
+                // Output is sorted by siteId so all Fuels for a site appear together
+
+                using (var connection = new SqlConnection(_context.Database.Connection.ConnectionString))
+                {
+                    using (var command = new SqlCommand(spName, connection))
+                    {
+                        command.CommandType = CommandType.StoredProcedure;
+                        command.Parameters.AddRange(sqlParams.ToArray());
+                        command.CommandTimeout = 0;
+                        connection.Open();
+
+                        var reader = command.ExecuteReader();
+                        var pgTable = new DataTable();
+                        pgTable.Load(reader);
+
+                        var lastSiteId = -1;
+                        SitePriceViewModel sitePriceRow = null;
+
+                        var dbList = new List<SitePriceViewModel>();
+
+                        var listOfbrands = GetExcludeBrands();
+
+                        Site site = GetSites().Where(x => x.Id == siteId).FirstOrDefault();
+
+                        foreach (DataRow pgRow in pgTable.Rows)
+                        {
+                            var result = listOfbrands.Contains((string)pgRow["Brand"]);
+
+                            if (result == true) continue;
+                            var loopSiteId = (int)pgRow["siteId"];
+                            if (loopSiteId != lastSiteId)
+                            {
+                                sitePriceRow = new SitePriceViewModel();
+                                dbList.Add(sitePriceRow);
+                                lastSiteId = loopSiteId;
+                            }
+                            if (sitePriceRow == null) continue;
+
+                            sitePriceRow.SiteId = (int)pgRow["SiteId"]; // CompetitorId
+                            sitePriceRow.JsSiteId = (int)pgRow["JsSiteId"];
+                            sitePriceRow.CatNo = Convert.IsDBNull(pgRow["CatNo"]) ? null : (int?)pgRow["CatNo"];
+                            // ToNullable<int> or ToNullable<double>
+                            sitePriceRow.StoreName = (string)pgRow["SiteName"];
+                            sitePriceRow.Brand = (string)pgRow["Brand"];
+                            sitePriceRow.Address = (string)pgRow["Address"];
+
+                            sitePriceRow.DriveTime = pgRow["DriveTime"].ToString().ToNullable<float>();
+                            sitePriceRow.Distance = pgRow["Distance"].ToString().ToNullable<float>();
+                            // any other fields for UI extract here
+
+                            sitePriceRow.FuelPrices = sitePriceRow.FuelPrices ?? new List<FuelPriceViewModel>();
+                            int nOffSet = loopSiteId == site.TrailPriceCompetitorId ? (int)site.CompetitorPriceOffsetNew : 0;
+                            if (!Convert.IsDBNull(pgRow["FuelTypeId"]))
+                            {
+                                var todayPrice = pgRow["ModalPrice"].ToString().ToNullable<int>();
+                                var yestPrice = pgRow["ModalPriceYest"].ToString().ToNullable<int>();
+                                sitePriceRow.FuelPrices.Add(new FuelPriceViewModel
+                                {
+                                    FuelTypeId = (int)pgRow["FuelTypeId"],
+
+                                    // Today's prices (whatever was calculated yesterday OR last)
+                                    TodayPrice = todayPrice.HasValue ? todayPrice.Value : 0 + nOffSet,
+
+                                    // Today's prices (whatever was calculated yesterday OR last)
+                                    YestPrice = yestPrice.HasValue ? yestPrice.Value : 0 + nOffSet,
+
+                                    //Difference between yesterday and today
+                                    Difference = todayPrice.HasValue && yestPrice.HasValue ? todayPrice - yestPrice : null
+                                });
+                            }
+                        }
+                        return dbList;
+                    }
+                }
+            }
+            catch (Exception ce)
+            {
+                return null;
+            }*/
         }
 
         private void AddFuelPricesForCompetitors(List<FuelPriceViewModel> competitorFuelList, int FuelType, DateTime forDate, int nOffSet, Site site)
