@@ -802,6 +802,21 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 				_priceService.DoCalcDailyPrices(fileProcessed.UploadDateTime);
 			}
 		}
+
+
+        public bool CalcDailyPrices()
+        {
+            var fileUploads=_db.GetFileUploads();
+
+            foreach (var fp in fileUploads)
+            {
+                if (fp.UploadTypeId == (int) FileUploadTypes.DailyPriceData)
+                {
+                    _priceService.DoCalcDailyPrices(fp.UploadDateTime);
+                }
+            }
+            return true;
+        }
 		#endregion
 
 	}

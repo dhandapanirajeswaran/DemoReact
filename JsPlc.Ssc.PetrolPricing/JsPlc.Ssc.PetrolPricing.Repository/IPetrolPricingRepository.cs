@@ -107,7 +107,9 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
 		List<FileUpload> GetFileUploads(DateTime? date, int? uploadType, int? statusId);
 
-		FileUpload GetFileUpload(int id);
+	    IEnumerable<FileUpload> GetFileUploads();
+
+    	FileUpload GetFileUpload(int id);
 
 		FileUpload NewUpload(FileUpload upload);
 

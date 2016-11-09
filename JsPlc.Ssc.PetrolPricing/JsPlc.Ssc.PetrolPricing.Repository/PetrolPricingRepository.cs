@@ -29,6 +29,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
         private List<string> LstOfBandsToRemoveInNA2;
 
+      
         public PetrolPricingRepository(RepositoryContext context)
         {
             _context = context;
@@ -142,9 +143,8 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                 .Include(x => x.Emails)
                 .Include(x => x.Prices)
                 .Where(x => x.IsActive)
-                .Where(x => x.Prices.All(p => p.DateOfPrice.Equals(forDate)));
+                .Where(x => x.Prices.All(p => p.DateOfCalc.Equals(forDate)));
         }
-
         private static object cachedCompetitorsLock = new Object();
 
         public Dictionary<int, Site> GetSitesWithCompetitors()
@@ -769,7 +769,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         public IEnumerable<DailyPrice> GetDailyPricesForFuelByCompetitors(IEnumerable<int> competitorCatNos, int fuelId,
             DateTime usingPricesforDate)
         {
-
+           
             string cacheKey = usingPricesforDate.Ticks.ToString() ;
             Dictionary<string, DailyPrice> dailyPricesCache = PetrolPricingRepositoryMemoryCache.CacheObj.Get(cacheKey) as Dictionary<string, DailyPrice>;
 
@@ -783,12 +783,12 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                     {
                         // If multiple uploads, needs to be handled here, but we assume one for now.
                         dailyPricesCache = _context.DailyPrices.Include(x => x.DailyUpload)
-                            .Where(x => DbFunctions.TruncateTime(x.DateOfPrice) == usingPricesforDate.Date)
+                            .Where(x => DbFunctions.TruncateTime(x.DailyUpload.UploadDateTime) == usingPricesforDate.Date)
                             .ToDictionary(k => string.Format("{0}_{1}", k.FuelTypeId, k.CatNo), v => v);
 
                         PetrolPricingRepositoryMemoryCache.CacheObj.Add(cacheKey, dailyPricesCache, PetrolPricingRepositoryMemoryCache.ReportsCacheExpirationPolicy(20));
                     }
-                }
+                }   
             }
 
             List<DailyPrice> result = new List<DailyPrice>();
@@ -835,7 +835,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                 if (site.Competitors != null) UpdateSiteCompetitors(site);
                 _context.Entry(site).State = EntityState.Modified;
                 int nReturn = _context.SaveChanges();
-
+             
                 return true;
             }
             catch (Exception ce)
@@ -1423,22 +1423,17 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
 
             List<int> cachedAnyDailyPricesForFuelOnDate = PetrolPricingRepositoryMemoryCache.CacheObj.Get(cacheKey) as List<int>;
 
-            bool isCacheFound = cachedAnyDailyPricesForFuelOnDate == null
-                ? false
-                : cachedAnyDailyPricesForFuelOnDate.Count != 0;
-            if (!isCacheFound)
+            if (cachedAnyDailyPricesForFuelOnDate == null)
             {
                 lock (cachedAnyDailyPricesForFuelOnDateLock)
                 {
                     cachedAnyDailyPricesForFuelOnDate = PetrolPricingRepositoryMemoryCache.CacheObj.Get(cacheKey) as List<int>;
-                    bool isFound = cachedAnyDailyPricesForFuelOnDate == null
-                ? false
-                : cachedAnyDailyPricesForFuelOnDate.Count != 0;
-                    if (!isFound)
+
+                    if (cachedAnyDailyPricesForFuelOnDate == null)
                     {
                         cachedAnyDailyPricesForFuelOnDate = _context.DailyPrices
                             .Include(x => x.DailyUpload)
-                            .Where(x => DbFunctions.TruncateTime(x.DateOfPrice) == usingPricesforDate.Date)
+                            .Where(x => DbFunctions.TruncateTime(x.DailyUpload.UploadDateTime) == usingPricesforDate.Date)
                             .Select(x => x.FuelTypeId).Distinct().ToList();
 
                         PetrolPricingRepositoryMemoryCache.CacheObj.Add(cacheKey, cachedAnyDailyPricesForFuelOnDate, PetrolPricingRepositoryMemoryCache.ReportsCacheExpirationPolicy(5));
@@ -1481,7 +1476,7 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
             var existingPriceRecord = _context.SitePrices.AsNoTracking().FirstOrDefault(
                 x => x.SiteId == calculatedSitePrice.SiteId
                      && x.FuelTypeId == calculatedSitePrice.FuelTypeId
-                     && DbFunctions.TruncateTime(x.DateOfPrice) == calculatedSitePrice.DateOfPrice.Date);
+                     && DbFunctions.TruncateTime(x.DateOfCalc) == calculatedSitePrice.DateOfCalc.Date);
 
             if (existingPriceRecord == null)
             {
@@ -1509,34 +1504,49 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
                     calculatedSitePrice.CompetitorId,
                     calculatedSitePrice.Markup,
                     calculatedSitePrice.IsTrailPrice,
-                    calculatedSitePrice.Id);
+                    existingPriceRecord.Id);
             }
         }
 
         public async Task<int> SaveOverridePricesAsync(List<SitePrice> prices, DateTime? forDate = null)
         {
             if (!forDate.HasValue) forDate = DateTime.Now;
-            int rowsAffected=0;
             using (var db = new RepositoryContext())
             {
                 foreach (SitePrice p in prices)
                 {
                     //
                     var dbPricesForDate =
-                        db.SitePrices.Where(x => DbFunctions.DiffDays(x.DateOfPrice, forDate) == 0)
+                        db.SitePrices.Where(x => DbFunctions.DiffDays(x.DateOfCalc, forDate) == 0)
                             .AsNoTracking()
                             .ToList();
 
-                     rowsAffected = UpdateFuelOverridePrice(forDate, db, p);
-                    if (p.FuelTypeId == (int) FuelTypeItem.Unleaded)
+                    SitePrice p1 = p; // to prevent closure issue
+                    var entry =
+                        dbPricesForDate.FirstOrDefault(x => x.SiteId == p1.SiteId && x.FuelTypeId == p1.FuelTypeId);
+                    if (entry == null)
                     {
-                        p.FuelTypeId = (int) FuelTypeItem.Super_Unleaded;
-                        p.OverriddenPrice += 50;
-                        rowsAffected=UpdateFuelOverridePrice(forDate, db, p);
+                        entry = new SitePrice
+                        {
+                            SiteId = p.SiteId,
+                            FuelTypeId = p.FuelTypeId,
+                            DateOfCalc = forDate.Value,
+                            DateOfPrice = forDate.Value,
+                            SuggestedPrice = 0,
+                            OverriddenPrice = p.OverriddenPrice
+                        };
+                        db.Entry(entry).State = EntityState.Added;
+                        //throw new ApplicationException(
+                        //    String.Format("Price not found in DB for siteId={0}, fuelId={1}", p1.SiteId, p1.FuelTypeId));
                     }
-                   
+                    else
+                    {
+                        entry.OverriddenPrice = p.OverriddenPrice;
+                        db.Entry(entry).State = EntityState.Modified;
+                    }
+                    //db.Entry(entry).Property(x => x.OverriddenPrice).IsModified = true;
                 }
-               
+                int rowsAffected = await db.SaveChangesAsync();
                 return rowsAffected;
             }
         }
@@ -1544,7 +1554,7 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
         private int UpdateFuelOverridePrice(DateTime? forDate,RepositoryContext db, SitePrice p)
         {
              var dbPricesForDate =
-                        db.SitePrices.Where(x => DbFunctions.DiffDays(x.DateOfPrice, forDate) == 0)
+                        db.SitePrices.Where(x => DbFunctions.DiffDays(x.DateOfCalc, forDate) == 0)
                             .AsNoTracking()
                             .ToList();
 
@@ -2599,19 +2609,17 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
         {
             using (var db = new RepositoryContext())
             {
-                /*var priceDates = db.DailyPrices.Include(x => x.DailyUpload)
+                var priceDates = db.DailyPrices.Include(x => x.DailyUpload)
                     .Where(x => x.DailyUpload.Status.Id == 10
-                    && DbFunctions.DiffDays(forDate, x.DailyUpload.UploadDateTime) == 0)
-                    .DistinctBy(x => x.DailyUpload.UploadDateTime).OrderBy(x => x.DailyUpload.UploadDateTime).Take(5); // ascending order*/
-
-                var priceDates = db.DailyPrices.Where(x => x.DailyUpload.Status.Id == 10 && DbFunctions.DiffDays(forDate, x.DateOfPrice) == 0).OrderBy(x => x.DateOfPrice).Take(5);
+                    && DbFunctions.DiffDays(forDate, x.DailyUpload.UploadDateTime) >= 1)
+                    .DistinctBy(x => x.DailyUpload.UploadDateTime).OrderBy(x => x.DailyUpload.UploadDateTime).Take(5); // ascending order
 
                 // success status
                 //.Select(x => x.DailyUpload.UploadDateTime)
                 //.Where(x => DbFunctions.DiffDays(x, forDate) >= 1) // UploadDate - forDate >= 1
                 if (priceDates.Any())
                 {
-                    return priceDates.First().DateOfPrice;
+                    return priceDates.First().DailyUpload.UploadDateTime;
                 }
                 return null;
             }
@@ -2644,7 +2652,7 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
 
         private static int GetSitePriceOnDate(IEnumerable<SitePrice> sitePrices, DateTime d, int fuelId)
         {
-            var price = sitePrices.FirstOrDefault(x => x.DateOfPrice.Equals(d) && x.FuelTypeId == fuelId);
+            var price = sitePrices.FirstOrDefault(x => x.DateOfCalc.Equals(d) && x.FuelTypeId == fuelId);
             return (price == null)
                 ? 0
                 : (price.OverriddenPrice == 0) ? price.SuggestedPrice : price.OverriddenPrice;

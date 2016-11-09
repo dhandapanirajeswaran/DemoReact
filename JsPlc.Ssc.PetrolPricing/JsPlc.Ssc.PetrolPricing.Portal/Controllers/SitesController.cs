@@ -948,11 +948,13 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             site.Emails = nonBlankVals;
 
             var editSite = _serviceFacade.EditSite(site);
-
+            _serviceFacade.CalcDailyPrices();
             if (editSite.ViewModel != null)
 				return RedirectToAction("Index", new { msg = "Site: " + editSite.ViewModel.SiteName + " updated successfully" });
 
 			ViewBag.ErrorMessage = editSite.ErrorMessage;
+
+           
 			return View(site);
         }
 

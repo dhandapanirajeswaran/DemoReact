@@ -66,7 +66,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 
 				calculatePrices(new PriceCalculationTaskData
 				{
-					ForDate = forDate.Value.AddDays(-1),
+					ForDate = forDate.Value,
 					FileUpload = dpFile
 				});
 
@@ -107,7 +107,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 				SiteId = site.Id,
 				FuelTypeId = fuelId,
 				DateOfCalc = usingPricesforDate.Date, // Only date component
-				DateOfPrice = usingPricesforDate.Date,
+				DateOfPrice = usingPricesforDate.Date.AddDays(-1),
 				SuggestedPrice = 0,
 				UploadId = 0,
 				CompetitorId = null
@@ -177,19 +177,19 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 			}
 
 			if (cheapestCompetitor == null)
-			{
+			{ 
 				db.AddOrUpdateSitePriceRecord(cheapestPrice);
 				return;
 			}
 
 			var competitor = cheapestCompetitor.Value.Key;
-			var markup = cheapestCompetitor.Value.Value;
+			var markup = site.CompetitorPriceOffsetNew;
 
 			cheapestPrice.DateOfPrice = competitor.DailyPrice.DateOfPrice;
 			cheapestPrice.UploadId = competitor.DailyPrice.DailyUploadId; // If we can provide traceability to calc file, then why not
-			cheapestPrice.SuggestedPrice = competitor.DailyPrice.ModalPrice + markup * 10; // since modalPrice is held in pence*10 (Catalist format)
+			cheapestPrice.SuggestedPrice = competitor.DailyPrice.ModalPrice + (int)markup * 10; // since modalPrice is held in pence*10 (Catalist format)
 			cheapestPrice.CompetitorId = competitor.CompetitorWithDriveTime.CompetitorId;
-			cheapestPrice.Markup = markup;
+			cheapestPrice.Markup =(int) markup;
 
 			db.AddOrUpdateSitePriceRecord(cheapestPrice);
 		}

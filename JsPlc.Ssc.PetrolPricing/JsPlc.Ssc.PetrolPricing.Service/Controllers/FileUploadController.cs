@@ -240,5 +240,17 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
 				return new ExceptionResult(ex, this);
 			}
 		}
+
+
+        /// <summary>
+        /// Test - Process a quarterly file - import and calc
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet] // Process files in upload list 
+        [Route("api/CalcDailyPrices")]
+        public async Task<IHttpActionResult> CalcDailyPrices()
+        {
+            return Ok(_fileService.CalcDailyPrices());
+        }
     }
 }
