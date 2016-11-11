@@ -19,7 +19,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 
         FileUpload ProcessDailyPrice(List<FileUpload> listOfFiles);
 
-        bool CalcDailyPrices();
+        bool CalcDailyPrices(int siteId);
 
         FileUpload ProcessQuarterlyFileNew(List<FileUpload> uploadedFiles);
 

@@ -248,9 +248,9 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
         /// <returns></returns>
         [HttpGet] // Process files in upload list 
         [Route("api/CalcDailyPrices")]
-        public async Task<IHttpActionResult> CalcDailyPrices()
+        public async Task<IHttpActionResult> CalcDailyPrices(int siteId)
         {
-            return Ok(_fileService.CalcDailyPrices());
+            return Ok(_fileService.CalcDailyPrices(siteId));
         }
     }
 }

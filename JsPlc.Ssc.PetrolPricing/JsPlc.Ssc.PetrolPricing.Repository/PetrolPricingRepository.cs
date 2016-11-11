@@ -373,7 +373,11 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                 if (!String.IsNullOrEmpty(storeTown)) sainsburysSites = sainsburysSites.Where(x => x.Town.ToLower().Contains(storeTown.Trim().ToLower())).ToList();
                 SitePriceViewModel sitePriceRow = null;
 
-                var fileUploadedObj = _context.FileUploads.Where(x => x.UploadDateTime.Day == forDate.Day && x.UploadDateTime.Month == forDate.Month && x.UploadDateTime.Year == forDate.Year && x.UploadTypeId==1).SingleOrDefault();
+                var fileUploadedObj =
+                    _context.FileUploads.Where(
+                        x =>
+                            x.UploadDateTime.Day == forDate.Day && x.UploadDateTime.Month == forDate.Month &&
+                            x.UploadDateTime.Year == forDate.Year && x.UploadTypeId == 1).OrderByDescending(x=>x.Id).ToList();
                 var dbList = new List<SitePriceViewModel>();
                 foreach (Site site in sainsburysSites)
                 {
@@ -391,13 +395,13 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
                     var TrialPrice = (int) site.CompetitorPriceOffset; 
                     TrialPrice = TrialPrice*10;
-                    AddSitePriceRow((int)FuelTypeItem.Diesel,  site, TrialPrice, forDate, fileUploadedObj != null,
+                    AddSitePriceRow((int)FuelTypeItem.Diesel,  site, TrialPrice, forDate, fileUploadedObj.Count>0,
                    sitePriceRow.FuelPrices);
 
-                    AddSitePriceRow((int)FuelTypeItem.Unleaded, site, TrialPrice, forDate, fileUploadedObj != null,
+                    AddSitePriceRow((int)FuelTypeItem.Unleaded, site, TrialPrice, forDate, fileUploadedObj.Count>0,
                     sitePriceRow.FuelPrices);
 
-                    AddSitePriceRow((int)FuelTypeItem.Super_Unleaded, site, TrialPrice, forDate,  fileUploadedObj != null,
+                    AddSitePriceRow((int)FuelTypeItem.Super_Unleaded, site, TrialPrice, forDate,  fileUploadedObj.Count>0,
                         sitePriceRow.FuelPrices);
                    /* var siteToCompetitorObjs =
                             transactionContext.SiteToCompetitors.Where(x => x.SiteId == siteID);
@@ -779,11 +783,29 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                     if (dailyPricesCache == null)
                     {
                         // If multiple uploads, needs to be handled here, but we assume one for now.
-                        dailyPricesCache = _context.DailyPrices.Include(x => x.DailyUpload)
-                            .Where(x => DbFunctions.TruncateTime(x.DailyUpload.UploadDateTime) == usingPricesforDate.Date)
-                            .ToDictionary(k => string.Format("{0}_{1}", k.FuelTypeId, k.CatNo), v => v);
 
-                        PetrolPricingRepositoryMemoryCache.CacheObj.Add(cacheKey, dailyPricesCache, PetrolPricingRepositoryMemoryCache.ReportsCacheExpirationPolicy(20));
+                        var fileUpload =
+                            _context.FileUploads.Where(
+                                x =>
+                                    x.UploadDateTime.Month == usingPricesforDate.Month &&
+                                    x.UploadDateTime.Day == usingPricesforDate.Day &&
+                                    x.UploadDateTime.Year == usingPricesforDate.Year).ToList();
+                        if (fileUpload.Count > 0)
+                        {
+                            int fileUploadId = fileUpload[0].Id;
+                            dailyPricesCache = _context.DailyPrices.Include(x => x.DailyUpload)
+                                .Where(
+                                    x =>
+                                        x.DailyUploadId.Value == fileUploadId)
+                                .ToDictionary(k => string.Format("{0}_{1}", k.FuelTypeId, k.CatNo), v => v);
+
+                            PetrolPricingRepositoryMemoryCache.CacheObj.Add(cacheKey, dailyPricesCache,
+                                PetrolPricingRepositoryMemoryCache.ReportsCacheExpirationPolicy(20));
+                        }
+                        else
+                        {
+                            return new List<DailyPrice>();
+                        }
                     }
                 }   
             }

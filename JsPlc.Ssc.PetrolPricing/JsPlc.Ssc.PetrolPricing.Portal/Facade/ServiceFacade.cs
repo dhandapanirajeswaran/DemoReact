@@ -753,9 +753,11 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
 
 
         // Get a list of companies
-        public bool CalcDailyPrices()
+        public bool CalcDailyPrices(int siteId)
         {
-            var response = _client.Value.GetAsync("api/CalcDailyPrices").Result;
+            var url = string.Format("api/CalcDailyPrices?siteId={0}", siteId);
+
+            var response = _client.Value.GetAsync(url).Result;
 
             var result = response.Content.ReadAsAsync<bool>().Result;
             return (response.IsSuccessStatusCode) ? result : false;

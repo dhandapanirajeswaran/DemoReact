@@ -13,6 +13,8 @@ namespace JsPlc.Ssc.PetrolPricing.Business
     {
         void DoCalcDailyPrices(DateTime? forDate);
 
+        void DoCalcDaiilyPricesForSite(int siteId, DateTime forDate);
+
         void CalcPrice(IPetrolPricingRepository db, Site site, int fuelId, PriceCalculationTaskData calcTaskData);
 
         Task<int> SaveOverridePricesAsync(List<SitePrice> pricesToSave);

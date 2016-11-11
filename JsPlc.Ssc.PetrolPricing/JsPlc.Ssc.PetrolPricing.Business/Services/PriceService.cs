@@ -79,7 +79,34 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 			}
 		}
 
+	    public void DoCalcDaiilyPricesForSite(int siteId, DateTime forDate)
+	    {
+            var fuels =
+                   _lookupService.GetFuelTypes()
+                       .Where(x => _fuelSelectionArray.Contains(x.Id))
+                       .AsQueryable()
+                       .AsNoTracking()
+                       .ToList(); // Limit calc iterations to known fuels
 
+
+            var db = _factory.Create<IPetrolPricingRepository>(CreationMethod.ServiceLocator, null);
+	        var site = db.GetSite(siteId);
+
+            var dpFile = _db.GetDailyFileAvailableForCalc(forDate);
+        
+        
+
+            foreach (var fuel in fuels.ToList())
+            {
+                var priceService = new PriceService(db, _appSettings, _lookupService, _factory);
+
+                priceService.CalcPrice(db, site, fuel.Id, new PriceCalculationTaskData
+                {
+                    ForDate = forDate,
+                    FileUpload = dpFile
+                });
+            }
+	    }
 		/// <summary>
 		/// Calculate price of a Fuel for a Given JS Site based on Pricing Rules and updates DB
 		/// As per flow diagram 30 Nov 2015
