@@ -442,7 +442,6 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                 var autoPrice = orgFuelTypeID == (int) FuelTypeItem.Super_Unleaded
                     ? sitePriceData[0].SuggestedPrice + 50
                     : sitePriceData[0].SuggestedPrice;
-                autoPrice += trialPrice;
                 autoPrice = (autoPrice/10)*10 + 9;
 
                 var overridePrice = 0;
@@ -486,9 +485,9 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                     OverridePrice = overridePrice,
 
                     TodayPrice = todayPrice,
-                    Markup =(int) site.CompetitorPriceOffsetNew,
+                    Markup =sitePriceData[0].Markup,
                     CompetitorName = competitorName,
-                    IsTrailPrice = site.CompetitorPriceOffsetNew>0,
+                    IsTrailPrice = sitePriceData[0].IsTrailPrice,
                     CompetitorPriceOffset = site.CompetitorPriceOffset
                     //  IsBasedOnCompetitor = trailPriceCompetitorId.HasValue
                 });

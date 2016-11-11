@@ -101,8 +101,8 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 				throw new ArgumentNullException("site can't be null");
 
 			var usingPricesforDate = calcTaskData.ForDate; // Uses dailyPrices of competitors Upload date matching this date
-		    int minPriceFound = 0;
-
+            int minPriceFound = int.MaxValue;
+         
 			var cheapestPrice = new SitePrice
 			{
 				SiteId = site.Id,
@@ -137,11 +137,17 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 				{
 					cheapestPrice.IsTrailPrice = true;
 					cheapestCompetitor = new KeyValuePair<CheapestCompetitor, int>(foundCompetitorPrices, 0);
+                    minPriceFound = foundCompetitorPrices.DailyPrice.ModalPrice;
+				}
+				else
+				{
+                    cheapestPrice.IsTrailPrice = true;
+                    minPriceFound = 0;
 				}
 			}
          
 			//when inheritin competitor price, if price wasn't found to this fuel type - find normal suggested price
-			if (cheapestCompetitor == null)
+            if (!cheapestPrice.IsTrailPrice)
 			{
 				List<KeyValuePair<CheapestCompetitor, int>> allCompetitors = new List<KeyValuePair<CheapestCompetitor, int>>();
 
@@ -176,20 +182,39 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 				}
 			}
 
-			if (cheapestCompetitor == null)
-			{ 
-				db.AddOrUpdateSitePriceRecord(cheapestPrice);
-				return;
-			}
+			
 
-			var competitor = cheapestCompetitor.Value.Key;
-			var markup = site.CompetitorPriceOffsetNew;
 
-			cheapestPrice.DateOfPrice = competitor.DailyPrice.DateOfPrice;
-			cheapestPrice.UploadId = competitor.DailyPrice.DailyUploadId; // If we can provide traceability to calc file, then why not
-            cheapestPrice.SuggestedPrice = minPriceFound; // since modalPrice is held in pence*10 (Catalist format)
-			cheapestPrice.CompetitorId = competitor.CompetitorWithDriveTime.CompetitorId;
-			cheapestPrice.Markup =(int) markup;
+		    if (cheapestPrice.IsTrailPrice)
+		    {
+                var markup = site.CompetitorPriceOffsetNew;
+                cheapestPrice.DateOfPrice = calcTaskData.ForDate;
+                cheapestPrice.UploadId = calcTaskData.FileUpload.Id; // If we can provide traceability to calc file, then why not
+                cheapestPrice.SuggestedPrice = minPriceFound + (int)markup * 10; // since modalPrice is held in pence*10 (Catalist format)
+		        cheapestPrice.CompetitorId = site.TrailPriceCompetitorId;
+                cheapestPrice.Markup = (int)markup;
+		    }
+		    else
+		    {
+                if (cheapestCompetitor == null)
+                {
+                    db.AddOrUpdateSitePriceRecord(cheapestPrice);
+                    return;
+                }
+                var competitor = cheapestCompetitor.Value.Key;
+                var markup = site.CompetitorPriceOffset;
+		        if (minPriceFound == int.MaxValue)
+		        {
+		            minPriceFound = 0;
+		            markup = 0;
+		        }
+                cheapestPrice.DateOfPrice = competitor.DailyPrice.DateOfPrice;
+                cheapestPrice.UploadId = competitor.DailyPrice.DailyUploadId; // If we can provide traceability to calc file, then why not
+                cheapestPrice.SuggestedPrice = minPriceFound + (int)markup * 10; // since modalPrice is held in pence*10 (Catalist format)
+                cheapestPrice.CompetitorId = competitor.CompetitorWithDriveTime.CompetitorId;
+                cheapestPrice.Markup = (int)markup;
+		    }
+			
 
 			db.AddOrUpdateSitePriceRecord(cheapestPrice);
 		}
