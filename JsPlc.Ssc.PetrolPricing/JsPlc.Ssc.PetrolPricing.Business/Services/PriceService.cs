@@ -101,7 +101,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 				throw new ArgumentNullException("site can't be null");
 
 			var usingPricesforDate = calcTaskData.ForDate; // Uses dailyPrices of competitors Upload date matching this date
-            int minPriceFound = int.MaxValue;
+		    int minPriceFound = 0;
 
 			var cheapestPrice = new SitePrice
 			{
