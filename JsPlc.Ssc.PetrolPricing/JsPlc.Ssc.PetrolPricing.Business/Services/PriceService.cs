@@ -101,6 +101,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 				throw new ArgumentNullException("site can't be null");
 
 			var usingPricesforDate = calcTaskData.ForDate; // Uses dailyPrices of competitors Upload date matching this date
+            int minPriceFound = int.MaxValue;
 
 			var cheapestPrice = new SitePrice
 			{
@@ -138,7 +139,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 					cheapestCompetitor = new KeyValuePair<CheapestCompetitor, int>(foundCompetitorPrices, 0);
 				}
 			}
-
+         
 			//when inheritin competitor price, if price wasn't found to this fuel type - find normal suggested price
 			if (cheapestCompetitor == null)
 			{
@@ -151,7 +152,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 				// 15-19.99 mins away – add 3p to minimum competitor 
 				// 20-24.99 mins away – add 4p to minimum competitor 
 				// 25-29.99 mins away – add 5p to minimum competitor 
-
+               
 				for (float f = 0; f < 6; f++)
 				{
 					float nextMin = f * 5;
@@ -162,8 +163,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 					if (currentCompetitor.HasValue)
 						allCompetitors.Add(currentCompetitor.Value);
 				}
-				int minPriceFound = int.MaxValue;
-
+				
 				foreach (var currentCompetitor in allCompetitors)
 				{
 					var priceWithMarkup = currentCompetitor.Key.DailyPrice.ModalPrice + currentCompetitor.Value * 10;
@@ -187,7 +187,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 
 			cheapestPrice.DateOfPrice = competitor.DailyPrice.DateOfPrice;
 			cheapestPrice.UploadId = competitor.DailyPrice.DailyUploadId; // If we can provide traceability to calc file, then why not
-			cheapestPrice.SuggestedPrice = competitor.DailyPrice.ModalPrice + (int)markup * 10; // since modalPrice is held in pence*10 (Catalist format)
+            cheapestPrice.SuggestedPrice = minPriceFound; // since modalPrice is held in pence*10 (Catalist format)
 			cheapestPrice.CompetitorId = competitor.CompetitorWithDriveTime.CompetitorId;
 			cheapestPrice.Markup =(int) markup;
 
