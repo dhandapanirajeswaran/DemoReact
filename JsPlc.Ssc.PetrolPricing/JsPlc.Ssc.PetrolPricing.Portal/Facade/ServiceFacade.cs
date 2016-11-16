@@ -16,20 +16,23 @@ using JsPlc.Ssc.PetrolPricing.Models.ViewModels;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Net.Mail;
+using JsPlc.Ssc.PetrolPricing.Core.Interfaces;
 
 namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
 {
     public class ServiceFacade : IDisposable
     {
         private Lazy<HttpClient> _client;
+        private ILogger _logger;
 
-        public ServiceFacade()
+        public ServiceFacade(ILogger logger)
         {
             _client = new Lazy<HttpClient>();
             _client.Value.BaseAddress = new Uri(ConfigurationManager.AppSettings["ServicesBaseUrl"] + "");
 
             _client.Value.DefaultRequestHeaders.Accept.Clear();
             _client.Value.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            _logger = logger;
         }
 
         // Get a list of sites
@@ -490,6 +493,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             }
             catch (Exception ex)
             {
+                _logger.Error(ex);
                 throw new Exception("Exception in Reports Generation. Contact support team." + System.Environment.NewLine + ex.Message, ex);
             }
             return null;
@@ -515,6 +519,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             }
             catch (Exception ex)
             {
+                _logger.Error(ex);
                 throw new Exception("Exception in Reports Generation. Contact support team." + System.Environment.NewLine + ex.Message, ex);
             }
             return null;
@@ -538,6 +543,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             }
             catch (Exception ex)
             {
+                _logger.Error(ex);
                 throw new Exception("Exception in Reports Generation. Contact support team." + System.Environment.NewLine + ex.Message, ex);
             }
             return null;
@@ -564,6 +570,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             }
             catch (Exception ex)
             {
+                _logger.Error(ex);
                 throw new Exception("Exception in Reports Generation. Contact support team." + System.Environment.NewLine + ex.Message, ex);
             }
             return null;
@@ -590,6 +597,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             }
             catch (Exception ex)
             {
+                _logger.Error(ex);
                 throw new Exception("Exception in Reports Generation. Contact support team." + System.Environment.NewLine + ex.Message, ex);
             }
             return null;
@@ -616,6 +624,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             }
             catch (Exception ex)
             {
+                _logger.Error(ex);
                 throw new Exception("Exception in Reports Generation. Contact support team." + System.Environment.NewLine + ex.Message, ex);
             }
             return null;
@@ -642,6 +651,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             }
             catch (Exception ex)
             {
+                _logger.Error(ex);
                 throw new Exception("Exception in Reports Generation. Contact support team." + System.Environment.NewLine + ex.Message, ex);
             }
             return null;
@@ -667,6 +677,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             }
             catch (Exception ex)
             {
+                _logger.Error(ex);
                 throw new Exception("Exception in Reports Generation. Contact support team." + System.Environment.NewLine + ex.Message, ex);
             }
             return null;
@@ -692,6 +703,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             }
             catch (Exception ex)
             {
+                _logger.Error(ex);
                 throw new Exception("Exception in Reports Generation. Contact support team." + System.Environment.NewLine + ex.Message, ex);
             }
             return null;

@@ -15,6 +15,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using JsPlc.Ssc.PetrolPricing.Core.Interfaces;
 using EntityState = System.Data.Entity.EntityState;
 
 namespace JsPlc.Ssc.PetrolPricing.Repository
@@ -29,10 +30,13 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
         private List<string> LstOfBandsToRemoveInNA2;
 
+        private readonly ILogger _logger;
+
       
         public PetrolPricingRepository(RepositoryContext context)
         {
             _context = context;
+            _logger = new PetrolPricingLogger();
             AddListOfBandsToRemoveInNA2();
         }
 
@@ -268,6 +272,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                 }
                 catch (Exception ce)
                 {
+                    _logger.Error(ce);
                     string str = ce.InnerException.Message;
                 }
                 //_context.Entry(site).State = EntityState.Detached;
@@ -419,6 +424,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             }
             catch (Exception ce)
             {
+                _logger.Error(ce);
                 return null;
             }
         }
@@ -753,6 +759,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             }
             catch (Exception ce)
             {
+                _logger.Error(ce);
                 return null;
             }
         }
@@ -859,6 +866,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             }
             catch (Exception ce)
             {
+                _logger.Error(ce);
                 return false;
             }
         }
@@ -976,6 +984,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                     }
                     catch (DbUpdateException e)
                     {
+                        _logger.Error(e);
                         tx.Rollback();
 
                         foreach (var dbUpdateException in e.Entries)
@@ -996,6 +1005,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                     }
                     catch (DbEntityValidationException dbEx)
                     {
+                        _logger.Error(dbEx);
                         tx.Rollback();
                         foreach (var validationErrors in dbEx.EntityValidationErrors)
                         {
@@ -1064,6 +1074,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                     }
                     catch (DbUpdateException e)
                     {
+                        _logger.Error(e);
                         tx.Rollback();
 
                         foreach (var dbUpdateException in e.Entries)
@@ -1164,6 +1175,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                     }
                     catch (DbUpdateException e)
                     {
+                        _logger.Error(e);
                         tx.Rollback();
 
                         foreach (var dbUpdateException in e.Entries)
@@ -1191,6 +1203,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                     }
                     catch (DbEntityValidationException dbEx)
                     {
+                        _logger.Error(dbEx);
                         tx.Rollback();
                         foreach (var validationErrors in dbEx.EntityValidationErrors)
                         {
@@ -1393,6 +1406,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                     }
                     catch (Exception ce)
                     {
+                        _logger.Error(ce);
                         transaction.Rollback();
                         throw;
                     }
@@ -1760,7 +1774,7 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
                 }
                 catch (Exception ce)
                 {
-
+                    _logger.Error(ce);
                 }
             }
 
@@ -2088,6 +2102,7 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
             }
             catch(Exception ce)
             {
+                _logger.Error(ce);
                 return null;
             }
         }
@@ -2563,6 +2578,7 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
             }
             catch (Exception ce)
             {
+                _logger.Error(ce);
                 return null;
             }
         }
@@ -2579,6 +2595,7 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
             }
             catch (Exception ce)
             {
+                _logger.Error(ce);
                 return false;
             }
         }
@@ -2619,6 +2636,7 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
             }
             catch (Exception ce)
             {
+                _logger.Error(ce);
                 return null;
             }
         }

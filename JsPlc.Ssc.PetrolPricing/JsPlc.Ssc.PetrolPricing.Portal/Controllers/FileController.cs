@@ -18,6 +18,8 @@ using Microsoft.Ajax.Utilities;
 using JsPlc.Ssc.PetrolPricing.Core;
 using System.Net.Http;
 using System.Globalization;
+using JsPlc.Ssc.PetrolPricing.Core.Interfaces;
+using JsPlc.Ssc.PetrolPricing.Portal.Helper;
 
 namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 {
@@ -25,14 +27,21 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
     [Authorize]
     public class FileController : Controller
     {
-        readonly ServiceFacade _serviceFacade = new ServiceFacade();
+        readonly ServiceFacade _serviceFacade;
+        private readonly ILogger _logger;
 
+        public FileController()
+        {
+            _logger = new PetrolPricingLogger();
+            _serviceFacade = new ServiceFacade(_logger);
+        }
+      
         public async Task<ActionResult> Index(string msg = "")
         {
             // Display list of existing files along with their status
             ViewBag.Message = msg;
 
-            using (var svc = new ServiceFacade())
+            using (var svc = new ServiceFacade(_logger))
             {
                 var model = await svc.GetFileUploads(null, null);
                 return View(model);
@@ -52,6 +61,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             if (existingUploads != null && existingUploads.Any())
             {
                 ViewBag.WarningMessage = StringMessages.Warning_DailyPriceFileAlreadyUploaded;
+                _logger.Information(StringMessages.Warning_DailyPriceFileAlreadyUploaded);
             }
             return View(model);
         }
@@ -73,10 +83,12 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             {
                 if (file == null || file.ContentLength <= 0)
                 {
+                    _logger.Error(new ApplicationException(StringMessages.Error_UploadedFileIsEmpty));
                     throw new ApplicationException(StringMessages.Error_UploadedFileIsEmpty);
                 }
                 else if (file.ContentLength > 3145728 && uploadTypes == 1)
                 {
+                    _logger.Error(new ApplicationException(StringMessages.Error_UploadedFileLengthGreaterThanMaxSize));
                     throw new ApplicationException(StringMessages.Error_UploadedFileLengthGreaterThanMaxSize);
                 }
 
@@ -97,7 +109,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
                 }
 
 
-                var fum = new FileUploadModel(fu, new ServiceFacade());
+                var fum = new FileUploadModel(fu, new ServiceFacade(new PetrolPricingLogger()));
 
                 var status = await fum.UploadFile(file);
 
@@ -117,10 +129,12 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             }
             catch (ApplicationException ex)
             {
+                _logger.Error(ex);
                 errorMessage = ex.Message;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                _logger.Error(ex);
                 errorMessage = StringMessages.Error_TryAgain;
             }
             return RedirectToAction("Upload", new { errMsg = errorMessage });
@@ -151,7 +165,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
                 return RedirectToAction("Upload", new { errMsg = StringMessages.Error_ReuploadFile });
             }
 
-            var fum = new FileUploadModel(fileUpload, new ServiceFacade());
+            var fum = new FileUploadModel(fileUpload, new ServiceFacade(new PetrolPricingLogger()));
 
             if (response == "Overwrite")
             {
@@ -189,7 +203,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 
         private static IEnumerable<UploadType> GetUploadTypes()
         {
-            using (var svcFacade = new ServiceFacade())
+            using (var svcFacade = new ServiceFacade(new PetrolPricingLogger()))
             {
                 return svcFacade.GetUploadTypes();
             }

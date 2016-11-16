@@ -13,10 +13,13 @@ using JsPlc.Ssc.PetrolPricing.Portal.Models;
 using System.Threading.Tasks;
 using System.IdentityModel.Tokens;
 using System;
+using System.Collections.Generic;
 using Microsoft.Owin.Security.Notifications;
 using JsPlc.Ssc.PetrolPricing.Portal.Helper.Extensions;
 using System.Web;
 using System.Web.Security;
+using JsPlc.Ssc.PetrolPricing.Core;
+
 
 namespace JsPlc.Ssc.PetrolPricing.Portal
 {
@@ -54,7 +57,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal
                         {
                             if (context.Identity.IsAuthenticated)
                             {
-                                var facade = new ServiceFacade();
+                                var facade = new ServiceFacade(new PetrolPricingLogger());
                                 var array = context.Identity.Name.Split(new[] { '#' });
                                 var userName = string.Empty;
                                 if (array == null || array.Length == 0)
@@ -143,6 +146,11 @@ namespace JsPlc.Ssc.PetrolPricing.Portal
 
 
             AntiForgeryConfig.UniqueClaimTypeIdentifier = ClaimTypes.NameIdentifier;
+
+
+           
+          
+            
         }
     }
 }

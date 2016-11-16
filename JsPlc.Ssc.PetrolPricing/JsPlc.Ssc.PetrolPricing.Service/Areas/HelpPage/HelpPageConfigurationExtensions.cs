@@ -11,6 +11,7 @@ using System.Net.Http.Headers;
 using System.Web.Http;
 using System.Web.Http.Controllers;
 using System.Web.Http.Description;
+using JsPlc.Ssc.PetrolPricing.Core;
 using JsPlc.Ssc.PetrolPricing.Service.Areas.HelpPage.ModelDescriptions;
 using JsPlc.Ssc.PetrolPricing.Service.Areas.HelpPage.Models;
 

@@ -6,11 +6,18 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using JsPlc.Ssc.PetrolPricing.Core.Interfaces;
 
 namespace JsPlc.Ssc.PetrolPricing.Core
 {
 	public class DataFileReader : IDataFileReader
 	{
+	    private readonly ILogger _logger;
+
+	    public DataFileReader()
+	    {
+	        _logger = new PetrolPricingLogger();
+	    }
 		public DataTable GetQuarterlyData(string filePathAndName, string excelFileSheetName)
 		{
          	var connectionString = string.Format("Provider=Microsoft.ACE.OLEDB.12.0;Data Source={0};Extended Properties='Excel 12.0 Xml;HDR=YES;IMEX=1'", filePathAndName);
@@ -38,7 +45,7 @@ namespace JsPlc.Ssc.PetrolPricing.Core
 		            var message =
 		                string.Format("Invalid Sheet name. Expected name start with: {0}. Fix the issue and try again.",
 		                    excelFileSheetName);
-
+                    _logger.Error(new ExcelParseFileException(message, null));
 		            throw new ExcelParseFileException(message, null);
 
 		        }
@@ -54,6 +61,7 @@ namespace JsPlc.Ssc.PetrolPricing.Core
 					}
 					catch (OleDbException ex)
 					{
+                        _logger.Error(ex);
 						if (ex.Message.Contains("Make sure that it does not include invalid characters or punctuation and that it is not too long."))
 						{
                             var message = string.Format("Invalid Sheet name. Expected name start with: {0}. Fix the issue and try again.", excelFileSheetName);
@@ -67,6 +75,7 @@ namespace JsPlc.Ssc.PetrolPricing.Core
 					}
 					catch (Exception ex)
 					{
+                        _logger.Error(ex);
                         throw new ExcelParseFileException("Unable to read excel file. Contact support team.", ex);
 					}
 					return ds.Tables[0].Copy();

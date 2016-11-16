@@ -22,6 +22,8 @@ using JsPlc.Ssc.PetrolPricing.Models.Common;
 using JsPlc.Ssc.PetrolPricing.Models.ViewModels;
 using WebGrease.Css.Extensions;
 using AutoMapper;
+using JsPlc.Ssc.PetrolPricing.Core;
+using JsPlc.Ssc.PetrolPricing.Core.Interfaces;
 
 namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
 {
@@ -30,15 +32,18 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
 		ISiteService _siteService;
 		IPriceService _priceService;
 		IEmailService _emailService;
+	    private ILogger _logger;
 		
 		public SitesController(
 			ISiteService siteService,
 			IPriceService priceService,
-			IEmailService emailService)
+			IEmailService emailService
+           )
 		{
 			_siteService = siteService;
 			_priceService = priceService;
 			_emailService = emailService;
+		    _logger = new PetrolPricingLogger();
 		}
 
 		[System.Web.Http.HttpGet]
@@ -125,6 +130,7 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
 			}
 			catch (Exception ex)
 			{
+                _logger.Error(ex);
 				return new ExceptionResult(ex, this);
 			}
 		}
@@ -181,6 +187,7 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
             }
             catch (Exception ex)
             {
+                _logger.Error(ex);
                 return new ExceptionResult(ex, this);
             }
         }
@@ -316,7 +323,8 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
 			}
 			catch (Exception ex)
 			{
-				return new ExceptionResult(ex, this);
+                _logger.Error(ex);
+                return new ExceptionResult(ex, this);
 			}
 		}
 
@@ -344,6 +352,7 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
 			}
 			catch (Exception ex)
 			{
+                _logger.Error(ex);
 				return new ExceptionResult(ex, this);
 			}
 		}
@@ -452,6 +461,7 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
             }
             catch (Exception ex)
             {
+                _logger.Error(ex);
                 return new ExceptionResult(ex, this);
             }
         }

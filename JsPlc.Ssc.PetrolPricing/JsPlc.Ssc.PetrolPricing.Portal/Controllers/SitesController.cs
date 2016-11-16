@@ -29,9 +29,14 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
     [System.Web.Mvc.Authorize]
     public class SitesController : Controller
     {
-        private readonly ServiceFacade _serviceFacade = new ServiceFacade();
+        private readonly ServiceFacade _serviceFacade;
+        private readonly ILogger _logger;
 
-
+        public SitesController()
+        {
+            _logger = new PetrolPricingLogger();
+            _serviceFacade = new ServiceFacade(_logger);
+        }
         // AJAX Methods
 
         // Coded Only - wired up the postback to backend
@@ -65,6 +70,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             }
             catch (Exception ex)
             {
+                _logger.Error(ex);
                 return new HttpResponseMessage(HttpStatusCode.BadRequest).ToJsonResult(postbackKey1, null, "ApiFail",
                     ex.Message);
             }
@@ -92,6 +98,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             }
             catch (Exception ex)
             {
+                _logger.Error(ex);
                 return new HttpResponseMessage(HttpStatusCode.BadRequest)
                     .ToJsonResult(sendLog, null, "ApiFail", ex.Message);
             }
@@ -160,6 +167,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             }
             catch (Exception ex)
             {
+                _logger.Error(ex);
                 return new HttpResponseMessage(HttpStatusCode.BadRequest)
                     .ToJsonResult(sendLog, null, "ApiFail", ex.Message);
             }
@@ -191,6 +199,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             }
             catch(Exception ce)
             {
+                _logger.Error(ce);
                 return View();
             }
         }

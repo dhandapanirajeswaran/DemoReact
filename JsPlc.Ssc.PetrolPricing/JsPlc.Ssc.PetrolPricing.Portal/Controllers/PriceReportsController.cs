@@ -14,6 +14,8 @@ using JsPlc.Ssc.PetrolPricing.Portal.Facade;
 using System;
 using System.Linq;
 using System.Web.Mvc;
+using JsPlc.Ssc.PetrolPricing.Core;
+using JsPlc.Ssc.PetrolPricing.Core.Interfaces;
 
 
 namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
@@ -22,8 +24,15 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 	[System.Web.Mvc.Authorize]
 	public class PriceReportsController : Controller
 	{
-		private readonly ServiceFacade _serviceFacade = new ServiceFacade();
+		private readonly ServiceFacade _serviceFacade ;
 
+	    private readonly ILogger _logger;
+
+	    public PriceReportsController()
+	    {
+	        _logger = new PetrolPricingLogger();
+            _serviceFacade = new ServiceFacade(_logger);
+	    }
 		#region Actions
 		public ActionResult Index(string msg = "")
 		{
@@ -59,8 +68,9 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 
                 return View(item);
             }
-            catch (Exception ce)
+            catch (Exception ex)
             {
+                _logger.Error(ex);
                 return View();
             }
 		}
@@ -84,8 +94,9 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 
                 return View(item);
             }
-            catch (Exception ce)
+            catch (Exception ex)
             {
+                _logger.Error(ex);
                 return View();
             }
 
@@ -117,6 +128,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             }
             catch (Exception ce)
             {
+                _logger.Error(ce);
                 return View();
             }
 		}
@@ -133,6 +145,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             }
             catch (Exception ce)
             {
+                _logger.Error(ce);
                 return View();
             }
 		}
@@ -179,6 +192,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             }
             catch(Exception ce)
             {
+                _logger.Error(ce);
                 return View();
             }
 		}
@@ -223,6 +237,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             }
             catch (Exception ce)
             {
+                _logger.Error(ce);
                 return View();
             }
 		}
@@ -252,6 +267,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             }
             catch (Exception ce)
             {
+                _logger.Error(ce);
                 return View();
             }
 		}

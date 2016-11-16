@@ -13,6 +13,8 @@ using System.Runtime.InteropServices;
 using System.Runtime.Remoting.Channels;
 using System.Text;
 using EntityFramework.Utilities;
+using JsPlc.Ssc.PetrolPricing.Core;
+using JsPlc.Ssc.PetrolPricing.Core.Interfaces;
 using JsPlc.Ssc.PetrolPricing.Models;
 using JsPlc.Ssc.PetrolPricing.Models.Enums;
 using MoreLinq;
@@ -22,6 +24,11 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 {
     public class RepositoryInitializer : DropCreateDatabaseIfModelChanges<RepositoryContext>
     {
+        private readonly ILogger _logger;
+        public RepositoryInitializer()
+        {
+            _logger = new PetrolPricingLogger();
+        }
         public override void InitializeDatabase(RepositoryContext context)
         {
 			//disabling initialisation - moved to dacpack updating strategy
@@ -300,6 +307,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                 }
                 catch (Exception ex)
                 {
+                    _logger.Error(ex);
                     throw new Exception("Script failed:" + sqlScript + "---" + ex.Message + ex.StackTrace, ex);
                 }
                 finally

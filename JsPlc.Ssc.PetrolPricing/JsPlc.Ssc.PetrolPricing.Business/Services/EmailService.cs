@@ -21,6 +21,7 @@ using MoreLinq;
 using System.Diagnostics;
 using System.IO;
 using JsPlc.Ssc.PetrolPricing.Core;
+using JsPlc.Ssc.PetrolPricing.Core.Interfaces;
 
 namespace JsPlc.Ssc.PetrolPricing.Business
 {
@@ -35,6 +36,8 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 
 		protected readonly IAppSettings _appSettings;
 
+	    protected readonly ILogger _logger;
+
 		public EmailService(IPetrolPricingRepository db,
 			IAppSettings appSettings,
 			IFactory factory)
@@ -42,6 +45,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 			_db = db;
 			_factory = factory;
 			_appSettings = appSettings;
+		    _logger = new PetrolPricingLogger();
 		}
 
 		/// <summary>
@@ -141,6 +145,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 				}
 				catch (Exception ex)
 				{
+                    _logger.Error(ex);
 					EmailSendLog existingEntry;
 					if (!_sendLog.TryGetValue(site.Id, out existingEntry))
 					{
@@ -213,6 +218,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 				}
 				catch (Exception ex)
 				{
+                    _logger.Error(ex);
 					Debug.WriteLine("TestSendMail: The email was not sent.");
 					var innerMsg = (ex.InnerException != null) ? ex.InnerException.Message : "";
 					result = "TestSendMail: Error message: " + ex.Message + innerMsg;

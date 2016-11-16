@@ -12,6 +12,8 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web.Http;
+using JsPlc.Ssc.PetrolPricing.Core;
+using JsPlc.Ssc.PetrolPricing.Core.Interfaces;
 using JsPlc.Ssc.PetrolPricing.Models;
 using JsPlc.Ssc.PetrolPricing.Models.Common;
 using JsPlc.Ssc.PetrolPricing.Models.ViewModels;
@@ -25,16 +27,19 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 		protected readonly ILookupService _lookupService;
 		protected readonly IFactory _factory;
 		protected readonly IAppSettings _appSettings;
+        protected readonly ILogger _logger;
 
 		public PriceService(IPetrolPricingRepository db,
 			IAppSettings appSettings,
 			ILookupService lookupSerivce,
-			IFactory factory)
+			IFactory factory
+            )
 		{
 			_db = db;
 			_lookupService = lookupSerivce;
 			_factory = factory;
 			_appSettings = appSettings;
+		    _logger = new PetrolPricingLogger();
 		}
 
 		private readonly int[] _fuelSelectionArray = new[] { 1, 2, 6, }; // superunl, unl, diesel,  
@@ -74,6 +79,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 			}
 			catch (Exception ex)
 			{
+                _logger.Error(ex);
 				_db.UpdateImportProcessStatus(12, dpFile); //CalcFailed 12
 				_db.LogImportError(dpFile, string.Format("Exception: {0}", ex.ToString()), 0);
 			}
@@ -389,6 +395,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 		    }
 		    catch (Exception ce)
 		    {
+                _logger.Error(ce);
 		        int j = 0;
 		    }
 		}

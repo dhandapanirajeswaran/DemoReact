@@ -11,6 +11,8 @@ using System.Net.Http.Formatting;
 using System.Net.Http.Headers;
 using System.Web.Http.Description;
 using System.Xml.Linq;
+using JsPlc.Ssc.PetrolPricing.Core;
+using JsPlc.Ssc.PetrolPricing.Core.Interfaces;
 using Newtonsoft.Json;
 
 namespace JsPlc.Ssc.PetrolPricing.Service.Areas.HelpPage
@@ -20,11 +22,13 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Areas.HelpPage
     /// </summary>
     public class HelpPageSampleGenerator
     {
+        private readonly ILogger _logger;
         /// <summary>
         /// Initializes a new instance of the <see cref="HelpPageSampleGenerator"/> class.
         /// </summary>
         public HelpPageSampleGenerator()
         {
+            _logger = new PetrolPricingLogger();
             ActualHttpMessageTypes = new Dictionary<HelpPageSampleKey, Type>();
             ActionSamples = new Dictionary<HelpPageSampleKey, object>();
             SampleObjects = new Dictionary<Type, object>();
@@ -197,8 +201,9 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Areas.HelpPage
                             break;
                         }
                     }
-                    catch
+                    catch(Exception ce)
                     {
+                        _logger.Error(ce);
                         // Ignore any problems encountered in the factory; go on to the next one (if any).
                     }
                 }
@@ -332,6 +337,7 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Areas.HelpPage
             }
             catch (Exception e)
             {
+                _logger.Error(e);
                 sample = new InvalidSample(String.Format(
                     CultureInfo.CurrentCulture,
                     "An exception has occurred while using the formatter '{0}' to generate sample for media type '{1}'. Exception message: {2}",
@@ -380,9 +386,9 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Areas.HelpPage
                 object parsedJson = JsonConvert.DeserializeObject(str);
                 return JsonConvert.SerializeObject(parsedJson, Formatting.Indented);
             }
-            catch
+            catch(Exception ce)
             {
-                // can't parse JSON, return the original string
+                 // can't parse JSON, return the original string
                 return str;
             }
         }
@@ -395,8 +401,9 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Areas.HelpPage
                 XDocument xml = XDocument.Parse(str);
                 return xml.ToString();
             }
-            catch
+            catch(Exception ce)
             {
+              
                 // can't parse XML, return the original string
                 return str;
             }

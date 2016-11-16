@@ -12,6 +12,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using JsPlc.Ssc.PetrolPricing.Core.Interfaces;
 
 namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 {
@@ -33,7 +34,7 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 		Mock<IAppSettings> _mockAppSettings;
 		Mock<IPriceService> _mockPriceService;
 		Mock<IDataFileReader> _mockDataFileReader;
-
+     
 		[SetUp]
 		public void SetUp()
 		{
@@ -283,7 +284,7 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 
 			var testFilePathAndName = Path.Combine(TestFileFolderPath, testFileToUpload.StoredFileName);
 
-			var testFileData = new DataFileReader().GetQuarterlyData(testFilePathAndName, QuarterlyFileDataSheetName);
+            var testFileData = new DataFileReader().GetQuarterlyData(testFilePathAndName, QuarterlyFileDataSheetName);
 
 			_mockDataFileReader
 				.Setup(dfr => dfr.GetQuarterlyData(testFilePathAndName, QuarterlyFileDataSheetName))
@@ -432,7 +433,7 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 
 			var testFilePathAndName = Path.Combine(TestFileFolderPath, testFileToUpload.StoredFileName);
 
-			var testFileData = new DataFileReader().GetQuarterlyData(testFilePathAndName, QuarterlyFileDataSheetName);
+            var testFileData = new DataFileReader().GetQuarterlyData(testFilePathAndName, QuarterlyFileDataSheetName);
 
 			_mockDataFileReader
 				.Setup(dfr => dfr.GetQuarterlyData(testFilePathAndName, QuarterlyFileDataSheetName))
@@ -554,7 +555,7 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 
 			var testFilePathAndName = Path.Combine(TestFileFolderPath, testFileToUpload.StoredFileName);
 
-			var testFileData = new DataFileReader().GetQuarterlyData(testFilePathAndName, QuarterlyFileDataSheetName);
+            var testFileData = new DataFileReader().GetQuarterlyData(testFilePathAndName, QuarterlyFileDataSheetName);
 
 			_mockDataFileReader
 				.Setup(dfr => dfr.GetQuarterlyData(testFilePathAndName, QuarterlyFileDataSheetName))
@@ -711,7 +712,7 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 			{
 				var testFilePathAndName = Path.Combine(TestFileFolderPath, testFileToUpload.StoredFileName);
 
-				var testFileData = new DataFileReader().GetQuarterlyData(testFilePathAndName, QuarterlyFileDataSheetName);
+                var testFileData = new DataFileReader().GetQuarterlyData(testFilePathAndName, QuarterlyFileDataSheetName);
 
 				_mockDataFileReader
 					.Setup(dfr => dfr.GetQuarterlyData(testFilePathAndName, QuarterlyFileDataSheetName))
@@ -757,7 +758,7 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 
 			var testFilePathAndName = Path.Combine(TestFileFolderPath, testFileToUpload.StoredFileName);
 
-			var testFileData = new DataFileReader().GetQuarterlyData(testFilePathAndName, QuarterlyFileDataSheetName);
+            var testFileData = new DataFileReader().GetQuarterlyData(testFilePathAndName, QuarterlyFileDataSheetName);
 
 			_mockDataFileReader
 				.Setup(dfr => dfr.GetQuarterlyData(testFilePathAndName, QuarterlyFileDataSheetName))

@@ -9,6 +9,7 @@ using System.Linq;
 using System.Net.Mail;
 using System.Text;
 using System.Threading.Tasks;
+using JsPlc.Ssc.PetrolPricing.Core.Interfaces;
 
 namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 {
@@ -25,7 +26,7 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 		Mock<IPetrolPricingRepository> _mockRepository;
 		Mock<IAppSettings> _mockAppSettings;
 		Mock<IFactory> _mockFactory;
-
+    
 		Mock<ISmtpClient> _mockSmtpClient;
 
 		Models.Site _site;
@@ -54,6 +55,7 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 				.Setup(f => f.Create<ISmtpClient>(CreationMethod.ServiceLocator, null))
 				.Returns(_mockSmtpClient.Object);
 
+          
 
 			_site = new Models.Site
 			{
@@ -134,7 +136,7 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 
 			List<Models.Site> sites = new List<Models.Site> { _site };
 
-			var sut = new EmailService(_mockRepository.Object, _mockAppSettings.Object, _mockFactory.Object);
+            var sut = new EmailService(_mockRepository.Object, _mockAppSettings.Object, _mockFactory.Object);
 
 			#endregion
 			//Act
@@ -177,7 +179,7 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 
 			List<Models.Site> sites = new List<Models.Site> { _site };
 
-			var sut = new EmailService(_mockRepository.Object, _mockAppSettings.Object, _mockFactory.Object);
+            var sut = new EmailService(_mockRepository.Object, _mockAppSettings.Object, _mockFactory.Object);
 
 			#endregion
 			//Act

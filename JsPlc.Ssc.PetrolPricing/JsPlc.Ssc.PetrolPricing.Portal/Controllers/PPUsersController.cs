@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Script.Services;
+using JsPlc.Ssc.PetrolPricing.Core;
+using JsPlc.Ssc.PetrolPricing.Core.Interfaces;
 using JsPlc.Ssc.PetrolPricing.Models;
 using JsPlc.Ssc.PetrolPricing.Models.Common;
 using JsPlc.Ssc.PetrolPricing.Models.ViewModels;
@@ -23,7 +25,14 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
     [System.Web.Mvc.Authorize]
     public class PPUsersController : Controller
     {
-        private readonly ServiceFacade _serviceFacade = new ServiceFacade();
+        private readonly ServiceFacade _serviceFacade ;
+        private readonly ILogger _logger;
+
+        public PPUsersController()
+        {
+            _logger = new PetrolPricingLogger();
+            _serviceFacade = new ServiceFacade(_logger);
+        }
 
         public ActionResult Index()
         {
@@ -33,8 +42,9 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
                 // Filtering based on search value     
                 return View(model.ToList());
             }
-            catch (Exception ce)
+            catch (Exception ex)
             {
+                _logger.Error(ex);
                 return View();
             }
         }
@@ -60,3 +70,4 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 
     }
 }
+

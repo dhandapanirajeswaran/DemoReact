@@ -7,6 +7,8 @@ using System.Web.Compilation;
 using System.Web.Http;
 using System.Web.Http.Results;
 using JsPlc.Ssc.PetrolPricing.Business;
+using JsPlc.Ssc.PetrolPricing.Core;
+using JsPlc.Ssc.PetrolPricing.Core.Interfaces;
 using JsPlc.Ssc.PetrolPricing.Models;
 using JsPlc.Ssc.PetrolPricing.Repository;
 using Newtonsoft.Json;
@@ -16,10 +18,12 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
 	public class SettingsController : ApiController
 	{
 		IAppSettings _appSettings;
+	    private ILogger _logger;
 
-		public SettingsController(IAppSettings appSettings)
+        public SettingsController(IAppSettings appSettings)
 		{
 			_appSettings = appSettings;
+		    _logger = new PetrolPricingLogger();
 		}
 
 		[Route("api/settings/{key}")]
@@ -36,6 +40,7 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
 			}
 			catch (Exception ex)
 			{
+                _logger.Error(ex);
 				return new ExceptionResult(ex, this);
 			}
 		}

@@ -12,14 +12,24 @@ using JsPlc.Ssc.PetrolPricing.Portal.Models;
 using Microsoft.Owin.Security.Cookies;
 using Microsoft.Owin.Security.OpenIdConnect;
 using System.Diagnostics;
+using System.Web.Http.ExceptionHandling;
+using System.Xml.Linq;
+using JsPlc.Ssc.PetrolPricing.Core;
+using JsPlc.Ssc.PetrolPricing.Core.Interfaces;
 using JsPlc.Ssc.PetrolPricing.Portal.Helper.Extensions;
-using log4net;
+using WebGrease;
+using WebGrease.Extensions;
 
 namespace JsPlc.Ssc.PetrolPricing.Portal
 {
     public class MvcApplication : System.Web.HttpApplication
     {
-        private static ILog logger = LogManager.GetLogger(typeof(MvcApplication));
+        private  ILogger _logger ;
+
+        public MvcApplication()
+        {
+            _logger = new PetrolPricingLogger();
+        }
 
         protected void Application_Start()
         {
@@ -27,12 +37,21 @@ namespace JsPlc.Ssc.PetrolPricing.Portal
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
-            //RepositoryInit.InitializeDatabase();
+
+            String StrAppPath = ConfigurationManager.AppSettings["LogFilePath"];
+
+            XDocument document = XDocument.Load(Server.MapPath("~/Web.config"));
+            var log = document.Root.Element("elmah").Element("errorLog");
+
+            log.SetAttributeValue("logPath", StrAppPath);
+            document.Save(Server.MapPath("~/Web.config"));
+        
+           
         }
 
         protected void Application_Error(Object sender, EventArgs e)
         {
-            logger.Error("MvcApplicationError", Server.GetLastError());
+            _logger.Error(Server.GetLastError());
         }
 
         protected void Application_PostAuthenticateRequest(Object sender, EventArgs e)

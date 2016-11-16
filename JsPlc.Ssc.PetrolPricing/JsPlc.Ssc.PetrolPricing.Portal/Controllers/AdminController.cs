@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
 using System.Web.Mvc;
+using JsPlc.Ssc.PetrolPricing.Core;
+using JsPlc.Ssc.PetrolPricing.Core.Interfaces;
 using JsPlc.Ssc.PetrolPricing.Portal.Facade;
 
 
@@ -10,7 +12,13 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
     [Authorize]
     public class AdminController : Controller
     {
-        readonly ServiceFacade _serviceFacade = new ServiceFacade();
+        readonly ServiceFacade _serviceFacade;
+        private readonly ILogger _logger;
+        public AdminController()
+        {
+            _logger = new PetrolPricingLogger();
+            _serviceFacade = new ServiceFacade(_logger);
+        }
 
         [HttpGet]
         public ActionResult Index(string option = "")
@@ -25,7 +33,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             // Display list of existing files along with their status
             if (option == "") return View(model: "");
 
-            using (var svc = new ServiceFacade())
+            using (var svc = new ServiceFacade(_logger))
             {
                 string msg = await svc.ReInitDb(option);
                 ViewBag.Message = msg;
