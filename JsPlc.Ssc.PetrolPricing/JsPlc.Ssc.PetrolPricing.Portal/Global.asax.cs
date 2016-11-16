@@ -40,11 +40,11 @@ namespace JsPlc.Ssc.PetrolPricing.Portal
 
             String StrAppPath = ConfigurationManager.AppSettings["LogFilePath"];
 
-            XDocument document = XDocument.Load(Server.MapPath("~/Web.config"));
+          /*  XDocument document = XDocument.Load(Server.MapPath("~/Web.config"));
             var log = document.Root.Element("elmah").Element("errorLog");
 
             log.SetAttributeValue("logPath", StrAppPath);
-            document.Save(Server.MapPath("~/Web.config"));
+            document.Save(Server.MapPath("~/Web.config"));*/
         
            
         }
