@@ -7,4 +7,8 @@
   <parameter name="PetrolPricingLogins-Web.config Connection String" defaultValue="">
     <parameterEntry kind="XmlFile" scope="\\web.config$" match="/configuration/connectionStrings/add[@name='PetrolPricingLogins']" />
   </parameter>
+
+	<parameter name="elmahLogPath" defaultValue="~/App_Data/ElmahErrorLogs">
+		<parameterEntry kind="XmlFile" scope="\\web.config$" match="/configuration/elmah/errorLog/@logPath" />
+	</parameter>
 </parameters>

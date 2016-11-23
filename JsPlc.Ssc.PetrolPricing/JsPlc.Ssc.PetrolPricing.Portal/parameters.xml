@@ -19,4 +19,7 @@
   <parameter name="PostLogoutRedirectUri-Web.config App Setting" defaultValue="http://petrolpricing">
     <parameterEntry kind="XmlFile" scope="\\web.config$" match="/configuration/appSettings/add[@key='ida:PostLogoutRedirectUri']/@value" />
   </parameter>
+  <parameter name="elmahLogPath" defaultValue="~/App_Data/ElmahErrorLogs">
+    <parameterEntry kind="XmlFile" scope="\\web.config$" match="/configuration/elmah/errorLog/@logPath" />
+  </parameter> 
 </parameters>
