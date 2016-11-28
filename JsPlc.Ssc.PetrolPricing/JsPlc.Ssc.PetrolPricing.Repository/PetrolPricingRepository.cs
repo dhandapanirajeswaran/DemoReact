@@ -743,10 +743,10 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                                     FuelTypeId = (int)pgRow["FuelTypeId"],
 
                                     // Today's prices (whatever was calculated yesterday OR last)
-                                    TodayPrice = todayPrice.HasValue ? todayPrice.Value : 0 + nOffSet,
+                                    TodayPrice = todayPrice.HasValue ? todayPrice.Value + nOffSet : 0 + nOffSet,
 
                                     // Today's prices (whatever was calculated yesterday OR last)
-                                    YestPrice = yestPrice.HasValue ? yestPrice.Value : 0 + nOffSet,
+                                    YestPrice = yestPrice.HasValue ? yestPrice.Value + nOffSet : 0 + nOffSet,
 
                                     //Difference between yesterday and today
                                     Difference = todayPrice.HasValue && yestPrice.HasValue ? todayPrice - yestPrice : null

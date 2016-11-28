@@ -59,8 +59,8 @@
     <meta name="description" content="Petrol pricing application for responding to market prices" />
     @RenderSection("head", false)
 </head>
-<body onclick="ReloadMe()">
-    <div class="navbar navbar-inverse navbar-fixed-top" >
+<body onclick="ReloadMe()" style="margin-left:-100px; padding: 0px;">
+    <div class="navbar navbar-inverse navbar-fixed-top">
         <div class="container">
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
@@ -70,7 +70,7 @@
                 </button>
                 <a class="navbar-brand" rel="home" href="/" title="Sainsbury's Petrol Pricing">
                     <img title="Sainsbury's Petrol Pricing" src="@Url.Content("~/images/logo.png")" />
-                       Petrol Pricing
+                    Petrol Pricing
                 </a>
             </div>
             <div class="navbar-collapse collapse">
@@ -97,8 +97,8 @@
             </footer>
         </div>
     </div>
-     @RenderSection("scripts", required: false)
-   
+    @RenderSection("scripts", required: false)
+
     <script type="text/javascript">
         require(['bootstrap'], function () {
 
@@ -181,23 +181,23 @@
         });
 
 
-       
+
     </script>
 
-    
-    <script type="text/javascript">
-    var config = {
-        '.chosen-select': {},
-        '.chosen-select-deselect': { allow_single_deselect: true },
-        '.chosen-select-no-single': { disable_search_threshold: 10 },
-        '.chosen-select-no-results': { no_results_text: 'Oops, nothing found!' },
-        '.chosen-select-width': { width: "95%" }
-    }
-    for (var selector in config) {
-        $(selector).chosen(config[selector]);
-    }
 
-    
+    <script type="text/javascript">
+        var config = {
+            '.chosen-select': {},
+            '.chosen-select-deselect': { allow_single_deselect: true },
+            '.chosen-select-no-single': { disable_search_threshold: 10 },
+            '.chosen-select-no-results': { no_results_text: 'Oops, nothing found!' },
+            '.chosen-select-width': { width: "95%" }
+        }
+        for (var selector in config) {
+            $(selector).chosen(config[selector]);
+        }
+
+
     </script>
 
 </body>

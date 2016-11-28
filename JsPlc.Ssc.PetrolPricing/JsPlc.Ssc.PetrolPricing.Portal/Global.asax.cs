@@ -37,14 +37,6 @@ namespace JsPlc.Ssc.PetrolPricing.Portal
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
-
-            String StrAppPath = ConfigurationManager.AppSettings["LogFilePath"];
-
-          /*  XDocument document = XDocument.Load(Server.MapPath("~/Web.config"));
-            var log = document.Root.Element("elmah").Element("errorLog");
-
-            log.SetAttributeValue("logPath", StrAppPath);
-            document.Save(Server.MapPath("~/Web.config"));*/
         
            
         }
