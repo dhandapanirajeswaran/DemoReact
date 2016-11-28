@@ -460,7 +460,7 @@
                                     <!-- /ko -->
                                     <!-- ko if: hasCompetitors() -->
                                     <!-- ko foreach: competitors -->
-                                    <tr data-bind="style: { background : $parent.FuelPricesToDisplay[0].FuelPrice.CompetitorName == Brand + '/' + StoreName ?  'yellow' : 'lightgray'}">
+                                    <tr data-bind="style: { background : $parent.FuelPricesToDisplay[0].FuelPrice.CompetitorName == Brand + '/' + StoreName  && $parent.FuelPricesToDisplay[0].FuelPrice.AutoPrice >0 ?  'yellow' : 'lightgray'}">
                                         <td><span data-bind="text: Brand"></span></td>
                                         <td><span data-bind="text: StoreName"></span></td>
                                         <td><span data-bind="text: DriveTime"></span></td>
@@ -469,7 +469,7 @@
                                         <!-- ko foreach: FuelPricesToDisplay -->
                                         <!-- ko if: siteSupportsFuel -->
                                         <td style="border-left: 1px solid #ccc"><span data-bind="text: FuelPrice.YestPrice"></span></td>
-                                        <td style="border-left: 1px solid #ccc;" >
+                                        <td style="border-left: 1px solid #ccc;">
                                             <span data-bind="text: FuelPrice.TodayPrice"></span>
 
 
@@ -484,7 +484,7 @@
 
 
                                         </td>
-                                        <td style="border-left: 1px solid #ccc;" >
+                                        <td style="border-left: 1px solid #ccc;">
 
                                             <div data-bind="if: FuelPrice.FuelTypeId==2">
                                                 <span data-bind="text: (FuelPrice.TodayPrice - $parents[1].FuelPricesToDisplay[0].FuelPrice.AutoPrice).toFixed(1) "></span>
