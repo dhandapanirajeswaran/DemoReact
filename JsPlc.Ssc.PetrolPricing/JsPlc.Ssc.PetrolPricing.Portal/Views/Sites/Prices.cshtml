@@ -487,31 +487,51 @@
                                         <td style="border-left: 1px solid #ccc;">
 
                                             <div data-bind="if: FuelPrice.FuelTypeId==2">
-                                                <span data-bind="text: (FuelPrice.TodayPrice - $parents[1].FuelPricesToDisplay[0].FuelPrice.AutoPrice).toFixed(1) "></span>
-                                                <i data-bind="attr: {
-                                 class: ( (FuelPrice.TodayPrice - $parents[1].FuelPricesToDisplay[0].FuelPrice.AutoPrice).toFixed(1) == 0 || (FuelPrice.TodayPrice - $parents[1].FuelPricesToDisplay[0].FuelPrice.AutoPrice).toFixed(1) == 'NaN' ) ? 'fa fa-arrow-circle-o-right'
-                                            : ((FuelPrice.TodayPrice - $parents[1].FuelPricesToDisplay[0].FuelPrice.AutoPrice).toFixed(1) <= 0.1) ? 'fa fa-arrow-circle-o-down': 'fa fa-arrow-circle-o-up',
-                                    style: ((FuelPrice.TodayPrice - $parents[1].FuelPricesToDisplay[0].FuelPrice.AutoPrice).toFixed(1) == 0 || (FuelPrice.TodayPrice - $parents[1].FuelPricesToDisplay[0].FuelPrice.AutoPrice).toFixed(1) == 'NaN') ? 'color: grey'
-                                            :( (FuelPrice.TodayPrice - $parents[1].FuelPricesToDisplay[0].FuelPrice.AutoPrice).toFixed(1) <= 0.1) ? 'color: red': 'color: green'
+                                                    <div data-bind="if: ($parents[1].FuelPricesToDisplay[0].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1)  != 'NaN' ">
+                                                        <span data-bind="text: ($parents[1].FuelPricesToDisplay[0].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1) "></span>
+                                                        <i data-bind="attr: {
+                                 class: ( ($parents[1].FuelPricesToDisplay[0].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1)   == 0 || ($parents[1].FuelPricesToDisplay[0].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1)  == 'NaN' ) ? 'fa fa-arrow-circle-o-right'
+                                            : (($parents[1].FuelPricesToDisplay[0].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1)  <= 0.1) ? 'fa fa-arrow-circle-o-down': 'fa fa-arrow-circle-o-up',
+                                    style: (($parents[1].FuelPricesToDisplay[0].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1)  == 0 || ($parents[1].FuelPricesToDisplay[0].FuelPrice.AutoPrice - FuelPrice.TodayPrice ).toFixed(1) == 'NaN') ? 'color: grey'
+                                            :( ($parents[1].FuelPricesToDisplay[0].FuelPrice.AutoPrice - FuelPrice.TodayPrice ).toFixed(1)  <= 0.1) ? 'color: red': 'color: green'
                                             }"></i>
+                                                    </div>
+                                                    <div data-bind="if: ($parents[1].FuelPricesToDisplay[0].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1) == 'NaN' ">
+                                                        <span>n/a</span>
+                                                    </div>
+                                                  
+                                               
                                             </div>
                                             <div data-bind="if: FuelPrice.FuelTypeId==6">
-                                                <span data-bind="text: (FuelPrice.TodayPrice - $parents[1].FuelPricesToDisplay[1].FuelPrice.AutoPrice).toFixed(1) "></span>
-                                                <i data-bind="attr: {
-                                 class: ( (FuelPrice.TodayPrice - $parents[1].FuelPricesToDisplay[1].FuelPrice.AutoPrice).toFixed(1) == 0 || (FuelPrice.TodayPrice - $parents[1].FuelPricesToDisplay[1].FuelPrice.AutoPrice).toFixed(1) == 'NaN' ) ? 'fa fa-arrow-circle-o-right'
-                                            : ((FuelPrice.TodayPrice - $parents[1].FuelPricesToDisplay[1].FuelPrice.AutoPrice).toFixed(1) <= 0.1) ? 'fa fa-arrow-circle-o-down': 'fa fa-arrow-circle-o-up',
-                                    style: ((FuelPrice.TodayPrice - $parents[1].FuelPricesToDisplay[1].FuelPrice.AutoPrice).toFixed(1) == 0  || (FuelPrice.TodayPrice - $parents[1].FuelPricesToDisplay[1].FuelPrice.AutoPrice).toFixed(1) == 'NaN' ) ? 'color: grey'
-                                            :( (FuelPrice.TodayPrice - $parents[1].FuelPricesToDisplay[1].FuelPrice.AutoPrice).toFixed(1) <= 0.1) ? 'color: red': 'color: green'
+                                                  
+                                                <div data-bind="if: ($parents[1].FuelPricesToDisplay[1].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1)  != 'NaN' ">
+                                                    <span data-bind="text: ($parents[1].FuelPricesToDisplay[1].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1) "></span>
+                                                    <i data-bind="attr: {
+                                 class: ( ($parents[1].FuelPricesToDisplay[1].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1) == 0 || ($parents[1].FuelPricesToDisplay[1].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1) == 'NaN' ) ? 'fa fa-arrow-circle-o-right'
+                                            : (($parents[1].FuelPricesToDisplay[1].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1) <= 0.1) ? 'fa fa-arrow-circle-o-down': 'fa fa-arrow-circle-o-up',
+                                    style: (($parents[1].FuelPricesToDisplay[1].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1) == 0  || ($parents[1].FuelPricesToDisplay[1].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1) == 'NaN' ) ? 'color: grey'
+                                            :( ($parents[1].FuelPricesToDisplay[1].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1) <= 0.1) ? 'color: red': 'color: green'
                                             }"></i>
+                                                </div>
+                                                <div data-bind="if: ($parents[1].FuelPricesToDisplay[1].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1) == 'NaN' ">
+                                                    <span>n/a</span>
+                                                </div>
+                                                
                                             </div>
                                             <div data-bind="if: FuelPrice.FuelTypeId==1">
-                                                <span data-bind="text: (FuelPrice.TodayPrice - $parents[1].FuelPricesToDisplay[2].FuelPrice.AutoPrice).toFixed(1) "></span>
-                                                <i data-bind="attr: {
-                                 class: ( (FuelPrice.TodayPrice - $parents[1].FuelPricesToDisplay[2].FuelPrice.AutoPrice).toFixed(1) == 0 || (FuelPrice.TodayPrice - $parents[1].FuelPricesToDisplay[2].FuelPrice.AutoPrice).toFixed(1) == 'NaN'  ) ? 'fa fa-arrow-circle-o-right'
-                                            : ((FuelPrice.TodayPrice - $parents[1].FuelPricesToDisplay[2].FuelPrice.AutoPrice).toFixed(1) <= 0.1) ? 'fa fa-arrow-circle-o-down': 'fa fa-arrow-circle-o-up',
-                                    style: ((FuelPrice.TodayPrice - $parents[1].FuelPricesToDisplay[2].FuelPrice.AutoPrice).toFixed(1) == 0 || (FuelPrice.TodayPrice - $parents[1].FuelPricesToDisplay[2].FuelPrice.AutoPrice).toFixed(1) == 'NaN') ? 'color: grey'
-                                            :( (FuelPrice.TodayPrice - $parents[1].FuelPricesToDisplay[2].FuelPrice.AutoPrice).toFixed(1) <= 0.1) ? 'color: red': 'color: green'
+                                                <div data-bind="if: ($parents[1].FuelPricesToDisplay[2].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1)  != 'NaN' ">
+                                                    <span data-bind="text: ($parents[1].FuelPricesToDisplay[2].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1) "></span>
+                                                    <i data-bind="attr: {
+                                 class: ( ($parents[1].FuelPricesToDisplay[2].FuelPrice.AutoPrice -FuelPrice.TodayPrice).toFixed(1) == 0 || ($parents[1].FuelPricesToDisplay[2].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1) == 'NaN'  ) ? 'fa fa-arrow-circle-o-right'
+                                            : (($parents[1].FuelPricesToDisplay[2].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1) <= 0.1) ? 'fa fa-arrow-circle-o-down': 'fa fa-arrow-circle-o-up',
+                                    style: (($parents[1].FuelPricesToDisplay[2].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1) == 0 || ($parents[1].FuelPricesToDisplay[2].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1) == 'NaN') ? 'color: grey'
+                                            :( ($parents[1].FuelPricesToDisplay[2].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1) <= 0.1) ? 'color: red': 'color: green'
                                             }"></i>
+                                                </div>
+                                                <div data-bind="if: ($parents[1].FuelPricesToDisplay[2].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1) == 'NaN' ">
+                                                    <span>n/a</span>
+                                                </div>
+                                                
                                             </div>
 
 
