@@ -23,22 +23,25 @@
     }
 
 
-    .table-responsive {
-        overflow-x: hidden;
-        width: 100%;
-    }
-
-    .actualdata {
-        height: 500px;
+     .table-responsive {
+   overflow-x: hidden; 
+   width:100%
+}
+      .actualdata {
+    height: 500px;
         overflow-y: auto;
-        overflow-x: hidden;
-    }
+        overflow-x: hidden; 
+}
+     
+
+     
+
 </style>
-@using (Html.BeginForm())
+ @using (Html.BeginForm())
 {
-    <h1>Market comparison and planner</h1>
+<h1>Market comparison and planner</h1>
     <hr style="width:1280px;" />
-    <!-- knockout binds here -->
+<!-- knockout binds here -->
     <div id="petrolpricingpage" onclick="    IsSitePriceFormClicked=1; ">
         <!-- Email ALL popup within knockout -->
         <div class="modal fade" id="emailAllSites" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
@@ -140,13 +143,13 @@
                 <!-- Store Name -->
                 <div class="col-md-2">
                     <label for="viewingStoreName">Store Name:</label>
-                    <input type="text" id="viewingStoreName" class="form-control" maxlength="50"
+                    <input type="text" id="viewingStoreName" class="form-control" maxlength="50" 
                            name="viewingStoreName" data-bind="value: $root.StoreName" />
                 </div>
                 <!-- Store Town -->
                 <div class="col-md-2">
                     <label for="viewingStoreTown">Store Town:</label>
-                    <input type="text" id="viewingStoreTown" class="form-control" maxlength="50"
+                    <input type="text" id="viewingStoreTown" class="form-control" maxlength="50" 
                            name="viewingStoreTown" data-bind="value: $root.StoreTown" />
                 </div>
                 <!-- Catalist No -->
@@ -160,7 +163,7 @@
                     <button style="margin-top: 24px;margin-left:10px;" type="button" id="btnGO" class="btn btn-success" data-bind="click: loadPageWithParams">Go</button>
                 </div>
                 <!-- show all button -->
-                <div class="col-md-1">
+                <div class="col-md-1" >
                     <button style="margin-top: 24px" type="button" class="btn btn-default" data-bind="click: function() { reloadSearchPage('Sites/Prices?date='+$root.InitDateInUsFormat()) }">Show all</button>
                 </div>
                 <!-- ExportToExcel button -->
@@ -174,7 +177,7 @@
 
             </div>
             <hr style="width:1280px;" />
-            <div class="row">
+            <div class="row" >
                 <div class="col-md-1" style="width:410px;">
 
                     <label>Excluded Brands</label>
@@ -184,9 +187,9 @@
                 <div class="col-md-1" style="width:750px;margin-top:24px;margin-left:10px">
                     <fieldset>
                         <legend style="border: 1px gray solid;width:860px;">
-                            &nbsp&nbsp  <font size="2" data-bind="with: dataModel"><b>Total:</b> <b style="color: red" data-bind="text: sites.length"></b></font>
+                            &nbsp&nbsp  <font size="2" data-bind="with: dataModel"><b>Total:</b> <b style="color: red"  data-bind="text: sites.length"></b></font>
 
-                            <font size="2">
+                            <font size="2" >
                                 &nbsp&nbsp <a>Price Difference :</a>
                             </font>
                             <font size="2" data-bind="foreach: PriceDifferences">
@@ -394,7 +397,7 @@
                         <!-- ko if: !siteSupportsFuel -->
                         <div class="col-sm-1" style="border-left: 1px solid #ddd;width:93px;height:45px">n/a</div>
                         <div class="col-sm-1" style="border-left: 1px solid #ddd;margin-left:0px; width:145px;height:45px">n/a</div>
-
+                       
                         <!-- /ko -->
                         <!-- /ko -->
                     </div>
@@ -434,7 +437,7 @@
                                         <th colspan="4"></th>
                                         <th class="tblHighlight"><span class="compyday">Yesterday</span></th>
                                         <th class="tblHighlight"><span class="comptoday">Today</span></th>
-                                        <th class="tblHighlight"><span>JS_Diff</span></th>
+                                        <th class="tblHighlight"><span >JS_Diff</span></th>
                                         <th><span class="compyday">Yesterday</span></th>
                                         <th><span class="comptoday">Today</span></th>
                                         <th class="tblHighlight"><span>JS_Diff</span></th>
@@ -484,31 +487,51 @@
                                         <td style="border-left: 1px solid #ccc;">
 
                                             <div data-bind="if: FuelPrice.FuelTypeId==2">
-                                                <span data-bind="text: (FuelPrice.TodayPrice - $parents[1].FuelPricesToDisplay[0].FuelPrice.AutoPrice).toFixed(1) "></span>
-                                                <i data-bind="attr: {
-                                 class: ( (FuelPrice.TodayPrice - $parents[1].FuelPricesToDisplay[0].FuelPrice.AutoPrice).toFixed(1) == 0 || (FuelPrice.TodayPrice - $parents[1].FuelPricesToDisplay[0].FuelPrice.AutoPrice).toFixed(1) == 'NaN' ) ? ''
-                                            : ((FuelPrice.TodayPrice - $parents[1].FuelPricesToDisplay[0].FuelPrice.AutoPrice).toFixed(1) <= 0.1) ? 'fa fa-minus': 'fa fa-plus',
-                                    style: ((FuelPrice.TodayPrice - $parents[1].FuelPricesToDisplay[0].FuelPrice.AutoPrice).toFixed(1) == 0 || (FuelPrice.TodayPrice - $parents[1].FuelPricesToDisplay[0].FuelPrice.AutoPrice).toFixed(1) == 'NaN') ? 'color: grey'
-                                            :( (FuelPrice.TodayPrice - $parents[1].FuelPricesToDisplay[0].FuelPrice.AutoPrice).toFixed(1) <= 0.1) ? 'color: red': 'color: green'
+                                                    <div data-bind="if: ($parents[1].FuelPricesToDisplay[0].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1)  != 'NaN' ">
+                                                        <span data-bind="text: ($parents[1].FuelPricesToDisplay[0].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1) "></span>
+                                                        <i data-bind="attr: {
+                                 class: ( ($parents[1].FuelPricesToDisplay[0].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1)   == 0 || ($parents[1].FuelPricesToDisplay[0].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1)  == 'NaN' ) ? ''
+                                            : (($parents[1].FuelPricesToDisplay[0].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1)  <= 0.1) ? 'fa fa-minus': 'fa fa-plus',
+                                    style: (($parents[1].FuelPricesToDisplay[0].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1)  == 0 || ($parents[1].FuelPricesToDisplay[0].FuelPrice.AutoPrice - FuelPrice.TodayPrice ).toFixed(1) == 'NaN') ? 'color: grey'
+                                            :( ($parents[1].FuelPricesToDisplay[0].FuelPrice.AutoPrice - FuelPrice.TodayPrice ).toFixed(1)  <= 0.1) ? 'color: red': 'color: green'
                                             }"></i>
+                                                    </div>
+                                                    <div data-bind="if: ($parents[1].FuelPricesToDisplay[0].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1) == 'NaN' ">
+                                                        <span>n/a</span>
+                                                    </div>
+                                                  
+                                               
                                             </div>
                                             <div data-bind="if: FuelPrice.FuelTypeId==6">
-                                                <span data-bind="text: (FuelPrice.TodayPrice - $parents[1].FuelPricesToDisplay[1].FuelPrice.AutoPrice).toFixed(1) "></span>
-                                                <i data-bind="attr: {
-                                 class: ( (FuelPrice.TodayPrice - $parents[1].FuelPricesToDisplay[1].FuelPrice.AutoPrice).toFixed(1) == 0 || (FuelPrice.TodayPrice - $parents[1].FuelPricesToDisplay[1].FuelPrice.AutoPrice).toFixed(1) == 'NaN' ) ? ''
-                                            : ((FuelPrice.TodayPrice - $parents[1].FuelPricesToDisplay[1].FuelPrice.AutoPrice).toFixed(1) <= 0.1) ? 'fa fa-minus': 'fa fa-plus',
-                                    style: ((FuelPrice.TodayPrice - $parents[1].FuelPricesToDisplay[1].FuelPrice.AutoPrice).toFixed(1) == 0  || (FuelPrice.TodayPrice - $parents[1].FuelPricesToDisplay[1].FuelPrice.AutoPrice).toFixed(1) == 'NaN' ) ? 'color: grey'
-                                            :( (FuelPrice.TodayPrice - $parents[1].FuelPricesToDisplay[1].FuelPrice.AutoPrice).toFixed(1) <= 0.1) ? 'color: red': 'color: green'
+                                                  
+                                                <div data-bind="if: ($parents[1].FuelPricesToDisplay[1].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1)  != 'NaN' ">
+                                                    <span data-bind="text: ($parents[1].FuelPricesToDisplay[1].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1) "></span>
+                                                    <i data-bind="attr: {
+                                 class: ( ($parents[1].FuelPricesToDisplay[1].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1) == 0 || ($parents[1].FuelPricesToDisplay[1].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1) == 'NaN' ) ? ''
+                                            : (($parents[1].FuelPricesToDisplay[1].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1) <= 0.1) ? 'fa fa-minus': 'fa fa-plus',
+                                    style: (($parents[1].FuelPricesToDisplay[1].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1) == 0  || ($parents[1].FuelPricesToDisplay[1].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1) == 'NaN' ) ? 'color: grey'
+                                            :( ($parents[1].FuelPricesToDisplay[1].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1) <= 0.1) ? 'color: red': 'color: green'
                                             }"></i>
+                                                </div>
+                                                <div data-bind="if: ($parents[1].FuelPricesToDisplay[1].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1) == 'NaN' ">
+                                                    <span>n/a</span>
+                                                </div>
+                                                
                                             </div>
                                             <div data-bind="if: FuelPrice.FuelTypeId==1">
-                                                <span data-bind="text: (FuelPrice.TodayPrice - $parents[1].FuelPricesToDisplay[2].FuelPrice.AutoPrice).toFixed(1) "></span>
-                                                <i data-bind="attr: {
-                                 class: ( (FuelPrice.TodayPrice - $parents[1].FuelPricesToDisplay[2].FuelPrice.AutoPrice).toFixed(1) == 0 || (FuelPrice.TodayPrice - $parents[1].FuelPricesToDisplay[2].FuelPrice.AutoPrice).toFixed(1) == 'NaN'  ) ? ''
-                                            : ((FuelPrice.TodayPrice - $parents[1].FuelPricesToDisplay[2].FuelPrice.AutoPrice).toFixed(1) <= 0.1) ? 'fa fa-minus': 'fa fa-plus',
-                                    style: ((FuelPrice.TodayPrice - $parents[1].FuelPricesToDisplay[2].FuelPrice.AutoPrice).toFixed(1) == 0 || (FuelPrice.TodayPrice - $parents[1].FuelPricesToDisplay[2].FuelPrice.AutoPrice).toFixed(1) == 'NaN') ? 'color: grey'
-                                            :( (FuelPrice.TodayPrice - $parents[1].FuelPricesToDisplay[2].FuelPrice.AutoPrice).toFixed(1) <= 0.1) ? 'color: red': 'color: green'
+                                                <div data-bind="if: ($parents[1].FuelPricesToDisplay[2].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1)  != 'NaN' ">
+                                                    <span data-bind="text: ($parents[1].FuelPricesToDisplay[2].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1) "></span>
+                                                    <i data-bind="attr: {
+                                 class: ( ($parents[1].FuelPricesToDisplay[2].FuelPrice.AutoPrice -FuelPrice.TodayPrice).toFixed(1) == 0 || ($parents[1].FuelPricesToDisplay[2].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1) == 'NaN'  ) ? ''
+                                            : (($parents[1].FuelPricesToDisplay[2].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1) <= 0.1) ? 'fa fa-minus': 'fa fa-plus',
+                                    style: (($parents[1].FuelPricesToDisplay[2].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1) == 0 || ($parents[1].FuelPricesToDisplay[2].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1) == 'NaN') ? 'color: grey'
+                                            :( ($parents[1].FuelPricesToDisplay[2].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1) <= 0.1) ? 'color: red': 'color: green'
                                             }"></i>
+                                                </div>
+                                                <div data-bind="if: ($parents[1].FuelPricesToDisplay[2].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1) == 'NaN' ">
+                                                    <span>n/a</span>
+                                                </div>
+                                                
                                             </div>
 
 
@@ -548,15 +571,15 @@
         </form>
 
     </div>
-    <br />
+<br />
 }
 
 <script type="text/javascript">
+    
 
+  
 
-
-
-    $("#viewingDate").keyup(function(event){
+  $("#viewingDate").keyup(function(event){
         if(event.keyCode == 13){
             $("#btnGO").click();
         }
@@ -575,7 +598,7 @@
         }
     });
 
-
+    
     $("#viewingStoreTown").keyup(function(event){
         if(event.keyCode == 13){
             $("#btnGO").click();
@@ -588,7 +611,7 @@
         }
     });
 
-
+    
 
     require(["SitePricing"], function (prices) {
         prices.go();
@@ -599,20 +622,20 @@
                 format: 'dd/mm/yyyy',
                 orientation: 'auto top',
                 autoclose: true,
-                todayHighlight: true,
+                todayHighlight: true,               
                 endDate: '1d'
             }).on('changeDate', function(e) {
                 $("#btnExportAll").prop("disabled", true);
                 $("#btnExportSites").prop("disabled", true);
 
-
+                
                 $("#viewingDate").focus();
             });
-
-
+           
+       
     });
 
-
+  
 
     function refreshDates(selectedDate)
     {
@@ -633,10 +656,10 @@
             strtoday = (('' + day).length < 2 ? '0' : '') + day + '/' +
                 (('' + month).length < 2 ? '0' : '') + month + '/' +
                 d.getFullYear();
-
+           
             yesterday=new Date(d.getFullYear(),d.getMonth(), d.getDate()-1);
             tomorrow=new Date(d.getFullYear(),d.getMonth(), d.getDate()+1);
-
+           
         }
         else
         {
@@ -645,7 +668,7 @@
             var yearnum=parseInt(tmp[2]);
             var monnum=parseInt(tmp[1])-1;
             var daynum=parseInt(tmp[0]);
-
+           
             var d=new Date(yearnum,monnum,daynum-1);
             yesterday=new Date(d.getFullYear(),d.getMonth(), d.getDate()-1);
             tomorrow=new Date(d.getFullYear(),d.getMonth(), d.getDate()+2);
@@ -656,10 +679,10 @@
             strtoday = (('' + day1).length < 2 ? '0' : '') + day1 + '/' +
                 (('' + month1).length < 2 ? '0' : '') + month1 + '/' +
                 d.getFullYear();
-
+         
 
         }
-
+      
         var month = yesterday.getMonth() + 1;
         var day = yesterday.getDate();
         stryday = (('' + day).length < 2 ? '0' : '') + day + '/' +
@@ -676,72 +699,72 @@
         $('#today3').text(strtoday);
 
         $(".comptoday").text(strtoday);
-
+     
         $('#tomorrow1').text(strtomorrow);
         $('#tomorrow2').text(strtomorrow);
         $('#tomorrow3').text(strtomorrow);
         $(".compyday").text(stryday);
 
-
+    
 
     }
 
-
+    
     $("#viewingStoreNo").change(function () {
-
+       
         $("#btnExportAll").prop("disabled", true);
         $("#btnExportSites").prop("disabled", true);
     });
 
     $("#viewingStoreName").change(function () {
-
+       
         $("#btnExportAll").prop("disabled", true);
         $("#btnExportSites").prop("disabled", true);
     });
 
     $("#viewingStoreNo").change(function () {
-
+       
         $("#btnExportAll").prop("disabled", true);
         $("#btnExportSites").prop("disabled", true);
     });
 
     $("#viewingStoreTown").change(function () {
-
+       
         $("#btnExportAll").prop("disabled", true);
         $("#btnExportSites").prop("disabled", true);
-
+        
     });
     $("#btnExportAll").click(function () {
 
-
+        
         var url = "Sites/ExportPrices?date=" + $('#viewingDate').val()
             + "&storeName=" + $('#viewingStoreName').val()
             + "&catNo=" + $('#viewingCatNo').val()
             + "&storeNo=" + $('#viewingStoreNo').val()
             + "&storeTown=" + $('#viewingStoreTown').val();
 
-
+      
         var rootFolder = /\/petrolpricing\//i.test(window.location.href) ? "/petrolpricing/" : "/";
-
+       
         window.location.href = rootFolder + url;
     });
 
     $("#btnExportSites").click(function () {
 
-
+        
         var url = "Sites/ExportSiteswithPrices?date=" + $('#viewingDate').val()
             + "&storeName=" + $('#viewingStoreName').val()
             + "&catNo=" + $('#viewingCatNo').val()
             + "&storeNo=" + $('#viewingStoreNo').val()
             + "&storeTown=" + $('#viewingStoreTown').val();
 
-
+      
         var rootFolder = /\/petrolpricing\//i.test(window.location.href) ? "/petrolpricing/" : "/";
-
+       
         window.location.href = rootFolder + url;
     });
 
-
+    
 
 
 </script>
