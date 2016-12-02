@@ -98,9 +98,11 @@
     <Compile Include="DTOs\EmailToSet.cs" />
     <Compile Include="EmailSendLog.cs" />
     <Compile Include="ImportProcessError.cs" />
+    <Compile Include="LatestCompPrice.cs" />
     <Compile Include="PPUser.cs" />
     <Compile Include="ExcludedBrands.cs" />
     <Compile Include="LatestPrice.cs" />
+    <Compile Include="ViewModels\LatestCompPriceDataModel.cs" />
     <Compile Include="ViewModels\LatestPriceDataModel.cs" />
     <Compile Include="ViewModels\CompetitorSiteReportViewModel.cs" />
     <Compile Include="ViewModels\CompetitorBrandTimeViewModel.cs" />

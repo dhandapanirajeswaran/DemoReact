@@ -138,6 +138,7 @@
     <Build Include="dbo\Tables\PPUser.sql" />
     <Build Include="dbo\Tables\ExcludeBrands.sql" />
     <Build Include="dbo\Tables\LatestPrice.sql" />
+    <Build Include="dbo\Tables\LatestCompPrice.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Scripts\PostDeployment\Script.PostDeployment.sql" />

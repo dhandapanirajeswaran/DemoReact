@@ -46,6 +46,9 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         bool NewLatestPriceRecords(List<LatestPriceDataModel> siteCatalistData, FileUpload fileDetails,
             int startingLineNumber);
 
+        bool NewLatestCompPriceRecords(List<LatestCompPriceDataModel> siteCatalistData, FileUpload fileDetails,
+           int startingLineNumber);
+
 		IEnumerable<QuarterlyUploadStaging> GetQuarterlyRecords();
 
 		/// <summary>

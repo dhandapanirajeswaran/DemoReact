@@ -1112,6 +1112,87 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             }
         }
 
+
+
+        public bool NewLatestCompPriceRecords(List<LatestCompPriceDataModel> LatestCompSiteData, FileUpload fileDetails,
+            int startingLineNumber)
+        {
+            int addingEntryLineNo = startingLineNumber;
+
+            using (var newDbContext = new RepositoryContext())
+            {
+                using (var tx = newDbContext.Database.BeginTransaction())
+                {
+                    newDbContext.Configuration.AutoDetectChangesEnabled = false;
+                    try
+                    {
+
+
+                        if (LatestCompSiteData.Count > 0)
+                        {
+                            foreach (LatestCompPriceDataModel LatestCompPriceDataModel in LatestCompSiteData)
+                            {
+
+                                if (!String.IsNullOrEmpty(LatestCompPriceDataModel.UnleadedPrice))
+                                {
+                                    AddOrUpdateLatestCompPrice(newDbContext, LatestCompPriceDataModel, fileDetails,
+                                        (int)FuelTypeItem.Unleaded, (int)Convert.ToDouble(LatestCompPriceDataModel.UnleadedPrice));
+
+
+                                }
+
+                                if (!String.IsNullOrEmpty(LatestCompPriceDataModel.DieselPrice))
+                                {
+                                    AddOrUpdateLatestCompPrice(newDbContext, LatestCompPriceDataModel, fileDetails,
+                                  (int)FuelTypeItem.Diesel, (int)Convert.ToDouble(LatestCompPriceDataModel.DieselPrice));
+                                }
+                            }
+
+                            newDbContext.SaveChanges();
+                            tx.Commit();
+                        }
+                        return true;
+                    }
+                    catch (DbUpdateException e)
+                    {
+                        _logger.Error(e);
+                        tx.Rollback();
+
+                        foreach (var dbUpdateException in e.Entries)
+                        {
+                            var dbRecord = dbUpdateException.Entity as LatestPrice ??
+                                           new LatestPrice();
+                            LogImportError(fileDetails,
+                                String.Format("Failed to save LatestPrice record:{0},{1},{2},{3},{4},{5},{6},{7},{8},{9}",
+                                    dbRecord.FuelTypeId, dbRecord.PfsNo, dbRecord.StoreNo,
+                                    dbRecord.ModalPrice),
+                                startingLineNumber);
+                            dbUpdateException.State = EntityState.Unchanged;
+                        }
+
+                        return false;
+                    }
+                    catch (DbEntityValidationException dbEx)
+                    {
+                        tx.Rollback();
+                        foreach (var validationErrors in dbEx.EntityValidationErrors)
+                        {
+                            foreach (var validationError in validationErrors.ValidationErrors)
+                            {
+                                LogImportError(fileDetails,
+                                    "DbEntityValidationException occured:" + validationError.ErrorMessage +
+                                    "," + validationError.PropertyName, addingEntryLineNo);
+
+                                Trace.TraceInformation("Property: {0} Error: {1}", validationError.PropertyName,
+                                    validationError.ErrorMessage);
+                            }
+                        }
+                        return false;
+                    }
+                }
+            }
+        }
+
         public void AddOrUpdateLatestPrice(RepositoryContext newDbContext,LatestPriceDataModel latestPriceDataModel, FileUpload fileDetails,int fuelTypeId,int fuelPrice)
         {
             LatestPrice dbRecord = null;
@@ -1140,6 +1221,34 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             dbRecord.ModalPrice = fuelPrice * 10;
             newDbContext.LatestPrices.Add(dbRecord);
             
+        }
+
+        public void AddOrUpdateLatestCompPrice(RepositoryContext newDbContext, LatestCompPriceDataModel latestCompPriceDataModel, FileUpload fileDetails, int fuelTypeId, int fuelPrice)
+        {
+            LatestCompPrice dbRecord = null;
+            bool iNewRecord = false;
+            var latestCompPriceList = newDbContext.LatestCompPrices.Where(
+                x =>
+                    x.CatNo == latestCompPriceDataModel.CatNo &&
+                    x.FuelTypeId == fuelTypeId).ToList();
+            dbRecord = latestCompPriceList.Count > 0 ? latestCompPriceList[0] :
+            null;
+
+            if (latestCompPriceList.Count > 0)
+            {
+                foreach (var latestprice in latestCompPriceList)
+                {
+                    newDbContext.LatestCompPrices.Remove(latestprice);
+                }
+
+            }
+            dbRecord = new LatestCompPrice();
+            dbRecord.UploadId = fileDetails.Id;
+            dbRecord.CatNo = latestCompPriceDataModel.CatNo;
+            dbRecord.FuelTypeId = fuelTypeId;
+            dbRecord.ModalPrice = fuelPrice * 10;
+            newDbContext.LatestCompPrices.Add(dbRecord);
+
         }
 
         public bool NewDailyPrices(List<DailyPrice> dailyPriceList, FileUpload fileDetails, int startingLineNumber)

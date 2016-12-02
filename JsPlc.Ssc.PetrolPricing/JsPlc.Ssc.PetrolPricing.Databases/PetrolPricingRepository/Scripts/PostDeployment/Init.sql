@@ -21,9 +21,10 @@ BEGIN
 
 INSERT [dbo].[UploadType] ([Id], [UploadTypeName]) VALUES (1, N'Daily Price Data')
 INSERT [dbo].[UploadType] ([Id], [UploadTypeName]) VALUES (2, N'Quarterly Site Data')
-INSERT [dbo].[UploadType] ([Id], [UploadTypeName]) VALUES (3, N'Latest Price Data')
+INSERT [dbo].[UploadType] ([Id], [UploadTypeName]) VALUES (3, N'Latest Js Price Data')
+INSERT [dbo].[UploadType] ([Id], [UploadTypeName]) VALUES (4, N'Latest Competitors Price Data')
 END
-
+update [dbo].[UploadType] set [UploadTypeName]= N'Latest Js Price Data' where [Id]=3
 
 IF NOT EXISTS(SELECT TOP 1 1 FROM [dbo].[FuelType])
 BEGIN

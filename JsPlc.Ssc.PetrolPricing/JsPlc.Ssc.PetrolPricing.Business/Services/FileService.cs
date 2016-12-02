@@ -69,7 +69,15 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 					break;
 
                 case 3:
-                    processedFile = ProcessLatestPriceFileNew(newUploadList);
+                    processedFile = ProcessLatestPriceFileNew(newUploadList, newUpload.UploadTypeId);
+
+                    if (processedFile == null)
+                        throw new FileUploadException("Upload failed. Contact support team.");
+
+
+                    break;
+                case 4:
+                    processedFile = ProcessLatestPriceFileNew(newUploadList, newUpload.UploadTypeId);
 
                     if (processedFile == null)
                         throw new FileUploadException("Upload failed. Contact support team.");
@@ -344,7 +352,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
         /// </summary>
         /// <param name="uploadedFiles"></param>
         /// <returns>The file picked for processing (only one)</returns>
-        public FileUpload ProcessLatestPriceFileNew(List<FileUpload> uploadedFiles)
+        public FileUpload ProcessLatestPriceFileNew(List<FileUpload> uploadedFiles, int UploadType)
         {
             if (!uploadedFiles.Any())
                 return null;
@@ -372,7 +380,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 
                 bool gotWarning = false;
 
-                var success = importLatestPricRecords(aFile, dataRows, out gotWarning); // dumps all rows into the quarterly staging table
+                var success = UploadType == 3 ? importLatestPricRecords(aFile, dataRows, out gotWarning) : importLatestCompPricRecords(aFile, dataRows, out gotWarning); // dumps all rows into the quarterly staging table
 
                 if (!success)
                 {
@@ -400,6 +408,14 @@ namespace JsPlc.Ssc.PetrolPricing.Business
             }
             return aFile;
         }
+
+        //Process Quarterly File//////////////////////////////////////////////////////////////////////////////////////
+        /// <summary>
+        /// Picks the right file to Process and returns it
+        /// </summary>
+        /// <param name="uploadedFiles"></param>
+        /// <returns>The file picked for processing (only one)</returns>
+    
 		public void CleanupIntegrationTestsData(string testUserName = "Integration tests")
 		{
 			_db.CleanupIntegrationTestsData(testUserName);
@@ -632,6 +648,18 @@ namespace JsPlc.Ssc.PetrolPricing.Business
            
             return true;
         }
+
+        private bool importLatestCompPricRecords(FileUpload aFile, IEnumerable<DataRow> allRows, out bool hasWarning)
+        {
+            int batchNo = 0;
+
+            List<LatestCompPriceDataModel> allSites = parseLatestCompPrice(aFile, allRows, out hasWarning);
+            if (hasWarning) return false;
+            var batchSuccess =
+                    _db.NewLatestCompPriceRecords(allSites, aFile, 2);
+
+            return true;
+        }
 		private DataTable getQuarterlyData(FileUpload aFile)
 		{
 			var storedFilePath = _appSettings.UploadPath;
@@ -737,6 +765,47 @@ namespace JsPlc.Ssc.PetrolPricing.Business
                     LatestPriceData.UnleadedPrice = row[3].ToString();
                     LatestPriceData.SuperUnleadedPrice = row[4].ToString();
                     LatestPriceData.DieselPrice = row[6].ToString();
+
+
+                    priceLatestPriceData.Add(LatestPriceData);
+                }
+                catch (Exception ex)
+                {
+                    //log error and continue loading file
+                    _db.LogImportError(aFile,
+                        ex,
+                        rowCount);
+
+                    hasWarnings = true;
+                }
+
+            }
+
+            return priceLatestPriceData;
+        }
+
+        private List<LatestCompPriceDataModel> parseLatestCompPrice(FileUpload aFile, IEnumerable<DataRow> batchRows, out bool hasWarnings)
+        {
+            List<LatestCompPriceDataModel> priceLatestPriceData = new List<LatestCompPriceDataModel>();
+
+            hasWarnings = false;
+
+            int rowCount = 0;
+
+            //starting from 2 to avoid headings held in row 1
+            foreach (DataRow row in batchRows)
+            {
+                rowCount++;
+
+                LatestCompPriceDataModel LatestPriceData = new LatestCompPriceDataModel();
+
+                try
+                {
+                    if (row[0].ToString().ToUpper() == "PFS") continue;
+                    //Sainsburys Store
+                    LatestPriceData.CatNo = Convert.ToInt32(row[0].ToString());
+                    LatestPriceData.UnleadedPrice = row[1].ToString();
+                    LatestPriceData.DieselPrice = row[2].ToString();
 
 
                     priceLatestPriceData.Add(LatestPriceData);

@@ -57,6 +57,13 @@
 
 
     </div>
+    <div id="divdownloadtemplatelatestcomppricebtn" class="col-md-1" style="margin-top: 60px; margin-left: -280px;display: none;">
+        <br />
+
+        <a href="~/Content/LatestCompPriceDataTemplate.xlsx" class="btn btn-primary" download="LatestCompPriceDataTemplate.xlsx">Download Data Template</a>
+
+
+    </div>
     <div class="col-md-1" id="datepickerctrl" style="margin-top: 24px">
         @Html.TextBoxFor(m => m.UploadDate, "{0:dd/MM/yyyy}", new { @class = "datepicker form-control",id = "caldattimepicker", style = "width:85px;", @maxlength = "12" })
                                                                                         
@@ -96,7 +103,8 @@
         $('#divuploadbtn').hide();
         $('#divdownloadquarterlydatabtn').hide();
         $('#divdownloadtemplatelatestpricebtn').hide();
-
+        $('#divdownloadtemplatelatestcomppricebtn').hide();
+        
         
         var uploadtype = $('#UploadTypeName').val();
         if (uploadtype == 1) {
@@ -122,6 +130,14 @@
             });
 
             $('#divdownloadtemplatelatestpricebtn').show();
+        }
+        else if (uploadtype == 4) {
+            $("#file").attr({
+                "accept": ".xls, .xlsx"
+
+            });
+
+            $('#divdownloadtemplatelatestcomppricebtn').show();
         }
     });
 
@@ -157,6 +173,11 @@
             $("#fileimage").attr("src", "images/excelicon.png");
         }
         else if ((ext == "xlsx" || ext == "xls") && uploadtype == 3) {
+            $('#divfilenameplusicon').show();
+            $('#divuploadbtn').show();
+            $("#fileimage").attr("src", "images/excelicon.png");
+        }
+        else if ((ext == "xlsx" || ext == "xls") && uploadtype == 4) {
             $('#divfilenameplusicon').show();
             $('#divuploadbtn').show();
             $("#fileimage").attr("src", "images/excelicon.png");

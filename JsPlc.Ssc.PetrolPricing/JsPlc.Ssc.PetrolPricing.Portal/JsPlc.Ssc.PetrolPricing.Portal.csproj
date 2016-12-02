@@ -267,6 +267,7 @@
     <Content Include="Content\chosen.css" />
     <Content Include="Content\LatestSitePriceDataTemplate.xlsx" />
     <Content Include="Content\QuarterlySiteData-Template.xlsx" />
+    <Content Include="Content\LatestCompPriceDataTemplate.xlsx" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="images\defaultfileicon.png" />
     <Content Include="images\excelcsvicon.png" />
