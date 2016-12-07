@@ -26,6 +26,11 @@ INSERT [dbo].[UploadType] ([Id], [UploadTypeName]) VALUES (4, N'Latest Competito
 END
 update [dbo].[UploadType] set [UploadTypeName]= N'Latest Js Price Data' where [Id]=3
 
+IF NOT EXISTS(SELECT TOP 1 1 FROM [dbo].[UploadType] where Id=4)
+BEGIN
+
+INSERT [dbo].[UploadType] ([Id], [UploadTypeName]) VALUES (4, N'Latest Competitors Price Data')
+END
 IF NOT EXISTS(SELECT TOP 1 1 FROM [dbo].[FuelType])
 BEGIN
 INSERT [dbo].[FuelType] ([Id], [FuelTypeName]) VALUES (1, N'Super Unleaded')
