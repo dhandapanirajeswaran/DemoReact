@@ -1,24 +1,51 @@
-﻿using JsPlc.Ssc.PetrolPricing.Core.Interfaces;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using NLog;
+using NLog.Common;
+using ILogger = JsPlc.Ssc.PetrolPricing.Core.Interfaces.ILogger;
 
 
 namespace JsPlc.Ssc.PetrolPricing.Core
 {
     public class PetrolPricingLogger : ILogger
     {
-     
+        private readonly Logger _internalLogger;
+
+         public PetrolPricingLogger()
+        {
+            _internalLogger = LogManager.GetCurrentClassLogger();
+             
+        }
+
+
         public void Error(Exception ex)
         {
-             Elmah.ErrorSignal.FromCurrentContext().Raise(ex);
+             _internalLogger.Log
+                 (
+                     new LogEventInfo
+                     {
+                         Level = LogLevel.Error,
+                         Exception = ex,
+                         Message = ex.Message
+                     }
+                 );
         }
 
         public void Information(string message)
         {
-            Elmah.ErrorSignal.FromCurrentContext().Raise(new Exception(message));
+            _internalLogger.Log
+                (
+                    new LogEventInfo
+                    {
+                        Level = LogLevel.Info,
+                        Exception = new Exception(message),
+                        Message = message
+                    }
+                );
         }
+		
     }
 }
