@@ -1349,16 +1349,15 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                     newDbContext.Configuration.AutoDetectChangesEnabled = false;
                     try
                     {
-
-
                         if (LatestCompSiteData.Count > 0)
                         {
+                            TruncateLatestCompPrices();
                             foreach (LatestCompPriceDataModel LatestCompPriceDataModel in LatestCompSiteData)
                             {
 
                                 if (!String.IsNullOrEmpty(LatestCompPriceDataModel.UnleadedPrice))
                                 {
-                                    AddOrUpdateLatestCompPrice(newDbContext, LatestCompPriceDataModel, fileDetails,
+                                    AddLatestCompPrice(newDbContext, LatestCompPriceDataModel, fileDetails,
                                         (int)FuelTypeItem.Unleaded, (int)Convert.ToDouble(LatestCompPriceDataModel.UnleadedPrice));
 
 
@@ -1366,7 +1365,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
                                 if (!String.IsNullOrEmpty(LatestCompPriceDataModel.DieselPrice))
                                 {
-                                    AddOrUpdateLatestCompPrice(newDbContext, LatestCompPriceDataModel, fileDetails,
+                                    AddLatestCompPrice(newDbContext, LatestCompPriceDataModel, fileDetails,
                                   (int)FuelTypeItem.Diesel, (int)Convert.ToDouble(LatestCompPriceDataModel.DieselPrice));
                                 }
                             }
@@ -1446,25 +1445,10 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             
         }
 
-        public void AddOrUpdateLatestCompPrice(RepositoryContext newDbContext, LatestCompPriceDataModel latestCompPriceDataModel, FileUpload fileDetails, int fuelTypeId, int fuelPrice)
+        public void AddLatestCompPrice(RepositoryContext newDbContext, LatestCompPriceDataModel latestCompPriceDataModel, FileUpload fileDetails, int fuelTypeId, int fuelPrice)
         {
             LatestCompPrice dbRecord = null;
             bool iNewRecord = false;
-            var latestCompPriceList = newDbContext.LatestCompPrices.Where(
-                x =>
-                    x.CatNo == latestCompPriceDataModel.CatNo &&
-                    x.FuelTypeId == fuelTypeId).ToList();
-            dbRecord = latestCompPriceList.Count > 0 ? latestCompPriceList[0] :
-            null;
-
-            if (latestCompPriceList.Count > 0)
-            {
-                foreach (var latestprice in latestCompPriceList)
-                {
-                    newDbContext.LatestCompPrices.Remove(latestprice);
-                }
-
-            }
             dbRecord = new LatestCompPrice();
             dbRecord.UploadId = fileDetails.Id;
             dbRecord.CatNo = latestCompPriceDataModel.CatNo;
@@ -1618,6 +1602,17 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                 db.Database.ExecuteSqlCommand("DBCC CHECKIDENT ('QuarterlyUploadStaging',RESEED, 0)");
 
                   
+            }
+        }
+
+
+        private void TruncateLatestCompPrices()
+        {
+            using (var db = new RepositoryContext())
+            {
+                db.Database.ExecuteSqlCommand("Truncate table LatestCompPrice");
+                db.Database.ExecuteSqlCommand("DBCC CHECKIDENT ('LatestCompPrice',RESEED, 0)");
+
             }
         }
 
