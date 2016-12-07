@@ -29,8 +29,25 @@
 
     });
 
+    function runScript(e) {
+        if (e.keyCode == 13) {
+            $("#btnViewReport").click();
+            return false;
+        }
+    }
 
 
+    $('.datepicker')
+           .datepicker({
+               language: "en-GB",
+               format: 'dd/mm/yyyy',
+               orientation: 'auto top',
+               autoclose: true,
+               todayHighlight: true,               
+               endDate: '1d'
+           }).on('changeDate', function(e) {
+               $("#btnViewReport").click();
+           });
 
 </script>
 
@@ -102,8 +119,8 @@
 
                 </div>
                 <div class="col-md-2">
-                    <label for="SiteName">Marker:</label>
-                    <input type="text" class="form-control" id="SiteName" name="SiteName" value='@Model.SiteName'>
+                    <label for="SiteName">Site:</label>
+                    <input type="text" class="form-control" id="SiteName" name="SiteName" onkeypress="return runScript(event)" value='@Model.SiteName'>
 
                 </div>
                 <div class="col-md-2">

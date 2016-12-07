@@ -16,7 +16,7 @@ namespace JsPlc.Ssc.PetrolPricing.Models.ViewModels
         {
             PriceMovementReport = new PriceMovementReportViewModel();
             Brand = "SAINSBURYS";
-            FromDate = DateTime.Today.AddDays(-3);
+            FromDate = DateTime.Today.AddDays(-30);
             ToDate = DateTime.Today;
             FuelTypeId = 2;
         }

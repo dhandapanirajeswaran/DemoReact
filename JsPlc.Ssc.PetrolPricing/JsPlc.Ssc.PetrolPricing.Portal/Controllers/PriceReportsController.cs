@@ -213,7 +213,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
                 if (model.FromDate > model.ToDate)
                 {
                     ViewBag.ErrorMessage = "Date From must be after or at the date To. Please fix the issue and try again.";
-                    model.FromDate = model.ToDate.Value.AddDays(-3);
+                    model.FromDate = model.ToDate.Value.AddDays(-30);
                 }
 
                 if (string.IsNullOrWhiteSpace(BrandName) == false)

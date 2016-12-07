@@ -2215,11 +2215,14 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
 
                         foreach (var brandName in brandNames)
                         {
-                            var brandCompetitors = sainsburysSite.Competitors.Where(x => x.Competitor.Brand == brandName).ToList();
+                            var brandCompetitors = sainsburysSite.Competitors.Where(x => x.Competitor.Brand == brandName).OrderBy(x => x.Competitor.Brand).ToList();
 
-                            var brandReportRow = brandReportRows.FirstOrDefault(x => x.BrandName == brandName);
+                            string brandNameAfter = (brandName == Const.TESCOEXTRA || brandName == Const.TESCOEXPRESS)
+                                ? Const.TESCO
+                                : brandName;
+                            var brandReportRow = brandReportRows.FirstOrDefault(x => x.BrandName == brandNameAfter);
 
-                            if (brandReportRow == null)
+                            if (brandReportRow == null )
                             {
                                 brandReportRow = new CompetitorBrandTimeViewModel();
                                 brandReportRow.BrandName = brandName;
@@ -2236,16 +2239,20 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
                     }
                     else
                     {
-                        var brandNames = sainsburysSite.Competitors.Select(x => x.Competitor.Brand).Distinct();
+                        var brandNames = sainsburysSite.Competitors.Select(x => x.Competitor.Brand).OrderBy(x=>x).Distinct();
 
                         // 2) all unique brand names e.g. ASDA, TESCO
-                        foreach (var brandName in brandNames)
+                        foreach (string brandName in brandNames)
                         {
+
                             // 3) brands of the competitor from step 2) e.g. ASDA so we get all ASDA here
                             var brandCompetitors = sainsburysSite.Competitors.Where(x => x.Competitor.Brand == brandName).ToList();
 
-                            // 4) have we already counted for this brand
-                            var brandReportRow = brandReportRows.FirstOrDefault(x => x.BrandName == brandName);
+                             // 4) have we already counted for this brand
+                            string brandNameAfter = (brandName == Const.TESCOEXTRA || brandName == Const.TESCOEXPRESS)
+                               ? Const.TESCO
+                               : brandName;
+                            var brandReportRow = brandReportRows.FirstOrDefault(x => x.BrandName == brandNameAfter);
                             if (brandReportRow == null)
                             {
                                 brandReportRow = new CompetitorBrandTimeViewModel();
@@ -2292,7 +2299,7 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
 
                     var distinctPrices = dailyPrices.Select(x => x.ModalPrice).Distinct().OrderBy(x => x).ToList();
                     var distinctCatNos = dailyPrices.Select(x => x.CatNo).Distinct().ToList();
-                    var competitorSites = _context.Sites.Where(x => distinctCatNos.Contains(x.CatNo.Value) && !x.IsSainsburysSite).ToList();
+                    var competitorSites = _context.Sites.Where(x => distinctCatNos.Contains(x.CatNo.Value) ).ToList();
                     var distinctBrands = competitorSites.Select(x => x.Brand).Distinct().OrderBy(x => x).ToList();
 
 
@@ -2973,17 +2980,16 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
         {
             using (var db = new RepositoryContext())
             {
-                var priceDates = db.DailyPrices.Include(x => x.DailyUpload)
-                    .Where(x => x.DailyUpload.Status.Id == 10
-                    && DbFunctions.DiffDays(forDate, x.DailyUpload.UploadDateTime) >= 1)
-                    .DistinctBy(x => x.DailyUpload.UploadDateTime).OrderBy(x => x.DailyUpload.UploadDateTime).Take(5); // ascending order
+                var priceDates =
+                    db.FileUploads.Where(x => x.Status.Id == 10 && x.UploadType.Id == (int)FileUploadTypes.DailyPriceData && x.UploadDateTime.Month == forDate.Month && x.UploadDateTime.Day == forDate.Day && x.UploadDateTime.Year == forDate.Year)
+                        .ToList();
 
                 // success status
                 //.Select(x => x.DailyUpload.UploadDateTime)
                 //.Where(x => DbFunctions.DiffDays(x, forDate) >= 1) // UploadDate - forDate >= 1
                 if (priceDates.Any())
                 {
-                    return priceDates.First().DailyUpload.UploadDateTime;
+                    return priceDates.First().UploadDateTime;
                 }
                 return null;
             }
@@ -2999,8 +3005,22 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
             List<DailyPrice> retval = new List<DailyPrice>();
             using (var db = new RepositoryContext())
             {
-                var prices = db.DailyPrices.Where(x => DbFunctions.DiffDays(forUploadDate, x.DateOfPrice) == 0 && x.DailyUpload.StatusId == 10).OrderByDescending(x => x.Id);
-                
+
+                var fileUpload_DailyPriceData_today = _context.FileUploads.Where(
+                              x =>
+                                  x.UploadDateTime.Month == forUploadDate.Month &&
+                                  x.UploadDateTime.Day == forUploadDate.Day &&
+                                  x.UploadDateTime.Year == forUploadDate.Year && x.UploadTypeId == (int)FileUploadTypes.DailyPriceData && x.Status.Id == 10).ToList();
+
+                var fileUploadId_DailyPriceData_today = fileUpload_DailyPriceData_today.Count > 0 ? fileUpload_DailyPriceData_today[0].Id : 0;
+
+
+
+                var prices = db.DailyPrices.Include(x => x.DailyUpload)
+                    .Where(
+                        x =>
+                                x.DailyUploadId.Value == fileUploadId_DailyPriceData_today).OrderByDescending(x => x.Id).ToList();
+                 
                 retval.AddRange(prices);
                 return retval;
             }
