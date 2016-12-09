@@ -21,5 +21,8 @@
   </parameter>
   <parameter name="elmahLogPath" defaultValue="~/App_Data/ElmahErrorLogs">
     <parameterEntry kind="XmlFile" scope="\\web.config$" match="/configuration/elmah/errorLog/@logPath" />
-  </parameter> 
+  </parameter>
+	<parameter name="NLogFolderPath" defaultValue="${basedir}/Log">
+		<parameterEntry kind="XmlFile" scope="\\web.config$" match="/configuration/nlog/variable[@name='log_dir']/@value" />
+	</parameter>
 </parameters>
