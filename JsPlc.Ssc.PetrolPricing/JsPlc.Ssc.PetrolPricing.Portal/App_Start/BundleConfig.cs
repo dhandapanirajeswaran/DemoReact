@@ -8,16 +8,18 @@ namespace JsPlc.Ssc.PetrolPricing.Portal
         // For more information on bundling, visit http://go.microsoft.com/fwlink/?LinkId=301862
         public static void RegisterBundles(BundleCollection bundles)
         {
-            bundles.IgnoreList.Clear();
+          //  bundles.IgnoreList.Clear();
             bundles.Add(new ScriptBundle("~/bundles/jquery").Include(
                         "~/Scripts/jquery-{version}.js",
                         "~/Scripts/chosen/chosen.jquery.js",
                        "~/Scripts/bootstrap-datepicker.min.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/datatables").Include(
-                     "~/Scripts/DataTable/jquery.dataTables.min.js",
-                     "~/Scripts/DataTable/jquery.dataTables.js"));
+                     "~/Scripts/jquery.dataTables.min.js",
+                     "~/Scripts/jquery.dataTables.js",
+                      "~/Scripts/dataTables.bootstrap.min.js"));
 
+            
             //Unobtrusive validation doesn't work. Temporary disabling
             bundles.Add(new ScriptBundle("~/bundles/jqueryval").Include(
                         //"~/Scripts/jquery.validate*")
