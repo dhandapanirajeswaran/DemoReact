@@ -246,6 +246,7 @@
     <Content Include="Content\chosen-sprite.png" />
     <Content Include="Content\font-awesome.css" />
     <Content Include="Content\font-awesome.min.css" />
+    <Content Include="Content\jquery.dataTables.min.css" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\fontawesome-webfont.svg" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
@@ -288,6 +289,7 @@
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Scripts\chosen\chosen.jquery.js" />
     <Content Include="Scripts\chosen\chosen.jquery.min.js" />
+    <Content Include="Scripts\DataTable\jquery.dataTables.min.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />

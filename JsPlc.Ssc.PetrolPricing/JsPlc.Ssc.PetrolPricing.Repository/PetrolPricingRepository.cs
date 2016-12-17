@@ -2609,9 +2609,9 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
             var competitorSites = _context.Sites.Where(x => distinctCatNos.Contains(x.CatNo.Value)).ToList();
 
             //calculating by brands
-            var distinctBrands = competitorSites.Select(x => x.Brand).Distinct().OrderBy(x => x).ToList();
+            List<string> distinctBrands=new List<string>();// = competitorSites.Select(x => x.Brand).Distinct().OrderBy(x => x).ToList();
 
-            if (distinctBrands.Count > 0)
+           // if (distinctBrands.Count > 0)
             {
                 distinctBrands.Remove(Const.SAINSBURYS);
                 distinctBrands.Insert(0, Const.SAINSBURYS);
