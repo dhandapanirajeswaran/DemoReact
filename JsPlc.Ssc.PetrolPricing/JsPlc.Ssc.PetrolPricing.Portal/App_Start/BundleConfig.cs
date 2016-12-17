@@ -11,8 +11,10 @@ namespace JsPlc.Ssc.PetrolPricing.Portal
             bundles.Add(new ScriptBundle("~/bundles/jquery").Include(
                         "~/Scripts/jquery-{version}.js",
                         "~/Scripts/chosen/chosen.jquery.js",
-                       "~/Scripts/bootstrap-datepicker.min.js",
-                       "~/Scripts/DataTable/bootstrap-datepicker.min.js"));
+                       "~/Scripts/bootstrap-datepicker.min.js"));
+
+            bundles.Add(new ScriptBundle("~/bundles/datatables").Include(
+                     "~/Scripts/DataTable/bootstrap-datepicker.min.js"));
 
             //Unobtrusive validation doesn't work. Temporary disabling
             bundles.Add(new ScriptBundle("~/bundles/jqueryval").Include(
