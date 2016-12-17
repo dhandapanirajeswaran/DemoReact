@@ -289,6 +289,7 @@
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Scripts\chosen\chosen.jquery.js" />
     <Content Include="Scripts\chosen\chosen.jquery.min.js" />
+    <Content Include="Scripts\DataTable\jquery.dataTables.js" />
     <Content Include="Scripts\DataTable\jquery.dataTables.min.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
