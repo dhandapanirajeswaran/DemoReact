@@ -2542,8 +2542,18 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
 
             var fuelTypeIds = new List<int> { (int)FuelTypeItem.Diesel, (int)FuelTypeItem.Unleaded };
 
+            var FileUpload_DailyPriceData_today = _context.FileUploads.Where(
+                          x =>
+                              x.UploadDateTime.Month == when.Month &&
+                              x.UploadDateTime.Day == when.Day &&
+                              x.UploadDateTime.Year == when.Year && x.UploadTypeId == (int)FileUploadTypes.DailyPriceData && x.Status.Id == 10).ToList();
+
+            var FileUploadId_DailyPriceData_today = FileUpload_DailyPriceData_today.Count > 0 ? FileUpload_DailyPriceData_today[0].Id : 0;
+
+            if (FileUploadId_DailyPriceData_today == 0) return result;
+
             // Report uses Prices as per date of upload..(not date of Price in DailyPrice)..
-            var dailyPrices = _context.DailyPrices.Where(x => DbFunctions.DiffDays(x.DateOfPrice, when) == 0 && fuelTypeIds.Contains(x.FuelTypeId)).ToList();
+            var dailyPrices = _context.DailyPrices.Where(x => x.DailyUploadId == FileUploadId_DailyPriceData_today && fuelTypeIds.Contains(x.FuelTypeId)).ToList();
 
             var fuels = _context.FuelType.ToList();
 
@@ -2681,9 +2691,15 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
             var result = new CompetitorsPriceRangeByCompanyViewModel();
             result.Date = when;
             // Report uses Prices as per date of upload..(not date of Price in DailyPrice)..
-            var dailyPrices = _context.DailyPrices.Where(x => DbFunctions.DiffDays(x.DateOfPrice, when) == 0 && result.FuelTypeIds.Contains(x.FuelTypeId)).ToList();
+            var FileUpload_DailyPriceData_today = _context.FileUploads.Where(
+                      x =>
+                          x.UploadDateTime.Month == when.Month &&
+                          x.UploadDateTime.Day == when.Day &&
+                          x.UploadDateTime.Year == when.Year && x.UploadTypeId == (int)FileUploadTypes.DailyPriceData && x.Status.Id == 10).ToList();
 
-            var fuels = _context.FuelType.ToList();
+            var FileUploadId_DailyPriceData_today = FileUpload_DailyPriceData_today.Count > 0 ? FileUpload_DailyPriceData_today[0].Id : 0;
+
+            var dailyPrices = _context.DailyPrices.Where(x => x.DailyUploadId == FileUploadId_DailyPriceData_today && result.FuelTypeIds.Contains(x.FuelTypeId)).ToList();
 
             var distinctCatNos = dailyPrices.Select(x => x.CatNo).Distinct().ToList();
 
@@ -2721,7 +2737,9 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
                     companyBrands = companyBrands.Where(x => x.Brand.Equals(brandName) || x.Brand.Equals(Const.SAINSBURYS));
                 }
 
-                foreach (var companyBrand in companyBrands.Select(b => b.Brand).Distinct())
+                var distinctBrands = companyBrands.Select(b => b.Brand).Distinct();
+
+                foreach (var companyBrand in distinctBrands)
                 {
                     var newBrandReportRow = new CompetitorsPriceRangeByCompanyBrandViewModel();
                     newBrandReportRow.BrandName = companyBrand;
@@ -2744,7 +2762,7 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
 
                             if (company.Equals(SainsburysCompanyName, StringComparison.InvariantCultureIgnoreCase))
                             {
-                                result.SainsburysPrices.Add(fuelTypeId, newFuel.Average);
+                                if (!result.SainsburysPrices.ContainsKey(fuelTypeId))  result.SainsburysPrices.Add(fuelTypeId, newFuel.Average);
                             }
                         }
                     }

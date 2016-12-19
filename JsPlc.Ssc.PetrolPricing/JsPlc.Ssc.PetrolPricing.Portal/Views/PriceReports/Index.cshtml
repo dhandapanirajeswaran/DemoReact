@@ -1,7 +1,20 @@
 ﻿@{
     ViewBag.Title = "Reports";
 }
+<style>
+   
 
+    div.transbox {
+        background-color: #ffffff;
+        opacity: 0.8;
+ 
+    }
+
+        div.transbox p {
+            font-weight: bold;
+            color: #000000;
+        }
+</style>
 <h1>@ViewBag.Title</h1>
 <hr />
 <div class="report">
@@ -10,7 +23,10 @@
             <div class="panel panel-default">
                 <div class="panel-body">
                     <a href="~/PriceReports/CompetitorSites">
-                        <img src="~/images/report.png" />
+                        <img src="~/images/report.png" height="50" width="50" />
+                        <div class="transbox">
+                            <p style="height: 70px;">Report shows how many and which competitors face JS sites within a 0-30 minute drive time</p>
+                        </div>
                     </a>
                 </div>
                 <div class="panel-heading"><a href="~/PriceReports/CompetitorSites">Competitor sites</a></div>
@@ -21,7 +37,10 @@
             <div class="panel panel-default">
                 <div class="panel-body">
                     <a href="~/PriceReports/PricePoints">
-                        <img src="~/images/report.png" />
+                        <img src="~/images/report.png" height="50" width="50" />
+                        <div class="transbox">
+                            <p style="height: 70px;">Report identifies the various retail prices of both diesel and unleaded for each brand and provides a market summary of how many brands have sites at each price point.</p>
+                        </div>
                     </a>
                 </div>
                 <div class="panel-heading"><a href="~/PriceReports/PricePoints">Price points</a></div>
@@ -31,7 +50,10 @@
             <div class="panel panel-default">
                 <div class="panel-body">
                     <a href="~/PriceReports/nationalAverage">
-                        <img src="~/images/report.png" />
+                        <img src="~/images/report.png" height="50" width="50" />
+                        <div class="transbox">
+                            <p style="height: 70px;">Report shows the average price of diesel and unleaded for all brands and their variance to JS.</p>
+                        </div>
                     </a>
                 </div>
                 <div class="panel-heading"><a href="~/PriceReports/nationalAverage">National average</a></div>
@@ -41,7 +63,10 @@
             <div class="panel panel-default">
                 <div class="panel-body">
                     <a href="~/PriceReports/nationalAverage2">
-                        <img src="~/images/report.png" />
+                        <img src="~/images/report.png" height="50" width="50" />
+                        <div class="transbox">
+                            <p style="height: 70px;">Report produces the output for the tracking competitor tab in the PPL spreadsheet.</p>
+                        </div>
                     </a>
                 </div>
                 <div class="panel-heading"><a href="~/PriceReports/nationalAverage2">National average 2</a></div>
@@ -56,7 +81,10 @@
             <div class="panel panel-default">
                 <div class="panel-body">
                     <a href="~/PriceReports/PriceMovement">
-                        <img src="~/images/report.png" />
+                        <img src="~/images/report.png" height="50" width="50" />
+                        <div class="transbox">
+                            <p style="height: 70px;">Tracks retail prices of individual sites over a specified period.</p>
+                        </div>
                     </a>
                 </div>
                 <div class="panel-heading"><a href="~/PriceReports/PriceMovement">Price movements</a></div>
@@ -68,7 +96,10 @@
                 <!--  panel-disabled -->
                 <div class="panel-body">
                     <a href="~/PriceReports/Compliance">
-                        <img src="~/images/report.png" />
+                        <img src="~/images/report.png" height="50" width="50" />
+                        <div class="transbox">
+                            <p style="height: 70px;">Report checks JS site compliance of fuel price changes from the day prior.</p>
+                        </div>
                     </a>
                 </div>
                 <div class="panel-heading"><a href="~/PriceReports/Compliance">Compliance check</a></div>
@@ -79,7 +110,10 @@
                 <!--  panel-disabled -->
                 <div class="panel-body">
                     <a href="~/PriceReports/CompetitorsPriceRange">
-                        <img src="~/images/report.png" />
+                        <img src="~/images/report.png" height="50" width="50" />
+                        <div class="transbox">
+                            <p style="height: 70px;">Report shows the average retails of all competitors by grade, their variance to JS and their price range.</p>
+                        </div>
                     </a>
                 </div>
                 <div class="panel-heading"><a href="~/PriceReports/CompetitorsPriceRange">Competitors price range</a></div>
@@ -90,7 +124,10 @@
                 <!--  panel-disabled -->
                 <div class="panel-body">
                     <a href="~/PriceReports/CompetitorsPriceRangeByCompany">
-                        <img src="~/images/report.png" />
+                        <img src="~/images/report.png" height="50" width="50" />
+                        <div class="transbox">
+                            <p style="height: 70px;">Report shows the average retails sorted by ownership of all competitors by grade, their variance to JS and their price range.</p>
+                        </div>
                     </a>
                 </div>
                 <div class="panel-heading"><a href="~/PriceReports/CompetitorsPriceRangeByCompany">Competitors price range by company</a></div>
