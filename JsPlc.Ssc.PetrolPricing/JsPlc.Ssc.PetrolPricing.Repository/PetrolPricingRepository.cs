@@ -2295,7 +2295,15 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
 
 
                     // Report uses Prices as per date of upload..(not date of Price in DailyPrice)..
-                    var dailyPrices = _context.DailyPrices.Where(x => DbFunctions.DiffDays(x.DateOfPrice, when) == 0 && x.FuelTypeId == fuelTypeId).ToList();
+                    var FileUpload_DailyPriceData_today = _context.FileUploads.Where(
+               x =>
+                   x.UploadDateTime.Month == when.Month &&
+                   x.UploadDateTime.Day == when.Day &&
+                   x.UploadDateTime.Year == when.Year && x.UploadTypeId == (int)FileUploadTypes.DailyPriceData && x.Status.Id == 10).ToList();
+
+                    var FileUploadId_DailyPriceData_today = FileUpload_DailyPriceData_today.Count > 0 ? FileUpload_DailyPriceData_today[0].Id : 0;
+
+                    var dailyPrices = _context.DailyPrices.Where(x => x.DailyUploadId == FileUploadId_DailyPriceData_today && x.FuelTypeId == fuelTypeId).ToList();
 
                     var distinctPrices = dailyPrices.Select(x => x.ModalPrice).Distinct().OrderBy(x => x).ToList();
                     var distinctCatNos = dailyPrices.Select(x => x.CatNo).Distinct().ToList();
@@ -2448,7 +2456,15 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
             var fuelTypeIds = new List<int> { (int)FuelTypeItem.Unleaded,(int)FuelTypeItem.Diesel };
 
             // Report uses Prices as per date of upload..(not date of Price in DailyPrice)..
-            var dailyPrices = _context.DailyPrices.Where(x => DbFunctions.DiffDays(x.DateOfPrice, when) == 0 && fuelTypeIds.Contains(x.FuelTypeId)).ToList();
+            var FileUpload_DailyPriceData_today = _context.FileUploads.Where(
+                 x =>
+                     x.UploadDateTime.Month == when.Month &&
+                     x.UploadDateTime.Day == when.Day &&
+                     x.UploadDateTime.Year == when.Year && x.UploadTypeId == (int)FileUploadTypes.DailyPriceData && x.Status.Id == 10).ToList();
+
+            var FileUploadId_DailyPriceData_today = FileUpload_DailyPriceData_today.Count > 0 ? FileUpload_DailyPriceData_today[0].Id : 0;
+
+            var dailyPrices = _context.DailyPrices.Where(x => x.DailyUploadId == FileUploadId_DailyPriceData_today && fuelTypeIds.Contains(x.FuelTypeId)).ToList();
 
             var fuels = _context.FuelType.ToList();
 
@@ -2611,7 +2627,15 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
             var fuelTypeIds = new List<int> { (int)FuelTypeItem.Unleaded, (int)FuelTypeItem.Diesel };
 
             // Report uses Prices as per date of upload..(not date of Price in DailyPrice)..
-            var dailyPrices = _context.DailyPrices.Where(x => DbFunctions.DiffDays(x.DateOfPrice, when) == 0 && fuelTypeIds.Contains(x.FuelTypeId)).ToList();
+            var FileUpload_DailyPriceData_today = _context.FileUploads.Where(
+                    x =>
+                        x.UploadDateTime.Month == when.Month &&
+                        x.UploadDateTime.Day == when.Day &&
+                        x.UploadDateTime.Year == when.Year && x.UploadTypeId == (int)FileUploadTypes.DailyPriceData && x.Status.Id == 10).ToList();
+
+            var FileUploadId_DailyPriceData_today = FileUpload_DailyPriceData_today.Count > 0 ? FileUpload_DailyPriceData_today[0].Id : 0;
+
+            var dailyPrices = _context.DailyPrices.Where(x => x.DailyUploadId == FileUploadId_DailyPriceData_today && fuelTypeIds.Contains(x.FuelTypeId)).ToList();
 
             var fuels = _context.FuelType.ToList();
 
