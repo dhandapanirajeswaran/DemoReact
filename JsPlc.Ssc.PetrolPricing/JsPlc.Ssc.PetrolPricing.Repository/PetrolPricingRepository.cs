@@ -815,7 +815,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                 var listOfbrands = GetExcludeBrands();
                 var allSites = GetSites();
                 Site Jssite = allSites.Where(x => x.Id == siteId).FirstOrDefault();
-                List<SiteToCompetitor> competitors = _context.SiteToCompetitors.Where(x => x.SiteId == siteId && x.DriveTime<25).ToList();
+                List<SiteToCompetitor> competitors = _context.SiteToCompetitors.Where(x => x.SiteId == siteId && x.DriveTime<25 && x.IsExcluded==0).ToList();
 
                 DateTime yDay = forDate.AddDays(-1);
 
@@ -900,7 +900,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
                     var result = listOfbrands.Contains(Compsite.Brand);
 
-                    if (result == true) continue;
+                    if (result == true || Compsite.IsActive==false) continue;
                     sitePriceRow = new SitePriceViewModel();
 
                     sitePriceRow.SiteId = comp.CompetitorId; // CompetitorId
