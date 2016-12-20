@@ -19,6 +19,7 @@ namespace JsPlc.Ssc.PetrolPricing.Models.ViewModels
             FromDate = DateTime.Today.AddDays(-30);
             ToDate = DateTime.Today;
             FuelTypeId = 2;
+            ReportWidth = 0;
         }
 
         public string Brand { get; set; }
@@ -28,6 +29,8 @@ namespace JsPlc.Ssc.PetrolPricing.Models.ViewModels
         public Dictionary<int, string> FuelTypes { get; set; }
 
         public List<string> Brands { get; set; }
+
+        public int ReportWidth { get; set; }
     }
 
     public class PriceMovementReportViewModel

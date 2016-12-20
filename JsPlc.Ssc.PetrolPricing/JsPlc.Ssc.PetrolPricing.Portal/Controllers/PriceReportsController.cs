@@ -232,6 +232,8 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
                 }
 
                 var result = LoadPriceMovementReport(model);
+                result.ReportWidth =
+                    result.PriceMovementReport.ReportRows.First().DataItems.Select(x => x.PriceDate).Count()*150 + 250;
 
                 return View(result);
             }
