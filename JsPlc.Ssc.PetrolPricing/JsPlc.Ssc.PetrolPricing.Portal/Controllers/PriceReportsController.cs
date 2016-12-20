@@ -369,7 +369,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 			var reportContainer = new NationalAverageReportContainerViewModel
 			{
 				ForDate = forDate,
-				NationalAverageReport = _serviceFacade.GetNationalAverage2(forDate,true)
+                NationalAverageReport = _serviceFacade.CompetitorsPriceRangeData(forDate)
 			};
 
 			var dtByBrand = reportContainer.ToCompetitorsPriceRangeByBrandDataTable(); // default tableName = PriceMovementReport (also becomes sheet name in Xlsx)
@@ -534,6 +534,65 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
                     {
                         ws.Rows().AdjustToContents();
                         ws.Tables.FirstOrDefault().ShowAutoFilter = false;
+                    }
+                    if (fileName.Contains("PriceMovementReport"))
+                    {
+                        var rangeAddress = ws.Tables.FirstOrDefault().RangeAddress;
+                        var cellrange = string.Format("{0}:{1}{2}", rangeAddress.FirstAddress, rangeAddress.LastAddress.ColumnLetter, rangeAddress.FirstAddress.ColumnNumber);
+
+                        var sitesCellRange = string.Format("{0}:{1}{2}", rangeAddress.FirstAddress, rangeAddress.FirstAddress.ColumnLetter, ws.Rows().Count());
+                        var Others_CellRange = string.Format("B2:{0}{1}", rangeAddress.LastAddress.ColumnLetter, ws.Rows().Count());
+                     
+                        ws.Range(cellrange).Style.NumberFormat.SetFormat("@");
+                        ws.Range(sitesCellRange).Style.NumberFormat.SetFormat("@");
+                        ws.Range(Others_CellRange).Style.NumberFormat.SetFormat("0.00");
+                    }
+                    if (fileName == "CompetitorsPriceRange")
+                    {
+                        var rangeAddress = ws.Tables.FirstOrDefault().RangeAddress;
+                        var cellrange = string.Format("{0}:{1}{2}", rangeAddress.FirstAddress, rangeAddress.LastAddress.ColumnLetter, rangeAddress.FirstAddress.ColumnNumber);
+
+                        var brandCellRange = string.Format("{0}:{1}{2}", rangeAddress.FirstAddress, rangeAddress.FirstAddress.ColumnLetter, ws.Rows().Count());
+                        var dieselPriceRange_CellRange = string.Format("F2:F{0}",  ws.Rows().Count());
+                        var unleadedPriceRange_CellRange = string.Format("G2:G{0}",  ws.Rows().Count());
+                        var dieselAvgRetails_CellRange = string.Format("B2:B{0}", ws.Rows().Count());
+                        var unleadedAvgRetails_CellRange = string.Format("C2:C{0}", ws.Rows().Count());
+                        var dieselDiffRetails_CellRange = string.Format("D2:D{0}", ws.Rows().Count());
+                        var unleadedDiffRetails_CellRange = string.Format("E2:E{0}", ws.Rows().Count());
+
+                        ws.Range(cellrange).Style.NumberFormat.SetFormat("@");
+                        ws.Range(brandCellRange).Style.NumberFormat.SetFormat("@");
+                        ws.Range(dieselPriceRange_CellRange).Style.NumberFormat.SetFormat("@");
+                        ws.Range(unleadedPriceRange_CellRange).Style.NumberFormat.SetFormat("@");
+                        ws.Range(dieselAvgRetails_CellRange).Style.NumberFormat.SetFormat("0.00");
+                        ws.Range(unleadedAvgRetails_CellRange).Style.NumberFormat.SetFormat("0.00");
+                        ws.Range(dieselDiffRetails_CellRange).Style.NumberFormat.SetFormat("0.00");
+                        ws.Range(unleadedDiffRetails_CellRange).Style.NumberFormat.SetFormat("0.00");
+                    }
+                    if (fileName == "CompetitorsPriceRangeByCompany")
+                    {
+                        var rangeAddress = ws.Tables.FirstOrDefault().RangeAddress;
+                        var cellrange = string.Format("{0}:{1}{2}", rangeAddress.FirstAddress, rangeAddress.LastAddress.ColumnLetter, rangeAddress.FirstAddress.ColumnNumber);
+
+                        var companyCellRange = string.Format("{0}:{1}{2}", rangeAddress.FirstAddress, rangeAddress.FirstAddress.ColumnLetter, ws.Rows().Count());
+                        var brandCellRange = string.Format("B2:B{0}",  ws.Rows().Count());
+                        var dieselAvgRetail_CellRange = string.Format("C2:C{0}", ws.Rows().Count());
+                        var unleadedAvgRetail_CellRange = string.Format("D2:D{0}", ws.Rows().Count());
+                        var unleadedDiffRetails_CellRange = string.Format("E2:E{0}", ws.Rows().Count());
+                        var dieselDiffRetails_CellRange = string.Format("F2:F{0}", ws.Rows().Count());
+                        var unleadedPriceRange_CellRange = string.Format("G2:G{0}", ws.Rows().Count());
+                        var dieselPriceRange_CellRange = string.Format("H2:H{0}", ws.Rows().Count());
+
+                        ws.Range(cellrange).Style.NumberFormat.SetFormat("@");
+                        ws.Range(brandCellRange).Style.NumberFormat.SetFormat("@");
+                        ws.Range(companyCellRange).Style.NumberFormat.SetFormat("@");
+                        ws.Range(unleadedPriceRange_CellRange).Style.NumberFormat.SetFormat("@");
+                        ws.Range(dieselPriceRange_CellRange).Style.NumberFormat.SetFormat("@");
+
+                        ws.Range(dieselAvgRetail_CellRange).Style.NumberFormat.SetFormat("0.00");
+                        ws.Range(unleadedAvgRetail_CellRange).Style.NumberFormat.SetFormat("0.00");
+                        ws.Range(unleadedDiffRetails_CellRange).Style.NumberFormat.SetFormat("0.00");
+                        ws.Range(dieselDiffRetails_CellRange).Style.NumberFormat.SetFormat("0.00");
                     }
                     if (fileName == "PricePointsReport")
                     {
