@@ -823,7 +823,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                                 x =>
                                     x.UploadDateTime.Month == forDate.Month &&
                                     x.UploadDateTime.Day == forDate.Day &&
-                                    x.UploadDateTime.Year == forDate.Year && x.UploadTypeId == (int)FileUploadTypes.LatestCompPriceData && x.Status.Id == 10).ToList();
+                                    x.UploadDateTime.Year == forDate.Year && x.UploadTypeId == (int)FileUploadTypes.LatestCompPriceData && x.Status.Id == 10).OrderByDescending(x=>x.Id).ToList();
 
                 var fileUploadId_LatestCompPriceData_today = fileUpload_LatestCompPriceData_today.Count>0? fileUpload_LatestCompPriceData_today[0].Id :0;
 
@@ -831,7 +831,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                                 x =>
                                     x.UploadDateTime.Month == forDate.Month &&
                                     x.UploadDateTime.Day == forDate.Day &&
-                                    x.UploadDateTime.Year == forDate.Year && x.UploadTypeId == (int)FileUploadTypes.DailyPriceData && x.Status.Id == 10).ToList();
+                                    x.UploadDateTime.Year == forDate.Year && x.UploadTypeId == (int)FileUploadTypes.DailyPriceData && x.Status.Id == 10).OrderByDescending(x => x.Id).ToList();
 
                 var fileUploadId_DailyPriceData_today =fileUpload_DailyPriceData_today.Count>0 ? fileUpload_DailyPriceData_today[0].Id:0;
 
@@ -839,7 +839,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                            x =>
                                x.UploadDateTime.Month == yDay.Month &&
                                x.UploadDateTime.Day == yDay.Day &&
-                               x.UploadDateTime.Year == yDay.Year && x.UploadTypeId == (int)FileUploadTypes.LatestCompPriceData && x.Status.Id == 10).ToList();
+                               x.UploadDateTime.Year == yDay.Year && x.UploadTypeId == (int)FileUploadTypes.LatestCompPriceData && x.Status.Id == 10).OrderByDescending(x => x.Id).ToList();
 
                 var fileUploadId_LatestCompPriceData_yday = fileUpload_LatestCompPriceData_yday.Count>0? fileUpload_LatestCompPriceData_yday[0].Id :0;
 
@@ -848,7 +848,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                                 x =>
                                     x.UploadDateTime.Month == yDay.Month &&
                                     x.UploadDateTime.Day == yDay.Day &&
-                                    x.UploadDateTime.Year == yDay.Year && x.UploadTypeId == (int)FileUploadTypes.DailyPriceData && x.Status.Id == 10).ToList();
+                                    x.UploadDateTime.Year == yDay.Year && x.UploadTypeId == (int)FileUploadTypes.DailyPriceData && x.Status.Id == 10).OrderByDescending(x => x.Id).ToList();
 
                 var fileUploadId_DailyPriceData_yday =fileUpload_DailyPriceData_yday.Count>0? fileUpload_DailyPriceData_yday[0].Id : 0;
 
@@ -858,7 +858,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                 {
                     latestCompPrices_today = _context.LatestCompPrices.Where(
                             x =>
-                                    x.FuelTypeId == fileUploadId_LatestCompPriceData_today).ToList();
+                                    x.UploadId == fileUploadId_LatestCompPriceData_today).ToList();
                 }
 
 
@@ -878,7 +878,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                 {
                     latestCompPrices_yday = _context.LatestCompPrices.Where(
                             x =>
-                                    x.FuelTypeId == fileUploadId_LatestCompPriceData_yday).ToList();
+                                    x.UploadId == fileUploadId_LatestCompPriceData_yday).ToList();
                 }
 
 
@@ -965,7 +965,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             if (latestCompPrices_yday != null)
             {
                 var latestPrice_yday = latestCompPrices_yday.Where(x => x.FuelTypeId == FuelType && x.CatNo == CompSite.CatNo.GetValueOrDefault()).ToList();
-                LatestPrice_today = latestPrice_yday.Count > 0 ? latestPrice_yday[0].ModalPrice : 0;
+                LatestPrice_yday = latestPrice_yday.Count > 0 ? latestPrice_yday[0].ModalPrice : 0;
             }
 
             var todayPrice = LatestPrice_today > 0 ? LatestPrice_today + nOffSet : DailyPrice_today + nOffSet;
@@ -1358,7 +1358,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                                 if (!String.IsNullOrEmpty(LatestCompPriceDataModel.UnleadedPrice))
                                 {
                                     AddLatestCompPrice(newDbContext, LatestCompPriceDataModel, fileDetails,
-                                        (int)FuelTypeItem.Unleaded, (int)Convert.ToDouble(LatestCompPriceDataModel.UnleadedPrice));
+                                        (int)FuelTypeItem.Unleaded, Convert.ToDouble(LatestCompPriceDataModel.UnleadedPrice));
 
 
                                 }
@@ -1366,7 +1366,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                                 if (!String.IsNullOrEmpty(LatestCompPriceDataModel.DieselPrice))
                                 {
                                     AddLatestCompPrice(newDbContext, LatestCompPriceDataModel, fileDetails,
-                                  (int)FuelTypeItem.Diesel, (int)Convert.ToDouble(LatestCompPriceDataModel.DieselPrice));
+                                  (int)FuelTypeItem.Diesel, Convert.ToDouble(LatestCompPriceDataModel.DieselPrice));
                                 }
                             }
 
@@ -1445,7 +1445,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             
         }
 
-        public void AddLatestCompPrice(RepositoryContext newDbContext, LatestCompPriceDataModel latestCompPriceDataModel, FileUpload fileDetails, int fuelTypeId, int fuelPrice)
+        public void AddLatestCompPrice(RepositoryContext newDbContext, LatestCompPriceDataModel latestCompPriceDataModel, FileUpload fileDetails, int fuelTypeId, double fuelPrice)
         {
             LatestCompPrice dbRecord = null;
             bool iNewRecord = false;
@@ -1453,7 +1453,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             dbRecord.UploadId = fileDetails.Id;
             dbRecord.CatNo = latestCompPriceDataModel.CatNo;
             dbRecord.FuelTypeId = fuelTypeId;
-            dbRecord.ModalPrice = fuelPrice * 10;
+            dbRecord.ModalPrice =(int) (fuelPrice * 10);
             newDbContext.LatestCompPrices.Add(dbRecord);
 
         }
