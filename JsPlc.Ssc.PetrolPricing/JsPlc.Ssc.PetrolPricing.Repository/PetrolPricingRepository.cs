@@ -2689,7 +2689,7 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
                     fuelRow.Brands.Add(brandAvg);
                     brandAvg.BrandName = brand;
 
-                    var brandCatsNos = competitorSites.Where(x => x.Brand == brand).Where(x => x.CatNo.HasValue).Select(x => x.CatNo.Value).ToList();
+                    var brandCatsNos = competitorSites.Where(x => brand == Const.UK ? true : x.Brand == brand).Where(x => x.CatNo.HasValue).Select(x => x.CatNo.Value).ToList();
                     var pricesList = dailyPrices.Where(x => x.FuelTypeId == fuelType && brandCatsNos.Contains(x.CatNo)).ToList();
 
                     if (pricesList.Any())
