@@ -2860,59 +2860,44 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
             {
                 var fuelTypesList = new[] { 2, 6, 1 }; // Unl, Diesel, Super
                 var nextday = forDate.AddDays(1);
+                var prevday = forDate.AddDays(-1);
 
-                //DateTime? sitePriceDateLookingBack = GetLastSitePriceDate(forDate);
-                DateTime? catPriceDateLookingForward = GetFirstDailyPriceDate(forDate);
-                DateTime? catPriceDateLookingForward_nextday = GetFirstDailyPriceDate(nextday);
 
-                if (catPriceDateLookingForward == null || catPriceDateLookingForward_nextday == null) return null;
+                var fileUpload_LatestCompPriceData_PrevDay = _context.FileUploads.Where(
+                               x =>
+                                   x.UploadDateTime.Month == prevday.Month &&
+                                   x.UploadDateTime.Day == prevday.Day &&
+                                   x.UploadDateTime.Year == prevday.Year && x.UploadTypeId == (int)FileUploadTypes.DailyPriceData && x.Status.Id == 10).OrderByDescending(x => x.Id).ToList();
+
+                var fileUploadId_LatestCompPriceData_PrevDay = fileUpload_LatestCompPriceData_PrevDay.Count > 0 ? fileUpload_LatestCompPriceData_PrevDay[0].Id : 0;
+
+                var dailyPrices = new List<DailyPrice>();
+                dailyPrices = GetDailyPricesForDate(nextday);
+
+                var sitePrices = _context.SitePrices.Where(x => x.UploadId == fileUploadId_LatestCompPriceData_PrevDay).ToList();
+
+                if (dailyPrices.Count == 0 || sitePrices.Count == 0) return null;
 
                 var sites = GetJsSites();
 
                 var reportFuels = GetFuelTypes().Where(x => fuelTypesList.Contains(x.Id)).ToList();
-
-                var sitePrices = CallSitePriceSproc(forDate);
-                var sitePrices_nextday = CallSitePriceSproc(nextday);
-
-                var dailyPrices = new List<DailyPrice>();
-                if (catPriceDateLookingForward != null)
-                {
-                    dailyPrices = GetDailyPricesForDate(catPriceDateLookingForward.Value);
-                }
-
-                var dailyPrices_nextday = new List<DailyPrice>();
-                if (catPriceDateLookingForward_nextday != null)
-                {
-                    dailyPrices_nextday = GetDailyPricesForDate(catPriceDateLookingForward_nextday.Value);
-                }
-
-
-                if (dailyPrices.Count == 0 || dailyPrices_nextday.Count==0)
-                {                          
-                    return null;
-                }
+               
 
                 foreach (var site in sites)
                 {
-                    Site site1 = site;
                     var dataRow = new ComplianceReportRow
                     {
-                        SiteId = site1.Id,
-                        PfsNo = site1.PfsNo.ToString(),
-                        StoreNo = site1.StoreNo.ToString(),
-                        CatNo = site1.CatNo.ToString(),
-                        SiteName = site1.SiteName,
+                        SiteId = site.Id,
+                        PfsNo = site.PfsNo.ToString(),
+                        StoreNo = site.StoreNo.ToString(),
+                        CatNo = site.CatNo.ToString(),
+                        SiteName = site.SiteName,
                         DataItems = new List<ComplianceReportDataItem>()
                     };
                     retval.ReportRows.Add(dataRow);
                    
                     var dataItems = dataRow.DataItems;
-                 /*   var sitePriceViewModels = sitePrices as SitePriceViewModel[] ?? sitePrices;
-                    var sitePriceViewModels_nextday = sitePrices_nextday as SitePriceViewModel[] ?? sitePrices_nextday;
                    
-                    var sitePriceViewModel = sitePriceViewModels==null? null: sitePriceViewModels.FirstOrDefault(x => x.SiteId == site1.Id);
-                    var sitePriceViewModel_nextday = sitePriceViewModels_nextday == null ? null : sitePriceViewModels_nextday.FirstOrDefault(x => x.SiteId == site1.Id);*/
-                 
                     foreach (var fuelId in fuelTypesList) // report order as per array - Unl, Diesel, Super
                     {
                         FuelType fuel = reportFuels.FirstOrDefault(x => x.Id == fuelId);
@@ -2929,15 +2914,15 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
                         };
                         dataItems.Add(dataItem);
 
-                        var dailyPrice_nextday = dailyPrices_nextday.FirstOrDefault(x => x.CatNo.Equals(site1.CatNo) && x.FuelTypeId == fuel.Id);
+                        var expected_nextday = sitePrices.FirstOrDefault(x => x.SiteId.Equals(site.Id) && x.FuelTypeId == fuel.Id);
                         // Find the ExpectedPrice
-                        if (dailyPrice_nextday != null)
+                        if (expected_nextday != null)
                         {  
                             dataItem.FoundExpectedPrice = true;
-                            dataItem.ExpectedPriceValue = dailyPrice_nextday.ModalPrice;                          
+                            dataItem.ExpectedPriceValue = expected_nextday.SuggestedPrice;                          
                         }
 
-                        var dailyPrice = dailyPrices.FirstOrDefault(x => x.CatNo.Equals(site1.CatNo) && x.FuelTypeId == fuel.Id);
+                        var dailyPrice = dailyPrices.FirstOrDefault(x => x.CatNo.Equals(site.CatNo) && x.FuelTypeId == fuel.Id);
                         if (dailyPrice != null)
                         {
                             dataItem.CatPriceValue = dailyPrice.ModalPrice;
