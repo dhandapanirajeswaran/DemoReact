@@ -14,7 +14,16 @@
 
     div.panel-hover:hover {
         box-shadow: 4px 4px 8px #ED8B00;
+        cursor: pointer;
+        background: #fff8f8;
     }
+
+    .report-blurb {
+        height: 100px;
+        font-weight: bold;
+        margin-top: 1em;
+    }
+
 </style>
 <h1>@ViewBag.Title</h1>
 <hr />
@@ -22,56 +31,40 @@
 <div class="report">
     <div class="row">
         <div class="col-md-3">
-            <div class="panel panel-default panel-hover">
+            <div class="panel panel-default panel-hover panel-click">
                 <div class="panel-body">
-                    <a  class="show-busy-loader" href="~/PriceReports/CompetitorSites">
-                        <img src="~/images/report.png" height="50" width="50" />
-                        <div class="transbox">
-                            <p style="height: 80px;">Report shows how many and which competitors face JS sites within a 0-30 minute drive time</p>
-                        </div>
-                    </a>
+                    <img src="~/images/report.png" height="50" width="50" />
+                    <div class="report-blurb">Report shows how many and which competitors face JS sites within a 0-30 minute drive time</div>
                 </div>
-                <div class="panel-heading"><a class="show-busy-loader" href="~/PriceReports/CompetitorSites">Competitor sites</a></div>
+                <div class="panel-heading"><a href="~/PriceReports/CompetitorSites">Competitor sites</a></div>
             </div>
         </div>
 
         <div class="col-md-3">
-            <div class="panel panel-default panel-hover">
+            <div class="panel panel-default panel-hover panel-click">
                 <div class="panel-body">
-                    <a  class="show-busy-loader" href="~/PriceReports/PricePoints">
-                        <img src="~/images/report.png" height="50" width="50" />
-                        <div class="transbox">
-                            <p style="height: 80px;">Report identifies the various retail prices of both diesel and unleaded for each brand and provides a market summary of how many brands have sites at each price point.</p>
-                        </div>
-                    </a>
+                    <img src="~/images/report.png" height="50" width="50" />
+                    <div class="report-blurb">Report identifies the various retail prices of both diesel and unleaded for each brand and provides a market summary of how many brands have sites at each price point.</div>
                 </div>
-                <div class="panel-heading"><a class="show-busy-loader" href="~/PriceReports/PricePoints">Price points</a></div>
+                <div class="panel-heading"><a href="~/PriceReports/PricePoints">Price points</a></div>
             </div>
         </div>
         <div class="col-md-3">
-            <div class="panel panel-default panel-hover">
+            <div class="panel panel-default panel-hover panel-click">
                 <div class="panel-body">
-                    <a class="show-busy-loader" href="~/PriceReports/nationalAverage">
-                        <img src="~/images/report.png" height="50" width="50" />
-                        <div class="transbox">
-                            <p style="height: 80px;">Report shows the average price of diesel and unleaded for all brands and their variance to JS.</p>
-                        </div>
-                    </a>
+                    <img src="~/images/report.png" height="50" width="50" />
+                    <div class="report-blurb">Report shows the average price of diesel and unleaded for all brands and their variance to JS.</div>
                 </div>
-                <div class="panel-heading"><a class="show-busy-loader" href="~/PriceReports/nationalAverage">National average</a></div>
+                <div class="panel-heading"><a href="~/PriceReports/nationalAverage">National average</a></div>
             </div>
         </div>
         <div class="col-md-3">
-            <div class="panel panel-default panel-hover">
+            <div class="panel panel-default panel-hover panel-click">
                 <div class="panel-body">
-                    <a  class="show-busy-loader" href="~/PriceReports/nationalAverage2">
-                        <img src="~/images/report.png" height="50" width="50" />
-                        <div class="transbox">
-                            <p style="height: 80px;">Report produces the output for the tracking competitor tab in the PPL spreadsheet.</p>
-                        </div>
-                    </a>
+                    <img src="~/images/report.png" height="50" width="50" />
+                    <div class="report-blurb">Report produces the output for the tracking competitor tab in the PPL spreadsheet.</div>
                 </div>
-                <div class="panel-heading"><a class="show-busy-loader" href="~/PriceReports/nationalAverage2">National average 2</a></div>
+                <div class="panel-heading"><a href="~/PriceReports/nationalAverage2">National average 2</a></div>
             </div>
         </div>
     </div>
@@ -80,59 +73,43 @@
       
           
         <div class="col-md-3">
-            <div class="panel panel-default panel-hover">
+            <div class="panel panel-default panel-hover panel-click">
                 <div class="panel-body">
-                    <a class="show-busy-loader" href="~/PriceReports/PriceMovement">
-                        <img src="~/images/report.png" height="50" width="50" />
-                        <div class="transbox">
-                            <p style="height: 80px;">Tracks retail prices of individual sites over a specified period.</p>
-                        </div>
-                    </a>
+                    <img src="~/images/report.png" height="50" width="50" />
+                    <div class="report-blurb">Tracks retail prices of individual sites over a specified period.</div>
                 </div>
-                <div class="panel-heading"><a class="show-busy-loader" href="~/PriceReports/PriceMovement">Price movements</a></div>
+                <div class="panel-heading"><a href="~/PriceReports/PriceMovement">Price movements</a></div>
             </div>
         </div>
 
         <div class="col-md-3">
-            <div class="panel panel-default panel-hover">
+            <div class="panel panel-default panel-hover panel-click">
                 <!--  panel-disabled -->
                 <div class="panel-body">
-                    <a class="show-busy-loader" href="~/PriceReports/Compliance">
-                        <img src="~/images/report.png" height="50" width="50" />
-                        <div class="transbox">
-                            <p style="height: 80px;">Report checks JS site compliance of fuel price changes from the day prior.</p>
-                        </div>
-                    </a>
+                    <img src="~/images/report.png" height="50" width="50" />
+                    <div class="report-blurb">Report checks JS site compliance of fuel price changes from the day prior.</div>
                 </div>
-                <div class="panel-heading"><a class="show-busy-loader" href="~/PriceReports/Compliance">Compliance check</a></div>
+                <div class="panel-heading"><a href="~/PriceReports/Compliance">Compliance check</a></div>
             </div>
         </div>
         <div class="col-md-3">
-            <div class="panel panel-default panel-hover">
+            <div class="panel panel-default panel-hover panel-click">
                 <!--  panel-disabled -->
                 <div class="panel-body">
-                    <a class="show-busy-loader" href="~/PriceReports/CompetitorsPriceRange">
-                        <img src="~/images/report.png" height="50" width="50" />
-                        <div class="transbox">
-                            <p style="height: 80px;">Report shows the average retails of all competitors by grade, their variance to JS and their price range.</p>
-                        </div>
-                    </a>
+                    <img src="~/images/report.png" height="50" width="50" />
+                    <div class="report-blurb">Report shows the average retails of all competitors by grade, their variance to JS and their price range.</div>
                 </div>
-                <div class="panel-heading"><a class="show-busy-loader" href="~/PriceReports/CompetitorsPriceRange">Competitors price range</a></div>
+                <div class="panel-heading"><a href="~/PriceReports/CompetitorsPriceRange">Competitors price range</a></div>
             </div>
         </div>
         <div class="col-md-3">
-            <div class="panel panel-default panel-hover">
+            <div class="panel panel-default panel-hover panel-click">
                 <!--  panel-disabled -->
                 <div class="panel-body">
-                    <a class="show-busy-loader" href="~/PriceReports/CompetitorsPriceRangeByCompany">
-                        <img src="~/images/report.png" height="50" width="50" />
-                        <div class="transbox">
-                            <p style="height: 80px;">Report shows the average retails sorted by ownership of all competitors by grade, their variance to JS and their price range.</p>
-                        </div>
-                    </a>
+                    <img src="~/images/report.png" height="50" width="50" />
+                    <div class="report-blurb">Report shows the average retails sorted by ownership of all competitors by grade, their variance to JS and their price range.</div>
                 </div>
-                <div class="panel-heading"><a class="show-busy-loader" href="~/PriceReports/CompetitorsPriceRangeByCompany">Competitors price range by company</a></div>
+                <div class="panel-heading"><a href="~/PriceReports/CompetitorsPriceRangeByCompany">Competitors price range by company</a></div>
             </div>
         </div>
     </div>
@@ -144,12 +121,16 @@
     require(["jquery", "common", "busyloader"],
         function ($, common, busyloader) {
             $(function () {
-                $('.show-busy-loader').on('click', function () {
+                $('.panel-click').on('click', function () {
+                    var panel = $(this),
+                        link = panel.find('a');
+
                     busyloader.show({
                         message: 'Loading report - this may take a few moments...',
-                        showtime: 4000
+                        showtime: 5000
                     });
-                    return true;
+                    panel.slideUp(1000);
+                    window.location = link.attr('href');
                 });
             });
         }
