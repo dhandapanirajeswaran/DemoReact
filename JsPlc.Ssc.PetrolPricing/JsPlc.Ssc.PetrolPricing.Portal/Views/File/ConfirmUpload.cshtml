@@ -19,7 +19,7 @@
             <input type="submit" value="Cancel" name="response" class="btn btn-primary" />
         </div>
         <div class="col-md-1">
-            <input type="submit" value="Overwrite" name="response" class="btn btn-primary btn-danger" />
+            <input type="submit" id="OverWriteUploadButton" value="Overwrite" name="response" class="btn btn-primary btn-danger" />
         </div>
         <div class="clearfix"></div>
     </div>
@@ -27,3 +27,18 @@
 <hr />
 <h3>Existing Daily Price files</h3>
 @Html.Partial("_FileUploadsList", Model.ExistingFiles)
+
+<script>
+    require(["jquery", "common", "busyloader"],
+        function ($, common, busyloader) {
+            $(function () {
+                $('#OverWriteUploadButton').on('click', function () {
+                    debugger;
+                    busyloader.show({
+                        message: 'Overwritting file. Please wait...',
+                        showtime: 3000
+                    });
+                });
+            });
+        });
+</script>

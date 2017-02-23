@@ -1,4 +1,5 @@
 ﻿@using System.Globalization
+@using JsPlc.Ssc.PetrolPricing.Portal.Helper.Extensions
 @model IEnumerable<JsPlc.Ssc.PetrolPricing.Models.FileUpload>
 
 @{ 
@@ -13,57 +14,65 @@
     };
 }
 
-@if(Model !=null && Model.Any())
-{ 
-
-<table class="table table-striped">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.OriginalFileName)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.UploadType.UploadTypeName)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.UploadDateTime)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Status.Status)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.UploadedBy)
-        </th>
-        <th></th>
-    </tr>
-    @foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.OriginalFileName)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.UploadType.UploadTypeName)
-        </td>
-        <td>
-            @item.UploadDateTime.ToString("dd-MMM-yyyy HH:mm:ss")
-        </td>
-        <td>
-            @if (statusMarkup.ContainsKey(item.Status.Status))
-            {
-                @Html.Raw(statusMarkup[item.Status.Status])
-            } else {
-                <span><i></i>@item.Status.Status</span>
-            }
-            @*@Html.DisplayFor(modelItem => item.Status.Status)*@
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.UploadedBy)
-        </td>
-        <td>
-            @Html.ActionLink("Details", "Details", new { id= item.Id.ToString(CultureInfo.InvariantCulture) })
-        </td>
-    </tr>
-}
-</table>
+@if (Model != null && Model.Any())
+{
+    <table class="table table-striped">
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.OriginalFileName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.UploadType.UploadTypeName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.UploadDateTime)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Status.Status)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.UploadedBy)
+            </th>
+            <th></th>
+        </tr>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.OriginalFileName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.UploadType.UploadTypeName)
+                </td>
+                <td>
+                    @if (DateTime.Now.Date.Subtract(item.UploadDateTime.Date).TotalDays < 2)
+                    {
+                       <strong>@Html.FormatFriendlyDateTime(item.UploadDateTime)</strong>
+                    }
+                    else
+                    {
+                        @Html.FormatFriendlyDateTime(item.UploadDateTime)
+                    }
+                </td>
+                <td>
+                    @if (statusMarkup.ContainsKey(item.Status.Status))
+                    {
+                        @Html.Raw(statusMarkup[item.Status.Status])
+                    }
+                    else
+                    {
+                        <span><i></i>@item.Status.Status</span>
+                    }
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.UploadedBy)
+                </td>
+                <td>
+                    @Html.ActionLink("Details", "Details", new { id = item.Id.ToString(CultureInfo.InvariantCulture) })
+                </td>
+            </tr>
+        }
+    </table>
 }
 else
 {

@@ -22,7 +22,6 @@
             tick = 15,
             element = $('#spanTicker'),
         redraw = function () {
-            console.log('redraw at: ' + tick);
             element.text(tick);
             tick--;
             if (tick < 0)
