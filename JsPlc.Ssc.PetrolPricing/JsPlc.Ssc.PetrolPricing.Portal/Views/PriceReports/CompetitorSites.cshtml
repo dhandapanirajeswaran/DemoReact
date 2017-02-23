@@ -13,34 +13,28 @@
 <hr />
 
 <style>
-  
 
-        .actualdata {
+.actualdata {
     height: 500px;
-        overflow-y: auto;
-        overflow-x: hidden; 
+    overflow-y: auto;
+    overflow-x: hidden; 
 }
 
-        .col-md-1 
-        {
-            width:130px;
-        }
+.fixed-col-1 {
+    width:130px;
+}
 
-        .alternativerow:nth-child(2n+1){
+.alternativerow:nth-child(2n+1) {
     background:#F5F5F5;
-    
 }
-        .alternativerow
-        {
-            height:35px;
-           
+
+.alternativerow {
+    height:35px;
     border-bottom:1px solid #b9b2b2
-        }
-
-      
-
+}
      
 </style>
+
 @using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
@@ -63,28 +57,28 @@
     <hr style="border-width:3px;" />
     <div class="row" style="font-weight: bold">
         <div class="divheader">
-            <div class="col-md-1" style="width:200px;">
+            <div class="col-md-1 fixed-col-1" style="width:200px;">
                 Brand Name
             </div>
-            <div class="col-md-1">
+            <div class="col-md-1 fixed-col-1">
                 0 - 5
             </div>
-            <div class="col-md-1">
+            <div class="col-md-1 fixed-col-1">
                 5 - 10
             </div>
-            <div class="col-md-1">
+            <div class="col-md-1 fixed-col-1">
                 10 - 15
             </div>
-            <div class="col-md-1">
+            <div class="col-md-1 fixed-col-1">
                 15 - 20
             </div>
-            <div class="col-md-1">
+            <div class="col-md-1 fixed-col-1">
                 20 - 25
             </div>
-            <div class="col-md-1">
+            <div class="col-md-1 fixed-col-1">
                 25 - 30
             </div>
-            <div class="col-md-1">
+            <div class="col-md-1 fixed-col-1">
                 > 30
             </div>
         </div>
@@ -98,28 +92,28 @@
 
           
         <div class="row">
-                <div class="col-md-1" style="width:200px;">
+                <div class="col-md-1 fixed-col-1" style="width:200px;">
                 @item.BrandName
             </div>
-            <div class="col-md-1">
+            <div class="col-md-1 fixed-col-1">
                 @item.Count0To5
             </div>
-            <div class="col-md-1">
+            <div class="col-md-1 fixed-col-1">
                 @item.Count5To10
             </div>
-            <div class="col-md-1">
+            <div class="col-md-1 fixed-col-1">
                 @item.Count10To15
             </div>
-            <div class="col-md-1">
+            <div class="col-md-1 fixed-col-1">
                 @item.Count15To20
             </div>
-            <div class="col-md-1">
+            <div class="col-md-1 fixed-col-1">
                 @item.Count20To25
             </div>
-            <div class="col-md-1">
+            <div class="col-md-1 fixed-col-1">
                 @item.Count25To30
             </div>
-            <div class="col-md-1">
+            <div class="col-md-1 fixed-col-1">
                 @item.CountMoreThan30
             </div>
             
@@ -138,6 +132,7 @@ else if (Model != null && Model.SiteId > 0)
 {
     <div class="alert alert-info" role="alert">Data for <strong>@Model.Report.SiteName</strong> site is not found</div>
 }
+
 
 @section scripts {
     <script src="~/Scripts/PriceReports/competitorSites.js"></script>

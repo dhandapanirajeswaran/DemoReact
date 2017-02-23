@@ -81,6 +81,8 @@ namespace JsPlc.Ssc.PetrolPricing.Models
         [Range(-4000, 4000)]
         public double CompetitorPriceOffsetNew { get; set; }        
 
+        public string Notes { get; set; }
+
         public SiteViewModel()
         {
             Competitors = new List<SiteViewModel>();

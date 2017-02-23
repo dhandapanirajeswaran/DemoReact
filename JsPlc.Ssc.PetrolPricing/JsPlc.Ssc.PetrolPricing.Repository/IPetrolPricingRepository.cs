@@ -260,5 +260,11 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         bool SaveExcludeBrands(List<String> listOfBrands);
 
         List<String> GetExcludeBrands();
+
+        SiteNoteViewModel GetSiteNote(int siteId);
+
+        JsonResultViewModel<bool> UpdateSiteNote(SiteNoteUpdateViewModel model);
+
+        JsonResultViewModel<int> DeleteSiteNote(int siteId);
 	}
 }

@@ -102,6 +102,7 @@
     <Compile Include="PPUser.cs" />
     <Compile Include="ExcludedBrands.cs" />
     <Compile Include="LatestPrice.cs" />
+    <Compile Include="ViewModels\JsonResultViewModel.cs" />
     <Compile Include="ViewModels\LatestCompPriceDataModel.cs" />
     <Compile Include="ViewModels\LatestPriceDataModel.cs" />
     <Compile Include="ViewModels\CompetitorSiteReportViewModel.cs" />
@@ -124,6 +125,8 @@
     <Compile Include="ViewModels\NationalAverageReportViewModel.cs" />
     <Compile Include="ViewModels\PricePointReportViewModel.cs" />
     <Compile Include="ViewModels\SelectItemViewModel.cs" />
+    <Compile Include="ViewModels\SiteNoteUpdateViewModel.cs" />
+    <Compile Include="ViewModels\SiteNoteViewModel.cs" />
     <Compile Include="ViewModels\SiteViewModel.cs" />
     <Compile Include="SitePrice.cs" />
     <Compile Include="DailyPrice.cs" />

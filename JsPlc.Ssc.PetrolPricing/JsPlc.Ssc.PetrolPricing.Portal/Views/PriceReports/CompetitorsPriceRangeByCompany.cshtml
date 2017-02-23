@@ -1,28 +1,9 @@
 ﻿@model JsPlc.Ssc.PetrolPricing.Models.ViewModels.CompetitorsPriceRangeByCompanyViewModel
 @{
-	ViewBag.Title = "Report - Competitors Price Range by company";
+    ViewBag.Title = "Report - Competitors Price Range by company";
     var hasData = (Model != null && Model.ReportCompanies[0].Brands.Count > 0);
 
 }
-
-
-
-<script type="text/javascript">
-
-    $(document).ready(function () {
-
-        if ("@hasData" == "True") {
-            $("#btnExportReport").prop("disabled", false);
-        }
-        else {
-            $("#btnExportReport").prop("disabled", true);
-        }
-
-    });
-
-
-</script>
-
 
 <style>
     .actualdata {
@@ -31,29 +12,31 @@
         overflow-x: hidden;
     }
 
-     .alternativerow:nth-child(2n+1){
-    background:#F5F5F5;
-    
-}
-        .alternativerow
-        {
-          
-           
-    border-bottom:1px solid #b9b2b2
-        }
-    
-</style>
+    .alternativerow:nth-child(2n+1) {
+        background: #F5F5F5;
+    }
 
+    .alternativerow {
+        border-bottom: 1px solid #b9b2b2;
+    }
+</style>
 <div class="row">
     <div class="col-md-6">
         <h1>@ViewBag.Title.</h1>
     </div>
     <div class="col-md-6 text-right" style="padding-top: 20px">
-        @if (Model!=null && Model.ReportCompanies.Any())
+        @if (Model != null && Model.ReportCompanies.Any())
         {
             using (Html.BeginForm("ExportCompetitorsPriceRangeByCompany", "PriceReports", FormMethod.Get))
             {
-        <input type="submit" id="btnExportReport" class="btn btn-primary" value="Export to Excel" />
+                if (hasData)
+                {
+                    <input type="submit" id="btnExportReport" class="btn btn-primary" value="Export to Excel" />
+                }
+                else
+                {
+                    <input type="submit" id="btnExportReport" class="btn btn-primary" value="Export to Excel" disabled="disabled" />
+                }
                 <input type="hidden" id="DateForCopy" name="DateFor" />
                 <input type="hidden" id="SelectedCompanyNameCopy" name="SelectedCompanyName" />
                 <input type="hidden" id="SelectedBrandNameCopy" name="SelectedBrandName" />
@@ -62,7 +45,6 @@
     </div>
 </div>
 <hr />
-
 @if (Model != null)
 {
     using (Html.BeginForm("CompetitorsPriceRangeByCompany", "PriceReports", FormMethod.Get))
@@ -87,24 +69,23 @@
         <hr />
     }
 }
-
-@if (Model!=null && Model.ReportCompanies[0].Brands.Count>0)
+@if (Model != null && Model.ReportCompanies[0].Brands.Count > 0)
 {
     <!-- Report Data -->
 
-    <div class="divtable" >
-       
-            <div class="row">
-                <div class="col-md-2" style="width:280px"></div>
-                <div class="col-md-2" style="width:270px; text-align:center;"><strong>Avg retails</strong></div>
-                <div class="col-md-2" style="width:270px;text-align:center;">
-                    <strong>Difference</strong>
-                </div>
-                <div class="col-md-2" style="width:270px; text-align:center;">
-                    <strong>Pricing range</strong>
-                </div>
+    <div class="divtable">
+
+        <div class="row">
+            <div class="col-md-2" style="width:280px"></div>
+            <div class="col-md-2" style="width:270px; text-align:center;"><strong>Avg retails</strong></div>
+            <div class="col-md-2" style="width:270px;text-align:center;">
+                <strong>Difference</strong>
             </div>
-        <hr/>
+            <div class="col-md-2" style="width:270px; text-align:center;">
+                <strong>Pricing range</strong>
+            </div>
+        </div>
+        <hr />
         <div class="row">
             <div class="col-md-1" style="width:280px"><strong>@Model.Date.ToString("dd-MMM-yyyy")</strong></div>
             @for (int i = 0; i < 3; i++)
@@ -115,119 +96,90 @@
                 }
             }
         </div>
-        <hr/>
+        <hr />
         <div class="actualdata">
-                     @foreach (var company in Model.ReportCompanies)
-                     {
-                         if (company.Brands.Any() == false)
-                         {
-                             continue;
-                         }
-                        <div class="alternativerow">
-                            <div class="row" style="width:1120px">
-                                <div class="col-md-5">
-                                    <strong>@company.CompanyName</strong>
-                                </div>
-                            </div>
-                            @foreach (var brand in company.Brands)
+            @foreach (var company in Model.ReportCompanies)
+            {
+                if (company.Brands.Any() == false)
+                {
+                    continue;
+                }
+                <div class="alternativerow">
+                    <div class="row" style="width:1120px">
+                        <div class="col-md-5">
+                            <strong>@company.CompanyName</strong>
+                        </div>
+                    </div>
+                    @foreach (var brand in company.Brands)
+                    {
+                        <div class="row">
+                            <div class="col-md-1" style="width:280px">@(brand.BrandName) (£)</div>
+                            @* Average *@
+                            @foreach (var fuelType in Model.FuelTypes)
                             {
-                                <div class="row">
-                                    <div class="col-md-1" style="width:280px">@(brand.BrandName) (£)</div>
-                                    @* Average *@
-                                    @foreach (var fuelType in Model.FuelTypes)
-                                    {
-                                        var fuelBrand = brand.Fuels.FirstOrDefault(f => f.FuelTypeId == fuelType.Id);
-                                        if (fuelBrand == null)
-                                        {
-                                            <div class="col-md-1" style="width:140px">n/a</div>
-                                        }
-                                        else
-                                        {
-                                            <div class="col-md-1" style="width:140px">@((fuelBrand.Average / 10.0).ToString("###0.0"))</div>
-                                        }
-                                    }
-                                    @* Difference *@
-                                    @foreach (var fuelType in Model.FuelTypes)
-                                    {
-                                        var fuelBrand = brand.Fuels.FirstOrDefault(f => f.FuelTypeId == fuelType.Id);
-
-                                        if (fuelBrand == null || Model.SainsburysPrices.ContainsKey(fuelType.Id) == false)
-                                        {
-                                            <div class="col-md-1" style="width:140px">n/a</div>
-                                        }
-                                        else
-                                        {
-                                            int diff = fuelBrand.Average > 0 ? (fuelBrand.Average - Model.SainsburysPrices[fuelType.Id]) : 0;
-                                            string color = "";
-                                            if (diff < 0)
-                                            {
-                                                color = "red";
-                                            }
-                                            else if (diff > 0)
-                                            {
-                                                color = "green";
-                                            }
-                                            <div class="col-md-1" style="color: @color;width:140px">@((diff / 10.0).ToString("###0.0"))</div>
-                                        }
-                                    }
-
-                                    @* Range *@
-                                    @foreach (var fuelType in Model.FuelTypes)
-                                    {
-                                        var fuelBrand = brand.Fuels.FirstOrDefault(f => f.FuelTypeId == fuelType.Id);
-                                        if (fuelBrand == null)
-                                        {
-                                            <div class="col-md-1" style="width:140px">n/a</div>
-                                        }
-                                        else
-                                        {
-                                            <div class="col-md-1" style="width:140px">@((fuelBrand.Min / 10.0).ToString("###0.0")) - @((fuelBrand.Max / 10.0).ToString("###0.0"))</div>
-                                        }
-                                    }
-                                </div>
+                                var fuelBrand = brand.Fuels.FirstOrDefault(f => f.FuelTypeId == fuelType.Id);
+                                if (fuelBrand == null)
+                                {
+                                    <div class="col-md-1" style="width:140px">n/a</div>
+                                }
+                                else
+                                {
+                                    <div class="col-md-1" style="width:140px">@((fuelBrand.Average / 10.0).ToString("###0.0"))</div>
+                                }
                             }
+                            @* Difference *@
+                            @foreach (var fuelType in Model.FuelTypes)
+                            {
+                                var fuelBrand = brand.Fuels.FirstOrDefault(f => f.FuelTypeId == fuelType.Id);
 
-            </div>
+                                if (fuelBrand == null || Model.SainsburysPrices.ContainsKey(fuelType.Id) == false)
+                                {
+                                    <div class="col-md-1" style="width:140px">n/a</div>
+                                }
+                                else
+                                {
+                                    int diff = fuelBrand.Average > 0 ? (fuelBrand.Average - Model.SainsburysPrices[fuelType.Id]) : 0;
+                                    string color = "";
+                                    if (diff < 0)
+                                    {
+                                        color = "red";
+                                    }
+                                    else if (diff > 0)
+                                    {
+                                        color = "green";
+                                    }
+                                    <div class="col-md-1" style="color: @color;width:140px">@((diff / 10.0).ToString("###0.0"))</div>
+                                }
+                            }
+                            @* Range *@
+                            @foreach (var fuelType in Model.FuelTypes)
+                            {
+                                var fuelBrand = brand.Fuels.FirstOrDefault(f => f.FuelTypeId == fuelType.Id);
+                                if (fuelBrand == null)
+                                {
+                                    <div class="col-md-1" style="width:140px">n/a</div>
+                                }
+                                else
+                                {
+                                    <div class="col-md-1" style="width:140px">@((fuelBrand.Min / 10.0).ToString("###0.0")) - @((fuelBrand.Max / 10.0).ToString("###0.0"))</div>
+                                }
+                            }
+                        </div>
+                    }
+                </div>
 
 
 
-         }
+            }
         </div>
 
-    
-        </div>
+    </div>
 }
 else
 {
 
     <div class="alert alert-info" role="alert">No data found at @Model.Date.ToString("dd-MMM-yyyy")</div>
 }
-
 @section scripts {
-    <script src="~/Scripts/bootstrap-datepicker.min.js"></script>
-    <script>
-
-        $("document").ready(function () {
-            var forDp = $('.datepicker').datepicker({
-                language: "en-GB",
-                autoClose: true,
-                format: 'd-M-yyyy',
-                todayBtn: "linked",
-                todayHighlight: true,
-                orientation: 'auto top',
-                endDate: '1d'
-            });
-
-            $("#DateFor, #SelectedCompanyName, #SelectedBrandName").each(function () {
-                $this = $(this);
-                $("#" + $this.attr("name") + "Copy").val($this.val());
-            });
-
-            $("#DateFor, #SelectedCompanyName, #SelectedBrandName").change(function () {
-                $this = $(this);
-                $("#" + $this.attr("name") + "Copy").val($this.val());
-            });
-        });
-
-    </script>
+    <script src="~/Scripts/pricereports/CompetitorsPriceRangeByCompany.js"></script>
 }

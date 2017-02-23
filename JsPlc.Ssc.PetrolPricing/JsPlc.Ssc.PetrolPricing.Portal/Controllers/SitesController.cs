@@ -967,5 +967,45 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 			return View(site);
         }
 
+        [System.Web.Mvc.HttpGet]
+        public JsonResult GetSiteNote([FromUri]int siteId)
+        {
+            var response = _serviceFacade.GetSiteNote(siteId);
+
+            if (response == null)
+                return new HttpResponseMessage(HttpStatusCode.BadRequest)
+                    .ToJsonResult(response, null, "ApiFail");
+
+            return new HttpResponseMessage(HttpStatusCode.OK)
+                .ToJsonResult(response, null, "ApiSuccess");
+        }
+
+        [ValidateInput(false)]
+        [System.Web.Mvc.HttpPost]
+        public ActionResult UpdateSiteNote([FromBody]SiteNoteUpdateViewModel model)
+        {
+            var result = _serviceFacade.UpdateSiteNote(model);
+
+            var jsonResult = new JsonResult
+            {
+                JsonRequestBehavior = JsonRequestBehavior.DenyGet,
+                Data = result
+            };
+
+            return jsonResult;
+        }
+
+        [System.Web.Mvc.HttpPost]
+        public ActionResult DeleteSiteNote([FromUri] int siteId)
+        {
+            var result = _serviceFacade.DeleteSiteNode(siteId);
+            var jsonResult = new JsonResult
+            {
+                JsonRequestBehavior = JsonRequestBehavior.DenyGet,
+                Data = result
+            };
+
+            return jsonResult;
+        }
     }
 }

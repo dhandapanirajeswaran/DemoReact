@@ -25,6 +25,8 @@ require.config({
 
         //App modules
         "common": "App/common",
+        "busyloader": "App/busyloader",
+        "notify": "App/notify",
 
         //"ko-binding-handlers": "App/ko-binding-handlers",
 
@@ -34,7 +36,9 @@ require.config({
         "PetrolPricingService": "App/Services/PetrolPricingService",
 
         //View scripts
-        "SitePricing": "App/ViewScripts/SitePricing"
+        "SitePricing": "App/ViewScripts/SitePricing",
+        "competitorPricePopup": "App/ViewScripts/CompetitorPricePopup",
+        "competitorPriceNotePopup": "App/ViewScripts/CompetitorPriceNotePopup"
 
     },
     shim: {

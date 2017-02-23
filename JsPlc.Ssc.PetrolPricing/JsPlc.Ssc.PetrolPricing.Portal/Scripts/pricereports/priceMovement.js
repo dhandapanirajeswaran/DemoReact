@@ -1,58 +1,65 @@
-﻿$("document").ready(function () {
+﻿require(["jquery", "common", "busyloader", "bootstrap-datepicker"],
+    function ($, common, busyloader, bsdatepicker) {
 
-    var rootFolder = /\/petrolpricing\//i.test(window.location.href) ? "/petrolpricing" : "";
+        $("document").ready(function () {
 
-    var forDp = $('#DateFrom').datepicker({
-        language: "en-GB",
-        autoClose: true,
-        format: 'd-M-yyyy',
-        todayBtn: "linked",
-        todayHighlight:true
-    });
+            var rootFolder = common.reportRootFolder();
 
-    var toDp = $('#DateTo').datepicker({
-        language: "en-GB",
-        autoClose: true,
-        format: 'd-M-yyyy',
-        todayBtn: "linked",
-        todayHighlight: true
-    });
+            var forDp = $('#DateFrom').datepicker({
+                language: "en-GB",
+                autoClose: true,
+                format: 'd-M-yyyy',
+                todayBtn: "linked",
+                todayHighlight: true
+            });
 
-    $("#btnViewReport").click(function () {
-        $('#errorMsgs').html("");
-        $('#msgs').html("");
+            var toDp = $('#DateTo').datepicker({
+                language: "en-GB",
+                autoClose: true,
+                format: 'd-M-yyyy',
+                todayBtn: "linked",
+                todayHighlight: true
+            });
 
-        var id = $('#FuelTypeId').val();
-        var brandName = $('#Brand').val();
-        var siteName = $('#SiteName').val();
-        var dt1 = forDp ? forDp.val() : $('#DateFrom').val();
-        var dt2 = toDp ? toDp.val() : $('#DateTo').val();
-        if (id == 0) {
-            $('#errorMsgs').html("Please select a fuel");
-            $('#fuelTypes').focus();
-            return false;
-        }
-        
-        window.location.href = rootFolder + '/PriceReports/PriceMovement?DateFrom=' + dt1 + "&DateTo=" + dt2 + "&FuelTypeId=" + id + "&BrandName=" + brandName + "&SiteName=" + siteName;
-        return true;
-    });
-    $("#btnExportReport").click(function () {
-        $('#errorMsgs').html("");
-        $('#msgs').html("");
+            $("#btnViewReport").click(function () {
+                $('#errorMsgs').html("");
+                $('#msgs').html("");
 
-        var id = $('#FuelTypeId').val();
-        var brandName = $('#Brand').val();
-        var dt1 = forDp ? forDp.val() : $('#DateFrom').val();
-        var dt2 = toDp ? toDp.val() : $('#DateTo').val();
-        if (id == 0) {
-            $('#errorMsgs').html("Please select a fuel");
-            $('#fuelTypes').focus();
-            return false;
-        }
+                var id = $('#FuelTypeId').val();
+                var brandName = $('#Brand').val();
+                var siteName = $('#SiteName').val();
+                var dt1 = forDp ? forDp.val() : $('#DateFrom').val();
+                var dt2 = toDp ? toDp.val() : $('#DateTo').val();
+                if (id == 0) {
+                    $('#errorMsgs').html("Please select a fuel");
+                    $('#fuelTypes').focus();
+                    return false;
+                }
 
-        window.location.href = rootFolder + '/PriceReports/ExportPriceMovement?DateFrom=' + dt1 + "&DateTo=" + dt2 + "&FuelTypeId=" + id + "&BrandName=" + brandName;
-        return true;
-    });
+                busyloader.showViewingReport();
 
-});
+                window.location.href = rootFolder + '/PriceReports/PriceMovement?DateFrom=' + dt1 + "&DateTo=" + dt2 + "&FuelTypeId=" + id + "&BrandName=" + brandName + "&SiteName=" + siteName;
+                return true;
+            });
+            $("#btnExportReport").click(function () {
+                $('#errorMsgs').html("");
+                $('#msgs').html("");
 
+                var id = $('#FuelTypeId').val();
+                var brandName = $('#Brand').val();
+                var dt1 = forDp ? forDp.val() : $('#DateFrom').val();
+                var dt2 = toDp ? toDp.val() : $('#DateTo').val();
+                if (id == 0) {
+                    $('#errorMsgs').html("Please select a fuel");
+                    $('#fuelTypes').focus();
+                    return false;
+                }
+
+                busyloader.showExportToExcel();
+
+                window.location.href = rootFolder + '/PriceReports/ExportPriceMovement?DateFrom=' + dt1 + "&DateTo=" + dt2 + "&FuelTypeId=" + id + "&BrandName=" + brandName;
+                return true;
+            });
+        });
+    }
+);

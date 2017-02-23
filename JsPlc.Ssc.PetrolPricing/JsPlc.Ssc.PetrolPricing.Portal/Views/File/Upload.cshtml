@@ -23,6 +23,19 @@
 <div class="alert alert-success @(string.IsNullOrWhiteSpace(ViewBag.SuccessMessage) ? "hidden" : "")">@ViewBag.SuccessMessage</div>
 <div class="alert alert-warning @(string.IsNullOrWhiteSpace(ViewBag.WarningMessage) ? "hidden" : "")">@ViewBag.WarningMessage</div>
 <hr />
+
+<!-- start loader -->
+<div style="display: none;" id="FileUploadingDialog" class="alert alert-warning busy-loader">
+    <div class="col-md-1 text-center">
+        <i class="fa fa-clock-o fa-2x"></i>
+    </div>
+    <div class="col-md-10 text-center">
+        <strong>Uploading file. Please wait...</strong>
+    </div>
+</div>
+<!-- end loader-->
+
+
 <form action="" method="post" enctype="multipart/form-data">
     @if (@Model!=null)
     {
@@ -79,7 +92,7 @@
     
     <div id="divuploadbtn" class="col-md-1" style="margin-top: 24px;display: none;" >
         <div class="form-group">
-            <input type="submit" value="Upload file" class="btn btn-primary" />
+            <input type="submit" id="UploadFileButton" value="Upload file" class="btn btn-primary" />
         </div>
     </div>   
     <div id="divfilenameplusicon" class="col-md-1" style="margin-top: 24px;width:500px;display: none;">
@@ -242,6 +255,11 @@ $(function () {
          $('#calcultedasdate').val($('#caldattimepicker').val());
       
     });
+
+    $('#UploadFileButton').on('click', function () {
+        $('#FileUploadingDialog').show();
+    });
+
 });
 </script>
 

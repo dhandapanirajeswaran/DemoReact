@@ -1,0 +1,127 @@
+﻿.smaller-normal {
+    font-size: smaller;
+    font-weight: normal;
+}
+
+.smaller {
+    font-size: smaller;
+}
+
+.input-override {
+    padding-top: 1px;
+    display: inline;
+    width: 50px;
+    height: 23px;
+}
+
+.table-responsive {
+    overflow-x: hidden;
+    width: 100%;
+}
+
+.actualdata {
+    height: 500px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+table.competitorTable td, th {
+    padding: 3px 4px;
+}
+
+#competitorPricesPopup {
+    width: 90%;
+    margin: 1em auto 1em auto;
+}
+
+#competitorPricesPopupSiteInfo {
+    width: 60em;
+    margin: 0.5em auto 0 auto;
+    background: silver;
+    padding: 10px;
+    border-radius: 12px 12px 0 0;
+}
+
+.compitatorData {
+    height: 400px;
+    overflow-y: auto;
+}
+
+#competitorPricePopupHeader {
+    margin-bottom: 2px;
+    border: 1px solid #ddd;
+}
+
+#competitorPricePopupPrices .competitorTable thead {
+    background: #eee;
+    border-bottom: 2px solid #fff;
+}
+#competitorPricePopupPrices .competitorTable thead th {]
+    background: #eee;
+}
+
+#competitorPricePopupHeader th {
+    background: #eee;
+}
+
+#competitorPricePopupHeader .tblHighlight {
+    background: #D0D0D0;
+}
+
+span.jsdiff {
+    border-radius: 12px;
+    background-color: orange;
+    color: #000;
+    padding: 1px 12px;
+}
+
+.competitorTable th,
+.competitorTable td {
+    overflow: hidden;
+}
+.competitorTable .competitor-row  {
+    border-top: 1px solid #eee;
+}
+
+.competitorTable tbody tr.highlight td {
+    background-color: orange;
+}
+
+#competitorPricesPopup .footer-actions {
+    float: left;
+}
+.note-panel {
+    background-color: #fff; 
+    border-radius: 0 0 12px 12px;
+    padding: 2px 12px;
+    margin: -3px 2em 0.25em 2em;
+    border: 2px solid lightgray;
+    border-top: 2px solid #aaa;
+    cursor: pointer;
+}
+.note-panel:hover {
+    background-color: #ffc;
+    border-color: #999;
+}
+.note-panel-text {
+    font-weight: bold;
+}
+
+#competitorNotePopup {
+    z-index: 1100;
+}
+.no-competitors {
+    color: #910048;
+    font-size: 110%;
+    line-height: 2em;
+}
+.please-wait {
+    color: orange;
+    font-size: 110%;
+    line-height: 2em;
+}
+
+.hide {
+    display: none;
+}
+

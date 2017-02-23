@@ -1,4 +1,5 @@
 ﻿body {
+    overflow: scroll;
 }
 
 
@@ -95,6 +96,9 @@ hr {
 
 .noSiteData {
     color: red;
+    font-size: 110%;
+    padding-top: 0.5em;
+    padding-bottom: 0.5em;
 }
 
 .txtPrice {
@@ -462,4 +466,31 @@ textarea {
     margin-left: -17em; 
     height: 4em; 
     box-shadow: 0 0 12px #666;
+}
+
+th.leftDivider, td.leftDivider {
+    border-left: 1px solid #ddd;
+}
+
+table.fixed-header {
+    width: 100%;
+    table-layout: fixed;
+}
+
+table.fixed-header>tbody {
+    display: block;
+    overflow: auto;
+    width: 100%;
+}
+
+.field-error {
+    border-color: #910048;
+    background-color: #fff8f8;
+}
+
+.field-error-message {
+    color: #910048;
+}
+.site-hero-text {
+    text-shadow: 4px 4px white;
 }

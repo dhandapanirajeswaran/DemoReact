@@ -422,8 +422,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                     sitePriceRow.PfsNo = site.PfsNo;
                     sitePriceRow.StoreNo = site.StoreNo;
                     sitePriceRow.FuelPrices = new List<FuelPriceViewModel>();
-
-
+                    sitePriceRow.Notes = site.Notes;
 
                     var TrialPrice = (int) site.CompetitorPriceOffset;
                     TrialPrice = TrialPrice*10;
@@ -912,6 +911,8 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
                     sitePriceRow.DriveTime = comp.DriveTime;
                     sitePriceRow.Distance = comp.Distance;
+
+                    sitePriceRow.Notes = Compsite.Notes;
 
                     sitePriceRow.FuelPrices = sitePriceRow.FuelPrices ?? new List<FuelPriceViewModel>();
                     int nOffSet = comp.CompetitorId == Jssite.TrailPriceCompetitorId ? (int)Jssite.CompetitorPriceOffsetNew : 0;
@@ -3002,6 +3003,105 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
             }
         }
 
+        public SiteNoteViewModel GetSiteNote(int siteId)
+        {
+            try
+            {
+                var site = _context.Sites.FirstOrDefault(x => x.Id == siteId);
+
+                if (site == null)
+                    throw new ArgumentException("Unable to find SiteNode - id:" + siteId);
+
+                return new SiteNoteViewModel()
+                {
+                    SiteId = site.Id,
+                    SiteName = site.SiteName,
+                    Note = site.Notes
+                };
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex);
+                return null;
+            }
+        }
+
+        public JsonResultViewModel<bool> UpdateSiteNote(SiteNoteUpdateViewModel model)
+        {
+            try
+            {
+                if (model.SiteId == 0)
+                    throw new ArgumentException("SiteNote - Id cannot be 0!");
+
+                var site = _context.Sites.FirstOrDefault(x => x.Id == model.SiteId);
+
+                if (site == null)
+                    throw new Exception("Unable to find siteId:" + model.SiteId);
+
+                site.Notes = String.IsNullOrWhiteSpace(model.Note)
+                    ? null
+                    : model.Note.Trim();
+
+                _context.SaveChanges();
+
+                return new JsonResultViewModel<bool>()
+                {
+                    Success = true,
+                    Message = "Updated Site Note",
+                    Data = true
+                };
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex);
+                return new JsonResultViewModel<bool>()
+                {
+                    Success = false,
+                    Message = ex.Message,
+                    Data = false
+                };
+            }
+        }
+
+        public JsonResultViewModel<int> DeleteSiteNote(int siteId)
+        {
+            try
+            {
+                if (siteId == 0)
+                    throw new ArgumentException("SiteId - cannot be 0!");
+
+                var site = _context.Sites.FirstOrDefault(x => x.Id == siteId);
+                if (site == null)
+                    return new JsonResultViewModel<int>()
+                    {
+                        Success = false,
+                        Message = "Site Note not found",
+                        Data = siteId
+                    };
+
+                site.Notes = null;
+                _context.SaveChanges();
+                return new JsonResultViewModel<int>()
+                {
+                    Success = true,
+                    Message = "Deleted Site Note",
+                    Data = siteId
+                };
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex);
+                return new JsonResultViewModel<int>()
+                {
+                    Success = false,
+                    Message = ex.Message,
+                    Data = siteId
+                };
+            }
+        }
+
+        #region private methods
+
         // Move forward from the forDate and find a set of Prices which were recently uploaded..
         private DateTime? GetFirstDailyPriceDate(DateTime forDate)
         {
@@ -3125,7 +3225,7 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
             return result;
         }
 
-
+        #endregion private methods
 
     }
 }

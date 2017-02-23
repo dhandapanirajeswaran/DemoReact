@@ -40,6 +40,8 @@ namespace JsPlc.Ssc.PetrolPricing.Portal
                       "~/Content/font-awesome.min.css",
                       "~/Content/bootstrap-datepicker.min.css",
                       "~/Content/site.css",
+                      "~/Content/notify.css",
+                      "~/Content/prompts.css",
                       "~/Content/jquery.dataTables.min.css"));
         }
     }

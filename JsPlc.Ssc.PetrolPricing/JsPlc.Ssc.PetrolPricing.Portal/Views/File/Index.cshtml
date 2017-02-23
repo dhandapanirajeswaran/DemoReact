@@ -2,15 +2,11 @@
 @{
     ViewBag.Title = "Daily Pricing, Latest JS Pricing, Latest Competitors Pricing and Quarterly files";
 }
-@section head
-{
-    <meta http-equiv="refresh" content="15" />
-}
 
 <div class="row">
     <div class="col-md-6">
         <h1>Daily Pricing, Latest JS Pricing, Latest Competitors Pricing and Quarterly files</h1>
-        <p>This page reloads every 15 sec to refresh status update</p>
+        <p>This page will reload in <strong><span id="spanTicker"></span> seconds</strong> to refresh status update. </p>
     </div>
     <div class="col-md-6 text-right" style="padding-top: 20px">
         <input type="button" value="New Upload" onclick="location.href='@Url.Action("Upload", "File" )'" class="btn btn-primary" />
@@ -19,3 +15,33 @@
 <div class="alert alert-info @(string.IsNullOrWhiteSpace(ViewBag.Message) ? "hidden" : "")">@ViewBag.Message</div>
 <hr />
 @Html.Partial("_FileUploadsList", Model)
+
+<script>
+    var countdown = (function() {
+        var duration = 15,
+            tick = 15,
+            element = $('#spanTicker'),
+        redraw = function () {
+            console.log('redraw at: ' + tick);
+            element.text(tick);
+            tick--;
+            if (tick < 0)
+                window.location.reload();
+            setTimeout(ticker, 1000);
+        },
+        ticker = function () {
+            redraw.call(redraw);
+        },
+        start = function () {
+            redraw();
+        };
+
+        return {
+            start: start
+        };
+    })();
+
+    $(countdown.start);
+
+</script>
+

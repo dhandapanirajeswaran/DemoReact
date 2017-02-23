@@ -247,6 +247,9 @@
     <Content Include="Content\font-awesome.css" />
     <Content Include="Content\font-awesome.min.css" />
     <Content Include="Content\jquery.dataTables.min.css" />
+    <Content Include="Content\notify.css" />
+    <Content Include="Content\prices.css" />
+    <Content Include="Content\prompts.css" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\fontawesome-webfont.svg" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
@@ -282,7 +285,12 @@
     <Content Include="images\sort_desc_disabled.png" />
     <Content Include="images\txtfileicon.png" />
     <Content Include="Logs\placeholder.txt" />
+    <Content Include="Scripts\App\busyloader.html" />
+    <Content Include="Scripts\App\busyloader.js" />
     <Content Include="Scripts\App\common.js" />
+    <Content Include="Scripts\App\prices.js" />
+    <Content Include="Scripts\App\ViewScripts\CompetitorPriceNotePopup.js" />
+    <Content Include="Scripts\App\ViewScripts\CompetitorPricePopup.js" />
     <Content Include="Scripts\App\ViewScripts\SitePricing.js" />
     <Content Include="Scripts\App\Services\PetrolPricingService.js" />
     <Content Include="Scripts\bootstrap-datepicker.js" />
@@ -371,7 +379,9 @@
     <Content Include="Scripts\moment-with-locales.min.js" />
     <Content Include="Scripts\moment.js" />
     <Content Include="Scripts\moment.min.js" />
+    <Content Include="Scripts\App\notify.js" />
     <Content Include="Scripts\pricereports\competitorsPriceRange.js" />
+    <Content Include="Scripts\pricereports\CompetitorsPriceRangeByCompany.js" />
     <Content Include="Scripts\pricereports\nationalAverage2.js" />
     <Content Include="Scripts\r.js" />
     <Content Include="Scripts\pricereports\nationalAverage.js" />
@@ -453,6 +463,7 @@
     <Content Include="Views\PriceReports\CompetitorsPriceRangeByCompany.cshtml" />
     <Content Include="Views\PPUsers\Index.cshtml" />
     <Content Include="Views\Log4Net\Index.cshtml" />
+    <Content Include="Views\Shared\_NotifyDialogs.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\uploads\" />

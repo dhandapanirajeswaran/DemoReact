@@ -1,6 +1,18 @@
 ﻿@using System.Globalization
 @model IEnumerable<JsPlc.Ssc.PetrolPricing.Models.FileUpload>
 
+@{ 
+    var statusMarkup = new Dictionary<string, string>()
+    {
+        {"Calculating", "<span class='label label-info'><i class='fa fa-calculator'></i> Calculating</span>" },
+        {"Failed", "<span class='label label-danger'><i class='fa fa-times-circle'></i> Failed</span>" },
+        {"Processing", "<span class='label label-success'><i class='fa fa-fa-cog'></i> Processing</span>" },
+        {"Success", "<span class='label label-success'><i class='fa fa-check-circle'></i> Success</span>" },
+        {"Uploaded", "<span class='label label-info'><i class='fa fa-upload'></i> Uploaded</span>" },
+        {"Warning", "<span class='label label-warning'><i class='fa fa-warning'></i> Warning</span>" }
+    };
+}
+
 @if(Model !=null && Model.Any())
 { 
 
@@ -35,7 +47,13 @@
             @item.UploadDateTime.ToString("dd-MMM-yyyy HH:mm:ss")
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.Status.Status)
+            @if (statusMarkup.ContainsKey(item.Status.Status))
+            {
+                @Html.Raw(statusMarkup[item.Status.Status])
+            } else {
+                <span><i></i>@item.Status.Status</span>
+            }
+            @*@Html.DisplayFor(modelItem => item.Status.Status)*@
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.UploadedBy)

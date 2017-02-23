@@ -1,0 +1,15 @@
+﻿/* notification banner */
+.notification {
+    display: none; /* initial state */
+    position: fixed;
+    top: -0.25em;
+    width: 60%;
+    left: 20%;
+    right: 20%;
+    box-shadow: 2px 2px 4px #000;
+    font-size: 125%;
+    text-align: left;
+    cursor: pointer;
+    z-index: 101000;
+    box-shadow: 4px 4px 16px #000;
+}

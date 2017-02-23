@@ -1,19 +1,23 @@
-﻿$("document").ready(function () {
+﻿require(["jquery", "common", "busyloader"],
+    function ($, common, busyloader) {
 
-    var rootFolder = /\/petrolpricing\//i.test(window.location.href) ? "/petrolpricing" : "";
+        $("document").ready(function () {
 
-    $("#SiteId").focus();
+            var rootFolder = common.reportRootFolder();
 
-    $("#SiteId").change(function () {
-        var siteId = $(this).val();
-        window.location.href = rootFolder + '/PriceReports/CompetitorSites/?siteId=' + siteId;
-    });
+            $("#SiteId").focus();
 
+            $("#SiteId").change(function () {
+                var siteId = $(this).val();
+                busyloader.showViewingReport();
+                window.location.href = rootFolder + '/PriceReports/CompetitorSites/?siteId=' + siteId;
+            });
 
-    $("#btnExportReport").click(function () {
-
-
-        var siteId = $("#SiteId").val();
-        window.location.href = rootFolder + '/PriceReports/ExportCompetitorSites/?siteId=' + siteId;
-    });
-});
+            $("#btnExportReport").click(function () {
+                busyloader.showExportToExcel();
+                var siteId = $("#SiteId").val();
+                window.location.href = rootFolder + '/PriceReports/ExportCompetitorSites/?siteId=' + siteId;
+            });
+        });
+    }
+);

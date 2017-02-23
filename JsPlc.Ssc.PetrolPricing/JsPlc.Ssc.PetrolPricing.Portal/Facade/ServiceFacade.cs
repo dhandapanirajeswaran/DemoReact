@@ -762,8 +762,6 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             return resultViewModel;
         }
 
-
-
         // Get a list of companies
         public bool CalcDailyPrices(int siteId)
         {
@@ -775,7 +773,71 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             return (response.IsSuccessStatusCode) ? result : false;
         }
 
+        public SiteNoteViewModel GetSiteNote(int siteId)
+        {
+            try
+            {
+                var response = _client.Value.GetAsync("api/GetSiteNote/" + siteId).Result;
+                if (response.IsSuccessStatusCode)
+                {
+                    var result = response.Content.ReadAsAsync<SiteNoteViewModel>().Result;
+                    return result;
+                }
+                else
+                    return null;
 
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex);
+                throw new Exception("Exception in GetSiteNote" + System.Environment.NewLine + ex.Message, ex);
+            }
+        }
 
+        public JsonResultViewModel<bool> UpdateSiteNote(SiteNoteUpdateViewModel model)
+        {
+            try
+            {
+                const string apiUrl = "api/UpdateSiteNote/";
+
+                var response = _client.Value.PostAsync(apiUrl, model, new JsonMediaTypeFormatter()).Result;
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var result = response.Content.ReadAsAsync<JsonResultViewModel<bool>>().Result;
+                    return result;
+                }
+                else
+                    return null;
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex);
+                throw new Exception("Exception in UpdateSiteNote" + System.Environment.NewLine + ex.Message, ex);
+            }
+        }
+
+        public JsonResultViewModel<int> DeleteSiteNode(int siteId)
+        {
+            try
+            {
+                var apiUrl = "api/DeleteSiteNote/" + siteId;
+
+                var response = _client.Value.PostAsync(apiUrl, siteId, new JsonMediaTypeFormatter()).Result;
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var result = response.Content.ReadAsAsync<JsonResultViewModel<int>>().Result;
+                    return result;
+                }
+                else
+                    return null;
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex);
+                throw new Exception("Exception in DeleteSiteNote" + System.Environment.NewLine + ex.Message, ex);
+            }
+        }
     }
 }

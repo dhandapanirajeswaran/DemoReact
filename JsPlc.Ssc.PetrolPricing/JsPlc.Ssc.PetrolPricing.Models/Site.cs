@@ -60,6 +60,12 @@ namespace JsPlc.Ssc.PetrolPricing.Models
         public double CompetitorPriceOffset { get; set; }
 
         public double CompetitorPriceOffsetNew { get; set; }
+
+        public bool hasNotes
+        {
+            get { return String.IsNullOrWhiteSpace(Notes) == false; }
+        }
+        public string Notes { get; set; }
     }
 
     public class SiteEmail

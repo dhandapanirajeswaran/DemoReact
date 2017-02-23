@@ -465,5 +465,53 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
                 return new ExceptionResult(ex, this);
             }
         }
+
+        [System.Web.Http.HttpGet]
+        [System.Web.Http.Route("api/GetSiteNote/{siteId}")]
+        public IHttpActionResult GetSiteNote([FromUri]int siteId)
+        {
+            try
+            {
+                var model = _siteService.GetSiteNote(siteId);
+                return Ok(model);
+            }
+            catch(Exception ex)
+            {
+                _logger.Error(ex);
+                return new ExceptionResult(ex, this);
+            }
+        }
+
+        [System.Web.Http.HttpPost]
+        [System.Web.Http.Route("api/UpdateSiteNote/")]
+        public IHttpActionResult UpdateSiteNote([FromBody]SiteNoteUpdateViewModel model)
+        {
+            try
+            {
+                var result = _siteService.UpdateSiteNote(Mapper.Map<SiteNoteUpdateViewModel>(model));
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex);
+                return new ExceptionResult(ex, this);
+            }
+        }
+
+        [System.Web.Http.HttpPost]
+        [System.Web.Http.Route("api/DeleteSiteNote/{siteId}")]
+        public IHttpActionResult DeleteSiteNote([FromUri] int siteId)
+        {
+            try
+            {
+                var result = _siteService.DeleteSiteNote(siteId);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex);
+                return new ExceptionResult(ex, this);
+            }
+        }
 	}
 }

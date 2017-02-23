@@ -120,5 +120,20 @@ namespace JsPlc.Ssc.PetrolPricing.Business
         {
             return _db.GetExcludeBrands();
         }
+
+        public SiteNoteViewModel GetSiteNote(int siteId)
+        {
+            return _db.GetSiteNote(siteId);
+        }
+
+        public JsonResultViewModel<bool> UpdateSiteNote(SiteNoteUpdateViewModel model)
+        {
+            return _db.UpdateSiteNote(model);
+        }
+
+        public JsonResultViewModel<int> DeleteSiteNote(int siteId)
+        {
+            return _db.DeleteSiteNote(siteId);
+        }
 	}
 }

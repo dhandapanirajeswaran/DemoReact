@@ -1,24 +1,30 @@
-﻿$("document").ready(function () {
+﻿require(["jquery", "common", "busyloader", "bootstrap-datepicker"],
+    function ($, common, busyloader, bsdatepicker) {
 
-    var rootFolder = /\/petrolpricing\//i.test(window.location.href) ? "/petrolpricing" : "";
+        $("document").ready(function () {
 
-    var forDp = $('.datepicker').datepicker({
-        language: "en-GB",
-        autoClose: true,
-        format: 'd-M-yyyy',
-        todayBtn: "linked",
-        todayHighlight: true,
-        orientation: 'auto top',
-        endDate: '1d'
-    });
+            var rootFolder = common.reportRootFolder();
 
-    $("#btnViewReport").click(function () {
-        var dt = forDp.val();
-        window.location.href = rootFolder + '/PriceReports/PricePoints?For=' + dt;
-    });
-    $("#btnExportReport").click(function () {
-        var dt = forDp.val();
-        window.location.href = rootFolder + '/PriceReports/ExportPricePoints?For=' + dt;
-    });
-});
+            var forDp = $('.datepicker').datepicker({
+                language: "en-GB",
+                autoClose: true,
+                format: 'd-M-yyyy',
+                todayBtn: "linked",
+                todayHighlight: true,
+                orientation: 'auto top',
+                endDate: '1d'
+            });
 
+            $("#btnViewReport").click(function () {
+                var dt = forDp.val();
+                busyloader.showViewingReport();
+                window.location.href = rootFolder + '/PriceReports/PricePoints?For=' + dt;
+            });
+            $("#btnExportReport").click(function () {
+                var dt = forDp.val();
+                busyloader.showExportToExcel();
+                window.location.href = rootFolder + '/PriceReports/ExportPricePoints?For=' + dt;
+            });
+        });
+    }
+);

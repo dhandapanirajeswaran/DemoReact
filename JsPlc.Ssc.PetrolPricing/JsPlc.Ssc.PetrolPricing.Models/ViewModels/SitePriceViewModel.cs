@@ -30,6 +30,12 @@ namespace JsPlc.Ssc.PetrolPricing.Models.ViewModels
         public List<FuelPriceViewModel> FuelPrices { get; set; } // list item contains price for each fuel
 
         public bool IsTrailPrice { get; set; } // if true, then trial price has been selected 
+
+        public bool hasNotes
+        {
+            get { return String.IsNullOrWhiteSpace(Notes) == false; }
+        }
+        public string Notes { get; set; }
     }
 
     // each fuel's price
