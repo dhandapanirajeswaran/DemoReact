@@ -48,6 +48,15 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             }
         }
 
+        public async Task<ActionResult> GetUploadsPartial()
+        {
+            using (var svc = new ServiceFacade(_logger))
+            {
+                var model = await svc.GetFileUploads(null, null);
+                return PartialView("~/Views/File/_FileUploadsList.cshtml", model);
+            }
+        }
+
         public async Task<ActionResult> Upload(string errMsg = "")
         {
             ViewBag.ErrorMessage = errMsg;

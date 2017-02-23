@@ -38,7 +38,8 @@ require.config({
         //View scripts
         "SitePricing": "App/ViewScripts/SitePricing",
         "competitorPricePopup": "App/ViewScripts/CompetitorPricePopup",
-        "competitorPriceNotePopup": "App/ViewScripts/CompetitorPriceNotePopup"
+        "competitorPriceNotePopup": "App/ViewScripts/CompetitorPriceNotePopup",
+        "UploadCountdown": "App/ViewScripts/UploadCountdown"
 
     },
     shim: {

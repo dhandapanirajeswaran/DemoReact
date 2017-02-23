@@ -292,6 +292,7 @@
     <Content Include="Scripts\App\prices.js" />
     <Content Include="Scripts\App\ViewScripts\CompetitorPriceNotePopup.js" />
     <Content Include="Scripts\App\ViewScripts\CompetitorPricePopup.js" />
+    <Content Include="Scripts\App\ViewScripts\UploadCountdown.js" />
     <Content Include="Scripts\App\ViewScripts\SitePricing.js" />
     <Content Include="Scripts\App\Services\PetrolPricingService.js" />
     <Content Include="Scripts\bootstrap-datepicker.js" />
