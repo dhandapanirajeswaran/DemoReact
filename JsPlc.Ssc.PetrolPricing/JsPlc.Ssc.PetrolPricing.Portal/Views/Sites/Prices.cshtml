@@ -248,6 +248,16 @@
 
 
             </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <label>Price changes</label><br />
+                    <div class="btn-group" role="group">
+                        <button type="button" class="btn btn-sm" data-bind="click: PriceChangeFilterAll, css: {'btn-primary': $root.priceChangeFilter() == 'All'}">Any</button>
+                        <button type="button" class="btn btn-sm" data-bind="click: PriceChangeFilterYes, css: {'btn-primary': $root.priceChangeFilter() == 'Yes'}">Yes</button>
+                        <button type="button" class="btn btn-sm" data-bind="click: PriceChangeFilterNo, css: {'btn-primary': $root.priceChangeFilter() == 'No'}">No</button>
+                    </div>
+                </div>
+            </div>
             <hr style="width:1280px;" />
             <div class="row" >
                 <div class="col-md-1" style="width:410px;">
@@ -417,7 +427,7 @@
                 <div class="actualdata" style="padding:0px;margin:0px" data-bind="with: dataModel">
                     <!-- JS Store DataRows -->
                     <!-- ko foreach: sites -->
-                    <div class="row" role="tab" data-bind="id:('Heading' + SiteId), attr: {id: 'SiteHeading' + SiteId}">
+                    <div class="row" role="tab" data-bind="id:('Heading' + SiteId), attr: {id: 'SiteHeading' + SiteId}, visible: $root.priceChangeFilter() == 'All' || ($root.priceChangeFilter() == 'Yes' && hasPriceChanges()) || ($root.priceChangeFilter() == 'No' && !hasPriceChanges())">
                         <div class="col-sm-1" style="width:5px;margin:2px;height:auto">
 
                             <a role="button" data-toggle="modal" data-bind="attr:{id: SiteId}, click: getCompetitorPopupDataClick"
