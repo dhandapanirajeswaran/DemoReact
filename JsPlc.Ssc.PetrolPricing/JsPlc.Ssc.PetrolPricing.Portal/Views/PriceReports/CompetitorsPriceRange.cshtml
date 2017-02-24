@@ -1,25 +1,24 @@
 ﻿@model JsPlc.Ssc.PetrolPricing.Models.ViewModels.NationalAverageReportContainerViewModel
+@using JsPlc.Ssc.PetrolPricing.Core
 @{
-	ViewBag.Title = "Report - Competitors Price Range";
-	
-	if (Model !=null && !Model.ForDate.HasValue)
-	{
-		Model.ForDate = DateTime.Now;
-	}
+    ViewBag.Title = "Report - Competitors Price Range";
 
-	var requestedDate = Model !=null ? @Model.ForDate.Value.Date.ToString("dd-MMM-yyyy"): null;
+    if (Model != null && !Model.ForDate.HasValue)
+    {
+        Model.ForDate = DateTime.Now;
+    }
+
+    var requestedDate = Model != null ? @Model.ForDate.Value.Date.ToString("dd-MMM-yyyy") : null;
     var hasData = (Model != null && Model.NationalAverageReport != null && Model.NationalAverageReport.Fuels.Any() && Model.NationalAverageReport.Fuels.First().Brands.Any());
 }
 <script type="text/javascript">
 
     $(document).ready(function () {
 
-        if ("@hasData" == "True")
-        {
+        if ("@hasData" == "True") {
             $("#btnExportReport").prop("disabled", false);
         }
-        else
-        {
+        else {
             $("#btnExportReport").prop("disabled", true);
         }
 
@@ -27,118 +26,168 @@
             "bPaginate": false, "scrollY": "500px",
             "scrollCollapse": true,
             "bInfo": false,
-            "bSort": true
+            "bSort": true,
+            "orderFixed": [0, 'asc'],
+            columnDefs: [
+                {
+                    "targets": [0],
+                    "visible": false,
+                    "searchable": false
+                },
+                {
+                    "targets": [1],
+                    "orderData": [1]
+                },
+                {
+                    "targets": [2],
+                    "orderData": [2]
+                },
+                {
+                    "targets": [3],
+                    "orderData": [3]
+                },
+                {
+                    "targets": [4],
+                    "orderData": [4]
+                },
+                {
+                    "targets": [5],
+                    "orderData": [5]
+                },
+                {
+                    "targets": [6],
+                    "orderData": [6]
+                },
+                {
+                    "targets": [7],
+                    "orderData": [7]
+                }
+            ]
         });
-      
-
     });
-
-
-   
-   
-
 </script>
- 
 
-   <style>
+<style>
+    table.dataTable tr:nth-child(even) {
+        background-color: #F5F5F5;
+    }
 
-          table.dataTable tr:nth-child(even)  { background-color: #F5F5F5;  }
-    
+    table.dataTable tr.fixed {
+        background: #ffe;
+    }
 
-    </style>
+        table.dataTable tr.fixed:nth-child(even) {
+            background: #eed;
+        }
+</style>
 
-    <div class="row">
-        <div class="col-md-6">
-            <h1>@ViewBag.Title.</h1>
-        </div>
-        <div class="col-md-6 text-right" style="padding-top: 20px">
-            <input type="button" class="btn btn-primary" id="btnExportReport" value="Export to Excel" />
-        </div>
+<div class="row">
+    <div class="col-md-6">
+        <h1>@ViewBag.Title.</h1>
     </div>
-    <hr />
+    <div class="col-md-6 text-right" style="padding-top: 20px">
+        <input type="button" class="btn btn-primary" id="btnExportReport" value="Export to Excel" />
+    </div>
+</div>
+<hr />
 
-    @using (Html.BeginForm("CompetitorsPriceRange", "PriceReports", FormMethod.Get))
+@using (Html.BeginForm("CompetitorsPriceRange", "PriceReports", FormMethod.Get))
 {
     <div class="row">
-            <div class="col-md-2">
-                <label for="For">When:</label>&nbsp;
-                <input type="text" class="datepicker form-control" id="For" name="For" value='@requestedDate'>
-            </div>
-            <div class="col-md-2" style="padding-top: 24px">
-                <input type="button" value="View" class="btn btn-success" id="btnViewReport" />
-            </div>
+        <div class="col-md-2">
+            <label for="For">When:</label>&nbsp;
+            <input type="text" class="datepicker form-control" id="For" name="For" value='@requestedDate'>
         </div>
-    <hr />
+        <div class="col-md-2" style="padding-top: 24px">
+            <input type="button" value="View" class="btn btn-success" id="btnViewReport" />
+        </div>
+    </div>
+        <hr />
 }
 
-                    @if (Model != null && Model.NationalAverageReport != null && Model.NationalAverageReport.Fuels.Any() && Model.NationalAverageReport.Fuels.First().Brands.Any())
+@if (Model != null && Model.NationalAverageReport != null && Model.NationalAverageReport.Fuels.Any() && Model.NationalAverageReport.Fuels.First().Brands.Any())
 {
     <!-- Report Data -->
 
     <table id="reportTable">
-        <thead >
-        <tr>
-            <td style="width:180px"></td>
-            <td style="width: 290px; " colspan="2"><strong>Avg retails</strong> </td>
-            <td style="width: 290px;" colspan="2"><strong>Difference</strong></td>
-            <td style="width: 290px;" colspan="2"><strong>Pricing range</strong></td>
-        </tr>
-        <tr>
-            <td><strong>@requestedDate</strong> </td>
-            @for (int i = 0; i < 3; i++)
-            {
-                foreach (var fuelType in Model.NationalAverageReport.Fuels)
-                {
-                    <td><strong>@fuelType.FuelName</strong></td>
-                }
-            }
-           
-        </tr>
-        </thead>
-        <tbody>
-        @foreach (var brand in Model.NationalAverageReport.Fuels.First().Brands)
-        {
+        <thead>
             <tr>
-                
-                <td><strong>@(brand.BrandName) </strong></td>
-                
-                @* Average *@
-                @foreach (var fuelType in Model.NationalAverageReport.Fuels)
+                <td style="width:32px"></td>
+                <td style="width:172px"></td>
+                <td style="width: 282px; " colspan="2"><strong>Avg retails</strong> </td>
+                <td style="width: 282px;" colspan="2"><strong>Difference</strong></td>
+                <td style="width: 282px;" colspan="2"><strong>Pricing range</strong></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td><strong>@requestedDate</strong> </td>
+                @for (int i = 0; i < 3; i++)
                 {
-                    var fuelBrand = fuelType.Brands.First(b => b.BrandName == brand.BrandName);
-                    <td>@((fuelBrand.Average / 10.0).ToString("###0.0"))</td>
-                }
-                @* Difference *@
-                @foreach (var fuelType in Model.NationalAverageReport.Fuels)
-                {
-                    var fuelBrand = fuelType.Brands.First(b => b.BrandName.Equals(brand.BrandName, StringComparison.InvariantCultureIgnoreCase));
-
-                    int diff = fuelBrand.Average > 0 ? (fuelBrand.Average - fuelType.SainsburysPrice) : 0;
-                    string color = "";
-                    if (diff < 0)
+                    foreach (var fuelType in Model.NationalAverageReport.Fuels)
                     {
-                        color = "red";
+                        <td><strong>@fuelType.FuelName</strong></td>
                     }
-                    else if (diff > 0)
-                    {
-                        color = "green";
-                    }
-
-                    <td style="color: @color; ">@((diff / 10.0).ToString("###0.0"))</td>
-                }
-
-                @* Range *@
-                @foreach (var fuelType in Model.NationalAverageReport.Fuels)
-                {
-                    var fuelBrand = fuelType.Brands.First(b => brand.BrandName.Equals(b.BrandName, StringComparison.InvariantCultureIgnoreCase));
-                    <td >@((fuelBrand.Min / 10.0).ToString("###0.0")) - @((fuelBrand.Max / 10.0).ToString("###0.0"))</td>
                 }
             </tr>
-        }
+        </thead>
+        <tbody>
+            @foreach (var brand in Model.NationalAverageReport.Fuels.First().Brands)
+            {
+                int sortOverride = int.MaxValue;
+                if (brand.BrandName == Const.SAINSBURYS) { sortOverride = 1; }
+                if (brand.BrandName == Const.ASDA) { sortOverride = 2; }
+                if (brand.BrandName == Const.TESCO) { sortOverride = 3; }
+                if (brand.BrandName == Const.MORRISONS) { sortOverride = 4; }
 
+                var rowClasses = sortOverride != int.MaxValue ? "fixed" : "";
+
+                <tr class="@(rowClasses)">
+                    <td>@sortOverride</td>
+
+                    <td>
+                        <strong>@(brand.BrandName) </strong>
+                        @* Hidden value so jQuery Datatable keeps 'Grocers' at top *@
+                        @if (sortOverride != int.MaxValue)
+                    {
+                            <i class="fa fa-star" title="Grocer"></i>
+                        }
+                    </td>
+
+                    @* Average *@
+                    @foreach (var fuelType in Model.NationalAverageReport.Fuels)
+                    {
+                        var fuelBrand = fuelType.Brands.First(b => b.BrandName == brand.BrandName);
+                        <td>@((fuelBrand.Average / 10.0).ToString("###0.0"))</td>
+                    }
+                    @* Difference *@
+                    @foreach (var fuelType in Model.NationalAverageReport.Fuels)
+                    {
+                        var fuelBrand = fuelType.Brands.First(b => b.BrandName.Equals(brand.BrandName, StringComparison.InvariantCultureIgnoreCase));
+
+                        int diff = fuelBrand.Average > 0 ? (fuelBrand.Average - fuelType.SainsburysPrice) : 0;
+                        string color = "";
+                        if (diff < 0)
+                        {
+                            color = "red";
+                        }
+                        else if (diff > 0)
+                        {
+                            color = "green";
+                        }
+
+                        <td style="color: @color; ">@((diff / 10.0).ToString("###0.0"))</td>
+                    }
+
+                    @* Range *@
+                    @foreach (var fuelType in Model.NationalAverageReport.Fuels)
+                    {
+                        var fuelBrand = fuelType.Brands.First(b => brand.BrandName.Equals(b.BrandName, StringComparison.InvariantCultureIgnoreCase));
+                        <td>@((fuelBrand.Min / 10.0).ToString("###0.0")) - @((fuelBrand.Max / 10.0).ToString("###0.0"))</td>
+                    }
+                </tr>
+            }
         </tbody>
-</table>
-    
+    </table>
 
 }
 else
@@ -146,7 +195,7 @@ else
 
     <div class="alert alert-info" role="alert">No data found at @requestedDate</div>
 }
-                    @section scripts {
-        <script src="~/Scripts/bootstrap-datepicker.min.js"></script>
+@section scripts {
+    <script src="~/Scripts/bootstrap-datepicker.min.js"></script>
     <script src="~/Scripts/PriceReports/competitorsPriceRange.js?v=1"></script>
 }

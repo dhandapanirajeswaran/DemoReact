@@ -30,6 +30,14 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             NormalisedMax
         }
 
+        private static List<string> Grocers = new List<string>()
+        {
+            Const.SAINSBURYS,
+            Const.ASDA,
+            Const.TESCO,
+            Const.MORRISONS
+        };
+
         private readonly RepositoryContext _context;
 
         private List<string> LstOfBandsToRemoveInNA2;
@@ -2580,11 +2588,7 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
             //calculating by brands
             var distinctBrands = competitorSites.Select(x => x.Brand).Distinct().OrderBy(x => x).ToList();
 
-            if (distinctBrands.Count > 0)
-            {
-                distinctBrands.Remove(Const.SAINSBURYS);
-                distinctBrands.Insert(0, Const.SAINSBURYS);
-            }
+            distinctBrands = SortBrandsWithGrocersAtTop(distinctBrands);
 
             foreach (var fuelType in fuelTypeIds)
             {
@@ -2763,6 +2767,8 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
                 }
 
                 var distinctBrands = companyBrands.Select(b => b.Brand).Distinct();
+
+                distinctBrands = SortBrandsWithGrocersAtTop(distinctBrands.ToList());
 
                 foreach (var companyBrand in distinctBrands)
                 {
@@ -3223,6 +3229,21 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
             }));
 
             return result;
+        }
+
+        private static List<string> SortBrandsWithGrocersAtTop(List<string> distinctBrands)
+        {
+            if (distinctBrands.Any())
+            {
+                // move 'grocers' to top of list (FC-164)
+                foreach (var grocer in Grocers)
+                    distinctBrands.Remove(grocer);
+
+                // add to top list of (keeping in same order as original list)
+                for (var index = Grocers.Count() - 1; index >= 0; index--)
+                    distinctBrands.Insert(0, Grocers[index]);
+            }
+            return distinctBrands;
         }
 
         #endregion private methods
