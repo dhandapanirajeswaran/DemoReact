@@ -484,9 +484,9 @@
                         <div class="compitatorData">
                             <table class="competitorTable table-striped table-hover full-width">
                                 <colgroup>
-                                    <col width="14%" />
-                                    <col width="3%" />
-                                    <col width="19%" />
+                                    <col width="12%" />
+                                    <col width="6%" />
+                                    <col width="18%" />
                                     <col width="4%" />
                                     <col width="4%" />
 
@@ -554,10 +554,11 @@
                                     <!-- /ko -->
                                     <!-- ko if: hasCompetitors() -->
                                     <!-- ko foreach: competitors -->
-                                    <tr class="competitor-row hoverable" data-bind="attr:{id:'CompetitorSiteRow_' + SiteId}, style: {background : $parent.FuelPricesToDisplay[0].FuelPrice.CompetitorName == Brand + '/' + StoreName  && $parent.FuelPricesToDisplay[0].FuelPrice.AutoPrice >0 ?  'yellow' : 'lightgray'}">
+                                    <tr class="competitor-row hoverable" title="Double click to edit/create Site Note" data-bind="attr:{id:'CompetitorSiteRow_' + SiteId}, style: {background : $parent.FuelPricesToDisplay[0].FuelPrice.CompetitorName == Brand + '/' + StoreName  && $parent.FuelPricesToDisplay[0].FuelPrice.AutoPrice >0 ?  'yellow' : 'lightgray'}">
                                         <td class="num1"><span data-bind="text: Brand"></span></td>
                                         <td class="num2">
                                             <button type="button" class="btn btn-default btn-xs triggerEditSiteNote" data-bind="attr:{id: 'EditSiteNoteButton_' + SiteId}" title="Create or edit note" ><i class="fa fa-pencil"></i></button>
+                                            <button type="button" class="btn btn-default btn-xs triggerToggleNote" data-bind="attr:{id: 'ToggleSiteNoteButton_' + SiteId}" title="Show Note"><i class="fa fa-sort-up"></i></button>
                                         </td>
                                         <td class="num3"><span data-bind="text: StoreName"></span></td>
                                         <td class="num4"><b><span data-bind="text: DriveTime"></span></b></td>

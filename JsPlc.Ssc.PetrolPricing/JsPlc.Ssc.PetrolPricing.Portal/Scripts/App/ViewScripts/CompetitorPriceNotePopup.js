@@ -14,7 +14,7 @@ function ($, ko, common, notify, pricingService) {
             unableToDeleteSiteNote: 'Unable to delete Site Note',
             pleaseEnterTextForNote: 'Please enter some text for the note',
             siteNoteSavedFor: 'Site Note saved for ',
-            unableToSaveSiteNoteFor: 'unable to save Site Note for ',
+            unableToSaveSiteNoteFor: 'Unable to save Site Note for ',
             unableToLoadSiteNote: 'Sorry, unable to load site Note'
         },
         classes: {

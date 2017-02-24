@@ -17,7 +17,9 @@ function ($, ko, common, compNotePopup, notify) {
             inactiveToggleButton: 'btn-default',
             activeEditIcon: 'btn-success',
             inactiveEditIcon: 'btn-default',
-            highlightRow: 'highlight'
+            highlightRow: 'highlight',
+            expandedNote: 'fa-sort-up',
+            collapsedNote: 'fa-sort-down'
         },
         selectors: {
             popup: '#competitorPricesPopup',
@@ -34,8 +36,20 @@ function ($, ko, common, compNotePopup, notify) {
             notePanel: '.note-panel',
             notePanelText: '.note-panel-text',
             triggerEditNote: '.triggerEditSiteNote',
-            closeButton: '#competitorPricePopupCloseButton'
+            triggerToggleNote: '.triggerToggleNote',
+            closeButton: '#competitorPricePopupCloseButton',
+            competitorRow: '.competitor-row'
+        },
+        naming: {
+            editButton: '#EditSiteNoteButton_',
+            competitorNote: '#CompetitorNote_',
+            toggleNoteButton: '#ToggleSiteNoteButton_',
+            competitorSiteRow: '#CompetitorSiteRow_'
         }
+    };
+
+    function extractSiteId(ele) {
+        return $(ele).attr('id').split('_')[1];
     };
 
     function getPopup() {
@@ -76,7 +90,6 @@ function ($, ko, common, compNotePopup, notify) {
 
     function drawPopup(siteItem) {
         hideLoading();
-        debugger;
 
         var dstHeader = $(config.selectors.header),
             srcDiv = $('#AjaxCollapseCompetitorsforsite' + siteItem.SiteId + ' .compitatorData'),
@@ -88,6 +101,7 @@ function ($, ko, common, compNotePopup, notify) {
         $(config.selectors.pricesGrid).html(clonedDiv);
 
         redrawAllNoteIcons();
+        redrawAllNoteToggles();
 
         dstHeader.hide().html(srcThead.clone(false));
 
@@ -98,7 +112,7 @@ function ($, ko, common, compNotePopup, notify) {
         var noteRows = $(config.selectors.popup).find(config.selectors.noteRow);
         noteRows.each(function (index) {
             var row = $(this),
-                siteId = row.attr('id').split('_')[1],
+                siteId = extractSiteId(row),
                 note = row.find(config.selectors.notePanelText).text(),
                 hasNote = isNotWhitespace(note),
                 visible = hasNote && (siteId == expandSiteId || showNotes);
@@ -113,6 +127,7 @@ function ($, ko, common, compNotePopup, notify) {
         $(config.selectors.hideAllNotesButton).fadeIn(2000);
         showOrHideNotePanels(state.showNotes, null);
         redrawAllNoteIcons();
+        redrawAllNoteToggles();
     };
 
     function setHeaderWidths() {
@@ -193,15 +208,15 @@ function ($, ko, common, compNotePopup, notify) {
         notes.each(function (item) {
             var note = $(this),
                 tr = note.closest('tr'),
-                id = tr.attr('id').split('_')[1];
+                id = extractSiteId(tr);
 
             redrawNoteEditButton(id);
         });
     };
 
     function redrawNoteEditButton(siteId) {
-        var editButton = $('#EditSiteNoteButton_' + siteId),
-            note = $('#CompetitorNote_' + siteId).find(config.selectors.notePanelText),
+        var editButton = $(config.naming.editButton + siteId),
+            note = $(config.naming.competitorNote + siteId).find(config.selectors.notePanelText),
             hasNote = isNotWhitespace(note.text());
 
         if (hasNote)
@@ -212,6 +227,34 @@ function ($, ko, common, compNotePopup, notify) {
             editButton.removeClass(config.classes.activeEditIcon)
                 .addClass(config.classes.inactiveEditIcon)
                 .attr('title', config.messages.createSiteNote);
+    };
+
+    function redrawAllNoteToggles() {
+        var rows = $(config.selectors.popup).find(config.selectors.competitorRow);
+        rows.each(function () {
+            var row = $(this),
+                siteId = extractSiteId(row);
+            redrawNoteToggle(siteId);
+        });
+    };
+
+    function redrawNoteToggle(siteId) {
+        var button = $(config.naming.toggleNoteButton + siteId),
+            icon = button.find('i:first'),
+            note = $(config.naming.competitorNote + siteId),
+            text = note.find(config.selectors.notePanelText),
+            hasNote = isNotWhitespace(note.text()),
+            isNoteVisible = note.is(':visible');
+
+        if (hasNote) {
+            if (isNoteVisible)
+                icon.removeClass(config.classes.collapsedNote).addClass(config.classes.expandedNote)
+            else
+                icon.removeClass(config.classes.expandedNote).addClass(config.classes.collapsedNote);
+            button.show();
+        } else {
+            button.hide();
+        }
     };
 
     function bindEvents() {
@@ -239,19 +282,55 @@ function ($, ko, common, compNotePopup, notify) {
             };
         $(config.selectors.popup).off().on('click', config.selectors.notePanel, handler);
         $(config.selectors.triggerEditNote).off().on('click', triggerEditNote);
+        $(config.selectors.triggerToggleNote).off().on('click', triggerToggleNote);
+        $(config.selectors.competitorRow).off().on('dblclick', triggerEditNote);
     };
 
     function triggerEditNote() {
         var btn = $(this),
-            siteId = btn.attr('id').split('_')[1];
+            siteId = extractSiteId(btn);
         compNotePopup.editSiteNote(siteId);
         highlightSiteRow(siteId, true);
+        expandSiteNote(siteId);
+    };
+
+    function expandSiteNote(siteId) {
+        var note = $(config.naming.competitorNote + siteId),
+            panel = note.find(config.selectors.notePanelText),
+            text = panel.text(),
+            hasNote = isNotWhitespace(text),
+            isNoteVisible = note.is(':visible');
+
+        if (hasNote && !isNoteVisible) {
+            panel.hide();
+            note.show();
+            panel.slideDown(1000);
+            redrawNoteToggle(siteId);
+        }
+    };
+
+    function triggerToggleNote() {
+        var btn = $(this),
+            siteId = extractSiteId(btn),
+            note = $(config.naming.competitorNote + siteId),
+            panel = note.find(config.selectors.notePanelText),
+            isNoteVisible = note.is(':visible');
+
+        if (isNoteVisible) {
+            panel.slideUp(1000, function () { note.hide(); });
+        } else {
+            panel.hide();
+            note.show();
+            panel.slideDown(1000);
+        }
+
+        redrawNoteToggle(siteId);
     };
 
     function highlightSiteRow(siteId, isHighlight) {
         var cssClass = config.classes.highlightRow;
         if (siteId) {
-            var row = $('#CompetitorSiteRow_' + siteId);
+            var row = $(config.naming.competitorSiteRow + siteId);
             isHighlight ? row.addClass(cssClass) : row.removeClass(cssClass);
         } else {
             $(config.selectors.pricesGrid).find('.' + cssClass).removeClass(cssClass);
@@ -260,7 +339,7 @@ function ($, ko, common, compNotePopup, notify) {
 
     function notePanelClick() {
         var row = $(this).closest('tr' + config.selectors.noteRow),
-            siteId = row.attr('id').split('_')[1];
+            siteId = extractSiteId(row);
 
         compNotePopup.editSiteNote(siteId);
         highlightSiteRow(siteId, true);
@@ -296,7 +375,7 @@ function ($, ko, common, compNotePopup, notify) {
 
     function redrawSiteNote(siteNote) {
         var html = common.htmlEncode(siteNote.Note).replace(/\n/g, '<br />');
-        $('#CompetitorNote_' + siteNote.SiteId).find(config.selectors.notePanelText).html(html);
+        $(config.naming.competitorNote + siteNote.SiteId).find(config.selectors.notePanelText).html(html);
     }
 
     function afterNoteUpdate(siteNote) {
@@ -304,12 +383,14 @@ function ($, ko, common, compNotePopup, notify) {
         setActiveToggleButtons(config.selectors.hideAllNotesButton, config.selectors.showAllNotesButton);
         redrawSiteNote(siteNote);
         redrawNoteEditButton(siteNote.SiteId);
+        redrawNoteToggle(siteNote.SiteId);
         showOrHideNotePanels(state.showNotes, siteNote.SiteId);
     };
 
     function afterNoteDelete(siteNote) {
         redrawSiteNote(siteNote);
         redrawAllNoteIcons();
+        redrawNoteToggle(siteNote.SiteId);
         showOrHideNotePanels(state.showNotes, siteNote.SiteId);
     };
 
