@@ -113,10 +113,13 @@ function ($, ko, common, compNotePopup, notify) {
         noteRows.each(function (index) {
             var row = $(this),
                 siteId = extractSiteId(row),
-                note = row.find(config.selectors.notePanelText).text(),
-                hasNote = isNotWhitespace(note),
+                note = $(config.naming.competitorNote + siteId),
+                panel = note.find(config.selectors.notePanelText),
+                text = panel.text(),
+                hasNote = isNotWhitespace(text),
                 visible = hasNote && (siteId == expandSiteId || showNotes);
             visible ? row.show() : row.hide();
+            visible ? panel.show() : panel.hide();
         });
     };
 
@@ -238,19 +241,22 @@ function ($, ko, common, compNotePopup, notify) {
         });
     };
 
-    function redrawNoteToggle(siteId) {
+    function redrawNoteToggle(siteId, isExpanded) {
         var button = $(config.naming.toggleNoteButton + siteId),
-            icon = button.find('i:first'),
+            icon = button.find('.fa'),
             note = $(config.naming.competitorNote + siteId),
             text = note.find(config.selectors.notePanelText),
             hasNote = isNotWhitespace(note.text()),
             isNoteVisible = note.is(':visible');
 
+        if (isExpanded != undefined)
+            isNoteVisible = isExpanded;
+
         if (hasNote) {
             if (isNoteVisible)
-                icon.removeClass(config.classes.collapsedNote).addClass(config.classes.expandedNote)
+                replaceClass(icon, config.classes.collapsedNote, config.classes.expandedNote);
             else
-                icon.removeClass(config.classes.expandedNote).addClass(config.classes.collapsedNote);
+                replaceClass(icon, config.classes.expandedNote, config.classes.collapsedNote);
             button.show();
         } else {
             button.hide();
@@ -305,7 +311,7 @@ function ($, ko, common, compNotePopup, notify) {
             panel.hide();
             note.show();
             panel.slideDown(1000);
-            redrawNoteToggle(siteId);
+            redrawNoteToggle(siteId, true);
         }
     };
 
@@ -318,13 +324,13 @@ function ($, ko, common, compNotePopup, notify) {
 
         if (isNoteVisible) {
             panel.slideUp(1000, function () { note.hide(); });
+            redrawNoteToggle(siteId, false);
         } else {
             panel.hide();
             note.show();
             panel.slideDown(1000);
+            redrawNoteToggle(siteId, true);
         }
-
-        redrawNoteToggle(siteId);
     };
 
     function highlightSiteRow(siteId, isHighlight) {
