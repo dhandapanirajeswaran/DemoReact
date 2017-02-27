@@ -22,7 +22,7 @@
 
     var hideAll = function () {
         $.each(notifyDefs, function (item) {
-            $(item.selector).hide();
+            $(item.selector).hide().stop(true, true).clearQueue();
         });
     };
 
@@ -35,6 +35,7 @@
 
         $(notif.selector).find('.message').html(message).end()
             .stop(true, true)
+            .clearQueue()
             .css(positions.hidden)
             .show()
             .delay(notif.delay)
