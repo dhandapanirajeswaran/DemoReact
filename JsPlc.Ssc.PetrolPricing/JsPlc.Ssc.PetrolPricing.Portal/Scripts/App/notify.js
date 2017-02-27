@@ -12,6 +12,14 @@
         "info": { selector: "#notification-generic-info", delay: 100, show: 500, pause: 1000, hide: 500 }
     };
 
+    var alertFunctions = {
+        "error": showError,
+        "danger": showError,
+        "success": showSuccess,
+        "warning": showWarning,
+        "info": showInfo
+    };
+
     var hideAll = function () {
         $.each(notifyDefs, function (item) {
             $(item.selector).hide();
@@ -52,25 +60,9 @@
     }
 
     var showAlertType = function (alertType, message, extratime) {
-        switch (alertType) {
-            case "error":
-            case "danger":
-                showError(message, extratime);
-                break;
-            case "success":
-                showSuccess(message, extratime);
-                break;
-            case "warning":
-                showWarning(message, extratime);
-                break;
-            case "info":
-                showInfo(message, extratime);
-                break;
-            default:
-                showError(message, extratime);
-                break;
-        }
-    }
+        var fn = alertFunctions[alertType.toLowerCase()] || showError;
+        fn(message, extratime);
+   }
 
     $(function () {
         $('.auto-hide-alert').each(function (index) {
