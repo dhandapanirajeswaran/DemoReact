@@ -427,8 +427,10 @@
                 <div class="actualdata" style="padding:0px;margin:0px" data-bind="with: dataModel">
                     <!-- JS Store DataRows -->
                     <!-- ko foreach: sites -->
-                    <div class="row" role="tab" data-bind="id:('Heading' + SiteId), attr: {id: 'SiteHeading' + SiteId}, visible: $root.priceChangeFilter() == 'All' || ($root.priceChangeFilter() == 'Yes' && hasPriceChanges()) || ($root.priceChangeFilter() == 'No' && !hasPriceChanges())">
+                    <div class="row" role="tab" data-bind="id:('Heading' + SiteId), attr: {id: 'SiteHeading' + SiteId}, visible: isEditing() || $root.priceChangeFilter() == 'All' || ($root.priceChangeFilter() == 'Yes' && hasPriceChanges()) || ($root.priceChangeFilter() == 'No' && !hasPriceChanges())">
                         <div class="col-sm-1" style="width:5px;margin:2px;height:auto">
+
+                            <span data-bind="text: isEditing"></span>
 
                             <a role="button" data-toggle="modal" data-bind="attr:{id: SiteId}, click: getCompetitorPopupDataClick"
                                data-target="#competitorPricesPopup" title="View competitor's prices">
@@ -467,7 +469,7 @@
                         <div class="col-sm-1" align="left" style="border-left: 1px solid #ddd;margin-left:0px; width:145px;height:45px">
                             <span data-bind="attr:{title:(FuelPrice.IsTrailPrice ? 'Trail price: ' + FuelPrice.CompetitorName : 'Competitor name: ' + FuelPrice.CompetitorName + '; Markup: ' + FuelPrice.Markup)}, text: FuelPrice.AutoPrice"></span>
                             <input type="text" data-bind="value: FuelPrice.OverridePrice, visible: !$root.ViewingHistorical(),
-                                id: ('OverridePrice_' + $parent.SiteId + '_' + FuelPrice.FuelTypeId), event:{keyup: changeProp}" class="txtPrice" maxlength="8" />
+                                id: ('OverridePrice_' + $parent.SiteId + '_' + FuelPrice.FuelTypeId), event:{keyup: changeProp, blur: blurred, focus: focused}" class="txtPrice" maxlength="8" />
                             <span style="color: red">
                                 <span data-bind="attr :{id: ('OverridePriceHighlight_' + $parent.SiteId + '_' + FuelPrice.FuelTypeId)}"></span>
                             </span>
