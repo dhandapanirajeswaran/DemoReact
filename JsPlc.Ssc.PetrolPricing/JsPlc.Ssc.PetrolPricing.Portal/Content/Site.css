@@ -494,3 +494,5 @@ table.fixed-header>tbody {
 .site-hero-text {
     text-shadow: 4px 4px white;
 }
+
+.hide {display: none;}
