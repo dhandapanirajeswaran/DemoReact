@@ -248,43 +248,35 @@
 
 
             </div>
+            <hr style="width:1280px;" />
             <div class="row">
-                <div class="col-md-12">
-                    <label>Price changes</label><br />
+                <div class="col-md-2">
+                    <label>Price changes:</label><br />
                     <div class="btn-group" role="group">
                         <button type="button" class="btn btn-sm" data-bind="click: PriceChangeFilterAll, css: {'btn-primary': $root.priceChangeFilter() == 'All'}"><i class="fa fa-question"></i> Any</button>
                         <button type="button" class="btn btn-sm" data-bind="click: PriceChangeFilterYes, css: {'btn-primary': $root.priceChangeFilter() == 'Yes'}"><i class="fa fa-check"></i>Yes</button>
                         <button type="button" class="btn btn-sm" data-bind="click: PriceChangeFilterNo, css: {'btn-primary': $root.priceChangeFilter() == 'No'}"><i class="fa fa-times"></i> No</button>
                     </div>
                 </div>
-            </div>
-            <hr style="width:1280px;" />
-            <div class="row" >
-                <div class="col-md-1" style="width:410px;">
 
-                    <label>Excluded Brands</label>
-                    @Html.ListBoxFor(model => model.ExcludeBrands, new MultiSelectList(Model.AllBrands), new { @data_placeholder = "Select Brands...", @class = "chosen-select", style = "width: 400px;", id = "lstbxexcludebrands" })
-
-                </div>
-                <div class="col-md-1" style="width:750px;margin-top:24px;margin-left:10px">
-                    <fieldset>
-                        <legend style="border: 1px gray solid;width:860px;">
-                            &nbsp&nbsp  <font size="2" data-bind="with: dataModel"><b>Total:</b> <b style="color: red"  data-bind="text: sites.length"></b></font>
-
-                            <font size="2" >
-                                &nbsp&nbsp <a>Price Difference :</a>
-                            </font>
-                            <font size="2" data-bind="foreach: PriceDifferences">
-                                &nbsp&nbsp&nbsp&nbsp <b><b data-bind="text: key"></b>:-&nbsp</b> <b style="color: blue"><b data-bind="text: value"></b>&nbsp sites</b>
-                            </font>
-
-                        </legend>
-
-
-
-                    </fieldset>
+                <div class="col-md-10">
+                    <label>Excluded Brands</label><br />
+                    @Html.ListBoxFor(model => model.ExcludeBrands, new MultiSelectList(Model.AllBrands), new { @data_placeholder = "Select Brands...", @class = "chosen-select", style = "width: 100%;", id = "lstbxexcludebrands" })
                 </div>
             </div>
+            <br />
+            <div class="row font125pc">
+                <div class="col-md-12">
+                    <label class="btn btn-primary" data-bind="with: dataModel">Price Differences <span class="badge" data-bind="text: sites.length"></span></label>
+                    <!-- ko foreach: PriceDifferences -->
+                    <span class="price-diff-item">
+                        <strong data-bind="text:key"></strong>
+                        <i class="badge" data-bind="text: (value + ' sites')"></i>
+                    </span>
+                    <!-- /ko -->
+                </div>
+            </div>
+
             <hr style="width:1280px;" />
             <div style="display: none" class="alert alert-danger" data-bind="visible: $root.HasValidationErrors() || $root.HasErrorMessage()">
                 <div class="col-md-1 text-center"><i class="fa fa-exclamation-triangle fa-2x"></i></div>

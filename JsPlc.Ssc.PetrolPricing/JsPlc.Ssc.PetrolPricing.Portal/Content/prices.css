@@ -125,3 +125,16 @@ span.jsdiff {
     display: none;
 }
 
+.price-diff-item {
+    margin-left: 4px;
+    margin-right: 4px;
+    border-right: 1px solid #2e6da4;
+}
+.price-diff-item:last-child {
+    border-right: none;
+}
+
+.font75pc {font-size: 75%;}
+.font100pc {font-size: 100%;}
+.font125pc {font-size: 125%}
+.font150pc {font-size: 150%;}
