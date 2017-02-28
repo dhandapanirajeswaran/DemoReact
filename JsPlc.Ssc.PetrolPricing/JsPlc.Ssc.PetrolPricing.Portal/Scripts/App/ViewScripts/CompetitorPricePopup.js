@@ -38,7 +38,8 @@ function ($, ko, common, compNotePopup, notify) {
             triggerEditNote: '.triggerEditSiteNote',
             triggerToggleNote: '.triggerToggleNote',
             closeButton: '#competitorPricePopupCloseButton',
-            competitorRow: '.competitor-row'
+            competitorRow: '.competitor-row',
+            modalBackground: '.modal-backdrop'
         },
         naming: {
             editButton: '#EditSiteNoteButton_',
@@ -131,6 +132,7 @@ function ($, ko, common, compNotePopup, notify) {
         showOrHideNotePanels(state.showNotes, null);
         redrawAllNoteIcons();
         redrawAllNoteToggles();
+        bindOutsideModalEvents();
     };
 
     function setHeaderWidths() {
@@ -204,6 +206,7 @@ function ($, ko, common, compNotePopup, notify) {
 
     function closePopup() {
         $(config.selectors.popup).modal('hide');
+        unbindOutsideModalEvents();
     };
 
     function redrawAllNoteIcons() {
@@ -273,6 +276,18 @@ function ($, ko, common, compNotePopup, notify) {
         $(config.selectors.popup).find('.modal-header .close').off().on('click', closePopup);
     };
 
+    function bindOutsideModalEvents() {
+        $(config.selectors.modalBackground).off().on('click', closePopup)
+            .css('cursor', 'pointer')
+            .attr('title', 'Close popup');
+    };
+
+    function unbindOutsideModalEvents() {
+        return $(config.selectors.modalBackground).off()
+            .css('cursor', 'default')
+            .attr('title', '');
+    };
+    
     function showAllNotesClick() {
         showAllNotes();
     };
@@ -295,6 +310,7 @@ function ($, ko, common, compNotePopup, notify) {
     function triggerEditNote() {
         var btn = $(this),
             siteId = extractSiteId(btn);
+        unbindOutsideModalEvents();
         compNotePopup.editSiteNote(siteId);
         highlightSiteRow(siteId, true);
         expandSiteNote(siteId);
@@ -402,6 +418,7 @@ function ($, ko, common, compNotePopup, notify) {
 
     function afterNoteHide() {
         highlightSiteRow();
+        bindOutsideModalEvents();
     };
 
     function isNotWhitespace(note) {
