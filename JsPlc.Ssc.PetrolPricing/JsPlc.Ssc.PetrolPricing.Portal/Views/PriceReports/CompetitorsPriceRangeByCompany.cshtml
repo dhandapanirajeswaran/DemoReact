@@ -31,11 +31,11 @@
             {
                 if (hasData)
                 {
-                    <input type="submit" id="btnExportReport" class="btn btn-primary" value="Export to Excel" />
+                    <button type="submit" id="btnExportReport" class="btn btn-primary"><i class="fa fa-download"></i> Export to Excel</button>
                 }
                 else
                 {
-                    <input type="submit" id="btnExportReport" class="btn btn-primary" value="Export to Excel" disabled="disabled" />
+                    <button type="submit" id="btnExportReport" class="btn btn-primary" disabled="disabled"><i class="fa fa-download"></i> Export to Excel</button>
                 }
                 <input type="hidden" id="DateForCopy" name="DateFor" />
                 <input type="hidden" id="SelectedCompanyNameCopy" name="SelectedCompanyName" />
@@ -177,9 +177,11 @@
 }
 else
 {
-
     <div class="alert alert-info" role="alert">No data found at @Model.Date.ToString("dd-MMM-yyyy")</div>
 }
+
+@Html.Partial("_BackToReports")
+
 @section scripts {
     <script src="~/Scripts/pricereports/CompetitorsPriceRangeByCompany.js"></script>
 }

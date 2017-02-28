@@ -49,7 +49,7 @@
     <div class="col-md-6 text-right" style="padding-top: 20px">
         @if (Model != null && Model.NationalAverageReport != null && Model.NationalAverageReport.Fuels.Any())
         {
-            <input type="button" class="btn btn-primary" id="btnExportReport" value="Export to Excel" />
+            <button type="button" class="btn btn-primary" id="btnExportReport"><i class="fa fa-download"></i> Export to Excel</button>
         }
     </div>
 </div>
@@ -150,6 +150,8 @@ else
 
     }
 }
+
+@Html.Partial("_BackToReports")
 
 @section scripts {
     <script src="~/Scripts/bootstrap-datepicker.min.js"></script>

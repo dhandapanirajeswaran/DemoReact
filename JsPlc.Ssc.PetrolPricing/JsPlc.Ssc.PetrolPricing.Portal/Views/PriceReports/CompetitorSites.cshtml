@@ -1,38 +1,35 @@
 ﻿@model JsPlc.Ssc.PetrolPricing.Models.ViewModels.CompetitorSiteViewModel
 @{
-	ViewBag.Title = "Report - View Competitor Sites By Driving Time in Minutes";
+    ViewBag.Title = "Report - View Competitor Sites By Driving Time in Minutes";
 }
 <div class="row">
     <div class="col-md-8">
         <h1>@ViewBag.Title.</h1>
     </div>
     <div class="col-md-4 text-right" style="padding-top: 20px">
-        <input type="button" class="btn btn-primary" id="btnExportReport" value="Export to Excel" />
+        <button type="button" class="btn btn-primary" id="btnExportReport"><i class="fa fa-download"></i> Export to Excel</button>
     </div>
 </div>
 <hr />
-
 <style>
+    .actualdata {
+        height: 500px;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
 
-.actualdata {
-    height: 500px;
-    overflow-y: auto;
-    overflow-x: hidden; 
-}
+    .fixed-col-1 {
+        width: 130px;
+    }
 
-.fixed-col-1 {
-    width:130px;
-}
+    .alternativerow:nth-child(2n+1) {
+        background: #F5F5F5;
+    }
 
-.alternativerow:nth-child(2n+1) {
-    background:#F5F5F5;
-}
-
-.alternativerow {
-    height:35px;
-    border-bottom:1px solid #b9b2b2
-}
-     
+    .alternativerow {
+        height: 35px;
+        border-bottom: 1px solid #b9b2b2;
+    }
 </style>
 
 @using (Html.BeginForm())
@@ -40,17 +37,29 @@
     @Html.AntiForgeryToken()
 
     <div class="row">
+        <div class="col-md-1 text-center">
+            <i class="fa fa-info-circle fa-2x"></i>
+        </div>
+        <div class="col-md-10">
+            <strong>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean enim tortor, tempor sit amet suscipit a, rhoncus sed magna. Morbi vel mollis dolor. Curabitur tristique arcu in sapien tempor, sed venenatis diam pharetra. Donec vitae elit purus. Cras tincidunt velit nec quam luctus maximus. Etiam magna lorem, elementum eu egestas sed, pretium a est. Etiam consequat nibh vitae mi vulputate, nec laoreet justo ornare. Aliquam erat volutpat. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vivamus congue faucibus magna, ac posuere nibh malesuada sed. Vestibulum sed leo at libero semper imperdiet. Sed purus neque, vestibulum eleifend nisi quis, suscipit dapibus massa.
+            </strong>
+        </div>
+    </div>
+
+    <hr />
+
+    <div class="row">
         <div class="col-md-4">
             <label for="SiteId">Site:</label>&nbsp;
             @if (Model != null)
-            { 
+            {
                 @Html.DropDownList("SiteId", new SelectList(Model.Sites, "Id", "SiteName", Model.SiteId), new { @class = "form-control" })
             }
         </div>
-       
+
     </div>
 }
-
 
 @if (Model != null && Model.Report.BrandTimes.Any())
 {
@@ -85,46 +94,43 @@
     </div>
     <hr style="border-width:3px; margin: 0.5px;" />
     <div class="actualdata">
-        
-    @foreach (var item in Model.Report.BrandTimes)
-    { 
-          <div class="alternativerow">
 
-          
-        <div class="row">
-                <div class="col-md-1 fixed-col-1" style="width:200px;">
-                @item.BrandName
-            </div>
-            <div class="col-md-1 fixed-col-1">
-                @item.Count0To5
-            </div>
-            <div class="col-md-1 fixed-col-1">
-                @item.Count5To10
-            </div>
-            <div class="col-md-1 fixed-col-1">
-                @item.Count10To15
-            </div>
-            <div class="col-md-1 fixed-col-1">
-                @item.Count15To20
-            </div>
-            <div class="col-md-1 fixed-col-1">
-                @item.Count20To25
-            </div>
-            <div class="col-md-1 fixed-col-1">
-                @item.Count25To30
-            </div>
-            <div class="col-md-1 fixed-col-1">
-                @item.CountMoreThan30
-            </div>
-            
-        </div>           
+        @foreach (var item in Model.Report.BrandTimes)
+        {
+            <div class="alternativerow">
 
-           
-        </div>
-  
+                <div class="row">
+                    <div class="col-md-1 fixed-col-1" style="width:200px;">
+                        @item.BrandName
+                    </div>
+                    <div class="col-md-1 fixed-col-1">
+                        @item.Count0To5
+                    </div>
+                    <div class="col-md-1 fixed-col-1">
+                        @item.Count5To10
+                    </div>
+                    <div class="col-md-1 fixed-col-1">
+                        @item.Count10To15
+                    </div>
+                    <div class="col-md-1 fixed-col-1">
+                        @item.Count15To20
+                    </div>
+                    <div class="col-md-1 fixed-col-1">
+                        @item.Count20To25
+                    </div>
+                    <div class="col-md-1 fixed-col-1">
+                        @item.Count25To30
+                    </div>
+                    <div class="col-md-1 fixed-col-1">
+                        @item.CountMoreThan30
+                    </div>
 
-    }
+                </div>
 
+            </div>
+
+
+        }
 
     </div>
 }
@@ -133,6 +139,7 @@ else if (Model != null && Model.SiteId > 0)
     <div class="alert alert-info" role="alert">Data for <strong>@Model.Report.SiteName</strong> site is not found</div>
 }
 
+@Html.Partial("_BackToReports")
 
 @section scripts {
     <script src="~/Scripts/PriceReports/competitorSites.js"></script>

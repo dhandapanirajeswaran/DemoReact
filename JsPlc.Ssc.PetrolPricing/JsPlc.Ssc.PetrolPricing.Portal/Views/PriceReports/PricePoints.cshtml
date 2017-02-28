@@ -159,7 +159,7 @@ ul.tab li a:focus, .active  {
 
         @if (Model != null && Model.PricePointReports.Any())
         {
-            <input type="button" id="btnExportReport" class="btn btn-primary" value="Export to Excel" />
+            <button type="button" id="btnExportReport" class="btn btn-primary"><i class="fa fa-download"></i> Export to Excel</button>
         }
     </div>
 </div>
@@ -245,10 +245,9 @@ ul.tab li a:focus, .active  {
 
 
 }
+@Html.Partial("_BackToReports")
 
-            @section scripts {
-                <script src="~/Scripts/bootstrap-datepicker.min.js"></script>
-                <script src="~/Scripts/PriceReports/pricePoints.js"></script>
-
-
-            }
+@section scripts {
+    <script src="~/Scripts/bootstrap-datepicker.min.js"></script>
+    <script src="~/Scripts/PriceReports/pricePoints.js"></script>
+}

@@ -86,7 +86,7 @@
         <h1>@ViewBag.Title.</h1>
     </div>
     <div class="col-md-6 text-right" style="padding-top: 20px">
-        <input type="button" class="btn btn-primary" id="btnExportReport" value="Export to Excel" />
+        <button type="button" class="btn btn-primary" id="btnExportReport"><i class="fa fa-download"></i> Export to Excel</button>
     </div>
 </div>
 <hr />
@@ -195,6 +195,9 @@ else
 
     <div class="alert alert-info" role="alert">No data found at @requestedDate</div>
 }
+
+@Html.Partial("_BackToReports")
+
 @section scripts {
     <script src="~/Scripts/bootstrap-datepicker.min.js"></script>
     <script src="~/Scripts/PriceReports/competitorsPriceRange.js?v=1"></script>
