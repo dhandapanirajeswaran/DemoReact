@@ -21,7 +21,7 @@ using JsPlc.Ssc.PetrolPricing.Core;
 using JsPlc.Ssc.PetrolPricing.Portal.Helper;
 using System.Data;
 using ClosedXML.Excel;
-
+using JsPlc.Ssc.PetrolPricing.Portal.DataExporters;
 
 namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 {
@@ -311,7 +311,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             SiteViewModel site = new SiteViewModel();
             site.ExcludeBrands = excludbrands.Split(',').ToList();
             _serviceFacade.UpdateExcludeBrands(site);
-            return Json("Saved");
+            return Json("Saved", JsonRequestBehavior.AllowGet);
         }
 
          [System.Web.Mvc.HttpGet]
@@ -336,51 +336,12 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
          public DataTable SitesWithPricesToDataTable(DateTime forDate,
              IEnumerable<SitePriceViewModel> sitesViewModelsWithPrices)
          {
-             var dt = new DataTable("Sites");
-             dt.Columns.Add("-");
-             dt.Columns.Add("-  ");
-             dt.Columns.Add("-   ");
-             dt.Columns.Add("UnLeaded ");
-             dt.Columns.Add("Super Unleaded ");
-             dt.Columns.Add("4 Star");
-             dt.Columns.Add("Diesel ");
-             DataRow dr = dt.NewRow();
-             dr[0] = forDate.ToString("dd/MM/yyyy");
-             dt.Rows.Add(dr);
-             int nRow = 2;
-             Dictionary<int, int> dicColtoFType = new Dictionary<int, int>();
-             dicColtoFType.Add(2, 3);
-             dicColtoFType.Add(1, 4);
-             dicColtoFType.Add(6, 6);
+            var pfsList = GetJsSitesByPfsNum();
 
+            var exporter = new SiteswithPricesDataTableExporter();
+            var dt = exporter.ExportDataTable(forDate, sitesViewModelsWithPrices, pfsList);
 
-             foreach (var pfsNum in GetJsSitesByPfsNum())
-             {
-                 var siteList = sitesViewModelsWithPrices.Where(x => x.PfsNo == pfsNum).ToList();
-                 if (siteList.Count == 0) continue;
-                 var siteVM = siteList[0];
-                 dr = dt.NewRow();
-                 dr[0] = siteVM.PfsNo.ToString().PadLeft(4, '0');
-                 dr[1] = siteVM.PfsNo;
-                 dr[2] = siteVM.StoreName.Replace(Const.SAINSBURYS,"");
-              
-                 if (siteVM.FuelPrices != null)
-                 {
-                     foreach (var fp in siteVM.FuelPrices)
-                     {
-                         if (dicColtoFType.ContainsKey(fp.FuelTypeId))
-                         {
-                             if (System.DBNull.Value == dr[dicColtoFType[fp.FuelTypeId]]) dr[dicColtoFType[fp.FuelTypeId]] = (fp.TodayPrice / 10.0).ToString();
-                            
-                         }
-                     }
-                 }
-                 dt.Rows.Add(dr);
-                 nRow = nRow + 1;
-
-
-             }
-             return dt;
+            return dt;
          }
 
         private List<int> GetJsSitesByPfsNum()
