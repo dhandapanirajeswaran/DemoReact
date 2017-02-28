@@ -138,3 +138,13 @@ span.jsdiff {
 .font100pc {font-size: 100%;}
 .font125pc {font-size: 125%}
 .font150pc {font-size: 150%;}
+
+.txtPrice {
+    padding-left: 2px;
+    padding-right: 2px;
+}
+
+.txtPrice:hover,
+.txtPrice:focus {
+    background: #ffc;
+}
