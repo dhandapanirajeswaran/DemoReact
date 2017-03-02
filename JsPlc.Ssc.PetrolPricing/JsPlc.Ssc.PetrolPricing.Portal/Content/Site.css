@@ -293,7 +293,7 @@ textarea {
 
 .navbar-inverse .navbar-nav > li > a:focus {
     color: white;
-    background-color: orange;
+    background-color: #910048;
 }
 
 /* The following rule clipped the menu opton in sm view*/

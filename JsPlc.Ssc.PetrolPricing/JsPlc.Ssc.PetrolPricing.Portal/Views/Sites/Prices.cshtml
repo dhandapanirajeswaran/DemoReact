@@ -265,10 +265,12 @@
                 </div>
             </div>
             <br />
-            <div class="row font125pc">
-                <div class="col-md-12">
-                    <label class="btn btn-primary" data-bind="with: dataModel">Price Differences <span class="badge" data-bind="text: sites.length"></span></label>
-                    <!-- ko foreach: PriceDifferences -->
+            <div class="row font125pc" data-bind="with: dataModel, visible: !$root.dataLoading()">
+                <div class="col-md-2">
+                    <button type="button" disabled="disabled" class="btn btn-primary" title="Total number of sites">Price Differences <span class="badge" data-bind="text: sites.length"></span></button>
+                </div>
+                <div class="col-md-10">
+                    <!-- ko foreach: $root.PriceDifferences -->
                     <span class="price-diff-item">
                         <strong data-bind="text:key"></strong>
                         <i class="badge" data-bind="text: (value + ' sites')"></i>
@@ -457,7 +459,7 @@
                             <span data-bind="text: FuelPrice.TodayPrice"></span>
                         </div>
                         <div class="col-sm-1" align="left" style="border-left: 1px solid #ddd;margin-left:0px; width:145px;height:45px">
-                            <span data-bind="attr:{title:(FuelPrice.IsTrailPrice ? 'Trail price: ' + FuelPrice.CompetitorName : 'Competitor name: ' + FuelPrice.CompetitorName + '; Markup: ' + FuelPrice.Markup)}, text: FuelPrice.AutoPrice"></span>
+                            <span class="padded-price-right" data-bind="attr:{title:(FuelPrice.IsTrailPrice ? 'Trail price: ' + FuelPrice.CompetitorName : 'Competitor name: ' + FuelPrice.CompetitorName + '; Markup: ' + FuelPrice.Markup)}, text: FuelPrice.AutoPrice"></span>
                             <input type="text" data-bind="value: FuelPrice.OverridePrice, visible: !$root.ViewingHistorical(),
                                 id: ('OverridePrice_' + $parent.SiteId + '_' + FuelPrice.FuelTypeId), event:{keyup: changeProp, blur: blurred, focus: focused}" class="txtPrice" maxlength="8" />
                             <span style="color: red">

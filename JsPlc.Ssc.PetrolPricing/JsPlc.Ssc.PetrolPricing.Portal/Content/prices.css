@@ -148,3 +148,9 @@ span.jsdiff {
 .txtPrice:focus {
     background: #ffc;
 }
+
+.padded-price-right {
+    min-width: 2em;
+    display: inline-block;
+    text-align: right;
+}
