@@ -811,7 +811,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
                  foreach (var dt in tables)
                  {
                      var ws = wb.Worksheets.Add(dt);
-                     int TotalRows = ws.RowCount();
+                     int TotalRows = dt.Rows.Count; // WARNING: Worksheet row count = max number of rows !
 
                      for (int i = 2; i < TotalRows; i++)
                      {
@@ -827,9 +827,9 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
                          {
 
 
-                             int nCompitetors = dicgroupRows[nRow];
+                             int competitorsCount = dicgroupRows[nRow];
 
-                             var cellrange = string.Format("A{0}:N{1}", nSiteRow + 1, nSiteRow + nCompitetors);
+                             var cellrange = string.Format("A{0}:N{1}", nSiteRow + 1, nSiteRow + competitorsCount);
                              var cellrangesecondRow = "A2:N2";
                              ws.Range(cellrangesecondRow)
                                  .Style.Fill.SetBackgroundColor(ClosedXML.Excel.XLColor.LightGray);
@@ -837,9 +837,9 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
                              ws.Range(cellrange).Style.Border.OutsideBorder = ClosedXML.Excel.XLBorderStyleValues.Thick;
                              ws.Range(cellrange).Style.Border.OutsideBorderColor = ClosedXML.Excel.XLColor.Gray;
 
-                             ws.Rows(nSiteRow + 1, nSiteRow + nCompitetors).Group();
-                             ws.Rows(nSiteRow + 1, nSiteRow + nCompitetors).Collapse();
-                             nSiteRow += nCompitetors + 2;
+                             ws.Rows(nSiteRow + 1, nSiteRow + competitorsCount).Group();
+                             ws.Rows(nSiteRow + 1, nSiteRow + competitorsCount).Collapse();
+                             nSiteRow += competitorsCount + 2;
                              nRow++;
                          }
                      }
