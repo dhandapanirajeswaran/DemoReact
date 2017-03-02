@@ -18,6 +18,8 @@ using System.Threading.Tasks;
 using JsPlc.Ssc.PetrolPricing.Core.Interfaces;
 using EntityState = System.Data.Entity.EntityState;
 
+using JsPlc.Ssc.PetrolPricing.Core.Diagnostics;
+
 namespace JsPlc.Ssc.PetrolPricing.Repository
 {
     public class PetrolPricingRepository : IPetrolPricingRepository
@@ -396,6 +398,10 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
             try
             {
+                var totaliser = new DurationTotaliser();
+                totaliser.Start("GetSites");
+
+
                 var sainsburysSites =
                     _context.Sites.Where(x => x.IsSainsburysSite == true && x.IsActive == true)
                         .OrderBy(x => x.SiteName)
@@ -411,6 +417,11 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                         sainsburysSites.Where(x => x.Town.ToLower().Contains(storeTown.Trim().ToLower())).ToList();
                 SitePriceViewModel sitePriceRow = null;
 
+                totaliser.Stop("GetSites");
+
+                totaliser.Start("FileUploads");
+
+
                 var fileUploadedObj =
                     _context.FileUploads.Where(
                             x =>
@@ -418,6 +429,11 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                                 x.UploadDateTime.Year == forDate.Year && x.UploadTypeId == 1)
                         .OrderByDescending(x => x.Id)
                         .ToList();
+
+                totaliser.Stop("FileUploads");
+
+                totaliser.Start("SiteLoop");
+
                 var dbList = new List<SitePriceViewModel>();
                 foreach (Site site in sainsburysSites)
                 {
@@ -431,6 +447,8 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                     sitePriceRow.StoreNo = site.StoreNo;
                     sitePriceRow.FuelPrices = new List<FuelPriceViewModel>();
                     sitePriceRow.Notes = site.Notes;
+
+                    totaliser.Start("AddSitePriceRow");
 
                     var TrialPrice = (int) site.CompetitorPriceOffset;
                     TrialPrice = TrialPrice*10;
@@ -450,9 +468,17 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                         transactionContext.SiteToCompetitors.Remove(siteToC);
                     }*/
 
+                    totaliser.Stop("AddSitePriceRow");
+
                     dbList.Add(sitePriceRow);
                 }
+
+                totaliser.Stop("SiteLoop");
+
                 // Apply5PMarkupForSuperUnleadedForNonCompetitorSites(dbList);
+
+
+                totaliser.WriteToFile(@"C:\tempfile\logs\petrol_duration_totals.txt");
 
                 return dbList;
 
