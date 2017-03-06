@@ -457,7 +457,10 @@ textarea {
     cursor: inherit;
     display: block;
 }
-.btn-go {margin-top: -4px;}
+
+.btn-go {background-color: #910048; color: #fff;}
+.btn-go:hover {background-color: #610018}
+
 .radio-button input {position: relative; top: 2px;}
 .full-width {width: 100%;}
 .horz-auto-scroll {max-width: 100%; overflow: auto;}

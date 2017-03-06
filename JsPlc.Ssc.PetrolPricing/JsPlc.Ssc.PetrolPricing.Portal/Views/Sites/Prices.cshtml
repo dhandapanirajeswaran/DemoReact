@@ -346,26 +346,32 @@
                             <label class="radio-button"><input type="radio" value="Override all" data-bind="click: switchChangeType, checked: changeType" /> Override all</label>
                         </div>
                     </div>
-                    <div class="col-md-2">
-                        <span class="smaller-normal">
-                            <span style="display: inline-block; width: 55px" data-bind="text: changeType"></span>
+                    <div class="col-md-2" style="width: 18em;">
+                        <div class="input-group">
+                            <span class="input-group-addon" data-bind="text: changeType"></span>
                             <input type="text" class="form-control input-override" maxlength="8" data-bind="value: $root.unleadedOffset" />
-                            <input type="button" class="btn btn-default btn-xs btn-go" value="Go" data-bind="click: changePricePerLitreUnleaded" />
-                        </span>
+                            <span class="input-group-btn">
+                                <button type="button" class="btn btn-primary btn-go" data-bind="click: changePricePerLitreUnleaded">Go</button>
+                            </span>
+                        </div>
                     </div>
-                    <div class="col-md-2">
-                        <span class="smaller-normal">
-                            <span style="display: inline-block; width: 55px" data-bind="text: changeType"></span>
+                    <div class="col-md-2" style="width: 18em;">
+                        <div class="input-group">
+                            <span class="input-group-addon" data-bind="text: changeType"></span>
                             <input type="text" class="form-control input-override" maxlength="8" data-bind="value: $root.dieselOffset" />
-                            <input type="button" class="btn btn-default btn-xs btn-go" value="Go" data-bind="click: changePricePerLitreDiesel" />
-                        </span>
+                            <span class="input-group-btn">
+                                <button type="button" class="btn btn-primary btn-go" data-bind="click: changePricePerLitreDiesel">Go</button>
+                            </span>
+                        </div>
                     </div>
-                    <div class="col-md-2">
-                        <span class="smaller-normal">
-                            <span style="display: inline-block; width: 55px" data-bind="text: changeType"></span>
+                    <div class="col-md-2" style="width: 18em;">
+                        <div class="input-group">
+                            <span class="input-group-addon" data-bind="text: changeType"></span>
                             <input type="text" class="form-control input-override" maxlength="8" data-bind="value: $root.superOffset" />
-                            <input type="button" class="btn btn-default btn-xs btn-go" value="Go" data-bind="click: changePricePerLitreSuper" />
-                        </span>
+                            <span class="input-group-btn">
+                                <button type="button" class="btn btn-primary btn-go" data-bind="click: changePricePerLitreSuper">Go</button>
+                            </span>
+                        </div>
                     </div>
                 </div>
                 <br />
@@ -399,21 +405,20 @@
                 <div class="row" style="font-weight: bold;">
                     <!-- 13 column layout -->
                     <div class="col-sm-1" style="width:5px"></div>
-                    <div class="col-sm-1" style="width:534px;height:60px">
+                    <div class="col-sm-1" style="width:534px; padding-top: 1em;">
                         <!-- EMAIL all Button, only loads popup -->
-                        <br />
                         <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#emailAllSites"
                                 data-bind="visible: !$root.ViewingHistorical() && $root.dataAvailable() == true">
                             Email all &nbsp;<i class="fa fa-envelope-o"></i>
                         </button>
                     </div>
 
-                    <div class="col-sm-1" style="border-left: 1px solid #ddd; width:93px;height:60px;text-align:left"><br /><span id="today1">Today</span></div>
-                    <div class="col-sm-1" style="border-left: 1px solid #ddd;width:145px;height:60px;text-align:left"><br /><span id="tomorrow1">Tomorrow</span></div>
-                    <div class="col-sm-1" style="border-left: 1px solid #ddd;width:93px;height:60px;text-align:left"><br /><span id="today2">Today</span></div>
-                    <div class="col-sm-1" style="border-left: 1px solid #ddd;width:145px;height:60px;text-align:left;"><br /><span id="tomorrow2">Tomorrow</span></div>
-                    <div class="col-sm-1" style="border-left: 1px solid #ddd;width:93px;height:60px;text-align:left"><br /><span id="today3">Today</span></div>
-                    <div class="col-sm-1" style="border-left: 1px solid #ddd;width:145px;height:60px;text-align:left;"><br /><span id="tomorrow3">Tomorrow</span></div>
+                    <div class="col-sm-1 dayColumnHeader" style="width:93px"><span id="today1">-</span></div>
+                    <div class="col-sm-1 dayColumnHeader" style="width:145px"><span id="tomorrow1">-</span></div>
+                    <div class="col-sm-1 dayColumnHeader" style="width:93px;"><span id="today2">-</span></div>
+                    <div class="col-sm-1 dayColumnHeader" style="width:145px;"><span id="tomorrow2">-</span></div>
+                    <div class="col-sm-1 dayColumnHeader" style="width:93px;"><span id="today3">-</span></div>
+                    <div class="col-sm-1 dayColumnHeader" style="width:145px;"><span id="tomorrow3">-</span></div>
                 </div>
 
                 <hr style="padding:0px;margin:0px" />

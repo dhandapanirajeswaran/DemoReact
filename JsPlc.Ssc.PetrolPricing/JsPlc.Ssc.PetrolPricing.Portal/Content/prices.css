@@ -8,10 +8,8 @@
 }
 
 .input-override {
-    padding-top: 1px;
-    display: inline;
-    width: 50px;
-    height: 23px;
+    text-align: center;
+    font-size: 125%;
 }
 
 .table-responsive {
@@ -153,4 +151,17 @@ span.jsdiff {
     min-width: 2em;
     display: inline-block;
     text-align: right;
+}
+
+.past-date {color: #999;}
+.yesterday-date {color: #666;}
+.today-date {color: #2e6da4;}
+.tomorrow-date {color: orange;}
+.future-date {color: green;}
+
+.dayColumnHeader {
+    border-left: 1px solid #ddd; 
+    min-height: 60px;
+    text-align: center;
+    padding: 1em 4px 0.5em 0px;
 }
