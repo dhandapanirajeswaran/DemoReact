@@ -452,15 +452,15 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
                     var TrialPrice = (int) site.CompetitorPriceOffset;
                     TrialPrice = TrialPrice*10;
-                    AddSitePriceRow(FuelTypeItem.Diesel, site, TrialPrice, forDate, fileUploadedObj.Count > 0,
-                        sitePriceRow.FuelPrices, totaliser);
+                    AddSitePriceRow((int) FuelTypeItem.Diesel, site, TrialPrice, forDate, fileUploadedObj.Count > 0,
+                        sitePriceRow.FuelPrices);
 
-                    AddSitePriceRow(FuelTypeItem.Unleaded, site, TrialPrice, forDate, fileUploadedObj.Count > 0,
-                        sitePriceRow.FuelPrices, totaliser);
+                    AddSitePriceRow((int) FuelTypeItem.Unleaded, site, TrialPrice, forDate, fileUploadedObj.Count > 0,
+                        sitePriceRow.FuelPrices);
 
-                    AddSitePriceRow(FuelTypeItem.Super_Unleaded, site, TrialPrice, forDate,
+                    AddSitePriceRow((int) FuelTypeItem.Super_Unleaded, site, TrialPrice, forDate,
                         fileUploadedObj.Count > 0,
-                        sitePriceRow.FuelPrices, totaliser);
+                        sitePriceRow.FuelPrices);
                     /* var siteToCompetitorObjs =
                             transactionContext.SiteToCompetitors.Where(x => x.SiteId == siteID);
                     foreach (var siteToC in siteToCompetitorObjs)
@@ -490,30 +490,28 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             }
         }
 
-        private void AddSitePriceRow(FuelTypeItem fuelType, Site site, int trialPrice, DateTime forDate,
-            bool bIsCatalistFileExits, List<FuelPriceViewModel> list, DurationTotaliser totaliser)
+        private void AddSitePriceRow(int fuelType, Site site, int trialPrice, DateTime forDate,
+            bool bIsCatalistFileExits, List<FuelPriceViewModel> list)
         {
             var orgFuelTypeID = fuelType;
-            if (fuelType == FuelTypeItem.Super_Unleaded)
-                fuelType = FuelTypeItem.Unleaded;
+            if (fuelType == (int) FuelTypeItem.Super_Unleaded) fuelType = (int) FuelTypeItem.Unleaded;
 
-            totaliser.Start("GetSitePrices");
 
             var sitePriceData =
                 _context.Set<SitePrice>()
                     .Where(
                         x =>
                             (x.SuggestedPrice > 0 || x.OverriddenPrice > 0) && x.SiteId == site.Id &&
-                            (x.FuelTypeId == (int)fuelType))
+                            (x.FuelTypeId == fuelType))
                     .OrderByDescending(item => item.Id)
                     .ToList();
 
-            totaliser.Stop("GetSitePrices");
+
 
 
             if (sitePriceData.Count > 0)
             {
-                var autoPrice = orgFuelTypeID == FuelTypeItem.Super_Unleaded
+                var autoPrice = orgFuelTypeID == (int) FuelTypeItem.Super_Unleaded
                     ? sitePriceData[0].SuggestedPrice + 50
                     : sitePriceData[0].SuggestedPrice;
                 autoPrice = (autoPrice/10)*10 + 9;
@@ -525,7 +523,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                     _context.Set<SitePrice>()
                         .Where(
                             x =>
-                                x.OverriddenPrice > 0 && x.SiteId == site.Id && x.FuelTypeId == (int)orgFuelTypeID &&
+                                x.OverriddenPrice > 0 && x.SiteId == site.Id && x.FuelTypeId == orgFuelTypeID &&
                                 x.DateOfPrice.Day == forDate.Day && x.DateOfPrice.Month == forDate.Month &&
                                 x.DateOfPrice.Year == forDate.Year)
                         .OrderBy(item => item.Id).ToList();
@@ -540,7 +538,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                 //today Price Calculation
                 var todayPriceFromCalculation = GetTodayPrice(fuelType, site, forDate);
 
-                var todayPrice = orgFuelTypeID == FuelTypeItem.Super_Unleaded
+                var todayPrice = orgFuelTypeID == (int) FuelTypeItem.Super_Unleaded
                     ? todayPriceFromCalculation + 50
                     : todayPriceFromCalculation;
                 todayPrice = (todayPrice/10)*10 + 9;
@@ -554,7 +552,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                 }
                 list.Add(new FuelPriceViewModel
                 {
-                    FuelTypeId = (int)orgFuelTypeID,
+                    FuelTypeId = orgFuelTypeID,
                     AutoPrice = bIsCatalistFileExits ? autoPrice : 0,
                     OverridePrice = overridePrice,
 
@@ -572,7 +570,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             {
                 list.Add(new FuelPriceViewModel
                 {
-                    FuelTypeId = (int)orgFuelTypeID,
+                    FuelTypeId = orgFuelTypeID,
                     AutoPrice = 0,
                     OverridePrice = 0,
 
@@ -590,12 +588,12 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         }
 
 
-        private int GetTodayPrice(FuelTypeItem fuelType, Site site, DateTime forDate)
+        private int GetTodayPrice(int fuelType, Site site, DateTime forDate)
         {
             //Latest Price DateTime
             var latestPrice =
                 _context.LatestPrices.Where(
-                        x => x.PfsNo == site.PfsNo.Value && x.StoreNo == site.StoreNo.Value && x.FuelTypeId == (int)fuelType)
+                        x => x.PfsNo == site.PfsNo.Value && x.StoreNo == site.StoreNo.Value && x.FuelTypeId == fuelType)
                     .ToList();
 
 
@@ -603,7 +601,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                 .Where(
                     x =>
                         (x.OverriddenPrice > 0) && x.SiteId == site.Id &&
-                        (x.FuelTypeId == (int)fuelType))
+                        (x.FuelTypeId == fuelType))
                 .OrderByDescending(item => item.Id)
                 .ToList();
 
@@ -611,11 +609,9 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                 .Where(
                     x =>
                         (x.ModalPrice > 0) && x.CatNo == site.CatNo.Value &&
-                        (x.FuelTypeId == (int)fuelType))
+                        (x.FuelTypeId == fuelType))
                 .OrderByDescending(item => item.Id)
                 .ToList();
-
-
             FileUpload fileUpload = null;
             if (latestPrice.Count > 0)
             {
