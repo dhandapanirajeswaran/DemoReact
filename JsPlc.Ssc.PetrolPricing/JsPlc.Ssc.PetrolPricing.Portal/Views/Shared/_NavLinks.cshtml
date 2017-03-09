@@ -1,8 +1,8 @@
 ﻿@if (Request.IsAuthenticated)
 {
-    <li data-menu-item="nav-upload">@Html.ActionLink("Upload", "Index", "File")</li>
-    <li data-menu-item="nav-site-pricing">@Html.ActionLink("Site Pricing", "Prices", "Sites")</li>
-    <li data-menu-item="nav-site-maintenance">@Html.ActionLink("Site Maintenance", "Index", "Sites")</li>
-    <li data-menu-item="nav-reports">@Html.ActionLink("Reports", "Index", "PriceReports")</li>
-    <li data-menu-item="nav-users">@Html.ActionLink("Users", "Index", "PPUsers")</li>
+    <li data-menu-item="nav-upload">@Html.ActionLink("Upload", "Index", "File")<i class="fa fa-file"></i></li>
+    <li data-menu-item="nav-site-pricing">@Html.ActionLink("Site Pricing", "Prices", "Sites")<i class="fa fa-bar-chart"></i></li>
+    <li data-menu-item="nav-site-maintenance">@Html.ActionLink("Site Maintenance", "Index", "Sites")<i class="fa fa-gear"></i></li>
+    <li data-menu-item="nav-reports">@Html.ActionLink("Reports", "Index", "PriceReports")<i class="fa fa-bar-chart"></i></li>
+    <li data-menu-item="nav-users">@Html.ActionLink("Users", "Index", "PPUsers")<i class="fa fa-user"></i></li>
 }

@@ -504,3 +504,19 @@ table.fixed-header>tbody {
 }
 
 .hide {display: none;}
+
+#TopNav>li {
+    text-align: center; 
+    position: relative;
+}
+
+#TopNav i.fa {
+    position: absolute;
+    margin-top: -4.5em;
+}
+
+#TopNav :hover i.fa,
+#TopNav .active i.fa 
+{
+    color: #fff;
+}

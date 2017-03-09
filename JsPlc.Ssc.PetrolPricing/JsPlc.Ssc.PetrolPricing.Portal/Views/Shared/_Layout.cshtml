@@ -78,12 +78,12 @@
                 </a>
             </div>
             <div class="navbar-collapse collapse">
-                <ul class="nav navbar-nav navbar-right">
-                    <li data-menu-item="nav-home">@Html.ActionLink("Home", "Index", "Home")</li>
+                <ul class="nav navbar-nav navbar-right" id="TopNav">
+                    <li data-menu-item="nav-home">@Html.ActionLink("Home", "Index", "Home")<i class="fa fa-home"></i></li>
 
                     @Html.Partial("_NavLinks")
 
-                    <li data-menu-item="nav-contact">@Html.ActionLink("Contact", "Contact", "Home")</li>
+                    <li data-menu-item="nav-contact">@Html.ActionLink("Contact", "Contact", "Home")<i class="fa fa-at"></i></li>
 
                     @Html.Partial("_LoginPartial")
                 </ul>

@@ -3,25 +3,28 @@
     ViewBag.Title = "Daily Pricing, Latest JS Pricing, Latest Competitors Pricing and Quarterly files";
 }
 <div class="row">
-    <div class="col-md-6">
-        <h1>Daily Pricing, Latest JS Pricing, Latest Competitors Pricing and Quarterly files</h1>
+    <div class="col-md-10">
+        <h1><i class="fa fa-file"></i> Daily Pricing, Latest JS Pricing, Latest Competitors Pricing and Quarterly files</h1>
+    </div>
+    <div class="col-md-2 text-right" style="padding-top: 20px">
+        <button type="button" onclick="location.href='@Url.Action("Upload", "File" )'" class="btn btn-primary"><i class="fa fa-upload"></i> New Upload</button>
+    </div>
+</div>
 
-        <div class="container">
-            <div class="row">
-                <div class="col-md-6">
-                    Last updated: <strong id="UploadLastRefresh"></strong>
-                </div>
-                <div class="col-md-6">
-                    This page will reload in <strong><span id="spanTicker">15</span> seconds</strong> to refresh status update.
-                    <div id="ProgressBar" style="background: orange; height: 1px; overflow: hidden; width: 60%"></div>
-                </div>
+<div class="row">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                Last updated: <strong id="UploadLastRefresh"></strong>
+            </div>
+            <div class="col-md-6">
+                This page will reload in <strong><span id="spanTicker">15</span> seconds</strong> to refresh status update.
+                <div id="ProgressBar" style="background: orange; height: 1px; overflow: hidden; width: 60%"></div>
             </div>
         </div>
     </div>
-    <div class="col-md-6 text-right" style="padding-top: 20px">
-        <button type="button" onclick="location.href='@Url.Action("Upload", "File" )'" class="btn btn-primary" ><i class="fa fa-upload"></i> New Upload</button>
-    </div>
 </div>
+
 <div class="alert alert-info @(string.IsNullOrWhiteSpace(ViewBag.Message) ? "hidden" : "")">@ViewBag.Message</div>
 <hr />
 <div id="FileUploadContainer" style="padding: 4px;">

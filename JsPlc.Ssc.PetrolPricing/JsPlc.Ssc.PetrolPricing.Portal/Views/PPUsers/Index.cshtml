@@ -34,16 +34,14 @@
             $("#msg").text("Please enter user details");
             $("#ErrorMessage").show("slow").delay(5000).fadeOut();
         }
-        else if (!validateEmail(email))
-        {
+        else if (!validateEmail(email)) {
             $("#msg").text("Please enter valid mail id");
             $("#ErrorMessage").show("slow").delay(5000).fadeOut();
-        }  
-        else if (!checkEmail(email))
-        {
+        }
+        else if (!checkEmail(email)) {
             $("#msg").text("Please enter sainsburys domain mail id");
             $("#ErrorMessage").show("slow").delay(5000).fadeOut();
-        }       
+        }
         else {
             $('#ErrorMessage').hide();
             location.href = '@Url.Action("Adduser", "PPUsers")?firstname=' + firstname + '&lastname=' + lastname + '&email=' + email;
@@ -58,7 +56,7 @@
                 return true;
             }
 
-      
+
         return false;
     }
 
@@ -66,13 +64,13 @@
     function validateEmail(email) {
         var lastAtPos = email.lastIndexOf('@@');
         var lastDotPos = email.lastIndexOf('.');
-        var AtPos = email.indexOf('@@@@');        
+        var AtPos = email.indexOf('@@@@');
         return (lastAtPos < lastDotPos && lastAtPos > 0 && AtPos == -1 && lastDotPos > 2 && (email.length - lastDotPos) > 2);
     }
 
     function DelteUser(id) {
         $('#ErrorMessage').hide();
-       location.href = '@Url.Action("Deleteuser", "PPUsers")?id=' + id;
+        location.href = '@Url.Action("Deleteuser", "PPUsers")?id=' + id;
     };
 
 </script>
@@ -85,9 +83,12 @@
                 <div class="panel-heading">
                     <div class="row">
                         <div class="col-lg-8">
-                            Users Information
+                            <h4>
+                                <i class="fa fa-bar-chart"></i>
+                                Users Information
+                            </h4>
                         </div>
-                        <div class="col-lg-4 query-builder__filterbuttons" >
+                        <div class="col-lg-4 query-builder__filterbuttons">
                             <button type="button" class="btn btn-default" onclick="showData()">
                                 <span class="glyphicon glyphicon-repeat"></span>
                             </button>
@@ -97,11 +98,11 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <div id="editablerow" style="display:none">
 
                     <div id="ErrorMessage" class="alert alert-danger" role="alert">
-                        <span id="msg">Sample Error Message</span> 
+                        <span id="msg">Sample Error Message</span>
                     </div>
                     <!-- Table -->
                     <table class="table">
@@ -114,24 +115,24 @@
                             </tr>
                         </thead>
                         @Html.Raw("<tr>")
-                       
-                            <td>
-                                <input class="form-control" id="FirstName" placeholder="First Name" required />
-                            </td>
-                            <td>
-                                <input class="form-control" id="LastName" placeholder="Last Name" required />
-                            </td>
-                            <td>
-                                <input class="form-control" id="Email" placeholder="me@sainsburys.co.uk" type="email" required />
-                            </td>
-                            <td>
-                                <button type="button" class="btn btn-danger" onclick="showData()">
-                                    <span class="glyphicon glyphicon-remove"></span>
-                                </button>
-                                <button id="btnAdd" type="button" class="btn btn-success" onclick="AddUser()"  >
-                                    <span class="glyphicon glyphicon-ok"></span>
-                                </button>
-                            </td>
+
+                        <td>
+                            <input class="form-control" id="FirstName" placeholder="First Name" required />
+                        </td>
+                        <td>
+                            <input class="form-control" id="LastName" placeholder="Last Name" required />
+                        </td>
+                        <td>
+                            <input class="form-control" id="Email" placeholder="me@sainsburys.co.uk" type="email" required />
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-danger" onclick="showData()">
+                                <span class="glyphicon glyphicon-remove"></span>
+                            </button>
+                            <button id="btnAdd" type="button" class="btn btn-success" onclick="AddUser()">
+                                <span class="glyphicon glyphicon-ok"></span>
+                            </button>
+                        </td>
                         @Html.Raw("</tr>")
                     </table>
                 </div>
@@ -150,31 +151,31 @@
                         {
                             foreach (var user in Model)
                             {
-                                <tr >
+                                <tr>
                                     <td>
                                         <span>@user.FirstName</span>
-                                       
+
                                     </td>
                                     <td>
                                         <span>@user.LastName</span>
-                                       
+
                                     </td>
                                     <td>
                                         <span>@user.Email</span>
-                                       
+
                                     </td>
                                     <td>
                                         <button type="button" class="btn btn-default" onclick="DelteUser(@user.Id)">
                                             <span class=" glyphicon glyphicon-minus">
                                             </span>
-                                        </button>                                       
+                                        </button>
                                     </td>
                                 </tr>
                             }
                         }
                     </table>
-                    </div>
                 </div>
+            </div>
         </div>
     </div>
 </div> 
