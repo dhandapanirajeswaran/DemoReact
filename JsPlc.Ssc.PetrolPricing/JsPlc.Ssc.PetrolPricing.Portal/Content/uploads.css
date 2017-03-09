@@ -1,0 +1,43 @@
+﻿.TextBoxAsLabel {
+    border: none;
+    background-color: #fff;
+    background: transparent;
+}
+
+#filename {
+    line-height: 2em;
+    font-size: 125%;
+}
+
+.step-number {
+    font-size: 200%;
+    color: #999;
+    background-color: #eee;
+    border-radius: 2em;
+    display: inline-block;
+    width: 3em;
+    line-height: 1.5em;
+    text-align: center;
+}
+
+    .step-number:before {
+        content: 'Step';
+        font-size: 50%;
+        position: relative;
+        top: -0.25em;
+        left: -0.25em;
+    }
+
+    .step-number.active {
+        background-color: #910048;
+        color: #fff;
+    }
+
+.step-panel {
+    border-bottom: 1px solid #eee;
+    padding: 1em 2em;
+}
+
+.btn-row-text {
+    line-height: 2.25em;
+}

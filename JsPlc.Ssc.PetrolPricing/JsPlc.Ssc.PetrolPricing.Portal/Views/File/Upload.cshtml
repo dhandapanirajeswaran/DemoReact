@@ -2,28 +2,17 @@
 @{
     ViewBag.Title = "New file upload";
 }
-
-<style>
-
-
-    .TextBoxAsLabel
-{
-   border: none;
-   background-color: #fff;
-   background: transparent;
-}
-</style>
-
+<link type="text/css" rel="stylesheet" href="~/Content/uploads.css" />
+<link type="text/css" rel="stylesheet" href="~/Content/tips.css" />
 
 <h1>
-    New file upload
+    New file upload <span id="FileUploadTitle"></span>
 </h1>
 <div class="alert alert-info @(string.IsNullOrWhiteSpace(ViewBag.Message) ? "hidden" : "")">@ViewBag.Message</div>
 <div class="alert alert-danger @(string.IsNullOrWhiteSpace(ViewBag.ErrorMessage) ? "hidden" : "")">@ViewBag.ErrorMessage</div>
 <div class="alert alert-success @(string.IsNullOrWhiteSpace(ViewBag.SuccessMessage) ? "hidden" : "")">@ViewBag.SuccessMessage</div>
 <div class="alert alert-warning @(string.IsNullOrWhiteSpace(ViewBag.WarningMessage) ? "hidden" : "")">@ViewBag.WarningMessage</div>
 <hr />
-
 <!-- start loader -->
 <div style="display: none;" id="FileUploadingDialog" class="alert alert-warning busy-loader">
     <div class="col-md-1 text-center">
@@ -35,233 +24,93 @@
 </div>
 <!-- end loader-->
 
-
 <form action="" method="post" enctype="multipart/form-data">
-    @if (@Model!=null)
+    @if (@Model != null)
     {
-    <div class="alert alert-info">Uploaded data will be calculated as <strong>  @Html.TextBoxFor(o => o.UploadDate,"{0:dd/MM/yyyy}", new { @class = "TextBoxAsLabel",@readonly = true, id = "calcultedasdate" })    </strong></div>
+        <div class="alert alert-info">
+            Uploaded data will be calculated as <strong id="calcultedasdate">@Model.UploadDate.ToString("dd/MM/yyyy")</strong>
+            <span id="CalculateDateInfo" class="badge"></span>
+        </div>
     }
-    <div class="col-md-3">
-        <div class="form-group">
+
+    <div id="diverror" class="alert alert-danger" style="display: none;"></div>
+
+    <!-- [Step 1] -->
+    <div class="row step-panel active" id="Step1Panel">
+        <div class="col-md-1">
+            <span class="step-number">1</span>
+        </div>
+
+        <div class="col-md-2 text-right btn-row-text">
             <label for="UploadTypes">Upload type:</label>
+        </div>
+
+        <div class="col-md-3">
             @Html.DropDownListFor(model => model.UploadTypes, new SelectList(
-                            Model.UploadTypes, "Id", "UploadTypeName"), new { @class = "form-control", id = "UploadTypeName" })  
-              
-          
-        
+                        Model.UploadTypes, "Id", "UploadTypeName"), new { @class = "form-control", id = "UploadTypeName" })
         </div>
 
-      
-         
-
-
-    </div>
-    <div id="divdownloadquarterlydatabtn" class="col-md-1" style="margin-top: 60px; margin-left: -280px;display: none;">
-        <br />
-
-        <a href="~/Content/QuarterlySiteData-Template.xlsx" class="btn btn-primary" download="QuarterlySiteDataTemplate.xlsx">Download Data Template</a>
-
-
-    </div>
-    <div id="divdownloadtemplatelatestpricebtn" class="col-md-1" style="margin-top: 60px; margin-left: -280px;display: none;">
-        <br />
-
-        <a href="~/Content/LatestSitePriceDataTemplate.xlsx" class="btn btn-primary" download="LatestSitePriceDataTemplate.xlsx">Download Data Template</a>
-
-
-    </div>
-    <div id="divdownloadtemplatelatestcomppricebtn" class="col-md-1" style="margin-top: 60px; margin-left: -280px;display: none;">
-        <br />
-
-        <a href="~/Content/LatestCompPriceDataTemplate.xlsx" class="btn btn-primary" download="LatestCompPriceDataTemplate.xlsx">Download Data Template</a>
-
-
-    </div>
-    <div class="col-md-1" id="datepickerctrl" style="margin-top: 24px">
-        @Html.TextBoxFor(m => m.UploadDate, "{0:dd/MM/yyyy}", new { @class = "datepicker form-control",id = "caldattimepicker", style = "width:85px;", @maxlength = "12" })
-                                                                                        
-    </div>
-    
-    <div class="col-md-1" style="margin-top: 24px">
-        <span class="btn btn-success btn-file">
-             Select file
-            <input type="file" name="file" id="file" class="inputfile"  accept=".csv,.txt" />
-
-        </span>
-    </div>
-    
-    <div id="divuploadbtn" class="col-md-1" style="margin-top: 24px;display: none;" >
-        <div class="form-group">
-            <input type="submit" id="UploadFileButton" value="Upload file" class="btn btn-primary" />
+        <div class="col-md-5 col-md-offset-1">
+            <a id="DownloadQuarterlyTemplateButton" href="~/Content/QuarterlySiteData-Template.xlsx" class="btn btn-primary hide" download="QuarterlySiteDataTemplate.xlsx"><i class="fa fa-download"></i> Download Data Template</a>
+            <a id="DownloadLatestPriceTemplateButton" href="~/Content/LatestSitePriceDataTemplate.xlsx" class="btn btn-primary hide" download="LatestSitePriceDataTemplate.xlsx"><i class="fa fa-download"></i> Download Data Template</a>
+            <a id="DownloadLatestCompPriceTemplateButton" href="~/Content/LatestCompPriceDataTemplate.xlsx" class="btn btn-primary hide" download="LatestCompPriceDataTemplate.xlsx"><i class="fa fa-download"></i> Download Data Template</a>
         </div>
-    </div>   
-    <div id="divfilenameplusicon" class="col-md-1" style="margin-top: 24px;width:500px;display: none;">
-        <img id="fileimage" src="images/defaultfileicon.png" />
-        <label id="filename" style="width:500px;"></label>
     </div>
-   
-    
 
-    <br/>
-    <br />
-    <br />
-    <br />
-    <div id="diverror" class="alert alert-info" style="display: none;background-color:lightgray;position:absolute;color:red;width:1140px;"></div>
+    <!-- [Step 2] -->
+    <div class="row step-panel hide" id="Step2Panel">
+        <div class="col-md-1 btn-row-text">
+            <span class="step-number">2</span>
+        </div>
+
+        <div class="col-md-2 text-right btn-row-text">
+            <label for="UploadDate" id="Step2Label">Choose Date / File:</label>
+        </div>
+
+        <div class="col-md-3" id="ChooseDatePanel">
+            @Html.TextBoxFor(m => m.UploadDate, "{0:dd/MM/yyyy}", new { @class = "datepicker form-control", style="width: 50%", id = "caldattimepicker", @maxlength = "12" })
+        </div>
+
+        <div class="col-md-6">
+            <span class="btn btn-success btn-file" id="FileButton">
+                <i class="fa fa-file"></i>
+                Select file...
+                <input type="file" name="file" id="file" class="inputfile" accept=".csv,.txt" />
+            </span>
+            <span id="SelectFilePrompt" class="btn-row-text tip tip-w"></span>
+        </div>
+    </div>
+
+    <!-- [Step 3] -->
+    <div class="row step-panel hide" id="Step3Panel">
+        <div class="col-md-1 btn-row-text">
+            <span class="step-number">3</span>
+        </div>
+
+        <div class="col-md-2 text-right btn-row-text">
+            <label for="UploadDate">Review &amp; Upload:</label>
+        </div>
+
+        <div class="col-md-3">
+            <button type="submit" id="UploadFileButton" class="btn btn-primary hide"><i class="fa fa-upload"></i> Upload file</button>
+        </div>
+
+        <div class="col-md-6" id="divfilenameplusicon">
+            <img id="fileimage" src="images/defaultfileicon.png" />
+            <label id="filename"></label>
+        </div>
+    </div>
+
 </form>
-
-<a class="btn btn-default" href="~/File"><i class="fa fa-backward"></i> Back</a>
-
+<br />
+<div class="row">
+    <div class="col-md-1">
+        <a class="btn btn-default" href="~/File"><i class="fa fa-backward"></i> Back</a>
+    </div>
+</div>
 <script type="text/javascript">
-   
-    $('#UploadTypeName').change(function () {
-        $('#divfilenameplusicon').hide();
-        $('#divuploadbtn').hide();
-        $('#divdownloadquarterlydatabtn').hide();
-        $('#divdownloadtemplatelatestpricebtn').hide();
-        $('#divdownloadtemplatelatestcomppricebtn').hide();
-        
-        
-        var uploadtype = $('#UploadTypeName').val();
-        if (uploadtype == 1) {
-            $("#file").attr({
-                "accept": ".csv,.txt"
-
-            });
-            $('#divdownloadbtn').hide();
-        }
-        else if (uploadtype == 2 ) {
-            $("#file").attr({
-                "accept": ".xls, .xlsx"
-
-            });
-
-            $('#divdownloadquarterlydatabtn').show();
-        }
-
-        else if (uploadtype == 3) {
-            $("#file").attr({
-                "accept": ".xls, .xlsx"
-
-            });
-
-            $('#divdownloadtemplatelatestpricebtn').show();
-        }
-        else if (uploadtype == 4) {
-            $("#file").attr({
-                "accept": ".xls, .xlsx"
-
-            });
-
-            $('#divdownloadtemplatelatestcomppricebtn').show();
-        }
-    });
-
-
-   
-
-    $("input[type=file]").on('click', function () {
-        this.value = null;
-    });
-
-    $("input[type=file]").on('change', function () {
-      
-        
-        var uploadtype=$('#UploadTypeName').val();
-        var ext = this.files[0].name.split(".");
-        ext = ext[ext.length - 1].toLowerCase();
-        $("#diverror").hide();
-        if (ext == "txt" && uploadtype == 1)
-        {
-            $('#divfilenameplusicon').show();
-            $('#divuploadbtn').show();
-            $("#fileimage").attr("src", "images/txtfileicon.png");
-        }
-        else if (ext == "csv" && uploadtype == 1)
-        {
-            $('#divfilenameplusicon').show();
-            $('#divuploadbtn').show();
-            $("#fileimage").attr("src", "images/excelcsvicon.png");
-        }
-        else if ((ext == "xlsx" || ext == "xls") && uploadtype==2) {
-            $('#divfilenameplusicon').show();
-            $('#divuploadbtn').show();
-            $("#fileimage").attr("src", "images/excelicon.png");
-        }
-        else if ((ext == "xlsx" || ext == "xls") && uploadtype == 3) {
-            $('#divfilenameplusicon').show();
-            $('#divuploadbtn').show();
-            $("#fileimage").attr("src", "images/excelicon.png");
-        }
-        else if ((ext == "xlsx" || ext == "xls") && uploadtype == 4) {
-            $('#divfilenameplusicon').show();
-            $('#divuploadbtn').show();
-            $("#fileimage").attr("src", "images/excelicon.png");
-        }
-        else
-        {
-         
-            $("#diverror").show();
-            $("#diverror").text("Please Select valid file...");
-            $('#diverror').delay(3000).fadeOut();
-            $('#divfilenameplusicon').hide();
-            $('#divuploadbtn').hide();
-            this.value = null;
-          //  $(this).attr("value", "");
-          //  $(this).val("");
-        }
-        $('#filename').text(this.files[0].name);
-    });
-
-        $('.datepicker')
-            .datepicker({
-                language: "en-GB",
-                format: "dd/mm/yyyy",
-                orientation: 'auto top',
-                autoclose: true,
-                todayHighlight: true,
-                startDate: '-3m',
-                endDate: '1d'
-            });
- 
-
-   
-
-
-
-$(function () {
-    $('#UploadTypeName').change(function () {
-        var value = $(this).val();
-        if (value == 1) {
-
-            $('#datepickerctrl').show();
-        } else {
-
-            var d = new Date();
-
-            var month = d.getMonth() + 1;
-            var day = d.getDate();
-
-            var output = (('' + day).length < 2 ? '0' : '') + day + '/' +
-                (('' + month).length < 2 ? '0' : '') + month + '/' +
-                d.getFullYear();
-            $('#calcultedasdate').val(output);
-            $('#datepickerctrl').hide();
-        }
-    });
-
-
-    $("#caldattimepicker").change(function () {
-
-
-     
-         $('#calcultedasdate').val($('#caldattimepicker').val());
-      
-    });
-
-    $('#UploadFileButton').on('click', function () {
-        $('#FileUploadingDialog').show();
-    });
-
-});
+    require(['FileUpload'],
+        function (fileupload) {
+            fileupload.init();
+        });
 </script>
-
