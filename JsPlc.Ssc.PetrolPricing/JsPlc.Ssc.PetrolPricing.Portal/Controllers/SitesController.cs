@@ -811,9 +811,12 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
                  foreach (var dt in tables)
                  {
                      var ws = wb.Worksheets.Add(dt);
-                     int TotalRows = ws.RowCount();
+                    //int TotalRows = ws.RowCount();
 
-                     for (int i = 2; i < TotalRows; i++)
+                    int TotalRows = dt.Rows.Count; // NOTE: do not use the Worksheet RowCount() it is always 1048576 !
+
+
+                    for (int i = 2; i < TotalRows; i++)
                      {
                           ChangeCellColor(ws.Cell(i, 8));
                           ChangeCellColor(ws.Cell(i, 11));
