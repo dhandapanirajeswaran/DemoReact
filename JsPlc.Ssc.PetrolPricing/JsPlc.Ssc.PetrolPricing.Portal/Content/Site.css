@@ -513,6 +513,8 @@ table.fixed-header>tbody {
 #TopNav i.fa {
     position: absolute;
     margin-top: -4.5em;
+    left: 50%;
+    margin-left: -6px;
 }
 
 #TopNav :hover i.fa,
