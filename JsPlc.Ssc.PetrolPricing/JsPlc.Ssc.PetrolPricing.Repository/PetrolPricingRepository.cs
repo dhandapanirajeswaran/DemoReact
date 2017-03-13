@@ -401,41 +401,53 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                 var totaliser = new DurationTotaliser();
                 totaliser.Start("GetSites");
 
-
                 var sainsburysSites =
-                    _context.Sites.Where(x => x.IsSainsburysSite == true && x.IsActive == true)
-                        .OrderBy(x => x.SiteName)
-                        .ToList();
+                    _context.Sites.Where(x => x.IsSainsburysSite == true && x.IsActive == true);
+
                 if (!String.IsNullOrEmpty(storeName))
                     sainsburysSites =
-                        sainsburysSites.Where(x => x.SiteName.ToLower().Contains(storeName.Trim().ToLower())).ToList();
-                if (catNo != 0) sainsburysSites = sainsburysSites.Where(x => x.CatNo == catNo).ToList();
-                if (storeNo != 0) sainsburysSites = sainsburysSites.Where(x => x.StoreNo == storeNo).ToList();
-                if (siteId != 0) sainsburysSites = sainsburysSites.Where(x => x.Id == siteId).ToList();
+                        sainsburysSites.Where(x => x.SiteName.ToLower().Contains(storeName.Trim().ToLower()));
+
+                if (catNo != 0)
+                    sainsburysSites = sainsburysSites.Where(x => x.CatNo == catNo);
+
+                if (storeNo != 0)
+                    sainsburysSites = sainsburysSites.Where(x => x.StoreNo == storeNo);
+
+                if (siteId != 0)
+                    sainsburysSites = sainsburysSites.Where(x => x.Id == siteId);
+
                 if (!String.IsNullOrEmpty(storeTown))
                     sainsburysSites =
-                        sainsburysSites.Where(x => x.Town.ToLower().Contains(storeTown.Trim().ToLower())).ToList();
+                        sainsburysSites.Where(x => x.Town.ToLower().Contains(storeTown.Trim().ToLower()));
+
+                var filteredSainsburysSites = sainsburysSites.OrderBy(x => x.SiteName).ToList();
+
+
                 SitePriceViewModel sitePriceRow = null;
 
                 totaliser.Stop("GetSites");
 
                 totaliser.Start("FileUploads");
 
-
                 var fileUploadedObj =
                     _context.FileUploads.Where(
                             x =>
-                                x.UploadDateTime.Day == forDate.Day && x.UploadDateTime.Month == forDate.Month &&
-                                x.UploadDateTime.Year == forDate.Year && x.UploadTypeId == 1)
+                                x.UploadDateTime.Day == forDate.Day
+                                && x.UploadDateTime.Month == forDate.Month
+                                && x.UploadDateTime.Year == forDate.Year
+                                && x.UploadTypeId == 1)
                         .OrderByDescending(x => x.Id)
-                        .ToList();
+                        .FirstOrDefault();
+
+                var catalistFileExits = fileUploadedObj != null;
 
                 totaliser.Stop("FileUploads");
 
                 totaliser.Start("SiteLoop");
 
                 var dbList = new List<SitePriceViewModel>();
-                foreach (Site site in sainsburysSites)
+                foreach (Site site in filteredSainsburysSites)
                 {
                     sitePriceRow = new SitePriceViewModel();
                     sitePriceRow.SiteId = site.Id;
@@ -451,16 +463,14 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                     totaliser.Start("AddSitePriceRow");
 
                     var TrialPrice = (int) site.CompetitorPriceOffset;
-                    TrialPrice = TrialPrice*10;
-                    AddSitePriceRow((int) FuelTypeItem.Diesel, site, TrialPrice, forDate, fileUploadedObj.Count > 0,
-                        sitePriceRow.FuelPrices);
+                    TrialPrice = TrialPrice * 10;
 
-                    AddSitePriceRow((int) FuelTypeItem.Unleaded, site, TrialPrice, forDate, fileUploadedObj.Count > 0,
-                        sitePriceRow.FuelPrices);
+                    AddSitePriceRow(FuelTypeItem.Diesel, site, TrialPrice, forDate, catalistFileExits, sitePriceRow.FuelPrices);
 
-                    AddSitePriceRow((int) FuelTypeItem.Super_Unleaded, site, TrialPrice, forDate,
-                        fileUploadedObj.Count > 0,
-                        sitePriceRow.FuelPrices);
+                    AddSitePriceRow(FuelTypeItem.Unleaded, site, TrialPrice, forDate, catalistFileExits, sitePriceRow.FuelPrices);
+
+                    AddSitePriceRow(FuelTypeItem.Super_Unleaded, site, TrialPrice, forDate, catalistFileExits, sitePriceRow.FuelPrices);
+
                     /* var siteToCompetitorObjs =
                             transactionContext.SiteToCompetitors.Where(x => x.SiteId == siteID);
                     foreach (var siteToC in siteToCompetitorObjs)
@@ -490,60 +500,62 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             }
         }
 
-        private void AddSitePriceRow(int fuelType, Site site, int trialPrice, DateTime forDate,
-            bool bIsCatalistFileExits, List<FuelPriceViewModel> list)
+        private void AddSitePriceRow(FuelTypeItem fuelType, Site site, int trialPrice, DateTime forDate,
+            bool doesCatalistFileExist, List<FuelPriceViewModel> list)
         {
+            int fuelMarkup = 0;
             var orgFuelTypeID = fuelType;
-            if (fuelType == (int) FuelTypeItem.Super_Unleaded) fuelType = (int) FuelTypeItem.Unleaded;
 
+            if (fuelType == FuelTypeItem.Super_Unleaded)
+            {
+                fuelType = FuelTypeItem.Unleaded;
+                fuelMarkup = 50;
+            }
 
             var sitePriceData =
                 _context.Set<SitePrice>()
                     .Where(
                         x =>
-                            (x.SuggestedPrice > 0 || x.OverriddenPrice > 0) && x.SiteId == site.Id &&
-                            (x.FuelTypeId == fuelType))
+                            (x.SuggestedPrice > 0 || x.OverriddenPrice > 0)
+                            && x.SiteId == site.Id
+                            && (x.FuelTypeId == (int)fuelType))
                     .OrderByDescending(item => item.Id)
-                    .ToList();
+                    .FirstOrDefault();
 
 
-
-
-            if (sitePriceData.Count > 0)
+            if (sitePriceData != null)
             {
-                var autoPrice = orgFuelTypeID == (int) FuelTypeItem.Super_Unleaded
-                    ? sitePriceData[0].SuggestedPrice + 50
-                    : sitePriceData[0].SuggestedPrice;
-                autoPrice = (autoPrice/10)*10 + 9;
+                var autoPrice = sitePriceData.SuggestedPrice + fuelMarkup;
+                autoPrice = SetLastDigitTo9(autoPrice);
 
                 var overridePrice = 0;
-
 
                 var dieselPriceOverride =
                     _context.Set<SitePrice>()
                         .Where(
                             x =>
-                                x.OverriddenPrice > 0 && x.SiteId == site.Id && x.FuelTypeId == orgFuelTypeID &&
-                                x.DateOfPrice.Day == forDate.Day && x.DateOfPrice.Month == forDate.Month &&
-                                x.DateOfPrice.Year == forDate.Year)
-                        .OrderBy(item => item.Id).ToList();
+                                x.OverriddenPrice > 0 
+                                && x.SiteId == site.Id 
+                                && x.FuelTypeId == (int)orgFuelTypeID 
+                                && x.DateOfPrice.Day == forDate.Day 
+                                && x.DateOfPrice.Month == forDate.Month 
+                                && x.DateOfPrice.Year == forDate.Year)
+                        .OrderBy(item => item.Id).FirstOrDefault();
 
-                if (dieselPriceOverride != null && dieselPriceOverride.Count > 0)
+                if (dieselPriceOverride != null)
                 {
-                    overridePrice = dieselPriceOverride[0].OverriddenPrice;
+                    overridePrice = dieselPriceOverride.OverriddenPrice;
                     overridePrice += trialPrice;
-                    overridePrice = (overridePrice/10)*10 + 9;
+                    overridePrice = SetLastDigitTo9(overridePrice);
                 }
 
                 //today Price Calculation
                 var todayPriceFromCalculation = GetTodayPrice(fuelType, site, forDate);
 
-                var todayPrice = orgFuelTypeID == (int) FuelTypeItem.Super_Unleaded
-                    ? todayPriceFromCalculation + 50
-                    : todayPriceFromCalculation;
-                todayPrice = (todayPrice/10)*10 + 9;
+                var todayPrice = todayPriceFromCalculation + fuelMarkup;
+                todayPrice = SetLastDigitTo9(todayPrice);
 
-                var competitorId = sitePriceData[0].CompetitorId.HasValue ? sitePriceData[0].CompetitorId.Value : 0;
+                var competitorId = sitePriceData.CompetitorId.HasValue ? sitePriceData.CompetitorId.Value : 0;
                 var competitorName = "Unknown";
                 if (competitorId > 0)
                 {
@@ -552,25 +564,23 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                 }
                 list.Add(new FuelPriceViewModel
                 {
-                    FuelTypeId = orgFuelTypeID,
-                    AutoPrice = bIsCatalistFileExits ? autoPrice : 0,
+                    FuelTypeId = (int)orgFuelTypeID,
+                    AutoPrice = doesCatalistFileExist ? autoPrice : 0,
                     OverridePrice = overridePrice,
 
                     TodayPrice = todayPrice,
-                    Markup = sitePriceData[0].Markup,
+                    Markup = sitePriceData.Markup,
                     CompetitorName = competitorName,
-                    IsTrailPrice = sitePriceData[0].IsTrailPrice,
+                    IsTrailPrice = sitePriceData.IsTrailPrice,
                     CompetitorPriceOffset = site.CompetitorPriceOffset
                     //  IsBasedOnCompetitor = trailPriceCompetitorId.HasValue
                 });
-
-
             }
             else
             {
                 list.Add(new FuelPriceViewModel
                 {
-                    FuelTypeId = orgFuelTypeID,
+                    FuelTypeId = (int)orgFuelTypeID,
                     AutoPrice = 0,
                     OverridePrice = 0,
 
@@ -581,102 +591,109 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                     CompetitorPriceOffset = site.CompetitorPriceOffset
                     //  IsBasedOnCompetitor = trailPriceCompetitorId.HasValue
                 });
-
             }
-
-
         }
 
+        private int SetLastDigitTo9(int value)
+        {
+            return (value / 10) * 10 + 9;
+        }
 
-        private int GetTodayPrice(int fuelType, Site site, DateTime forDate)
+        private int GetMarkupForFuel(FuelTypeItem fuelType)
+        {
+            return fuelType == FuelTypeItem.Super_Unleaded
+                ? 50
+                : 0;
+        }
+
+        private int GetTodayPrice(FuelTypeItem fuelType, Site site, DateTime forDate)
         {
             //Latest Price DateTime
             var latestPrice =
-                _context.LatestPrices.Where(
-                        x => x.PfsNo == site.PfsNo.Value && x.StoreNo == site.StoreNo.Value && x.FuelTypeId == fuelType)
-                    .ToList();
-
+                _context.LatestPrices.FirstOrDefault(
+                        x => x.PfsNo == site.PfsNo.Value
+                        && x.StoreNo == site.StoreNo.Value
+                        && x.FuelTypeId == (int)fuelType);
 
             var overridepriceIfAny = _context.Set<SitePrice>()
                 .Where(
                     x =>
-                        (x.OverriddenPrice > 0) && x.SiteId == site.Id &&
-                        (x.FuelTypeId == fuelType))
+                        (x.OverriddenPrice > 0)
+                        && x.SiteId == site.Id
+                        && (x.FuelTypeId == (int)fuelType)
+                        )
                 .OrderByDescending(item => item.Id)
-                .ToList();
+                .FirstOrDefault();
 
             var todayPriceSortByDate = _context.Set<DailyPrice>()
                 .Where(
                     x =>
-                        (x.ModalPrice > 0) && x.CatNo == site.CatNo.Value &&
-                        (x.FuelTypeId == fuelType))
+                        (x.ModalPrice > 0)
+                        && x.CatNo == site.CatNo.Value
+                        && (x.FuelTypeId == (int)fuelType))
                 .OrderByDescending(item => item.Id)
-                .ToList();
-            FileUpload fileUpload = null;
-            if (latestPrice.Count > 0)
-            {
-                var fileUploadList = _context.FileUploads.ToList().Where(x => x.Id == latestPrice[0].UploadId).ToList();
-                fileUpload = fileUploadList.Count > 0
-                    ? fileUploadList[0]
-                    : null;
-            }
+                .FirstOrDefault();
 
-            if (todayPriceSortByDate.Count == 0 && overridepriceIfAny.Count == 0 && latestPrice.Count > 0)
+            FileUpload fileUpload = latestPrice != null
+                ? fileUpload = _context.FileUploads.FirstOrDefault(x => x.Id == latestPrice.UploadId)
+                : null;
+
+            if (todayPriceSortByDate == null && overridepriceIfAny == null && latestPrice != null)
             {
-                return latestPrice[0].ModalPrice;
+                return latestPrice.ModalPrice;
             }
-            else if (todayPriceSortByDate.Count == 0 && overridepriceIfAny.Count > 0 && latestPrice.Count == 0)
+            else if (todayPriceSortByDate == null && overridepriceIfAny != null && latestPrice == null)
             {
-                return overridepriceIfAny[0].OverriddenPrice;
+                return overridepriceIfAny.OverriddenPrice;
             }
-            else if (todayPriceSortByDate.Count > 0 && overridepriceIfAny.Count == 0 && latestPrice.Count == 0)
+            else if (todayPriceSortByDate != null && overridepriceIfAny == null && latestPrice == null)
             {
-                return todayPriceSortByDate[0].ModalPrice;
+                return todayPriceSortByDate.ModalPrice;
             }
-            else if (todayPriceSortByDate.Count > 0 && overridepriceIfAny.Count > 0 && latestPrice.Count == 0)
+            else if (todayPriceSortByDate != null && overridepriceIfAny != null && latestPrice == null)
             {
-                return todayPriceSortByDate[0].DateOfPrice > overridepriceIfAny[0].DateOfPrice
-                    ? todayPriceSortByDate[0].ModalPrice
-                    : overridepriceIfAny[0].OverriddenPrice;
+                return todayPriceSortByDate.DateOfPrice > overridepriceIfAny.DateOfPrice
+                    ? todayPriceSortByDate.ModalPrice
+                    : overridepriceIfAny.OverriddenPrice;
             }
-            else if (todayPriceSortByDate.Count == 0 && overridepriceIfAny.Count > 0 && latestPrice.Count > 0)
+            else if (todayPriceSortByDate == null && overridepriceIfAny != null && latestPrice != null)
             {
-                return fileUpload.UploadDateTime > overridepriceIfAny[0].DateOfPrice
-                    ? latestPrice[0].ModalPrice
-                    : overridepriceIfAny[0].OverriddenPrice;
+                return fileUpload.UploadDateTime > overridepriceIfAny.DateOfPrice
+                    ? latestPrice.ModalPrice
+                    : overridepriceIfAny.OverriddenPrice;
             }
-            else if (todayPriceSortByDate.Count > 0 && overridepriceIfAny.Count == 0 && latestPrice.Count > 0)
+            else if (todayPriceSortByDate != null && overridepriceIfAny == null && latestPrice != null)
             {
-                return todayPriceSortByDate[0].DateOfPrice > fileUpload.UploadDateTime
-                    ? todayPriceSortByDate[0].ModalPrice
-                    : latestPrice[0].ModalPrice;
+                return todayPriceSortByDate.DateOfPrice > fileUpload.UploadDateTime
+                    ? todayPriceSortByDate.ModalPrice
+                    : latestPrice.ModalPrice;
             }
-            else if (todayPriceSortByDate.Count > 0 && overridepriceIfAny.Count > 0 && latestPrice.Count > 0)
+            else if (todayPriceSortByDate != null && overridepriceIfAny != null && latestPrice != null)
             {
-                if (todayPriceSortByDate[0].DateOfPrice > fileUpload.UploadDateTime)
+                if (todayPriceSortByDate.DateOfPrice > fileUpload.UploadDateTime)
                 {
-                    if (todayPriceSortByDate[0].DateOfPrice > overridepriceIfAny[0].DateOfPrice)
+                    if (todayPriceSortByDate.DateOfPrice > overridepriceIfAny.DateOfPrice)
                     {
-                        return todayPriceSortByDate[0].ModalPrice;
+                        return todayPriceSortByDate.ModalPrice;
                     }
-                    else if (fileUpload.UploadDateTime > overridepriceIfAny[0].DateOfPrice)
+                    else if (fileUpload.UploadDateTime > overridepriceIfAny.DateOfPrice)
                     {
-                        return latestPrice[0].ModalPrice;
+                        return latestPrice.ModalPrice;
                     }
                     else
                     {
-                        return overridepriceIfAny[0].OverriddenPrice;
+                        return overridepriceIfAny.OverriddenPrice;
                     }
                 }
                 else
                 {
-                    if (fileUpload.UploadDateTime > overridepriceIfAny[0].DateOfPrice)
+                    if (fileUpload.UploadDateTime > overridepriceIfAny.DateOfPrice)
                     {
-                        return latestPrice[0].ModalPrice;
+                        return latestPrice.ModalPrice;
                     }
                     else
                     {
-                        return overridepriceIfAny[0].OverriddenPrice;
+                        return overridepriceIfAny.OverriddenPrice;
                     }
                 }
 
