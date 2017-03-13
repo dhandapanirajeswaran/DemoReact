@@ -1,6 +1,8 @@
 ﻿require(["jquery", "common", "busyloader", "bootstrap-datepicker"],
     function ($, common, busyloader, bsdatepicker) {
 
+        var rootFolder = common.reportRootFolder();
+
         $("document").ready(function () {
             var forDp = $('.datepicker').datepicker({
                 language: "en-GB",
@@ -30,6 +32,10 @@
             $('#btnViewReport').off().on('click', function () {
                 busyloader.showViewingReport();
                 return true;
+            });
+
+            $('#btnResetReport').click(function () {
+                window.location.href = rootFolder + '/PriceReports/CompetitorsPriceRangeByCompany';
             });
 
         });

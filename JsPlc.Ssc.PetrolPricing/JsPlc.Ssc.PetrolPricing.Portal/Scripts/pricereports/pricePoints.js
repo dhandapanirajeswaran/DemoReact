@@ -25,6 +25,10 @@
                 busyloader.showExportToExcel();
                 window.location.href = rootFolder + '/PriceReports/ExportPricePoints?For=' + dt;
             });
+
+            $('#btnResetReport').click(function () {
+                window.location.href = rootFolder + '/PriceReports/PricePoints';
+            });
         });
     }
 );

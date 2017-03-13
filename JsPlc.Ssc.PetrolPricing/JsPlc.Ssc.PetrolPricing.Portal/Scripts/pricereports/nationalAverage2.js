@@ -24,6 +24,9 @@
                 busyloader.showExportToExcel();
                 window.location.href = rootFolder + '/PriceReports/ExportNationalAverage2?For=' + dt;
             });
+            $('#btnResetReport').click(function () {
+                window.location.href = rootFolder + '/PriceReports/nationalAverage2';
+            });
         });
     }
 );

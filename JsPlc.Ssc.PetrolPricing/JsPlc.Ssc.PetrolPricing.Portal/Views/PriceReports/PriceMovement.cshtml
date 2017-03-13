@@ -1,8 +1,8 @@
 ﻿@using System.Web.UI.WebControls
 @model JsPlc.Ssc.PetrolPricing.Models.ViewModels.PriceMovementReportContainerViewModel
 @{
-	ViewBag.Title = "Report - Price Movement within selected dates";
-	
+    ViewBag.Title = "Report - Price Movement within selected dates";
+
     if (Model !=null && !Model.FromDate.HasValue)
     {
         Model.FromDate = DateTime.Now;
@@ -14,20 +14,21 @@
 
     var requestedFromDate = Model != null ? @Model.FromDate.Value.Date.ToString("dd-MMM-yyyy"): null;
     var requestedToDate = Model != null ? @Model.ToDate.Value.Date.ToString("dd-MMM-yyyy"): null;
-    
+
+
+    var reportWidth = Model != null ? Model.ReportWidth + "px" : "auto";
 }
 
 
 <script type="text/javascript">
-
-
-
     $(document).ready(function () {
-
-    
-        $("#tableDiv").width(@Model.ReportWidth);
-
+        $('#Brand,#DateFrom,#DateTo,#SiteName,#FuelTypeId').on('keyup', submitOnEnter);
     });
+
+    function submitOnEnter(e) {
+        if (e.which == 13)
+            $("#btnViewReport").click();
+    };
 
     function runScript(e) {
         if (e.keyCode == 13) {
@@ -35,7 +36,6 @@
             return false;
         }
     }
-
 
     $('.datepicker')
            .datepicker({
@@ -124,8 +124,11 @@
                     <label for="FuelTypeId">Fuel:</label>
                     @Html.DropDownListFor(d => d.FuelTypeId, Model.FuelTypes.Select(b => new SelectListItem { Value = b.Key.ToString(), Text = b.Value, Selected = b.Key == Model.FuelTypeId }), null, new { @class = "form-control" })
                 </div>
-                <div class="col-md-2" style="padding-top: 24px">
-                    <input type="button" value="View" class="btn btn-success" id="btnViewReport" />
+                <div class="col-md-1" style="padding-top: 24px">
+                    <button type="button" class="btn btn-success btn-block" id="btnViewReport">View</button>
+                </div>
+                <div class="col-md-1" style="padding-top: 24px">
+                    <button type="button" class="btn btn-danger btn-block" id="btnResetReport">Reset</button>
                 </div>
             </div>
         }
@@ -143,7 +146,7 @@
         { 
             <!-- Report Data -->
     <div  class="divtable" >
-        <div id="tableDiv">
+        <div id="tableDiv" style="width: @(reportWidth)">
             <div class="row" style="font-weight:bold">
                 <div class="col-md-1 fixed-col-1" style="width:250px">Sites</div>
 
@@ -183,6 +186,11 @@
         </div>
     </div>
         }
+    } else
+    {
+        <div class="row">
+            <div class="col-md-12 text-center"><strong>Sorry, There is no data available</strong></div>
+        </div>
     }
 </div>
 

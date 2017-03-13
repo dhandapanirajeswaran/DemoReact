@@ -19,6 +19,10 @@
                 busyloader.showViewingReport();
                 window.location.href = rootFolder + '/PriceReports/Compliance?For=' + dt;
             });
+
+            $('#btnResetReport').click(function () {
+                window.location.href = rootFolder + '/PriceReports/Compliance';
+            });
         });
     }
 );

@@ -18,6 +18,10 @@
                 var siteId = $("#SiteId").val();
                 window.location.href = rootFolder + '/PriceReports/ExportCompetitorSites/?siteId=' + siteId;
             });
+
+            $('#btnResetReport').click(function () {
+                window.location.href = rootFolder + '/PriceReports/CompetitorSites';
+            });
         });
     }
 );

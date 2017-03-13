@@ -60,6 +60,15 @@
                 window.location.href = rootFolder + '/PriceReports/ExportPriceMovement?DateFrom=' + dt1 + "&DateTo=" + dt2 + "&FuelTypeId=" + id + "&BrandName=" + brandName;
                 return true;
             });
+
+            $('#btnResetReport').click(function () {
+                busyloader.show({
+                    message: 'Reset Report. Please wait...',
+                    showtime: 3000
+                })
+                window.location.href = rootFolder + '/PriceReports/PriceMovement';
+            });
+
         });
     }
 );

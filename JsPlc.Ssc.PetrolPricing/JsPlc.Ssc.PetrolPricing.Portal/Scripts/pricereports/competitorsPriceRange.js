@@ -24,6 +24,9 @@
                 busyloader.showExportToExcel();
                 window.location.href = rootFolder + '/PriceReports/ExportCompetitorsPriceRange?For=' + dt;
             });
+            $('#btnResetReport').click(function () {
+                window.location.href = rootFolder + '/PriceReports/CompetitorsPriceRange';
+            });
         });
     }
 );

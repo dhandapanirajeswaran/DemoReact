@@ -62,8 +62,11 @@
                 <label for="SelectedBrandName">Brand:</label>
                 @Html.DropDownListFor(d => d.SelectedBrandName, Model.Brands.Select(b => new SelectListItem { Value = b, Text = b, Selected = b == Model.SelectedBrandName }), null, new { @class = "form-control" })
             </div>
-            <div class="col-md-2" style="padding-top: 24px">
-                <input type="submit" value="View" class="btn btn-success" id="btnViewReport" />
+            <div class="col-md-1" style="padding-top: 1.74em">
+                <button type="submit" class="btn btn-success btn-block" id="btnViewReport">View</button>
+            </div>
+            <div class="col-md-1" style="padding-top: 1.74em">
+                <button type="button" class="btn btn-danger btn-block" id="btnResetReport">Reset</button>
             </div>
         </div>
         <hr />
