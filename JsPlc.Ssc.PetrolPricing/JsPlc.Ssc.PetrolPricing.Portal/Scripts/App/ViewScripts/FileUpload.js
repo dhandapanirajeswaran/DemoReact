@@ -208,7 +208,15 @@
         };
 
         function uploadfileButtonClick() {
+
+            var delayed = function () {
+                $(selectors.uploadButton).attr('disabled', true);
+            }
+
+            $(selectors.uploadButton).removeClass('btn-primary').addClass('btn-danger');
             $(selectors.fileUploadingDialog).show();
+
+            setTimeout(delayed, 100);
         };
 
         function showSteps(currentStep) {

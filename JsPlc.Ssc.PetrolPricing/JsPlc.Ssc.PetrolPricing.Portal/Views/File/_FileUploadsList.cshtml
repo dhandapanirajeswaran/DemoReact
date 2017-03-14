@@ -37,7 +37,9 @@
         </tr>
         @foreach (var item in Model)
         {
-            <tr>
+            var isRecentUpload = DateTime.Now.Date.Subtract(item.UploadDateTime.Date).TotalDays < 2;
+            var rowClass = isRecentUpload ? "recent" : "";
+            <tr class="@rowClass">
                 <td>
                     @Html.DisplayFor(modelItem => item.OriginalFileName)
                 </td>
@@ -45,19 +47,19 @@
                     @Html.DisplayFor(modelItem => item.UploadType.UploadTypeName)
                 </td>
                 <td>
-                    @if (DateTime.Now.Date.Subtract(item.UploadDateTime.Date).TotalDays < 2)
+                    @if (isRecentUpload)
                     {
                        <strong>@Html.FormatFriendlyDateTime(item.UploadDateTime)</strong>
                     }
                     else
                     {
-                        @Html.FormatFriendlyDateTime(item.UploadDateTime)
+                @Html.FormatFriendlyDateTime(item.UploadDateTime)
                     }
                 </td>
                 <td>
                     @if (statusMarkup.ContainsKey(item.Status.Status))
                     {
-                        @Html.Raw(statusMarkup[item.Status.Status])
+                @Html.Raw(statusMarkup[item.Status.Status])
                     }
                     else
                     {
