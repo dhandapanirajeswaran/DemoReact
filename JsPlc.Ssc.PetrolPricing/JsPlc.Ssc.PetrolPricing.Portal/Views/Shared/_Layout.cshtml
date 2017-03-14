@@ -79,12 +79,13 @@
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav navbar-right" id="TopNav">
-                    <li data-menu-item="nav-home">@Html.ActionLink("Home", "Index", "Home")<i class="fa fa-home"></i></li>
-
+                    <li data-menu-item="nav-home">
+                        <a href="@Url.Action("Index", "Home")"><i class="fa fa-home"></i>Home</a>
+                    </li>
                     @Html.Partial("_NavLinks")
-
-                    <li data-menu-item="nav-contact">@Html.ActionLink("Contact", "Contact", "Home")<i class="fa fa-at"></i></li>
-
+                    <li data-menu-item="nav-contact">
+                        <a href="@Url.Action("Contact","Home")"><i class="fa fa-at"></i>Contact</a>
+                    </li>
                     @Html.Partial("_LoginPartial")
                 </ul>
             </div>

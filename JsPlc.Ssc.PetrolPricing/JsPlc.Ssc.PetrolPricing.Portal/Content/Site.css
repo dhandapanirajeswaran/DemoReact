@@ -274,8 +274,8 @@ textarea {
 .nav > li > a {
     position: relative;
     display: block;
-    padding-top: 25px;
-    padding-bottom: 25px;
+    padding-top: 20px;
+    padding-bottom: 20px;
     font-family: MaryAnn,Arial,sans-serif;
     font-size: 105%;
     font-weight: 400;
@@ -508,13 +508,12 @@ table.fixed-header>tbody {
 #TopNav>li {
     text-align: center; 
     position: relative;
+    border-right: 1px solid #fff;
 }
 
 #TopNav i.fa {
-    position: absolute;
-    margin-top: -4.5em;
-    left: 50%;
-    margin-left: -6px;
+    display: block;
+    clear: both;
 }
 
 #TopNav :hover i.fa,

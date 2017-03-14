@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<Favorites xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <folders />
+  <favorites>
+    <Favorite>
+      <name>Web.config</name>
+      <path>JsPlc.Ssc.PetrolPricing.Portal\Web.config</path>
+      <absolutePath>C:\Users\garry.leeder\Source\Repos\PetrolPricing\JsPlc.Ssc.PetrolPricing\JsPlc.Ssc.PetrolPricing.Portal\Web.config</absolutePath>
+      <position>
+        <line>72</line>
+        <column>17</column>
+        <lineHash>Yt51mPITFJEGbbUfX/GJlv6dY95AGlYaJN/0JQJ8Byw=</lineHash>
+      </position>
+    </Favorite>
+  </favorites>
+</Favorites>
