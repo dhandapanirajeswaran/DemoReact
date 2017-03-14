@@ -104,29 +104,77 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
         private static object cachedAppSettingsLock = new Object();
 
-        public IEnumerable<PPUser> GetPPUsers()
+        public PPUserList GetPPUsers()
         {
-            return _context.PPUsers.ToArray();
+            return new PPUserList()
+            {
+                Users = _context.PPUsers.OrderBy(x => x.FirstName).ToArray(),
+                ErrorMessage = "",
+                SuccessMessage = ""
+            };
         }
 
-        public IEnumerable<PPUser> AddPPUser(PPUser ppuser)
+        public PPUserList AddPPUser(PPUser ppuser)
         {
-            var result = _context.PPUsers.Add(ppuser);
-            _context.SaveChanges();
+            var success = "";
+            var failure = "";
+            var selectedUserId = 0;
 
-            return this.GetPPUsers(); // return full object back
+            if (_context.PPUsers.Any(x => x.Email == ppuser.Email))
+            {
+                failure = String.Format("User with the email \"{0}\" already exists", ppuser.Email);
+            }
+            else
+            {
+                try
+                {
+                    var result = _context.PPUsers.Add(ppuser);
+                    _context.SaveChanges();
+
+                    selectedUserId = result.Id;
+                    success = String.Format("Added User with email \"{0}\"", ppuser.Email);
+                }
+                catch (Exception ex)
+                {
+                    failure = "Unable to add user";
+                }
+            }
+            var userList = this.GetPPUsers();
+            userList.SelectedUserId = selectedUserId;
+            userList.SuccessMessage = success;
+            userList.ErrorMessage = failure;
+
+            return userList;
         }
 
-
-
-        public IEnumerable<PPUser> DeletePPUser(PPUser ppuser)
+        public PPUserList DeletePPUser(string email)
         {
+            var success = "";
+            var failure = "";
 
-            _context.PPUsers.Remove(ppuser);
-            _context.SaveChanges();
+            var ppUser = _context.PPUsers.FirstOrDefault(x => x.Email == email);
+            if (ppUser != null)
+            {
+                try
+                {
+                    _context.PPUsers.Remove(ppUser);
+                    _context.SaveChanges();
 
-            return this.GetPPUsers();
-
+                    success = String.Format("Deleted User with email \"{0}\"", ppUser.Email);
+                }
+                catch (Exception ex)
+                {
+                    failure = String.Format("Unable to delete user with email \"{0}\"", ppUser.Email);
+                }
+            }
+            else
+            {
+                failure = String.Format("User with email \"{0}\" does not exist", email);
+            }
+            PPUserList userList = this.GetPPUsers();
+            userList.SuccessMessage = success;
+            userList.ErrorMessage = failure;
+            return userList;
         }
 
         public IEnumerable<Site> GetJsSites()

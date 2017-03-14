@@ -103,6 +103,7 @@
     <Compile Include="PPUser.cs" />
     <Compile Include="ExcludedBrands.cs" />
     <Compile Include="LatestPrice.cs" />
+    <Compile Include="PPUserList.cs" />
     <Compile Include="ViewModels\JsonResultViewModel.cs" />
     <Compile Include="ViewModels\LatestCompPriceDataModel.cs" />
     <Compile Include="ViewModels\LatestPriceDataModel.cs" />

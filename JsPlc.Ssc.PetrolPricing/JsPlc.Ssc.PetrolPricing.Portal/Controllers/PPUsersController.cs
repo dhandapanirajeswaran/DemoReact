@@ -40,7 +40,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             {
                 var model = _serviceFacade.GetPPUsers();
                 // Filtering based on search value     
-                return View(model.ToList());
+                return View(model);
             }
             catch (Exception ex)
             {
@@ -52,22 +52,18 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 
         public ActionResult Adduser(String firstname, String lastName, String email)
         {
-            PPUser user =new PPUser { Email=email, LastName=lastName, FirstName=firstname};
+            PPUser user = new PPUser { Email = email, LastName = lastName, FirstName = firstname };
 
-             var result =_serviceFacade.AddPPUser(user).ToList();
-
-             return View("Index", result);
-        }
-
-
-        public ActionResult DeleteUser(int id)
-        {
-            var result = _serviceFacade.DeletePPUser(id).ToList();
+            var result = _serviceFacade.AddPPUser(user);
 
             return View("Index", result);
         }
-       
 
+        public ActionResult DeleteUser(string email)
+        {
+            var result = _serviceFacade.DeletePPUser(email);
+            return View("Index", result);
+        }
     }
 }
 

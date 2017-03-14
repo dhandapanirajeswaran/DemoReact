@@ -44,34 +44,34 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             return (response.IsSuccessStatusCode) ? result : null;
         }
 
-        public IEnumerable<PPUser> GetPPUsers()
+        public PPUserList GetPPUsers()
         {
             var response = _client.Value.GetAsync("api/PPUsers/").Result;
 
-            var result = response.Content.ReadAsAsync<IEnumerable<PPUser>>().Result;
+            var result = response.Content.ReadAsAsync<PPUserList>().Result;
             return (response.IsSuccessStatusCode) ? result : null;
 
         }
 
-        public IEnumerable<PPUser> AddPPUser(PPUser user)
+        public PPUserList AddPPUser(PPUser user)
         {
             var querystring = "api/PPUsers/Add?email=" + user.Email + "&firstname="+ user.FirstName+"&lastname="+ user.LastName;
 
             var response = _client.Value.PostAsync(querystring,null).Result;
 
-            var result = response.Content.ReadAsAsync<IEnumerable<PPUser>>().Result;
+            var result = response.Content.ReadAsAsync<PPUserList>().Result;
 
             return (response.IsSuccessStatusCode) ? result : null;  
 
         }
 
-        public IEnumerable<PPUser> DeletePPUser(int id)
+        public PPUserList DeletePPUser(string email)
         {
-            var querystring = "api/PPUsers/Delete?id=" + Convert.ToString(id);
+            var querystring = "api/PPUsers/Delete?email=" + email;
 
             var response = _client.Value.PostAsync(querystring, null).Result;
 
-            var result = response.Content.ReadAsAsync<IEnumerable<PPUser>>().Result;
+            var result = response.Content.ReadAsAsync<PPUserList>().Result;
 
             return (response.IsSuccessStatusCode) ? result : null;
 
@@ -712,7 +712,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
         public void RegisterUser(string email)
         {
             var usersList = GetPPUsers();
-            var user = (from PPUser a in usersList
+            var user = (from PPUser a in usersList.Users
                        where a.Email.ToLower() == email.ToLower()
                        select a).SingleOrDefault();
             MailAddress address = new MailAddress(email);

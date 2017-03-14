@@ -1,79 +1,42 @@
-﻿@model IEnumerable<JsPlc.Ssc.PetrolPricing.Models.PPUser>
+﻿@model JsPlc.Ssc.PetrolPricing.Models.PPUserList
 @{
     ViewBag.Title = "Users Information";
 }
-<script type="text/javascript">
 
-    function showEditableRow() {
-        $('#ErrorMessage').hide();
-        $('#datarow').hide();
-        $('#editablerow').show();
-
-
+<style>
+    .table-striped tr.selected:nth-child(even) {
+        background-color: #ffc;
     }
-
-    function showData() {
-
-        $('#ErrorMessage').hide();
-        $('#editablerow').hide();
-        $('#datarow').show();
-
-        location.href = '@Url.Action("Index", "PPUsers")';
-
+    .table-striped tr.selected:nth-child(odd) {
+        background-color: #eeb;
     }
+</style>
 
-
-
-    function AddUser() {
-
-        var firstname = $('#FirstName').val();
-        var lastname = $('#LastName').val();
-        var email = $('#Email').val();
-
-        if (firstname == "" || lastname == "" || email == "") {
-            $("#msg").text("Please enter user details");
-            $("#ErrorMessage").show("slow").delay(5000).fadeOut();
-        }
-        else if (!validateEmail(email)) {
-            $("#msg").text("Please enter valid mail id");
-            $("#ErrorMessage").show("slow").delay(5000).fadeOut();
-        }
-        else if (!checkEmail(email)) {
-            $("#msg").text("Please enter sainsburys domain mail id");
-            $("#ErrorMessage").show("slow").delay(5000).fadeOut();
-        }
-        else {
-            $('#ErrorMessage').hide();
-            location.href = '@Url.Action("Adduser", "PPUsers")?firstname=' + firstname + '&lastname=' + lastname + '&email=' + email;
-        }
-    };
-
-    function checkEmail(email) {
-        var domainName = "sainsburys.co.uk";
-        if (email.indexOf(domainName) > 0)
-            if ((email.indexOf(domainName) + domainName.length) == email.length) {
-                //do regex checking if any
-                return true;
-            }
-
-
-        return false;
-    }
-
-
-    function validateEmail(email) {
-        var lastAtPos = email.lastIndexOf('@@');
-        var lastDotPos = email.lastIndexOf('.');
-        var AtPos = email.indexOf('@@@@');
-        return (lastAtPos < lastDotPos && lastAtPos > 0 && AtPos == -1 && lastDotPos > 2 && (email.length - lastDotPos) > 2);
-    }
-
-    function DelteUser(id) {
-        $('#ErrorMessage').hide();
-        location.href = '@Url.Action("Deleteuser", "PPUsers")?id=' + id;
-    };
-
-</script>
+<div id="DeleteUserModal" class="modal fade" role="dialog" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4>Confirm Delete User</h4>
+            </div>
+            <div class="modal-body text-center">
+               <p>Are you sure you wish to delete this user?</p>
+                <p><strong id="deleteUserEmail"></strong></p>
+                <div class="row">
+                    <div class="col-md-2 col-md-offset-3">
+                        <button type="button" class="btn btn-success btn-block" data-click="confirmDeleteUser"><i class="fa fa-check"></i> Yes</button>
+                    </div>
+                    <div class="col-md-2 col-md-offset-2">
+                        <button type="button" class="btn btn-danger btn-block" data-dismiss="modal"><i class="fa fa-times"></i> No</button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <div class="container">
     <div class="row">
@@ -82,17 +45,17 @@
                 <!-- Default panel contents -->
                 <div class="panel-heading">
                     <div class="row">
-                        <div class="col-lg-8">
+                        <div class="col-md-10">
                             <h4>
                                 <i class="fa fa-bar-chart"></i>
                                 Users Information
                             </h4>
                         </div>
-                        <div class="col-lg-4 query-builder__filterbuttons">
-                            <button type="button" class="btn btn-default" onclick="showData()">
+                        <div class="col-md-2 text-center query-builder__filterbuttons">
+                            <button type="button" class="btn btn-default" data-click="showData" title="Refresh page">
                                 <span class="glyphicon glyphicon-repeat"></span>
                             </button>
-                            <button type="button" class="btn btn-success" onclick="showEditableRow()">
+                            <button type="button" class="btn btn-success" data-click="showEditableRow" title="Add a new User">
                                 <span class="glyphicon glyphicon-plus"></span>
                             </button>
                         </div>
@@ -111,71 +74,200 @@
                                 <th>First Name</th>
                                 <th>Last Name</th>
                                 <th>Email</th>
-                                <th>...</th>
+                                <th></th>
                             </tr>
                         </thead>
-                        @Html.Raw("<tr>")
+                        <tbody>
+                            <tr>
 
-                        <td>
-                            <input class="form-control" id="FirstName" placeholder="First Name" required />
-                        </td>
-                        <td>
-                            <input class="form-control" id="LastName" placeholder="Last Name" required />
-                        </td>
-                        <td>
-                            <input class="form-control" id="Email" placeholder="me@sainsburys.co.uk" type="email" required />
-                        </td>
-                        <td>
-                            <button type="button" class="btn btn-danger" onclick="showData()">
-                                <span class="glyphicon glyphicon-remove"></span>
-                            </button>
-                            <button id="btnAdd" type="button" class="btn btn-success" onclick="AddUser()">
-                                <span class="glyphicon glyphicon-ok"></span>
-                            </button>
-                        </td>
-                        @Html.Raw("</tr>")
+                                <td>
+                                    <input class="form-control" id="FirstName" placeholder="First Name" required />
+                                </td>
+                                <td>
+                                    <input class="form-control" id="LastName" placeholder="Last Name" required />
+                                </td>
+                                <td>
+                                    <input class="form-control" id="Email" placeholder="me@sainsburys.co.uk" type="email" required />
+                                </td>
+                                <td>
+                                    <button type="button" class="btn btn-danger" data-click="showData">
+                                        <span class="glyphicon glyphicon-remove"></span>
+                                    </button>
+                                    <button id="btnAdd" type="button" class="btn btn-success" data-click="addUser">
+                                        <span class="glyphicon glyphicon-ok"></span>
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
                     </table>
                 </div>
                 <div id="datarow">
-                    <table class="table">
-
+                    <table class="table table-striped">
                         <thead>
                             <tr>
                                 <th>First Name</th>
                                 <th>Last Name</th>
                                 <th>Email</th>
-                                <th>...</th>
+                                <th></th>
                             </tr>
                         </thead>
-                        @if (Model != null)
-                        {
-                            foreach (var user in Model)
+                        <tbody>
+                            @if (Model.Users != null)
                             {
-                                <tr>
-                                    <td>
-                                        <span>@user.FirstName</span>
+                                foreach (var user in Model.Users)
+                                {
+                                    var isSelected = Model.SelectedUserId == user.Id;
+                                    var rowClass = isSelected ? "selected" : "";
+                                    <tr class="@rowClass">
+                                        <td>
+                                            <span>@user.FirstName</span>
 
-                                    </td>
-                                    <td>
-                                        <span>@user.LastName</span>
+                                        </td>
+                                        <td>
+                                            <span>@user.LastName</span>
 
-                                    </td>
-                                    <td>
-                                        <span>@user.Email</span>
+                                        </td>
+                                        <td>
+                                            <span>@user.Email</span>
 
-                                    </td>
-                                    <td>
-                                        <button type="button" class="btn btn-default" onclick="DelteUser(@user.Id)">
-                                            <span class=" glyphicon glyphicon-minus">
-                                            </span>
-                                        </button>
-                                    </td>
-                                </tr>
+                                        </td>
+                                        <td>
+                                            <button type="button" class="btn btn-danger btn-sm" data-click="deleteUser" data-user-id="@user.Id" data-email="@user.Email" title="Delete user">
+                                                <span class="fa fa-times"></span>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                }
                             }
-                        }
+                        </tbody>
                     </table>
                 </div>
             </div>
         </div>
     </div>
 </div> 
+
+<script type="text/javascript">
+    require(['jquery', 'common', 'notify', 'busyloader'],
+        function ($, common, notify, busyloader) {
+
+            var selectedUser = {
+                id: 0,
+                email: ''
+            };
+
+            function deselectUserRows() {
+                $('#datarow tr.selected').removeClass('selected');
+            };
+
+            function showPageNotification() {
+                var success = '@Model.SuccessMessage',
+                    failure = '@Model.ErrorMessage';
+                if (success)
+                    notify.success(success);
+                else if (failure)
+                    notify.error(failure);
+            };
+
+            function deleteUserClick() {
+                var button = $(this),
+                    tableRow = button.closest('tr'),
+                    userId = button.data('user-id'),
+                    email = button.data('email'),
+                    modal = $('#DeleteUserModal');
+                if (userId > 0) {
+                    deselectUserRows();
+                    tableRow.addClass('selected');
+                    selectedUser.id = userId;
+                    selectedUser.email = email;
+                    $('#deleteUserEmail').text(email);
+                    modal.off().on('hidden.bs.modal', deselectUserRows);
+                    modal.modal('show');
+                }
+            };
+
+            function showEditableRowClick() {
+                $('#ErrorMessage').hide();
+                $('#datarow').hide();
+                $('#editablerow').show();
+            };
+
+            function showDataClick() {
+                $('#ErrorMessage').hide();
+                $('#editablerow').hide();
+                $('#datarow').show();
+
+                location.href = '@Url.Action("Index", "PPUsers")';
+            };
+
+            function confimDeleteUserClick() {
+                if (selectedUser.id > 0) {
+                    debugger;
+                    $('#DeleteUserModal').modal('hide');
+                    $('#ErrorMessage').hide();
+                    busyloader.show({
+                        message: 'Deleting user. Please wait...',
+                        showtime: 1000
+                    });
+
+                    location.href = '@Url.Action("Deleteuser", "PPUsers")?email=' + selectedUser.email;
+                }
+            };
+
+            function addUserClick() {
+                var firstname = $('#FirstName').val(),
+                    lastname = $('#LastName').val(),
+                    email = $('#Email').val();
+
+                if (firstname == "" || lastname == "" || email == "") {
+                    $("#msg").text("Please enter user details");
+                    $("#ErrorMessage").show("slow").delay(5000).fadeOut();
+                }
+                else if (!validateEmail(email)) {
+                    $("#msg").text("Please enter valid mail id");
+                    $("#ErrorMessage").show("slow").delay(5000).fadeOut();
+                }
+                else if (!checkEmail(email)) {
+                    $("#msg").text("Please enter Sainsburys domain email id");
+                    $("#ErrorMessage").show("slow").delay(5000).fadeOut();
+                }
+                else {
+                    $('#ErrorMessage').hide();
+                    location.href = '@Url.Action("Adduser", "PPUsers")?firstname=' + firstname + '&lastname=' + lastname + '&email=' + email;
+                }
+            };
+
+            function checkEmail(email) {
+                var domainName = "sainsburys.co.uk";
+                if (email.indexOf(domainName) > 0)
+                    if ((email.indexOf(domainName) + domainName.length) == email.length) {
+                        //do regex checking if any
+                        return true;
+                    }
+                return false;
+            }
+
+            function validateEmail(email) {
+                var lastAtPos = email.lastIndexOf('@@');
+                var lastDotPos = email.lastIndexOf('.');
+                var AtPos = email.indexOf('@@@@');
+                return (lastAtPos < lastDotPos && lastAtPos > 0 && AtPos == -1 && lastDotPos > 2 && (email.length - lastDotPos) > 2);
+            }
+
+            function bindEvents() {
+                $('[data-click="showData"]').off().on('click', showDataClick);
+                $('[data-click="showEditableRow"]').off().on('click', showEditableRowClick);
+                $('[data-click="addUser"]').off().on('click', addUserClick);
+                $('[data-click="deleteUser"]').off().on('click', deleteUserClick);
+                $('[data-click="confirmDeleteUser"]').off().on('click', confimDeleteUserClick);
+            };
+
+            function docReady() {
+                bindEvents();
+                showPageNotification();
+            };
+
+            $(docReady);
+        }
+    );
+</script>

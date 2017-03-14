@@ -15,22 +15,17 @@ namespace JsPlc.Ssc.PetrolPricing.Business
             _repository = repository;
         }
 
-        public IEnumerable<PPUser> GetPPUsers()
+        public PPUserList GetPPUsers()
         {
             return _repository.GetPPUsers();
         }
-        public IEnumerable<PPUser> AddUser(PPUser user)
+        public PPUserList AddUser(PPUser user)
         {
              return _repository.AddPPUser(user);
         }
-        public IEnumerable<PPUser> DeleteUser(PPUser user)
+        public PPUserList DeleteUser(string email)
         {
-            if (user != null)
-            {
-                return _repository.DeletePPUser(user);
-            }
-            return null;
-
+            return _repository.DeletePPUser(email);
         }
         
     }

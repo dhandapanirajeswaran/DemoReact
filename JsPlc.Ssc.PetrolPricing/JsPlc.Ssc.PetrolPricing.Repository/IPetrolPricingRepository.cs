@@ -11,10 +11,10 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 	public interface IPetrolPricingRepository
 	{
 
-        IEnumerable<PPUser> AddPPUser(PPUser ppUser);
-        IEnumerable<PPUser> DeletePPUser(PPUser ppuser);
+        PPUserList AddPPUser(PPUser ppUser);
+        PPUserList DeletePPUser(string email);
 
-        IEnumerable<PPUser> GetPPUsers();
+        PPUserList GetPPUsers();
 		IEnumerable<Site> GetSites();
 
 		Dictionary<string, int> GetCompanies();

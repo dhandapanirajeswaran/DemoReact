@@ -34,7 +34,7 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
 
         [System.Web.Http.HttpPost]
         [Route("api/PPUsers/Add")]
-        public IEnumerable<PPUser> AddUser()
+        public PPUserList AddUser()
         {
             var queryString = Request.GetQueryNameValuePairs().ToDictionary(x => x.Key, x => x.Value);
 
@@ -54,20 +54,15 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
 
         [System.Web.Http.HttpPost]
         [Route("api/PPUsers/Delete")]
-        public IEnumerable<PPUser> DeleteUser()
+        public PPUserList DeleteUser()
         {
             var queryString = Request.GetQueryNameValuePairs().ToDictionary(x => x.Key, x => x.Value);
 
-            var userid = queryString["id"];
+            var email = queryString["email"];
 
-            var usersList = _ppUserService.GetPPUsers();
-            var user = from PPUser a in usersList
-                          where a.Id == Convert.ToInt32(userid)
-                               select a;
-
-            return _ppUserService.DeleteUser(user.ToList()[0]); 
+            var usersList = _ppUserService.DeleteUser(email);
+            return usersList;
         }
-
 
         [System.Web.Http.HttpGet]
         [Route("api/PPUsers")]

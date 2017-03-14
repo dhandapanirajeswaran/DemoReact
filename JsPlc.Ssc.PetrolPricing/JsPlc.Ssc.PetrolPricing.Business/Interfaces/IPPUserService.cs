@@ -6,9 +6,9 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 {
     public interface IPPUserService
     {
-        IEnumerable<PPUser> GetPPUsers();
-        IEnumerable<PPUser> AddUser(PPUser user);
-        IEnumerable<PPUser> DeleteUser(PPUser user);
+        PPUserList GetPPUsers();
+        PPUserList AddUser(PPUser user);
+        PPUserList DeleteUser(string email);
       
     }
 }
