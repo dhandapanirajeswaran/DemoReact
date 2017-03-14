@@ -41,6 +41,8 @@ namespace JsPlc.Ssc.PetrolPricing.Models.ViewModels
     // each fuel's price
     public class FuelPriceViewModel
     {
+        public int SiteId { get; set; }
+
         public int FuelTypeId { get; set; }
 
         // Tomorrow's Prices (only available when buidling JSSites VM, not for competitors VM)

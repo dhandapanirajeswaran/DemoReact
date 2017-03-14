@@ -4,6 +4,10 @@ using System.Data.Entity.ModelConfiguration.Conventions;
 using System.Data.Common;
 using JsPlc.Ssc.PetrolPricing.Models;
 using JsPlc.Ssc.PetrolPricing.Models.Persistence;
+using JsPlc.Ssc.PetrolPricing.Models.ViewModels;
+using System.Collections.Generic;
+using JsPlc.Ssc.PetrolPricing.Repository.Dapper;
+using System;
 
 namespace JsPlc.Ssc.PetrolPricing.Repository
 {
@@ -67,5 +71,18 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 				.WithRequired(x => x.Upload)
 				.HasForeignKey(x => x.UploadId);
 		}
-	}
+
+        public List<FuelPriceViewModel> CalculateFuelPricesForSitesAndDate(DateTime forDate, string siteIds)
+        {
+            var sproc = "spCalculateSitePricesForDate";
+
+            var parameters = new
+            {
+                @ForDate = forDate,
+                @SiteIds = siteIds
+            };
+
+            return DapperHelper.QueryList<FuelPriceViewModel>(this, sproc, parameters);
+        }
+    }
 }

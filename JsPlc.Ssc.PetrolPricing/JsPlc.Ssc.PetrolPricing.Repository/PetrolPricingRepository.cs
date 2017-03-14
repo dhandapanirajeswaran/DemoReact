@@ -19,6 +19,7 @@ using JsPlc.Ssc.PetrolPricing.Core.Interfaces;
 using EntityState = System.Data.Entity.EntityState;
 
 using JsPlc.Ssc.PetrolPricing.Core.Diagnostics;
+using JsPlc.Ssc.PetrolPricing.Repository.Dapper;
 
 namespace JsPlc.Ssc.PetrolPricing.Repository
 {
@@ -401,6 +402,8 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                 var totaliser = new DurationTotaliser();
                 totaliser.Start("GetSites");
 
+                var useNewCode = false;
+
                 var sainsburysSites =
                     _context.Sites.Where(x => x.IsSainsburysSite == true && x.IsActive == true);
 
@@ -462,14 +465,20 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
                     totaliser.Start("AddSitePriceRow");
 
-                    var TrialPrice = (int) site.CompetitorPriceOffset;
-                    TrialPrice = TrialPrice * 10;
 
-                    AddSitePriceRow(FuelTypeItem.Diesel, site, TrialPrice, forDate, catalistFileExits, sitePriceRow.FuelPrices);
+                    #region OLD CODE
+                    if (useNewCode == false)
+                    {
+                        var TrialPrice = (int)site.CompetitorPriceOffset;
+                        TrialPrice = TrialPrice * 10;
 
-                    AddSitePriceRow(FuelTypeItem.Unleaded, site, TrialPrice, forDate, catalistFileExits, sitePriceRow.FuelPrices);
+                        AddSitePriceRow(FuelTypeItem.Diesel, site, TrialPrice, forDate, catalistFileExits, sitePriceRow.FuelPrices);
 
-                    AddSitePriceRow(FuelTypeItem.Super_Unleaded, site, TrialPrice, forDate, catalistFileExits, sitePriceRow.FuelPrices);
+                        AddSitePriceRow(FuelTypeItem.Unleaded, site, TrialPrice, forDate, catalistFileExits, sitePriceRow.FuelPrices);
+
+                        AddSitePriceRow(FuelTypeItem.Super_Unleaded, site, TrialPrice, forDate, catalistFileExits, sitePriceRow.FuelPrices);
+                    }
+                    #endregion
 
                     /* var siteToCompetitorObjs =
                             transactionContext.SiteToCompetitors.Where(x => x.SiteId == siteID);
@@ -481,6 +490,11 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                     totaliser.Stop("AddSitePriceRow");
 
                     dbList.Add(sitePriceRow);
+                }
+
+                if (useNewCode)
+                {
+                    AddFuelPricesRowsForSites(forDate, dbList);
                 }
 
                 totaliser.Stop("SiteLoop");
@@ -497,6 +511,25 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             {
                 _logger.Error(ce);
                 return null;
+            }
+        }
+
+        private void AddFuelPricesRowsForSites(DateTime forDate, List<SitePriceViewModel> sites)
+        {
+            var siteIds = sites.Select(x => x.SiteId.ToString()).Aggregate((x, y) => x + "," + y);
+
+            var calculatedPrices = _context.CalculateFuelPricesForSitesAndDate(forDate, siteIds);
+            foreach (var site in sites)
+            {
+                var fuelPricesForSite = calculatedPrices.Where(x => x.SiteId == site.SiteId);
+
+                var superUnleaded = fuelPricesForSite.First(x => x.FuelTypeId == (int)FuelTypeItem.Super_Unleaded);
+                var unleaded = fuelPricesForSite.First(x => x.FuelTypeId == (int)FuelTypeItem.Unleaded);
+                var diesel = fuelPricesForSite.First(x => x.FuelTypeId == (int)FuelTypeItem.Diesel);
+
+                site.FuelPrices.Add(superUnleaded);
+                site.FuelPrices.Add(unleaded);
+                site.FuelPrices.Add(diesel);
             }
         }
 

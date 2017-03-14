@@ -115,6 +115,9 @@
     <Folder Include="dbo\Stored Procedures\" />
     <Folder Include="Scripts" />
     <Folder Include="Scripts\PostDeployment" />
+    <Folder Include="dbo\Functions" />
+    <Folder Include="dbo\Functions\Scalar Functions" />
+    <Folder Include="dbo\Functions\Table Functions" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="dbo\Tables\DailyPrice.sql" />
@@ -139,6 +142,10 @@
     <Build Include="dbo\Tables\ExcludeBrands.sql" />
     <Build Include="dbo\Tables\LatestPrice.sql" />
     <Build Include="dbo\Tables\LatestCompPrice.sql" />
+    <Build Include="dbo\Stored Procedures\spCalculateSitePricesForDate.sql" />
+    <Build Include="dbo\Functions\Scalar Functions\fn_ReplaceLastPriceDigit.sql" />
+    <Build Include="dbo\Functions\Scalar Functions\fn_CalculateTodayPrice.sql" />
+    <Build Include="dbo\Functions\Table Functions\tf_SplitIdsOnComma.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Scripts\PostDeployment\Script.PostDeployment.sql" />
