@@ -810,6 +810,22 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             }
         }
 
+        private FileUpload GetLastFileUploadForDateAndUploadType(DateTime forDate, FileUploadTypes uploadType)
+        {
+            var forDateNextDay = forDate.Date.AddDays(1);
+
+            var fileupload = _context.FileUploads.Where(
+                            x =>
+                                x.UploadDateTime >= forDate && x.UploadDateTime < forDateNextDay
+                                && x.UploadTypeId == (int)uploadType
+                                && x.Status.Id == 10)
+                                .OrderByDescending(x => x.Id)
+                                .FirstOrDefault();
+
+            return fileupload;
+        }
+
+
         /// <summary>
         /// Calls [spGetCompetitorPrices] to get competitors prices view
         /// </summary>
@@ -946,83 +962,94 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                 var listOfbrands = GetExcludeBrands();
                 var allSites = GetSites();
                 Site Jssite = allSites.Where(x => x.Id == siteId).FirstOrDefault();
-                List<SiteToCompetitor> competitors = _context.SiteToCompetitors.Where(x => x.SiteId == siteId && x.DriveTime<25 && x.IsExcluded==0).ToList();
+                List<SiteToCompetitor> competitors = _context.SiteToCompetitors.Where(x => x.SiteId == siteId && x.DriveTime < 25 && x.IsExcluded == 0).ToList();
 
-                DateTime yDay = forDate.AddDays(-1);
+                var forDateNextDay = forDate.Date.AddDays(1);
+
+                var yesterday = forDate.AddDays(-1);
+                var yesterdayNextDay = yesterday.Date.AddDays(1);
+
+                ///////////////////////////////////
 
                 var fileUpload_LatestCompPriceData_today = _context.FileUploads.Where(
                                 x =>
-                                    x.UploadDateTime.Month == forDate.Month &&
-                                    x.UploadDateTime.Day == forDate.Day &&
-                                    x.UploadDateTime.Year == forDate.Year && x.UploadTypeId == (int)FileUploadTypes.LatestCompPriceData && x.Status.Id == 10).OrderByDescending(x=>x.Id).ToList();
-
-                var fileUploadId_LatestCompPriceData_today = fileUpload_LatestCompPriceData_today.Count>0? fileUpload_LatestCompPriceData_today[0].Id :0;
-
-                var fileUpload_DailyPriceData_today = _context.FileUploads.Where(
-                                x =>
-                                    x.UploadDateTime.Month == forDate.Month &&
-                                    x.UploadDateTime.Day == forDate.Day &&
-                                    x.UploadDateTime.Year == forDate.Year && x.UploadTypeId == (int)FileUploadTypes.DailyPriceData && x.Status.Id == 10).OrderByDescending(x => x.Id).ToList();
-
-                var fileUploadId_DailyPriceData_today =fileUpload_DailyPriceData_today.Count>0 ? fileUpload_DailyPriceData_today[0].Id:0;
-
-                var fileUpload_LatestCompPriceData_yday = _context.FileUploads.Where(
-                           x =>
-                               x.UploadDateTime.Month == yDay.Month &&
-                               x.UploadDateTime.Day == yDay.Day &&
-                               x.UploadDateTime.Year == yDay.Year && x.UploadTypeId == (int)FileUploadTypes.LatestCompPriceData && x.Status.Id == 10).OrderByDescending(x => x.Id).ToList();
-
-                var fileUploadId_LatestCompPriceData_yday = fileUpload_LatestCompPriceData_yday.Count>0? fileUpload_LatestCompPriceData_yday[0].Id :0;
-
-
-                var fileUpload_DailyPriceData_yday = _context.FileUploads.Where(
-                                x =>
-                                    x.UploadDateTime.Month == yDay.Month &&
-                                    x.UploadDateTime.Day == yDay.Day &&
-                                    x.UploadDateTime.Year == yDay.Year && x.UploadTypeId == (int)FileUploadTypes.DailyPriceData && x.Status.Id == 10).OrderByDescending(x => x.Id).ToList();
-
-                var fileUploadId_DailyPriceData_yday =fileUpload_DailyPriceData_yday.Count>0? fileUpload_DailyPriceData_yday[0].Id : 0;
-
+                                    x.UploadDateTime >= forDate && x.UploadDateTime < forDateNextDay
+                                    && x.UploadTypeId == (int)FileUploadTypes.LatestCompPriceData 
+                                    && x.Status.Id == 10)
+                                    .OrderByDescending(x => x.Id)
+                                    .FirstOrDefault();
 
                 List<LatestCompPrice> latestCompPrices_today = null;
-                if (fileUpload_LatestCompPriceData_today.Count > 0)
+                if (fileUpload_LatestCompPriceData_today != null)
                 {
-                    latestCompPrices_today = _context.LatestCompPrices.Where(
-                            x =>
-                                    x.UploadId == fileUploadId_LatestCompPriceData_today).ToList();
+                    latestCompPrices_today = _context.LatestCompPrices.Where(x => x.UploadId == fileUpload_LatestCompPriceData_today.Id)
+                        .ToList();
                 }
 
 
+                ///////////////////////////////////
 
+                var fileUpload_DailyPriceData_today = _context.FileUploads.Where(
+                                x =>
+                                    x.UploadDateTime >= forDate && x.UploadDateTime < forDateNextDay
+                                    && x.UploadTypeId == (int)FileUploadTypes.DailyPriceData 
+                                    && x.Status.Id == 10)
+                                    .OrderByDescending(x => x.Id)
+                                    .FirstOrDefault();
+                
                 List<DailyPrice> dailypriceList_today = null;
-                if (fileUpload_DailyPriceData_today.Count > 0)
+                if (fileUpload_DailyPriceData_today != null)
                 {
                     dailypriceList_today = _context.DailyPrices.Include(x => x.DailyUpload)
                         .Where(
                             x =>
-                                    x.DailyUploadId.Value == fileUploadId_DailyPriceData_today).ToList();
+                                    x.DailyUploadId.Value == fileUpload_DailyPriceData_today.Id)
+                                    .ToList();
                 }
 
+                ///////////////////////////////////
+
+                var fileUpload_LatestCompPriceData_yday = _context.FileUploads.Where(
+                           x =>
+                               x.UploadDateTime >= yesterday && x.UploadDateTime < yesterdayNextDay
+                               && x.UploadTypeId == (int)FileUploadTypes.LatestCompPriceData 
+                               && x.Status.Id == 10)
+                               .OrderByDescending(x => x.Id)
+                               .FirstOrDefault();
 
                 List<LatestCompPrice> latestCompPrices_yday = null;
-                if (fileUpload_LatestCompPriceData_today.Count > 0)
+                if (fileUpload_LatestCompPriceData_today != null)
                 {
-                    latestCompPrices_yday = _context.LatestCompPrices.Where(
-                            x =>
-                                    x.UploadId == fileUploadId_LatestCompPriceData_yday).ToList();
+                    latestCompPrices_yday = _context.LatestCompPrices.Where(x => x.UploadId == fileUpload_LatestCompPriceData_yday.Id)
+                        .ToList();
                 }
 
+                ///////////////////////////////////
 
+                var fileUpload_DailyPriceData_yday = _context.FileUploads.Where(
+                                x =>
+                                    x.UploadDateTime >= yesterday && x.UploadDateTime < yesterdayNextDay
+                                    && x.UploadTypeId == (int)FileUploadTypes.DailyPriceData 
+                                    && x.Status.Id == 10)
+                                    .OrderByDescending(x => x.Id)
+                                    .FirstOrDefault();
 
                 List<DailyPrice> dailypriceList_yday = null;
-                if (fileUpload_DailyPriceData_today.Count > 0)
+                if (fileUpload_DailyPriceData_today != null)
                 {
                     dailypriceList_yday = _context.DailyPrices.Include(x => x.DailyUpload)
-                        .Where(
-                            x =>
-                                    x.DailyUploadId.Value == fileUploadId_DailyPriceData_yday).ToList();
+                        .Where(x =>x.DailyUploadId.Value == fileUpload_DailyPriceData_yday.Id)
+                        .ToList();
                 }
 
+                ///////////////////////////////////
+
+                var fuelTypes = new List<FuelTypeItem>()
+                {
+                    FuelTypeItem.Unleaded,
+                    FuelTypeItem.Diesel,
+                    FuelTypeItem.Super_Unleaded
+                };
 
 
                 foreach (var comp in competitors)
@@ -1048,13 +1075,13 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
                     sitePriceRow.FuelPrices = sitePriceRow.FuelPrices ?? new List<FuelPriceViewModel>();
                     int nOffSet = comp.CompetitorId == Jssite.TrailPriceCompetitorId ? (int)Jssite.CompetitorPriceOffsetNew : 0;
-                    AddCompetitorFuelPrice(sitePriceRow.FuelPrices, Jssite, Compsite, (int)FuelTypeItem.Unleaded, nOffSet, forDate, latestCompPrices_today, dailypriceList_today, latestCompPrices_yday, dailypriceList_yday);
-                    AddCompetitorFuelPrice(sitePriceRow.FuelPrices, Jssite, Compsite, (int)FuelTypeItem.Diesel, nOffSet, forDate, latestCompPrices_today, dailypriceList_today, latestCompPrices_yday, dailypriceList_yday);
-                    AddCompetitorFuelPrice(sitePriceRow.FuelPrices, Jssite, Compsite, (int)FuelTypeItem.Super_Unleaded, nOffSet, forDate, latestCompPrices_today, dailypriceList_today, latestCompPrices_yday, dailypriceList_yday);
+
+                    foreach (var fuelType in fuelTypes)
+                    {
+                        AddCompetitorFuelPrice(sitePriceRow.FuelPrices, Jssite, Compsite, fuelType, nOffSet, forDate, latestCompPrices_today, dailypriceList_today, latestCompPrices_yday, dailypriceList_yday);
+                    }
 
                     dbList.Add(sitePriceRow);
-
-
                 }
 
                 return dbList;
@@ -1064,14 +1091,20 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                 _logger.Error(ce);
                 return null;
             }
-           
-
         }
 
 
-
-        private void AddCompetitorFuelPrice(List<FuelPriceViewModel> lstFuelPriceViewModel, Site JsSite, Site CompSite,
-            int FuelType, int nOffSet, DateTime forDate, List<LatestCompPrice> latestCompPrices_today, List<DailyPrice> dailypriceList_today, List<LatestCompPrice> latestCompPrices_yday, List<DailyPrice> dailypriceList_yday)
+        private void AddCompetitorFuelPrice(
+            List<FuelPriceViewModel> lstFuelPriceViewModel, 
+            Site JsSite, 
+            Site compSite,
+            FuelTypeItem fuelType,
+            int nOffSet, 
+            DateTime forDate, 
+            List<LatestCompPrice> latestCompPrices_today, 
+            List<DailyPrice> dailypriceList_today,
+            List<LatestCompPrice> latestCompPrices_yday, 
+            List<DailyPrice> dailypriceList_yday)
         {
 
             int DailyPrice_today = 0;
@@ -1080,33 +1113,34 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             int LatestPrice_yday = 0;
             if (dailypriceList_today != null)
             {
-                var dailyPrice_today = dailypriceList_today.Where(x => x.FuelTypeId == FuelType && x.CatNo== CompSite.CatNo.GetValueOrDefault()).ToList();
-                DailyPrice_today = dailyPrice_today.Count > 0 ? dailyPrice_today[0].ModalPrice : 0;
+                var dailyPrice_today = dailypriceList_today.FirstOrDefault(x => x.FuelTypeId == (int)fuelType && x.CatNo == compSite.CatNo.GetValueOrDefault());
+                DailyPrice_today = dailyPrice_today != null ? dailyPrice_today.ModalPrice : 0;
             }
             if (dailypriceList_yday != null)
             {
-                var dailyPrice_yday = dailypriceList_yday.Where(x => x.FuelTypeId == FuelType && x.CatNo == CompSite.CatNo.GetValueOrDefault()).ToList();
-                DailyPrice_yday = dailyPrice_yday.Count > 0 ? dailyPrice_yday[0].ModalPrice : 0;
+                var dailyPrice_yday = dailypriceList_yday.FirstOrDefault(x => x.FuelTypeId == (int)fuelType && x.CatNo == compSite.CatNo.GetValueOrDefault());
+                DailyPrice_yday = dailyPrice_yday != null ? dailyPrice_yday.ModalPrice : 0;
             }
 
             if (latestCompPrices_today != null)
             {
-                var latestPrice_today = latestCompPrices_today.Where(x => x.FuelTypeId == FuelType && x.CatNo == CompSite.CatNo.GetValueOrDefault()).ToList();
-                LatestPrice_today = latestPrice_today.Count > 0 ? latestPrice_today[0].ModalPrice : 0;
+                var latestPrice_today = latestCompPrices_today.FirstOrDefault(x => x.FuelTypeId == (int)fuelType && x.CatNo == compSite.CatNo.GetValueOrDefault());
+                LatestPrice_today = latestPrice_today != null ? latestPrice_today.ModalPrice : 0;
             }
 
             if (latestCompPrices_yday != null)
             {
-                var latestPrice_yday = latestCompPrices_yday.Where(x => x.FuelTypeId == FuelType && x.CatNo == CompSite.CatNo.GetValueOrDefault()).ToList();
-                LatestPrice_yday = latestPrice_yday.Count > 0 ? latestPrice_yday[0].ModalPrice : 0;
+                var latestPrice_yday = latestCompPrices_yday.FirstOrDefault(x => x.FuelTypeId == (int)fuelType && x.CatNo == compSite.CatNo.GetValueOrDefault());
+                LatestPrice_yday = latestPrice_yday != null ? latestPrice_yday.ModalPrice : 0;
             }
 
             var todayPrice = LatestPrice_today > 0 ? LatestPrice_today + nOffSet : DailyPrice_today + nOffSet;
+
             var yesterdayPrice = LatestPrice_yday > 0 ? LatestPrice_yday + nOffSet : DailyPrice_yday + nOffSet;
 
             lstFuelPriceViewModel.Add(new FuelPriceViewModel
             {
-                FuelTypeId = FuelType,
+                FuelTypeId = (int)fuelType,
 
                 // Today's prices (whatever was calculated yesterday OR last)
                 TodayPrice = todayPrice,
@@ -1117,8 +1151,6 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                 //Difference between yesterday and today
                 Difference = todayPrice > 0 && yesterdayPrice > 0 ? todayPrice - yesterdayPrice : 0
             });
-
-
         }
    
         private static object cachedGetDailyPricesForFuelByCompetitorsLock = new Object();
