@@ -1,6 +1,24 @@
-﻿@{
+﻿@model JsPlc.Ssc.PetrolPricing.Models.ViewModels.RecentFileUploadSummary
+@using JsPlc.Ssc.PetrolPricing.Portal.Helper.Extensions
+@{
     ViewBag.Title = "Sainsbury's Petrol Pricing";
 }
+
+@{
+    var statusMarkup = new Dictionary<string, string>()
+    {
+        {"Calculating", "<span class='label label-info'><i class='fa fa-calculator'></i> Calculating</span>" },
+        {"Failed", "<span class='label label-danger'><i class='fa fa-times-circle'></i> Failed</span>" },
+        {"Processing", "<span class='label label-success'><i class='fa fa-fa-cog'></i> Processing</span>" },
+        {"Success", "<span class='label label-success'><i class='fa fa-check-circle'></i> Success</span>" },
+        {"Uploaded", "<span class='label label-info'><i class='fa fa-upload'></i> Uploaded</span>" },
+        {"Warning", "<span class='label label-warning'><i class='fa fa-warning'></i> Warning</span>" }
+    };
+}
+<style>
+    .spaced-list li {line-height: 1.75em;}
+</style>
+
 
 <div class="jumbotron">
     <h1 class="site-hero-text"><i class="fa fa-bar-chart-o"></i> Sainsbury's Petrol Pricing</h1>
@@ -8,14 +26,61 @@
 </div>
 
 <div class="row">
-    <div class="col-md-12">
+    <div class="col-md-5">
         <h2>This application allows users to:</h2>
-        <ul>
+        <ul class="spaced-list">
             <li>Compute & adjust daily fuel prices for Sainsburys' fuel stations</li>
             <li>Perform market comparison on fuel prices</li>
             <li>Track fuel price movement</li>
             <li>Report on fuel prices</li>
             <li>Maintain records of sites (own and competitors)</li>
         </ul>
+    </div>
+
+    <div class="col-md-7" style="border-left: 1px dashed #ccc;">
+        <h2>Recent File Uploads</h2>
+        <table class="table table-striped recent-file-uploads" style="margin-bottom: none;">
+            <thead>
+                <tr>
+                    <th>Type</th>
+                    <th>Status</th>
+                    <th>Uploaded</th>
+                    <th>User</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var row in Model.Files)
+                {
+                    var daysAgo = DateTime.Now.Date.Subtract(row.UploadDateTime.Date).TotalDays;
+                    var isRecentUpload = daysAgo < 2;
+                    var rowClass = isRecentUpload ? "recent" : "";
+                <tr class="@rowClass">
+                    <td>@row.UploadTypeName</td>
+                    <td>
+                        @if (statusMarkup.ContainsKey(row.ImportStatus))
+                        {
+                            @Html.Raw(statusMarkup[row.ImportStatus])
+                        }
+                        else
+                        {
+                            <span><i></i>@row.ImportStatus</span>
+                        }
+                    </td>
+                    <td>
+                        @if (isRecentUpload)
+                        {
+                            <strong>@Html.FormatFriendlyDateTime(row.UploadDateTime)</strong>
+                        } else
+                        {
+                            <span>@Html.FormatFriendlyDateTime(row.UploadDateTime)</span>
+                        }
+                    </td>
+                    <td>
+                        @row.UploadedBy
+                    </td>
+                </tr>
+                }
+            </tbody>
+        </table>
     </div>
 </div>

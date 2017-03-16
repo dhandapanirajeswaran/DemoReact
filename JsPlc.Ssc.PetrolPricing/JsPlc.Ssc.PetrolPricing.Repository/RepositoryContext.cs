@@ -74,7 +74,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
         public List<FuelPriceViewModel> CalculateFuelPricesForSitesAndDate(DateTime forDate, string siteIds)
         {
-            var sproc = "spCalculateSitePricesForDate";
+            const string sproc = "spCalculateSitePricesForDate";
 
             var parameters = new
             {
@@ -83,6 +83,18 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             };
 
             return DapperHelper.QueryList<FuelPriceViewModel>(this, sproc, parameters);
+        }
+
+        public RecentFileUploadSummary GetRecentFileUploadSummary()
+        {
+            const string sproc = "spGetRecentFileUploadSummary";
+
+            var parameters = new { };
+
+            return new RecentFileUploadSummary()
+            {
+                Files = DapperHelper.QueryList<RecentFileUploadSummaryItem>(this, sproc, parameters)
+            };
         }
     }
 }

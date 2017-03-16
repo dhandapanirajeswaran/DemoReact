@@ -513,5 +513,21 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
                 return new ExceptionResult(ex, this);
             }
         }
-	}
+
+        [System.Web.Http.HttpGet]
+        [System.Web.Http.Route("api/GetRecentFileUploadSummary/")]
+        public IHttpActionResult GetRecentFileUploadSummary()
+        {
+            try
+            {
+                var result = _siteService.GetRecentFileUploadSummary();
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex);
+                return new ExceptionResult(ex, this);
+            }
+        }
+    }
 }

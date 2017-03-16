@@ -146,6 +146,7 @@
     <Build Include="dbo\Functions\Scalar Functions\fn_ReplaceLastPriceDigit.sql" />
     <Build Include="dbo\Functions\Scalar Functions\fn_CalculateTodayPrice.sql" />
     <Build Include="dbo\Functions\Table Functions\tf_SplitIdsOnComma.sql" />
+    <Build Include="dbo\Stored Procedures\spGetRecentFileUploadSummary.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Scripts\PostDeployment\Script.PostDeployment.sql" />

@@ -135,5 +135,10 @@ namespace JsPlc.Ssc.PetrolPricing.Business
         {
             return _db.DeleteSiteNote(siteId);
         }
-	}
+
+        public RecentFileUploadSummary GetRecentFileUploadSummary()
+        {
+            return _db.GetRecentFileUploadSummary();
+        }
+    }
 }

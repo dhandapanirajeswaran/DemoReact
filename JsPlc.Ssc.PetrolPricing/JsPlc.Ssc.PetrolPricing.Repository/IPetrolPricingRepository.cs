@@ -266,5 +266,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         JsonResultViewModel<bool> UpdateSiteNote(SiteNoteUpdateViewModel model);
 
         JsonResultViewModel<int> DeleteSiteNote(int siteId);
-	}
+
+        RecentFileUploadSummary GetRecentFileUploadSummary();
+    }
 }

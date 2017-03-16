@@ -3262,6 +3262,11 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
             }
         }
 
+        public RecentFileUploadSummary GetRecentFileUploadSummary()
+        {
+            return _context.GetRecentFileUploadSummary();
+        }
+
         #region private methods
 
         // Move forward from the forDate and find a set of Prices which were recently uploaded..

@@ -839,5 +839,27 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
                 throw new Exception("Exception in DeleteSiteNote" + System.Environment.NewLine + ex.Message, ex);
             }
         }
+
+        public RecentFileUploadSummary GetRecentFileUploadSummary()
+        {
+            try
+            {
+                var apiUrl = "api/GetRecentFileUploadSummary";
+
+                var response = _client.Value.GetAsync(apiUrl).Result;
+                if (response.IsSuccessStatusCode)
+                {
+                    var result = response.Content.ReadAsAsync<RecentFileUploadSummary>().Result;
+                    return result;
+                }
+                else
+                    return new RecentFileUploadSummary();
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex);
+                throw new Exception("Exception in GetRecentFileUploadSummary" + System.Environment.NewLine + ex.Message, ex);
+            }
+        }
     }
 }
