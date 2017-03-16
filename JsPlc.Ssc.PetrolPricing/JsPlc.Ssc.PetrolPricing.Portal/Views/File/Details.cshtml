@@ -1,7 +1,17 @@
 ﻿@model JsPlc.Ssc.PetrolPricing.Models.FileUpload
+@using JsPlc.Ssc.PetrolPricing.Portal.Helper.Extensions
 @{
     ViewBag.Title = "Uploaded file details";
+
+    var daysAgo = DateTime.Now.Date.Subtract(Model.UploadDateTime.Date).TotalDays;
+    var daysAgoText = daysAgo == 0 ? "Today" : daysAgo == 1 ? "Yesterday" : daysAgo + " Days ago";
+    var isRecentUpload = daysAgo < 2;
 }
+
+<style>
+    dt, dd {line-height: 2em;}
+</style>
+
 <h1><i class="fa fa-file"></i> Uploaded file details</h1>
 @if (Model.ImportProcessErrors.Any())
 {
@@ -37,7 +47,7 @@
             </dt>
 
             <dd>
-                @Html.DisplayFor(model => model.UploadDateTime)
+                @Html.DisplayFor(model => model.UploadDateTime) <strong style="margin-left: 1em;">( @daysAgoText )</strong>
             </dd>
 
             <dt>
@@ -54,10 +64,11 @@
 
             <dd>
                 @Html.DisplayFor(model => model.UploadedBy)
+                <a class="btn btn-primary btn-sm" target="_blank" style="margin-left: 1em;" href="mailto:@Model.UploadedBy"><i class="fa fa-at"></i> Email</a>
             </dd>
         </dl>
     </div>
     <div class="panel-footer">
-        @Html.ActionLink("Back to List", "Index", null, new { @class = "btn btn-default" })
+        <a class="btn btn-default" href="@Url.Action("Index", "File")"><i class="fa fa-angle-double-left"></i> Back to List</a>
     </div>
 </div>
