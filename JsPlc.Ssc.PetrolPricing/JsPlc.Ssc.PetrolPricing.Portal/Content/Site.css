@@ -524,11 +524,11 @@ table.fixed-header>tbody {
 
 .recent-file-uploads  tr.recent:nth-child(odd),
 #FileUploadContainer tr.recent:nth-child(odd) {
-    background-color:  #ffe;
+    background-color:  #efe;
 }
 .recent-file-uploads  tr.recent:nth-child(odd),
 #FileUploadContainer tr.recent:nth-child(even) {
-    background-color: #eed;
+    background-color: #ded;
 }
 
 .spinner {

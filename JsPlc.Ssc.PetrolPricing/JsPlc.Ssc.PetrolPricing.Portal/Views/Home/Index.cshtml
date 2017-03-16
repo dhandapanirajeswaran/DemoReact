@@ -17,7 +17,10 @@
     };
 }
 <style>
-    .spaced-list li {line-height: 1.75em;}
+    .spaced-list li {line-height: 2.5em;}
+    .good {color: green;}
+    .warning {color: orange;}
+    .error {color: red;}
 </style>
 
 
@@ -56,7 +59,8 @@
                     var daysAgo = DateTime.Now.Date.Subtract(row.UploadDateTime.Date).TotalDays;
                     var isRecentUpload = daysAgo < 2;
                     var rowClass = isRecentUpload ? "recent" : "";
-                    var isOutdated = row.UploadTypeId != (int)FileUploadTypes.QuarterlySiteData && daysAgo > 1;
+                    var maxAgeInDays = row.UploadTypeId == (int)FileUploadTypes.QuarterlySiteData ? 90 : 1;
+                    var isOutdated = daysAgo > maxAgeInDays;
                     var isSuccessful = row.ImportStatusId == (int)ImportProcessStatuses.Success;
                     var warning = isSuccessful && isOutdated == false ? "" : isOutdated ? "Outdated" : "Non-successful upload";
                     <tr class="@rowClass">
@@ -78,7 +82,14 @@
                             }
                             else
                             {
-                                <span>@daysAgo Days Ago</span>
+                                if (isOutdated)
+                                {
+                                    <span class="warning">@daysAgo Days Ago</span>
+                                }
+                                else
+                                {
+                                    <span>@daysAgo Days Ago</span>
+                                }
                             }
                         </td>
                         <td>
@@ -89,15 +100,16 @@
                             {
                                 if (isOutdated)
                                 {
-                                    <i class="fa fa-warning" style="color: orange;" title="@warning"></i>
+                                    <i class="fa fa-calendar warning" title="@warning"></i>
                                 }
                                 else
                                 {
-                                    <i class="fa fa-warning" style="color: red;" title="@warning"></i>
+                                    <i class="fa fa-warning error" title="@warning"></i>
                                 }
-                            } else
+                            }
+                            else
                             {
-                                <i class="fa fa-check" style="color: green" title="Success"></i>
+                                <i class="fa fa-check good" title="Success"></i>
                             }
                         </td>
                     </tr>
