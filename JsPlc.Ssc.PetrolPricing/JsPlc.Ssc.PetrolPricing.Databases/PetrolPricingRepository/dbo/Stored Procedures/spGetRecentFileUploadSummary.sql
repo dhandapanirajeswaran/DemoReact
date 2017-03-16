@@ -3,6 +3,7 @@ AS
 	SET NOCOUNT ON
 	SELECT
 		ut.UploadTypeName [UploadTypeName],
+		ut.Id [UploadTypeId],
 		ips.Id [ImportStatusId],
 		ips.Status [ImportStatus],
 		fu.Id [FileUploadId],

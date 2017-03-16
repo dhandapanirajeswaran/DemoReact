@@ -9,6 +9,8 @@ namespace JsPlc.Ssc.PetrolPricing.Models.ViewModels
     public class RecentFileUploadSummaryItem
     {
         public string UploadTypeName { get; set; }
+        public int UploadTypeId { get; set; }
+        public int ImportStatusId { get; set; }
         public string ImportStatus { get; set; }
         public int FileUploadId { get; set; }
         public string OriginalFileName { get; set; }
