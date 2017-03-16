@@ -73,6 +73,6 @@
             show: show,
             hide: hide,
             showViewingReport: showViewingReport,
-            showExportToExcel, showExportToExcel
+            showExportToExcel: showExportToExcel
         };
     });

@@ -62,7 +62,7 @@
                     <tr class="@rowClass">
                         <td>@row.UploadTypeName</td>
                         <td>
-                            @if (statusMarkup.ContainsKey(row.ImportStatus))
+                            @if (row.ImportStatus != null && statusMarkup.ContainsKey(row.ImportStatus))
                             {
                                 @Html.Raw(statusMarkup[row.ImportStatus])
                             }
