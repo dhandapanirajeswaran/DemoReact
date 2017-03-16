@@ -1,5 +1,5 @@
-﻿require(["jquery", "common", "busyloader", "bootstrap-datepicker"],
-    function ($, common, busyloader, bsdatepicker) {
+﻿require(["jquery", "common", "busyloader", "bootstrap-datepicker", "notify", "downloader"],
+    function ($, common, busyloader, bsdatepicker, notify, downloader) {
         $("document").ready(function () {
 
             var rootFolder = common.reportRootFolder();
@@ -20,9 +20,19 @@
                 window.location.href = rootFolder + '/PriceReports/competitorsPriceRange?For=' + dt;
             });
             $("#btnExportReport").click(function () {
-                var dt = forDp.val();
+                var dt = forDp.val(),
+                    downloadId = downloader.generateId();
                 busyloader.showExportToExcel();
-                window.location.href = rootFolder + '/PriceReports/ExportCompetitorsPriceRange?For=' + dt;
+
+                downloader.start({
+                    id: downloadId,
+                    element: '#btnExportReport',
+                    complete: function () {
+                        notify.success('Export completed');
+                    }
+                });
+
+                window.location.href = rootFolder + '/PriceReports/ExportCompetitorsPriceRange?downloadId=' + downloadId + '&For=' + dt;
             });
             $('#btnResetReport').click(function () {
                 window.location.href = rootFolder + '/PriceReports/CompetitorsPriceRange';

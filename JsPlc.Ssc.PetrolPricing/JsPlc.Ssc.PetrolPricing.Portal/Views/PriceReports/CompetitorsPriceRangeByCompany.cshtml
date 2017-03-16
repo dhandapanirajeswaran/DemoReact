@@ -31,11 +31,11 @@
             {
                 if (hasData)
                 {
-                    <button type="submit" id="btnExportReport" class="btn btn-primary"><i class="fa fa-download"></i> Export to Excel</button>
+                    <button type="button" id="btnExportReport" class="btn btn-primary"><i class="fa fa-download"></i> Export to Excel</button>
                 }
                 else
                 {
-                    <button type="submit" id="btnExportReport" class="btn btn-primary" disabled="disabled"><i class="fa fa-download"></i> Export to Excel</button>
+                    <button type="button" id="btnExportReport" class="btn btn-primary" disabled="disabled"><i class="fa fa-download"></i> Export to Excel</button>
                 }
                 <input type="hidden" id="DateForCopy" name="DateFor" />
                 <input type="hidden" id="SelectedCompanyNameCopy" name="SelectedCompanyName" />
@@ -62,11 +62,13 @@
                 <label for="SelectedBrandName">Brand:</label>
                 @Html.DropDownListFor(d => d.SelectedBrandName, Model.Brands.Select(b => new SelectListItem { Value = b, Text = b, Selected = b == Model.SelectedBrandName }), null, new { @class = "form-control" })
             </div>
-            <div class="col-md-1" style="padding-top: 1.74em">
-                <button type="submit" class="btn btn-success btn-block" id="btnViewReport">View</button>
+            <div class="col-md-1">
+                <label>&nbsp;</label>
+                <button type="submit" class="btn btn-success btn-block" id="btnViewReport"><i class="fa fa-search"></i> View</button>
             </div>
-            <div class="col-md-1" style="padding-top: 1.74em">
-                <button type="button" class="btn btn-danger btn-block" id="btnResetReport">Reset</button>
+            <div class="col-md-1">
+                <label>&nbsp;</label>
+                <button type="button" class="btn btn-danger btn-block" id="btnResetReport"><i class="fa fa-power-off"></i> Reset</button>
             </div>
         </div>
         <hr />

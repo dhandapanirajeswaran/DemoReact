@@ -16,13 +16,13 @@ using System.Linq;
 using System.Web.Mvc;
 using JsPlc.Ssc.PetrolPricing.Core;
 using JsPlc.Ssc.PetrolPricing.Core.Interfaces;
-
+using JsPlc.Ssc.PetrolPricing.Portal.Controllers.BaseClasses;
 
 namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 {
   
 	[System.Web.Mvc.Authorize]
-	public class PriceReportsController : Controller
+	public class PriceReportsController : BaseController
 	{
 		private readonly ServiceFacade _serviceFacade ;
 
@@ -281,7 +281,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 		//### #### #### #### ####
 
 		[System.Web.Mvc.HttpGet]
-		public ActionResult ExportPriceMovement([FromUri]DateTime DateFrom, [FromUri]DateTime DateTo, [FromUri]int FuelTypeId = 0, [FromUri]string BrandName = "")
+		public ActionResult ExportPriceMovement([FromUri]string downloadId, [FromUri]DateTime DateFrom, [FromUri]DateTime DateTo, [FromUri]int FuelTypeId = 0, [FromUri]string BrandName = "")
 		{
 			var model = new PriceMovementReportContainerViewModel
 			{
@@ -301,11 +301,11 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 					reportContainer.ToDate.Value.ToString("dd-MMM-yyyy"));
 
 
-			return ExcelDocumentStream(new List<DataTable> { dt }, model.Brand + " PriceMovementReport", filenameSuffix);
+            return ExcelDocumentStream(new List<DataTable> { dt }, model.Brand + " PriceMovementReport", filenameSuffix, downloadId);
 		}
 
 		[System.Web.Mvc.HttpGet]
-		public ActionResult ExportNationalAverage(string For = "")
+		public ActionResult ExportNationalAverage(string downloadId, string For = "")
 		{
 			DateTime forDate;
 			if (!DateTime.TryParse(For, out forDate))
@@ -321,11 +321,11 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 
 			string filenameSuffix = String.Format("[{0}]", forDate.ToString("dd-MMM-yyyy"));
 
-			return ExcelDocumentStream(new List<DataTable> { dt }, "NationalAverageReport", filenameSuffix);
+            return ExcelDocumentStream(new List<DataTable> { dt }, "NationalAverageReport", filenameSuffix, downloadId);
 		}
 
 		[System.Web.Mvc.HttpGet]
-		public ActionResult ExportNationalAverage2(string For = "",bool  viewAllCompitetors=false)
+		public ActionResult ExportNationalAverage2(string downloadId, string For = "",bool  viewAllCompitetors=false)
 		{
 			DateTime forDate;
 			if (!DateTime.TryParse(For, out forDate))
@@ -341,11 +341,11 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 
 			string filenameSuffix = String.Format("[{0}]", forDate.ToString("dd-MMM-yyyy"));
 
-			return ExcelDocumentStream(new List<DataTable> { dt }, "NationalAverageReport2", filenameSuffix);
+            return ExcelDocumentStream(new List<DataTable> { dt }, "NationalAverageReport2", filenameSuffix, downloadId);
 		}
 
         [System.Web.Mvc.HttpGet]
-        public ActionResult ExportCompetitorSites(int siteId)
+        public ActionResult ExportCompetitorSites(string downloadId, int siteId)
 		{
             var reportContainer = _serviceFacade.GetCompetitorSites(siteId);
 
@@ -355,14 +355,12 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 
 			string filenameSuffix = String.Format("[{0}]", forDate.ToString("dd-MMM-yyyy"));
 
-            return ExcelDocumentStream(new List<DataTable> { dt }, "CompetitorSites", filenameSuffix);
+            return ExcelDocumentStream(new List<DataTable> { dt }, "CompetitorSites", filenameSuffix, downloadId);
 		}
-
-
-        
+       
 
 		[System.Web.Mvc.HttpGet]
-		public ActionResult ExportCompetitorsPriceRange(string For = "")
+		public ActionResult ExportCompetitorsPriceRange(string downloadId, string For = "")
 		{
 			DateTime forDate;
 			if (!DateTime.TryParse(For, out forDate))
@@ -378,11 +376,11 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 
 			string filenameSuffix = String.Format("[{0}]", forDate.ToString("dd-MMM-yyyy"));
 
-			return ExcelDocumentStream(new List<DataTable> { dtByBrand }, "CompetitorsPriceRange", filenameSuffix);
+            return ExcelDocumentStream(new List<DataTable> { dtByBrand }, "CompetitorsPriceRange", filenameSuffix, downloadId);
 		}
 
 		[System.Web.Mvc.HttpGet]
-		public ActionResult ExportCompetitorsPriceRangeByCompany([FromUri]DateTime DateFor, [FromUri]string SelectedCompanyName, [FromUri]string SelectedBrandName)
+		public ActionResult ExportCompetitorsPriceRangeByCompany([FromUri]string downloadId, [FromUri]DateTime DateFor, [FromUri]string SelectedCompanyName, [FromUri]string SelectedBrandName)
 		{
 			var report = _serviceFacade.GetCompetitorsPriceRangeByCompany(DateFor, SelectedCompanyName, SelectedBrandName);
 
@@ -392,11 +390,11 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 
 			string filenameSuffix = String.Format("{1}-{2} [{0}]", DateFor.ToString("dd-MMM-yyyy"), SelectedCompanyName, SelectedBrandName);
 
-			return ExcelDocumentStream(new List<DataTable> { dt }, "CompetitorsPriceRangeByCompany", filenameSuffix);
+            return ExcelDocumentStream(new List<DataTable> { dt }, "CompetitorsPriceRangeByCompany", filenameSuffix, downloadId);
 		}
 
 		[System.Web.Mvc.HttpGet]
-		public ActionResult ExportPricePoints(string For = "")
+		public ActionResult ExportPricePoints(string downloadId, string For = "")
 		{
 			DateTime forDate;
 			if (!DateTime.TryParse(For, out forDate))
@@ -414,7 +412,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 
 			string filenameSuffix = String.Format("[{0}]", forDate.ToString("dd-MMM-yyyy"));
 
-			return ExcelDocumentStream(tables, "PricePointsReport", filenameSuffix);
+            return ExcelDocumentStream(tables, "PricePointsReport", filenameSuffix, downloadId);
 		}
 		#endregion
 
@@ -514,24 +512,24 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             return item;
         }
 
-		private ActionResult ExcelDocumentStream(List<DataTable> tables, string fileName, string fileNameSuffix)
-		{
-			//if (!tables.Any())
-			//{
-			//	return new ContentResult { Content = "No data to download..", ContentType = "text/plain" };
-			//}
+        private ActionResult ExcelDocumentStream(List<DataTable> tables, string fileName, string fileNameSuffix, string downloadId)
+        {
+            //if (!tables.Any())
+            //{
+            //	return new ContentResult { Content = "No data to download..", ContentType = "text/plain" };
+            //}
 
-			//if (tables[0].Rows.Count <= 1) // Model != null && Model.NationalAverageReport != null && Model.NationalAverageReport.Fuels.Any()
-			//{
-			//	return new ContentResult { Content = "No data to download..", ContentType = "text/plain" };
-			//}
+            //if (tables[0].Rows.Count <= 1) // Model != null && Model.NationalAverageReport != null && Model.NationalAverageReport.Fuels.Any()
+            //{
+            //	return new ContentResult { Content = "No data to download..", ContentType = "text/plain" };
+            //}
 
-			using (var wb = new XLWorkbook())
-			{
+            using (var wb = new XLWorkbook())
+            {
 
-				foreach (var dt in tables)
-				{
-					var ws=wb.Worksheets.Add(dt);
+                foreach (var dt in tables)
+                {
+                    var ws = wb.Worksheets.Add(dt);
                     if (fileName == "NationalAverageReport2" || fileName == "CompetitorSites" || fileName == "NationalAverageReport" || fileName == "CompetitorsPriceRange" || fileName.Contains("PriceMovementReport"))
                     {
                         ws.Rows().AdjustToContents();
@@ -544,7 +542,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 
                         var sitesCellRange = string.Format("{0}:{1}{2}", rangeAddress.FirstAddress, rangeAddress.FirstAddress.ColumnLetter, ws.Rows().Count());
                         var Others_CellRange = string.Format("B2:{0}{1}", rangeAddress.LastAddress.ColumnLetter, ws.Rows().Count());
-                     
+
                         ws.Range(cellrange).Style.NumberFormat.SetFormat("@");
                         ws.Range(sitesCellRange).Style.NumberFormat.SetFormat("@");
                         ws.Range(Others_CellRange).Style.NumberFormat.SetFormat("0.00");
@@ -555,8 +553,8 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
                         var cellrange = string.Format("{0}:{1}{2}", rangeAddress.FirstAddress, rangeAddress.LastAddress.ColumnLetter, rangeAddress.FirstAddress.ColumnNumber);
 
                         var brandCellRange = string.Format("{0}:{1}{2}", rangeAddress.FirstAddress, rangeAddress.FirstAddress.ColumnLetter, ws.Rows().Count());
-                        var dieselPriceRange_CellRange = string.Format("F2:F{0}",  ws.Rows().Count());
-                        var unleadedPriceRange_CellRange = string.Format("G2:G{0}",  ws.Rows().Count());
+                        var dieselPriceRange_CellRange = string.Format("F2:F{0}", ws.Rows().Count());
+                        var unleadedPriceRange_CellRange = string.Format("G2:G{0}", ws.Rows().Count());
                         var dieselAvgRetails_CellRange = string.Format("B2:B{0}", ws.Rows().Count());
                         var unleadedAvgRetails_CellRange = string.Format("C2:C{0}", ws.Rows().Count());
                         var dieselDiffRetails_CellRange = string.Format("D2:D{0}", ws.Rows().Count());
@@ -577,7 +575,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
                         var cellrange = string.Format("{0}:{1}{2}", rangeAddress.FirstAddress, rangeAddress.LastAddress.ColumnLetter, rangeAddress.FirstAddress.ColumnNumber);
 
                         var companyCellRange = string.Format("{0}:{1}{2}", rangeAddress.FirstAddress, rangeAddress.FirstAddress.ColumnLetter, ws.Rows().Count());
-                        var brandCellRange = string.Format("B2:B{0}",  ws.Rows().Count());
+                        var brandCellRange = string.Format("B2:B{0}", ws.Rows().Count());
                         var dieselAvgRetail_CellRange = string.Format("C2:C{0}", ws.Rows().Count());
                         var unleadedAvgRetail_CellRange = string.Format("D2:D{0}", ws.Rows().Count());
                         var unleadedDiffRetails_CellRange = string.Format("E2:E{0}", ws.Rows().Count());
@@ -601,59 +599,59 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
                         var rangeAddress = ws.Tables.FirstOrDefault().RangeAddress;
                         var cellrange = string.Format("{0}:{1}{2}", rangeAddress.FirstAddress, rangeAddress.LastAddress.ColumnLetter, rangeAddress.FirstAddress.ColumnNumber);
 
-                     
+
                         ws.Range(cellrange).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Left;
-                       ws.Range(cellrange).Style.Alignment.Vertical = XLAlignmentVerticalValues.Center;
+                        ws.Range(cellrange).Style.Alignment.Vertical = XLAlignmentVerticalValues.Center;
                         ws.Range(cellrange).Style.Alignment.TextRotation = 90;
-                        ws.Range(string.Format("{0}",rangeAddress.FirstAddress)).Style.Alignment.TextRotation = 45;
+                        ws.Range(string.Format("{0}", rangeAddress.FirstAddress)).Style.Alignment.TextRotation = 45;
                     }
                     if (fileName == "NationalAverageReport")
                     {
-                       int nCount= ws.Rows().Count();
-                       for(int i=2;i<=nCount;i++)
-                       {
-                           var Cell_DieselVariance = "F" + i.ToString();
-                           var Cell_UnleadedVariance = "G" + i.ToString();
-                           var Cell_AveragelVariance = "H" + i.ToString();
-                           object value_DieselVariance = ws.Cell(Cell_DieselVariance).Value;
-                           object value_UnleadedVariance = ws.Cell(Cell_UnleadedVariance).Value;
-                           object value_AveragelVariance = ws.Cell(Cell_AveragelVariance).Value;
-                           if (value_DieselVariance.ToString() != "")
-                           {
-                               if (Convert.ToDouble(value_DieselVariance) > 0.0)
-                               {
-                                   ws.Cell(Cell_DieselVariance).Style.Font.FontColor = XLColor.Green;
-                               }
-                               else if (Convert.ToDouble(value_DieselVariance) < 0.0)
-                               {
-                                   ws.Cell(Cell_DieselVariance).Style.Font.FontColor = XLColor.Red;
-                               }
-                           }
+                        int nCount = ws.Rows().Count();
+                        for (int i = 2; i <= nCount; i++)
+                        {
+                            var Cell_DieselVariance = "F" + i.ToString();
+                            var Cell_UnleadedVariance = "G" + i.ToString();
+                            var Cell_AveragelVariance = "H" + i.ToString();
+                            object value_DieselVariance = ws.Cell(Cell_DieselVariance).Value;
+                            object value_UnleadedVariance = ws.Cell(Cell_UnleadedVariance).Value;
+                            object value_AveragelVariance = ws.Cell(Cell_AveragelVariance).Value;
+                            if (value_DieselVariance.ToString() != "")
+                            {
+                                if (Convert.ToDouble(value_DieselVariance) > 0.0)
+                                {
+                                    ws.Cell(Cell_DieselVariance).Style.Font.FontColor = XLColor.Green;
+                                }
+                                else if (Convert.ToDouble(value_DieselVariance) < 0.0)
+                                {
+                                    ws.Cell(Cell_DieselVariance).Style.Font.FontColor = XLColor.Red;
+                                }
+                            }
 
-                           if (value_UnleadedVariance.ToString() != "")
-                           {
-                               if (Convert.ToDouble(value_UnleadedVariance) > 0.0)
-                               {
-                                   ws.Cell(Cell_UnleadedVariance).Style.Font.FontColor = XLColor.Green;
-                               }
-                               else if (Convert.ToDouble(value_UnleadedVariance) < 0.0)
-                               {
-                                   ws.Cell(Cell_UnleadedVariance).Style.Font.FontColor = XLColor.Red;
-                               }
-                           }
+                            if (value_UnleadedVariance.ToString() != "")
+                            {
+                                if (Convert.ToDouble(value_UnleadedVariance) > 0.0)
+                                {
+                                    ws.Cell(Cell_UnleadedVariance).Style.Font.FontColor = XLColor.Green;
+                                }
+                                else if (Convert.ToDouble(value_UnleadedVariance) < 0.0)
+                                {
+                                    ws.Cell(Cell_UnleadedVariance).Style.Font.FontColor = XLColor.Red;
+                                }
+                            }
 
-                           if (value_AveragelVariance.ToString() != "")
-                           {
-                               if (Convert.ToDouble(value_AveragelVariance) > 0.0)
-                               {
-                                   ws.Cell(Cell_AveragelVariance).Style.Font.FontColor = XLColor.Green;
-                               }
-                               else if (Convert.ToDouble(value_AveragelVariance) < 0.0)
-                               {
-                                   ws.Cell(Cell_AveragelVariance).Style.Font.FontColor = XLColor.Red;
-                               }
-                           }
-                       }
+                            if (value_AveragelVariance.ToString() != "")
+                            {
+                                if (Convert.ToDouble(value_AveragelVariance) > 0.0)
+                                {
+                                    ws.Cell(Cell_AveragelVariance).Style.Font.FontColor = XLColor.Green;
+                                }
+                                else if (Convert.ToDouble(value_AveragelVariance) < 0.0)
+                                {
+                                    ws.Cell(Cell_AveragelVariance).Style.Font.FontColor = XLColor.Red;
+                                }
+                            }
+                        }
 
                     }
 
@@ -661,7 +659,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
                     {
                         int nColCount = ws.Columns().Count();
                         char cellAlphabet = 'E';
-                        for(int i=4;i<=nColCount;i++)
+                        for (int i = 4; i <= nColCount; i++)
                         {
                             string cell = string.Format("{0}4", cellAlphabet);
                             object cell_value = ws.Cell(cell).Value;
@@ -681,30 +679,15 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
                         }
 
                     }
-				}
-				wb.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
-				wb.Style.Font.Bold = true;
+                }
+                wb.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+                wb.Style.Font.Bold = true;
 
-				Response.Clear();
-				Response.Buffer = true;
-				Response.Charset = "";
-				Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                var excelFilename = String.Format("{1}{0}.xlsx", fileNameSuffix, fileName);
 
-				string downloadHeader = String.Format("attachment;filename= {1}{0}.xlsx",
-					fileNameSuffix,
-					fileName);
-				Response.AddHeader("content-disposition", downloadHeader);
-
-				using (var myMemoryStream = new MemoryStream())
-				{
-					wb.SaveAs(myMemoryStream);
-					myMemoryStream.WriteTo(Response.OutputStream);
-					Response.Flush();
-					Response.End();
-					return new EmptyResult();
-				}
-			}
-		}
+                return base.SendExcelFile(excelFilename, wb, downloadId);
+            }
+        }
 		#endregion
 	}
 }

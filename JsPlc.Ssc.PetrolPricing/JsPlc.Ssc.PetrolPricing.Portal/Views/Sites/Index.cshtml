@@ -12,8 +12,10 @@
     </div>
 </div>
 
-<div style="display:block;" class="alert alert-warning busy-loader" data-bind="visible: $root.busyLoadingData()">
-    <div class="col-md-1 text-center"><i class="fa fa-clock-o fa-2x"></i></div>
+<div style="display:none;" class="alert alert-warning busy-loader" data-bind="visible: $root.busyLoadingData()">
+    <div class="col-md-1 text-center">
+        <i class="fa fa-clock-o fa-2x spinner"></i>
+    </div>
     <div class="col-md-10 text-center">
         <strong>Loading Site Maintenance information. Please wait...</strong>
     </div>
@@ -61,34 +63,34 @@
 
 </div>
 <hr />
-@if (Model!=null) 
+@if (Model != null)
 {
     @Html.Partial("_SiteList", Model)
 }
 
 
 <script type="text/javascript">
-    
-    $("#viewingStoreTown").keyup(function(event){
-        if(event.keyCode == 13){
+
+    $("#viewingStoreTown").keyup(function (event) {
+        if (event.keyCode == 13) {
             $("#btnGO").click();
         }
     });
 
-    $("#viewingStoreName").keyup(function(event){
-        if(event.keyCode == 13){
+    $("#viewingStoreName").keyup(function (event) {
+        if (event.keyCode == 13) {
             $("#btnGO").click();
         }
     });
 
-    $("#viewingStoreNo").keyup(function(event){
-        if(event.keyCode == 13){
+    $("#viewingStoreNo").keyup(function (event) {
+        if (event.keyCode == 13) {
             $("#btnGO").click();
         }
     });
 
-    $("#viewingCatNo").keyup(function(event){
-        if(event.keyCode == 13){
+    $("#viewingCatNo").keyup(function (event) {
+        if (event.keyCode == 13) {
             $("#btnGO").click();
         }
     });

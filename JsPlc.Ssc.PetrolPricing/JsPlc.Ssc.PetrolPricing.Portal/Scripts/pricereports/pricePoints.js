@@ -1,5 +1,5 @@
-﻿require(["jquery", "common", "busyloader", "bootstrap-datepicker"],
-    function ($, common, busyloader, bsdatepicker) {
+﻿require(["jquery", "common", "busyloader", "bootstrap-datepicker", "notify", "downloader"],
+    function ($, common, busyloader, bsdatepicker, notify, downloader) {
 
         $("document").ready(function () {
 
@@ -21,9 +21,20 @@
                 window.location.href = rootFolder + '/PriceReports/PricePoints?For=' + dt;
             });
             $("#btnExportReport").click(function () {
-                var dt = forDp.val();
+                var dt = forDp.val(),
+                    downloadId = downloader.generateId();
                 busyloader.showExportToExcel();
-                window.location.href = rootFolder + '/PriceReports/ExportPricePoints?For=' + dt;
+
+                downloader.start({
+                    id: downloadId,
+                    element: '#btnExportReport',
+                    complete: function () {
+                        notify.success('Export complete');
+                    }
+
+                });
+
+                window.location.href = rootFolder + '/PriceReports/ExportPricePoints?downloadId=' + downloadId + '&For=' + dt;
             });
 
             $('#btnResetReport').click(function () {

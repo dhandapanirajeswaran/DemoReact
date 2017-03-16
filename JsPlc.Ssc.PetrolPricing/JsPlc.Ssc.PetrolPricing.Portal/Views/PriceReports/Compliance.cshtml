@@ -102,11 +102,13 @@
                 <label for="DateFor">Date:</label>&nbsp;
                 <input type="text" class="datepicker form-control" id="DateFor" name="dateFor" value='@requestedForDate'>
             </div>
-            <div class="col-md-1" style="margin-top: 1.74em">
-                <button type="button" class="btn btn-success btn-block" id="btnViewReport">View</button>
+            <div class="col-md-1">
+                <label>&nbsp;</label>
+                <button type="button" class="btn btn-success btn-block" id="btnViewReport"><i class="fa fa-search"></i> View</button>
             </div>
-            <div class="col-md-1" style="margin-top: 1.74em">
-                <button type="button" class="btn btn-danger btn-block" id="btnResetReport">Reset</button>
+            <div class="col-md-1">
+                <label>&nbsp;</label>
+                <button type="button" class="btn btn-danger btn-block" id="btnResetReport"><i class="fa fa-power-off"></i> Reset</button>
             </div>
         </div>
     }
@@ -124,10 +126,10 @@
         <div class="divtable">
             
             <div class="row" style="font-weight: bold;">
-                <div class="col-sm-1" style="width:150px">PfsNo </div>
-                <div class="col-sm-1" style="width:150px">CatNo</div>
-                <div class="col-sm-1" style="width:150px">StoreNo</div>
-                <div class="col-sm-1" style="width:250px">SiteName</div>
+                <div class="col-sm-1" style="width:100px">PfsNo </div>
+                <div class="col-sm-1" style="width:100px">CatNo</div>
+                <div class="col-sm-1" style="width:100px">StoreNo</div>
+                <div class="col-sm-1" style="width:360px">SiteName</div>
                 @foreach (var fuel in Model.ComplianceReport.ReportRows.First().DataItems.Select(x => x.FuelTypeName).Take(2))
                 {
                     <div class="col-sm-3" style="width:230px">
@@ -147,10 +149,10 @@
                 {
                     <div class="alternativerow">
                         <div class="row">
-                            <div class="col-sm-1" style="width:150px">@siteRow.PfsNo</div>
-                            <div class="col-sm-1" style="width:150px">@siteRow.CatNo</div>
-                            <div class="col-sm-1" style="width:150px">@siteRow.StoreNo</div>
-                            <div class="col-sm-1" style="width:250px">@siteRow.SiteName</div>
+                            <div class="col-sm-1" style="width:100px">@siteRow.PfsNo</div>
+                            <div class="col-sm-1" style="width:100px">@siteRow.CatNo</div>
+                            <div class="col-sm-1" style="width:100px">@siteRow.StoreNo</div>
+                            <div class="col-sm-1" style="width:360px">@siteRow.SiteName</div>
                             @if (!siteRow.DataItems.Any())
                         {
                         <div class="col-sm-1">There is no data available for site</div>

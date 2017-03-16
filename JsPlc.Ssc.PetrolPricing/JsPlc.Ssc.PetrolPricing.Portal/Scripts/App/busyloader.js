@@ -37,7 +37,6 @@
         function launch(opts) {
             var message = opts.message || 'Busy - Please wait...',
                 showtime = parseInt(opts.showtime, 10);
-            console.log('launching', message);
             showing = true;
 
             overlay.find(messageSelector).text(message);

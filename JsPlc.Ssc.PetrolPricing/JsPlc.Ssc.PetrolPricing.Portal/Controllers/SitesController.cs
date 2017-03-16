@@ -22,12 +22,13 @@ using JsPlc.Ssc.PetrolPricing.Portal.Helper;
 using System.Data;
 using ClosedXML.Excel;
 using JsPlc.Ssc.PetrolPricing.Portal.DataExporters;
+using JsPlc.Ssc.PetrolPricing.Portal.Controllers.BaseClasses;
 
 namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 {
    
     [System.Web.Mvc.Authorize]
-    public class SitesController : Controller
+    public class SitesController : BaseController
     {
         private readonly ServiceFacade _serviceFacade;
         private readonly ILogger _logger;
@@ -315,7 +316,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
         }
 
          [System.Web.Mvc.HttpGet]
-         public ActionResult ExportSiteswithPrices(string date = null, string storeName = "",
+         public ActionResult ExportSiteswithPrices(string downloadId, string date = null, string storeName = "",
             int catNo = 0, int storeNo = 0,
             string storeTown = "", int siteId = 0)
          {
@@ -330,7 +331,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
              IEnumerable<SitePriceViewModel> sitesViewModelsWithPrices = _serviceFacade.GetSitePrices(forDate, storeName, catNo, storeNo, storeTown, siteId, 1, 2000);
               var dt = SitesWithPricesToDataTable(forDate, sitesViewModelsWithPrices);
              string filenameSuffix = String.Format("[{0}]", forDate.ToString("dd-MMM-yyyy"));
-             return ExcelDocumentStream(new List<DataTable> { dt }, "SiteWithPrices", filenameSuffix, null);
+            return ExcelDocumentStream(new List<DataTable> { dt }, "SiteWithPrices", filenameSuffix, null, downloadId);
          }
 
          public DataTable SitesWithPricesToDataTable(DateTime forDate,
@@ -659,27 +660,27 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             return lstJsList;
 
         }
-      
 
-         [System.Web.Mvc.HttpGet]
-         public ActionResult ExportPrices(string date = null, string storeName = "",
-            int catNo = 0, int storeNo = 0,
-            string storeTown = "", int siteId = 0)
-         {
-             DateTime forDate = DateTime.Now;
-             if (!DateTime.TryParse(date, out forDate)) 
-             {
-                   string[] tokenize = date.Split('/');
-                   date = tokenize[2]+"/"+ tokenize[1]+ "/" + tokenize[0];
-                   forDate = new DateTime(Convert.ToInt16(tokenize[2]), Convert.ToInt16(tokenize[1]), Convert.ToInt16(tokenize[0]));
-             }
+
+        [System.Web.Mvc.HttpGet]
+        public ActionResult ExportPrices(string date = null, string storeName = "",
+           int catNo = 0, int storeNo = 0,
+           string storeTown = "", int siteId = 0)
+        {
+            DateTime forDate = DateTime.Now;
+            if (!DateTime.TryParse(date, out forDate))
+            {
+                string[] tokenize = date.Split('/');
+                date = tokenize[2] + "/" + tokenize[1] + "/" + tokenize[0];
+                forDate = new DateTime(Convert.ToInt16(tokenize[2]), Convert.ToInt16(tokenize[1]), Convert.ToInt16(tokenize[0]));
+            }
             // forDate = forDate.AddDays(-1);
-             IEnumerable<SitePriceViewModel> sitesViewModelsWithPrices = _serviceFacade.GetSitePrices(forDate, storeName, catNo, storeNo, storeTown, siteId, 1, 2000);
-             Dictionary<int, int> dicgroupRows = new Dictionary<int, int>();
-             var dt = SitePricesToDataTable(forDate, sitesViewModelsWithPrices, ref  dicgroupRows);
-             string filenameSuffix = String.Format("[{0}]", forDate.ToString("dd-MMM-yyyy"));
-             return ExcelDocumentStream(new List<DataTable> { dt }, "SitePricesWithCompetitors", filenameSuffix, dicgroupRows);
-         }
+            IEnumerable<SitePriceViewModel> sitesViewModelsWithPrices = _serviceFacade.GetSitePrices(forDate, storeName, catNo, storeNo, storeTown, siteId, 1, 2000);
+            Dictionary<int, int> dicgroupRows = new Dictionary<int, int>();
+            var dt = SitePricesToDataTable(forDate, sitesViewModelsWithPrices, ref dicgroupRows);
+            string filenameSuffix = String.Format("[{0}]", forDate.ToString("dd-MMM-yyyy"));
+            return ExcelDocumentStream(new List<DataTable> { dt }, "SitePricesWithCompetitors", filenameSuffix, dicgroupRows, null);
+        }
          public DataTable SitePricesToDataTable(DateTime forDate,
              IEnumerable<SitePriceViewModel> sitesViewModelsWithPrices, ref  Dictionary<int, int> dicgroupRows)
          {
@@ -804,7 +805,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
              }
              return dt;
          }
-         private ActionResult ExcelDocumentStream(List<DataTable> tables, string fileName, string fileNameSuffix, Dictionary<int, int> dicgroupRows)
+         private ActionResult ExcelDocumentStream(List<DataTable> tables, string fileName, string fileNameSuffix, Dictionary<int, int> dicgroupRows, string downloadId)
          {
              using (var wb = new ClosedXML.Excel.XLWorkbook())
              {
@@ -851,22 +852,10 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
                  }
                  wb.Style.Alignment.Horizontal = ClosedXML.Excel.XLAlignmentHorizontalValues.Center;
                  wb.Style.Font.Bold = true;
-                 Response.Clear();
-                 Response.Buffer = true;
-                 Response.Charset = "";
-                 Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-                 string downloadHeader = String.Format("attachment;filename= {1}{0}.xlsx",
-                     fileNameSuffix,
-                     fileName);
-                 Response.AddHeader("content-disposition", downloadHeader);
-                 using (var myMemoryStream = new System.IO.MemoryStream())
-                 {
-                     wb.SaveAs(myMemoryStream);
-                     myMemoryStream.WriteTo(Response.OutputStream);
-                     Response.Flush();
-                     Response.End();
-                     return new EmptyResult();
-                 }
+
+                var excelFilename = String.Format("{1}{0}.xlsx", fileNameSuffix, fileName);
+
+                return base.SendExcelFile(excelFilename, wb, downloadId);
              }
          }
 

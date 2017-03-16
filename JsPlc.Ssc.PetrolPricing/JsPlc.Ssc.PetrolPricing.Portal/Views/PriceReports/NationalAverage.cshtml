@@ -62,11 +62,13 @@
             <label for="For">When:</label>;
             <input type="text" class="datepicker form-control" id="For" name="For" value='@requestedDate'>
         </div>
-        <div class="col-md-1" style="margin-top: 1.74em">
-            <button type="button" class="btn btn-success btn-block" id="btnViewReport">View</button>
+        <div class="col-md-1">
+            <label>&nbsp;</label>
+            <button type="button" class="btn btn-success btn-block" id="btnViewReport"><i class="fa fa-search"></i> View</button>
         </div>
-        <div class="col-md-1" style="margin-top: 1.74em">
-            <button type="button" class="btn btn-danger btn-block" id="btnResetReport">Reset</button>
+        <div class="col-md-1">
+            <label>&nbsp;</label>
+            <button type="button" class="btn btn-danger btn-block" id="btnResetReport"><i class="fa fa-power-off"></i> Reset</button>
         </div>
     </div>
 }
@@ -149,7 +151,7 @@ else
 {
     foreach (var fuelType in Model.NationalAverageReport.Fuels)
     {
-        <div class="alert alert-info" role="alert">No @fuelType.FuelName data found at @requestedDate</div>
+        <div class="alert alert-info" role="alert">No <strong>@fuelType.FuelName</strong> data found at @requestedDate</div>
 
     }
 }

@@ -1,5 +1,5 @@
-﻿require(["jquery", "common", "busyloader", "bootstrap-datepicker"],
-    function ($, common, busyloader, bsdatepicker) {
+﻿require(["jquery", "common", "busyloader", "bootstrap-datepicker", "notify", "downloader"],
+    function ($, common, busyloader, bsdatepicker, notify, downloader) {
 
         var rootFolder = common.reportRootFolder();
 
@@ -25,8 +25,24 @@
             });
 
             $('#btnExportReport').off().on('click', function () {
+                var downloadId = downloader.generateId();
+
                 busyloader.showExportToExcel();
-                return true;
+
+                downloader.start({
+                    id: downloadId,
+                    element: '#btnExportReport',
+                    complete: function () {
+                        notify.success('Export complete');
+                    }
+                });
+
+                window.location.href = rootFolder + '/PriceReports/ExportCompetitorsPriceRangeByCompany?downloadId=' + downloadId
+                    + '&DateFor=' + $('#DateForCopy').val()
+                    + '&SelectedCompanyName=' + $('#SelectedCompanyNameCopy').val()
+                    + '&SelectedBrandName=' + $('#SelectedBrandNameCopy').val()
+
+                return false;
             });
 
             $('#btnViewReport').off().on('click', function () {

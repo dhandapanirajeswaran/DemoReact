@@ -529,3 +529,15 @@ table.fixed-header>tbody {
     background-color: #eed;
 }
 
+.spinner {
+    -webkit-animation: infinitespin 1s infinite linear;
+}
+
+@-webkit-keyframes infinitespin {
+    0% {
+        -webkit-transform: rotate(0deg);
+    }
+    100% {
+        -webkit-transform: rotate(360deg);
+    }   
+}

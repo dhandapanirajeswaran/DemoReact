@@ -1,0 +1,49 @@
+﻿.downloader {
+    position: fixed;
+    bottom: 0;
+    left: 2em;
+    opacity: 0.6;
+    background-color: #f28e00;
+    border: 1px solid ##d26E00;
+    border-radius: 6px 6px 0 0;
+    padding: 0.25em 1em;
+    font-size: 100%;
+    text-align: center;
+    color: #000;
+    cursor: wait;
+}
+
+.downloader.active {
+    background-color: #f28e00;
+    border: 1px solid #d26E00;
+}
+.downloader.done {
+    background-color: #5cb85c;
+    border: 1px solid #3c983c;
+    opacity: 1;
+}
+
+.downloader.done > .fa {
+    -webkit-animation: none;
+}
+
+.downloader:hover {
+    opacity: 1;
+}
+
+.downloader > .fa {
+    -webkit-animation: beat 4s infinite ease-in-out;
+}
+
+@-webkit-keyframes beat {
+    0% {
+        -webkit-transform: scale(1);
+    }
+    50% {
+        -webkit-transform: scale(.5);
+    }   
+
+    100% {
+        -webkit-transform: scale(1);
+    }   
+}

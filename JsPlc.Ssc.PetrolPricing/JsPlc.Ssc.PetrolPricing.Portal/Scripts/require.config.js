@@ -27,6 +27,8 @@ require.config({
         "common": "App/common",
         "busyloader": "App/busyloader",
         "notify": "App/notify",
+        "cookie": "App/cookie",
+        "downloader": "App/downloader",
 
         //"ko-binding-handlers": "App/ko-binding-handlers",
 

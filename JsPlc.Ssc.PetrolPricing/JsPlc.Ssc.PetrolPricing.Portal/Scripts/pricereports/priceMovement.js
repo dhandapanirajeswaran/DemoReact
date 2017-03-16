@@ -1,5 +1,5 @@
-﻿require(["jquery", "common", "busyloader", "bootstrap-datepicker"],
-    function ($, common, busyloader, bsdatepicker) {
+﻿require(["jquery", "common", "busyloader", "bootstrap-datepicker", "notify", "downloader"],
+    function ($, common, busyloader, bsdatepicker, notify, downloader) {
 
         $("document").ready(function () {
 
@@ -45,10 +45,11 @@
                 $('#errorMsgs').html("");
                 $('#msgs').html("");
 
-                var id = $('#FuelTypeId').val();
-                var brandName = $('#Brand').val();
-                var dt1 = forDp ? forDp.val() : $('#DateFrom').val();
-                var dt2 = toDp ? toDp.val() : $('#DateTo').val();
+                var id = $('#FuelTypeId').val(),
+                    brandName = $('#Brand').val(),
+                    dt1 = forDp ? forDp.val() : $('#DateFrom').val(),
+                    dt2 = toDp ? toDp.val() : $('#DateTo').val(),
+                    downloadId = downloader.generateId();
                 if (id == 0) {
                     $('#errorMsgs').html("Please select a fuel");
                     $('#fuelTypes').focus();
@@ -57,7 +58,15 @@
 
                 busyloader.showExportToExcel();
 
-                window.location.href = rootFolder + '/PriceReports/ExportPriceMovement?DateFrom=' + dt1 + "&DateTo=" + dt2 + "&FuelTypeId=" + id + "&BrandName=" + brandName;
+                downloader.start({
+                    id: downloadId,
+                    element: '#btnExportReport',
+                    complete: function () {
+                        notify.success('Export complete')
+                    }
+                });
+
+                window.location.href = rootFolder + '/PriceReports/ExportPriceMovement?downloadId=' + downloadId + '&DateFrom=' + dt1 + "&DateTo=" + dt2 + "&FuelTypeId=" + id + "&BrandName=" + brandName;
                 return true;
             });
 

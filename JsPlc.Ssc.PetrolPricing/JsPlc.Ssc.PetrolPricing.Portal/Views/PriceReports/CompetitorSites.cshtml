@@ -58,16 +58,22 @@
             }
         </div>
 
-        <div class="col-md-1" style="margin-top: 24px;">
-            <button type="button" class="btn btn-danger btn-block" id="btnResetReport">Reset</button>
+        <div class="col-md-1">
+            <label>&nbsp;</label>
+            <button type="button" class="btn btn-danger btn-block" id="btnResetReport"><i class="fa fa-power-off"></i> Reset</button>
         </div>
-
     </div>
 }
 
 @if (Model != null && Model.Report.BrandTimes.Any())
 {
     <hr style="border-width:3px;" />
+    <div class="row" style="font-weight: bold;">
+        <div class="col-md-9 text-center" style="margin-left: 200px;">
+            Drive time in minutes
+        </div>
+    </div>
+
     <div class="row" style="font-weight: bold">
         <div class="divheader">
             <div class="col-md-1 fixed-col-1" style="width:200px;">
@@ -92,7 +98,7 @@
                 25 - 30
             </div>
             <div class="col-md-1 fixed-col-1">
-                > 30
+                &gt; 30
             </div>
         </div>
     </div>

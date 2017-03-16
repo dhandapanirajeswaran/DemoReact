@@ -5,8 +5,8 @@ $("#viewingDate,#viewingStoreNo,#viewingStoreName,#viewingStoreTown,#viewingCatN
     }
 });
 
-require(["SitePricing", "notify", "busyloader"],
-    function (prices, notify, busyloader) {
+require(["SitePricing", "notify", "busyloader", "downloader"],
+    function (prices, notify, busyloader, downloader) {
     prices.go();
 
     $('.datepicker')
@@ -24,17 +24,32 @@ require(["SitePricing", "notify", "busyloader"],
             $("#viewingDate").focus();
         });
 
-    $(window).on('exporting-all-click', function () {
+    $(window).on('exporting-all-click', function (ev, download) {
         busyloader.show({
             message: 'Exporting All - Please wait',
             showtime: 8000
         });
+
+        downloader.start({
+            id: download.id,
+            element: '#btnExportAll',
+            complete: function () {
+                notify.success('Export completed');
+            }
+        });
     });
 
-    $(window).on('exporting-js-sites-click', function () {
+    $(window).on('exporting-js-sites-click', function (ev, download) {
         busyloader.show({
             message: 'Exporting JS Sites - Please wait.',
             showtime: 8000
+        });
+        downloader.start({
+            id: download.id,
+            element: '#btnExportSites',
+            complete: function () {
+                notify.success('Export completed');
+            }
         });
     });
 });
@@ -194,25 +209,35 @@ $("#viewingStoreTown").change(function () {
 });
 
 $("#btnExportAll").click(function () {
-    var url = "Sites/ExportPrices?date=" + $('#viewingDate').val()
+    var downloadId = downloader.generateId(),
+        download = {
+            id: downloadId
+        },
+        url = "Sites/ExportPrices?" + downloadId
+        + "&date=" + $('#viewingDate').val()
         + "&storeName=" + $('#viewingStoreName').val()
         + "&catNo=" + $('#viewingCatNo').val()
         + "&storeNo=" + $('#viewingStoreNo').val()
         + "&storeTown=" + $('#viewingStoreTown').val();
 
-    $(window).trigger('exporting-all-click');
-
+    $(window).trigger('exporting-all-click', download);
+        
     window.location.href = getRootSiteFolder() + url;
 });
 
 $("#btnExportSites").click(function () {
-    var url = "Sites/ExportSiteswithPrices?date=" + $('#viewingDate').val()
+    var downloadId = downloader.generateId(),
+        download = {
+            id: downloadId
+        },
+        url = "Sites/ExportSiteswithPrices?downloadId=" + downloadId
+        + "&date=" + $('#viewingDate').val()
         + "&storeName=" + $('#viewingStoreName').val()
         + "&catNo=" + $('#viewingCatNo').val()
         + "&storeNo=" + $('#viewingStoreNo').val()
         + "&storeTown=" + $('#viewingStoreTown').val();
-
-    $(window).trigger('exporting-js-sites-click');
+        
+    $(window).trigger('exporting-js-sites-click', download);
 
     window.location.href = getRootSiteFolder() + url;
 });

@@ -124,11 +124,13 @@
                     <label for="FuelTypeId">Fuel:</label>
                     @Html.DropDownListFor(d => d.FuelTypeId, Model.FuelTypes.Select(b => new SelectListItem { Value = b.Key.ToString(), Text = b.Value, Selected = b.Key == Model.FuelTypeId }), null, new { @class = "form-control" })
                 </div>
-                <div class="col-md-1" style="padding-top: 24px">
-                    <button type="button" class="btn btn-success btn-block" id="btnViewReport">View</button>
+                <div class="col-md-1">
+                    <label>&nbsp;</label>
+                    <button type="button" class="btn btn-success btn-block" id="btnViewReport"><i class="fa fa-search"></i> View</button>
                 </div>
-                <div class="col-md-1" style="padding-top: 24px">
-                    <button type="button" class="btn btn-danger btn-block" id="btnResetReport">Reset</button>
+                <div class="col-md-1">
+                    <label>&nbsp;</label>
+                    <button type="button" class="btn btn-danger btn-block" id="btnResetReport"><i class="fa fa-power-off"></i> Reset</button>
                 </div>
             </div>
         }
