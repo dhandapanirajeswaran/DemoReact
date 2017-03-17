@@ -210,6 +210,7 @@ function ($, ko, common, notify, pricingService) {
     function editSiteNote(siteId) {
         siteModel.SiteId = siteId;
 
+        hideDeletePrompt();
         $(config.selectors.popup).modal('show');
 
         $(config.selectors.noteEmptyWarning).hide();
