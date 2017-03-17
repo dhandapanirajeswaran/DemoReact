@@ -165,3 +165,20 @@ span.jsdiff {
     text-align: center;
     padding: 1em 4px 0.5em 0px;
 }
+
+.previousDay {
+    width: 93px;
+}
+.currentDay {
+    width: 145px;
+}
+.darkHeader {
+    background-color: #eee;
+}
+
+.dividerLeft {
+    border-left: 1px solid #ccc;
+}
+.dividerLeftWhite {
+    border-left: 1px solid #fff;
+}

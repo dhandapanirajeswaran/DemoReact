@@ -197,8 +197,8 @@
         </div>
         <!-- End Email popup within knockout -->
         <!-- Submit disabled, all work done thru ajax calls -->
-        <form id="myform" method="post" data-bind="submit: savePetrolPricingForm" xclass="input-group-sm" action="sites/PostPrices" onsubmit="    return false;" onclick="    IsSitePriceFormClicked=1; " style="width: 1280px;">
-            <div class="row" onclick=" IsSitePriceFormClicked=1; " style="width:1280px;">
+        <form id="myform" method="post" data-bind="submit: savePetrolPricingForm" xclass="input-group-sm" action="sites/PostPrices" onsubmit="return false;" onclick="IsSitePriceFormClicked=1;" style="width: 1280px;">
+            <div class="row" onclick="IsSitePriceFormClicked=1;" style="width:1280px;">
                 <!-- Date Picker -->
                 <div class="col-md-1">
                     <label for="viewingDate">Date:</label>
@@ -236,17 +236,18 @@
                 </div>
                 <!-- show all button -->
                 <div class="col-md-1" >
-                    <button style="margin-top: 24px" type="button" class="btn btn-default" data-bind="click: function() { reloadSearchPage('Sites/Prices?date='+$root.InitDateInUsFormat()) }">Show all</button>
+                    <label>&nbsp;</label>
+                    <button type="button" class="btn btn-default" data-bind="click: function() { reloadSearchPage('Sites/Prices?date='+$root.InitDateInUsFormat()) }">Show all</button>
                 </div>
                 <!-- ExportToExcel button -->
                 <div class="col-md-1" style="width: 130px; margin-left: 80px;">
-                    <button type="button" style="margin-top: 24px;margin-left:0px " class="btn btn-primary" id="btnExportAll"><i class="fa fa-download"></i> Export ALL</button>
+                    <label>&nbsp;</label>
+                    <button type="button" style="margin-left:0px " class="btn btn-primary" id="btnExportAll"><i class="fa fa-download"></i> Export ALL</button>
                 </div>
                 <div class="col-md-1" style="margin-left: -20px;">
-                    <button type="button" style="margin-top: 24px;margin-left:0px " class="btn btn-primary" id="btnExportSites"><i class="fa fa-download"></i> Export JS Sites</button>
+                    <label>&nbsp;</label>
+                    <button type="button" style="margin-left:0px" class="btn btn-primary" id="btnExportSites"><i class="fa fa-download"></i> Export JS Sites</button>
                 </div>
-
-
             </div>
             <hr style="width:1280px;" />
             <div class="row">
@@ -384,19 +385,19 @@
                     <div class="col-sm-1" style="width:50px"><span>Cat No.</span></div>
                     <div class="col-sm-1" style="width:50px"><span>PFS No.</span></div>
 
-                    <div class="col-sm-1" style="border-left: 1px solid #ccc;width:240px;text-align:center;height:60px">
+                    <div class="col-sm-1 dividerLeftWhite" style="width:240px;text-align:center;height:60px">
                         <h4>
                             <span class="label label-success">
                                 &nbsp;Unleaded&nbsp;
                             </span>
                         </h4>
                     </div>
-                    <div class="col-sm-1" style="border-left: 1px solid #ccc;width:240px;text-align:center;height:60px">
+                    <div class="col-sm-1 dividerLeftWhite" style="width:240px;text-align:center;height:60px">
                         <h4>
                             <span class="label label-black">&nbsp;Diesel&nbsp;</span>
                         </h4>
                     </div>
-                    <div class="col-sm-1" style="border-left: 1px solid #ccc;width:240px;text-align:center;height:60px">
+                    <div class="col-sm-1 dividerLeftWhite" style="width:240px;text-align:center;height:60px">
                         <h4>
                             <span class="label label-success-inverted">&nbsp;Super Unleaded&nbsp;</span>
                         </h4>
@@ -413,12 +414,12 @@
                         </button>
                     </div>
 
-                    <div class="col-sm-1 dayColumnHeader" style="width:93px"><span id="today1">-</span></div>
-                    <div class="col-sm-1 dayColumnHeader" style="width:145px"><span id="tomorrow1">-</span></div>
-                    <div class="col-sm-1 dayColumnHeader" style="width:93px;"><span id="today2">-</span></div>
-                    <div class="col-sm-1 dayColumnHeader" style="width:145px;"><span id="tomorrow2">-</span></div>
-                    <div class="col-sm-1 dayColumnHeader" style="width:93px;"><span id="today3">-</span></div>
-                    <div class="col-sm-1 dayColumnHeader" style="width:145px;"><span id="tomorrow3">-</span></div>
+                    <div class="col-sm-1 dayColumnHeader previousDay"><span id="today1">-</span></div>
+                    <div class="col-sm-1 dayColumnHeader currentDay"><span id="tomorrow1">-</span></div>
+                    <div class="col-sm-1 dayColumnHeader previousDay darkHeader"><span id="today2">-</span></div>
+                    <div class="col-sm-1 dayColumnHeader currentDay darkHeader"><span id="tomorrow2">-</span></div>
+                    <div class="col-sm-1 dayColumnHeader previousDay"><span id="today3">-</span></div>
+                    <div class="col-sm-1 dayColumnHeader currentDay"><span id="tomorrow3">-</span></div>
                 </div>
 
                 <hr style="padding:0px;margin:0px" />
@@ -463,7 +464,7 @@
                         <div class="col-sm-1" style="border-left: 1px solid #ddd;width:93px;height:45px">
                             <span data-bind="text: FuelPrice.TodayPrice"></span>
                         </div>
-                        <div class="col-sm-1" align="left" style="border-left: 1px solid #ddd;margin-left:0px; width:145px;height:45px">
+                        <div class="col-sm-1 dividerLeft" align="left" style="margin-left:0px; width:145px;height:45px">
                             <span class="padded-price-right" data-bind="attr:{title:(FuelPrice.IsTrailPrice ? 'Trail price: ' + FuelPrice.CompetitorName : 'Competitor name: ' + FuelPrice.CompetitorName + '; Markup: ' + FuelPrice.Markup)}, text: FuelPrice.AutoPrice"></span>
                             <input type="text" data-bind="value: FuelPrice.OverridePrice, visible: !$root.ViewingHistorical(),
                                 id: ('OverridePrice_' + $parent.SiteId + '_' + FuelPrice.FuelTypeId), event:{keyup: changeProp, blur: blurred, focus: focused}" class="txtPrice" maxlength="8" />
@@ -482,8 +483,8 @@
                         </div>
                         <!-- /ko -->
                         <!-- ko if: !siteSupportsFuel -->
-                        <div class="col-sm-1" style="border-left: 1px solid #ddd;width:93px;height:45px">n/a</div>
-                        <div class="col-sm-1" style="border-left: 1px solid #ddd;margin-left:0px; width:145px;height:45px">n/a</div>
+                        <div class="col-sm-1 dividerLeft" style="width:93px;height:45px">n/a</div>
+                        <div class="col-sm-1 dividerLeft" style="margin-left:0px; width:145px;height:45px">n/a</div>
                        
                         <!-- /ko -->
                         <!-- /ko -->
@@ -518,19 +519,19 @@
                                         <th class="num4"><span>Drive-Time</span></th>
                                         <th class="num5"><span>Cat No.</span></th>
 
-                                        <th colspan="3" class="text-center" style="border-left: 1px solid #ccc">
+                                        <th colspan="3" class="text-center dividerLeft" >
                                             <h4>
                                                 <span class="label label-success">
                                                     &nbsp;Unleaded&nbsp;
                                                 </span>
                                             </h4>
                                         </th>
-                                        <th colspan="3" class="text-center" style="border-left: 1px solid #ccc">
+                                        <th colspan="3" class="text-center dividerLeft">
                                             <h4>
                                                 <span class="label label-black">&nbsp;Diesel&nbsp;</span>
                                             </h4>
                                         </th>
-                                        <th colspan="3" class="text-center" style="border-left: 1px solid #ccc">
+                                        <th colspan="3" class="text-center dividerLeft">
                                             <h4>
                                                 <span class="label label-success-inverted">&nbsp;Super Unleaded&nbsp;</span>
                                             </h4>
