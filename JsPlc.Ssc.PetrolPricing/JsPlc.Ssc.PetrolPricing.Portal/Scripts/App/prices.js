@@ -39,19 +39,55 @@ require(["SitePricing", "notify", "busyloader", "downloader"],
         });
     });
 
-    $(window).on('exporting-js-sites-click', function (ev, download) {
+    $("#btnExportAll").click(function () {
+        var downloadId = downloader.generateId(),
+            url = "Sites/ExportPrices?" + downloadId
+            + "&date=" + $('#viewingDate').val()
+            + "&storeName=" + $('#viewingStoreName').val()
+            + "&catNo=" + $('#viewingCatNo').val()
+            + "&storeNo=" + $('#viewingStoreNo').val()
+            + "&storeTown=" + $('#viewingStoreTown').val();
+
         busyloader.show({
-            message: 'Exporting JS Sites - Please wait.',
-            showtime: 8000
+            message: 'Exporting All - Please wait',
+            showtime: 4000
         });
+
         downloader.start({
-            id: download.id,
-            element: '#btnExportSites',
+            id: downloadId,
+            element: '#btnExportAll',
             complete: function () {
-                notify.success('Export completed');
+                notify.success('Export All completed');
             }
         });
+
+        window.location.href = getRootSiteFolder() + url;
     });
+
+    $("#btnExportSites").click(function () {
+        var downloadId = downloader.generateId(),
+            url = "Sites/ExportSiteswithPrices?downloadId=" + downloadId
+            + "&date=" + $('#viewingDate').val()
+            + "&storeName=" + $('#viewingStoreName').val()
+            + "&catNo=" + $('#viewingCatNo').val()
+            + "&storeNo=" + $('#viewingStoreNo').val()
+            + "&storeTown=" + $('#viewingStoreTown').val();
+
+        busyloader.show({
+            message: 'Exporting JS Sites - Please wait.',
+            showtime: 2000
+        });
+        downloader.start({
+            id: downloadId,
+            element: '#btnExportSites',
+            complete: function () {
+                notify.success('Export JS completed');
+            }
+        });
+
+        window.location.href = getRootSiteFolder() + url;
+    });
+
 });
 
 function getRootSiteFolder() {
@@ -208,36 +244,4 @@ $("#viewingStoreTown").change(function () {
     $("#btnExportSites").prop("disabled", true);
 });
 
-$("#btnExportAll").click(function () {
-    var downloadId = downloader.generateId(),
-        download = {
-            id: downloadId
-        },
-        url = "Sites/ExportPrices?" + downloadId
-        + "&date=" + $('#viewingDate').val()
-        + "&storeName=" + $('#viewingStoreName').val()
-        + "&catNo=" + $('#viewingCatNo').val()
-        + "&storeNo=" + $('#viewingStoreNo').val()
-        + "&storeTown=" + $('#viewingStoreTown').val();
 
-    $(window).trigger('exporting-all-click', download);
-        
-    window.location.href = getRootSiteFolder() + url;
-});
-
-$("#btnExportSites").click(function () {
-    var downloadId = downloader.generateId(),
-        download = {
-            id: downloadId
-        },
-        url = "Sites/ExportSiteswithPrices?downloadId=" + downloadId
-        + "&date=" + $('#viewingDate').val()
-        + "&storeName=" + $('#viewingStoreName').val()
-        + "&catNo=" + $('#viewingCatNo').val()
-        + "&storeNo=" + $('#viewingStoreNo').val()
-        + "&storeTown=" + $('#viewingStoreTown').val();
-        
-    $(window).trigger('exporting-js-sites-click', download);
-
-    window.location.href = getRootSiteFolder() + url;
-});
