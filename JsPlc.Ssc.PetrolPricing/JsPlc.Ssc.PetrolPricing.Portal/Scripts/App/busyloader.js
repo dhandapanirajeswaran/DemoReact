@@ -3,6 +3,7 @@
 
         var showing = false,
             overlay = $(busyloaderHtml),
+            lightbox = $('<div class="lightbox-overlay"></div>')
             messageSelector = '#BusyLoaderMessage',
             positions = {
                 start: { 'top': '400px', 'opacity': 0 },
@@ -20,8 +21,20 @@
                 }
             };
 
+            var animations = {
+                lightbox: {
+                    show: { 'opacity': 0.5 },
+                    hide: { 'opacity': 0.0 }
+                }
+            };
+
+        // init styles
+            overlay.css({ 'zIndex': 2010 });
+            lightbox.css({ 'position': 'absolute', 'top': 0, 'bottom': 0, 'left': 0, 'right': 0, 'backgroundColor': '#000', 'zIndex': 2000, 'opacity': 0 });
+
         // attach to DOM
-        overlay.appendTo(document.body);
+            overlay.appendTo(document.body);
+            lightbox.hide().appendTo(document.body);
 
         function show(opts) {
             var begin = function() {
@@ -36,8 +49,13 @@
 
         function launch(opts) {
             var message = opts.message || 'Busy - Please wait...',
-                showtime = parseInt(opts.showtime, 10);
+                showtime = parseInt(opts.showtime, 10),
+                dull = !!opts.dull;
             showing = true;
+
+            if (dull != lightbox.is(':visible')) {
+                dull ? showLightbox() : hideLightbox();
+            }
 
             overlay.find(messageSelector).text(message);
             overlay.css(positions.start)
@@ -51,8 +69,19 @@
         };
 
         function onHide() {
+            hideLightbox();
             showing = false;
         };
+
+        function showLightbox() {
+            lightbox.show().animate(animations.lightbox.show, 1000);
+        };
+
+        function hideLightbox() {
+            lightbox.animate(animations.lightbox.hide, 2000, function () {
+                lightbox.hide();
+            });
+        }
 
         function hide() {
             overlay.hide();

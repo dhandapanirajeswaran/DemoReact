@@ -11,6 +11,7 @@
     text-align: center;
     color: #000;
     cursor: wait;
+    z-index: 2010;
 }
 
 .downloader.active {
@@ -32,7 +33,7 @@
 }
 
 .downloader > .fa {
-    -webkit-animation: beat 4s infinite ease-in-out;
+    -webkit-animation: beat 3s infinite ease-in-out;
 }
 
 @-webkit-keyframes beat {
@@ -42,7 +43,6 @@
     50% {
         -webkit-transform: scale(.5);
     }   
-
     100% {
         -webkit-transform: scale(1);
     }   

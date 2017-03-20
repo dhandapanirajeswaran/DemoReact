@@ -41,7 +41,8 @@ require(["SitePricing", "notify", "busyloader", "downloader"],
 
     $("#btnExportAll").click(function () {
         var downloadId = downloader.generateId(),
-            url = "Sites/ExportPrices?" + downloadId
+            url = "Sites/ExportPrices"
+            + "?downloadId=" + downloadId
             + "&date=" + $('#viewingDate').val()
             + "&storeName=" + $('#viewingStoreName').val()
             + "&catNo=" + $('#viewingCatNo').val()
@@ -50,7 +51,8 @@ require(["SitePricing", "notify", "busyloader", "downloader"],
 
         busyloader.show({
             message: 'Exporting All - Please wait',
-            showtime: 4000
+            showtime: 4000,
+            dull: true
         });
 
         downloader.start({
@@ -66,7 +68,8 @@ require(["SitePricing", "notify", "busyloader", "downloader"],
 
     $("#btnExportSites").click(function () {
         var downloadId = downloader.generateId(),
-            url = "Sites/ExportSiteswithPrices?downloadId=" + downloadId
+            url = "Sites/ExportSiteswithPrices"
+            + "?downloadId=" + downloadId
             + "&date=" + $('#viewingDate').val()
             + "&storeName=" + $('#viewingStoreName').val()
             + "&catNo=" + $('#viewingCatNo').val()
@@ -75,7 +78,8 @@ require(["SitePricing", "notify", "busyloader", "downloader"],
 
         busyloader.show({
             message: 'Exporting JS Sites - Please wait.',
-            showtime: 2000
+            showtime: 2000,
+            dull: true
         });
         downloader.start({
             id: downloadId,
