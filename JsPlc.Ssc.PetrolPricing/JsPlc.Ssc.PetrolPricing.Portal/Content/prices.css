@@ -18,9 +18,14 @@
 }
 
 .actualdata {
-    height: 500px;
     overflow-y: auto;
     overflow-x: hidden;
+}
+.actualdata.expanded {
+    height: auto;
+}
+.actualdata.collapsed {
+    height: 500px;
 }
 
 table.competitorTable td, th {
@@ -126,7 +131,9 @@ span.jsdiff {
 .price-diff-item {
     margin-left: 4px;
     margin-right: 4px;
-    border-right: 1px solid #2e6da4;
+    padding-right: 4px;
+    border-right: 1px dashed #2e6da4;
+    display: inline-block;
 }
 .price-diff-item:last-child {
     border-right: none;
@@ -160,6 +167,7 @@ span.jsdiff {
 .future-date {color: green;}
 
 .dayColumnHeader {
+    width: 146px;
     border-left: 1px solid #ddd; 
     min-height: 60px;
     text-align: center;
@@ -182,3 +190,20 @@ span.jsdiff {
 .dividerLeftWhite {
     border-left: 1px solid #fff;
 }
+
+.yesterday-col {
+    border-left: 1px solid #ddd;
+    width:93px;
+    height:45px; 
+    padding-right: 2.5em;
+    text-align: right;
+}
+
+.override-col {
+    margin-left: 0; 
+    width: 146px;
+    height: 45px; 
+    padding-left: 4px; 
+    padding-right: 4px;
+}
+

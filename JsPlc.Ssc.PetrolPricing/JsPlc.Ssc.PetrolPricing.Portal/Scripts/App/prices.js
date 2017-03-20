@@ -88,6 +88,32 @@ require(["SitePricing", "notify", "busyloader", "downloader"],
         window.location.href = getRootSiteFolder() + url;
     });
 
+    $('[data-click="setExpandMode"').off().click(function () {
+        var button = $(this),
+            mode = button.data('mode'),
+            states = button.data('states').split(','),
+            selector = button.data('target'),
+            panel = $(selector),
+            message = button.data('message'),
+            clones = $('[data-click="setExpandMode"][data-target="' + selector + '"]');
+
+        clones.each(function () {
+            var item = $(this);
+            if (item.data('mode') == mode)
+                item.addClass('btn-primary');
+            else
+                item.removeClass('btn-primary');
+        });
+
+        $.each(states, function (i, value) {
+            if (value == mode)
+                panel.addClass(value);
+            else
+                panel.removeClass(value);
+        });
+
+        notify.info(message);
+    });
 });
 
 function getRootSiteFolder() {

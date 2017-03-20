@@ -532,7 +532,7 @@ table.fixed-header>tbody {
 }
 
 .spinner {
-    -webkit-animation: infinitespin 1s infinite linear;
+    -webkit-animation: infinitespin 0.5s infinite linear;
 }
 
 @-webkit-keyframes infinitespin {

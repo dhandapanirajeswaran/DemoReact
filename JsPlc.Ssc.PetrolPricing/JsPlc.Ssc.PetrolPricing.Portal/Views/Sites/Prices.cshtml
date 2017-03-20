@@ -328,7 +328,7 @@
             </div>
 
             <div style="display:block;" class="alert alert-warning busy-loader" data-bind="visible: $root.busyLoadingData()">
-                <div class="col-md-1 text-center"><i class="fa fa-clock-o fa-2x"></i></div>
+                <div class="col-md-1 text-center"><i class="fa fa-clock-o fa-2x spinner"></i></div>
                 <div class="col-md-10 text-center">
                     <strong>Loading Sales Pricing information. Please wait...</strong>
                 </div>
@@ -376,6 +376,14 @@
                     </div>
                 </div>
                 <br />
+                <div class="row" style="margin-bottom: 4px; padding-bottom: 4px; border-bottom: 1px solid #ccc;">
+                    <div class="col-md-3 col-md-offset-9">
+                        <div class="btn-group pull-right" role="group">
+                            <button type="button" class="btn btn-xs btn-primary" data-click="setExpandMode" data-mode="collapsed" data-states="expanded,collapsed" data-target="#PricingPanelScroller" data-message="Price grid collapsed"><i class="fa fa-minus-square"></i> Collapse</button>
+                            <button type="button" class="btn btn-xs" data-click="setExpandMode" data-mode="expanded" data-states="expanded,collapsed" data-target="#PricingPanelScroller" data-message="Price grid expanded"><i class="fa fa-plus-square"></i> Expand</button>
+                        </div>
+                    </div>
+                </div>
                 <div class="row" style="background-color: silver;font-weight: bold;height:60px;">
                     <div class="col-sm-1" style="width:5px;margin:2px;">#</div>
                     <div class="col-sm-1" style="width:50px"><span style="vertical-align:bottom;height:60px">Store No.</span></div>
@@ -424,7 +432,7 @@
 
                 <hr style="padding:0px;margin:0px" />
 
-                <div class="actualdata" style="padding:0px;margin:0px" data-bind="with: dataModel">
+                <div id="PricingPanelScroller" class="actualdata collapsed" style="padding:0px;margin:0px" data-bind="with: dataModel">
                     <!-- JS Store DataRows -->
                     <!-- ko foreach: sites -->
                     <div class="row site-row" role="tab" data-bind="id:('Heading' + SiteId), attr: {id: 'SiteHeading' + SiteId, 'data-haspricechanges': (hasPriceChanges())},">
@@ -461,10 +469,10 @@
 
                         <!-- ko foreach: FuelPricesToDisplay -->
                         <!-- ko if: siteSupportsFuel -->
-                        <div class="col-sm-1" style="border-left: 1px solid #ddd;width:93px;height:45px">
+                        <div class="col-sm-1 yesterday-col">
                             <span data-bind="text: FuelPrice.TodayPrice"></span>
                         </div>
-                        <div class="col-sm-1 dividerLeft" align="left" style="margin-left:0px; width:145px;height:45px">
+                        <div class="col-sm-1 dividerLeft override-col">
                             <span class="padded-price-right" data-bind="attr:{title:(FuelPrice.IsTrailPrice ? 'Trail price: ' + FuelPrice.CompetitorName : 'Competitor name: ' + FuelPrice.CompetitorName + '; Markup: ' + FuelPrice.Markup)}, text: FuelPrice.AutoPrice"></span>
                             <input type="text" data-bind="value: FuelPrice.OverridePrice, visible: !$root.ViewingHistorical(),
                                 id: ('OverridePrice_' + $parent.SiteId + '_' + FuelPrice.FuelTypeId), event:{keyup: changeProp, blur: blurred, focus: focused}" class="txtPrice" maxlength="8" />
@@ -553,7 +561,7 @@
                                 <tbody>
                                     <!-- ko if: loadingCompetitors() -->
                                     <tr>
-                                        <td colspan="14" class="noSiteData text-center"><span class="please-wait"><i class="fa fa-clock-o"></i> Loading... Please wait</span></td>
+                                        <td colspan="14" class="noSiteData text-center"><span class="please-wait"><i class="fa fa-clock-o spinner"></i> Loading... Please wait</span></td>
                                     </tr>
                                     <!-- /ko -->
                                     <!-- ko if: !loadingCompetitors() -->
@@ -676,6 +684,16 @@
 
                     <!-- /ko -->
                 </div>
+
+                <div class="row" style="margin-top: 4px; padding-top: 4px; border-top: 1px solid #ccc;">
+                    <div class="col-md-3 col-md-offset-9">
+                        <div class="btn-group pull-right" role="group">
+                            <button type="button" class="btn btn-xs btn-primary" data-click="setExpandMode" data-mode="collapsed" data-states="expanded,collapsed" data-target="#PricingPanelScroller" data-message="Price grid collapsed"><i class="fa fa-minus-square"></i> Collapse</button>
+                            <button type="button" class="btn btn-xs" data-click="setExpandMode" data-mode="expanded" data-states="expanded,collapsed" data-target="#PricingPanelScroller" data-message="Price grid expanded"><i class="fa fa-plus-square"></i> Expand</button>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </form>
     </div>
