@@ -320,6 +320,9 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             int catNo = 0, int storeNo = 0,
             string storeTown = "", int siteId = 0)
          {
+            if (String.IsNullOrWhiteSpace(downloadId))
+                throw new ArgumentException("DownloadId cannot be empty!");
+
              DateTime forDate = DateTime.Now;
              if (!DateTime.TryParse(date, out forDate))
              {
@@ -663,10 +666,13 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 
 
         [System.Web.Mvc.HttpGet]
-        public ActionResult ExportPrices(string date = null, string storeName = "",
+        public ActionResult ExportPrices(string downloadId, string date = null, string storeName = "",
            int catNo = 0, int storeNo = 0,
            string storeTown = "", int siteId = 0)
         {
+            if (String.IsNullOrWhiteSpace(downloadId))
+                throw new ArgumentException("DownloadId cannot be empty!");
+
             DateTime forDate = DateTime.Now;
             if (!DateTime.TryParse(date, out forDate))
             {
@@ -679,7 +685,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             Dictionary<int, int> dicgroupRows = new Dictionary<int, int>();
             var dt = SitePricesToDataTable(forDate, sitesViewModelsWithPrices, ref dicgroupRows);
             string filenameSuffix = String.Format("[{0}]", forDate.ToString("dd-MMM-yyyy"));
-            return ExcelDocumentStream(new List<DataTable> { dt }, "SitePricesWithCompetitors", filenameSuffix, dicgroupRows, null);
+            return ExcelDocumentStream(new List<DataTable> { dt }, "SitePricesWithCompetitors", filenameSuffix, dicgroupRows, downloadId);
         }
          public DataTable SitePricesToDataTable(DateTime forDate,
              IEnumerable<SitePriceViewModel> sitesViewModelsWithPrices, ref  Dictionary<int, int> dicgroupRows)

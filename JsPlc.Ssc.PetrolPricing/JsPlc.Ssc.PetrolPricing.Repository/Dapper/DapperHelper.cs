@@ -55,5 +55,20 @@ namespace JsPlc.Ssc.PetrolPricing.Repository.Dapper
                 return conn.Query<T>(sprocName, parameters, null, false, null, CommandType.StoredProcedure).ToList();
             }
         }
+
+        public static T QueryMultiple<T>(this DbContext context, string sprocName, object parameters, Action<T, SqlMapper.GridReader> filler) where T : class, new()
+        {
+            if (String.IsNullOrWhiteSpace(sprocName))
+                throw new ArgumentException("Stored procedure name cannot be empty");
+
+            T result = new T();
+
+            using (var conn = new SqlConnection(context.Database.Connection.ConnectionString))
+            {
+                var multiReader = conn.QueryMultiple(sprocName, parameters, null, null, CommandType.StoredProcedure);
+                filler(result, multiReader);
+                return result;
+            }
+        }
     }
 }

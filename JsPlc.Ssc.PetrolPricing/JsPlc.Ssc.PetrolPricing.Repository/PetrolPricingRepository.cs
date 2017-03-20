@@ -20,6 +20,7 @@ using EntityState = System.Data.Entity.EntityState;
 
 using JsPlc.Ssc.PetrolPricing.Core.Diagnostics;
 using JsPlc.Ssc.PetrolPricing.Repository.Dapper;
+using Dapper;
 
 namespace JsPlc.Ssc.PetrolPricing.Repository
 {
@@ -838,120 +839,14 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             int pageNo = 1, int pageSize = Constants.PricePageSize)
         {
 
-            /*  try
-            {
-                // TODO wireup params from sproc to a new DTO
-                var siteIdParam = new SqlParameter("@siteId", SqlDbType.Int)
-                {
-                    Value = siteId
-                };
-                var forDateParam = new SqlParameter("@forDate", SqlDbType.DateTime)
-                {
-                    Value = forDate
-                };
+            const bool useNewCode = false;
 
-                // NOTE: Below paging params are for JSSite(s), not for competitors (we get all competitors for the specified sites resultset)
-                var skipRecsParam = new SqlParameter("@skipRecs", SqlDbType.Int)
-                {
-                    Value = (pageNo - 1) * pageSize
-                };
-                var takeRecsParam = new SqlParameter("@takeRecs", SqlDbType.Int)
-                {
-                    Value = pageSize
-                };
-                // any other params here
+            if (useNewCode)
+                return _context.GetCompetitorsWithPriceView(forDate, siteId);
 
-                var sqlParams = new List<SqlParameter>
-            {
-                siteIdParam,
-                forDateParam,
-                skipRecsParam,
-                takeRecsParam
-            };
-                const string spName = "dbo.spGetCompetitorPrices";
-                // Test in SQL:     Exec dbo.[spGetCompetitorPrices] 0, '2015-11-30',
-                // Output is sorted by siteId so all Fuels for a site appear together
-
-                using (var connection = new SqlConnection(_context.Database.Connection.ConnectionString))
-                {
-                    using (var command = new SqlCommand(spName, connection))
-                    {
-                        command.CommandType = CommandType.StoredProcedure;
-                        command.Parameters.AddRange(sqlParams.ToArray());
-                        command.CommandTimeout = 0;
-                        connection.Open();
-
-                        var reader = command.ExecuteReader();
-                        var pgTable = new DataTable();
-                        pgTable.Load(reader);
-
-                        var lastSiteId = -1;
-                        SitePriceViewModel sitePriceRow = null;
-
-                        var dbList = new List<SitePriceViewModel>();
-
-                        var listOfbrands = GetExcludeBrands();
-
-                        Site site = GetSites().Where(x => x.Id == siteId).FirstOrDefault();
-
-                        foreach (DataRow pgRow in pgTable.Rows)
-                        {
-                            var result = listOfbrands.Contains((string)pgRow["Brand"]);
-
-                            if (result == true) continue;
-                            var loopSiteId = (int)pgRow["siteId"];
-                            if (loopSiteId != lastSiteId)
-                            {
-                                sitePriceRow = new SitePriceViewModel();
-                                dbList.Add(sitePriceRow);
-                                lastSiteId = loopSiteId;
-                            }
-                            if (sitePriceRow == null) continue;
-
-                            sitePriceRow.SiteId = (int)pgRow["SiteId"]; // CompetitorId
-                            sitePriceRow.JsSiteId = (int)pgRow["JsSiteId"];
-                            sitePriceRow.CatNo = Convert.IsDBNull(pgRow["CatNo"]) ? null : (int?)pgRow["CatNo"];
-                            // ToNullable<int> or ToNullable<double>
-                            sitePriceRow.StoreName = (string)pgRow["SiteName"];
-                            sitePriceRow.Brand = (string)pgRow["Brand"];
-                            sitePriceRow.Address = (string)pgRow["Address"];
-
-                            sitePriceRow.DriveTime = pgRow["DriveTime"].ToString().ToNullable<float>();
-                            sitePriceRow.Distance = pgRow["Distance"].ToString().ToNullable<float>();
-                            // any other fields for UI extract here
-
-                            sitePriceRow.FuelPrices = sitePriceRow.FuelPrices ?? new List<FuelPriceViewModel>();
-                            int nOffSet = loopSiteId == site.TrailPriceCompetitorId ? (int)site.CompetitorPriceOffsetNew : 0;
-                            if (!Convert.IsDBNull(pgRow["FuelTypeId"]))
-                            {
-                                var todayPrice = pgRow["ModalPrice"].ToString().ToNullable<int>();
-                                var yestPrice = pgRow["ModalPriceYest"].ToString().ToNullable<int>();
-                                sitePriceRow.FuelPrices.Add(new FuelPriceViewModel
-                                {
-                                    FuelTypeId = (int)pgRow["FuelTypeId"],
-
-                                    // Today's prices (whatever was calculated yesterday OR last)
-                                    TodayPrice = todayPrice.HasValue ? todayPrice.Value + nOffSet : 0 + nOffSet,
-
-                                    // Today's prices (whatever was calculated yesterday OR last)
-                                    YestPrice = yestPrice.HasValue ? yestPrice.Value + nOffSet : 0 + nOffSet,
-
-                                    //Difference between yesterday and today
-                                    Difference = todayPrice.HasValue && yestPrice.HasValue ? todayPrice - yestPrice : null
-                                });
-                            }
-                        }
-                        return dbList;
-                    }
-                }
-            }
-            catch (Exception ce)
-            {
-                _logger.Error(ce);
-                return null;
-            }*/
-
-
+            //
+            // OLD CODE
+            //
             try
             {
                 var lastSiteId = -1;
@@ -1093,7 +988,6 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             }
         }
 
-
         private void AddCompetitorFuelPrice(
             List<FuelPriceViewModel> lstFuelPriceViewModel, 
             Site JsSite, 
@@ -1152,7 +1046,12 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                 Difference = todayPrice > 0 && yesterdayPrice > 0 ? todayPrice - yesterdayPrice : 0
             });
         }
-   
+
+        private void FillGetCompetitorsWithPriceView(SitePriceViewModel arg1, SqlMapper.GridReader arg2)
+        {
+            throw new NotImplementedException();
+        }
+
         private static object cachedGetDailyPricesForFuelByCompetitorsLock = new Object();
 
         /// <summary>

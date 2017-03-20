@@ -2,12 +2,14 @@
 using System.Data.Entity;
 using System.Data.Entity.ModelConfiguration.Conventions;
 using System.Data.Common;
+using System.Linq;
 using JsPlc.Ssc.PetrolPricing.Models;
 using JsPlc.Ssc.PetrolPricing.Models.Persistence;
 using JsPlc.Ssc.PetrolPricing.Models.ViewModels;
 using System.Collections.Generic;
 using JsPlc.Ssc.PetrolPricing.Repository.Dapper;
 using System;
+using Dapper;
 
 namespace JsPlc.Ssc.PetrolPricing.Repository
 {
@@ -95,6 +97,41 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             {
                 Files = DapperHelper.QueryList<RecentFileUploadSummaryItem>(this, sproc, parameters)
             };
+        }
+
+        public IEnumerable<SitePriceViewModel> GetCompetitorsWithPriceView(DateTime forDate, int siteId)
+        {
+            const string sproc = "GetCompetitorsWithPriceView";
+
+            var parameters = new
+            {
+                @ForDate = forDate,
+                @SiteId = siteId
+            };
+
+            var model = DapperHelper.QueryMultiple<List<SitePriceViewModel>>(this, sproc, parameters, FillGetCompetitorsWithPriceView);
+            return model;
+        }
+
+        private void FillGetCompetitorsWithPriceView(List<SitePriceViewModel> model, SqlMapper.GridReader multiReader)
+        {
+            var compsites = multiReader.Read<SitePriceViewModel>().AsList();
+            if (compsites != null)
+            {
+                model.AddRange(compsites);
+                var prices = multiReader.Read<FuelPriceViewModel>();
+                foreach(var price in prices)
+                {
+                    var compsite = compsites.FirstOrDefault(x => x.SiteId == price.SiteId);
+                    if (compsite != null)
+                    {
+                        if (compsite.FuelPrices == null)
+                            compsite.FuelPrices = new List<FuelPriceViewModel>();
+
+                        compsite.FuelPrices.Add(price);
+                    }
+                }
+            }
         }
     }
 }
