@@ -543,3 +543,8 @@ table.fixed-header>tbody {
         -webkit-transform: rotate(360deg);
     }   
 }
+.build-information {
+    float: right;
+    color: #999;
+    font-style: italic;
+}

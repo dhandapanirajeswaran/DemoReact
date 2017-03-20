@@ -1,4 +1,5 @@
 ﻿@using System.Configuration;
+@using JsPlc.Ssc.PetrolPricing.Portal.Helper;
 <!DOCTYPE html>
 <html lang="en-gb">
 <head>
@@ -98,7 +99,10 @@
     <div class="panel-footer" style="margin-top: 100px">
         <div class="container">
             <footer>
-                <p>&copy; @DateTime.Today.Year - Sainsbury's Petrol Pricing</p>
+                <p>
+                    &copy; @DateTime.Today.Year - Sainsbury's Petrol Pricing
+                    <span class="build-information">Build @(BuildInfoHelper.BuildVersion) - on @(BuildInfoHelper.BuildDateTime.ToString("yyyy-MM-dd a\\t HH:mm:ss")) </span>
+                </p>
             </footer>
         </div>
     </div>

@@ -219,6 +219,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helper\BuildInfoHelper.cs" />
     <Compile Include="Helper\Extensions\HtmlHelperExtensions.cs" />
     <Compile Include="Helper\Extensions\JsonResponseHelper.cs" />
     <Compile Include="Helper\Extensions\UiHelper.cs" />

@@ -19,6 +19,9 @@ using JsPlc.Ssc.PetrolPricing.Core.Interfaces;
 using JsPlc.Ssc.PetrolPricing.Portal.Helper.Extensions;
 using WebGrease;
 using WebGrease.Extensions;
+using JsPlc.Ssc.PetrolPricing.Portal.Helper;
+using System.Reflection;
+using System.IO;
 
 namespace JsPlc.Ssc.PetrolPricing.Portal
 {
@@ -33,12 +36,11 @@ namespace JsPlc.Ssc.PetrolPricing.Portal
 
         protected void Application_Start()
         {
+            GetBuildInformation();
             AreaRegistration.RegisterAllAreas();
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
-        
-           
         }
 
         protected void Application_Error(Object sender, EventArgs e)
@@ -73,6 +75,13 @@ namespace JsPlc.Ssc.PetrolPricing.Portal
             Response.Cache.SetCacheability(HttpCacheability.NoCache);
             Response.Cache.SetExpires(DateTime.UtcNow.AddHours(-1));
             Response.Cache.SetNoStore();
+        }
+
+        private void GetBuildInformation()
+        {
+            var assembly = Assembly.GetExecutingAssembly();
+            BuildInfoHelper.BuildVersion = assembly.GetName().Version.ToString();
+            BuildInfoHelper.BuildDateTime = new FileInfo(assembly.Location).LastWriteTime;
         }
     }
 }
