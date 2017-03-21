@@ -29,6 +29,8 @@ require.config({
         "notify": "App/notify",
         "cookie": "App/cookie",
         "downloader": "App/downloader",
+        "layout": "App/layout",
+        "scrollToTop": "App/scrollToTop",
 
         //"ko-binding-handlers": "App/ko-binding-handlers",
 

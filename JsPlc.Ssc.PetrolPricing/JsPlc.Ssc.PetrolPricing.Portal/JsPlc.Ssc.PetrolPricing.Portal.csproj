@@ -259,6 +259,7 @@
     <Content Include="Content\notify.css" />
     <Content Include="Content\prices.css" />
     <Content Include="Content\prompts.css" />
+    <Content Include="Content\scrollToTop.css" />
     <Content Include="Content\tips.css" />
     <Content Include="Content\uploads.css" />
     <Content Include="favicon.ico" />
@@ -301,7 +302,9 @@
     <Content Include="Scripts\App\common.js" />
     <Content Include="Scripts\App\cookie.js" />
     <Content Include="Scripts\App\downloader.js" />
+    <Content Include="Scripts\App\layout.js" />
     <Content Include="Scripts\App\prices.js" />
+    <Content Include="Scripts\App\scrollToTop.js" />
     <Content Include="Scripts\App\ViewScripts\CompetitorPriceNotePopup.js" />
     <Content Include="Scripts\App\ViewScripts\CompetitorPricePopup.js" />
     <Content Include="Scripts\App\ViewScripts\FileUpload.js" />

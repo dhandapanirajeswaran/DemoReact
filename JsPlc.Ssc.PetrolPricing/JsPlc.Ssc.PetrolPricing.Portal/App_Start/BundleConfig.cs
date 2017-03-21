@@ -43,6 +43,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal
                       "~/Content/notify.css",
                       "~/Content/prompts.css",
                       "~/Content/downloader.css",
+                      "~/Content/scrollToTop.css",
                       "~/Content/jquery.dataTables.min.css"));
         }
     }
