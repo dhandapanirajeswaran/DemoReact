@@ -435,7 +435,7 @@
                 <div id="PricingPanelScroller" class="actualdata collapsed" style="padding:0px;margin:0px" data-bind="with: dataModel">
                     <!-- JS Store DataRows -->
                     <!-- ko foreach: sites -->
-                    <div class="row site-row" role="tab" data-bind="id:('Heading' + SiteId), attr: {id: 'SiteHeading' + SiteId, 'data-haspricechanges': (hasPriceChanges())},">
+                    <div class="row site-row" role="tab" data-bind="id:('Heading' + SiteId), attr: {id: 'SiteHeading' + SiteId, 'data-haspricechanges': (hasPriceChanges())}, css: (isEditing() ? 'focused': '')">
                         <div class="col-sm-1" style="width:5px;margin:2px;height:auto">
 
                             <a role="button" data-toggle="modal" data-bind="attr:{id: SiteId}, click: getCompetitorPopupDataClick"
@@ -481,8 +481,8 @@
                             </span>
                             <!-- note: override prices can be extracted using $('#SiteId-FueldTypeId-overridePrice') -->
                             <i data-bind="attr: {
-                                    class: (!UpDownValue() || UpDownValue() == 0 || UpDownValue() == '-') ? 'fa fa-arrow-circle-o-right'
-                                            : (UpDownValue() <= 0.1) ? 'fa fa-arrow-circle-o-down': 'fa fa-arrow-circle-o-up',
+                                    class: (!UpDownValue() || UpDownValue() == 0 || UpDownValue() == '-') ? 'fa fa-arrow-right'
+                                            : (UpDownValue() <= 0.1) ? 'fa fa-arrow-down': 'fa fa-arrow-up',
                                     style: (!UpDownValue() || UpDownValue() == 0 || UpDownValue() == '-') ? 'color: grey'
                                             : (UpDownValue() <= 0.1) ? 'color: red': 'color: green',
                                             }"></i>

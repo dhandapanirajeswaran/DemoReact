@@ -207,3 +207,12 @@ span.jsdiff {
     padding-right: 4px;
 }
 
+.site-row.focused {
+    background-color: #efe;
+}
+
+.site-row > div {
+    text-align: center;
+    vertical-align: middle;
+    line-height: normal;
+}
