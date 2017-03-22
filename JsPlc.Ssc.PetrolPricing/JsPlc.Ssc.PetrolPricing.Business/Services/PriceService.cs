@@ -85,7 +85,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 			}
 		}
 
-	    public void DoCalcDaiilyPricesForSite(int siteId, DateTime forDate)
+	    public void DoCalcDailyPricesForSite(int siteId, DateTime forDate)
 	    {
             var fuels =
                    _lookupService.GetFuelTypes()

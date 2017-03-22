@@ -875,14 +875,11 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 
         public bool CalcDailyPrices(int siteId)
         {
-            var fileUploads=_db.GetFileUploads();
+            var fileUploads = _db.GetFileUploads(null, (int)FileUploadTypes.DailyPriceData, null);
 
             foreach (var fp in fileUploads)
             {
-                if (fp.UploadTypeId == (int) FileUploadTypes.DailyPriceData)
-                {
-                    _priceService.DoCalcDaiilyPricesForSite(siteId, fp.UploadDateTime);
-                }
+                _priceService.DoCalcDailyPricesForSite(siteId, fp.UploadDateTime);
             }
             return true;
         }
