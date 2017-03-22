@@ -384,121 +384,150 @@
                         </div>
                     </div>
                 </div>
-                <div class="row" style="background-color: silver;font-weight: bold;height:60px;">
-                    <div class="col-sm-1" style="width:5px;margin:2px;">#</div>
-                    <div class="col-sm-1" style="width:50px"><span style="vertical-align:bottom;height:60px">Store No.</span></div>
-                    <div class="col-sm-1" style="width:10px"><span></span></div>
-                    <div class="col-sm-1" style="width:230px"><span>Store Name</span></div>
-                    <div class="col-sm-1" style="width:120px"><span>Store Town</span></div>
-                    <div class="col-sm-1" style="width:50px"><span>Cat No.</span></div>
-                    <div class="col-sm-1" style="width:50px"><span>PFS No.</span></div>
 
-                    <div class="col-sm-1 dividerLeftWhite" style="width:240px;text-align:center;height:60px">
-                        <h4>
-                            <span class="label label-success">
-                                &nbsp;Unleaded&nbsp;
-                            </span>
-                        </h4>
-                    </div>
-                    <div class="col-sm-1 dividerLeftWhite" style="width:240px;text-align:center;height:60px">
-                        <h4>
-                            <span class="label label-black">&nbsp;Diesel&nbsp;</span>
-                        </h4>
-                    </div>
-                    <div class="col-sm-1 dividerLeftWhite" style="width:240px;text-align:center;height:60px">
-                        <h4>
-                            <span class="label label-success-inverted">&nbsp;Super Unleaded&nbsp;</span>
-                        </h4>
-                    </div>
-                </div>
-                <div class="row" style="font-weight: bold;">
-                    <!-- 13 column layout -->
-                    <div class="col-sm-1" style="width:5px"></div>
-                    <div class="col-sm-1" style="width:534px; padding-top: 1em;">
-                        <!-- EMAIL all Button, only loads popup -->
-                        <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#emailAllSites"
-                                data-bind="visible: !$root.ViewingHistorical() && $root.dataAvailable() == true">
-                            Email all &nbsp;<i class="fa fa-envelope-o"></i>
-                        </button>
-                    </div>
+                <!-- start grid header -->
+                <table class="pricing-grid">
+                    <thead>
+                        <!-- first row -->
+                        <tr>
+                            <th class="col-header-competitor">#</th>
+                            <th class="col-header-store-no">Store No.</th>
+                            <th class="col-header-email">@@</th>
+                            <th class="col-header-store-name">Store Name</th>
+                            <th class="col-header-store-town">Store Town</th>
+                            <th class="col-header-cat-no">Cat No.</th>
+                            <th class="col-header-pfs-no">PFS No.</th>
+                            <th class="col-header-unleaded" colspan="2">
+                                <h4>
+                                    <span class="label label-success">&nbsp;Unleaded&nbsp;</span>
+                                </h4>
+                            </th>
+                            <th class="col-header-diesel" colspan="2">
+                                <h4>
+                                    <span class="label label-black">&nbsp;Diesel&nbsp;</span>
+                                </h4>
+                            </th>
+                            <th class="col-header-super-unleaded" colspan="2">
+                                <h4>
+                                    <span class="label label-success-inverted">&nbsp;Super Unleaded&nbsp;</span>
+                                </h4>
+                            </th>
+                        </tr>
 
-                    <div class="col-sm-1 dayColumnHeader previousDay"><span id="today1">-</span></div>
-                    <div class="col-sm-1 dayColumnHeader currentDay"><span id="tomorrow1">-</span></div>
-                    <div class="col-sm-1 dayColumnHeader previousDay darkHeader"><span id="today2">-</span></div>
-                    <div class="col-sm-1 dayColumnHeader currentDay darkHeader"><span id="tomorrow2">-</span></div>
-                    <div class="col-sm-1 dayColumnHeader previousDay"><span id="today3">-</span></div>
-                    <div class="col-sm-1 dayColumnHeader currentDay"><span id="tomorrow3">-</span></div>
-                </div>
+                        <!-- second row -->
+                        <tr>
+                            <th colspan="3">
+                                <!-- EMAIL all Button, only loads popup -->
+                                <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#emailAllSites"
+                                        data-bind="visible: !$root.ViewingHistorical() && $root.dataAvailable() == true">
+                                    Email all &nbsp;<i class="fa fa-envelope-o"></i>
+                                </button>
+                            </th>
+                            <th colspan="4"></th>
+                            <th class="col-header-yesterday-unleaded">
+                                <span id="today1">-</span>
+                            </th>
+                            <th class="col-header-tomorrow-unleaded">
+                                <span id="tomorrow1">-</span>
+                            </th>
+                            <th class="col-header-yesterday-diesel">
+                                <span id="today2">-</span>
+                            </th>
+                            <th class="col-header-tomorrow-diesel">
+                                <span id="tomorrow2">-</span>
+                            </th>
+                            <th class="col-header-yesterday-super-unleaded">
+                                <span id="today3">-</span>
+                            </th>
+                            <th class="col-header-tomorrow-super-unleaded">
+                                <span id="tomorrow3">-</span>
+                            </th>
+                        </tr>
+                    </thead>
+                </table>
+                <!-- end of grid header -->
 
                 <hr style="padding:0px;margin:0px" />
 
-                <div id="PricingPanelScroller" class="actualdata collapsed" style="padding:0px;margin:0px" data-bind="with: dataModel">
-                    <!-- JS Store DataRows -->
-                    <!-- ko foreach: sites -->
-                    <div class="row site-row" role="tab" data-bind="id:('Heading' + SiteId), attr: {id: 'SiteHeading' + SiteId, 'data-haspricechanges': (hasPriceChanges())}, css: (isEditing() ? 'focused': '')">
-                        <div class="col-sm-1" style="width:5px;margin:2px;height:auto">
-
-                            <a role="button" data-toggle="modal" data-bind="attr:{id: SiteId}, click: getCompetitorPopupDataClick"
-                               data-target="#competitorPricesPopup" title="View competitor's prices">
-                                <i class="fa fa-credit-card"></i>
-                            </a>
-
-                            @*<a role="button" data-toggle="collapse" data-parent="#accordion" onclick="IsSitePriceFormClicked=1;"
-                               data-bind="attr:{href:('#CollapseCompetitorsforsite' + SiteId)}, click: getCompetitorDataClick"><i class="fa fa-minus-square-o" data-bind="css: showingComps() ? 'fa fa-minus-square-o' : 'fa fa-plus-square-o'"></i></a>*@
-                        </div>
-                        <div class="col-sm-1" style="width:50px"><span data-bind="text: StoreNo"></span></div>
-                        <!-- Email envelope... -->
-                        <div class="col-sm-1" style="width:10px">
-                            <span>
-                                <a href="#" data-toggle="modal" data-target="#emailSite" data-bind="click: bindEmailTemplate">
-                                    <i class="fa fa-envelope-o" data-bind="visible: canSendEmail()"></i>
-                                    <!-- ko if: hasEmailSendLogEntry() -->
-                                    <!-- ko with: EmailSendLogEntry -->
-                                    <i class="fa fa-check" data-bind="visible: IsSuccess, attr: {title:'Email sent..'}" style="color: green"></i>
-                                    <i class="fa fa-warning" data-bind="visible: IsWarning, attr: {title:WarningMessage}" style="color: orange"></i>
-                                    <i class="fa fa-ban" data-bind="visible: IsError, attr: {title:ErrorMessage}" style="color: red"></i>
-                                    <!-- /ko -->
-                                    <!-- /ko -->
-                                </a>
-                            </span>
-                        </div>
-                        <div class="col-sm-1" style="width:230px"><span data-bind="text: StoreName"></span></div>
-                        <div class="col-sm-1" style="width:120px"><span data-bind="text: Town"></span></div>
-                        <div class="col-sm-1" style="width:50px"><span data-bind="text: CatNo"></span></div>
-                        <div class="col-sm-1" style="width:50px"><span data-bind="text: PfsNo"></span></div>
-
-                        <!-- ko foreach: FuelPricesToDisplay -->
-                        <!-- ko if: siteSupportsFuel -->
-                        <div class="col-sm-1 yesterday-col">
-                            <span data-bind="text: FuelPrice.TodayPrice"></span>
-                        </div>
-                        <div class="col-sm-1 dividerLeft override-col">
-                            <span class="padded-price-right" data-bind="attr:{title:(FuelPrice.IsTrailPrice ? 'Trail price: ' + FuelPrice.CompetitorName : 'Competitor name: ' + FuelPrice.CompetitorName + '; Markup: ' + FuelPrice.Markup)}, text: FuelPrice.AutoPrice"></span>
-                            <input type="text" data-bind="value: FuelPrice.OverridePrice, visible: !$root.ViewingHistorical(),
-                                id: ('OverridePrice_' + $parent.SiteId + '_' + FuelPrice.FuelTypeId), event:{keyup: changeProp, blur: blurred, focus: focused}" class="txtPrice" maxlength="8" />
-                            <span style="color: red">
-                                <span data-bind="attr :{id: ('OverridePriceHighlight_' + $parent.SiteId + '_' + FuelPrice.FuelTypeId)}"></span>
-                            </span>
-                            <!-- note: override prices can be extracted using $('#SiteId-FueldTypeId-overridePrice') -->
-                            <i data-bind="attr: {
-                                    class: (!UpDownValue() || UpDownValue() == 0 || UpDownValue() == '-') ? 'fa fa-arrow-right'
-                                            : (UpDownValue() <= 0.1) ? 'fa fa-arrow-down': 'fa fa-arrow-up',
-                                    style: (!UpDownValue() || UpDownValue() == 0 || UpDownValue() == '-') ? 'color: grey'
-                                            : (UpDownValue() <= 0.1) ? 'color: red': 'color: green',
-                                            }"></i>
-                            &nbsp;<span data-bind="text: (!UpDownValue() || UpDownValue() == 0 || UpDownValue() == '-') ? '-' :
-                                                           (UpDownValue()/10)"></span>
-                        </div>
-                        <!-- /ko -->
-                        <!-- ko if: !siteSupportsFuel -->
-                        <div class="col-sm-1 dividerLeft" style="width:93px;height:45px">n/a</div>
-                        <div class="col-sm-1 dividerLeft" style="margin-left:0px; width:145px;height:45px">n/a</div>
-                       
-                        <!-- /ko -->
-                        <!-- /ko -->
+                <div class="row" id="SorryNoResultsPanel" data-bind="visible: $root.shouldShowSorryResults" style="display: none; padding: 3em 2em;">
+                    <div class="col-md-13 text-center font150pc">
+                        Sorry, no data was found. Try a different search criteria.
                     </div>
+                </div>
 
-                    <div data-bind="attr:{id: ('AjaxCollapseCompetitorsforsite' + SiteId)}" onclick="IsSitePriceFormClicked=1;" class="panel-collapse collapse" role="tabpanel" style="background-color: grey">
+                <!-- ko if: $root.busyLoadingData() -->
+                <div class="row" style="padding: 3em 2em;">
+                    <div class="col-md-13 text-center font150pc">
+                        Loading Sales Pricing information. Please wait...
+                    </div>
+                </div>
+                <!-- /ko -->
+
+                <div id="PricingPanelScroller" class="actualdata collapsed" style="padding:0px;margin:0px; display: none;" data-bind="with: dataModel, visible: !busyLoadingData()">
+                    <table class="pricing-grid">
+                        <tbody>
+                        <!-- JS Store DataRows -->
+                        <!-- ko foreach: sites -->
+                        <tr class="row site-row" role="tab" data-bind="id:('Heading' + SiteId), attr: {id: 'SiteHeading' + SiteId, 'data-haspricechanges': (hasPriceChanges())}, css: (isEditing() ? 'focused': '')">
+                            <td class="col-competitor">
+                                <a role="button" data-toggle="modal" data-bind="attr:{id: SiteId}, click: getCompetitorPopupDataClick"
+                                   data-target="#competitorPricesPopup" title="View competitor's prices">
+                                    <i class="fa fa-credit-card"></i>
+                                </a>
+
+                                @*<a role="button" data-toggle="collapse" data-parent="#accordion" onclick="IsSitePriceFormClicked=1;"
+                    data-bind="attr:{href:('#CollapseCompetitorsforsite' + SiteId)}, click: getCompetitorDataClick"><i class="fa fa-minus-square-o" data-bind="css: showingComps() ? 'fa fa-minus-square-o' : 'fa fa-plus-square-o'"></i></a>*@
+                            </td>
+                            <td class="col-store-no text-center" data-bind="text: StoreNo"></td>
+                            <!-- Email envelope... -->
+                            <td class="col-email">
+                                <span>
+                                    <a href="#" data-toggle="modal" data-target="#emailSite" data-bind="click: bindEmailTemplate">
+                                        <i class="fa fa-envelope-o" data-bind="visible: canSendEmail()"></i>
+                                        <!-- ko if: hasEmailSendLogEntry() -->
+                                        <!-- ko with: EmailSendLogEntry -->
+                                        <i class="fa fa-check" data-bind="visible: IsSuccess, attr: {title:'Email sent..'}" style="color: green"></i>
+                                        <i class="fa fa-warning" data-bind="visible: IsWarning, attr: {title:WarningMessage}" style="color: orange"></i>
+                                        <i class="fa fa-ban" data-bind="visible: IsError, attr: {title:ErrorMessage}" style="color: red"></i>
+                                        <!-- /ko -->
+                                        <!-- /ko -->
+                                    </a>
+                                </span>
+                            </td>
+                            <td class="col-store-name"><span data-bind="text: StoreName"></span></td>
+                            <td class="col-store-town"><span data-bind="text: Town"></span></td>
+                            <td class="col-cat-no text-center"><span data-bind="text: CatNo"></span></td>
+                            <td class="col-pfs-no text-center"><span data-bind="text: PfsNo"></span></td>
+
+                            <!-- ko foreach: FuelPricesToDisplay -->
+                            <!-- ko if: siteSupportsFuel -->
+                            <td class="col-yesterday">
+                                <span data-bind="html: FuelPrice.ForecourtTodayPriceHtml"></span>
+                            </td>
+                            <td class="col-today">
+                                <span class="padded-price-right" data-bind="attr:{title:(FuelPrice.IsTrailPrice ? 'Trail price: ' + FuelPrice.CompetitorName : 'Competitor name: ' + FuelPrice.CompetitorName + '; Markup: ' + FuelPrice.Markup)}, html: FuelPrice.ForecourtAutoPriceHtml()"></span>
+                                <input type="text" data-bind="value: FuelPrice.OverridePrice, visible: !$root.ViewingHistorical(),
+                                id: ('OverridePrice_' + $parent.SiteId + '_' + FuelPrice.FuelTypeId), event:{keyup: changeProp, blur: blurred, focus: focused}" class="txtPrice" maxlength="8" />
+                                    <span data-bind="attr :{id: ('OverridePriceHighlight_' + $parent.SiteId + '_' + FuelPrice.FuelTypeId)}"></span>
+                                <!-- note: override prices can be extracted using $('#SiteId-FueldTypeId-overridePrice') -->
+                                <i data-bind="attr: {class: (UpDownIconCss())}"></i>
+                                &nbsp;<span class="price-diff" data-bind="text: (UpDownText())"></span>
+                            </td>
+                            <!-- /ko -->
+                            <!-- ko if: !siteSupportsFuel -->
+                            <td class="dividerLeft">n/a</td>
+                            <td class="dividerLeft">n/a</td>
+                            <!-- /ko -->
+                            <!-- /ko -->
+                        </tr>
+                            <!-- /ko -->
+                        </tbody>
+                    </table>
+
+                    <!-- TODO: shift out of here for popup !! -->
+
+
+                    @*<div data-bind="attr:{id: ('AjaxCollapseCompetitorsforsite' + SiteId)}" onclick="IsSitePriceFormClicked=1;" class="panel-collapse collapse" role="tabpanel" style="background-color: grey">
                         <div class="compitatorData">
                             <table class="competitorTable table-striped table-hover full-width">
                                 <colgroup>
@@ -669,20 +698,8 @@
                                 </tbody>
                             </table>
                         </div>
+                    </div>*@
 
-
-                        <div class="container" data-bind="visible: $root.dataAvailable() == false" style="display: none">
-                            <div class="row">
-                                <div class="noSiteData">
-                                    No results found
-                                </div>
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                    <!-- /ko -->
                 </div>
 
                 <div class="row" style="margin-top: 4px; padding-top: 4px; border-top: 1px solid #ccc;">

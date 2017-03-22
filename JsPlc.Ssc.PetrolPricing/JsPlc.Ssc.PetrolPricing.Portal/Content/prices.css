@@ -147,15 +147,19 @@ span.jsdiff {
 .txtPrice {
     padding-left: 2px;
     padding-right: 2px;
+    font-size: 130%;
+    width: 3em;
+    text-align: center;
 }
 
-.txtPrice:hover,
-.txtPrice:focus {
+.txtPrice:hover
+{
     background: #ffc;
+    border-color: black;
 }
 
 .padded-price-right {
-    min-width: 2em;
+    min-width: 3em;
     display: inline-block;
     text-align: right;
 }
@@ -166,29 +170,11 @@ span.jsdiff {
 .tomorrow-date {color: orange;}
 .future-date {color: green;}
 
-.dayColumnHeader {
-    width: 146px;
-    border-left: 1px solid #ddd; 
-    min-height: 60px;
-    text-align: center;
-    padding: 1em 4px 0.5em 0px;
-}
-
 .previousDay {
     width: 93px;
 }
 .currentDay {
     width: 145px;
-}
-.darkHeader {
-    background-color: #eee;
-}
-
-.dividerLeft {
-    border-left: 1px solid #ccc;
-}
-.dividerLeftWhite {
-    border-left: 1px solid #fff;
 }
 
 .yesterday-col {
@@ -207,12 +193,67 @@ span.jsdiff {
     padding-right: 4px;
 }
 
-.site-row.focused {
-    background-color: #efe;
+.site-row.focused,
+.site-row.focused:hover {
+    background-color: #bdb;
 }
 
-.site-row > div {
-    text-align: center;
-    vertical-align: middle;
-    line-height: normal;
+.site-row:hover {
+    background: #ffc;
 }
+
+.pricing-grid {
+    table-layout: fixed;
+}
+
+.pricing-grid > thead > tr > th {text-align: center; border-left: 1px solid #fff;}
+.pricing-grid > tbody > tr > td {min-height: 2em; padding: 6px 2px;}
+
+.pricing-grid > thead > tr:nth-child(1) {background-color: silver}
+.pricing-grid > thead > tr:nth-child(2) {background-color: #f8f8f8;}
+
+.pricing-grid > thead {border-bottom: 2px solid #ccc;}
+
+.pricing-grid > thead > tr:nth-child(1) .col-header-competitor,
+.pricing-grid > tbody .col-competitor {width: 24px;}
+.pricing-grid > thead > tr:nth-child(1) .col-header-store-no,
+.pricing-grid > tbody .col-store-no {width: 64px;}
+.pricing-grid > thead > tr:nth-child(1) .col-header-email,
+.pricing-grid > tbody .col-email {width: 24px;}
+.pricing-grid > thead > tr:nth-child(1) .col-header-store-name,
+.pricing-grid > tbody .col-store-name {width: 210px;}
+.pricing-grid > thead > tr:nth-child(1) .col-header-store-town,
+.pricing-grid > tbody .col-store-town {width: 140px;}
+.pricing-grid > thead > tr:nth-child(1) .col-header-cat-no,
+.pricing-grid > tbody .col-cat-no {width: 48px;}
+.pricing-grid > thead > tr:nth-child(1) .col-header-pfs-no,
+.pricing-grid > tbody .col-pfs-no {width: 48px;}
+.pricing-grid > thead > tr:nth-child(1) .col-header-unleaded,
+.pricing-grid > thead > tr:nth-child(1) .col-header-diesel,
+.pricing-grid > thead > tr:nth-child(1) .col-header-super-unleaded {width: 236px;}
+
+
+.pricing-grid > thead > tr:nth-child(2) .col-header-yesterday-unleaded,
+.pricing-grid > thead > tr:nth-child(2) .col-header-yesterday-diesel,
+.pricing-grid > thead > tr:nth-child(2) .col-header-yesterday-super-unleaded {width: 84px; border-left: 1px solid #aaa;}
+
+.pricing-grid > thead > tr:nth-child(1) .col-header-diesel,
+.pricing-grid > thead > tr:nth-child(2) .col-header-yesterday-diesel,
+.pricing-grid > thead > tr:nth-child(2) .col-header-tomorrow-diesel {background-color: #ddd;}
+
+.pricing-grid > thead > tr:nth-child(2) .col-header-today,
+.pricing-grid > tbody .col-yesterday {width: 76px;}
+
+.pricing-grid > tbody .col-today {width: 160px;}
+
+.pricing-grid > tbody .col-yesterday {width: 76px; text-align: center; border-left: 1px solid #ccc;}
+
+.price-diff-up {color: #5cb85c}
+.price-diff-none {color: #999;}
+.price-diff-down {color: #910048;}
+
+.price-diff {font-family: monospace;}
+
+.price-pence {font-size: 125%; letter-spacing: 1px;}
+.price-fraction {letter-spacing: 2px;}
+
