@@ -36,9 +36,11 @@
             width: 11%;
             float: left;
         }
+
+.site-grid > thead > tr > th {background-color: #eee; border-left: 1px solid #fff;}
 </style>
 
-<table class="table table-striped header-fixed">
+<table class="table table-striped header-fixed site-grid" style="margin-bottom: 0;">
     <thead>
         <tr>
             <th>
@@ -73,27 +75,36 @@
             <th>
                 @Html.DisplayNameFor(model => model.IsActive)
             </th>
-            <th></th>
+            <th>
+            </th>
         </tr>
+
+        @if (Model != null && Model.Any() == false)
+        {
+        <tr>
+            <td colspan="8" class="text-center" style="font-size: 125%">
+                Sorry, No results found
+            </td>
+        </tr>
+        }
     </thead>
 
+    </table>
+
+<table class="table table-striped header-fixed site-grid">
     <tbody>
         @if (Model != null)
         {
-            if (Model.Any() == false)
-            {
-                <tr><td colspan="14" class="noSiteData">No results found</td></tr>
-            }
             foreach (var item in Model)
             {
                 <tr>
-                    <td class="filterable-cell">
+                    <td class="filterable-cell text-center">
                         @Html.DisplayFor(modelItem => item.CatNo)
                     </td>
-                    <td class="filterable-cell">
+                    <td class="filterable-cell text-center">
                         @Html.DisplayFor(modelItem => item.StoreNo)
                     </td>
-                    <td class="filterable-cell">
+                    <td class="filterable-cell text-center">
                         @Html.DisplayFor(modelItem => item.PfsNo)
                     </td>
                     <td class="filterable-cell">
@@ -116,21 +127,30 @@
                     <td class="filterable-cell">
                         @Html.DisplayFor(modelItem => item.Ownership)
                     </td>
-                    <td class="filterable-cell">
-                        @Html.DisplayFor(modelItem => item.IsActive)
+                    <td class="filterable-cell text-center">
+                        @if(item.IsActive)
+                        {
+                            <span style="color: green"><i class="fa fa-check"></i>&nbsp;Yes</span>
+                        } else
+                        {
+                            <span style="color: red;"><i class="fa fa-times"></i>&nbsp;No</span>
+                        }
                     </td>
-                    <td class="filterable-cell">
+                    <td class="filterable-cell text-center">
                         @if (item.IsSainsburysSite)
                         {
-                            @Html.ActionLink("Edit", "Edit", new { id = item.Id })
-                            @(" | ")
+                            <a class="btn btn-xs btn-primary" href="@Url.Action("Edit", "Sites", new {id = item.Id})"><i class="fa fa-pencil"></i>&nbsp;Edit</a>
+                            <span>&nbsp;</span>
                         }
-                        @Html.ActionLink("Details", "Details", new { id = item.Id }, htmlAttributes: new { onclick = "return true;" })
+                        <a class="btn btn-xs btn-primary" href="@Url.Action("Details","Sites", new { id = item.Id})"><i class="fa fa-info"></i>&nbsp;Details</a>
+                        <br /><br />
                         @if (item.Emails == null || !item.Emails.Any())
                         {
-                            <br /><span style="color: red">@("No Emails..")</span>
+                            <span style="color: red;"><i class="fa fa-warning"></i>  No Emails...</span>
+                        } else if (item.Emails != null && item.Emails.Any())
+                        {
+                            <span style="color: green;"><i class="fa fa-check"></i> @item.Emails.Count() Emails</span>
                         }
-
                     </td>
 
                 </tr>
