@@ -1,9 +1,11 @@
 ﻿define(["jquery", "common", "text!busyloader.html"],
     function ($, common, busyloaderHtml) {
 
+        "use strict";
+
         var showing = false,
             overlay = $(busyloaderHtml),
-            lightbox = $('<div class="lightbox-overlay"></div>')
+            lightbox = $('<div class="lightbox-overlay"></div>'),
             messageSelector = '#BusyLoaderMessage',
             positions = {
                 start: { 'top': '400px', 'opacity': 0 },
@@ -30,7 +32,7 @@
 
         // init styles
             overlay.css({ 'zIndex': 2010 });
-            lightbox.css({ 'position': 'absolute', 'top': 0, 'bottom': 0, 'left': 0, 'right': 0, 'backgroundColor': '#000', 'zIndex': 2000, 'opacity': 0 });
+            lightbox.css({ 'position': 'fixed', 'top': 0, 'bottom': 0, 'left': 0, 'right': 0, 'backgroundColor': '#000', 'zIndex': 2000, 'opacity': 0 });
 
         // attach to DOM
             overlay.appendTo(document.body);

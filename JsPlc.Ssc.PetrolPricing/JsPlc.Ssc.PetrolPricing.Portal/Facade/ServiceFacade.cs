@@ -767,10 +767,18 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
         {
             var url = string.Format("api/CalcDailyPrices?siteId={0}", siteId);
 
-            var response = _client.Value.GetAsync(url).Result;
+            try
+            {
+                var response = _client.Value.GetAsync(url).Result;
 
-            var result = response.Content.ReadAsAsync<bool>().Result;
-            return (response.IsSuccessStatusCode) ? result : false;
+                var result = response.Content.ReadAsAsync<bool>().Result;
+                return (response.IsSuccessStatusCode) ? result : false;
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex);
+                return false;
+            }
         }
 
         public SiteNoteViewModel GetSiteNote(int siteId)

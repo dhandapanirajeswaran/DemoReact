@@ -111,7 +111,7 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
 			{
 				if (_siteService.ExistsSite(Mapper.Map<Site>(site)))
 				{
-					return BadRequest("Site with that name already exists. Please try again.");
+					return BadRequest("Site with that name/Cat no already exists. Please try again.");
 				}
 
 				if (false == _siteService.IsUnique(Mapper.Map<Site>(site)))

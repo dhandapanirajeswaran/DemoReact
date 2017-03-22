@@ -152,7 +152,8 @@ span.jsdiff {
     text-align: center;
 }
 
-.txtPrice:hover
+.txtPrice:hover,
+.txtPrice:focus
 {
     background: #ffc;
     border-color: black;

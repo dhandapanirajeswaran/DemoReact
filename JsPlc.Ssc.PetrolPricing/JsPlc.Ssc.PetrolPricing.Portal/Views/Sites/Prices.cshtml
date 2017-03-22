@@ -494,7 +494,7 @@
                                     </a>
                                 </span>
                             </td>
-                            <td class="col-store-name"><span data-bind="text: StoreName"></span></td>
+                            <td class="col-store-name"><a title="Edit this site" data-bind="attr: {'href': ('@Url.Action("Edit", "Sites")/' + SiteId)}"><span data-bind="text: StoreName"></span> <i class="fa fa-edit"></i></a></td>
                             <td class="col-store-town"><span data-bind="text: Town"></span></td>
                             <td class="col-cat-no text-center"><span data-bind="text: CatNo"></span></td>
                             <td class="col-pfs-no text-center"><span data-bind="text: PfsNo"></span></td>

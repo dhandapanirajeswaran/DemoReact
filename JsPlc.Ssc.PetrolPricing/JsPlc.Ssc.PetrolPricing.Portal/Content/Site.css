@@ -466,7 +466,7 @@ textarea {
 .horz-auto-scroll {max-width: 100%; overflow: auto;}
 .clickable {cursor: pointer;}
 .busy-loader {
-    position: absolute;  
+    position: fixed;  
     z-index: 100; 
     width: 34em; 
     top: 6em; 

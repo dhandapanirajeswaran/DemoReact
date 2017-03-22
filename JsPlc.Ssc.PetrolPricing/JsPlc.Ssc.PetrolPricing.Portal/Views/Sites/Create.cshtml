@@ -151,10 +151,37 @@
                 <a class="btn btn-default" href="@Url.Action("Index","Sites")"><i class="fa fa-backward"></i> Back to List</a>
             </div>
             <div class="col-md-6 text-right">
-                <button type="submit" class="btn btn-primary"><i class="fa fa-check"></i> Create</button>
+                <button id="CreateSiteButton" type="submit" class="btn btn-primary"><i class="fa fa-star"></i> Create</button>
             </div>
             <div class="clearfix"></div>
         </div>
     </div>
 }
 
+
+@section Scripts {
+    <script>
+        require(["jquery", "busyloader"],
+            function ($, busyloader) {
+
+                function createSiteClick(ev) {
+                    busyloader.show({
+                        message: 'Creating new Site. Please wait...',
+                        dull: true
+                    });
+                };
+
+                function bindEvents() {
+                    $('#CreateSiteButton').off().on('click', createSiteClick)
+                };
+
+                function init() {
+                    bindEvents();
+                };
+
+                init();
+            }
+        );
+    </script>
+
+}

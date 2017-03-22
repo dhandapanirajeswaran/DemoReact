@@ -103,7 +103,14 @@
                 </dt>
 
                 <dd>
-                    @Html.DisplayFor(model => model.IsSainsburysSite)
+                    @if (Model.IsSainsburysSite)
+                    {
+                        <span style="color: green"><i class="fa fa-check"></i>&nbsp;Yes</span> <text>&mdash;</text> <span style="color: orange;">@Model.Brand</span>
+                    }
+                    else
+                    {
+                        <span style="color: red;"><i class="fa fa-times"></i>&nbsp;No</span>                        <text>&mdash;</text>  <span style="color: grey;">@Model.Brand</span>
+                    }
                 </dd>
 
                 <dt>
@@ -111,7 +118,14 @@
                 </dt>
 
                 <dd>
-                    @Html.DisplayFor(model => model.IsActive)
+                    @if (Model.IsActive)
+                    {
+                        <span style="color: green"><i class="fa fa-check"></i>&nbsp;Yes</span>
+                    }
+                    else
+                    {
+                        <span style="color: red;"><i class="fa fa-times"></i>&nbsp;No</span>
+                    }
                 </dd>
 
                 <dt>
@@ -130,5 +144,10 @@
     </div>
     <div class="panel-footer">
         <a class="btn btn-default" href="@Url.Action("Index", "Sites")"><i class="fa fa-backward"> Back to List</i></a>
+
+        @if (Model.IsSainsburysSite)
+        {
+            <a class="btn btn-primary pull-right" href="@Url.Action("Edit", "Sites", new {id = Model.Id})"><i class="fa fa-pencil"></i>&nbsp;Edit</a>
+        }
     </div>
 </div>
