@@ -196,11 +196,21 @@ span.jsdiff {
 
 .site-row.focused,
 .site-row.focused:hover {
-    background-color: #bdb;
+    background-color: #cec;
+    background-color: #ffc580;
 }
 
-.site-row:hover {
-    background: #ffc;
+.pricing-grid > tbody > .site-row.focused > td:nth-child(10),
+.pricing-grid > tbody > .site-row.focused > td:nth-child(11),
+.pricing-grid > tbody > .site-row.focused:hover > td:nth-child(10),
+.pricing-grid > tbody > .site-row.focused:hover > td:nth-child(11) {
+   background-color: #ffa560;
+}
+
+.site-row:hover,
+.pricing-grid > tbody > .site-row:hover > td:nth-child(10),
+.pricing-grid > tbody > .site-row:hover > td:nth-child(11) {
+    background-color: #ee9;
 }
 
 .pricing-grid {
@@ -236,18 +246,23 @@ span.jsdiff {
 
 .pricing-grid > thead > tr:nth-child(2) .col-header-yesterday-unleaded,
 .pricing-grid > thead > tr:nth-child(2) .col-header-yesterday-diesel,
-.pricing-grid > thead > tr:nth-child(2) .col-header-yesterday-super-unleaded {width: 84px; border-left: 1px solid #aaa;}
+.pricing-grid > thead > tr:nth-child(2) .col-header-yesterday-super-unleaded {width: 84px; border-left: 1px solid #999;}
 
 .pricing-grid > thead > tr:nth-child(1) .col-header-diesel,
 .pricing-grid > thead > tr:nth-child(2) .col-header-yesterday-diesel,
 .pricing-grid > thead > tr:nth-child(2) .col-header-tomorrow-diesel {background-color: #ddd;}
+
+.pricing-grid > thead > tr:nth-child(2) .col-header-tomorrow-diesel {border-left: none;}
 
 .pricing-grid > thead > tr:nth-child(2) .col-header-today,
 .pricing-grid > tbody .col-yesterday {width: 76px;}
 
 .pricing-grid > tbody .col-today {width: 160px;}
 
-.pricing-grid > tbody .col-yesterday {width: 76px; text-align: center; border-left: 1px solid #ccc;}
+.pricing-grid > tbody .col-yesterday {width: 76px; text-align: center; border-left: 1px solid #999;}
+
+.pricing-grid > tbody > tr > td:nth-child(10),
+.pricing-grid > tbody > tr > td:nth-child(11) {background-color: #eee;}
 
 .price-diff-up {color: #5cb85c}
 .price-diff-none {color: #999;}
