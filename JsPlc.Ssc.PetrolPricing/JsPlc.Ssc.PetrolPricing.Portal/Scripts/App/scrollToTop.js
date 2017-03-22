@@ -36,9 +36,6 @@
                 opacity = scroll / (defaults.maxY - defaults.minY);
 
             opacity = limit(opacity, 0, 1);
-
-            console.log(scroll, opacity);
-
             ui.css('opacity', opacity);
         };
 
