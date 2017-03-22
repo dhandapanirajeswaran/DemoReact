@@ -258,6 +258,11 @@
                         <button type="button" class="btn btn-sm" data-bind="click: PriceChangeFilterYes, css: {'btn-primary': $root.priceChangeFilter() == 'Yes'}"><i class="fa fa-check"></i>Yes</button>
                         <button type="button" class="btn btn-sm" data-bind="click: PriceChangeFilterNo, css: {'btn-primary': $root.priceChangeFilter() == 'No'}"><i class="fa fa-times"></i> No</button>
                     </div>
+                    <div class="btn-group" role="group">
+                        <button type="button" class="btn btn-sm" data-bind="visible: $root.priceChangeFilter() == 'Yes', click: togglePriceChangeFilterUp, css: {'btn-primary': $root.priceChangeFilterUp()}"><i class="fa fa-arrow-up"></i> Up</button>
+                        <button type="button" class="btn btn-sm" data-bind="visible: $root.priceChangeFilter() == 'Yes', click: togglePriceChangeFilterNone, css: {'btn-primary': $root.priceChangeFilterNone()}"><i class="fa fa-minus"></i> None</button>
+                        <button type="button" class="btn btn-sm" data-bind="visible: $root.priceChangeFilter() == 'Yes', click: togglePriceChangeFilterDown, css: {'btn-primary': $root.priceChangeFilterDown()}"><i class="fa fa-arrow-down"></i> Down</button>
+                    </div>
                 </div>
 
                 <div class="col-md-10">
@@ -502,9 +507,10 @@
                             <!-- ko foreach: FuelPricesToDisplay -->
                             <!-- ko if: siteSupportsFuel -->
                             <td class="col-yesterday">
-                                <span data-bind="html: FuelPrice.ForecourtTodayPriceHtml"></span>
+                                <span data-bind="css: ('fuel-price-change-' + UpDownSignCss()), html: FuelPrice.ForecourtTodayPriceHtml"></span>
                             </td>
                             <td class="col-today">
+                                <div data-bind="css: ('fuel-price-change-' + UpDownSignCss())">
                                 <span class="padded-price-right" data-bind="attr:{title:(FuelPrice.IsTrailPrice ? 'Trail price: ' + FuelPrice.CompetitorName : 'Competitor name: ' + FuelPrice.CompetitorName + '; Markup: ' + FuelPrice.Markup)}, html: FuelPrice.ForecourtAutoPriceHtml()"></span>
                                 <input type="text" data-bind="value: FuelPrice.OverridePrice, visible: !$root.ViewingHistorical(),
                                 id: ('OverridePrice_' + $parent.SiteId + '_' + FuelPrice.FuelTypeId), event:{keyup: changeProp, blur: blurred, focus: focused}" class="txtPrice" maxlength="8" />
@@ -512,6 +518,7 @@
                                 <!-- note: override prices can be extracted using $('#SiteId-FueldTypeId-overridePrice') -->
                                 <i data-bind="attr: {class: (UpDownIconCss())}"></i>
                                 &nbsp;<span class="price-diff" data-bind="text: (UpDownText())"></span>
+                                    </div>
                             </td>
                             <!-- /ko -->
                             <!-- ko if: !siteSupportsFuel -->

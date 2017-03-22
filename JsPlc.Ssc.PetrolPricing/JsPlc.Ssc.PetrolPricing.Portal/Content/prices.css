@@ -145,17 +145,18 @@ span.jsdiff {
 .font150pc {font-size: 150%;}
 
 .txtPrice {
-    padding-left: 2px;
-    padding-right: 2px;
-    font-size: 130%;
-    width: 3em;
+    padding: 1px 2px;
+    font-size: 115%;
+    width: 3.1em;
     text-align: center;
+    letter-spacing: 1px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
 }
 
 .txtPrice:hover,
 .txtPrice:focus
 {
-    background: #ffc;
     border-color: black;
 }
 
@@ -246,7 +247,7 @@ span.jsdiff {
 
 .pricing-grid > thead > tr:nth-child(2) .col-header-yesterday-unleaded,
 .pricing-grid > thead > tr:nth-child(2) .col-header-yesterday-diesel,
-.pricing-grid > thead > tr:nth-child(2) .col-header-yesterday-super-unleaded {width: 84px; border-left: 1px solid #999;}
+.pricing-grid > thead > tr:nth-child(2) .col-header-yesterday-super-unleaded {width: 83px; border-left: 1px solid #ddd;}
 
 .pricing-grid > thead > tr:nth-child(1) .col-header-diesel,
 .pricing-grid > thead > tr:nth-child(2) .col-header-yesterday-diesel,
@@ -273,3 +274,9 @@ span.jsdiff {
 .price-pence {font-size: 125%; letter-spacing: 1px;}
 .price-fraction {letter-spacing: 2px;}
 
+.pricing-grid.hide-fuel-price-change-up .fuel-price-change-up,
+.pricing-grid.hide-fuel-price-change-down .fuel-price-change-down,
+.pricing-grid.hide-fuel-price-change-none .fuel-price-change-none
+{
+    opacity: 0;
+}
