@@ -168,7 +168,7 @@
                                 <span id="kStartDateMonthYear" data-bind="text: kStartDateMonthYear"></span>
                             </strong>
                         </p>
-                        <table>
+                        <table class="font125pc">
                             <tr><td><strong>Product</strong></td><td><strong>New Price</strong></td></tr>
                             <tr><td>Unleaded&nbsp;</td><td>&nbsp;<span id="kUnleadedPrice" data-bind="text: kUnleadedPrice"></span></td></tr>
                             <tr><td>Super (if applicable)&nbsp;</td><td>&nbsp;<span id="kSuperPrice" data-bind="text: kSuperPrice"></span></td></tr>
@@ -482,8 +482,13 @@
                             <!-- Email envelope... -->
                             <td class="col-email">
                                 <span>
+                                    <!-- ko if: $root.ViewingHistorical()-->
+                                    <i class="fa fa-clock-o" title="Viewing historical data" style="color: grey;"></i>
+                                    <!-- /ko -->
+                                    <!-- ko if: !$root.ViewingHistorical() -->
+                                    <i class="fa fa-warning text-danger" data-bind="visible: !HasEmails" title="Site has no emails."></i>
                                     <a href="#" data-toggle="modal" data-target="#emailSite" data-bind="click: bindEmailTemplate">
-                                        <i class="fa fa-envelope-o" data-bind="visible: canSendEmail()"></i>
+                                        <i class="fa fa-envelope-o" data-bind="visible: HasEmails && canSendEmail()"></i>
                                         <!-- ko if: hasEmailSendLogEntry() -->
                                         <!-- ko with: EmailSendLogEntry -->
                                         <i class="fa fa-check" data-bind="visible: IsSuccess, attr: {title:'Email sent..'}" style="color: green"></i>
@@ -492,6 +497,7 @@
                                         <!-- /ko -->
                                         <!-- /ko -->
                                     </a>
+                                    <!-- /ko -->
                                 </span>
                             </td>
                             <td class="col-store-name"><a title="Edit this site" data-bind="attr: {'href': ('@Url.Action("Edit", "Sites")/' + SiteId)}"><span data-bind="text: StoreName"></span> <i class="fa fa-edit"></i></a></td>

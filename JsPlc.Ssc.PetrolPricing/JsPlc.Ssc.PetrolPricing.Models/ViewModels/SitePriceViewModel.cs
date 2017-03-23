@@ -31,6 +31,8 @@ namespace JsPlc.Ssc.PetrolPricing.Models.ViewModels
 
         public bool IsTrailPrice { get; set; } // if true, then trial price has been selected 
 
+        public bool HasEmails { get; set; }
+
         public bool hasNotes
         {
             get { return String.IsNullOrWhiteSpace(Notes) == false; }

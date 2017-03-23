@@ -473,7 +473,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                     sainsburysSites =
                         sainsburysSites.Where(x => x.Town.ToLower().Contains(storeTown.Trim().ToLower()));
 
-                var filteredSainsburysSites = sainsburysSites.OrderBy(x => x.SiteName).ToList();
+                var filteredSainsburysSites = sainsburysSites.Include(x => x.Emails).OrderBy(x => x.SiteName).ToList();
 
 
                 SitePriceViewModel sitePriceRow = null;
@@ -511,6 +511,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                     sitePriceRow.StoreNo = site.StoreNo;
                     sitePriceRow.FuelPrices = new List<FuelPriceViewModel>();
                     sitePriceRow.Notes = site.Notes;
+                    sitePriceRow.HasEmails = site.Emails.Any();
 
                     totaliser.Start("AddSitePriceRow");
 
