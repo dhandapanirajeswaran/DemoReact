@@ -17,6 +17,10 @@
 
 
     var reportWidth = Model != null ? Model.ReportWidth + "px" : "auto";
+
+    var reportInformationViewModel = new JsPlc.Ssc.PetrolPricing.Models.ViewModels.ReportInformationViewModel();
+    reportInformationViewModel.Introduction = "Tracks retail prices of individual sites over a specified period.";
+
 }
 
 
@@ -90,6 +94,11 @@
         }
     </div>
 </div>
+
+<hr />
+
+@Html.Partial("_ReportIntroduction", reportInformationViewModel)
+
 <div class="alert alert-danger @(string.IsNullOrWhiteSpace(ViewBag.ErrorMessage) ? "hidden" : "")">@ViewBag.ErrorMessage</div>
 <hr />
 

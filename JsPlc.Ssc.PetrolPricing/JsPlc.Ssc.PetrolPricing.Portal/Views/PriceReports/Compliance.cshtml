@@ -1,14 +1,18 @@
 ﻿@using System.Web.UI.WebControls
 @model JsPlc.Ssc.PetrolPricing.Models.ViewModels.ComplianceReportContainerViewModel
 @{
-	ViewBag.Title = "Report - Compliance of sites on selected date";
-	
+    ViewBag.Title = "Report - Compliance of sites on selected date";
+
     if (Model!=null && !Model.ForDate.HasValue)
     {
         Model.ForDate = DateTime.Now;
     }
 
     var requestedForDate =Model!=null ?  @Model.ForDate.Value.Date.ToString("dd-MMM-yyyy"): null;
+
+    var reportInformationViewModel = new JsPlc.Ssc.PetrolPricing.Models.ViewModels.ReportInformationViewModel();
+    reportInformationViewModel.Introduction = "Report checks Sainsbury's site compliance of fuel price changes from the day prior.";
+
 }
 <style>
     .diffColored {
@@ -91,6 +95,8 @@
     </div>
 </div>
 <hr />
+
+@Html.Partial("_ReportIntroduction", reportInformationViewModel)
 
 <div class="report">
     <div id="errorMsgs" style="color: red"></div>

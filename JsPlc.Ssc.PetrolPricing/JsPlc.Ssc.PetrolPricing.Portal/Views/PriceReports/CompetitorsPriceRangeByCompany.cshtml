@@ -3,6 +3,8 @@
     ViewBag.Title = "Report - Competitors Price Range by company";
     var hasData = (Model != null && Model.ReportCompanies[0].Brands.Count > 0);
 
+    var reportInformationViewModel = new JsPlc.Ssc.PetrolPricing.Models.ViewModels.ReportInformationViewModel();
+    reportInformationViewModel.Introduction = "Report shows the average retails sorted by ownership of all competitors by grade, their variance to Sainsbury's and their price range.";
 }
 
 <style>
@@ -45,6 +47,9 @@
     </div>
 </div>
 <hr />
+
+@Html.Partial("_ReportIntroduction", reportInformationViewModel)
+
 @if (Model != null)
 {
     using (Html.BeginForm("CompetitorsPriceRangeByCompany", "PriceReports", FormMethod.Get))

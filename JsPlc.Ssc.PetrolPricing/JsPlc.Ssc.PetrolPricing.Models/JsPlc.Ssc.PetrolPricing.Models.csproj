@@ -128,6 +128,7 @@
     <Compile Include="ViewModels\PricePointReportViewModel.cs" />
     <Compile Include="ViewModels\RecentFileUploadSummary.cs" />
     <Compile Include="ViewModels\RecentFileUploadSummaryItem.cs" />
+    <Compile Include="ViewModels\ReportInformationViewModel.cs" />
     <Compile Include="ViewModels\SelectItemViewModel.cs" />
     <Compile Include="ViewModels\SiteNoteUpdateViewModel.cs" />
     <Compile Include="ViewModels\SiteNoteViewModel.cs" />

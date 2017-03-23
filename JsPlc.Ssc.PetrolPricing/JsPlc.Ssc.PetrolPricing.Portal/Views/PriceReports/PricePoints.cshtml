@@ -1,13 +1,16 @@
 ﻿@model JsPlc.Ssc.PetrolPricing.Models.ViewModels.PricePointReportContainerViewModel
 @{
-	ViewBag.Title = "Report - View Number Of Sites At Each Price Point";
-	
+    ViewBag.Title = "Report - View Number Of Sites At Each Price Point";
+
     if (Model != null && !Model.ForDate.HasValue)
     {
         Model.ForDate = DateTime.Now;
     }
 
     var requestedDate = Model != null ? @Model.ForDate.Value.Date.ToString("dd-MMM-yyyy"): null;
+
+    var reportInformationViewModel = new JsPlc.Ssc.PetrolPricing.Models.ViewModels.ReportInformationViewModel();
+    reportInformationViewModel.Introduction = "Report identifies the various retail prices of both diesel and unleaded for each brand and provides a market summary of how many brands have sites at each price point.";
 }
 
 <script type="text/javascript">
@@ -148,6 +151,8 @@
     </div>
 </div>
 <hr />
+
+@Html.Partial("_ReportIntroduction", reportInformationViewModel)
 
 @using (Html.BeginForm("PricePoints", "PriceReports", FormMethod.Get))
 {

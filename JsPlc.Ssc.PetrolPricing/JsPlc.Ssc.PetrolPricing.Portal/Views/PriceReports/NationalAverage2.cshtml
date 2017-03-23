@@ -9,6 +9,10 @@
 
     var requestedDate = Model != null ? Model.ForDate.Value.Date.ToString("dd-MMM-yyyy") : null;
     var hasData = (Model != null && Model.NationalAverageReport != null && Model.NationalAverageReport.Fuels.First().Brands.Any());
+
+    var reportInformationViewModel = new JsPlc.Ssc.PetrolPricing.Models.ViewModels.ReportInformationViewModel();
+    reportInformationViewModel.Introduction = "Report produces the output for the tracking competitor tab in the PPL spreadsheet.";
+
 }
 
 <script type="text/javascript">
@@ -37,6 +41,8 @@
     </div>
 </div>
 <hr />
+
+@Html.Partial("_ReportIntroduction", reportInformationViewModel)
 
 @using (Html.BeginForm("NationalAverage2", "PriceReports", FormMethod.Get))
 {

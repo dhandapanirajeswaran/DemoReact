@@ -10,6 +10,9 @@
 
     var requestedDate = Model != null ? @Model.ForDate.Value.Date.ToString("dd-MMM-yyyy") : null;
     var hasData = (Model != null && Model.NationalAverageReport != null && Model.NationalAverageReport.Fuels.Any() && Model.NationalAverageReport.Fuels.First().Brands.Any());
+
+    var reportInformationViewModel = new JsPlc.Ssc.PetrolPricing.Models.ViewModels.ReportInformationViewModel();
+    reportInformationViewModel.Introduction = "Report shows the average retails of all competitors by grade, their variance to Sainsbury's and their price range.";
 }
 <script type="text/javascript">
 
@@ -89,7 +92,10 @@
         <button type="button" class="btn btn-primary" id="btnExportReport"><i class="fa fa-download"></i> Export to Excel</button>
     </div>
 </div>
+
 <hr />
+
+@Html.Partial("_ReportIntroduction", reportInformationViewModel)
 
 @using (Html.BeginForm("CompetitorsPriceRange", "PriceReports", FormMethod.Get))
 {

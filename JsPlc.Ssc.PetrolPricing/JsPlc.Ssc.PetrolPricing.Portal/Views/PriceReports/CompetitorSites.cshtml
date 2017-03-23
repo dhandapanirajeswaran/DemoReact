@@ -1,6 +1,11 @@
 ﻿@model JsPlc.Ssc.PetrolPricing.Models.ViewModels.CompetitorSiteViewModel
 @{
     ViewBag.Title = "Report - View Competitor Sites By Driving Time in Minutes";
+
+    var reportInformationViewModel = new JsPlc.Ssc.PetrolPricing.Models.ViewModels.ReportInformationViewModel()
+    {
+        Introduction = "The normalised view displays sites without double counting them if they are near multiple Sainsbury’s sites.<br /> E.G. if a JS site has two ASDA’s within 5 minutes this would count as 1."
+    };
 }
 <div class="row">
     <div class="col-md-8">
@@ -36,18 +41,7 @@
 {
     @Html.AntiForgeryToken()
 
-    <div class="row">
-        <div class="col-md-1 text-center">
-            <i class="fa fa-info-circle fa-2x"></i>
-        </div>
-        <div class="col-md-10">
-            <strong>
-                The normalised view displays sites without double counting them if they are near multiple Sainsbury’s sites.<br /> E.G. if a JS site has two ASDA’s within 5 minutes this would count as 1.
-            </strong>
-        </div>
-    </div>
-
-    <hr />
+    @Html.Partial("_ReportIntroduction", reportInformationViewModel)
 
     <div class="row">
         <div class="col-md-4">
