@@ -63,7 +63,7 @@
                     var isOutdated = daysAgo > maxAgeInDays;
                     var isSuccessful = row.ImportStatusId == (int)ImportProcessStatuses.Success;
                     var warning = isSuccessful && isOutdated == false ? "" : isOutdated ? "Outdated" : "Non-successful upload";
-                    <tr class="@rowClass">
+                    <tr class="@rowClass" style="cursor: pointer;" onclick="window.location='@Url.Action("Details", "File")/@row.FileUploadId'">
                         <td>@row.UploadTypeName</td>
                         <td>
                             @if (row.ImportStatus != null && statusMarkup.ContainsKey(row.ImportStatus))

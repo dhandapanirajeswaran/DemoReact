@@ -547,3 +547,11 @@ table.fixed-header>tbody {
     color: #999;
     font-style: italic;
 }
+
+.recent-file-uploads tr:nth-child(odd):hover {
+    background-color: #ee9;
+}
+.recent-file-uploads tr:nth-child(even):hover {
+    background-color: #dd8;
+}
+
