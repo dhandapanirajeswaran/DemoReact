@@ -280,3 +280,55 @@ span.jsdiff {
 {
     opacity: 0;
 }
+
+
+#PriceDifferenceBarChart {
+    border: 1px solid #999;
+    border-radius: 12px;
+    padding: 8px;
+    width: 100%;
+    HIDE width: 1280px; /* TODO: fix with parent 100% ! */
+    height: 200px;
+    color: #666;
+
+}
+
+.price-diff-bar-chart th {width: 3em; text-align: center;}
+.price-diff-bar-chart .bar {display: inline-block; width: 100%; position: absolute; bottom: 0; left: 0; right: 0; border-bottom: 1px solid #ccc;}
+.show-price-diff-down .price-diff-bar-chart .bar.lower-price {border-bottom-color:#610018; }
+.show-price-diff-up .price-diff-bar-chart .bar.higher-price {border-bottom-color: #449D44;}
+.show-price-diff-none .price-diff-bar-chart .bar.same-price {border-bottom-color: #F2A83E;}
+.show-price-diff-none .price-diff-bar-chart .bar.na-price {border-bottom-color: #000;}
+
+.price-diff-bar-chart .lower-price:hover,
+.price-diff-bar-chart .higher-price:hover,
+.price-diff-bar-chart .same-price:hover {background-color: #ffc; box-shadow: 2px 4px 4px #000; cursor: pointer;}
+
+.show-price-diff-down .price-diff-bar-chart .lower-price {color:#610018;}
+.show-price-diff-up .price-diff-bar-chart .higher-price {color: #449D44;}
+.show-price-diff-none .price-diff-bar-chart .same-price {color: #F2A83E;}
+.show-price-diff-none .price-diff-bar-chart .na-price {color: #000;}
+
+.price-diff-bar-chart td {position: relative; text-align: center; border-left: 2px solid #fff;}
+.price-diff-bar-chart-key {
+    font-weight: bold;
+    position: relative;
+}
+    .price-diff-bar-chart-key span {
+        position: absolute;
+    }
+
+    .price-diff-bar-chart-key .no-price-differences {left: 10%; color: #910048}
+    .price-diff-bar-chart-key .lower-price {left: 8%;}
+    .price-diff-bar-chart-key .same-price {left: 35%;}
+    .price-diff-bar-chart-key .higher-price {left: 57%;}
+    .price-diff-bar-chart-key .na-price {left: 82%;}
+
+.price-diff-bar-title {
+    text-align: center;
+    font-size: 110%;
+    font-weight: bold;
+    color: #666;
+    line-height: 2em;
+}
+

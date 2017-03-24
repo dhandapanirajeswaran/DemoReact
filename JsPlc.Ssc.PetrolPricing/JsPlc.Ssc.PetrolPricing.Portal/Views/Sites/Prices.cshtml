@@ -215,13 +215,13 @@
                 <!-- Store Name -->
                 <div class="col-md-2">
                     <label for="viewingStoreName">Store Name:</label>
-                    <input type="text" id="viewingStoreName" class="form-control" maxlength="50" 
+                    <input type="text" id="viewingStoreName" class="form-control" maxlength="50"
                            name="viewingStoreName" data-bind="value: $root.StoreName" />
                 </div>
                 <!-- Store Town -->
                 <div class="col-md-2">
                     <label for="viewingStoreTown">Store Town:</label>
-                    <input type="text" id="viewingStoreTown" class="form-control" maxlength="50" 
+                    <input type="text" id="viewingStoreTown" class="form-control" maxlength="50"
                            name="viewingStoreTown" data-bind="value: $root.StoreTown" />
                 </div>
                 <!-- Catalist No -->
@@ -235,7 +235,7 @@
                     <button style="margin-top: 24px;margin-left:10px;" type="button" id="btnGO" class="btn btn-success" data-bind="click: loadPageWithParams">Go</button>
                 </div>
                 <!-- show all button -->
-                <div class="col-md-1" >
+                <div class="col-md-1">
                     <label>&nbsp;</label>
                     <button type="button" class="btn btn-default" data-bind="click: function() { reloadSearchPage('Sites/Prices?date='+$root.InitDateInUsFormat()) }">Show all</button>
                 </div>
@@ -252,11 +252,15 @@
             <hr style="width:1280px;" />
             <div class="row">
                 <div class="col-md-2">
-                    <label>Price changes:</label><br />
+                    <label>Price changes: </label>
+                    <!-- ko if: !$root.priceChangeFilterDown() || !$root.priceChangeFilterNone() || !priceChangeFilterUp() -->
+                    <button class="btn btn-danger btn-xs" style="margin-left: 2.5em" data-bind="click: resetPriceChangeFilters"><i class="fa fa-power-off"></i> Reset</button>
+                    <!-- /ko -->
+                    <br />
                     <div class="btn-group" role="group">
-                        <button type="button" class="btn btn-sm" data-bind="click: togglePriceChangeFilterUp, css: {'btn-primary': $root.priceChangeFilterUp()}"><i class="fa fa-arrow-up"></i> Up</button>
-                        <button type="button" class="btn btn-sm" data-bind="click: togglePriceChangeFilterNone, css: {'btn-primary': $root.priceChangeFilterNone()}"><i class="fa fa-minus"></i> None</button>
                         <button type="button" class="btn btn-sm" data-bind="click: togglePriceChangeFilterDown, css: {'btn-primary': $root.priceChangeFilterDown()}"><i class="fa fa-arrow-down"></i> Down</button>
+                        <button type="button" class="btn btn-sm" data-bind="click: togglePriceChangeFilterNone, css: {'btn-primary': $root.priceChangeFilterNone()}"><i class="fa fa-minus"></i> None</button>
+                        <button type="button" class="btn btn-sm" data-bind="click: togglePriceChangeFilterUp, css: {'btn-primary': $root.priceChangeFilterUp()}"><i class="fa fa-arrow-up"></i> Up</button>
                     </div>
                 </div>
 
@@ -266,17 +270,9 @@
                 </div>
             </div>
             <br />
-            <div class="row font125pc" data-bind="with: dataModel, visible: !$root.dataLoading()">
-                <div class="col-md-2">
-                    <button type="button" disabled="disabled" class="btn btn-primary" title="Total number of sites">Price Differences <span class="badge" data-bind="text: sites.length"></span></button>
-                </div>
-                <div class="col-md-10">
-                    <!-- ko foreach: $root.PriceDifferences -->
-                    <span class="price-diff-item">
-                        <strong data-bind="text:key"></strong>
-                        <i class="badge" data-bind="text: (value + ' sites')"></i>
-                    </span>
-                    <!-- /ko -->
+            <div class="row font125pc" data-bind="with: dataModel, visible: !$root.dataLoading()" style="display: none;">
+                <div class="col-md-12">
+                    <div id="PriceDifferenceBarChart" data-bind="css: ('col-md-10 ' + $root.priceDiffBarChartFiltersCss() )"></div>
                 </div>
             </div>
 
@@ -451,7 +447,10 @@
 
                 <div class="row" id="SorryNoResultsPanel" data-bind="visible: $root.shouldShowSorryResults" style="display: none; padding: 3em 2em;">
                     <div class="col-md-13 text-center font150pc">
-                        Sorry, no data was found. Try a different search criteria.
+                        Sorry, no data was found. Try a different search criteria or
+                        <!-- ko if: !$root.priceChangeFilterUp() || !$root.priceChangeFilterDown() || !$root.priceChangeFilterNone() -->
+                        <button type="button" class="btn btn-danger btn-sm" data-bind="click: resetPriceChangeFilters"><i class="fa fa-power-off"></i> Reset</button> the Price Change filters.
+                        <!-- /ko -->
                     </div>
                 </div>
 
@@ -466,68 +465,68 @@
                 <div id="PricingPanelScroller" class="actualdata collapsed" style="padding:0px;margin:0px; display: none;" data-bind="with: dataModel, visible: !busyLoadingData()">
                     <table class="pricing-grid">
                         <tbody>
-                        <!-- JS Store DataRows -->
-                        <!-- ko foreach: sites -->
-                        <tr class="row site-row" role="tab" data-bind="id:('Heading' + SiteId), attr: {id: 'SiteHeading' + SiteId, 'data-price-change-signs': (priceChangeSigns())}, css: (isEditing() ? 'focused': '')">
-                            <td class="col-competitor">
-                                <a role="button" data-toggle="modal" data-bind="attr:{id: SiteId}, click: getCompetitorPopupDataClick"
-                                   data-target="#competitorPricesPopup" title="View competitor's prices">
-                                    <i class="fa fa-credit-card"></i>
-                                </a>
-
-                                @*<a role="button" data-toggle="collapse" data-parent="#accordion" onclick="IsSitePriceFormClicked=1;"
-                    data-bind="attr:{href:('#CollapseCompetitorsforsite' + SiteId)}, click: getCompetitorDataClick"><i class="fa fa-minus-square-o" data-bind="css: showingComps() ? 'fa fa-minus-square-o' : 'fa fa-plus-square-o'"></i></a>*@
-                            </td>
-                            <td class="col-store-no text-center" data-bind="text: StoreNo"></td>
-                            <!-- Email envelope... -->
-                            <td class="col-email">
-                                <span>
-                                    <!-- ko if: $root.ViewingHistorical()-->
-                                    <i class="fa fa-clock-o" title="Viewing historical data" style="color: grey;"></i>
-                                    <!-- /ko -->
-                                    <!-- ko if: !$root.ViewingHistorical() -->
-                                    <i class="fa fa-warning text-danger" data-bind="visible: !HasEmails" title="Site has no emails."></i>
-                                    <a href="#" data-toggle="modal" data-target="#emailSite" data-bind="click: bindEmailTemplate">
-                                        <i class="fa fa-envelope-o" data-bind="visible: HasEmails && canSendEmail()"></i>
-                                        <!-- ko if: hasEmailSendLogEntry() -->
-                                        <!-- ko with: EmailSendLogEntry -->
-                                        <i class="fa fa-check" data-bind="visible: IsSuccess, attr: {title:'Email sent..'}" style="color: green"></i>
-                                        <i class="fa fa-warning" data-bind="visible: IsWarning, attr: {title:WarningMessage}" style="color: orange"></i>
-                                        <i class="fa fa-ban" data-bind="visible: IsError, attr: {title:ErrorMessage}" style="color: red"></i>
-                                        <!-- /ko -->
-                                        <!-- /ko -->
+                            <!-- JS Store DataRows -->
+                            <!-- ko foreach: sites -->
+                            <tr class="row site-row" role="tab" data-bind="id:('Heading' + SiteId), attr: {id: 'SiteHeading' + SiteId, 'data-price-change-signs': (priceChangeSigns())}, css: (isEditing() ? 'focused': '')">
+                                <td class="col-competitor">
+                                    <a role="button" data-toggle="modal" data-bind="attr:{id: SiteId}, click: getCompetitorPopupDataClick"
+                                       data-target="#competitorPricesPopup" title="View competitor's prices">
+                                        <i class="fa fa-credit-card"></i>
                                     </a>
-                                    <!-- /ko -->
-                                </span>
-                            </td>
-                            <td class="col-store-name"><a title="Edit this site" data-bind="attr: {'href': ('@Url.Action("Edit", "Sites")/' + SiteId)}"><span data-bind="text: StoreName"></span> <i class="fa fa-edit"></i></a></td>
-                            <td class="col-store-town"><span data-bind="text: Town"></span></td>
-                            <td class="col-cat-no text-center"><span data-bind="text: CatNo"></span></td>
-                            <td class="col-pfs-no text-center"><span data-bind="text: PfsNo"></span></td>
 
-                            <!-- ko foreach: FuelPricesToDisplay -->
-                            <!-- ko if: siteSupportsFuel -->
-                            <td class="col-yesterday">
-                                <span data-bind="css: ('fuel-price-change-' + UpDownSignCss()), html: FuelPrice.ForecourtTodayPriceHtml"></span>
-                            </td>
-                            <td class="col-today">
-                                <div data-bind="css: ('fuel-price-change-' + UpDownSignCss())">
-                                <span class="padded-price-right" data-bind="attr:{title:(FuelPrice.IsTrailPrice ? 'Trail price: ' + FuelPrice.CompetitorName : 'Competitor name: ' + FuelPrice.CompetitorName + '; Markup: ' + FuelPrice.Markup)}, html: FuelPrice.ForecourtAutoPriceHtml()"></span>
-                                <input type="text" data-bind="value: FuelPrice.OverridePrice, visible: !$root.ViewingHistorical(),
+                                    @*<a role="button" data-toggle="collapse" data-parent="#accordion" onclick="IsSitePriceFormClicked=1;"
+                                    data-bind="attr:{href:('#CollapseCompetitorsforsite' + SiteId)}, click: getCompetitorDataClick"><i class="fa fa-minus-square-o" data-bind="css: showingComps() ? 'fa fa-minus-square-o' : 'fa fa-plus-square-o'"></i></a>*@
+                                </td>
+                                <td class="col-store-no text-center" data-bind="text: StoreNo"></td>
+                                <!-- Email envelope... -->
+                                <td class="col-email">
+                                    <span>
+                                        <!-- ko if: $root.ViewingHistorical()-->
+                                        <i class="fa fa-clock-o" title="Viewing historical data" style="color: grey;"></i>
+                                        <!-- /ko -->
+                                        <!-- ko if: !$root.ViewingHistorical() -->
+                                        <i class="fa fa-warning text-danger" data-bind="visible: !HasEmails" title="Site has no emails."></i>
+                                        <a href="#" data-toggle="modal" data-target="#emailSite" data-bind="click: bindEmailTemplate">
+                                            <i class="fa fa-envelope-o" data-bind="visible: HasEmails && canSendEmail()"></i>
+                                            <!-- ko if: hasEmailSendLogEntry() -->
+                                            <!-- ko with: EmailSendLogEntry -->
+                                            <i class="fa fa-check" data-bind="visible: IsSuccess, attr: {title:'Email sent..'}" style="color: green"></i>
+                                            <i class="fa fa-warning" data-bind="visible: IsWarning, attr: {title:WarningMessage}" style="color: orange"></i>
+                                            <i class="fa fa-ban" data-bind="visible: IsError, attr: {title:ErrorMessage}" style="color: red"></i>
+                                            <!-- /ko -->
+                                            <!-- /ko -->
+                                        </a>
+                                        <!-- /ko -->
+                                    </span>
+                                </td>
+                                <td class="col-store-name"><a title="Edit this site" data-bind="attr: {'href': ('@Url.Action("Edit", "Sites")/' + SiteId)}"><span data-bind="text: StoreName"></span> <i class="fa fa-edit"></i></a></td>
+                                <td class="col-store-town"><span data-bind="text: Town"></span></td>
+                                <td class="col-cat-no text-center"><span data-bind="text: CatNo"></span></td>
+                                <td class="col-pfs-no text-center"><span data-bind="text: PfsNo"></span></td>
+
+                                <!-- ko foreach: FuelPricesToDisplay -->
+                                <!-- ko if: siteSupportsFuel -->
+                                <td class="col-yesterday">
+                                    <span data-bind="css: ('fuel-price-change-' + UpDownSignCss()), html: FuelPrice.ForecourtTodayPriceHtml"></span>
+                                </td>
+                                <td class="col-today">
+                                    <div data-bind="css: ('fuel-price-change-' + UpDownSignCss())">
+                                        <span class="padded-price-right" data-bind="attr:{title:(FuelPrice.IsTrailPrice ? 'Trail price: ' + FuelPrice.CompetitorName : 'Competitor name: ' + FuelPrice.CompetitorName + '; Markup: ' + FuelPrice.Markup)}, html: FuelPrice.ForecourtAutoPriceHtml()"></span>
+                                        <input type="text" data-bind="value: FuelPrice.OverridePrice, visible: !$root.ViewingHistorical(),
                                 id: ('OverridePrice_' + $parent.SiteId + '_' + FuelPrice.FuelTypeId), event:{keyup: changeProp, blur: blurred, focus: focused}" class="txtPrice" maxlength="8" />
-                                    <span data-bind="attr :{id: ('OverridePriceHighlight_' + $parent.SiteId + '_' + FuelPrice.FuelTypeId)}"></span>
-                                <!-- note: override prices can be extracted using $('#SiteId-FueldTypeId-overridePrice') -->
-                                <i data-bind="attr: {class: (UpDownIconCss())}"></i>
-                                &nbsp;<span class="price-diff" data-bind="text: (UpDownText())"></span>
+                                        <span data-bind="attr :{id: ('OverridePriceHighlight_' + $parent.SiteId + '_' + FuelPrice.FuelTypeId)}"></span>
+                                        <!-- note: override prices can be extracted using $('#SiteId-FueldTypeId-overridePrice') -->
+                                        <i data-bind="attr: {class: (UpDownIconCss())}"></i>
+                                        &nbsp;<span class="price-diff" data-bind="text: (UpDownText())"></span>
                                     </div>
-                            </td>
-                            <!-- /ko -->
-                            <!-- ko if: !siteSupportsFuel -->
-                            <td class="dividerLeft">n/a</td>
-                            <td class="dividerLeft">n/a</td>
-                            <!-- /ko -->
-                            <!-- /ko -->
-                        </tr>
+                                </td>
+                                <!-- /ko -->
+                                <!-- ko if: !siteSupportsFuel -->
+                                <td class="dividerLeft">n/a</td>
+                                <td class="dividerLeft">n/a</td>
+                                <!-- /ko -->
+                                <!-- /ko -->
+                            </tr>
                             <!-- /ko -->
                         </tbody>
                     </table>
@@ -537,177 +536,177 @@
                     <div data-bind="with: $root.dataModel, visible: !$root.busyLoadingData()">
                         <!-- ko foreach: sites -->
                         <div data-bind="attr:{id: ('AjaxCollapseCompetitorsforsite' + SiteId)}" onclick="IsSitePriceFormClicked=1;" class="panel-collapse collapse" role="tabpanel" style="background-color: grey">
-                    <div class="compitatorData">
-                        <table class="competitorTable table-striped table-hover full-width">
-                            <colgroup>
-                                <col width="12%" />
-                                <col width="6%" />
-                                <col width="18%" />
-                                <col width="4%" />
-                                <col width="4%" />
+                            <div class="compitatorData">
+                                <table class="competitorTable table-striped table-hover full-width">
+                                    <colgroup>
+                                        <col width="12%" />
+                                        <col width="6%" />
+                                        <col width="18%" />
+                                        <col width="4%" />
+                                        <col width="4%" />
 
-                                <col width="6%" />
-                                <col width="6%" />
-                                <col width="6%" />
-                                <col width="6%" />
-                                <col width="6%" />
-                                <col width="6%" />
-                                <col width="6%" />
-                                <col width="6%" />
-                                <col width="6%" />
-                            </colgroup>
+                                        <col width="6%" />
+                                        <col width="6%" />
+                                        <col width="6%" />
+                                        <col width="6%" />
+                                        <col width="6%" />
+                                        <col width="6%" />
+                                        <col width="6%" />
+                                        <col width="6%" />
+                                        <col width="6%" />
+                                    </colgroup>
 
-                            <thead>
-                                <tr>
-                                    <th class="num1"><span>Brand</span></th>
-                                    <th class="num2"><span>Notes</span></th>
-                                    <th class="num3"><span>Marker</span></th>
-                                    <th class="num4"><span>Drive-Time</span></th>
-                                    <th class="num5"><span>Cat No.</span></th>
+                                    <thead>
+                                        <tr>
+                                            <th class="num1"><span>Brand</span></th>
+                                            <th class="num2"><span>Notes</span></th>
+                                            <th class="num3"><span>Marker</span></th>
+                                            <th class="num4"><span>Drive-Time</span></th>
+                                            <th class="num5"><span>Cat No.</span></th>
 
-                                    <th colspan="3" class="text-center dividerLeft" >
-                                        <h4>
-                                            <span class="label label-success">
-                                                &nbsp;Unleaded&nbsp;
-                                            </span>
-                                        </h4>
-                                    </th>
-                                    <th colspan="3" class="text-center dividerLeft">
-                                        <h4>
-                                            <span class="label label-black">&nbsp;Diesel&nbsp;</span>
-                                        </h4>
-                                    </th>
-                                    <th colspan="3" class="text-center dividerLeft">
-                                        <h4>
-                                            <span class="label label-success-inverted">&nbsp;Super Unleaded&nbsp;</span>
-                                        </h4>
-                                    </th>
-                                </tr>
-                                <tr>
-                                    <th colspan="5"></th>
-                                    <th class="num6 tblHighlight"><span class="compyday">Yesterday</span></th>
-                                    <th class="num7 tblHighlight"><span class="comptoday">Today</span></th>
-                                    <th class="num8 tblHighlight"><span class="jsdiff" >JS_Diff</span></th>
-                                    <th class="num9"><span class="compyday">Yesterday</span></th>
-                                    <th class="num10"><span class="comptoday">Today</span></th>
-                                    <th class="num11"><span class="jsdiff">JS_Diff</span></th>
-                                    <th class="num12 tblHighlight"><span class="compyday">Yesterday</span></th>
-                                    <th class="num13 tblHighlight"><span class="comptoday">Today</span></th>
-                                    <th class="num14 tblHighlight"><span class="jsdiff">JS_Diff</span></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <!-- ko if: loadingCompetitors() -->
-                                <tr>
-                                    <td colspan="14" class="noSiteData text-center"><span class="please-wait"><i class="fa fa-clock-o spinner"></i> Loading... Please wait</span></td>
-                                </tr>
-                                <!-- /ko -->
-                                <!-- ko if: !loadingCompetitors() -->
-                                <!-- ko if: !hasCompetitors() -->
-                                <tr>
-                                    <td colspan="14" class="noSiteData text-center"><span class="no-competitors"><i class="fa fa-info-circle"></i> Sorry, no competitors available</span></td>
-                                </tr>
-                                <!-- /ko -->
-                                <!-- ko if: hasCompetitors() -->
-                                <!-- ko foreach: competitors -->
-                                <tr class="competitor-row hoverable" title="Double click to edit/create Site Note" data-bind="attr:{id:'CompetitorSiteRow_' + SiteId}, style: {background : $parent.FuelPricesToDisplay[0].FuelPrice.CompetitorName == Brand + '/' + StoreName  && $parent.FuelPricesToDisplay[0].FuelPrice.AutoPrice >0 ?  'yellow' : 'lightgray'}">
-                                    <td class="num1"><span data-bind="text: Brand"></span></td>
-                                    <td class="num2">
-                                        <button type="button" class="btn btn-default btn-xs triggerEditSiteNote" data-bind="attr:{id: 'EditSiteNoteButton_' + SiteId}" title="Create or edit note" ><i class="fa fa-pencil"></i></button>
-                                        <button type="button" class="btn btn-default btn-xs triggerToggleNote" data-bind="attr:{id: 'ToggleSiteNoteButton_' + SiteId}" title="Show Note"><i class="fa fa-sort-up"></i></button>
-                                    </td>
-                                    <td class="num3"><span data-bind="text: StoreName"></span></td>
-                                    <td class="num4"><b><span data-bind="text: DriveTime"></span></b></td>
-                                    <td class="num5"><span data-bind="text: CatNo"></span></td>
+                                            <th colspan="3" class="text-center dividerLeft">
+                                                <h4>
+                                                    <span class="label label-success">
+                                                        &nbsp;Unleaded&nbsp;
+                                                    </span>
+                                                </h4>
+                                            </th>
+                                            <th colspan="3" class="text-center dividerLeft">
+                                                <h4>
+                                                    <span class="label label-black">&nbsp;Diesel&nbsp;</span>
+                                                </h4>
+                                            </th>
+                                            <th colspan="3" class="text-center dividerLeft">
+                                                <h4>
+                                                    <span class="label label-success-inverted">&nbsp;Super Unleaded&nbsp;</span>
+                                                </h4>
+                                            </th>
+                                        </tr>
+                                        <tr>
+                                            <th colspan="5"></th>
+                                            <th class="num6 tblHighlight"><span class="compyday">Yesterday</span></th>
+                                            <th class="num7 tblHighlight"><span class="comptoday">Today</span></th>
+                                            <th class="num8 tblHighlight"><span class="jsdiff">JS_Diff</span></th>
+                                            <th class="num9"><span class="compyday">Yesterday</span></th>
+                                            <th class="num10"><span class="comptoday">Today</span></th>
+                                            <th class="num11"><span class="jsdiff">JS_Diff</span></th>
+                                            <th class="num12 tblHighlight"><span class="compyday">Yesterday</span></th>
+                                            <th class="num13 tblHighlight"><span class="comptoday">Today</span></th>
+                                            <th class="num14 tblHighlight"><span class="jsdiff">JS_Diff</span></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- ko if: loadingCompetitors() -->
+                                        <tr>
+                                            <td colspan="14" class="noSiteData text-center"><span class="please-wait"><i class="fa fa-clock-o spinner"></i> Loading... Please wait</span></td>
+                                        </tr>
+                                        <!-- /ko -->
+                                        <!-- ko if: !loadingCompetitors() -->
+                                        <!-- ko if: !hasCompetitors() -->
+                                        <tr>
+                                            <td colspan="14" class="noSiteData text-center"><span class="no-competitors"><i class="fa fa-info-circle"></i> Sorry, no competitors available</span></td>
+                                        </tr>
+                                        <!-- /ko -->
+                                        <!-- ko if: hasCompetitors() -->
+                                        <!-- ko foreach: competitors -->
+                                        <tr class="competitor-row hoverable" title="Double click to edit/create Site Note" data-bind="attr:{id:'CompetitorSiteRow_' + SiteId}, style: {background : $parent.FuelPricesToDisplay[0].FuelPrice.CompetitorName == Brand + '/' + StoreName  && $parent.FuelPricesToDisplay[0].FuelPrice.AutoPrice >0 ?  'yellow' : 'lightgray'}">
+                                            <td class="num1"><span data-bind="text: Brand"></span></td>
+                                            <td class="num2">
+                                                <button type="button" class="btn btn-default btn-xs triggerEditSiteNote" data-bind="attr:{id: 'EditSiteNoteButton_' + SiteId}" title="Create or edit note"><i class="fa fa-pencil"></i></button>
+                                                <button type="button" class="btn btn-default btn-xs triggerToggleNote" data-bind="attr:{id: 'ToggleSiteNoteButton_' + SiteId}" title="Show Note"><i class="fa fa-sort-up"></i></button>
+                                            </td>
+                                            <td class="num3"><span data-bind="text: StoreName"></span></td>
+                                            <td class="num4"><b><span data-bind="text: DriveTime"></span></b></td>
+                                            <td class="num5"><span data-bind="text: CatNo"></span></td>
 
-                                    <!-- ko foreach: FuelPricesToDisplay -->
-                                    <!-- ko if: siteSupportsFuel -->
-                                    <td style="border-left: 1px solid #ccc"><span data-bind="text: FuelPrice.YestPrice"></span></td>
-                                    <td style="border-left: 1px solid #ccc;">
-                                        <span data-bind="text: FuelPrice.TodayPrice"></span>
+                                            <!-- ko foreach: FuelPricesToDisplay -->
+                                            <!-- ko if: siteSupportsFuel -->
+                                            <td style="border-left: 1px solid #ccc"><span data-bind="text: FuelPrice.YestPrice"></span></td>
+                                            <td style="border-left: 1px solid #ccc;">
+                                                <span data-bind="text: FuelPrice.TodayPrice"></span>
 
 
-                                        <i data-bind="attr: {
-                                class: (FuelPrice.Difference == 0 || FuelPrice.Difference == '-') ? 'fa fa-arrow-circle-o-right'
-                                        : (FuelPrice.Difference <= 0.1) ? 'fa fa-arrow-circle-o-down': 'fa fa-arrow-circle-o-up',
+                                                <i data-bind="attr: {
+                                                   class (FuelPrice.Difference= =0 || FuelPrice.Difference= ='-' ) ? 'fa fa-arrow-circle-o-right'
+                                                   (FuelPrice.Difference <= 0.1) ? 'fa fa-arrow-circle-o-down': 'fa fa-arrow-circle-o-up',
                                 style: (FuelPrice.Difference == 0 || FuelPrice.Difference == '-') ? 'color: grey'
                                         : (FuelPrice.Difference <= 0.1) ? 'color: red': 'color: green',
                                         }"></i>
-                                        &nbsp;<span data-bind="text: (FuelPrice.Difference == 0 || FuelPrice.Difference == '-') ? '-' :
+                                                &nbsp;<span data-bind="text: (FuelPrice.Difference == 0 || FuelPrice.Difference == '-') ? '-' :
                                                        (FuelPrice.Difference/10)"></span>
 
 
-                                    </td>
-                                    <td style="border-left: 1px solid #ccc;">
+                                            </td>
+                                            <td style="border-left: 1px solid #ccc;">
 
-                                        <div data-bind="if: FuelPrice.FuelTypeId==2">
-                                                <div data-bind="if: ($parents[1].FuelPricesToDisplay[0].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1)  != 'NaN' ">
-                                                    <span data-bind="text: ($parents[1].FuelPricesToDisplay[0].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1) "></span>
-                                                    <i data-bind="attr: {
-                             class: ( ($parents[1].FuelPricesToDisplay[0].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1)   == 0 || ($parents[1].FuelPricesToDisplay[0].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1)  == 'NaN' ) ? ''
-                                        : (($parents[1].FuelPricesToDisplay[0].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1)  <= 0.1) ? 'fa fa-minus': 'fa fa-plus',
+                                                <div data-bind="if: FuelPrice.FuelTypeId==2">
+                                                    <div data-bind="if: ($parents[1].FuelPricesToDisplay[0].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1)  != 'NaN' ">
+                                                        <span data-bind="text: ($parents[1].FuelPricesToDisplay[0].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1) "></span>
+                                                        <i data-bind="attr: {
+                                                           class ( ($parents[1].FuelPricesToDisplay[0].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1)= =0 || ($parents[1].FuelPricesToDisplay[0].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1)= ='NaN' ) ? ''
+                                                           (($parents[1].FuelPricesToDisplay[0].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1)  <= 0.1) ? 'fa fa-minus': 'fa fa-plus',
                                 style: (($parents[1].FuelPricesToDisplay[0].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1)  == 0 || ($parents[1].FuelPricesToDisplay[0].FuelPrice.AutoPrice - FuelPrice.TodayPrice ).toFixed(1) == 'NaN') ? 'color: grey'
                                         :( ($parents[1].FuelPricesToDisplay[0].FuelPrice.AutoPrice - FuelPrice.TodayPrice ).toFixed(1)  <= 0.1) ? 'color: red': 'color: green'
                                         }"></i>
+                                                    </div>
+                                                    <div data-bind="if: ($parents[1].FuelPricesToDisplay[0].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1) == 'NaN' ">
+                                                        <span>n/a</span>
+                                                    </div>
+
+
                                                 </div>
-                                                <div data-bind="if: ($parents[1].FuelPricesToDisplay[0].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1) == 'NaN' ">
-                                                    <span>n/a</span>
-                                                </div>
+                                                <div data-bind="if: FuelPrice.FuelTypeId==6">
 
-
-                                        </div>
-                                        <div data-bind="if: FuelPrice.FuelTypeId==6">
-
-                                            <div data-bind="if: ($parents[1].FuelPricesToDisplay[1].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1)  != 'NaN' ">
-                                                <span data-bind="text: ($parents[1].FuelPricesToDisplay[1].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1) "></span>
-                                                <i data-bind="attr: {
-                             class: ( ($parents[1].FuelPricesToDisplay[1].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1) == 0 || ($parents[1].FuelPricesToDisplay[1].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1) == 'NaN' ) ? ''
-                                        : (($parents[1].FuelPricesToDisplay[1].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1) <= 0.1) ? 'fa fa-minus': 'fa fa-plus',
+                                                    <div data-bind="if: ($parents[1].FuelPricesToDisplay[1].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1)  != 'NaN' ">
+                                                        <span data-bind="text: ($parents[1].FuelPricesToDisplay[1].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1) "></span>
+                                                        <i data-bind="attr: {
+                                                           class ( ($parents[1].FuelPricesToDisplay[1].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1)= =0 || ($parents[1].FuelPricesToDisplay[1].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1)= ='NaN' ) ? ''
+                                                           (($parents[1].FuelPricesToDisplay[1].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1) <= 0.1) ? 'fa fa-minus': 'fa fa-plus',
                                 style: (($parents[1].FuelPricesToDisplay[1].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1) == 0  || ($parents[1].FuelPricesToDisplay[1].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1) == 'NaN' ) ? 'color: grey'
                                         :( ($parents[1].FuelPricesToDisplay[1].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1) <= 0.1) ? 'color: red': 'color: green'
                                         }"></i>
-                                            </div>
-                                            <div data-bind="if: ($parents[1].FuelPricesToDisplay[1].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1) == 'NaN' ">
-                                                <span>n/a</span>
-                                            </div>
+                                                    </div>
+                                                    <div data-bind="if: ($parents[1].FuelPricesToDisplay[1].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1) == 'NaN' ">
+                                                        <span>n/a</span>
+                                                    </div>
 
-                                        </div>
-                                        <div data-bind="if: FuelPrice.FuelTypeId==1">
-                                            <div data-bind="if: ($parents[1].FuelPricesToDisplay[2].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1)  != 'NaN' ">
-                                                <span data-bind="text: ($parents[1].FuelPricesToDisplay[2].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1) "></span>
-                                                <i data-bind="attr: {
-                             class: ( ($parents[1].FuelPricesToDisplay[2].FuelPrice.AutoPrice -FuelPrice.TodayPrice).toFixed(1) == 0 || ($parents[1].FuelPricesToDisplay[2].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1) == 'NaN'  ) ? ''
-                                        : (($parents[1].FuelPricesToDisplay[2].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1) <= 0.1) ? 'fa fa-minus': 'fa fa-plus',
+                                                </div>
+                                                <div data-bind="if: FuelPrice.FuelTypeId==1">
+                                                    <div data-bind="if: ($parents[1].FuelPricesToDisplay[2].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1)  != 'NaN' ">
+                                                        <span data-bind="text: ($parents[1].FuelPricesToDisplay[2].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1) "></span>
+                                                        <i data-bind="attr: {
+                                                           class ( ($parents[1].FuelPricesToDisplay[2].FuelPrice.AutoPrice -FuelPrice.TodayPrice).toFixed(1)= =0 || ($parents[1].FuelPricesToDisplay[2].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1)= ='NaN' ) ? ''
+                                                           (($parents[1].FuelPricesToDisplay[2].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1) <= 0.1) ? 'fa fa-minus': 'fa fa-plus',
                                 style: (($parents[1].FuelPricesToDisplay[2].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1) == 0 || ($parents[1].FuelPricesToDisplay[2].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1) == 'NaN') ? 'color: grey'
                                         :( ($parents[1].FuelPricesToDisplay[2].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1) <= 0.1) ? 'color: red': 'color: green'
                                         }"></i>
-                                            </div>
-                                            <div data-bind="if: ($parents[1].FuelPricesToDisplay[2].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1) == 'NaN' ">
-                                                <span>n/a</span>
-                                            </div>
+                                                    </div>
+                                                    <div data-bind="if: ($parents[1].FuelPricesToDisplay[2].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1) == 'NaN' ">
+                                                        <span>n/a</span>
+                                                    </div>
 
-                                        </div>
-                                    </td>
-                                    <!-- /ko -->
-                                    <!-- ko if: !siteSupportsFuel -->
-                                    <td style="border-left: 1px solid #ccc" colspan="3">n/a</td>
-                                    <!-- /ko -->
-                                    <!-- /ko -->
-                                </tr>
-                                <tr class="note-row" data-bind="attr:{id:'CompetitorNote_' + SiteId}">
-                                    <td colspan="14">
-                                        <div class="note-panel">
-                                            <p class="note-panel-text" data-bind="formatSiteNote: Notes" title="Click to edit"></p>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <!-- /ko -->
-                                <!-- /ko -->
-                                <!-- /ko -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+                                                </div>
+                                            </td>
+                                            <!-- /ko -->
+                                            <!-- ko if: !siteSupportsFuel -->
+                                            <td style="border-left: 1px solid #ccc" colspan="3">n/a</td>
+                                            <!-- /ko -->
+                                            <!-- /ko -->
+                                        </tr>
+                                        <tr class="note-row" data-bind="attr:{id:'CompetitorNote_' + SiteId}">
+                                            <td colspan="14">
+                                                <div class="note-panel">
+                                                    <p class="note-panel-text" data-bind="formatSiteNote: Notes" title="Click to edit"></p>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <!-- /ko -->
+                                        <!-- /ko -->
+                                        <!-- /ko -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                         <!-- /ko -->
 
                     </div>
@@ -719,7 +718,8 @@
                     <div class="col-md-3 col-md-offset-9">
                         <div class="btn-group pull-right" role="group">
                             <button type="button" class="btn btn-xs btn-primary" data-click="setExpandMode" data-mode="collapsed" data-states="expanded,collapsed" data-target="#PricingPanelScroller" data-message="Price grid collapsed"><i class="fa fa-toggle-up"></i> Collapse</button>
-                            <button type="button" class="btn btn-xs" data-click="setExpandMode" data-mode="expanded" data-states="expanded,collapsed" data-target="#PricingPanelScroller" data-message="Price grid expanded"><i class="fa fa-toggle-down"></i> Expand</button>                        </div>
+                            <button type="button" class="btn btn-xs" data-click="setExpandMode" data-mode="expanded" data-states="expanded,collapsed" data-target="#PricingPanelScroller" data-message="Price grid expanded"><i class="fa fa-toggle-down"></i> Expand</button>
+                        </div>
                     </div>
                 </div>
 
