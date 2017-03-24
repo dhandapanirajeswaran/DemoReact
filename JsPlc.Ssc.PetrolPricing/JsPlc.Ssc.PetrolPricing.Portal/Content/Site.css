@@ -521,11 +521,11 @@ table.fixed-header>tbody {
     color: #fff;
 }
 
-.recent-file-uploads  tr.recent:nth-child(odd),
+.recent-file-uploads tr.recent:nth-child(odd),
 #FileUploadContainer tr.recent:nth-child(odd) {
     background-color:  #efe;
 }
-.recent-file-uploads  tr.recent:nth-child(odd),
+.recent-file-uploads tr.recent:nth-child(even),
 #FileUploadContainer tr.recent:nth-child(even) {
     background-color: #ded;
 }
