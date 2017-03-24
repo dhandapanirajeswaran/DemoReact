@@ -140,5 +140,10 @@ namespace JsPlc.Ssc.PetrolPricing.Business
         {
             return _db.GetRecentFileUploadSummary();
         }
+
+        public IEnumerable<ContactDetail> GetContactDetails()
+        {
+            return _db.GetContactDetails();
+        }
     }
 }

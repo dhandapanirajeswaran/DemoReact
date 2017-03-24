@@ -148,6 +148,8 @@
     <Build Include="dbo\Functions\Table Functions\tf_SplitIdsOnComma.sql" />
     <Build Include="dbo\Stored Procedures\spGetRecentFileUploadSummary.sql" />
     <Build Include="dbo\Stored Procedures\GetCompetitorsWithPriceView.sql" />
+    <Build Include="dbo\Tables\ContactDetails.sql" />
+    <Build Include="dbo\Stored Procedures\spGetContactDetailsList.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Scripts\PostDeployment\Script.PostDeployment.sql" />

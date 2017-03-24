@@ -95,6 +95,7 @@
     <Compile Include="Common\Extensions.cs" />
     <Compile Include="Common\Functions.cs" />
     <Compile Include="Constants.cs" />
+    <Compile Include="ContactDetail.cs" />
     <Compile Include="DTOs\EmailToSet.cs" />
     <Compile Include="EmailSendLog.cs" />
     <Compile Include="Enums\FuelTypeEnum.cs" />
@@ -104,6 +105,7 @@
     <Compile Include="ExcludedBrands.cs" />
     <Compile Include="LatestPrice.cs" />
     <Compile Include="PPUserList.cs" />
+    <Compile Include="ViewModels\ContactDetailViewModel.cs" />
     <Compile Include="ViewModels\JsonResultViewModel.cs" />
     <Compile Include="ViewModels\LatestCompPriceDataModel.cs" />
     <Compile Include="ViewModels\LatestPriceDataModel.cs" />

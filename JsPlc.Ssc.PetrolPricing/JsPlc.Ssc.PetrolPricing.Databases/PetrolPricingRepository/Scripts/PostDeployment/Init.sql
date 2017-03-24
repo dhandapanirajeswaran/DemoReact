@@ -381,3 +381,10 @@ update [dbo].[Site] set pfsno=1038, StoreNo=2112 where CatNo=9179
 update [dbo].[Site] set pfsno=91, StoreNo=59 where CatNo=9243
 update [dbo].[Site] set pfsno=1051, StoreNo=2051 where CatNo=26185
 
+IF NOT EXISTS(SELECT NULL FROM dbo.ContactDetails)
+BEGIN
+	INSERT INTO dbo.ContactDetails (Heading, Address, PhoneNumber, EmailName, EmailAddress, IsActive)
+	VALUES ('Petrol Pricing Contact', 'Sainsburys Plc<br />33 Holborn, London,<br /> EC1N 2HT', '0207 69 52704', 'Product Owner', 'Izzy.Hexter@sainsburys.co.uk', 1);
+END
+
+

@@ -1,6 +1,6 @@
 ﻿using System.Data.Entity;
 using JsPlc.Ssc.PetrolPricing.Models;
-
+using System.Collections.Generic;
 
 namespace JsPlc.Ssc.PetrolPricing.Models.Persistence
 {
@@ -24,5 +24,6 @@ namespace JsPlc.Ssc.PetrolPricing.Models.Persistence
         IDbSet<QuarterlyUploadStaging> QuarterlyUploadStaging { get; }
 
         IDbSet<DailyPrice> DailyPrices { get; set; }
+        IEnumerable<ContactDetail> GetContactDetails();
     }
 }

@@ -1,17 +1,69 @@
-﻿@{
-    ViewBag.Title = "Contact Product Owner";
+﻿@model IEnumerable<JsPlc.Ssc.PetrolPricing.Models.ViewModels.ContactDetailViewModel>
+@{
+    ViewBag.Title = "Contact Details";
 }
+
+<style>
+    .contact-details-panel {
+        border: 4px solid #eee;
+        border-radius: 12px;
+        padding: 0 0.5em;
+        margin: 4px;
+    }
+</style>
+
 <div>
     <h1><i class="fa fa-at"></i> @ViewBag.Title</h1>
     <hr />
-    <address>
-        Sainsburys Plc<br />
-        33 Holborn, London, EC1N 2HT<br />
-        <abbr title="Phone">P:</abbr>
-        0207 69 52704
-    </address>
 
-    <address>
-        <strong>Product owner:</strong>   <a href="mailto:Izzy.Hexter@sainsburys.co.uk">Izzy.Hexter@sainsburys.co.uk</a><br />
-    </address>
+    <div class="container">
+        <div class="row">
+            @foreach (var contact in Model)
+            {
+                <div class="col-md-4 contact-details-panel">
+                    <div class="row">
+                        @if (!String.IsNullOrWhiteSpace(contact.Heading))
+                        {
+                            <div class="col-md-12 text-center">
+                                <h3>@contact.Heading</h3>
+                            </div>
+                        }
+                    </div>
+
+                    @if (!String.IsNullOrWhiteSpace(contact.Address))
+                    {
+                        <div class="row">
+                            <div class="col-md-4 text-right"><strong>Address</strong></div>
+                            <div class="col-md-8">
+                                <address>@Html.Raw(contact.Address)</address>
+                            </div>
+                        </div>
+                    }
+                    @if (!String.IsNullOrWhiteSpace(contact.PhoneNumber))
+                    {
+                        <div class="row">
+                            <div class="col-md-4 text-right"><strong>Phone:</strong></div>
+                            <div class="col-md-8">
+                                <span>@(contact.PhoneNumber)</span>
+                            </div>
+                        </div>
+                    }
+                    @if (!String.IsNullOrWhiteSpace(contact.EmailAddress))
+                    {
+                        <div class="row">
+                            <div class="col-md-4 text-right">
+                                <strong>@contact.EmailName</strong>
+                            </div>
+                            <div class="col-md-8">
+                                <a href="mailto:@contact.EmailAddress">@contact.EmailAddress</a>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <br />
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    </div>
 </div>

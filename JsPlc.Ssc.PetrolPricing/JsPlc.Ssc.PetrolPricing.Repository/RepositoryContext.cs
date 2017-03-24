@@ -133,5 +133,18 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                 }
             }
         }
+
+
+        public IEnumerable<ContactDetail> GetContactDetails()
+        {
+            const string sproc = "spGetContactDetailsList";
+
+            var parameters = new
+            {
+            };
+
+            var model = DapperHelper.QueryList<ContactDetail>(this, sproc, parameters);
+            return model;
+        }
     }
 }

@@ -529,5 +529,35 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
                 return new ExceptionResult(ex, this);
             }
         }
+
+        [System.Web.Http.HttpGet]
+        [System.Web.Http.Route("api/GetContactDetails/")]
+        public IHttpActionResult GetContactDetails()
+        {
+            try
+            {
+                var result = _siteService.GetContactDetails();
+
+                var model = new List<ContactDetailViewModel>();
+                foreach (var item in result)
+                    model.Add(new ContactDetailViewModel()
+                    {
+                        Id = item.Id,
+                        Heading = item.Heading ?? "",
+                        Address = item.Address ?? "",
+                        PhoneNumber = item.PhoneNumber ?? "",
+                        EmailName = item.EmailName ?? "",
+                        EmailAddress = item.EmailAddress ?? "",
+                        IsActive = item.IsActive
+                    });
+
+                return Ok(model);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex);
+                return new ExceptionResult(ex, this);
+            }
+        }
     }
 }

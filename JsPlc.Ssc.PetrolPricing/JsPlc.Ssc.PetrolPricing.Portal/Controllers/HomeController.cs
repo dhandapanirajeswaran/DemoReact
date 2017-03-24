@@ -35,7 +35,8 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 
         public ActionResult Contact()
         {
-            return View();
+            var model = _serviceFacade.GetContactDetails();
+            return View(model);
         }
     }
 }
