@@ -295,19 +295,19 @@ span.jsdiff {
 
 .price-diff-bar-chart th {width: 3em; text-align: center;}
 .price-diff-bar-chart .bar {display: inline-block; width: 100%; position: absolute; bottom: 0; left: 0; right: 0; border-bottom: 1px solid #ccc;}
-.show-price-diff-down .price-diff-bar-chart .bar.lower-price {border-bottom-color:#610018; }
-.show-price-diff-up .price-diff-bar-chart .bar.higher-price {border-bottom-color: #449D44;}
-.show-price-diff-none .price-diff-bar-chart .bar.same-price {border-bottom-color: #F2A83E;}
-.show-price-diff-none .price-diff-bar-chart .bar.na-price {border-bottom-color: #000;}
+.price-diff-bar-chart .bar.lower-price {border-bottom-color:#610018; }
+.price-diff-bar-chart .bar.higher-price {border-bottom-color: #449D44;}
+.price-diff-bar-chart .bar.same-price {border-bottom-color: #F2A83E;}
+.price-diff-bar-chart .bar.na-price {border-bottom-color: #000;}
 
 /*.price-diff-bar-chart .lower-price:hover,
 .price-diff-bar-chart .higher-price:hover,
 .price-diff-bar-chart .same-price:hover {background-color: #ffc; box-shadow: 2px 4px 4px #000; cursor: pointer;}*/
 
-.show-price-diff-down .price-diff-bar-chart .lower-price {color:#610018;}
-.show-price-diff-up .price-diff-bar-chart .higher-price {color: #449D44;}
-.show-price-diff-none .price-diff-bar-chart .same-price {color: #F2A83E;}
-.show-price-diff-none .price-diff-bar-chart .na-price {color: #000;}
+.price-diff-bar-chart .lower-price {color:#610018;}
+.price-diff-bar-chart .higher-price {color: #449D44;}
+.price-diff-bar-chart .same-price {color: #F2A83E;}
+.price-diff-bar-chart .na-price {color: #000;}
 
 .price-diff-bar-chart td {position: relative; text-align: center; border-left: 2px solid #fff;}
 .price-diff-bar-chart-key {
