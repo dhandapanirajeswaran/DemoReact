@@ -282,19 +282,18 @@
                 <div class="col-md-8" style="padding-top: 2px"><strong><span id="msgError"></span></strong></div>
                 <div class="clearfix"></div>
             </div>
-            <div style="display: none" class="alert alert-warning" data-bind="visible: !$root.hasAnyFieldErrors() && !$root.HasValidationErrors() && $root.HasUnsavedChanges() && !$root.ViewingHistorical() && !$root.hasBadPriceChangeValue()">
+            <div style="display: none" class="alert alert-warning sticky-footer" data-bind="visible: !$root.hasAnyFieldErrors() && !$root.HasValidationErrors() && $root.HasUnsavedChanges() && !$root.ViewingHistorical() && !$root.hasBadPriceChangeValue()">
                 <div class="col-md-1 text-center"><i class="fa fa-question-circle fa-2x"></i></div>
-                <div class="col-md-5">
+                <div class="col-md-8">
                     <strong>
                         You have unsaved changes. Would you like to save them?
                     </strong>
                 </div>
                 <div class="col-md-1">
-                    <button type="button" class="btn btn-success" data-bind="click: savePetrolPricingForm">
+                    <button type="button" class="btn btn-success btn-block" data-bind="click: savePetrolPricingForm">
                         Yes
                     </button>
                 </div>
-                <div class="clearfix"></div>
             </div>
             <div style="display: none" class="alert alert-success" data-bind="visible: $root.HasSuccessMessage()">
                 <div class="col-md-1 text-center"><i class="fa fa-exclamation-triangle fa-2x"></i></div>

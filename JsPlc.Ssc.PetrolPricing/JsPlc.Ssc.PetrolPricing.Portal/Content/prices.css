@@ -300,9 +300,9 @@ span.jsdiff {
 .show-price-diff-none .price-diff-bar-chart .bar.same-price {border-bottom-color: #F2A83E;}
 .show-price-diff-none .price-diff-bar-chart .bar.na-price {border-bottom-color: #000;}
 
-.price-diff-bar-chart .lower-price:hover,
+/*.price-diff-bar-chart .lower-price:hover,
 .price-diff-bar-chart .higher-price:hover,
-.price-diff-bar-chart .same-price:hover {background-color: #ffc; box-shadow: 2px 4px 4px #000; cursor: pointer;}
+.price-diff-bar-chart .same-price:hover {background-color: #ffc; box-shadow: 2px 4px 4px #000; cursor: pointer;}*/
 
 .show-price-diff-down .price-diff-bar-chart .lower-price {color:#610018;}
 .show-price-diff-up .price-diff-bar-chart .higher-price {color: #449D44;}
@@ -330,5 +330,13 @@ span.jsdiff {
     font-weight: bold;
     color: #666;
     line-height: 2em;
+}
+
+.sticky-footer {
+    position: fixed;
+    bottom: -1em;
+    left: 20%;
+    right: 20%;
+    box-shadow: 1px 2px 6px #000;
 }
 
