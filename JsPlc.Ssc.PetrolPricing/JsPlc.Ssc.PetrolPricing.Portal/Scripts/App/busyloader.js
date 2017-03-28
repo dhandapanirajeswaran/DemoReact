@@ -87,6 +87,7 @@
 
         function hide() {
             overlay.hide();
+            hideLightbox();
             showing = false;
         };
 
