@@ -270,8 +270,18 @@
                 </div>
             </div>
             <br />
-            <div class="row font125pc" data-bind="with: dataModel, visible: !$root.dataLoading()" style="display: none;">
-                <div class="col-md-12">
+
+            <div class="row" style="margin-bottom: 4px; padding-bottom: 4px;">
+                <div class="col-md-3 col-md-offset-9">
+                    <div class="btn-group pull-right" role="group">
+                        <button type="button" class="btn btn-xs btn-primary" data-click="setExpandMode" data-mode="expanded" data-states="expanded,collapsed" data-target="#PriceDifferencePanel" data-message="Showing Bar Chart"><i class="fa fa-toggle-down"></i> Show</button>
+                        <button type="button" class="btn btn-xs" data-click="setExpandMode" data-mode="collapsed" data-states="expanded,collapsed" data-target="#PriceDifferencePanel" data-message="Hiding Bar Chart"><i class="fa fa-toggle-up"></i> Hide</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="PriceDifferencePanel" class="row font125pc" >
+                <div class="col-md-12" data-bind="with: dataModel, visible: !$root.dataLoading()" style="display: none;">
                     <div id="PriceDifferenceBarChart" data-bind="css: ('col-md-10 ' + $root.priceDiffBarChartFiltersCss() )"></div>
                 </div>
             </div>

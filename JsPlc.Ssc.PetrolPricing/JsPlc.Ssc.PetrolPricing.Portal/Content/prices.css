@@ -371,3 +371,6 @@ span.jsdiff {
     box-shadow: 1px 2px 6px #000;
 }
 
+#PriceDifferencePanel.collapsed {
+    display: none;
+}
