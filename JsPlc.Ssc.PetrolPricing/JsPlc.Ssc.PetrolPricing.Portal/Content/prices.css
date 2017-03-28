@@ -158,7 +158,27 @@ span.jsdiff {
 .txtPrice:focus
 {
     border-color: black;
+    box-shadow: 1px 1px 7px #000;
 }
+
+.txtPrice.override-empty {
+    border-color: #ccc;
+    background-color: #fff;
+    color: #999;
+}
+
+.txtPrice.override-valid {
+    border-color: #4cae4c;
+    background-color: #dff0d8;
+    color: #000;
+}
+.txtPrice.override-invalid {
+    border-color: #910048;
+    background-color: #ebccd1;
+    color: #910048
+}
+
+
 
 .padded-price-right {
     min-width: 3em;
@@ -199,6 +219,15 @@ span.jsdiff {
 .site-row.focused:hover {
     background-color: #cec;
     background-color: #ffc580;
+}
+
+.site-row.row-errors {
+    background-color: #fee;
+}
+
+.site-row .col-editing {
+    border-bottom: 3px solid #000;
+    font-weight: bold;
 }
 
 .pricing-grid > tbody > .site-row.focused > td:nth-child(10),
@@ -265,6 +294,11 @@ span.jsdiff {
 .pricing-grid > tbody > tr > td:nth-child(10),
 .pricing-grid > tbody > tr > td:nth-child(11) {background-color: #eee;}
 
+    .pricing-grid > tbody > tr.row-errors > td:nth-child(10),
+    .pricing-grid > tbody > tr.row-errors > td:nth-child(11) {
+        background-color: #edd;
+    }
+
 .price-diff-up {color: #5cb85c}
 .price-diff-none {color: #999;}
 .price-diff-down {color: #910048;}
@@ -274,23 +308,20 @@ span.jsdiff {
 .price-pence {font-size: 125%; letter-spacing: 1px;}
 .price-fraction {letter-spacing: 2px;}
 
-.pricing-grid.hide-fuel-price-change-up .fuel-price-change-up,
-.pricing-grid.hide-fuel-price-change-down .fuel-price-change-down,
-.pricing-grid.hide-fuel-price-change-none .fuel-price-change-none
+.pricing-grid.hide-fuel-price-change-up .col-valid .fuel-price-change-up,
+.pricing-grid.hide-fuel-price-change-down .col-valid .fuel-price-change-down,
+.pricing-grid.hide-fuel-price-change-none .col-valid .fuel-price-change-none
 {
     opacity: 0;
 }
-
 
 #PriceDifferenceBarChart {
     border: 1px solid #999;
     border-radius: 12px;
     padding: 8px;
     width: 100%;
-    HIDE width: 1280px; /* TODO: fix with parent 100% ! */
     height: 200px;
     color: #666;
-
 }
 
 .price-diff-bar-chart th {width: 3em; text-align: center;}

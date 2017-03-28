@@ -282,7 +282,7 @@
                 <div class="col-md-8" style="padding-top: 2px"><strong><span id="msgError"></span></strong></div>
                 <div class="clearfix"></div>
             </div>
-            <div style="display: none" class="alert alert-warning sticky-footer" data-bind="visible: !$root.hasAnyFieldErrors() && !$root.HasValidationErrors() && $root.HasUnsavedChanges() && !$root.ViewingHistorical() && !$root.hasBadPriceChangeValue()">
+            <div style="display: none" class="alert alert-warning" data-bind="visible: !$root.hasAnyFieldErrors() && !$root.HasValidationErrors() && $root.HasUnsavedChanges() && !$root.ViewingHistorical() && !$root.hasBadPriceChangeValue()">
                 <div class="col-md-1 text-center"><i class="fa fa-question-circle fa-2x"></i></div>
                 <div class="col-md-8">
                     <strong>
@@ -294,6 +294,7 @@
                         Yes
                     </button>
                 </div>
+                <div class="clearfix"></div>
             </div>
             <div style="display: none" class="alert alert-success" data-bind="visible: $root.HasSuccessMessage()">
                 <div class="col-md-1 text-center"><i class="fa fa-exclamation-triangle fa-2x"></i></div>
@@ -317,8 +318,12 @@
             <div style="display:none;" class="alert alert-danger" data-bind="visible: $root.hasAnyFieldErrors() && !$root.HasValidationErrors()">
                 <div class="col-md-1 text-center"><i class="fa fa-exclamation-triangle fa-2x"></i></div>
                 <div class="col-md-10">
-                    <strong>There are 1 or more field errors. Please correct and retry.</strong>
+                    <strong>There are <span data-bind="text: fieldErrorCount()"></span> field errors. Please correct and retry.</strong>
                 </div>
+                <div class="col-md-1">
+                    <button data-bind="click: $root.gotoFirstInvalidOverrideField" type="button" class="btn btn-danger" title="Go to first error">First</button>
+                </div>
+
                 <div class="clearfix"></div>
             </div>
 
@@ -466,7 +471,7 @@
                         <tbody>
                             <!-- JS Store DataRows -->
                             <!-- ko foreach: sites -->
-                            <tr class="row site-row" role="tab" data-bind="id:('Heading' + SiteId), attr: {id: 'SiteHeading' + SiteId, 'data-price-change-signs': (priceChangeSigns())}, css: (isEditing() ? 'focused': '')">
+                            <tr class="row site-row" role="tab" data-bind="id:('Heading' + SiteId), attr: {id: 'SiteHeading' + SiteId, 'data-price-change-signs': (priceChangeSigns())}, css: (siteRowCss())">
                                 <td class="col-competitor">
                                     <a role="button" data-toggle="modal" data-bind="attr:{id: SiteId}, click: getCompetitorPopupDataClick"
                                        data-target="#competitorPricesPopup" title="View competitor's prices">
@@ -485,7 +490,7 @@
                                         <!-- /ko -->
                                         <!-- ko if: !$root.ViewingHistorical() -->
                                         <i class="fa fa-warning text-danger" data-bind="visible: !HasEmails" title="Site has no emails."></i>
-                                        <a href="#" data-toggle="modal" data-target="#emailSite" data-bind="click: bindEmailTemplate">
+                                        <a tabindex="-1" href="#" data-toggle="modal" data-target="#emailSite" data-bind="click: bindEmailTemplate">
                                             <i class="fa fa-envelope-o" data-bind="visible: HasEmails && canSendEmail()"></i>
                                             <!-- ko if: hasEmailSendLogEntry() -->
                                             <!-- ko with: EmailSendLogEntry -->
@@ -498,21 +503,21 @@
                                         <!-- /ko -->
                                     </span>
                                 </td>
-                                <td class="col-store-name"><a title="Edit this site" data-bind="attr: {'href': ('@Url.Action("Edit", "Sites")/' + SiteId)}"><span data-bind="text: StoreName"></span> <i class="fa fa-edit"></i></a></td>
+                                <td class="col-store-name"><a tabindex="-1" title="Edit this site" data-bind="attr: {'href': ('@Url.Action("Edit", "Sites")/' + SiteId)}"><span data-bind="text: StoreName"></span> <i class="fa fa-edit"></i></a></td>
                                 <td class="col-store-town"><span data-bind="text: Town"></span></td>
                                 <td class="col-cat-no text-center"><span data-bind="text: CatNo"></span></td>
                                 <td class="col-pfs-no text-center"><span data-bind="text: PfsNo"></span></td>
 
                                 <!-- ko foreach: FuelPricesToDisplay -->
                                 <!-- ko if: siteSupportsFuel -->
-                                <td class="col-yesterday">
+                                <td data-bind="css: ('col-yesterday' + (isEditingFuel() ? ' col-editing' : '') + (hasValidValue() ? ' col-valid' : ' col-invalid'))">
                                     <span data-bind="css: ('fuel-price-change-' + UpDownSignCss()), html: FuelPrice.ForecourtTodayPriceHtml"></span>
                                 </td>
-                                <td class="col-today">
+                                <td data-bind="css: ('col-today' + (isEditingFuel() ? ' col-editing' : '') + (hasValidValue() ? ' col-valid' : ' col-invalid'))">
                                     <div data-bind="css: ('fuel-price-change-' + UpDownSignCss())">
                                         <span class="padded-price-right" data-bind="attr:{title:(FuelPrice.IsTrailPrice ? 'Trail price: ' + FuelPrice.CompetitorName : 'Competitor name: ' + FuelPrice.CompetitorName + '; Markup: ' + FuelPrice.Markup)}, html: FuelPrice.ForecourtAutoPriceHtml()"></span>
                                         <input type="text" data-bind="value: FuelPrice.OverridePrice, visible: !$root.ViewingHistorical(),
-                                id: ('OverridePrice_' + $parent.SiteId + '_' + FuelPrice.FuelTypeId), event:{keyup: changeProp, blur: blurred, focus: focused}" class="txtPrice" maxlength="8" />
+                                id: ('OverridePrice_' + $parent.SiteId + '_' + FuelPrice.FuelTypeId), event:{keyup: changeProp, blur: blurred, focus: focused}, css: ('txtPrice ' + OverrideInputCss())" maxlength="8" />
                                         <span data-bind="attr :{id: ('OverridePriceHighlight_' + $parent.SiteId + '_' + FuelPrice.FuelTypeId)}"></span>
                                         <!-- note: override prices can be extracted using $('#SiteId-FueldTypeId-overridePrice') -->
                                         <i data-bind="attr: {class: (UpDownIconCss())}"></i>
