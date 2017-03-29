@@ -226,7 +226,6 @@ function refreshDates(selectedDate) {
     selectedDate = selectedDate == "" ? $('#viewingDate').val() : selectedDate;
 
     var currentDate,
-        previousDay,
         currentDay,
         nextDay;
 
@@ -238,12 +237,11 @@ function refreshDates(selectedDate) {
     }
 
     currentDay = buildDateHeadingAndMarkup(currentDate);
-    previousDay = buildDateHeadingAndMarkup(dateAdd('d', -1, currentDate));
     nextDay = buildDateHeadingAndMarkup(dateAdd('d', +1, currentDate));
 
-    $('#today1').html(previousDay.markup + '<br />' + previousDay.formatted );
-    $('#today2').html(previousDay.markup + '<br />' + previousDay.formatted);
-    $('#today3').html(previousDay.markup + '<br />' + previousDay.formatted);
+    $('#today1').html(currentDay.markup + '<br />' + currentDay.formatted);
+    $('#today2').html(currentDay.markup + '<br />' + currentDay.formatted);
+    $('#today3').html(currentDay.markup + '<br />' + currentDay.formatted);
 
     $(".comptoday").html(currentDay.formatted);
 
