@@ -307,6 +307,7 @@ span.jsdiff {
 
 .price-pence {font-size: 125%; letter-spacing: 1px;}
 .price-fraction {letter-spacing: 2px;}
+.price-na {font-size: 110%; letter-spacing: 1px; color: #999; font-style: italic;}
 
 .pricing-grid.hide-fuel-price-change-up .col-valid .fuel-price-change-up,
 .pricing-grid.hide-fuel-price-change-down .col-valid .fuel-price-change-down,
