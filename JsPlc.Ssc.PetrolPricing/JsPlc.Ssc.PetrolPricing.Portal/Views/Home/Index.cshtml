@@ -20,7 +20,7 @@
     .spaced-list li {line-height: 2.5em;}
     .good {color: green;}
     .warning {color: orange;}
-    .error {color: red;}
+    .error {color: #910048;}
 </style>
 
 
@@ -56,6 +56,7 @@
             <tbody>
                 @foreach (var row in Model.Files)
                 {
+                    var hasFileUpload = row.UploadDateTime.Year > 1;
                     var daysAgo = DateTime.Now.Date.Subtract(row.UploadDateTime.Date).TotalDays;
                     var isRecentUpload = daysAgo < 2;
                     var rowClass = isRecentUpload ? "recent" : "";
@@ -66,7 +67,11 @@
                     <tr class="@rowClass" style="cursor: pointer;" onclick="window.location='@Url.Action("Details", "File")/@row.FileUploadId'">
                         <td>@row.UploadTypeName</td>
                         <td>
-                            @if (row.ImportStatus != null && statusMarkup.ContainsKey(row.ImportStatus))
+                            @if (hasFileUpload == false)
+                            {
+                                <span>&mdash;</span>
+
+                            } else if (row.ImportStatus != null && statusMarkup.ContainsKey(row.ImportStatus))
                             {
                                 @Html.Raw(statusMarkup[row.ImportStatus])
                             }
@@ -76,29 +81,46 @@
                             }
                         </td>
                         <td>
-                            @if (isRecentUpload)
+                            @if (hasFileUpload == false)
                             {
-                                <strong>@Html.FormatFriendlyDateTime(row.UploadDateTime)</strong>
+                                <span>&mdash;</span>
                             }
                             else
                             {
-                                if (isOutdated)
+                                if (isRecentUpload)
                                 {
-                                    <span class="warning">@daysAgo Days Ago</span>
+                                    <strong>@Html.FormatFriendlyDateTime(row.UploadDateTime)</strong>
                                 }
                                 else
                                 {
-                                    <span>@daysAgo Days Ago</span>
+                                    if (isOutdated)
+                                    {
+                                        <span class="warning">@daysAgo Days Ago</span>
+                                    }
+                                    else
+                                    {
+                                        <span>@daysAgo Days Ago</span>
+                                    }
                                 }
                             }
                         </td>
                         <td>
-                            @row.UploadedBy
+                            @if (hasFileUpload)
+                            {
+                                @row.UploadedBy
+                            } else
+                            {
+                                <span>&mdash;</span>
+                            }
                         </td>
                         <td>
                             @if (String.IsNullOrEmpty(warning) == false)
                             {
-                                if (isOutdated)
+                                if (hasFileUpload == false)
+                                {
+                                    <i class="fa fa-file error" title="No file upload exists"></i>
+                                }
+                                else if (isOutdated)
                                 {
                                     <i class="fa fa-calendar warning" title="@warning"></i>
                                 }
