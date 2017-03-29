@@ -274,13 +274,13 @@
             <div class="row" style="margin-bottom: 4px; padding-bottom: 4px;">
                 <div class="col-md-3 col-md-offset-9">
                     <div class="btn-group pull-right" role="group">
-                        <button type="button" class="btn btn-xs btn-primary" data-click="setExpandMode" data-mode="expanded" data-states="expanded,collapsed" data-target="#PriceDifferencePanel" data-message="Showing Bar Chart"><i class="fa fa-toggle-down"></i> Show</button>
-                        <button type="button" class="btn btn-xs" data-click="setExpandMode" data-mode="collapsed" data-states="expanded,collapsed" data-target="#PriceDifferencePanel" data-message="Hiding Bar Chart"><i class="fa fa-toggle-up"></i> Hide</button>
+                        <button type="button" class="btn btn-sm btn-primary" data-click="setExpandMode" data-mode="expanded" data-states="expanded,collapsed" data-target="#PriceDifferencePanel" data-message="Showing Bar Chart"><i class="fa fa-toggle-down"></i> Show</button>
+                        <button type="button" class="btn btn-sm" data-click="setExpandMode" data-mode="collapsed" data-states="expanded,collapsed" data-target="#PriceDifferencePanel" data-message="Hiding Bar Chart"><i class="fa fa-toggle-up"></i> Hide</button>
                     </div>
                 </div>
             </div>
 
-            <div id="PriceDifferencePanel" class="row font125pc" >
+            <div id="PriceDifferencePanel" class="row font125pc">
                 <div class="col-md-12" data-bind="with: dataModel, visible: !$root.dataLoading()" style="display: none;">
                     <div id="PriceDifferenceBarChart" data-bind="css: ('col-md-10 ' + $root.priceDiffBarChartFiltersCss() )"></div>
                 </div>
@@ -349,14 +349,14 @@
 
 
                 <div class="row" data-bind="visible: !$root.ViewingHistorical()">
-                    <div class="col-md-5">
-                        <!-- Price Change Type -->
-                        <div class="col-md-6" style="margin-left: -10px"><b>Price change type:</b></div>
-                        <div class="col-md-6">
-                            <div class="btn-group" role="group">
-                                <button type="button" class="btn btn-sm btn-primary" data-bind="css: {'btn-primary': $root.changeType() == $root.changeTypeValuePlusMinus}, click: setOverrideModePlusMinus">(+/-n)</button>
-                                <button type="button" class="btn btn-sm btn-default" data-bind="css: {'btn-primary' : $root.changeType() == $root.changeTypeValueOverrideAll} ,click: setOverrideModeOverrideAll">Override all</button>
-                            </div>
+                    <!-- Price Change Type -->
+                    <div class="col-md-2">
+                        <strong>Price change type:</strong>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="btn-group" role="group">
+                            <button type="button" class="btn btn-sm btn-primary" data-bind="css: {'btn-primary': $root.changeType() == $root.changeTypeValuePlusMinus}, click: setOverrideModePlusMinus">(+/-n)</button>
+                            <button type="button" class="btn btn-sm btn-default" data-bind="css: {'btn-primary' : $root.changeType() == $root.changeTypeValueOverrideAll} ,click: setOverrideModeOverrideAll">Override all</button>
                         </div>
                     </div>
                     <div class="col-md-2" style="width: 18em;">
@@ -388,11 +388,25 @@
                     </div>
                 </div>
                 <br />
+                <!-- highlighers -->
                 <div class="row" style="margin-bottom: 4px; padding-bottom: 4px; border-bottom: 1px solid #ccc;">
-                    <div class="col-md-3 col-md-offset-9">
+                    <div class="col-md-2">
+                        <strong>Price Highlighting:</strong>
+                    </div>
+
+                    <div class="col-md-4">
+                        <button type="button" class="btn btn-sm" data-bind="click: toggleHighlightTrialPrices, css: {'btn-primary': $root.highlightTrialPrices()}"><i class="fa fa-flask "></i> Trial Prices</button>
+                        <button type="button" class="btn btn-sm" data-bind="click: toggleHighlightMatchCompetitors, css: {'btn-primary': $root.highlightMatchCompetitors()}"><i class="fa fa-clone"></i> Match Competitors</button>
+                        <button type="button" class="btn btn-sm btn-danger" data-bind="visible: ($root.highlightTrialPrices() || $root.highlightMatchCompetitors()), click: resetPriceHighlighting"><i class="fa fa-power-off "></i> Reset</button>
+                    </div>
+
+                    <div class="col-md-3">
+                    </div>
+
+                    <div class="col-md-3 col">
                         <div class="btn-group pull-right" role="group">
-                            <button type="button" class="btn btn-xs btn-primary" data-click="setExpandMode" data-mode="collapsed" data-states="expanded,collapsed" data-target="#PricingPanelScroller" data-message="Price grid collapsed"><i class="fa fa-toggle-up"></i> Collapse</button>
-                            <button type="button" class="btn btn-xs" data-click="setExpandMode" data-mode="expanded" data-states="expanded,collapsed" data-target="#PricingPanelScroller" data-message="Price grid expanded"><i class="fa fa-toggle-down"></i> Expand</button>
+                            <button type="button" class="btn btn-sm btn-primary" data-click="setExpandMode" data-mode="collapsed" data-states="expanded,collapsed" data-target="#PricingPanelScroller" data-message="Price grid collapsed"><i class="fa fa-toggle-up"></i> Collapse</button>
+                            <button type="button" class="btn btn-sm" data-click="setExpandMode" data-mode="expanded" data-states="expanded,collapsed" data-target="#PricingPanelScroller" data-message="Price grid expanded"><i class="fa fa-toggle-down"></i> Expand</button>
                         </div>
                     </div>
                 </div>
@@ -527,7 +541,12 @@
                                 </td>
                                 <td data-bind="css: ('col-today' + (isEditingFuel() ? ' col-editing' : '') + (hasValidValue() ? ' col-valid' : ' col-invalid'))">
                                     <div data-bind="css: ('fuel-price-change-' + UpDownSignCss())">
-                                        <span class="padded-price-right" data-bind="attr:{title:(FuelPrice.IsTrailPrice ? 'Trail price: ' + FuelPrice.CompetitorName : 'Competitor name: ' + FuelPrice.CompetitorName + '; Markup: ' + FuelPrice.Markup)}, html: FuelPrice.ForecourtAutoPriceHtml()"></span>
+                                        <!-- ko if: FuelPrice.IsTrailPrice -->
+                                        <span class="padded-price-right trial-price" data-bind="attr: {title: 'Trial Price: ' + FuelPrice.CompetitorName}, html: FuelPrice.ForecourtAutoPriceHtml()"></span>
+                                        <!-- /ko -->
+                                        <!-- ko if: !FuelPrice.IsTrailPrice -->
+                                        <span class="padded-price-right match-competitor-price" data-bind="attr: {title: 'Match Competitor: ' + FuelPrice.CompetitorName + '; Markup: ' + FuelPrice.Markup}, html: FuelPrice.ForecourtAutoPriceHtml()"></span>
+                                        <!-- /ko -->
                                         <input type="text" data-bind="value: FuelPrice.OverridePrice, visible: !$root.ViewingHistorical(),
                                 id: ('OverridePrice_' + $parent.SiteId + '_' + FuelPrice.FuelTypeId), event:{keyup: changeProp, blur: blurred, focus: focused}, css: ('txtPrice ' + OverrideInputCss())" maxlength="8" />
                                         <span data-bind="attr :{id: ('OverridePriceHighlight_' + $parent.SiteId + '_' + FuelPrice.FuelTypeId)}"></span>

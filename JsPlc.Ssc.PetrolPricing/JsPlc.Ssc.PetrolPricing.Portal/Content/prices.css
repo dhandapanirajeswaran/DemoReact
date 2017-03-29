@@ -316,6 +316,9 @@ span.jsdiff {
     opacity: 0;
 }
 
+.pricing-grid.highlight-trial-prices .trial-price {background-color: #ff8;}
+.pricing-grid.highlight-match-competitor-prices .match-competitor-price {background-color: #cff;}
+
 #PriceDifferenceBarChart {
     border: 1px solid #999;
     border-radius: 12px;
