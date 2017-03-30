@@ -118,26 +118,32 @@
                             {
                                 if (hasFileUpload == false)
                                 {
-                                    <i class="fa fa-file error" title="No file upload exists"></i>
+                                    <i class="fa fa-file error" data-infotip="No file upload exists"></i>
                                 }
                                 else if (isOutdated)
                                 {
-                                    <i class="fa fa-calendar warning" title="@warning"></i>
+                                    <i class="fa fa-calendar warning" data-infotip="@warning"></i>
                                 }
                                 else
                                 {
-                                    <i class="fa fa-warning error" title="@warning"></i>
+                                    <i class="fa fa-warning error" data-infotip="@warning"></i>
                                 }
                             }
                             else
                             {
-                                <i class="fa fa-check good" title="Success"></i>
+                                <i class="fa fa-check good" data-infotip="Success"></i>
                             }
                         </td>
                     </tr>
                 }
             </tbody>
         </table>
-        <a href="@Url.Action("Index","File")" class="btn btn-primary pull-right"><i class="fa fa-upload"></i> Uploads</a>
+        <a href="@Url.Action("Index","File")" class="btn btn-primary pull-right" data-infotip="Go to the File Uploads section"><i class="fa fa-upload"></i> Uploads</a>
     </div>
 </div>
+
+@section scripts {
+    <script>
+        require(["infotips"], function () {})
+    </script>
+}

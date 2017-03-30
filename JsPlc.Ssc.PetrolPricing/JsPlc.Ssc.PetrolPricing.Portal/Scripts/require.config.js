@@ -31,6 +31,7 @@ require.config({
         "downloader": "App/downloader",
         "layout": "App/layout",
         "scrollToTop": "App/scrollToTop",
+        "infotips": "App/infotips",
 
         //"ko-binding-handlers": "App/ko-binding-handlers",
 

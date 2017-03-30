@@ -5,8 +5,8 @@ $("#viewingDate,#viewingStoreNo,#viewingStoreName,#viewingStoreTown,#viewingCatN
     }
 });
 
-require(["SitePricing", "notify", "busyloader", "downloader"],
-    function (prices, notify, busyloader, downloader) {
+require(["SitePricing", "notify", "busyloader", "downloader", "infotips"],
+    function (prices, notify, busyloader, downloader, infotips) {
     prices.go();
 
     $('.datepicker')
