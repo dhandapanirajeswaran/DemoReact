@@ -144,6 +144,14 @@ span.jsdiff {
 .font125pc {font-size: 125%}
 .font150pc {font-size: 150%;}
 
+.past-override-text {
+    width: 3.1em;
+    color: #999;
+    font-style: italic;
+    padding: 1px 0.5em;
+
+}
+
 .txtPrice {
     padding: 1px 2px;
     font-size: 115%;
@@ -378,3 +386,9 @@ span.jsdiff {
 #PriceDifferencePanel.collapsed {
     display: none;
 }
+
+.pricing-filters-row .col-md-1 {
+    padding-left: 4px;
+    padding-right: 4px;
+}
+

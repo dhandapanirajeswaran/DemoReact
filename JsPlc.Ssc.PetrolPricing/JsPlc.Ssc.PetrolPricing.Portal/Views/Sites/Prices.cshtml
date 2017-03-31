@@ -198,55 +198,56 @@
         <!-- End Email popup within knockout -->
         <!-- Submit disabled, all work done thru ajax calls -->
         <form id="myform" method="post" data-bind="submit: savePetrolPricingForm" xclass="input-group-sm" action="sites/PostPrices" onsubmit="return false;" onclick="IsSitePriceFormClicked=1;" style="width: 1280px;">
-            <div class="row" onclick="IsSitePriceFormClicked=1;" style="width:1280px;">
+            <div class="row pricing-filters-row" onclick="IsSitePriceFormClicked=1;" style="width:1280px;">
                 <!-- Date Picker -->
                 <div class="col-md-1">
-                    <label for="viewingDate">Date:</label>
+                    <label for="viewingDate">Date:</label> <button type="button" class="btn btn-xs btn-danger" data-bind="visible: $root.ViewingHistorical, click: $root.resetViewingDate" style="display: none;" data-infotip="View Today's Prices'"><i class="fa fa-power-off"></i> Reset</button>
                     <input type="text" id="viewingDate" class="datepicker form-control" onmousedown="IsSitePriceFormClicked=1;" onclick="IsSitePriceFormClicked=1;"
                            style="width: 85px" name="viewingDate" maxlength="12"
-                           data-bind="value: $root.InitDate" />
+                           data-bind="value: $root.InitDate" data-infotip="Enter a [b]Date[/b] to view" />
                 </div>
                 <!-- Store No -->
                 <div class="col-md-1">
                     <label for="viewingStoreNo">Store No:</label>
                     <input type="text" id="viewingStoreNo" class="form-control" maxlength="9" style="width: 70px;"
-                           name="viewingStoreNo" data-bind="numeric, value: $root.StoreNo" />
+                           name="viewingStoreNo" data-bind="numeric, value: $root.StoreNo" data-infotip="Enter a [b]Store No[/b]" />
                 </div>
                 <!-- Store Name -->
                 <div class="col-md-2">
                     <label for="viewingStoreName">Store Name:</label>
                     <input type="text" id="viewingStoreName" class="form-control" maxlength="50"
-                           name="viewingStoreName" data-bind="value: $root.StoreName" />
+                           name="viewingStoreName" data-bind="value: $root.StoreName" data-infotip="Enter a [b]Store Name[/b]" />
                 </div>
                 <!-- Store Town -->
                 <div class="col-md-2">
                     <label for="viewingStoreTown">Store Town:</label>
                     <input type="text" id="viewingStoreTown" class="form-control" maxlength="50"
-                           name="viewingStoreTown" data-bind="value: $root.StoreTown" />
+                           name="viewingStoreTown" data-bind="value: $root.StoreTown" data-infotip="Enter a [b]Store Town[/b]" />
                 </div>
                 <!-- Catalist No -->
                 <div class="col-md-1" style="width: 100px;">
                     <label for="viewingCatNo">Catalist No:</label>
                     <input type="text" id="viewingCatNo" class="form-control" maxlength="9" style="width: 70px;"
-                           name="viewingCatNo" data-bind="numeric, value: $root.CatNo" />
+                           name="viewingCatNo" data-bind="numeric, value: $root.CatNo" data-infotip="Enter a [b]Catalist No[/b]" />
                 </div>
                 <!-- go button -->
                 <div class="col-md-1">
-                    <button style="margin-top: 24px;margin-left:10px;" type="button" id="btnGO" class="btn btn-success" data-bind="click: loadPageWithParams">Go</button>
+                    <label>&nbsp;</label><br />
+                    <button type="button" id="btnGO" class="btn btn-success" data-bind="click: loadPageWithParams" data-infotip="Filter the Site Prices"><i class="fa fa-filter"></i> Go</button>
                 </div>
                 <!-- show all button -->
                 <div class="col-md-1">
-                    <label>&nbsp;</label>
-                    <button type="button" class="btn btn-default" data-bind="click: function() { reloadSearchPage('Sites/Prices?date='+$root.InitDateInUsFormat()) }">Show all</button>
+                    <label>&nbsp;</label><br />
+                    <button type="button" class="btn btn-default" data-bind="click: function() { reloadSearchPage('Sites/Prices?date='+$root.InitDateInUsFormat()) }" data-infotip="Show All the Site Prices"><i class="fa fa-search"></i> Show all</button>
                 </div>
                 <!-- ExportToExcel button -->
-                <div class="col-md-1" style="width: 130px; margin-left: 80px;">
+                <div class="col-md-3 text-right">
                     <label>&nbsp;</label>
-                    <button type="button" style="margin-left:0px " class="btn btn-primary" id="btnExportAll"><i class="fa fa-download"></i> Export ALL</button>
-                </div>
-                <div class="col-md-1" style="margin-left: -20px;">
-                    <label>&nbsp;</label>
-                    <button type="button" style="margin-left:0px" class="btn btn-primary" id="btnExportSites"><i class="fa fa-download"></i> Export JS Sites</button>
+                        <label class="button"></label>
+                    <div>
+                        <button type="button" style="margin-left:0px " class="btn btn-primary" id="btnExportAll" data-infotip="Export [b]All[/b] Sites"><i class="fa fa-download"></i>Export ALL</button>
+                        <button type="button" style="margin-left:0px" class="btn btn-primary" id="btnExportSites" data-infotip="Export [b]Sainsbury's'[/b] Sites Only"><i class="fa fa-download"></i> Export JS Sites</button>
+                    </div>
                 </div>
             </div>
             <hr style="width:1280px;" />
@@ -258,9 +259,9 @@
                     <!-- /ko -->
                     <br />
                     <div class="btn-group" role="group">
-                        <button type="button" class="btn btn-sm" data-bind="click: togglePriceChangeFilterDown, css: {'btn-primary': $root.priceChangeFilterDown()}"><i class="fa fa-arrow-down"></i> Down</button>
-                        <button type="button" class="btn btn-sm" data-bind="click: togglePriceChangeFilterNone, css: {'btn-primary': $root.priceChangeFilterNone()}"><i class="fa fa-minus"></i> None</button>
-                        <button type="button" class="btn btn-sm" data-bind="click: togglePriceChangeFilterUp, css: {'btn-primary': $root.priceChangeFilterUp()}"><i class="fa fa-arrow-up"></i> Up</button>
+                        <button type="button" class="btn btn-sm" data-bind="click: togglePriceChangeFilterDown, css: {'btn-primary': $root.priceChangeFilterDown()}" data-infotip="Toggle [b]Downward[/b] Price Changes"><i class="fa fa-arrow-down"></i> Down</button>
+                        <button type="button" class="btn btn-sm" data-bind="click: togglePriceChangeFilterNone, css: {'btn-primary': $root.priceChangeFilterNone()}" data-infotip="Toggle [b]Non-moving[/b] Price Changes"><i class="fa fa-minus"></i> None</button>
+                        <button type="button" class="btn btn-sm" data-bind="click: togglePriceChangeFilterUp, css: {'btn-primary': $root.priceChangeFilterUp()}" data-infotip="Toggle [b]Upward[/b] Price Changes"><i class="fa fa-arrow-up"></i> Up</button>
                     </div>
                 </div>
 
@@ -274,8 +275,8 @@
             <div class="row" style="margin-bottom: 4px; padding-bottom: 4px;">
                 <div class="col-md-3 col-md-offset-9">
                     <div class="btn-group pull-right" role="group">
-                        <button type="button" class="btn btn-sm btn-primary" data-click="setExpandMode" data-mode="expanded" data-states="expanded,collapsed" data-target="#PriceDifferencePanel" data-message="Showing Bar Chart"><i class="fa fa-toggle-down"></i> Show</button>
-                        <button type="button" class="btn btn-sm" data-click="setExpandMode" data-mode="collapsed" data-states="expanded,collapsed" data-target="#PriceDifferencePanel" data-message="Hiding Bar Chart"><i class="fa fa-toggle-up"></i> Hide</button>
+                        <button type="button" class="btn btn-sm btn-primary" data-click="setExpandMode" data-mode="expanded" data-states="expanded,collapsed" data-target="#PriceDifferencePanel" data-message="Showing Bar Chart" data-infotip="Show the [b]Competitor Price Differences[/b] Bar Chart"><i class="fa fa-toggle-down"></i> Show</button>
+                        <button type="button" class="btn btn-sm" data-click="setExpandMode" data-mode="collapsed" data-states="expanded,collapsed" data-target="#PriceDifferencePanel" data-message="Hiding Bar Chart" data-infotip="Hide the [b]Competitor Price Differences[/b] Bar Chart"><i class="fa fa-toggle-up"></i> Hide</button>
                     </div>
                 </div>
             </div>
@@ -300,7 +301,7 @@
                     </strong>
                 </div>
                 <div class="col-md-1">
-                    <button type="button" class="btn btn-success btn-block" data-bind="click: savePetrolPricingForm">
+                    <button type="button" class="btn btn-success btn-block" data-bind="click: savePetrolPricingForm" data-infotip="Save the changes">
                         Yes
                     </button>
                 </div>
@@ -318,7 +319,7 @@
                     <strong>Please enter a valid value for the price change for <span id="msgFuelTypeError"></span>.</strong>
                 </div>
                 <div class="col-md-1 pull-right">
-                    <span class="clickable btn btn-default" data-bind="click:closeWarningPanel">
+                    <span class="clickable btn btn-default" data-bind="click:closeWarningPanel" data-infotip="Close the warning message">
                         <i class="fa fa-close"></i> Close
                     </span>
                 </div>
@@ -355,34 +356,34 @@
                     </div>
                     <div class="col-md-3">
                         <div class="btn-group" role="group">
-                            <button type="button" class="btn btn-sm btn-primary" data-bind="css: {'btn-primary': $root.changeType() == $root.changeTypeValuePlusMinus}, click: setOverrideModePlusMinus">(+/-n)</button>
-                            <button type="button" class="btn btn-sm btn-default" data-bind="css: {'btn-primary' : $root.changeType() == $root.changeTypeValueOverrideAll} ,click: setOverrideModeOverrideAll">Override all</button>
+                            <button type="button" class="btn btn-sm btn-primary" data-bind="css: {'btn-primary': $root.changeType() == $root.changeTypeValuePlusMinus}, click: setOverrideModePlusMinus" data-infotip="Switch to [b]Plus/Minus[/b] Mode">(+/-n)</button>
+                            <button type="button" class="btn btn-sm btn-default" data-bind="css: {'btn-primary' : $root.changeType() == $root.changeTypeValueOverrideAll} ,click: setOverrideModeOverrideAll" data-infotip="Switch to [b]Override Price[/b] Mode">Override all</button>
                         </div>
                     </div>
                     <div class="col-md-2" style="width: 18em;">
                         <div class="input-group">
                             <span class="input-group-addon" data-bind="text: changeType"></span>
-                            <input type="text" class="form-control input-override" maxlength="8" data-bind="value: $root.unleadedOffset" />
+                            <input type="text" class="form-control input-override" maxlength="8" data-bind="value: $root.unleadedOffset" data-infotip="Enter a value for [b]Unleaded[/b]" />
                             <span class="input-group-btn">
-                                <button type="button" class="btn btn-primary btn-go" data-bind="click: changePricePerLitreUnleaded">Go</button>
+                                <button type="button" class="btn btn-primary btn-go" data-bind="click: changePricePerLitreUnleaded" data-infotip="Update all the [b]Unleaded[/b] Prices">Go</button>
                             </span>
                         </div>
                     </div>
                     <div class="col-md-2" style="width: 18em;">
                         <div class="input-group">
                             <span class="input-group-addon" data-bind="text: changeType"></span>
-                            <input type="text" class="form-control input-override" maxlength="8" data-bind="value: $root.dieselOffset" />
+                            <input type="text" class="form-control input-override" maxlength="8" data-bind="value: $root.dieselOffset" data-infotip="Enter a value for [b]Diesel[/b]" />
                             <span class="input-group-btn">
-                                <button type="button" class="btn btn-primary btn-go" data-bind="click: changePricePerLitreDiesel">Go</button>
+                                <button type="button" class="btn btn-primary btn-go" data-bind="click: changePricePerLitreDiesel" data-infotip="Update all the [b]Diesel[/b] Prices">Go</button>
                             </span>
                         </div>
                     </div>
                     <div class="col-md-2" style="width: 18em;">
                         <div class="input-group">
                             <span class="input-group-addon" data-bind="text: changeType"></span>
-                            <input type="text" class="form-control input-override" maxlength="8" data-bind="value: $root.superOffset" />
+                            <input type="text" class="form-control input-override" maxlength="8" data-bind="value: $root.superOffset" data-infotip="Enter a value for [b]Super Unleaded[/b]" />
                             <span class="input-group-btn">
-                                <button type="button" class="btn btn-primary btn-go" data-bind="click: changePricePerLitreSuper">Go</button>
+                                <button type="button" class="btn btn-primary btn-go" data-bind="click: changePricePerLitreSuper" data-infotip="Update all the [b]Super Unleaded[/b] Prices">Go</button>
                             </span>
                         </div>
                     </div>
@@ -395,9 +396,9 @@
                     </div>
 
                     <div class="col-md-4">
-                        <button type="button" class="btn btn-sm" data-bind="click: toggleHighlightTrialPrices, css: {'btn-primary': $root.highlightTrialPrices()}"><i class="fa fa-flask "></i> Trial Prices</button>
-                        <button type="button" class="btn btn-sm" data-bind="click: toggleHighlightMatchCompetitors, css: {'btn-primary': $root.highlightMatchCompetitors()}"><i class="fa fa-clone"></i> Match Competitors</button>
-                        <button type="button" class="btn btn-sm btn-danger" data-bind="visible: ($root.highlightTrialPrices() || $root.highlightMatchCompetitors()), click: resetPriceHighlighting"><i class="fa fa-power-off "></i> Reset</button>
+                        <button type="button" class="btn btn-sm" data-bind="click: toggleHighlightTrialPrices, css: {'btn-primary': $root.highlightTrialPrices()}" data-infotip="Toggle the [b]Trial Prices[/b] Highlighting"><i class="fa fa-flask "></i> Trial Prices</button>
+                        <button type="button" class="btn btn-sm" data-bind="click: toggleHighlightMatchCompetitors, css: {'btn-primary': $root.highlightMatchCompetitors()}" data-infotip="Toggle the [b]Match Competitors[/b] Highlighting"><i class="fa fa-clone"></i> Match Competitors</button>
+                        <button type="button" class="btn btn-sm btn-danger" data-bind="visible: ($root.highlightTrialPrices() || $root.highlightMatchCompetitors()), click: resetPriceHighlighting" data-infotip="Hide all the Highlighting"><i class="fa fa-power-off "></i> Reset</button>
                     </div>
 
                     <div class="col-md-3">
@@ -405,8 +406,8 @@
 
                     <div class="col-md-3 col">
                         <div class="btn-group pull-right" role="group">
-                            <button type="button" class="btn btn-sm btn-primary" data-click="setExpandMode" data-mode="collapsed" data-states="expanded,collapsed" data-target="#PricingPanelScroller" data-message="Price grid collapsed"><i class="fa fa-toggle-up"></i> Collapse</button>
-                            <button type="button" class="btn btn-sm" data-click="setExpandMode" data-mode="expanded" data-states="expanded,collapsed" data-target="#PricingPanelScroller" data-message="Price grid expanded"><i class="fa fa-toggle-down"></i> Expand</button>
+                            <button type="button" class="btn btn-sm btn-primary" data-click="setExpandMode" data-mode="collapsed" data-states="expanded,collapsed" data-target="#PricingPanelScroller" data-message="Price grid collapsed" data-infotip="Collapse the Pricing Grid"><i class="fa fa-toggle-up"></i> Collapse</button>
+                            <button type="button" class="btn btn-sm" data-click="setExpandMode" data-mode="expanded" data-states="expanded,collapsed" data-target="#PricingPanelScroller" data-message="Price grid expanded" data-infotip="Expand the Pricing Grid"><i class="fa fa-toggle-down"></i> Expand</button>
                         </div>
                     </div>
                 </div>
@@ -503,9 +504,6 @@
                                        data-target="#competitorPricesPopup" data-infotip="View competitor's prices">
                                         <i class="fa fa-credit-card"></i>
                                     </a>
-
-                                    @*<a role="button" data-toggle="collapse" data-parent="#accordion" onclick="IsSitePriceFormClicked=1;"
-                                    data-bind="attr:{href:('#CollapseCompetitorsforsite' + SiteId)}, click: getCompetitorDataClick"><i class="fa fa-minus-square-o" data-bind="css: showingComps() ? 'fa fa-minus-square-o' : 'fa fa-plus-square-o'"></i></a>*@
                                 </td>
                                 <td class="col-store-no text-center" data-bind="text: StoreNo"></td>
                                 <!-- Email envelope... -->
@@ -515,7 +513,7 @@
                                         <i class="fa fa-clock-o" data-infotip="Viewing historical data" style="color: grey;"></i>
                                         <!-- /ko -->
                                         <!-- ko if: !$root.ViewingHistorical() -->
-                                        <i class="fa fa-warning text-danger" data-bind="visible: !HasEmails" data-infotip="Site has no emails."></i>
+                                        <i class="fa fa-warning text-danger" data-bind="visible: !HasEmails" data-infotip="[i class='fa fa-warning'][/i] Site has no emails."></i>
                                         <a tabindex="-1" href="#" data-toggle="modal" data-target="#emailSite" data-bind="click: bindEmailTemplate">
                                             <i class="fa fa-envelope-o" data-bind="visible: HasEmails && canSendEmail()"></i>
                                             <!-- ko if: hasEmailSendLogEntry() -->
@@ -537,22 +535,23 @@
                                 <!-- ko foreach: FuelPricesToDisplay -->
                                 <!-- ko if: siteSupportsFuel -->
                                 <td data-bind="css: ('col-yesterday' + (isEditingFuel() ? ' col-editing' : '') + (hasValidValue() ? ' col-valid' : ' col-invalid'))">
-                                    <span data-bind="css: ('fuel-price-change-' + UpDownSignCss()), html: FuelPrice.ForecourtTodayPriceHtml" data-infotip="Current price"></span>
+                                    <span data-bind="css: ('fuel-price-change-' + UpDownSignCss()), html: FuelPrice.ForecourtTodayPriceHtml, attr: {'data-infotip': FuelPrice.CurrentPriceInfoTip()}"></span>
                                 </td>
                                 <td data-bind="css: ('col-today' + (isEditingFuel() ? ' col-editing' : '') + (hasValidValue() ? ' col-valid' : ' col-invalid'))">
                                     <div data-bind="css: ('fuel-price-change-' + UpDownSignCss())">
                                         <!-- ko if: FuelPrice.IsTrailPrice -->
-                                        <span class="padded-price-right trial-price" data-bind="attr: {'data-infotip': '[i class=&quot;fa fa-flask &quot;][/i] Trial Price: ' + FuelPrice.CompetitorName}, html: FuelPrice.ForecourtAutoPriceHtml()"></span>
+                                        <span class="padded-price-right trial-price" data-bind="attr: {'data-infotip': FuelPrice.TrialPriceInfoTip()}, html: FuelPrice.ForecourtAutoPriceHtml()"></span>
                                         <!-- /ko -->
                                         <!-- ko if: !FuelPrice.IsTrailPrice -->
-                                        <span class="padded-price-right match-competitor-price" data-bind="attr: {'data-infotip': '[i class=&quot;fa fa-clone &quot;][/i] Match Competitor: [b]' + FuelPrice.CompetitorName + '[/b]&mdash; Markup: [b]' + FuelPrice.Markup + '[/b]'}, html: FuelPrice.ForecourtAutoPriceHtml()"></span>
+                                        <span class="padded-price-right match-competitor-price" data-bind="attr: {'data-infotip': FuelPrice.MatchCompetitorInfoTip()}, html: FuelPrice.ForecourtAutoPriceHtml()"></span>
                                         <!-- /ko -->
+                                        <span class="past-override-text" data-bind="visible: $root.ViewingHistorical()" data-infotip="Historical Prices"><i class="fa fa-clock-o"></i> Past</span>
                                         <input type="text" data-bind="value: FuelPrice.OverridePrice, visible: !$root.ViewingHistorical(),
-                                id: ('OverridePrice_' + $parent.SiteId + '_' + FuelPrice.FuelTypeId), event:{keyup: changeProp, blur: blurred, focus: focused}, css: ('txtPrice ' + OverrideInputCss())" maxlength="8" />
+                                id: ('OverridePrice_' + $parent.SiteId + '_' + FuelPrice.FuelTypeId), event:{keyup: changeProp, blur: blurred, focus: focused}, css: ('txtPrice ' + OverrideInputCss()), attr: {'data-infotip': FuelPrice.PriceOverrideInfoTip()}" maxlength="8" />
                                         <span data-bind="attr :{id: ('OverridePriceHighlight_' + $parent.SiteId + '_' + FuelPrice.FuelTypeId)}"></span>
                                         <!-- note: override prices can be extracted using $('#SiteId-FueldTypeId-overridePrice') -->
-                                        <i data-bind="attr: {class: (UpDownIconCss())}"></i>
-                                        &nbsp;<span class="price-diff" data-bind="text: (UpDownText())"></span>
+                                        <i data-bind="attr: {class: (UpDownIconCss()), 'data-infotip': FuelPrice.UpDownInfoTip()}"></i>
+                                        &nbsp;<span class="price-diff" data-bind="text: (UpDownText()), attr: {'data-infotip': FuelPrice.UpDownInfoTip()}"></span>
                                     </div>
                                 </td>
                                 <!-- /ko -->
@@ -725,8 +724,8 @@
                 <div class="row" style="margin-top: 4px; padding-top: 4px; border-top: 1px solid #ccc;">
                     <div class="col-md-3 col-md-offset-9">
                         <div class="btn-group pull-right" role="group">
-                            <button type="button" class="btn btn-xs btn-primary" data-click="setExpandMode" data-mode="collapsed" data-states="expanded,collapsed" data-target="#PricingPanelScroller" data-message="Price grid collapsed"><i class="fa fa-toggle-up"></i> Collapse</button>
-                            <button type="button" class="btn btn-xs" data-click="setExpandMode" data-mode="expanded" data-states="expanded,collapsed" data-target="#PricingPanelScroller" data-message="Price grid expanded"><i class="fa fa-toggle-down"></i> Expand</button>
+                            <button type="button" class="btn btn-xs btn-primary" data-click="setExpandMode" data-mode="collapsed" data-states="expanded,collapsed" data-target="#PricingPanelScroller" data-message="Price grid collapsed" data-infotip="Collapse the Pricing Grid"><i class="fa fa-toggle-up"></i> Collapse</button>
+                            <button type="button" class="btn btn-xs" data-click="setExpandMode" data-mode="expanded" data-states="expanded,collapsed" data-target="#PricingPanelScroller" data-message="Price grid expanded" data-infotip="Expand the Pricing Grid"><i class="fa fa-toggle-down"></i> Expand</button>
                         </div>
                     </div>
                 </div>
