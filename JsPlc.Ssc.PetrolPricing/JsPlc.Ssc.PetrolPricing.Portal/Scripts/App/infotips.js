@@ -21,9 +21,9 @@
 
             var markup = convertToMarkup(ele.data('infotip')),
                 offset = ele.offset(),
-                eleWidth = ele.width(),
+                eleWidth = Math.floor(ele.width()),
                 eleHeight = ele.height(),
-                uiWidth = ui.width(),
+                uiWidth = Math.floor(ui.width()),
                 uiHeight = ui.height(),
                 uiMarginWidth = 16,
                 uiMarginHeight = 24;
@@ -33,8 +33,8 @@
             ui.html(markup);
 
             ui.css({
-                top: offset.top - uiHeight - uiMarginHeight,
-                left: offset.left + eleWidth / 2 - uiWidth/2 - uiMarginWidth
+                top: Math.floor(offset.top + 0.5) - uiHeight - uiMarginHeight,
+                left: Math.floor(offset.left + (eleWidth - uiWidth)/2 - uiMarginWidth)
             })
                 .show()
                 .appendTo(document.body);
