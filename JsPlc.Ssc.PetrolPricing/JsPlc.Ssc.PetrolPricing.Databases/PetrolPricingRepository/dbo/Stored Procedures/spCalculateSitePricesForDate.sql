@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE dbo.spCalculateSitePricesForDate (
+﻿CREATE PROCEDURE [dbo].[spCalculateSitePricesForDate] (
 	@forDate DATE,
 	@SiteIds VARCHAR(MAX)
 )
@@ -18,9 +18,6 @@ BEGIN
 			THEN 1 
 			ELSE 0 
 		END
-
-	-- DEBUG
-	-- SELECT @catalistFileExits [@catalistFileExits]
 
 	DECLARE @FuelsTypesTV TABLE (FuelTypeId INT, FuelMarkup INT, AliasFuelTypeId INT)
 	INSERT INTO @FuelsTypesTV
@@ -63,9 +60,9 @@ BEGIN
 				THEN 0
 				ELSE spd.Markup 
 			END [Markup],
-			CASE WHEN comp.Id IS NULL 
+			CASE WHEN trial.Id IS NULL 
 				THEN 'Unknown' 
-				ELSE comp.Brand + '/' + comp.SiteName 
+				ELSE trial.Brand + '/' + trial.SiteName 
 			END [CompetitorName],
 			CASE WHEN spd.Id IS NULL
 				THEN 0
@@ -76,7 +73,11 @@ BEGIN
 			sf.StoreNo [StoreNo],
 			sf.CatNo [CatNo],
 			sf.CompetitorPriceOffset * 10 [TrialPrice],
-			sf.FuelMarkup
+			sf.FuelMarkup,
+			CASE WHEN spd.Id IS NULL 
+				THEN 0 
+				ELSE 1 
+			END [HasSitePriceData]
 		FROM
 			SiteFuelsCTE sf
 
@@ -84,17 +85,26 @@ BEGIN
 			LEFT JOIN dbo.SitePrice spd on spd.Id = (SELECT MAX(id) FROM dbo.SitePrice WHERE SiteId = sf.SiteId AND (SuggestedPrice > 0 OR OverriddenPrice > 0))
 
 			-- dieselPriceOverride
-			LEFT JOIN dbo.SitePrice dpo on spd.Id IS NOT NULL AND dpo.Id = (SELECT MAX(id) FROM dbo.SitePrice WHERE SiteId = sf.SiteId AND FuelTypeId = sf.AliasFuelTypeId AND DateOfPrice >= @forDate AND DateOfPrice < @forDateNextDay AND OverriddenPrice > 0)
+			LEFT JOIN dbo.SitePrice dpo on spd.Id IS NOT NULL AND dpo.Id = (SELECT MIN(id) FROM dbo.SitePrice WHERE SiteId = sf.SiteId AND FuelTypeId = sf.FuelTypeId AND DateOfPrice >= @forDate AND DateOfPrice < @forDateNextDay AND OverriddenPrice > 0)
 
 			-- competitor site
-			LEFT JOIN dbo.Site comp on comp.Id = sf.TrailPriceCompetitorId 
+			LEFT JOIN dbo.Site comp on comp.Id = sf.TrailPriceCompetitorId
+			
+			-- trial price competitor site
+			LEFT JOIN dbo.Site trial on trial.Id = spd.CompetitorId
 	)
 	, TodayPriceCTE AS (
 		SELECT 
 			spr.SiteId,
 			spr.FuelTypeId,
-			spr.AutoPrice,
-			spr.overridePrice,
+			CASE WHEN spr.HasSitePriceData = 1
+				THEN spr.AutoPrice
+				ELSE 0
+			END [AutoPrice],
+			CASE WHEN spr.HasSitePriceData = 1
+				THEN spr.overridePrice
+				ELSE 0
+			END [OverridePrice],
 			dbo.fn_ReplaceLastPriceDigit(
 				dbo.fn_CalculateTodayPrice(
 					fu.UploadDateTime,
@@ -107,9 +117,15 @@ BEGIN
 					tp.DateOfPrice,
 					tp.ModalPrice
 				) + spr.FuelMarkup, '9') [TodayPrice],
-			spr.Markup,
+			CASE WHEN spr.HasSitePriceData = 1
+				THEN spr.Markup
+				ELSE 0
+			END [Markup],
 			spr.CompetitorName,
-			spr.IsTrailPrice,
+			CASE WHEN spr.HasSitePriceData = 1
+				THEN spr.IsTrailPrice
+				ELSE CONVERT(BIT, 0)
+			END [IsTrailPrice],
 			spr.CompetitorPriceOffset
 		FROM 
 			SitePriceRowCTE spr
