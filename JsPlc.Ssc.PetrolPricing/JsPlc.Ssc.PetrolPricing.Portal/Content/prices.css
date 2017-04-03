@@ -388,8 +388,17 @@ span.jsdiff {
     display: none;
 }
 
+.pricing-filters-row {
+    margin-left: 0;
+    margin-right: 0;
+}
+
 .pricing-filters-row .col-md-1 {
     padding-left: 4px;
     padding-right: 4px;
+}
+
+.pricing-filters-row .last-col {
+    padding-right: 0;
 }
 
