@@ -33,8 +33,8 @@ require(["SitePricing", "notify", "busyloader", "downloader", "infotips"],
         downloader.start({
             id: download.id,
             element: '#btnExportAll',
-            complete: function () {
-                notify.success('Export completed');
+            complete: function (download) {
+                notify.success('Export completed - took ' + download.friendlyTimeTaken);
             }
         });
     });
@@ -58,8 +58,8 @@ require(["SitePricing", "notify", "busyloader", "downloader", "infotips"],
         downloader.start({
             id: downloadId,
             element: '#btnExportAll',
-            complete: function () {
-                notify.success('Export All completed');
+            complete: function (download) {
+                notify.success('Export All completed - took ' + download.friendlyTimeTaken);
             }
         });
 
@@ -84,8 +84,8 @@ require(["SitePricing", "notify", "busyloader", "downloader", "infotips"],
         downloader.start({
             id: downloadId,
             element: '#btnExportSites',
-            complete: function () {
-                notify.success('Export JS completed');
+            complete: function (download) {
+                notify.success('Export JS completed - took ' + download.friendlyTimeTaken);
             }
         });
 

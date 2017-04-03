@@ -32,6 +32,16 @@
     opacity: 1;
 }
 
+.downloader .active-count {
+    margin: 1px 4px;
+    font-size: 125%;
+    font-family: monospace;
+}
+.downloader .message {
+    font-size: 125%;
+    font-family: monospace;
+}
+
 .downloader > .fa {
     -webkit-animation: beat 3s infinite ease-in-out;
 }
