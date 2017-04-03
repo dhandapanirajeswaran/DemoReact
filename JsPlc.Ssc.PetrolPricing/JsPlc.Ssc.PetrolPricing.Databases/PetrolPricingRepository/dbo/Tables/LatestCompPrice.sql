@@ -12,3 +12,6 @@
 
 
  
+GO
+
+CREATE INDEX [IDX_LatestCompPrice_UploadId] ON [dbo].[LatestCompPrice] (UploadId)
