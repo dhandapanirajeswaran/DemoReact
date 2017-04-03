@@ -35,7 +35,8 @@
                 uiMarginWidth = 10,
                 uiMarginHeight = 26,
                 top,
-                left;
+                left,
+                gap = 16;
 
             lastArea.left = offset.left;
             lastArea.top = offset.top;
@@ -49,11 +50,11 @@
 
             switch (dock) {
                 case 'above':
-                    top = Math.floor(offset.top + 0.5) - uiHeight - uiMarginHeight;
+                    top = Math.floor(offset.top + 0.5) - uiHeight - uiMarginHeight - gap;
                     left = Math.floor(offset.left + (eleWidth - uiWidth) / 2 - uiMarginWidth);
                     break;
                 case 'below':
-                    top = Math.floor(offset.top + 0.5) + eleHeight + uiMarginHeight,
+                    top = Math.floor(offset.top + 0.5) + eleHeight + uiMarginHeight + gap,
                     left = Math.floor(offset.left + (eleWidth - uiWidth)/2 - uiMarginWidth)
                     break;
             }
@@ -86,13 +87,10 @@
 
         function mouseMoved(ev) {
             var ele = $(ev.target).closest('[data-infotip]');
-            if (ele.length == 0)
-                if (isMouseInsideArea(ev, lastArea))
-                    ele = element;
+            if (ele.length == 0 && isMouseInsideArea(ev, lastArea))
+                ele = element;
 
             if (ele.length) {
-                ev.preventDefault();
-                ev.stopPropagation();
                 show(ele)
             } else
                 hide();
