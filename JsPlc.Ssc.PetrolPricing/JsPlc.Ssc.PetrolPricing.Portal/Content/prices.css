@@ -160,6 +160,7 @@ span.jsdiff {
     letter-spacing: 1px;
     border: 1px solid #ccc;
     border-radius: 4px;
+    margin-right: 4px;
 }
 
 .txtPrice:hover,

@@ -4,7 +4,13 @@
 
         var ui = $('<div class="infotip">testing</div>'),
             isVisible = false,
-            element = null;
+            element = null,
+            lastArea = {
+                left: 0,
+                top: 0,
+                width: 0,
+                height: 0
+            };
 
         var timings = {
             fadeOut: 1000,
@@ -20,22 +26,39 @@
                 return;
 
             var markup = convertToMarkup(ele.data('infotip')),
+                dock = (ele.data('infotip-dock') || 'above').toLowerCase(),
                 offset = ele.offset(),
                 eleWidth = Math.floor(ele.width()),
                 eleHeight = ele.height(),
                 uiWidth = Math.floor(ui.width()),
                 uiHeight = ui.height(),
-                uiMarginWidth = 16,
-                uiMarginHeight = 24;
+                uiMarginWidth = 10,
+                uiMarginHeight = 26,
+                top,
+                left;
+
+            lastArea.left = offset.left;
+            lastArea.top = offset.top;
+            lastArea.width = eleWidth;
+            lastArea.height = eleHeight;
 
             element = ele;
             ui.detach()
             ui.html(markup);
+            ui.removeClass('infotip-above infotip-below').addClass('infotip-' + dock)
 
-            ui.css({
-                top: Math.floor(offset.top + 0.5) - uiHeight - uiMarginHeight,
-                left: Math.floor(offset.left + (eleWidth - uiWidth)/2 - uiMarginWidth)
-            })
+            switch (dock) {
+                case 'above':
+                    top = Math.floor(offset.top + 0.5) - uiHeight - uiMarginHeight;
+                    left = Math.floor(offset.left + (eleWidth - uiWidth) / 2 - uiMarginWidth);
+                    break;
+                case 'below':
+                    top = Math.floor(offset.top + 0.5) + eleHeight + uiMarginHeight,
+                    left = Math.floor(offset.left + (eleWidth - uiWidth)/2 - uiMarginWidth)
+                    break;
+            }
+
+            ui.css({top: top, left: left})
                 .show()
                 .appendTo(document.body);
             isVisible = true;
@@ -52,14 +75,26 @@
             ui.hide().appendTo(document.body);
         };
 
+        function isMouseInsideArea(ev, area) {
+            if (!area || area.width == 0 || area.height == 0)
+                return false;
+            return ev.pageX >= area.left
+                && ev.pageX <= (area.left + area.width)
+                && ev.pageY >= area.top
+                && ev.pageY <= (area.top + area.height);
+        }
+
         function mouseMoved(ev) {
             var ele = $(ev.target).closest('[data-infotip]');
+            if (ele.length == 0)
+                if (isMouseInsideArea(ev, lastArea))
+                    ele = element;
+
             if (ele.length) {
                 ev.preventDefault();
                 ev.stopPropagation();
-                show(ele);
-            }
-            else
+                show(ele)
+            } else
                 hide();
         };
 
