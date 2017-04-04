@@ -26,7 +26,7 @@ require(["SitePricing", "notify", "busyloader", "downloader", "infotips"],
 
     $(window).on('exporting-all-click', function (ev, download) {
         busyloader.show({
-            message: 'Exporting All - Please wait',
+            message: 'Exporting All - Please wait (ETA: 3 minutes)',
             showtime: 8000
         });
 
@@ -50,7 +50,7 @@ require(["SitePricing", "notify", "busyloader", "downloader", "infotips"],
             + "&storeTown=" + $('#viewingStoreTown').val();
 
         busyloader.show({
-            message: 'Exporting All - Please wait',
+            message: 'Exporting All - Please wait (ETA 3 minutes)',
             showtime: 4000,
             dull: true
         });
@@ -77,7 +77,7 @@ require(["SitePricing", "notify", "busyloader", "downloader", "infotips"],
             + "&storeTown=" + $('#viewingStoreTown').val();
 
         busyloader.show({
-            message: 'Exporting JS Sites - Please wait.',
+            message: 'Exporting JS Sites - Please wait. (ETA 10 seconds)',
             showtime: 2000,
             dull: true
         });
@@ -118,6 +118,14 @@ require(["SitePricing", "notify", "busyloader", "downloader", "infotips"],
 
         notify.info(message);
     });
+
+
+    function disableExportButtons() {
+        $("#btnExportAll").prop("disabled", true);
+        $("#btnExportSites").prop("disabled", true);
+    };
+
+    $("#viewingStoreNo, #viewingStoreName, #viewingStoreNo, #viewingStoreTown").change(disableExportButtons);
 });
 
 function getRootSiteFolder() {
@@ -252,24 +260,6 @@ function refreshDates(selectedDate) {
     $(".compyday").html(previousDay.formatted);
 }
 
-$("#viewingStoreNo").change(function () {
-    $("#btnExportAll").prop("disabled", true);
-    $("#btnExportSites").prop("disabled", true);
-});
 
-$("#viewingStoreName").change(function () {
-    $("#btnExportAll").prop("disabled", true);
-    $("#btnExportSites").prop("disabled", true);
-});
-
-$("#viewingStoreNo").change(function () {
-    $("#btnExportAll").prop("disabled", true);
-    $("#btnExportSites").prop("disabled", true);
-});
-
-$("#viewingStoreTown").change(function () {
-    $("#btnExportAll").prop("disabled", true);
-    $("#btnExportSites").prop("disabled", true);
-});
 
 
