@@ -5,9 +5,10 @@ $("#viewingDate,#viewingStoreNo,#viewingStoreName,#viewingStoreTown,#viewingCatN
     }
 });
 
-require(["SitePricing", "notify", "busyloader", "downloader", "infotips"],
-    function (prices, notify, busyloader, downloader, infotips) {
-    prices.go();
+require(["SitePricing", "notify", "busyloader", "downloader", "infotips", "cookieSettings"],
+    function (prices, notify, busyloader, downloader, infotips, cookieSettings) {
+
+        prices.go();
 
     $('.datepicker')
         .datepicker({
@@ -95,11 +96,20 @@ require(["SitePricing", "notify", "busyloader", "downloader", "infotips"],
     $('[data-click="setExpandMode"').off().click(function () {
         var button = $(this),
             mode = button.data('mode'),
-            states = button.data('states').split(','),
             selector = button.data('target'),
-            panel = $(selector),
-            message = button.data('message'),
-            clones = $('[data-click="setExpandMode"][data-target="' + selector + '"]');
+            message = button.data('message');
+
+        redrawExpandModes(selector, mode);
+
+        $(selector).trigger('expand-mode-change', [mode]);
+
+        notify.info(message);
+    });
+
+    function redrawExpandModes(selector, mode) {
+        var panel = $(selector),
+            clones = $('[data-click="setExpandMode"][data-target="' + selector + '"]'),
+            states = clones.first().data('states').split(',');
 
         clones.each(function () {
             var item = $(this);
@@ -115,10 +125,33 @@ require(["SitePricing", "notify", "busyloader", "downloader", "infotips"],
             else
                 panel.removeClass(value);
         });
+    };
 
-        notify.info(message);
+    $('#PricingPanelScroller').on('expand-mode-change', function (ev, mode) {
+        cookieSettings.write('pricing.expandGrid', mode);
     });
 
+    function applyPricingPanelScrollerMode() {
+        var selector = '#PricingPanelScroller',
+            mode = cookieSettings.read('pricing.expandGrid', '');
+        if (mode)
+            redrawExpandModes(selector, mode);
+    };
+
+    $('#PriceDifferencePanel').on('expand-mode-change', function (ev, mode) {
+        cookieSettings.write('pricing.showBarChart', mode);
+    });
+
+    $('#PriceDifferencePanel').on('data-loaded', function (ev) {
+        var selector = '#PriceDifferencePanel',
+            mode = cookieSettings.read('pricing.showBarChart', '');
+        if (mode)
+            redrawExpandModes(selector, mode);
+    });
+
+    function applyUserSettings() {
+        applyPricingPanelScrollerMode();
+    };
 
     function disableExportButtons() {
         $("#btnExportAll").prop("disabled", true);
@@ -126,6 +159,12 @@ require(["SitePricing", "notify", "busyloader", "downloader", "infotips"],
     };
 
     $("#viewingStoreNo, #viewingStoreName, #viewingStoreNo, #viewingStoreTown").change(disableExportButtons);
+
+    function docReady() {
+        applyUserSettings();
+    };
+
+    $(docReady);
 });
 
 function getRootSiteFolder() {

@@ -302,6 +302,7 @@
     <Content Include="Scripts\App\busyloader.js" />
     <Content Include="Scripts\App\common.js" />
     <Content Include="Scripts\App\cookie.js" />
+    <Content Include="Scripts\App\cookieSettings.js" />
     <Content Include="Scripts\App\downloader.js" />
     <Content Include="Scripts\App\infotips.js" />
     <Content Include="Scripts\App\layout.js" />

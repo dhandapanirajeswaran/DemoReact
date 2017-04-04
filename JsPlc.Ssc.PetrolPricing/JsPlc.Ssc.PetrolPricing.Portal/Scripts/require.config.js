@@ -32,6 +32,7 @@ require.config({
         "layout": "App/layout",
         "scrollToTop": "App/scrollToTop",
         "infotips": "App/infotips",
+        "cookieSettings": "App/cookieSettings",
 
         //"ko-binding-handlers": "App/ko-binding-handlers",
 

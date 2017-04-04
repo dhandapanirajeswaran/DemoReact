@@ -26,7 +26,8 @@
         return {
             setCookie: setCookie,
             removeCookie: removeCookie,
-            allCookies: allCookies
+            allCookies: allCookies,
+            getCookie: getCookie
         };
     }
 );
