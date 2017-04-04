@@ -63,6 +63,19 @@ table.competitorTable td, th {
     background: #eee;
 }
 
+#competitorPricePopupPrices .comp-js-price-diff {
+    color: #000;
+    font-size: 110%;
+    font-weight: bold;
+}
+
+#competitorPricePopupPrices .comp-js-price-diff-na {
+    font-size: 110%;
+    letter-spacing: 1px;
+    color: #999;
+    font-style: italic;
+}
+
 #competitorPricePopupHeader th {
     background: #eee;
 }
