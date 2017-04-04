@@ -31,8 +31,8 @@
             };
 
         // init styles
-            overlay.css({ 'zIndex': 2010 });
-            lightbox.css({ 'position': 'fixed', 'top': 0, 'bottom': 0, 'left': 0, 'right': 0, 'backgroundColor': '#000', 'zIndex': 2000, 'opacity': 0 });
+            overlay.css({ 'zIndex': 2010 }).hide();
+            lightbox.css({ 'position': 'fixed', 'top': 0, 'bottom': 0, 'left': 0, 'right': 0, 'backgroundColor': '#000', 'zIndex': 2000, 'opacity': 0 }).hide();
 
         // attach to DOM
             overlay.appendTo(document.body);
@@ -72,6 +72,7 @@
 
         function onHide() {
             hideLightbox();
+            overlay.hide();
             showing = false;
         };
 
