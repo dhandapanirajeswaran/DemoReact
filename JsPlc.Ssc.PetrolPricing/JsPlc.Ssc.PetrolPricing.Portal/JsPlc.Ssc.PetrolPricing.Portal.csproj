@@ -486,6 +486,11 @@
     <Content Include="Views\Shared\_NotifyDialogs.cshtml" />
     <Content Include="Views\PriceReports\_BackToReports.cshtml" />
     <Content Include="Views\PriceReports\_ReportIntroduction.cshtml" />
+    <Content Include="Views\Sites\Pricing\_CompetitorNotePopup.cshtml" />
+    <Content Include="Views\Sites\Pricing\_CompetitorPriceGridPopup.cshtml" />
+    <Content Include="Views\Sites\Pricing\_EmailAllSitesPopup.cshtml" />
+    <Content Include="Views\Sites\Pricing\_EmailSitePopup.cshtml" />
+    <Content Include="Views\Sites\Pricing\_CompetitorSitePriceGridTable.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\uploads\" />

@@ -1,0 +1,61 @@
+﻿@using JsPlc.Ssc.PetrolPricing.Models
+@model JsPlc.Ssc.PetrolPricing.Models.SiteViewModel
+
+<div class="modal fade" id="competitorPricesPopup" tabindex="-1" role="dialog" aria-labelledby="competitorPricesPopupLabel">
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="competitorPricesPopupLabel"><i class="fa fa-credit-card"></i> <span id="competitorPricePopupStoreName"></span> - Competitor Prices</h4>
+        </div>
+        <div class="modal-body">
+
+            <table id="competitorPricesPopupSiteInfo">
+                <thead>
+                    <tr>
+                        <th>Store No.</th>
+                        <th class="leftDivider">Store Name</th>
+                        <th class="leftDivider">Store Town</th>
+                        <th class="leftDivider">Cat No.</th>
+                        <th class="leftDivider">PFS No.</th>
+                    </tr>
+                    <tr>
+                        <th class="text-center"><big class="storeNumber">--</big></th>
+                        <th class="text-center leftDivider"><big class="storeName">--</big></th>
+                        <th class="text-center leftDivider"><big class="storeTown">--</big></th>
+                        <th class="text-center leftDivider"><big class="catNo">--</big></th>
+                        <th class="text-center leftDivider"><big class="pfsNo">--</big></th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+
+            <!-- start loader -->
+            <div id="competitorPricePopupLoading" class="alert alert-warning busy-loader">
+                <div class="col-md-1 text-center">
+                    <i class="fa fa-clock-o fa-2x spinner"></i>
+                </div>
+                <div class="col-md-10 text-center">
+                    <strong>Loading Competitor Prices. Please wait...</strong>
+                </div>
+            </div>
+            <!-- end loader-->
+            <!-- start competitor header -->
+            <table id="competitorPricePopupHeader"></table>
+            <!-- end competitor header -->
+            <!-- start competitor table -->
+            <div id="competitorPricePopupPrices"></div>
+            <!-- end competitor table -->
+        </div>
+        <div class="modal-footer">
+            <div class="footer-actions">
+                <div class="btn-group" data-toggle="buttons-radio">
+                    <button id="competitorPricesShowAllNotesButton" class="btn btn-sm btn-default" href="#" data-infotip="Show all notes"><i class="fa fa-pencil-square-o"></i> Show notes</button>
+                    <button id="competitorPricesHideAllNotesButton" class="btn btn-sm btn-default" data-infotip="Hide all notes"><i class="fa fa-pencil-square-o"></i> Hide notes</button>
+                </div>
+            </div>
+
+            <button type="button" id="competitorPricePopupCloseButton" class="btn btn-primary" data-dismiss="modal"><i class="fa fa-close"></i> Close</button>
+        </div>
+    </div>
+</div>
+
