@@ -21,6 +21,7 @@ using EntityState = System.Data.Entity.EntityState;
 using JsPlc.Ssc.PetrolPricing.Core.Diagnostics;
 using JsPlc.Ssc.PetrolPricing.Repository.Dapper;
 using Dapper;
+using JsPlc.Ssc.PetrolPricing.Repository.Debugging;
 
 namespace JsPlc.Ssc.PetrolPricing.Repository
 {
@@ -448,10 +449,8 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
             try
             {
-                var totaliser = new DurationTotaliser();
-                totaliser.Start("GetSites");
-
-                var useNewCode = false;
+                var useNewCode = true;
+                var shouldCompareOldvsNew = false;
 
                 var sainsburysSites =
                     _context.Sites.Where(x => x.IsSainsburysSite == true && x.IsActive == true);
@@ -478,10 +477,6 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
                 SitePriceViewModel sitePriceRow = null;
 
-                totaliser.Stop("GetSites");
-
-                totaliser.Start("FileUploads");
-
                 var fileUploadedObj =
                     _context.FileUploads.Where(
                             x =>
@@ -493,10 +488,6 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                         .FirstOrDefault();
 
                 var catalistFileExits = fileUploadedObj != null;
-
-                totaliser.Stop("FileUploads");
-
-                totaliser.Start("SiteLoop");
 
                 var dbList = new List<SitePriceViewModel>();
                 foreach (Site site in filteredSainsburysSites)
@@ -513,9 +504,6 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                     sitePriceRow.Notes = site.Notes;
                     sitePriceRow.HasEmails = site.Emails.Any();
 
-                    totaliser.Start("AddSitePriceRow");
-
-
                     #region OLD CODE
                     if (useNewCode == false)
                     {
@@ -530,29 +518,16 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                     }
                     #endregion
 
-                    /* var siteToCompetitorObjs =
-                            transactionContext.SiteToCompetitors.Where(x => x.SiteId == siteID);
-                    foreach (var siteToC in siteToCompetitorObjs)
-                    {
-                        transactionContext.SiteToCompetitors.Remove(siteToC);
-                    }*/
-
-                    totaliser.Stop("AddSitePriceRow");
-
                     dbList.Add(sitePriceRow);
                 }
 
                 if (useNewCode)
-                {
                     AddFuelPricesRowsForSites(forDate, dbList);
-                }
-
-                totaliser.Stop("SiteLoop");
 
                 // Apply5PMarkupForSuperUnleadedForNonCompetitorSites(dbList);
 
-
-                totaliser.WriteToFile(@"C:\tempfile\logs\petrol_duration_totals.txt");
+                if (shouldCompareOldvsNew)
+                    DumpNewCodeFuelPrices(@"C:\tempfile\logs\fuel_prices_old_vs_new.txt", forDate, dbList);
 
                 return dbList;
 
@@ -561,6 +536,105 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             {
                 _logger.Error(ce);
                 return null;
+            }
+        }
+
+        /// <summary>
+        /// DEBUG - dump original vs new code for Fuel Prices
+        /// </summary>
+        /// <param name="filename"></param>
+        /// <param name="forDate"></param>
+        /// <param name="sites"></param>
+        private void DumpNewCodeFuelPrices(string filename, DateTime forDate, IEnumerable<SitePriceViewModel> sites) 
+        {
+            var dump = new System.Text.StringBuilder();
+
+            var showIdentical = true;
+
+            var siteIds = sites.Select(x => x.SiteId.ToString()).Aggregate((x, y) => x + "," + y);
+
+            var calculatedPrices = _context.CalculateFuelPricesForSitesAndDate(forDate, siteIds);
+            foreach (var site in sites)
+            {
+                var fuelPricesForSite = calculatedPrices.Where(x => x.SiteId == site.SiteId);
+
+                var newCode_SuperUnleaded = fuelPricesForSite.FirstOrDefault(x => x.FuelTypeId == (int)FuelTypeItem.Super_Unleaded);
+                var newCode_Unleaded = fuelPricesForSite.FirstOrDefault(x => x.FuelTypeId == (int)FuelTypeItem.Unleaded);
+                var newCode_Diesel = fuelPricesForSite.FirstOrDefault(x => x.FuelTypeId == (int)FuelTypeItem.Diesel);
+
+                var original_SuperUnleaded = site.FuelPrices.FirstOrDefault(x => x.FuelTypeId == (int)FuelTypeItem.Super_Unleaded);
+                var original_Unleaded = site.FuelPrices.FirstOrDefault(x => x.FuelTypeId == (int)FuelTypeItem.Unleaded);
+                var original_Diesel = site.FuelPrices.FirstOrDefault(x => x.FuelTypeId == (int)FuelTypeItem.Diesel);
+
+                dump.AppendLine("Site: " + site.SiteId + " - Name: " + site.StoreName + " - StoreNo: " + site.StoreNo);
+                dump.AppendLine("\t\t" + DumpSerialiseFuelPrice(FuelTypeItem.Super_Unleaded, original_SuperUnleaded, newCode_SuperUnleaded, showIdentical));
+                dump.AppendLine("\t\t" + DumpSerialiseFuelPrice(FuelTypeItem.Unleaded, original_Unleaded, newCode_Unleaded, showIdentical));
+                dump.AppendLine("\t\t" + DumpSerialiseFuelPrice(FuelTypeItem.Diesel, original_Diesel, newCode_Diesel, showIdentical));
+                dump.AppendLine();
+
+                dump.AppendLine();
+            }
+
+            System.IO.File.WriteAllText(filename, dump.ToString());
+        }
+
+        private string DumpSerialiseFuelPrice(FuelTypeItem fuelType, FuelPriceViewModel originalfuelPrice, FuelPriceViewModel newfuelPrice, bool showIdentical)
+        {
+            var propertyIndentation = "\n\t\t\t\t";
+
+
+            var oldAutoPrice = originalfuelPrice == null ? "NULL" : originalfuelPrice.AutoPrice.ToString();
+            var newAutoPrice = newfuelPrice == null ? "NULL" : newfuelPrice.AutoPrice.ToString();
+
+            var oldTodayPrice = originalfuelPrice == null ? "NULL" : originalfuelPrice.TodayPrice.ToString();
+            var newTodayPrice = newfuelPrice == null ? "NULL" : newfuelPrice.TodayPrice.ToString();
+
+            var oldYestPrice = originalfuelPrice == null ? "NULL" : originalfuelPrice.YestPrice.ToString();
+            var newYestPrice = originalfuelPrice == null ? "NULL" : newfuelPrice.YestPrice.ToString();
+
+            var oldMarkup = originalfuelPrice == null ? "NULL" : originalfuelPrice.Markup.ToString();
+            var newMarkup = newfuelPrice == null ? "NULL" : newfuelPrice.Markup.ToString();
+
+            var oldCompetitorName = originalfuelPrice == null ? "NULL" : originalfuelPrice.CompetitorName;
+            var newCompetitorName = newfuelPrice == null ? "NULL" : newfuelPrice.CompetitorName;
+
+            var oldIsTrailPrice = originalfuelPrice == null ? "NULL" : originalfuelPrice.IsTrailPrice.ToString();
+            var newIsTrailPrice = newfuelPrice == null ? "NULL" : newfuelPrice.IsTrailPrice.ToString();
+
+            var oldDifference = originalfuelPrice == null ? "NULL" : originalfuelPrice.Difference.ToString();
+            var newDifference = newfuelPrice == null ? "NULL" : newfuelPrice.Difference.ToString();
+
+            var oldCompetitorPriceOffset = originalfuelPrice == null ? "NULL" : originalfuelPrice.CompetitorPriceOffset.ToString();
+            var newCompetitorPriceOffset = newfuelPrice == null ? "NULL" : newfuelPrice.CompetitorPriceOffset.ToString();
+
+            var oldIsBasedOnCompetitor = originalfuelPrice == null ? "NULL" : originalfuelPrice.IsBasedOnCompetitor.ToString();
+            var newIsBasedOnCompetitor = newfuelPrice == null ? "NULL" : newfuelPrice.IsBasedOnCompetitor.ToString();
+
+            var result = new System.Text.StringBuilder();
+            result.Append("[" + fuelType.ToString().ToUpper() + "] : ");
+
+            DebugAppendComparision(result, propertyIndentation, "AutoPrice", showIdentical, oldAutoPrice, newAutoPrice);
+            DebugAppendComparision(result, propertyIndentation, "TodayPrice", showIdentical, oldTodayPrice, newTodayPrice);
+            DebugAppendComparision(result, propertyIndentation, "YestPrice", showIdentical, oldYestPrice, newYestPrice);
+            DebugAppendComparision(result, propertyIndentation, "Markup", showIdentical, oldMarkup, newMarkup);
+            DebugAppendComparision(result, propertyIndentation, "CompetitorName", showIdentical, oldCompetitorName, newCompetitorName);
+            DebugAppendComparision(result, propertyIndentation, "IsTrialPrice", showIdentical, oldIsTrailPrice, newIsTrailPrice);
+            DebugAppendComparision(result, propertyIndentation, "Difference", showIdentical, oldDifference, newDifference);
+            DebugAppendComparision(result, propertyIndentation, "CompetitorPriceOffset", showIdentical, oldCompetitorPriceOffset, newCompetitorPriceOffset);
+            DebugAppendComparision(result, propertyIndentation, "IsBasedOnCompetitor", showIdentical, oldIsBasedOnCompetitor, newIsBasedOnCompetitor);
+
+            return result.ToString();
+        }
+
+        private void DebugAppendComparision(System.Text.StringBuilder sb, string indentation, string fieldName, bool showIdentical, string oldValue, string newValue)
+        {
+            var isDifferent = oldValue != newValue;
+            var indicator = isDifferent ? "**" : "  ";
+
+            if (showIdentical || isDifferent)
+            {
+                sb.Append(indentation);
+                sb.AppendFormat(" {0} {1}: {2} --VS-- {3}", indicator, fieldName.PadRight(25,' '), oldValue, newValue);
             }
         }
 
@@ -840,7 +914,9 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             int pageNo = 1, int pageSize = Constants.PricePageSize)
         {
 
-            const bool useNewCode = false;
+            const bool useNewCode = true;
+            const bool shouldCompareData = false;
+            const string debugOutputFile = @"C:\tempfile\logs\competitor_prices_old_vs_new.txt";
 
             if (useNewCode)
                 return _context.GetCompetitorsWithPriceView(forDate, siteId);
@@ -978,6 +1054,16 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                     }
 
                     dbList.Add(sitePriceRow);
+                }
+
+                if (shouldCompareData)
+                {
+                    var newCodeData = _context.GetCompetitorsWithPriceView(forDate, siteId);
+
+                    var debugLog = new DebugCompareCompetitorPrices();
+                    debugLog.Compare(dbList, newCodeData);
+
+                    debugLog.WriteToFile(debugOutputFile);
                 }
 
                 return dbList;
