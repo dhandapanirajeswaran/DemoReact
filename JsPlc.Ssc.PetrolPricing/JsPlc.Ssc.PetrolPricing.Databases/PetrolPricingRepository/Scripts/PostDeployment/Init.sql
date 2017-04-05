@@ -14,23 +14,32 @@ INSERT [dbo].[ImportProcessStatus] ([Id], [Status]) VALUES (17, N'CalcAborted')
 
 END
 
+---------------
+--
+-- Update/Insert the dbo.UploadType rows
+--
+declare @UploadTypeDataTV table(Id int, Name nvarchar(max))
+insert into @UploadTypeDataTV
+values 
+	(1, N'Daily Price Data'),
+	(2, N'Quarterly Site Data'),
+	(3, N'Latest Js Price Data'),
+	(4, N'Latest Competitors Price Data');
 
+merge dbo.UploadType as target
+using
+(
+	select Id, Name from @UploadTypeDataTV
+) as source(Id, Name)
+on target.Id = source.Id
+when not matched then
+	insert(Id, UploadTypeName)
+	values(source.Id, source.Name)
+when matched then
+	update set target.UploadTypeName = source.Name;
 
-IF NOT EXISTS(SELECT TOP 1 1 FROM [dbo].[UploadType])
-BEGIN
+---------------
 
-INSERT [dbo].[UploadType] ([Id], [UploadTypeName]) VALUES (1, N'Daily Price Data')
-INSERT [dbo].[UploadType] ([Id], [UploadTypeName]) VALUES (2, N'Quarterly Site Data')
-INSERT [dbo].[UploadType] ([Id], [UploadTypeName]) VALUES (3, N'Latest Js Price Data')
-INSERT [dbo].[UploadType] ([Id], [UploadTypeName]) VALUES (4, N'Latest Competitors Price Data')
-END
-update [dbo].[UploadType] set [UploadTypeName]= N'Latest Js Price Data' where [Id]=3
-
-IF NOT EXISTS(SELECT TOP 1 1 FROM [dbo].[UploadType] where Id=4)
-BEGIN
-
-INSERT [dbo].[UploadType] ([Id], [UploadTypeName]) VALUES (4, N'Latest Competitors Price Data')
-END
 IF NOT EXISTS(SELECT TOP 1 1 FROM [dbo].[FuelType])
 BEGIN
 INSERT [dbo].[FuelType] ([Id], [FuelTypeName]) VALUES (1, N'Super Unleaded')
@@ -53,7 +62,6 @@ INSERT [dbo].[PPUser] ([FirstName],[LastName],[Email]) VALUES (N'Simon',N'Millea
 INSERT [dbo].[PPUser] ([FirstName],[LastName],[Email]) VALUES (N'Marjorie',N'Dehaney',N'Marjorie.Dehaney@sainsburys.co.uk')
 INSERT [dbo].[PPUser] ([FirstName],[LastName],[Email]) VALUES (N'Owain',N'Fenn',N'Owain.Fenn@sainsburys.co.uk')
 INSERT [dbo].[PPUser] ([FirstName],[LastName],[Email]) VALUES (N'Sandip',N'Vaidya',N'Sandip.Vaidya@sainsburys.co.uk')
-INSERT [dbo].[PPUser] ([FirstName],[LastName],[Email]) VALUES (N'Mike',N'Gwyer',N'Mike.Gwyer@sainsburys.co.uk')
 INSERT [dbo].[PPUser] ([FirstName],[LastName],[Email]) VALUES (N'Garry',N'Leeder',N'Garry.Leeder@sainsburys.co.uk')
 INSERT [dbo].[PPUser] ([FirstName],[LastName],[Email]) VALUES (N'Premkumar',N'Krishnan',N'Premkumar.Krishnan@sainsburys.co.uk')
 INSERT [dbo].[PPUser] ([FirstName],[LastName],[Email]) VALUES (N'Ramaraju',N'Vittanala',N'Ramaraju.Vittanala@sainsburys.co.uk')
