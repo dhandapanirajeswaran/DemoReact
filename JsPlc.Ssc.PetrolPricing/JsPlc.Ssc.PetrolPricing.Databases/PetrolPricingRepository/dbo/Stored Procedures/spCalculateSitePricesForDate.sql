@@ -6,10 +6,11 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-----DEBUG:START
+
+------DEBUG:START
 --DECLARE @forDate DATE = GetDate()
---DECLARE @SiteIds VARCHAR(MAX) = '9'
-----DEBUG:END
+--DECLARE @SiteIds VARCHAR(MAX) = '8'
+------DEBUG:END
 
 	DECLARE @forDateNextDay DATE = DATEADD(DAY, 1, @forDate)
 
@@ -78,13 +79,14 @@ BEGIN
 				THEN 0 
 				ELSE 1 
 			END [HasSitePriceData]
+
 		FROM
 			SiteFuelsCTE sf
 
 			-- sitePriceData
-			LEFT JOIN dbo.SitePrice spd on spd.Id = (SELECT MAX(id) FROM dbo.SitePrice WHERE SiteId = sf.SiteId AND (SuggestedPrice > 0 OR OverriddenPrice > 0))
+			LEFT JOIN dbo.SitePrice spd on spd.Id = (SELECT MAX(id) FROM dbo.SitePrice WHERE SiteId = sf.SiteId AND (SuggestedPrice > 0 OR OverriddenPrice > 0) and FuelTypeId = sf.FuelTypeId)
 
-			-- dieselPriceOverride
+			-- dieselPriceOverride (original C# name, its ANY fuel)
 			LEFT JOIN dbo.SitePrice dpo on spd.Id IS NOT NULL AND dpo.Id = (SELECT MIN(id) FROM dbo.SitePrice WHERE SiteId = sf.SiteId AND FuelTypeId = sf.FuelTypeId AND DateOfPrice >= @forDate AND DateOfPrice < @forDateNextDay AND OverriddenPrice > 0)
 
 			-- competitor site
@@ -127,6 +129,8 @@ BEGIN
 				ELSE CONVERT(BIT, 0)
 			END [IsTrailPrice],
 			spr.CompetitorPriceOffset
+
+			,ovp.OverriddenPrice [ovp_OverriddenPrice]
 		FROM 
 			SitePriceRowCTE spr
 
@@ -150,7 +154,10 @@ BEGIN
 			THEN tp.AutoPrice
 			ELSE 0
 		END [AutoPrice],
-		tp.overridePrice [OverridePrice],
+		CASE WHEN ovp_OverriddenPrice IS NULL -- fix for invisible Override Prices for Match Competitor sites...
+			THEN tp.overridePrice
+			ELSE ovp_OverriddenPrice
+		END [OverridePrice],
 		tp.TodayPrice [TodayPrice],
 		tp.Markup [Markup],
 		tp.CompetitorName [CompetitorName],

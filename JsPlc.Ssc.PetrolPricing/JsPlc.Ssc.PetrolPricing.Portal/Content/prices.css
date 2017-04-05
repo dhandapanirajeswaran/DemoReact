@@ -168,12 +168,12 @@ span.jsdiff {
 .txtPrice {
     padding: 1px 2px;
     font-size: 115%;
-    width: 3.1em;
+    width: 3em;
     text-align: center;
     letter-spacing: 1px;
     border: 1px solid #ccc;
     border-radius: 4px;
-    margin-right: 4px;
+    margin-right: 2px;
 }
 
 .txtPrice:hover,
@@ -311,7 +311,7 @@ span.jsdiff {
 
 .pricing-grid > tbody .col-today {width: 160px;}
 
-.pricing-grid > tbody .col-yesterday {width: 76px; text-align: center; border-left: 1px solid #999;}
+.pricing-grid > tbody .col-yesterday {width: 72px; text-align: center; border-left: 1px solid #999;}
 
 .pricing-grid > tbody > tr > td:nth-child(10),
 .pricing-grid > tbody > tr > td:nth-child(11) {background-color: #eee;}
@@ -327,7 +327,7 @@ span.jsdiff {
 
 .price-diff {font-family: monospace;}
 
-.price-pence {font-size: 125%; letter-spacing: 1px;}
+.price-pence {font-size: 120%; letter-spacing: 1px;}
 .price-fraction {letter-spacing: 2px;}
 .price-na {font-size: 110%; letter-spacing: 1px; color: #999; font-style: italic;}
 
