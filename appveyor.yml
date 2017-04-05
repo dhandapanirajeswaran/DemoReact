@@ -25,6 +25,9 @@ after_build:
     7z a JsPlc.Ssc.PetrolPricing.IntegrationTests.zip %APPVEYOR_BUILD_FOLDER%\JsPlc.Ssc.PetrolPricing\JsPlc.Ssc.PetrolPricing.IntegrationTests\bin\x86\Release\*.*
     
     AppVeyor PushArtifact JsPlc.Ssc.PetrolPricing.IntegrationTests.zip -DeploymentName JsPlc.Ssc.PetrolPricing.IntegrationTests
+branches:
+  only:
+    - develop    
 artifacts:
 - path: JsPlc.Ssc.PetrolPricing\JsPlc.Ssc.PetrolPricing.Databases\PetrolPricingRepository\bin\Release\PetrolPricingRepository.dacpac
   name: JsPlc.Ssc.PetrolPricing.Databases
