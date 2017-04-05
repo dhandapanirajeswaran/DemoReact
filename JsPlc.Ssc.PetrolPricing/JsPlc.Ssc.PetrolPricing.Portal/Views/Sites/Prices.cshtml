@@ -135,7 +135,7 @@
                 </div>
                 <div class="col-md-1">
                     <button type="button" class="btn btn-success btn-block" data-bind="click: savePetrolPricingForm" data-infotip="Save the changes">
-                        Yes
+                        <i class="fa fa-check"></i> Yes
                     </button>
                 </div>
                 <div class="clearfix"></div>
@@ -278,7 +278,7 @@
                         <tr>
                             <th colspan="3">
                                 <!-- EMAIL all Button, only loads popup -->
-                                <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#emailAllSites"
+                                <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#emailAllSites" data-infotip="Email [b]All[/b] Sites"
                                         data-bind="visible: !$root.ViewingHistorical() && $root.dataAvailable() == true">
                                     Email all &nbsp;<i class="fa fa-envelope-o"></i>
                                 </button>
@@ -347,7 +347,7 @@
                                         <!-- /ko -->
                                         <!-- ko if: !$root.ViewingHistorical() -->
                                         <i class="fa fa-warning text-danger" data-bind="visible: !HasEmails" data-infotip="[i class='fa fa-warning'][/i] Site has no emails."></i>
-                                        <a tabindex="-1" href="#" data-toggle="modal" data-target="#emailSite" data-bind="click: bindEmailTemplate">
+                                        <a tabindex="-1" href="#" data-toggle="modal" data-target="#emailSite" data-bind="click: bindEmailTemplate" data-infotip="Email Site">
                                             <i class="fa fa-envelope-o" data-bind="visible: HasEmails && canSendEmail()"></i>
                                             <!-- ko if: hasEmailSendLogEntry() -->
                                             <!-- ko with: EmailSendLogEntry -->

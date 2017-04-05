@@ -87,7 +87,7 @@
 
         function mouseMoved(ev) {
             var ele = $(ev.target).closest('[data-infotip]');
-            if (ele.length == 0 && isMouseInsideArea(ev, lastArea))
+            if (ele.length == 0 && isMouseInsideArea(ev, lastArea) && element.is(':visible'))
                 ele = element;
 
             if (ele.length) {
