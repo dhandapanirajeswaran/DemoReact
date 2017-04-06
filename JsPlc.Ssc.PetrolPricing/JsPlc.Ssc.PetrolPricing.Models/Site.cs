@@ -66,6 +66,9 @@ namespace JsPlc.Ssc.PetrolPricing.Models
             get { return String.IsNullOrWhiteSpace(Notes) == false; }
         }
         public string Notes { get; set; }
+
+        [NotMapped]
+        public bool HasNearbyGrocerPrice { get; set; }
     }
 
     public class SiteEmail

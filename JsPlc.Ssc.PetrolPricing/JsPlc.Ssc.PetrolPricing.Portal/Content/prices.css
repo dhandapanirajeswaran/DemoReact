@@ -252,6 +252,13 @@ span.jsdiff {
     font-weight: bold;
 }
 
+.pricing-grid .no-nearby-grocer-price {
+    color: #999;
+    display: inline-block;
+    width: 3.5em;
+    text-align: center;
+}
+
 .pricing-grid > tbody > .site-row.focused > td:nth-child(10),
 .pricing-grid > tbody > .site-row.focused > td:nth-child(11),
 .pricing-grid > tbody > .site-row.focused:hover > td:nth-child(10),
@@ -340,6 +347,7 @@ span.jsdiff {
 
 .pricing-grid.highlight-trial-prices .trial-price {background-color: #ff8;}
 .pricing-grid.highlight-match-competitor-prices .match-competitor-price {background-color: #cff;}
+.pricing-grid.highlight-no-nearby-grocer-prices .no-nearby-grocer-price {background-color: #ffdc9a; color: #000;}
 
 #PriceDifferenceBarChart {
     border: 1px solid #999;

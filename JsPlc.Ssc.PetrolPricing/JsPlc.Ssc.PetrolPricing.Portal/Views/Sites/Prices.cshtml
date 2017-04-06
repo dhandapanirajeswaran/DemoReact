@@ -231,7 +231,8 @@
                     <div class="col-md-4">
                         <button type="button" class="btn btn-sm" data-bind="click: toggleHighlightTrialPrices, css: {'btn-primary': $root.highlightTrialPrices()}" data-infotip="Toggle the [b]Trial Prices[/b] Highlighting"><i class="fa fa-flask "></i> Trial Prices</button>
                         <button type="button" class="btn btn-sm" data-bind="click: toggleHighlightMatchCompetitors, css: {'btn-primary': $root.highlightMatchCompetitors()}" data-infotip="Toggle the [b]Match Competitors[/b] Highlighting"><i class="fa fa-clone"></i> Match Competitors</button>
-                        <button type="button" class="btn btn-sm btn-danger" data-bind="visible: ($root.highlightTrialPrices() || $root.highlightMatchCompetitors()), click: resetPriceHighlighting" data-infotip="Hide all the Highlighting"><i class="fa fa-power-off "></i> Reset</button>
+                        <button type="button" class="btn btn-sm" data-bind="click: toggleHighlightNoNearbyGrocerPrices, css: {'btn-primary': $root.highlightNoNearbyGrocerPrices() }" data-infotip="Toggle missing [b]Grocer Prices[/b] highlighting"><i class="fa fa-question"></i> No Grocer Prices</button>
+                        <button type="button" class="btn btn-sm btn-danger" data-bind="visible: ($root.highlightTrialPrices() || $root.highlightMatchCompetitors() || $root.highlightNoNearbyGrocerPrices()), click: resetPriceHighlighting" data-infotip="Hide all the Highlighting"><i class="fa fa-power-off "></i> Reset</button>
                     </div>
 
                     <div class="col-md-3">
@@ -360,7 +361,7 @@
                                         <!-- /ko -->
                                     </span>
                                 </td>
-                                <td class="col-store-name"><a tabindex="-1" data-infotip="Edit this site" data-bind="attr: {'href': ('@Url.Action("Edit", "Sites")/' + SiteId)}"><span data-bind="text: StoreName"></span> <i class="fa fa-edit"></i></a></td>
+                                <td class="col-store-name"><a tabindex="-1" data-bind="attr: {'href': ('@Url.Action("Edit", "Sites")/' + SiteId), 'data-infotip': 'Edit Site [b]' + StoreName + '[/b]'}"><span data-bind="text: StoreName"></span> <i class="fa fa-edit"></i></a></td>
                                 <td class="col-store-town"><span data-bind="text: Town"></span></td>
                                 <td class="col-cat-no text-center"><span data-bind="text: CatNo"></span></td>
                                 <td class="col-pfs-no text-center"><span data-bind="text: PfsNo"></span></td>
@@ -378,10 +379,17 @@
                                         <!-- ko if: !FuelPrice.IsTrailPrice -->
                                         <span class="padded-price-right match-competitor-price" data-bind="attr: {'data-infotip': FuelPrice.MatchCompetitorInfoTip()}, html: FuelPrice.ForecourtAutoPriceHtml()"></span>
                                         <!-- /ko -->
+
+                                        <!-- ko if: $parent.HasNearbyGrocerPrice -->
                                         <span class="past-override-text" data-bind="visible: $root.ViewingHistorical()" data-infotip="Historical Prices"><i class="fa fa-clock-o"></i> Past</span>
                                         <input type="text" data-bind="value: FuelPrice.OverridePrice, visible: !$root.ViewingHistorical(),
                                 id: ('OverridePrice_' + $parent.SiteId + '_' + FuelPrice.FuelTypeId), event:{keyup: changeProp, blur: blurred, focus: focused}, css: ('txtPrice ' + OverrideInputCss()), attr: {'data-infotip': FuelPrice.PriceOverrideInfoTip()}" maxlength="8" />
-                                        <span data-bind="attr :{id: ('OverridePriceHighlight_' + $parent.SiteId + '_' + FuelPrice.FuelTypeId)}"></span>
+                                        <!-- /ko -->
+                                        <!-- ko if: !$parent.HasNearbyGrocerPrice -->
+                                        <span class="no-nearby-grocer-price" data-infotip="[b]No Grocer[/b] Price data within [b]5 Minutes[/b]"><i class="fa fa-clone"></i>-<i class="fa fa-question"></i></span>
+                                        <!-- /ko -->
+
+                                        @*<span data-bind="attr :{id: ('OverridePriceHighlight_' + $parent.SiteId + '_' + FuelPrice.FuelTypeId)}"></span>*@
                                         <!-- note: override prices can be extracted using $('#SiteId-FueldTypeId-overridePrice') -->
                                         <i data-bind="attr: {class: (UpDownIconCss()), 'data-infotip': FuelPrice.UpDownInfoTip()}"></i>
                                         &nbsp;<span class="price-diff" data-bind="text: (UpDownText()), attr: {'data-infotip': FuelPrice.UpDownInfoTip()}"></span>

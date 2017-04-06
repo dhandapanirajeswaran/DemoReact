@@ -521,6 +521,11 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                     dbList.Add(sitePriceRow);
                 }
 
+
+                const int driveTime = 5;
+                GetNearbyGrocerPriceStatus(forDate, dbList, driveTime);
+
+
                 if (useNewCode)
                     AddFuelPricesRowsForSites(forDate, dbList);
 
@@ -536,6 +541,17 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             {
                 _logger.Error(ce);
                 return null;
+            }
+        }
+
+        private void GetNearbyGrocerPriceStatus(DateTime forDate, IEnumerable<SitePriceViewModel> sites, int driveTime)
+        {
+            var siteIds = sites.Select(x => x.SiteId.ToString()).Aggregate((x, y) => x + "," + y);
+
+            var statuses = _context.GetNearbyGrocerPriceStatusForSites(forDate, siteIds, driveTime);
+            foreach(var status in statuses)
+            {
+                sites.First(x => x.SiteId == status.SiteId).HasNearbyGrocerPrice = status.HasNearbyGrocerPrice;
             }
         }
 

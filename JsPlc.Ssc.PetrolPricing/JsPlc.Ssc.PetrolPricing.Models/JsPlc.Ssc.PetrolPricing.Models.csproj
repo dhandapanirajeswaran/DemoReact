@@ -101,6 +101,7 @@
     <Compile Include="Enums\FuelTypeEnum.cs" />
     <Compile Include="ImportProcessError.cs" />
     <Compile Include="LatestCompPrice.cs" />
+    <Compile Include="NearbyGrocerPriceSiteStatus.cs" />
     <Compile Include="PPUser.cs" />
     <Compile Include="ExcludedBrands.cs" />
     <Compile Include="LatestPrice.cs" />

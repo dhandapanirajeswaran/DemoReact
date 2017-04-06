@@ -83,6 +83,8 @@ namespace JsPlc.Ssc.PetrolPricing.Models
 
         public string Notes { get; set; }
 
+        public bool HasNearbyGrocerPrice { get; set; }
+
         public SiteViewModel()
         {
             Competitors = new List<SiteViewModel>();

@@ -11,7 +11,8 @@
                 'pricing.highlightMatchCompetitors',
                 'pricing.priceChangeFilterDown',
                 'pricing.priceChangeFilterNone',
-                'pricing.priceChangeFilterUp'
+                'pricing.priceChangeFilterUp',
+                'pricing.highlightNoNearbyGrocerPrices'
             ],
             values = readSettingsCookie();
 

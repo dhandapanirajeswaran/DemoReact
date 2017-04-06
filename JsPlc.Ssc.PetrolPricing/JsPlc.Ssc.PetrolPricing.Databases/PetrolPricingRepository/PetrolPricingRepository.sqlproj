@@ -150,6 +150,8 @@
     <Build Include="dbo\Stored Procedures\GetCompetitorsWithPriceView.sql" />
     <Build Include="dbo\Tables\ContactDetails.sql" />
     <Build Include="dbo\Stored Procedures\spGetContactDetailsList.sql" />
+    <Build Include="dbo\Functions\Scalar Functions\fn_DoesNearbyGrocerPriceExistForSite.sql" />
+    <Build Include="dbo\Stored Procedures\spNearbyByGrocerPriceStatusForSites.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Scripts\PostDeployment\Script.PostDeployment.sql" />

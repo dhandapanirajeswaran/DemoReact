@@ -146,5 +146,19 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             var model = DapperHelper.QueryList<ContactDetail>(this, sproc, parameters);
             return model;
         }
+
+        public IEnumerable<NearbyGrocerPriceSiteStatus> GetNearbyGrocerPriceStatusForSites(DateTime forDate, string siteIds, int driveTime)
+        {
+            const string sproc = "spNearbyByGrocerPriceStatusForSites";
+
+            var parameters = new
+            {
+                @ForDate = forDate,
+                @driveTime = driveTime,
+                @SiteIds = siteIds
+            };
+            var model = DapperHelper.QueryList<NearbyGrocerPriceSiteStatus>(this, sproc, parameters);
+            return model;
+        }
     }
 }

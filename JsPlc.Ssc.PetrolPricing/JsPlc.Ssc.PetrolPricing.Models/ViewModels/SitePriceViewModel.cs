@@ -38,6 +38,8 @@ namespace JsPlc.Ssc.PetrolPricing.Models.ViewModels
             get { return String.IsNullOrWhiteSpace(Notes) == false; }
         }
         public string Notes { get; set; }
+
+        public bool HasNearbyGrocerPrice { get; set; }
     }
 
     // each fuel's price

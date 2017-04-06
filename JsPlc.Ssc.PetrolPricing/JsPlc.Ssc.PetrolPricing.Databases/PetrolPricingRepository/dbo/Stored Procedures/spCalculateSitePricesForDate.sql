@@ -12,6 +12,10 @@ BEGIN
 --DECLARE @SiteIds VARCHAR(MAX) = '8'
 ------DEBUG:END
 
+	-- constants
+	DECLARE @DriveTime INT = 5
+
+	-- variables
 	DECLARE @forDateNextDay DATE = DATEADD(DAY, 1, @forDate)
 
 	DECLARE @catalistFileExits bit = 
@@ -162,7 +166,8 @@ BEGIN
 		tp.Markup [Markup],
 		tp.CompetitorName [CompetitorName],
 		tp.IsTrailPrice [IsTrailPrice],
-		tp.CompetitorPriceOffset [CompetitorPriceOffset]
+		tp.CompetitorPriceOffset [CompetitorPriceOffset],
+		dbo.fn_DoesNearbyGrocerPriceExistForSite(@forDate, tp.SiteId, @DriveTime) [HasNearbyGrocerPrice]
 	FROM 
 		TodayPriceCTE tp
 
