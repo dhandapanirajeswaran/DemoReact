@@ -41,3 +41,9 @@
 .btn-row-text {
     line-height: 2.25em;
 }
+
+.large-message-icon {
+    position: relative;
+    top: 4px;
+    margin-right: 1em;
+}

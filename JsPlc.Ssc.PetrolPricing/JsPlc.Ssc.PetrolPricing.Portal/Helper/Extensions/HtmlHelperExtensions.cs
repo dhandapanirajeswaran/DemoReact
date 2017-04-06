@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using JsPlc.Ssc.PetrolPricing.Core.StringFormatters;
 
 namespace JsPlc.Ssc.PetrolPricing.Portal.Helper.Extensions
 {
@@ -10,13 +11,12 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Helper.Extensions
     {
         public static string FormatFriendlyDateTime(this HtmlHelper helper,DateTime datetime)
         {
-            var daysAgo = DateTime.Now.Date.Subtract(datetime.Date).TotalDays;
-            var formattedTime = datetime.ToString("HH:mm:ss");
-            if (daysAgo == 0)
-                return "Today at " + formattedTime;
-            if (daysAgo == 1)
-                return "Yesterday at " + formattedTime;
-            return datetime.ToString("dd-MMM-yyyy HH:mm:ss");
+            return DateAndTimeFormatter.FormatFriendlyDateTime(datetime);
+        }
+
+        public static string FormatFriendlyTimeAgo(this HtmlHelper helper, TimeSpan timeAgo)
+        {
+            return DateAndTimeFormatter.FormatFriendlyTimeAgo(timeAgo);
         }
     }
 }

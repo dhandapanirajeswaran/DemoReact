@@ -25,7 +25,7 @@
     </div>
 </div>
 
-<div class="alert alert-info @(string.IsNullOrWhiteSpace(ViewBag.Message) ? "hidden" : "")">@ViewBag.Message</div>
+<div class="alert alert-info @(string.IsNullOrWhiteSpace(ViewBag.Message) ? "hidden" : "")"><strong>@ViewBag.Message</strong></div>
 <hr />
 <div id="FileUploadContainer" style="padding: 4px;">
     @Html.Partial("_FileUploadsList", Model)

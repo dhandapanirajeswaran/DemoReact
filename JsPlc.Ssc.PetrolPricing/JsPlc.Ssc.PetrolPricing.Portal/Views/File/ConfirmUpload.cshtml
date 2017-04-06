@@ -11,15 +11,16 @@
 @using (Html.BeginForm("UploadConfirmation", "File", FormMethod.Get))
 {
     <div class="alert alert-warning">
-        <div class="col-md-4">
-            Calculated prices loaded earlied will be overwriten with a new data from new file: <strong>@Model.OriginalFileName</strong>
+        <div class="col-md-10">
+            <i class="fa fa-question-circle fa-2x" style="position: relative; top: 4px;"></i> &nbsp;
+            Calculated prices loaded earlied will be <strong>overwriten</strong> with a new data from new file: <i class="fa fa-file"></i>&nbsp; <strong>@Model.OriginalFileName</strong>
         </div>
         <div class="col-md-1">
             <input type="hidden" value="@Model.Guid" name="guidKey" />
-            <input type="submit" value="Cancel" name="response" class="btn btn-primary" />
+            <input type="submit" value="Cancel" name="response" class="btn btn-primary" data-infotip="Cancel the file upload." />
         </div>
         <div class="col-md-1">
-            <input type="submit" id="OverWriteUploadButton" value="Overwrite" name="response" class="btn btn-primary btn-danger" />
+            <input type="submit" id="OverWriteUploadButton" value="Overwrite" name="response" class="btn btn-primary btn-danger" data-infotip="Overwrite the older file" />
         </div>
         <div class="clearfix"></div>
     </div>
@@ -29,13 +30,13 @@
 @Html.Partial("_FileUploadsList", Model.ExistingFiles)
 
 <script>
-    require(["jquery", "common", "busyloader"],
-        function ($, common, busyloader) {
+    require(["jquery", "common", "busyloader", "infotips"],
+        function ($, common, busyloader, infotips) {
             $(function () {
                 $('#OverWriteUploadButton').on('click', function () {
                     busyloader.show({
                         message: 'Overwritting file. Please wait...',
-                        showtime: 3000
+                        dull: true
                     });
                 });
             });

@@ -20,6 +20,7 @@ using System.Net.Http;
 using System.Globalization;
 using JsPlc.Ssc.PetrolPricing.Core.Interfaces;
 using JsPlc.Ssc.PetrolPricing.Portal.Helper;
+using JsPlc.Ssc.PetrolPricing.Core.StringFormatters;
 
 namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 {
@@ -120,7 +121,9 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 
                 var fum = new FileUploadModel(fu, new ServiceFacade(new PetrolPricingLogger()));
 
+                var started = DateTime.Now;
                 var status = await fum.UploadFile(file);
+                var finished = DateTime.Now;
 
                 switch (status) // Store fu to state
                 {
@@ -133,7 +136,11 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
                         return RedirectToAction("ConfirmUpload", new { guidKey = holdKey });
 
                     case FileUploadStatus.Saved:
-                        return RedirectToAction("Index", new { msg = String.Format(Constants.UploadSuccessMessageWithFormat, fum.OriginalFileName) });
+                        var msg = String.Format(Constants.UploadSuccessMessageWithFormatAndTimeTaken,
+                            fum.OriginalFileName,
+                            DateAndTimeFormatter.FormatFriendlyTimeAgo(finished.Subtract(started))
+                            );
+                        return RedirectToAction("Index", new { msg = msg });
                 }
             }
             catch (ApplicationException ex)
@@ -178,8 +185,16 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 
             if (response == "Overwrite")
             {
+                var started = DateTime.Now;
                 fum.ConfirmedUploadByUser();
-                return RedirectToAction("Index", new { msg = String.Format(Constants.UploadSuccessMessageWithFormat, fum.OriginalFileName) });
+                var finished = DateTime.Now;
+
+               var msg = String.Format(Constants.UploadSuccessMessageWithFormatAndTimeTaken, 
+                   fum.OriginalFileName,
+                   DateAndTimeFormatter.FormatFriendlyTimeAgo(finished.Subtract(started))
+                  );
+
+                return RedirectToAction("Index", new { msg = msg });
             }
 
             fum.CleanupUpload();
