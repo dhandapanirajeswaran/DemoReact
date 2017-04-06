@@ -4,6 +4,11 @@
 AS
 BEGIN
 	SET NOCOUNT ON
+
+----DEBUG:START
+--DECLARE	@ForDate DATE = GetDate()
+--DECLARE	@SiteId INT = 8
+----DEBUG:END
 	
 	-- constants
 	DECLARE @FileUploadTypes_DailyPriceData INT = 1;
@@ -146,7 +151,7 @@ BEGIN
 		FROM
 			dbo.LatestCompPrice lcp
 		WHERE
-			lcp.UploadId = (SELECT TOP 1 Id FROM fileUploadLatestCompPriceDataYesterday)
+			lcp.UploadId = (SELECT MAX(Id) FROM fileUploadLatestCompPriceDataYesterday)
 	)
 	, fileUploadDailyPriceDataYesterday AS (
 		SELECT TOP 1
@@ -206,7 +211,7 @@ BEGIN
 			caft.Address,
 			caft.DriveTime,
 			caft.Distance,
-			caft.Notes,			-- ARE THESE NEEDED ?
+			caft.Notes,	
 			caft.FuelTypeName,
 
 			caft.FuelTypeId,
@@ -217,7 +222,7 @@ BEGIN
 			END [TodayPrice],
 
 			CASE WHEN caft.LatestPriceYesterday > 0
-				THEN caft.LatestPriceYesterday + caft.nOffset
+				THEN (caft.LatestPriceYesterday / 10) + caft.nOffset
 				ELSE caft.DailyPriceYesterday + caft.nOffset
 			END [YesterdayPrice]
 		FROM 
