@@ -24,8 +24,8 @@
                 downloader.start({
                     id: downloadId,
                     element: '#btnExportReport',
-                    complete: function () {
-                        notify.success('Export completed');
+                    complete: function (download) {
+                        notify.success('Export completed - took ' + download.friendlyTimeTaken);
                     }
                 });
 

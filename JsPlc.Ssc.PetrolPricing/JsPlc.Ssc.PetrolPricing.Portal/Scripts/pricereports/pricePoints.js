@@ -28,10 +28,9 @@
                 downloader.start({
                     id: downloadId,
                     element: '#btnExportReport',
-                    complete: function () {
-                        notify.success('Export complete');
+                    complete: function (download) {
+                        notify.success('Export complete - took ' + download.friendlyTimeTaken);
                     }
-
                 });
 
                 window.location.href = rootFolder + '/PriceReports/ExportPricePoints?downloadId=' + downloadId + '&For=' + dt;
