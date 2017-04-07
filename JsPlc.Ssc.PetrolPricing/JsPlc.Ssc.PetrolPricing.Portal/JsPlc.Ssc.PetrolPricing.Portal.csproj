@@ -214,6 +214,7 @@
     <Compile Include="Controllers\SitesController.cs" />
     <Compile Include="Controllers\FileController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="DataExporters\ExcelStyler.cs" />
     <Compile Include="DataExporters\SiteswithPricesDataTableExporter.cs" />
     <Compile Include="Facade\FacadeResponse.cs" />
     <Compile Include="Global.asax.cs">

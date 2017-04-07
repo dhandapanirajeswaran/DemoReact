@@ -17,6 +17,7 @@ using System.Web.Mvc;
 using JsPlc.Ssc.PetrolPricing.Core;
 using JsPlc.Ssc.PetrolPricing.Core.Interfaces;
 using JsPlc.Ssc.PetrolPricing.Portal.Controllers.BaseClasses;
+using JsPlc.Ssc.PetrolPricing.Portal.DataExporters;
 
 namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 {
@@ -28,7 +29,22 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 
 	    private readonly ILogger _logger;
 
-	    public PriceReportsController()
+        private static Dictionary<string, ReportExportFileType> ReportFilenameToFileTypeMap = new Dictionary<string, ReportExportFileType>()
+        {
+            {"CompetitorSites", ReportExportFileType.CompetitorSites},
+            {"CompetitorsPriceRange", ReportExportFileType.CompetitorsPriceRange},
+            {"CompetitorsPriceRangeByCompany", ReportExportFileType.CompetitorsPriceRangeByCompany},
+            {"NationalAverageReport", ReportExportFileType.NationalAverageReport},
+            {"NationalAverageReport2", ReportExportFileType.NationalAverageReport2},
+            {"PriceMovementReport", ReportExportFileType.PriceMovementReport},
+            {"PricePointsReport", ReportExportFileType.PricePointsReport},
+
+            // alternative filenames !
+            {"SAINSBURYS PriceMovementReport", ReportExportFileType.PriceMovementReport }
+
+        };
+
+        public PriceReportsController()
 	    {
 	        _logger = new PetrolPricingLogger();
             _serviceFacade = new ServiceFacade(_logger);
@@ -524,18 +540,27 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             //	return new ContentResult { Content = "No data to download..", ContentType = "text/plain" };
             //}
 
+            if (!ReportFilenameToFileTypeMap.ContainsKey(fileName))
+                throw new ArgumentException("Unknown report type for filename: " + fileName);
+
+            var reportType = ReportFilenameToFileTypeMap[fileName];
+
             using (var wb = new XLWorkbook())
             {
-
                 foreach (var dt in tables)
                 {
                     var ws = wb.Worksheets.Add(dt);
-                    if (fileName == "NationalAverageReport2" || fileName == "CompetitorSites" || fileName == "NationalAverageReport" || fileName == "CompetitorsPriceRange" || fileName.Contains("PriceMovementReport"))
+                    if (reportType == ReportExportFileType.NationalAverageReport2 
+                        || reportType == ReportExportFileType.CompetitorSites
+                        || reportType == ReportExportFileType.NationalAverageReport
+                        || reportType == ReportExportFileType.CompetitorsPriceRange
+                        || reportType == ReportExportFileType.PriceMovementReport
+                        )
                     {
                         ws.Rows().AdjustToContents();
                         ws.Tables.FirstOrDefault().ShowAutoFilter = false;
                     }
-                    if (fileName.Contains("PriceMovementReport"))
+                    if (reportType == ReportExportFileType.PriceMovementReport)
                     {
                         var rangeAddress = ws.Tables.FirstOrDefault().RangeAddress;
                         var cellrange = string.Format("{0}:{1}{2}", rangeAddress.FirstAddress, rangeAddress.LastAddress.ColumnLetter, rangeAddress.FirstAddress.ColumnNumber);
@@ -547,7 +572,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
                         ws.Range(sitesCellRange).Style.NumberFormat.SetFormat("@");
                         ws.Range(Others_CellRange).Style.NumberFormat.SetFormat("0.00");
                     }
-                    if (fileName == "CompetitorsPriceRange")
+                    if (reportType == ReportExportFileType.CompetitorsPriceRange)
                     {
                         var rangeAddress = ws.Tables.FirstOrDefault().RangeAddress;
                         var cellrange = string.Format("{0}:{1}{2}", rangeAddress.FirstAddress, rangeAddress.LastAddress.ColumnLetter, rangeAddress.FirstAddress.ColumnNumber);
@@ -569,7 +594,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
                         ws.Range(dieselDiffRetails_CellRange).Style.NumberFormat.SetFormat("0.00");
                         ws.Range(unleadedDiffRetails_CellRange).Style.NumberFormat.SetFormat("0.00");
                     }
-                    if (fileName == "CompetitorsPriceRangeByCompany")
+                    if (reportType == ReportExportFileType.CompetitorsPriceRangeByCompany)
                     {
                         var rangeAddress = ws.Tables.FirstOrDefault().RangeAddress;
                         var cellrange = string.Format("{0}:{1}{2}", rangeAddress.FirstAddress, rangeAddress.LastAddress.ColumnLetter, rangeAddress.FirstAddress.ColumnNumber);
@@ -594,7 +619,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
                         ws.Range(unleadedDiffRetails_CellRange).Style.NumberFormat.SetFormat("0.00");
                         ws.Range(dieselDiffRetails_CellRange).Style.NumberFormat.SetFormat("0.00");
                     }
-                    if (fileName == "PricePointsReport")
+                    if (reportType == ReportExportFileType.PricePointsReport)
                     {
                         var rangeAddress = ws.Tables.FirstOrDefault().RangeAddress;
                         var cellrange = string.Format("{0}:{1}{2}", rangeAddress.FirstAddress, rangeAddress.LastAddress.ColumnLetter, rangeAddress.FirstAddress.ColumnNumber);
@@ -605,7 +630,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
                         ws.Range(cellrange).Style.Alignment.TextRotation = 90;
                         ws.Range(string.Format("{0}", rangeAddress.FirstAddress)).Style.Alignment.TextRotation = 45;
                     }
-                    if (fileName == "NationalAverageReport")
+                    if (reportType == ReportExportFileType.NationalAverageReport)
                     {
                         int nCount = ws.Rows().Count();
                         for (int i = 2; i <= nCount; i++)
@@ -655,7 +680,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 
                     }
 
-                    if (fileName == "NationalAverageReport2")
+                    if (reportType == ReportExportFileType.NationalAverageReport2)
                     {
                         int nColCount = ws.Columns().Count();
                         char cellAlphabet = 'E';
@@ -679,6 +704,9 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
                         }
 
                     }
+
+                    var excelStyler = new ExcelStyler();
+                    excelStyler.ApplyReportExport(ws, reportType, dt.Columns.Count, dt.Rows.Count);
                 }
                 wb.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
                 wb.Style.Font.Bold = true;
