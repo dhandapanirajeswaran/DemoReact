@@ -209,6 +209,7 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\BaseClasses\BaseController.cs" />
+    <Compile Include="Controllers\DiagnosticsController.cs" />
     <Compile Include="Controllers\PPUsersController.cs" />
     <Compile Include="Controllers\PriceReportsController.cs" />
     <Compile Include="Controllers\SitesController.cs" />
@@ -311,6 +312,7 @@
     <Content Include="Scripts\App\scrollToTop.js" />
     <Content Include="Scripts\App\ViewScripts\CompetitorPriceNotePopup.js" />
     <Content Include="Scripts\App\ViewScripts\CompetitorPricePopup.js" />
+    <Content Include="Scripts\App\ViewScripts\Diagnositcs.js" />
     <Content Include="Scripts\App\ViewScripts\FileUpload.js" />
     <Content Include="Scripts\App\ViewScripts\UploadCountdown.js" />
     <Content Include="Scripts\App\ViewScripts\SitePricing.js" />
@@ -493,6 +495,7 @@
     <Content Include="Views\Sites\Pricing\_EmailAllSitesPopup.cshtml" />
     <Content Include="Views\Sites\Pricing\_EmailSitePopup.cshtml" />
     <Content Include="Views\Sites\Pricing\_CompetitorSitePriceGridTable.cshtml" />
+    <Content Include="Views\Diagnostics\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\uploads\" />

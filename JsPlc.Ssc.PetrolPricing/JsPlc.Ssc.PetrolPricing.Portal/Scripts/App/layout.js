@@ -12,7 +12,8 @@
             "nav-site-pricing": ["^/sites/prices"],
             "nav-site-maintenance": ["^/sites"],
             "nav-reports": ["^/pricereports"],
-            "nav-users": ["^/ppusers"]
+            "nav-users": ["^/ppusers"],
+            "nav-diagnostics": ["^/diagnostics"]
         };
 
         function setNavigationTab() {

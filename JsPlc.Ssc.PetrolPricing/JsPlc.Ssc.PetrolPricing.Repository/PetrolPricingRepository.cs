@@ -22,6 +22,7 @@ using JsPlc.Ssc.PetrolPricing.Core.Diagnostics;
 using JsPlc.Ssc.PetrolPricing.Repository.Dapper;
 using Dapper;
 using JsPlc.Ssc.PetrolPricing.Repository.Debugging;
+using JsPlc.Ssc.PetrolPricing.Core.Settings;
 
 namespace JsPlc.Ssc.PetrolPricing.Repository
 {
@@ -449,8 +450,10 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
             try
             {
-                var useNewCode = true;
-                var shouldCompareOldvsNew = false;
+                _logger.Debug("Started CallSitePriceSproc");
+
+                var useNewCode = CoreSettings.RepositorySettings.SitePrices.UseStoredProcedure;
+                var shouldCompareOldvsNew = CoreSettings.RepositorySettings.SitePrices.ShouldCompareWithOldCode;
 
                 var sainsburysSites =
                     _context.Sites.Where(x => x.IsSainsburysSite == true && x.IsActive == true);
@@ -521,24 +524,37 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                     dbList.Add(sitePriceRow);
                 }
 
+                _logger.Debug("Started: GetNearbyGrocerPriceStatus");
 
                 const int driveTime = 5;
                 GetNearbyGrocerPriceStatus(forDate, dbList, driveTime);
 
+                _logger.Debug("Finished: GetNearbyGrocerPriceStatus");
 
                 if (useNewCode)
+                {
+                    _logger.Debug("Started: AddFuelPricesRowsForSites");
                     AddFuelPricesRowsForSites(forDate, dbList);
+                    _logger.Debug("Finished: AddFuelPricesRowsForSites");
+                }
 
                 // Apply5PMarkupForSuperUnleadedForNonCompetitorSites(dbList);
 
                 if (shouldCompareOldvsNew)
-                    DumpNewCodeFuelPrices(@"C:\tempfile\logs\fuel_prices_old_vs_new.txt", forDate, dbList);
+                {
+                    _logger.Debug("Started: DumpNewCodeFuelPrices");
+
+                    DumpNewCodeFuelPrices(CoreSettings.RepositorySettings.SitePrices.CompareOutputFilename, forDate, dbList);
+                    _logger.Debug("Finished: DumpNewCodeFuelPrices");
+                }
+
+                _logger.Debug("Finished CallSitePriceSproc");
 
                 return dbList;
-
             }
             catch (Exception ce)
             {
+                _logger.Debug("Crashed: CallSitePriceSproc");
                 _logger.Error(ce);
                 return null;
             }
@@ -930,9 +946,9 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             int pageNo = 1, int pageSize = Constants.PricePageSize)
         {
 
-            const bool useNewCode = true;
-            const bool shouldCompareData = false;
-            const string debugOutputFile = @"C:\tempfile\logs\competitor_prices_old_vs_new.txt";
+            var useNewCode = CoreSettings.RepositorySettings.CompetitorPrices.UseStoredProcedure;
+            var shouldCompareData = CoreSettings.RepositorySettings.CompetitorPrices.ShouldCompareWithOldCode;
+            var debugOutputFile = CoreSettings.RepositorySettings.CompetitorPrices.CompareOutputFilename;
 
             if (useNewCode)
                 return _context.GetCompetitorsWithPriceView(forDate, siteId);
@@ -3272,6 +3288,15 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
         public IEnumerable<ContactDetail> GetContactDetails()
         {
             return _context.GetContactDetails();
+        }
+
+        public IEnumerable<DiagnosticsDatabaseObject> GetDiagnosticsRecentDatabaseObjectChanges(int daysAgo)
+        {
+            return _context.GetDiagnosticsRecentDatabaseObjectChanges(daysAgo);
+        }
+        public DiagnosticsDatabaseObjectSummary GetDiagnosticsDatabaseObjectSummary()
+        {
+            return _context.GetDiagnosticsDatabaseObjectSummary();
         }
 
         #region private methods

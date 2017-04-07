@@ -270,5 +270,8 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         RecentFileUploadSummary GetRecentFileUploadSummary();
 
         IEnumerable<ContactDetail> GetContactDetails();
+
+        IEnumerable<DiagnosticsDatabaseObject> GetDiagnosticsRecentDatabaseObjectChanges(int daysAgo);
+        DiagnosticsDatabaseObjectSummary GetDiagnosticsDatabaseObjectSummary();
     }
 }

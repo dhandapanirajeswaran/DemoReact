@@ -152,6 +152,8 @@
     <Build Include="dbo\Stored Procedures\spGetContactDetailsList.sql" />
     <Build Include="dbo\Functions\Scalar Functions\fn_DoesNearbyGrocerPriceExistForSite.sql" />
     <Build Include="dbo\Stored Procedures\spNearbyByGrocerPriceStatusForSites.sql" />
+    <Build Include="dbo\Stored Procedures\spGetDiagnosticsRecentDatabaseObjectChanges.sql" />
+    <Build Include="dbo\Stored Procedures\spGetDiagnosticsDatabaseObjectSummary.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Scripts\PostDeployment\Script.PostDeployment.sql" />

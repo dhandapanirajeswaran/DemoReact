@@ -160,5 +160,25 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             var model = DapperHelper.QueryList<NearbyGrocerPriceSiteStatus>(this, sproc, parameters);
             return model;
         }
+
+        public IEnumerable<DiagnosticsDatabaseObject> GetDiagnosticsRecentDatabaseObjectChanges(int daysAgo)
+        {
+            const string sproc = "spGetDiagnosticsRecentDatabaseObjectChanges";
+
+            var parameters = new
+            {
+                @DaysAgo = daysAgo
+            };
+            var model = DapperHelper.QueryList<DiagnosticsDatabaseObject>(this, sproc, parameters);
+            return model;
+        }
+
+        public DiagnosticsDatabaseObjectSummary GetDiagnosticsDatabaseObjectSummary()
+        {
+            const string sproc = "spGetDiagnosticsDatabaseObjectSummary";
+
+            var model = DapperHelper.QueryFirst<DiagnosticsDatabaseObjectSummary>(this, sproc, null);
+            return model;
+        }
     }
 }

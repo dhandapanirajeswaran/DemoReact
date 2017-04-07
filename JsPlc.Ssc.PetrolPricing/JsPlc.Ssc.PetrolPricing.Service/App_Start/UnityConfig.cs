@@ -1,4 +1,6 @@
 ﻿using JsPlc.Ssc.PetrolPricing.Business;
+using JsPlc.Ssc.PetrolPricing.Business.Interfaces;
+using JsPlc.Ssc.PetrolPricing.Business.Services;
 using JsPlc.Ssc.PetrolPricing.Core;
 using JsPlc.Ssc.PetrolPricing.IoC;
 using JsPlc.Ssc.PetrolPricing.Repository;
@@ -34,6 +36,7 @@ namespace JsPlc.Ssc.PetrolPricing.Service
             container.RegisterType<IPriceService, PriceService>();
             container.RegisterType<IReportService, ReportService>();
             container.RegisterType<ISiteService, SiteService>();
+            container.RegisterType<IDiagnosticsService, DiagnosticsService>();
             container.RegisterType<IFactory, Factory>();
 			container.RegisterType<IAppSettings, AppSettings>();
 			container.RegisterType<IDataFileReader, DataFileReader>();

@@ -107,6 +107,10 @@
     <Compile Include="LatestPrice.cs" />
     <Compile Include="PPUserList.cs" />
     <Compile Include="ViewModels\ContactDetailViewModel.cs" />
+    <Compile Include="ViewModels\DiagnosticsDatabaseObjectSummary.cs" />
+    <Compile Include="ViewModels\DiagnosticsLogEntryViewModel.cs" />
+    <Compile Include="ViewModels\DiagnosticsDatabaseObject.cs" />
+    <Compile Include="ViewModels\DiagnosticsViewModel.cs" />
     <Compile Include="ViewModels\JsonResultViewModel.cs" />
     <Compile Include="ViewModels\LatestCompPriceDataModel.cs" />
     <Compile Include="ViewModels\LatestPriceDataModel.cs" />

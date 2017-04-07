@@ -10,5 +10,7 @@ namespace JsPlc.Ssc.PetrolPricing.Core.Interfaces
     {
         void Error(Exception ex);
         void Information(string message);
+
+        void Debug(string message);
     }
 }

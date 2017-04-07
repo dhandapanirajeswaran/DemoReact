@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using NLog;
 using NLog.Common;
 using ILogger = JsPlc.Ssc.PetrolPricing.Core.Interfaces.ILogger;
-
+using JsPlc.Ssc.PetrolPricing.Core.Diagnostics;
 
 namespace JsPlc.Ssc.PetrolPricing.Core
 {
@@ -20,7 +20,6 @@ namespace JsPlc.Ssc.PetrolPricing.Core
              
         }
 
-
         public void Error(Exception ex)
         {
              _internalLogger.Log
@@ -32,6 +31,8 @@ namespace JsPlc.Ssc.PetrolPricing.Core
                          Message = ex.Message
                      }
                  );
+
+            DiagnosticLog.AddLog(LogLevel.Error.ToString(), ex.Message, ex.ToString());
         }
 
         public void Information(string message)
@@ -45,7 +46,23 @@ namespace JsPlc.Ssc.PetrolPricing.Core
                         Message = message
                     }
                 );
+
+            DiagnosticLog.AddLog(LogLevel.Info.ToString(), message, "");
         }
-		
+
+        public void Debug(string message)
+        {
+            _internalLogger.Log
+                (
+                new LogEventInfo
+                {
+                    Level = LogLevel.Debug,
+                    Exception = new Exception(message),
+                    Message = message
+                }
+            );
+
+            DiagnosticLog.AddLog(LogLevel.Debug.ToString(), message, "");
+        }
     }
 }

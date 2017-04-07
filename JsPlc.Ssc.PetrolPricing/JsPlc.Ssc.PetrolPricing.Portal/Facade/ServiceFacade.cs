@@ -17,6 +17,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Net.Mail;
 using JsPlc.Ssc.PetrolPricing.Core.Interfaces;
+using JsPlc.Ssc.PetrolPricing.Core.Diagnostics;
 
 namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
 {
@@ -212,6 +213,8 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             filters = filters + "pageNo=" + pageNo + "&";
             filters = filters + "pageSize=" + pageSize + "&";
 
+            DiagnosticLog.StartDebug("GetSitePrices");
+
             var apiUrl = String.IsNullOrEmpty(filters) ? String.Format("api/{0}/", apiName) : String.Format("api/{0}/?{1}", apiName, filters);
             var response = _client.Value.GetAsync(apiUrl).Result;
 
@@ -219,10 +222,12 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             if (response.IsSuccessStatusCode)
             {
                 var result = response.Content.ReadAsAsync<IEnumerable<SitePriceViewModel>>().Result;
+                DiagnosticLog.EndDebug("GetSitePrices success");
                 return result;
             }
             else
             {
+                DiagnosticLog.FailedDebug("GetSitePrices failed - " + response.StatusCode);
                 return null;
             } 
             
@@ -889,6 +894,30 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             {
                 _logger.Error(ex);
                 throw new Exception("Exception in GetContactDetails");
+            }
+        }
+
+        public DiagnosticsViewModel GetDiagnostics(int daysAgo)
+        {
+            try
+            {
+                var apiUrl = String.Format("api/GetDiagnostics?daysAgo={0}", daysAgo);
+                var response = _client.Value.GetAsync(apiUrl).Result;
+                if (response.IsSuccessStatusCode)
+                {
+                    var result = response.Content.ReadAsAsync<DiagnosticsViewModel>().Result;
+                    return result;
+                }
+                else
+                    return new DiagnosticsViewModel();
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex);
+                return new DiagnosticsViewModel()
+                {
+                    ApiExceptionMessage = ex.ToString()
+                };
             }
         }
     }

@@ -23,6 +23,7 @@ using System.Data;
 using ClosedXML.Excel;
 using JsPlc.Ssc.PetrolPricing.Portal.DataExporters;
 using JsPlc.Ssc.PetrolPricing.Portal.Controllers.BaseClasses;
+using JsPlc.Ssc.PetrolPricing.Core.Diagnostics;
 
 namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 {
@@ -118,6 +119,8 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
                 forDate = DateTime.Now;
             }
 
+            DiagnosticLog.AddLog("Debug", "Started: GetSitesWithPricesJson");
+
             // POST scenarios use : JsonConvert.SerializeObject(siteView);
             IEnumerable<SitePriceViewModel> sitesViewModelsWithPrices = (getCompetitor != 1)
                 ? _serviceFacade.GetSitePrices(forDate, storeName, catNo, storeNo, storeTown, siteId, pageNo, pageSize)
@@ -145,6 +148,8 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
                    var dt = SitePricesToDataTable(forDate, sitesViewModelsWithPrices, ref  dicgroupRows);
 
                });*/
+
+            DiagnosticLog.AddLog("Debug", "Finished: GetSitesWithPricesJson");
 
             return jsonResult;
         }

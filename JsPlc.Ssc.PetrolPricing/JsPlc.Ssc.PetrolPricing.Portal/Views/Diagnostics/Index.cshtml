@@ -1,0 +1,215 @@
+﻿@model JsPlc.Ssc.PetrolPricing.Models.ViewModels.DiagnosticsViewModel
+@using JsPlc.Ssc.PetrolPricing.Core
+@using JsPlc.Ssc.PetrolPricing.Portal.Helper.Extensions
+@{
+    ViewBag.Title = "Petrol Pricing Diagnostics";
+}
+
+@section head {
+    <style>
+        .divider-row {border-bottom: 4px solid #6f1f44; height: 4px}
+        .code-listing {width: 100%; overflow: auto; max-height: 10em;}
+    </style>
+}
+
+<div class="jumbotron">
+    <h1 class="site-hero-text"><i class="fa fa-bug"></i> Diagnostics</h1>
+    <p class="lead">Petrol Pricing Diagnostics</p>
+
+    <!-- app settings -->
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h5>App Settings</h3>
+        </div>
+        <div class="panel-body">
+            <table class="table table-striped table-condensed">
+                <thead>
+                    <tr>
+                        <th>Setting</th>
+                        <th>Value</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.AppSettings)
+                    {
+                        <tr>
+                            <td>@item.Key</td>
+                            <td>@item.Value</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- app settings -->
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h5>Core Settings</h3>
+        </div>
+        <div class="panel-body">
+            <table class="table table-striped table-condensed">
+                <thead>
+                    <tr>
+                        <th>Setting</th>
+                        <th>Value</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.CoreSettings)
+                    {
+                        <tr>
+                            <td>@item.Key</td>
+                            <td>@item.Value</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- environment -->
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h5>Environment</h3>
+        </div>
+        <div class="panel-body">
+            <table class="table table-striped table-condensed">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Value</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Environment)
+                    {
+                        <tr>
+                            <td>@item.Key</td>
+                            <td>@item.Value</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
+    <!-- recent database object changes -->
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h5>Recent Database Object Changes</h3>
+        </div>
+        <div class="panel-body">
+            <table class="table table-striped table-condensed">
+                <thead>
+                    <tr>
+                        <th>Type</th>
+                        <th>Description</th>
+                        <th>Schema</th>
+                        <th>Name</th>
+                        <th>Created</th>
+                        <th>Modified</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.RecentDatabaseObjectsChanges)
+                    {
+                        <tr>
+                            <td>@item.Type</td>
+                            <td>@item.TypeDescription</td>
+                            <td>@item.SchemaName</td>
+                            <td>@item.Name</td>
+                            <td>@item.CreatedOn</td>
+                            <td>@item.ModifiedOn</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- recent database object summary -->
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h5>Database Object Summary</h3>
+        </div>
+        <div class="panel-body">
+            <table class="table table-striped table-condensed">
+                <thead>
+                    <tr>
+                        <th class="text-center">Default Contraints</th>
+                        <th class="text-center">Foreign Keys</th>
+                        <th class="text-center">Scalar Functions</th>
+                        <th class="text-center">Stored Procedures</th>
+                        <th class="text-center">Primary Keys</th>
+                        <th class="text-center">Table Funtions</th>
+                        <th class="text-center">User Tables</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="text-center">@Model.DatabaseObjectSummary.DefaultConstraintCount</td>
+                        <td class="text-center">@Model.DatabaseObjectSummary.ForeignKeyCount</td>
+                        <td class="text-center">@Model.DatabaseObjectSummary.ScalarFunctionCount</td>
+                        <td class="text-center">@Model.DatabaseObjectSummary.StoredProcedureCount</td>
+                        <td class="text-center">@Model.DatabaseObjectSummary.PrimaryKeyCount</td>
+                        <td class="text-center">@Model.DatabaseObjectSummary.TableFunctionCount</td>
+                        <td class="text-center">@Model.DatabaseObjectSummary.UserTableCount</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
+    <!-- log entries -->
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h5>Log Entries</h3>
+        </div>
+        <div class="panel-body">
+            <table class="table table-striped table-condensed">
+                <thead>
+                    <tr>
+                        <th style="width: 20%;"><big>Created</big></th>
+                        <th style="width: 10%;"><big>Level</big></th>
+                        <th><big>Message</big></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var log in Model.LogEntries)
+                    {
+                        <tr>
+                            <td><strong>@log.Created</strong></td>
+                            <td><strong>@log.Level</strong></td>
+                            <td><strong>@log.Message</strong></td>
+                        </tr>
+                        if (log.Exception != "N/A")
+                        {
+                        <tr>
+                            <td colspan="3">
+                                <div class="code-listing">
+                                    <strong>Exception:</strong>
+                                    @log.Exception
+                                </div>
+                            </td>
+                        </tr>
+                        }
+                        <tr class="divider-row">
+                            <td colspan="3"></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
+</div>
+
+@section scripts {
+    <script>
+        require(["diagnostics"], function () { })
+    </script>
+}
