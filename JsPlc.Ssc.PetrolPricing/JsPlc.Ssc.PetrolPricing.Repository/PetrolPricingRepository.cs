@@ -562,6 +562,9 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
         private void GetNearbyGrocerPriceStatus(DateTime forDate, IEnumerable<SitePriceViewModel> sites, int driveTime)
         {
+            if (sites == null || !sites.Any())
+                return;
+
             var siteIds = sites.Select(x => x.SiteId.ToString()).Aggregate((x, y) => x + "," + y);
 
             var statuses = _context.GetNearbyGrocerPriceStatusForSites(forDate, siteIds, driveTime);
@@ -672,6 +675,9 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
         private void AddFuelPricesRowsForSites(DateTime forDate, List<SitePriceViewModel> sites)
         {
+            if (sites == null || !sites.Any())
+                return;
+
             var siteIds = sites.Select(x => x.SiteId.ToString()).Aggregate((x, y) => x + "," + y);
 
             var calculatedPrices = _context.CalculateFuelPricesForSitesAndDate(forDate, siteIds);

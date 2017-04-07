@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using JsPlc.Ssc.PetrolPricing.Repository.Dapper;
 using System;
 using Dapper;
+using JsPlc.Ssc.PetrolPricing.Core.Diagnostics;
 
 namespace JsPlc.Ssc.PetrolPricing.Repository
 {
@@ -151,6 +152,8 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         {
             const string sproc = "spNearbyByGrocerPriceStatusForSites";
 
+            DiagnosticLog.StartDebug("sproc: " + sproc);
+
             var parameters = new
             {
                 @ForDate = forDate,
@@ -158,6 +161,8 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                 @SiteIds = siteIds
             };
             var model = DapperHelper.QueryList<NearbyGrocerPriceSiteStatus>(this, sproc, parameters);
+
+            DiagnosticLog.EndDebug("sproc: " + sproc);
             return model;
         }
 
