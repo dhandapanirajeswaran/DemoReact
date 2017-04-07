@@ -524,12 +524,12 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                     dbList.Add(sitePriceRow);
                 }
 
-                _logger.Debug("Started: GetNearbyGrocerPriceStatus");
+                //_logger.Debug("Started: GetNearbyGrocerPriceStatus");
 
-                const int driveTime = 5;
-                GetNearbyGrocerPriceStatus(forDate, dbList, driveTime);
+                //const int driveTime = 5;
+                //GetNearbyGrocerPriceStatus(forDate, dbList, driveTime);
 
-                _logger.Debug("Finished: GetNearbyGrocerPriceStatus");
+                //_logger.Debug("Finished: GetNearbyGrocerPriceStatus");
 
                 if (useNewCode)
                 {
