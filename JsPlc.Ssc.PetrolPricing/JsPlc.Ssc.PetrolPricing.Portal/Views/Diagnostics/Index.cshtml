@@ -21,8 +21,11 @@
             padding: 2px;
         }
         .auto-horz-scroll {
-            width: 60em;
+            width: 54em;
             overflow: auto;
+        }
+        .mono {
+            font-family: monospace;
         }
     </style>
 }
@@ -47,7 +50,14 @@
                     <div class="container">
                         <div class="row">
                             <div class="col-md-1">
-                                <input type="checkbox" class="pull-left" name="Dapper_LogDatabaseCalls" id="Dapper_LogDatabaseCalls" value="True" checked="@(Model.DiagnosticsSettings.Dapper_LogDatabaseCalls ? "checked" : "")" />
+                                @if (Model.DiagnosticsSettings.Dapper_LogDatabaseCalls)
+                                {
+                                    <input type="checkbox" class="pull-left" name="Dapper_LogDatabaseCalls" id="Dapper_LogDatabaseCalls" value="True" checked="checked" />
+                                }
+                                else
+                                {
+                                    <input type="checkbox" class="pull-left" name="Dapper_LogDatabaseCalls" id="Dapper_LogDatabaseCalls" value="True" />
+                                }
                             </div>
                             <div class="col-md-3">
                                 <label for="Dapper_LogDatabaseCalls">Log Database Calls</label>
@@ -62,7 +72,14 @@
                     <div class="container">
                         <div class="row">
                             <div class="col-md-1">
-                                <input type="checkbox" name="SitePrices_UseStoredProcedure" id="SitePrices_UseStoredProcedure" value="True" checked="@(Model.DiagnosticsSettings.SitePrices_UseStoredProcedure ? "checked" : "")" />
+                                @if (Model.DiagnosticsSettings.SitePrices_UseStoredProcedure)
+                                {
+                                    <input type="checkbox" name="SitePrices_UseStoredProcedure" id="SitePrices_UseStoredProcedure" value="True" checked="checked" />
+                                }
+                                else
+                                {
+                                    <input type="checkbox" name="SitePrices_UseStoredProcedure" id="SitePrices_UseStoredProcedure" value="True" />
+                                }
                             </div>
                             <div class="col-md-3">
                                 <label for="SitePrices_UseStoredProcedure">Use Stored Procedure</label>
@@ -78,7 +95,14 @@
                     <div class="container">
                         <div class="row">
                             <div class="col-md-1">
-                                <input type="checkbox" name="CompetitorPrices_UseStoredProcedure" id="CompetitorPrices_UseStoredProcedure" value="True" checked="@(Model.DiagnosticsSettings.CompetitorPrices_UseStoredProcedure ? "checked" : "")" />
+                                @if (Model.DiagnosticsSettings.CompetitorPrices_UseStoredProcedure)
+                                {
+                                <input type="checkbox" name="CompetitorPrices_UseStoredProcedure" id="CompetitorPrices_UseStoredProcedure" value="True" checked="checked" />
+                                }
+                                else
+                                {
+                                    <input type="checkbox" name="CompetitorPrices_UseStoredProcedure" id="CompetitorPrices_UseStoredProcedure" value="True" />
+                                }
                             </div>
                             <div class="col-md-3">
                                 <label for="CompetitorPrices_UseStoredProcedure">Use Stored Procedure</label>
@@ -266,28 +290,32 @@
                         <td><strong>@log.Level</strong></td>
                         <td><strong>@log.Message</strong></td>
                     </tr>
+
+                    if (log.Parameters.Count != 0)
+                    {
                     <tr>
-                        <td><strong>Parameters</strong></td>
-                        <td>
+                        <td class="text-right"><strong>Parameters:</strong></td>
+                        <td colspan="2">
                             <table class="table log-parameters-table">
                                 <tbody>
                                     @foreach (var kvp in log.Parameters)
                                     {
                                     <tr>
                                         <th>@kvp.Key</th>
-                                        <td><div class="auto-horz-scroll">@kvp.Value</div></td>
+                                        <td><div class="mono auto-horz-scroll">@kvp.Value</div></td>
                                     </tr>
                                     }
                                 </tbody>
                             </table>
                         </td>
                     </tr>
+                    }
 
-                        if (log.Exception != "N/A")
-                        {
+                    if (log.Exception != "N/A")
+                    {
                     <tr>
                         <td colspan="3">
-                            <div class="code-listing">
+                            <div class="code-listing mono">
                                 <strong>Exception:</strong>
                                 @log.Exception
                             </div>

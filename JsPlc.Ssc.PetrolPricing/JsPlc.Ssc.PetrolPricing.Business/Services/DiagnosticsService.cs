@@ -38,6 +38,12 @@ namespace JsPlc.Ssc.PetrolPricing.Business.Services
         {
             var model = new DiagnosticsViewModel()
             {
+                DiagnosticsSettings = new DiagnosticsSettingsViewModel()
+                {
+                    Dapper_LogDatabaseCalls = CoreSettings.RepositorySettings.Dapper.LogDapperCalls,
+                    SitePrices_UseStoredProcedure = CoreSettings.RepositorySettings.SitePrices.UseStoredProcedure,
+                    CompetitorPrices_UseStoredProcedure = CoreSettings.RepositorySettings.CompetitorPrices.UseStoredProcedure
+                }
             };
 
             var diagnosticsLog = DiagnosticLog.CloneLogEntries().OrderBy(x => x.Created);
