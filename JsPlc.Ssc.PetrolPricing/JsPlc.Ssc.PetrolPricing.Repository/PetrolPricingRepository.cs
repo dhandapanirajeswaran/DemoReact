@@ -680,7 +680,12 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
             var siteIds = sites.Select(x => x.SiteId.ToString()).Aggregate((x, y) => x + "," + y);
 
+            DiagnosticLog.StartDebug("AddFuelPricesRowsForSites - Calling SP");
+
             var calculatedPrices = _context.CalculateFuelPricesForSitesAndDate(forDate, siteIds);
+
+            DiagnosticLog.StartDebug("AddFuelPricesRowsForSites - Finished SP");
+
             foreach (var site in sites)
             {
                 var fuelPricesForSite = calculatedPrices.Where(x => x.SiteId == site.SiteId);

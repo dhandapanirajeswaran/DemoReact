@@ -25,7 +25,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
         [HttpGet]
         public ActionResult Index()
         {
-            var daysAgo = 7;
+            var daysAgo = 30;
             var model = _serviceFacade.GetDiagnostics(daysAgo);
             return View(model);
         }

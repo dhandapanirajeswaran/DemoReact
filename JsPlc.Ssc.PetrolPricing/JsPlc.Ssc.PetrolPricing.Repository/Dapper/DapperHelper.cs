@@ -16,7 +16,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository.Dapper
         public static void Execute(this DbContext context, string sprocName, DynamicParameters parameters, bool disableDapperLog = false)
         {
             if (!disableDapperLog)
-                LogDapperCall(sprocName, parameters);
+                LogDapperCall(context, sprocName, parameters);
 
             if (String.IsNullOrWhiteSpace(sprocName))
                 throw new ArgumentException("Stored procedure name cannot be empty");
@@ -30,7 +30,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository.Dapper
         public static T QueryFirst<T>(this DbContext context, string sprocName, DynamicParameters parameters, bool disableDapperLog = false) where T : class
         {
             if (!disableDapperLog)
-                LogDapperCall(sprocName, parameters);
+                LogDapperCall(context, sprocName, parameters);
 
             if (String.IsNullOrWhiteSpace(sprocName))
                 throw new ArgumentException("Stored procedure name cannot be empty");
@@ -44,7 +44,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository.Dapper
         public static int QueryScalar(this DbContext context, string sprocName, DynamicParameters parameters, bool disableDapperLog = false)
         {
             if (!disableDapperLog)
-                LogDapperCall(sprocName, parameters);
+                LogDapperCall(context, sprocName, parameters);
 
             if (String.IsNullOrWhiteSpace(sprocName))
                 throw new ArgumentException("Stored procedure name cannot be empty");
@@ -58,7 +58,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository.Dapper
         public static List<T> QueryList<T>(this DbContext context, string sprocName, object parameters, bool disableDapperLog = false) where T : class
         {
             if (!disableDapperLog)
-                LogDapperCall(sprocName, parameters);
+                LogDapperCall(context, sprocName, parameters);
 
             if (String.IsNullOrWhiteSpace(sprocName))
                 throw new ArgumentException("Stored procedure name cannot be empty");
@@ -72,7 +72,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository.Dapper
         public static T QueryMultiple<T>(this DbContext context, string sprocName, object parameters, Action<T, SqlMapper.GridReader> filler, bool disableDapperLog = false) where T : class, new()
         {
             if (!disableDapperLog)
-                LogDapperCall(sprocName, parameters);
+                LogDapperCall(context, sprocName, parameters);
 
             if (String.IsNullOrWhiteSpace(sprocName))
                 throw new ArgumentException("Stored procedure name cannot be empty");
@@ -89,12 +89,13 @@ namespace JsPlc.Ssc.PetrolPricing.Repository.Dapper
 
         #region private methods
 
-        private static void LogDapperCall(string sprocName, object parameters)
+        private static void LogDapperCall(DbContext context, string sprocName, object parameters)
         {
             if (CoreSettings.RepositorySettings.Dapper.LogDapperCalls)
             {
                 var msg = new StringBuilder();
                 msg.AppendFormat("Dapper Sproc: {0}", sprocName);
+                msg.AppendFormat(" - ConnectionString: {0}", context.Database.Connection.ConnectionString);
 
                 var exception = "";
                 var parameterDictionary = new Dictionary<string, string>();

@@ -21,7 +21,7 @@
             padding: 2px;
         }
         .auto-horz-scroll {
-            width: 100%;
+            width: 60em;
             overflow: auto;
         }
     </style>
@@ -275,7 +275,7 @@
                                     {
                                     <tr>
                                         <th>@kvp.Key</th>
-                                        <td>@kvp.Value</td>
+                                        <td><div class="auto-horz-scroll">@kvp.Value</div></td>
                                     </tr>
                                     }
                                 </tbody>
