@@ -109,7 +109,6 @@ namespace JsPlc.Ssc.PetrolPricing.Repository.Dapper
             {
                 var msg = new StringBuilder();
                 msg.AppendFormat("Dapper Sproc: {0}", sprocName);
-                msg.AppendFormat(" - ConnectionString: {0}", DatabaseConnectionString);
 
                 var exception = "";
                 var parameterDictionary = new Dictionary<string, string>();
