@@ -1,5 +1,6 @@
 ﻿using JsPlc.Ssc.PetrolPricing.Core;
 using JsPlc.Ssc.PetrolPricing.Core.Interfaces;
+using JsPlc.Ssc.PetrolPricing.Models.ViewModels;
 using JsPlc.Ssc.PetrolPricing.Portal.Facade;
 using System;
 using System.Collections.Generic;
@@ -21,13 +22,26 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
         }
 
 
-        // GET: Diagnostics
+        [HttpGet]
         public ActionResult Index()
         {
             var daysAgo = 7;
             var model = _serviceFacade.GetDiagnostics(daysAgo);
-
             return View(model);
+        }
+
+        [HttpPost]
+        public ActionResult Index(DiagnosticsSettingsViewModel model)
+        {
+            _serviceFacade.UpdateDiagnosticsSettings(model);
+            return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        public ActionResult ClearLog()
+        {
+            _serviceFacade.ClearDiagnosticsLog();
+            return RedirectToAction("Index");
         }
     }
 }

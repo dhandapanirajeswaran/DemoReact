@@ -7,8 +7,23 @@
 
 @section head {
     <style>
-        .divider-row {border-bottom: 4px solid #6f1f44; height: 4px}
-        .code-listing {width: 100%; overflow: auto; max-height: 10em;}
+        .divider-row {
+            border-bottom: 4px solid #6f1f44;
+            height: 4px;
+        }
+
+        .code-listing {
+            width: 100%;
+            overflow: auto;
+            max-height: 10em;
+        }
+        .log-parameters-table th{
+            padding: 2px;
+        }
+        .auto-horz-scroll {
+            width: 100%;
+            overflow: auto;
+        }
     </style>
 }
 
@@ -16,10 +31,74 @@
     <h1 class="site-hero-text"><i class="fa fa-bug"></i> Diagnostics</h1>
     <p class="lead">Petrol Pricing Diagnostics</p>
 
+    @using (Html.BeginForm("Index", "Diagnostics"))
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h5>Control Panel</h5>
+            </div>
+            <div class="panel-body">
+
+                <fieldset>
+                    <legend>Dapper</legend>
+
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-md-1">
+                                <input type="checkbox" class="pull-left" name="Dapper_LogDatabaseCalls" id="Dapper_LogDatabaseCalls" value="True" checked="@(Model.DiagnosticsSettings.Dapper_LogDatabaseCalls ? "checked" : "")" />
+                            </div>
+                            <div class="col-md-3">
+                                <label for="Dapper_LogDatabaseCalls">Log Database Calls</label>
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+                <hr />
+
+                <fieldset>
+                    <legend>Site Prices</legend>
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-md-1">
+                                <input type="checkbox" name="SitePrices_UseStoredProcedure" id="SitePrices_UseStoredProcedure" value="True" checked="@(Model.DiagnosticsSettings.SitePrices_UseStoredProcedure ? "checked" : "")" />
+                            </div>
+                            <div class="col-md-3">
+                                <label for="SitePrices_UseStoredProcedure">Use Stored Procedure</label>
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+                <hr />
+
+                <fieldset>
+                    <legend>Competitor Sites</legend>
+
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-md-1">
+                                <input type="checkbox" name="CompetitorPrices_UseStoredProcedure" id="CompetitorPrices_UseStoredProcedure" value="True" checked="@(Model.DiagnosticsSettings.CompetitorPrices_UseStoredProcedure ? "checked" : "")" />
+                            </div>
+                            <div class="col-md-3">
+                                <label for="CompetitorPrices_UseStoredProcedure">Use Stored Procedure</label>
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+
+            <div class="panel-footer">
+                <button type="submit" name="btnSubmitSettings" id="btnSubmitSettings" class="btn btn-danger pull-right"><i class="fa fa-check"></i> Update Settings</button>
+                <div class="clearfix"></div>
+            </div>
+        </div>
+    }
+
     <!-- app settings -->
     <div class="panel panel-default">
         <div class="panel-heading">
-            <h5>App Settings</h3>
+            <h5>App Settings</h5>
         </div>
         <div class="panel-body">
             <table class="table table-striped table-condensed">
@@ -33,8 +112,10 @@
                     @foreach (var item in Model.AppSettings)
                     {
                         <tr>
-                            <td>@item.Key</td>
-                            <td>@item.Value</td>
+                            <th>@item.Key</th>
+                            <td>
+                                <div class="auto-horz-scroll">@item.Value</div>
+                            </td>
                         </tr>
                     }
                 </tbody>
@@ -45,7 +126,7 @@
     <!-- app settings -->
     <div class="panel panel-default">
         <div class="panel-heading">
-            <h5>Core Settings</h3>
+            <h5>Core Settings</h5>
         </div>
         <div class="panel-body">
             <table class="table table-striped table-condensed">
@@ -71,7 +152,7 @@
     <!-- environment -->
     <div class="panel panel-default">
         <div class="panel-heading">
-            <h5>Environment</h3>
+            <h5>Environment</h5>
         </div>
         <div class="panel-body">
             <table class="table table-striped table-condensed">
@@ -98,7 +179,7 @@
     <!-- recent database object changes -->
     <div class="panel panel-default">
         <div class="panel-heading">
-            <h5>Recent Database Object Changes</h3>
+            <h5>Recent Database Object Changes</h5>
         </div>
         <div class="panel-body">
             <table class="table table-striped table-condensed">
@@ -132,7 +213,7 @@
     <!-- recent database object summary -->
     <div class="panel panel-default">
         <div class="panel-heading">
-            <h5>Database Object Summary</h3>
+            <h5>Database Object Summary</h5>
         </div>
         <div class="panel-body">
             <table class="table table-striped table-condensed">
@@ -166,7 +247,7 @@
     <!-- log entries -->
     <div class="panel panel-default">
         <div class="panel-heading">
-            <h5>Log Entries</h3>
+            <h5>Log Entries (User Session Based)</h5>
         </div>
         <div class="panel-body">
             <table class="table table-striped table-condensed">
@@ -180,32 +261,56 @@
                 <tbody>
                     @foreach (var log in Model.LogEntries)
                     {
-                        <tr>
-                            <td><strong>@log.Created</strong></td>
-                            <td><strong>@log.Level</strong></td>
-                            <td><strong>@log.Message</strong></td>
-                        </tr>
+                    <tr>
+                        <td><strong>@log.Created</strong></td>
+                        <td><strong>@log.Level</strong></td>
+                        <td><strong>@log.Message</strong></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Parameters</strong></td>
+                        <td>
+                            <table class="table log-parameters-table">
+                                <tbody>
+                                    @foreach (var kvp in log.Parameters)
+                                    {
+                                    <tr>
+                                        <th>@kvp.Key</th>
+                                        <td>@kvp.Value</td>
+                                    </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+
                         if (log.Exception != "N/A")
                         {
-                        <tr>
-                            <td colspan="3">
-                                <div class="code-listing">
-                                    <strong>Exception:</strong>
-                                    @log.Exception
-                                </div>
-                            </td>
-                        </tr>
+                    <tr>
+                        <td colspan="3">
+                            <div class="code-listing">
+                                <strong>Exception:</strong>
+                                @log.Exception
+                            </div>
+                        </td>
+                    </tr>
                         }
-                        <tr class="divider-row">
-                            <td colspan="3"></td>
-                        </tr>
+                    <tr class="divider-row">
+                        <td colspan="3"></td>
+                    </tr>
                     }
                 </tbody>
             </table>
         </div>
+
+        <div class="panel-footer">
+            @using (Html.BeginForm("ClearLog", "Diagnostics"))
+            {
+                @Html.AntiForgeryToken()
+                <button type="submit" class="btn btn-danger pull-right"><i class="fa fa-power-off"></i> Clear</button>
+            }
+            <div class="clearfix"></div>
+        </div>
     </div>
-
-
 </div>
 
 @section scripts {

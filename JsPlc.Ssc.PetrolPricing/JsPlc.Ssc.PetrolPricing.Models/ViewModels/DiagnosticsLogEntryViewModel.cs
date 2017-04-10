@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace JsPlc.Ssc.PetrolPricing.Models.ViewModels
 {
@@ -12,5 +9,6 @@ namespace JsPlc.Ssc.PetrolPricing.Models.ViewModels
         public string Level = "";
         public string Message = "";
         public string Exception = "";
+        public Dictionary<string, string> Parameters = new Dictionary<string, string>();
     }
 }

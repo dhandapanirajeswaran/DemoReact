@@ -1,4 +1,6 @@
 ﻿using Dapper;
+using JsPlc.Ssc.PetrolPricing.Core.Diagnostics;
+using JsPlc.Ssc.PetrolPricing.Core.Settings;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -6,14 +8,16 @@ using System.Data.Entity;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace JsPlc.Ssc.PetrolPricing.Repository.Dapper
 {
     public static class DapperHelper
     {
-        public static void Execute(this DbContext context, string sprocName, DynamicParameters parameters)
+        public static void Execute(this DbContext context, string sprocName, DynamicParameters parameters, bool disableDapperLog = false)
         {
+            if (!disableDapperLog)
+                LogDapperCall(sprocName, parameters);
+
             if (String.IsNullOrWhiteSpace(sprocName))
                 throw new ArgumentException("Stored procedure name cannot be empty");
 
@@ -23,8 +27,11 @@ namespace JsPlc.Ssc.PetrolPricing.Repository.Dapper
             }
         }
 
-        public static T QueryFirst<T>(this DbContext context, string sprocName, DynamicParameters parameters) where T : class
+        public static T QueryFirst<T>(this DbContext context, string sprocName, DynamicParameters parameters, bool disableDapperLog = false) where T : class
         {
+            if (!disableDapperLog)
+                LogDapperCall(sprocName, parameters);
+
             if (String.IsNullOrWhiteSpace(sprocName))
                 throw new ArgumentException("Stored procedure name cannot be empty");
 
@@ -34,8 +41,11 @@ namespace JsPlc.Ssc.PetrolPricing.Repository.Dapper
             }
         }
 
-        public static int QueryScalar(this DbContext context, string sprocName, DynamicParameters parameters)
+        public static int QueryScalar(this DbContext context, string sprocName, DynamicParameters parameters, bool disableDapperLog = false)
         {
+            if (!disableDapperLog)
+                LogDapperCall(sprocName, parameters);
+
             if (String.IsNullOrWhiteSpace(sprocName))
                 throw new ArgumentException("Stored procedure name cannot be empty");
 
@@ -45,8 +55,11 @@ namespace JsPlc.Ssc.PetrolPricing.Repository.Dapper
             }
         }
 
-        public static List<T> QueryList<T>(this DbContext context, string sprocName, object parameters) where T : class
+        public static List<T> QueryList<T>(this DbContext context, string sprocName, object parameters, bool disableDapperLog = false) where T : class
         {
+            if (!disableDapperLog)
+                LogDapperCall(sprocName, parameters);
+
             if (String.IsNullOrWhiteSpace(sprocName))
                 throw new ArgumentException("Stored procedure name cannot be empty");
 
@@ -56,8 +69,11 @@ namespace JsPlc.Ssc.PetrolPricing.Repository.Dapper
             }
         }
 
-        public static T QueryMultiple<T>(this DbContext context, string sprocName, object parameters, Action<T, SqlMapper.GridReader> filler) where T : class, new()
+        public static T QueryMultiple<T>(this DbContext context, string sprocName, object parameters, Action<T, SqlMapper.GridReader> filler, bool disableDapperLog = false) where T : class, new()
         {
+            if (!disableDapperLog)
+                LogDapperCall(sprocName, parameters);
+
             if (String.IsNullOrWhiteSpace(sprocName))
                 throw new ArgumentException("Stored procedure name cannot be empty");
 
@@ -70,5 +86,41 @@ namespace JsPlc.Ssc.PetrolPricing.Repository.Dapper
                 return result;
             }
         }
+
+        #region private methods
+
+        private static void LogDapperCall(string sprocName, object parameters)
+        {
+            if (CoreSettings.RepositorySettings.Dapper.LogDapperCalls)
+            {
+                var msg = new StringBuilder();
+                msg.AppendFormat("Dapper Sproc: {0}", sprocName);
+
+                var exception = "";
+                var parameterDictionary = new Dictionary<string, string>();
+
+                if (parameters != null)
+                {
+                    try
+                    {
+                        var properties = parameters.GetType().GetProperties();
+                        foreach (var prop in properties)
+                        {
+                            object value = prop.GetValue(parameters, null);
+                            parameterDictionary.Add(prop.Name, value == null ? "" : value.ToString());
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        msg.Append(" - ***EXCEPTION***");
+                        exception = ex.ToString();
+                    }
+                }
+
+                DiagnosticLog.StartDebug(msg.ToString(), parameterDictionary, exception);
+            }
+        }
+
+        #endregion private methods
     }
 }

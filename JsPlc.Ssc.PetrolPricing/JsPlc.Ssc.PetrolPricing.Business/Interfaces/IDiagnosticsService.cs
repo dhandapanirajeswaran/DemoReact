@@ -10,5 +10,8 @@ namespace JsPlc.Ssc.PetrolPricing.Business.Interfaces
     public interface IDiagnosticsService
     {
         DiagnosticsViewModel GetDiagnostics(int daysAgo);
+        bool UpdateDiagnosticsSettings(DiagnosticsSettingsViewModel settings);
+
+        bool ClearDiagnosticsLog();
     }
 }

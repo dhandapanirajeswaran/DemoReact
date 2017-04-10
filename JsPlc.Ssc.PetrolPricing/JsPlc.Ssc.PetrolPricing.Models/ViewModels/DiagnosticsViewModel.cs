@@ -10,6 +10,7 @@ namespace JsPlc.Ssc.PetrolPricing.Models.ViewModels
     {
         public string ApiExceptionMessage { get; set; }
 
+        public DiagnosticsSettingsViewModel DiagnosticsSettings;
 
         public Dictionary<string, string> AppSettings;
         public Dictionary<string, string> CoreSettings;
@@ -20,10 +21,10 @@ namespace JsPlc.Ssc.PetrolPricing.Models.ViewModels
         public List<DiagnosticsDatabaseObject> RecentDatabaseObjectsChanges;
         public DiagnosticsDatabaseObjectSummary DatabaseObjectSummary;
 
-
         public DiagnosticsViewModel()
         {
             this.ApiExceptionMessage = "";
+            this.DiagnosticsSettings = new DiagnosticsSettingsViewModel();
             this.AppSettings = new Dictionary<string, string>();
             this.CoreSettings = new Dictionary<string, string>();
             this.Environment = new Dictionary<string, string>();

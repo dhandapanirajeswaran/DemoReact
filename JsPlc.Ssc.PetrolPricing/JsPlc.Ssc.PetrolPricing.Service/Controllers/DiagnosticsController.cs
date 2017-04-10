@@ -1,6 +1,7 @@
 ﻿using JsPlc.Ssc.PetrolPricing.Business.Interfaces;
 using JsPlc.Ssc.PetrolPricing.Core;
 using JsPlc.Ssc.PetrolPricing.Core.Interfaces;
+using JsPlc.Ssc.PetrolPricing.Models.ViewModels;
 using System;
 using System.Web.Http;
 using System.Web.Http.Results;
@@ -33,5 +34,38 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
                 return new ExceptionResult(ex, this);
             }
         }
+
+        [System.Web.Http.HttpPost]
+        [System.Web.Http.Route("api/UpdateDiagnosticsSettings")]
+        public IHttpActionResult UpdateDiagnosticsSettings([FromBody] DiagnosticsSettingsViewModel settings)
+        {
+            try
+            {
+                var result = _diagnosticService.UpdateDiagnosticsSettings(settings);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex);
+                return new ExceptionResult(ex, this);
+            }
+        }
+
+        [System.Web.Http.HttpGet]
+        [System.Web.Http.Route("api/ClearDiagnosticsLog")]
+        public IHttpActionResult ClearDiagnosticsLog()
+        {
+            try
+            {
+                var result = _diagnosticService.ClearDiagnosticsLog();
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex);
+                return new ExceptionResult(ex, this);
+            }
+        }
+
     }
 }

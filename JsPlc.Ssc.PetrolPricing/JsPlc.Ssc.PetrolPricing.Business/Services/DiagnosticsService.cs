@@ -40,7 +40,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business.Services
             {
             };
 
-            var diagnosticsLog = DiagnosticLog.CloneLogEntries().OrderByDescending(x => x.Created);
+            var diagnosticsLog = DiagnosticLog.CloneLogEntries().OrderBy(x => x.Created);
             foreach(var log in diagnosticsLog)
             {
                 model.LogEntries.Add(new DiagnosticsLogEntryViewModel()
@@ -48,7 +48,8 @@ namespace JsPlc.Ssc.PetrolPricing.Business.Services
                     Created = log.Created,
                     Level = log.Level,
                     Message = log.Message,
-                    Exception = log.Exception
+                    Exception = log.Exception,
+                    Parameters = log.Parameters
                 });
             }
 
@@ -74,6 +75,8 @@ namespace JsPlc.Ssc.PetrolPricing.Business.Services
 
             var coreSettings = new Dictionary<string, object>()
             {
+                {"Dapper.LogDatabaseCalls", CoreSettings.RepositorySettings.Dapper.LogDapperCalls },
+
                 {"SitePrices.UseStoredProcedure", CoreSettings.RepositorySettings.SitePrices.UseStoredProcedure },
                 {"SitePrices.ShouldCompareWithOldCode", CoreSettings.RepositorySettings.SitePrices.ShouldCompareWithOldCode },
                 {"SitePrices.CompareOutputFilename", CoreSettings.RepositorySettings.SitePrices.CompareOutputFilename},
@@ -91,6 +94,20 @@ namespace JsPlc.Ssc.PetrolPricing.Business.Services
             model.DatabaseObjectSummary = _db.GetDiagnosticsDatabaseObjectSummary();
 
             return model;
+        }
+
+        public bool UpdateDiagnosticsSettings(DiagnosticsSettingsViewModel settings)
+        {
+            CoreSettings.RepositorySettings.Dapper.LogDapperCalls = settings.Dapper_LogDatabaseCalls;
+            CoreSettings.RepositorySettings.SitePrices.UseStoredProcedure = settings.SitePrices_UseStoredProcedure;
+            CoreSettings.RepositorySettings.CompetitorPrices.UseStoredProcedure = settings.CompetitorPrices_UseStoredProcedure;
+            return true;
+        }
+
+        public bool ClearDiagnosticsLog()
+        {
+            DiagnosticLog.Clear();
+            return true;
         }
 
         #endregion implementation of IDiagnosticsService

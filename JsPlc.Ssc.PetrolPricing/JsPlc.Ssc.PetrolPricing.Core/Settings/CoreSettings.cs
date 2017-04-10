@@ -10,6 +10,11 @@ namespace JsPlc.Ssc.PetrolPricing.Core.Settings
     {
         public static class RepositorySettings
         {
+            public static class Dapper
+            {
+                public static bool LogDapperCalls = true;
+            }
+
             public static class SitePrices
             {
                 public static bool UseStoredProcedure = true;

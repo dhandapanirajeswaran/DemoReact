@@ -11,6 +11,7 @@ using JsPlc.Ssc.PetrolPricing.Repository.Dapper;
 using System;
 using Dapper;
 using JsPlc.Ssc.PetrolPricing.Core.Diagnostics;
+using JsPlc.Ssc.PetrolPricing.Core.Settings;
 
 namespace JsPlc.Ssc.PetrolPricing.Repository
 {
@@ -174,7 +175,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             {
                 @DaysAgo = daysAgo
             };
-            var model = DapperHelper.QueryList<DiagnosticsDatabaseObject>(this, sproc, parameters);
+            var model = DapperHelper.QueryList<DiagnosticsDatabaseObject>(this, sproc, parameters, disableDapperLog: true);
             return model;
         }
 
@@ -182,7 +183,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         {
             const string sproc = "spGetDiagnosticsDatabaseObjectSummary";
 
-            var model = DapperHelper.QueryFirst<DiagnosticsDatabaseObjectSummary>(this, sproc, null);
+            var model = DapperHelper.QueryFirst<DiagnosticsDatabaseObjectSummary>(this, sproc, null, disableDapperLog: true);
             return model;
         }
     }

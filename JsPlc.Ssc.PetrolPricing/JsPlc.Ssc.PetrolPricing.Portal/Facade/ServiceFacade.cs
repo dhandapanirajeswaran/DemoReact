@@ -920,5 +920,38 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
                 };
             }
         }
+
+        public bool UpdateDiagnosticsSettings(DiagnosticsSettingsViewModel settings)
+        {
+            try
+            {
+                var apiUrl = String.Format("api/UpdateDiagnosticsSettings");
+                var response = _client.Value.PostAsync(apiUrl, settings, new JsonMediaTypeFormatter()).Result;
+                var result = response.Content.ReadAsAsync<bool>().Result;
+                return result;
+            }
+            catch(Exception ex)
+            {
+                _logger.Error(ex);
+                return false;
+            }
+        }
+
+        public bool ClearDiagnosticsLog()
+        {
+            try
+            {
+                var apiUrl = String.Format("api/ClearDiagnosticsLog");
+                var response = _client.Value.GetAsync(apiUrl).Result;
+                var result = response.Content.ReadAsAsync<bool>().Result;
+                return (response.IsSuccessStatusCode) ? result : false;
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex);
+                throw new Exception("Exception in ClearDiagnosticsLog" + System.Environment.NewLine + ex.Message, ex);
+            }
+        }
+
     }
 }

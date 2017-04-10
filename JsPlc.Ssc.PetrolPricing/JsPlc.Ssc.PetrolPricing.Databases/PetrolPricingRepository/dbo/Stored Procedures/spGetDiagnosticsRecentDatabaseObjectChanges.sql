@@ -41,6 +41,6 @@ BEGIN
 		CASE WHEN ro.modify_date > ro.create_date 
 			THEN ro.modify_date 
 			ELSE ro.create_date
-		END DESC
+		END ASC
 END
 RETURN 0

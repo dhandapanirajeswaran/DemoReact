@@ -32,7 +32,7 @@ namespace JsPlc.Ssc.PetrolPricing.Core
                      }
                  );
 
-            DiagnosticLog.AddLog(LogLevel.Error.ToString(), ex.Message, ex.ToString());
+            DiagnosticLog.AddLog(LogLevel.Error.ToString(), ex.Message, null, ex.ToString());
         }
 
         public void Information(string message)
@@ -47,7 +47,7 @@ namespace JsPlc.Ssc.PetrolPricing.Core
                     }
                 );
 
-            DiagnosticLog.AddLog(LogLevel.Info.ToString(), message, "");
+            DiagnosticLog.AddLog(LogLevel.Info.ToString(), message, null, "");
         }
 
         public void Debug(string message)
@@ -62,7 +62,7 @@ namespace JsPlc.Ssc.PetrolPricing.Core
                 }
             );
 
-            DiagnosticLog.AddLog(LogLevel.Debug.ToString(), message, "");
+            DiagnosticLog.AddLog(LogLevel.Debug.ToString(), message, null, "");
         }
     }
 }
