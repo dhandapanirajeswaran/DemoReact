@@ -154,6 +154,9 @@
     <Build Include="dbo\Stored Procedures\spNearbyByGrocerPriceStatusForSites.sql" />
     <Build Include="dbo\Stored Procedures\spGetDiagnosticsRecentDatabaseObjectChanges.sql" />
     <Build Include="dbo\Stored Procedures\spGetDiagnosticsDatabaseObjectSummary.sql" />
+    <Build Include="dbo\Stored Procedures\spGetUserPermissions.sql" />
+    <Build Include="dbo\Stored Procedures\spUpsertUserPermissions.sql" />
+    <Build Include="dbo\Tables\PPUserPermissions.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Scripts\PostDeployment\Script.PostDeployment.sql" />

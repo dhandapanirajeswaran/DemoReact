@@ -23,6 +23,7 @@ using JsPlc.Ssc.PetrolPricing.Repository.Dapper;
 using Dapper;
 using JsPlc.Ssc.PetrolPricing.Repository.Debugging;
 using JsPlc.Ssc.PetrolPricing.Core.Settings;
+using JsPlc.Ssc.PetrolPricing.Models.ViewModels.UserPermissions;
 
 namespace JsPlc.Ssc.PetrolPricing.Repository
 {
@@ -178,6 +179,27 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             userList.SuccessMessage = success;
             userList.ErrorMessage = failure;
             return userList;
+        }
+
+        public PPUserDetails GetPPUserDetails(string userName)
+        {
+            var ppUserId = 0;
+            if (!String.IsNullOrEmpty(userName)) {
+                var ppUser = _context.PPUsers.FirstOrDefault(x => x.Email == userName);
+                ppUserId = ppUser.Id;
+            }
+            return GetPPUserDetails(ppUserId);
+        }
+
+        public PPUserDetails GetPPUserDetails(int id)
+        {
+            var userDetails = new PPUserDetails()
+            {
+                Status = new GenericStatus(),
+                User = _context.PPUsers.FirstOrDefault(x => x.Id == id),
+                Permissions = _context.GetUserPermissions(id)
+            };
+            return userDetails;
         }
 
         public IEnumerable<Site> GetJsSites()
@@ -3301,6 +3323,20 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
             return _context.GetContactDetails();
         }
 
+        public PPUserPermissions GetUserPermissions(int ppUserId)
+        {
+            if (ppUserId == 0)
+                throw new ArgumentException("PPUserId cannot be zero!");
+
+            var permissions = _context.GetUserPermissions(ppUserId);
+            return permissions;
+        }
+
+        public bool UpsertUserPermissions(int requestingPPUserId, PPUserPermissions permissions)
+        {
+            return _context.UpserUserPermissions(requestingPPUserId, permissions);
+        }
+
         public IEnumerable<DiagnosticsDatabaseObject> GetDiagnosticsRecentDatabaseObjectChanges(int daysAgo)
         {
             return _context.GetDiagnosticsRecentDatabaseObjectChanges(daysAgo);
@@ -3310,9 +3346,71 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
             return _context.GetDiagnosticsDatabaseObjectSummary();
         }
 
+        public UserAccessViewModel GetUserAccess(string userName)
+        {
+            var ppUser = _context.PPUsers.FirstOrDefault(x => x.Email == userName);
+            if (ppUser != null)
+            {
+                var permissions = GetUserPermissions(ppUser.Id);
+
+                var uploadPermissions = (FileUploadsUserPermissions)permissions.FileUploadsUserPermissions;
+                var sitePricingPermissions = (SitesPricingUserPermissions)permissions.SitePricingUserPermissions;
+                var sitesManagementPermissions = (SitesMaintenanceUserPermissions)permissions.SitesMaintenanceUserPermissions;
+                var reportsPermissions = (ReportsUserPermissions)permissions.ReportsUserPermissions;
+                var UserManagementPermissions = (UsersManagementUserPermissions)permissions.UsersManagementUserPermissions;
+                var diagnosticsPermissions = (DiagnosticsUserPermissions)permissions.DiagnosticsUserPermissions;
+
+                return new UserAccessViewModel()
+                {
+                    IsUserAuthenticated = true,
+                    UserName = ppUser.Email,
+                    UserFileUploadsAccess = new UserFileUploadsAccess
+                    {
+                        CanView = uploadPermissions.HasFlag(FileUploadsUserPermissions.View),
+                        CanUpload = uploadPermissions.HasFlag(FileUploadsUserPermissions.Upload)
+                    },
+                    UserSitePricingAccess = new UserSitePricingAccess
+                    {
+                        CanView = sitePricingPermissions.HasFlag(SitesPricingUserPermissions.View),
+                        CanExport = sitePricingPermissions.HasFlag(SitesPricingUserPermissions.Export),
+                        CanUpdate = sitePricingPermissions.HasFlag(SitesPricingUserPermissions.Update)
+                    },
+                    UserSitesMaintenanceAccess = new UserSitesMaintenanceAccess
+                    {
+                        CanView = sitesManagementPermissions.HasFlag(SitesMaintenanceUserPermissions.View),
+                        CanAdd = sitesManagementPermissions.HasFlag(SitesMaintenanceUserPermissions.Add),
+                        CanEdit = sitesManagementPermissions.HasFlag(SitesMaintenanceUserPermissions.Edit)
+                    },
+                    UserReportsAccess = new UserReportsAccess
+                    {
+                        CanView = reportsPermissions.HasFlag(ReportsUserPermissions.View),
+                        CanExport = reportsPermissions.HasFlag(ReportsUserPermissions.Export)
+                    },
+                    UserDiagnosticsAccess = new UserDiagnosticsAccess
+                    {
+                        CanView = diagnosticsPermissions.HasFlag(DiagnosticsUserPermissions.View)
+                    }
+                };
+            }
+            return new UserAccessViewModel();
+        }
+
+        public void SignIn(string email)
+        {
+            if (String.IsNullOrWhiteSpace(email))
+                return;
+
+            var ppUser = _context.PPUsers.FirstOrDefault(x => x.IsActive && x.Email == email);
+            if (ppUser != null)
+            {
+                ppUser.LastUsedOn = DateTime.Now;
+                _context.SaveChanges();
+            }
+        }
+
         #region private methods
 
-        // Move forward from the forDate and find a set of Prices which were recently uploaded..
+            // Move forward from the forDate and find a set of Prices which were recently uploaded..
         private DateTime? GetFirstDailyPriceDate(DateTime forDate)
         {
             using (var db = new RepositoryContext())

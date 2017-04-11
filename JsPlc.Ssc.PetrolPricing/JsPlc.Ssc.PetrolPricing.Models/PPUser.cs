@@ -23,7 +23,15 @@ namespace JsPlc.Ssc.PetrolPricing.Models
 
         [Display(Name = "Last Name")]
         public string LastName { get; set; }       
-    }
 
-   
+        [Display(Name = "Is Active")]
+        public bool IsActive { get; set; }
+        [Display(Name = "Created On")]
+        public DateTime CreatedOn { get; set; }
+        [Display(Name = "Last Updated On")]
+        public DateTime UpdatedOn { get; set; }
+        [Display(Name = "Last Used On")]
+        public DateTime? LastUsedOn { get; set; }
+    }
+  
 }

@@ -395,4 +395,78 @@ BEGIN
 	VALUES ('Petrol Pricing Contact', 'Sainsburys Plc<br />33 Holborn, London,<br /> EC1N 2HT', '0207 69 52704', 'Product Owner', 'Izzy.Hexter@sainsburys.co.uk', 1);
 END
 
+--
+-- PPUserPermissions - NOTE: The values are BITWISE but SQL refuses to evaluate 0x01 + 0x02 as 3 !!
+--
+
+DECLARE @Default_FileUploadsUserPermissions INT = 1 + 2 -- View and Upload
+DECLARE @Default_SitePricingUserPermissions INT = 1 + 2 + 4 -- View, Export and Update
+DECLARE @Default_SitesMaintenanceUserPermissions INT = 1 + 2 + 4 -- View, Add and Edit
+DECLARE @Default_ReportsUserPermissions INT = 1 + 2 -- View and Export
+DECLARE @Default_UsersManagementUserPermissions INT = 1 + 2 + 4 + 8 -- View, Add, Edit and Delete
+DECLARE @Default_DiagnosticsUserPermissions INT = 0 -- View
+
+MERGE
+	dbo.PPUserPermissions AS target
+	USING (
+		SELECT
+			usr.Id
+		FROM
+			dbo.PPUser usr
+		WHERE
+			NOT EXISTS(SELECT NULL FROM dbo.PPUserPermissions WHERE PPUserId = usr.Id)
+	)
+	AS source(PPUserId)
+	ON (source.PPUserId = target.PPUserId)
+	WHEN NOT MATCHED
+		THEN 
+		INSERT (
+           [PPUserId],
+           [IsAdmin],
+           [FileUploadsUserPermissions],
+           [SitePricingUserPermissions],
+           [SitesMaintenanceUserPermissions],
+           [ReportsUserPermissions],
+           [UsersManagementUserPermissions],
+           [DiagnosticsUserPermissions],
+           [CreatedOn],
+           [CreatedBy],
+           [UpdatedOn],
+           [UpdatedBy]
+		   )
+     VALUES
+			(source.PPUserId,
+			0, -- IsAdmin
+			@Default_FileUploadsUserPermissions,
+			@Default_SitePricingUserPermissions,
+			@Default_SitesMaintenanceUserPermissions,
+			@Default_ReportsUserPermissions,
+			@Default_UsersManagementUserPermissions,
+			@Default_DiagnosticsUserPermissions,
+			GetDate(),
+			0,
+			GetDate(),
+			0);
+
+--
+-- Setup the Admins
+--
+UPDATE 
+	dbo.PPUserPermissions
+SET 
+	IsAdmin = 1,
+	DiagnosticsUserPermissions = 1
+WHERE 
+	PPUserId IN (
+	SELECT usr.Id
+	FROM
+		dbo.PPUser usr
+	WHERE
+		usr.Email IN (
+			'Premkumar.Krishnan@sainsburys.co.uk', 
+			'Ramaraju.Vittanala@sainsburys.co.uk', 
+			'Garry.Leeder@sainsburys.co.uk', 
+			'Sandip.Vaidya@sainsburys.co.uk'
+		)
+	);
 

@@ -149,6 +149,40 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             return model;
         }
 
+        public PPUserPermissions GetUserPermissions(int ppUserId)
+        {
+            const string sproc = "spGetUserPermissions";
+
+            var parameters = new
+            {
+                @PPUserId = ppUserId
+            };
+
+            var model = DapperHelper.QueryFirst<PPUserPermissions>(this, sproc, parameters);
+            return model;
+        }
+
+        public bool UpserUserPermissions(int requestingPPUserId, PPUserPermissions permissions)
+        {
+            const string sproc = "spUpsertUserPermissions";
+
+            var parameters = new
+            {
+                @PPUserId = permissions.PPUserId,
+                @IsAdmin = permissions.IsAdmin,
+                @FileUploadsUserPermissions = permissions.FileUploadsUserPermissions,
+                @SitePricingUserPermissions = permissions.SitePricingUserPermissions,
+                @SitesMaintenanceUserPermissions = permissions.SitesMaintenanceUserPermissions,
+                @ReportsUserPermissions = permissions.ReportsUserPermissions,
+                @UsersManagementUserPermissions = permissions.UsersManagementUserPermissions,
+                @DiagnosticsUserPermissions = permissions.DiagnosticsUserPermissions,
+                @RequestingPPUserId = requestingPPUserId
+            };
+
+            var result = DapperHelper.QueryScalar(this, sproc, parameters);
+            return result == 0;
+        }
+
         public IEnumerable<NearbyGrocerPriceSiteStatus> GetNearbyGrocerPriceStatusForSites(DateTime forDate, string siteIds, int driveTime)
         {
             const string sproc = "spNearbyByGrocerPriceStatusForSites";

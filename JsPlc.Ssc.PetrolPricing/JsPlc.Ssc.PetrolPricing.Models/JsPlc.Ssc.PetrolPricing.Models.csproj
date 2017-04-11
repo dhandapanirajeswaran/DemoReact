@@ -99,13 +99,18 @@
     <Compile Include="DTOs\EmailToSet.cs" />
     <Compile Include="EmailSendLog.cs" />
     <Compile Include="Enums\FuelTypeEnum.cs" />
+    <Compile Include="Enums\UserPermissionEnums.cs" />
+    <Compile Include="GenericStatus.cs" />
     <Compile Include="ImportProcessError.cs" />
     <Compile Include="LatestCompPrice.cs" />
     <Compile Include="NearbyGrocerPriceSiteStatus.cs" />
     <Compile Include="PPUser.cs" />
     <Compile Include="ExcludedBrands.cs" />
     <Compile Include="LatestPrice.cs" />
+    <Compile Include="PPUserDetails.cs" />
     <Compile Include="PPUserList.cs" />
+    <Compile Include="PPUserPermissions.cs" />
+    <Compile Include="ViewModels\AccessDeniedViewModel.cs" />
     <Compile Include="ViewModels\ContactDetailViewModel.cs" />
     <Compile Include="ViewModels\DiagnosticsCoreSettingsViewModel.cs" />
     <Compile Include="ViewModels\DiagnosticsDatabaseObjectSummary.cs" />
@@ -123,11 +128,13 @@
     <Compile Include="ViewModels\CompetitorsPriceRangeByCompanyCompanyViewModel.cs" />
     <Compile Include="ViewModels\CompetitorsPriceRangeByCompanyViewModel.cs" />
     <Compile Include="ViewModels\FileUploadViewModel.cs" />
+    <Compile Include="ViewModels\Layout\TopNavigationViewModel.cs" />
     <Compile Include="ViewModels\NationalAverageReportFuelViewModel.cs" />
     <Compile Include="ViewModels\NationalAverageReportBrandViewModel.cs" />
     <Compile Include="ViewModels\NationalAverageReportContainerViewModel.cs" />
     <Compile Include="ViewModels\OverridePricePostViewModel.cs" />
     <Compile Include="ViewModels\ComplianceReportContainerViewModel.cs" />
+    <Compile Include="ViewModels\PPUserDetailsViewModel.cs" />
     <Compile Include="ViewModels\PriceMovementReportContainerViewModel.cs" />
     <Compile Include="ViewModels\PricePointBrandViewModel.cs" />
     <Compile Include="ViewModels\PricePointReportRowViewModel.cs" />
@@ -156,7 +163,12 @@
     <Compile Include="ViewModels\CatalistQuarterly.cs" />
     <Compile Include="ViewModels\CompetitorPriceViewModel.cs" />
     <Compile Include="ViewModels\SitePriceViewModel.cs" />
+    <Compile Include="ViewModels\StatusViewModel.cs" />
     <Compile Include="ViewModels\UploadViewModel.cs" />
+    <Compile Include="ViewModels\UserPermissions\UserPermissionsOptionViewModel.cs" />
+    <Compile Include="ViewModels\UserPermissions\EditUserPermissionsViewModel.cs" />
+    <Compile Include="ViewModels\UserPermissions\UserPermissionsOptionListViewModel.cs" />
+    <Compile Include="ViewModels\UserPermissions\UserAccessViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

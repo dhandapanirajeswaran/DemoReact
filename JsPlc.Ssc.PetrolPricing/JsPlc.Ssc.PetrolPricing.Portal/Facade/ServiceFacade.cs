@@ -18,6 +18,7 @@ using Newtonsoft.Json.Linq;
 using System.Net.Mail;
 using JsPlc.Ssc.PetrolPricing.Core.Interfaces;
 using JsPlc.Ssc.PetrolPricing.Core.Diagnostics;
+using JsPlc.Ssc.PetrolPricing.Models.ViewModels.UserPermissions;
 
 namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
 {
@@ -733,7 +734,45 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             {
                 HttpContext.Current.Response.Redirect("~/Account/LogOff");
             }
-            
+        }
+
+        public void SuccessfulSignIn(string email)
+        {
+            try
+            {
+                var apiUrl = String.Format("api/signin?email={0}", email);
+                var response = _client.Value.PostAsync(apiUrl, new { }, new JsonMediaTypeFormatter()).Result;
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex);
+            }
+        }
+
+
+        public PPUserDetailsViewModel GetPPUser(int ppUserId)
+        {
+            var querystring = "api/PPUsers/Edit?id=" + ppUserId;
+
+            var response = _client.Value.GetAsync(querystring).Result;
+            if (response.IsSuccessStatusCode)
+            {
+                var result = response.Content.ReadAsAsync<PPUserDetails>().Result;
+
+                var model = new PPUserDetailsViewModel()
+                {
+                    Status = new StatusViewModel()
+                    {
+                        ErrorMessage = "",
+                        SuccessMessage = ""
+                    },
+                    User = result.User,
+                    Permissions = UserPermissionsFascade.BuildUserPermissionsViewModel(result.Permissions)
+                };
+
+                return model;
+            }
+            return null;
         }
 
         public IEnumerable<string> GetExcludeBrands()
@@ -953,5 +992,26 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             }
         }
 
+
+        public UserAccessViewModel GetUserAccessModel(string userName)
+        {
+            if (String.IsNullOrWhiteSpace(userName))
+                return new UserAccessViewModel();
+
+            try
+            {
+                var apiUrl = String.Format("api/PPUsers/Access/?userName={0}", userName);
+                var response = _client.Value.GetAsync(apiUrl).Result;
+                var result = response.Content.ReadAsAsync<UserAccessViewModel>().Result;
+                return response.IsSuccessStatusCode
+                    ? result
+                    : new UserAccessViewModel();
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex);
+                throw new Exception("Exception in GetUserAccessModel" + System.Environment.NewLine + ex.Message, ex);
+            }
+        }
     }
 }

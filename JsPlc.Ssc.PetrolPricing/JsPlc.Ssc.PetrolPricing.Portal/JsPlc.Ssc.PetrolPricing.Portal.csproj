@@ -210,6 +210,7 @@
     <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\BaseClasses\BaseController.cs" />
     <Compile Include="Controllers\DiagnosticsController.cs" />
+    <Compile Include="Controllers\LayoutController.cs" />
     <Compile Include="Controllers\PPUsersController.cs" />
     <Compile Include="Controllers\PriceReportsController.cs" />
     <Compile Include="Controllers\SitesController.cs" />
@@ -218,6 +219,7 @@
     <Compile Include="DataExporters\ExcelStyler.cs" />
     <Compile Include="DataExporters\SiteswithPricesDataTableExporter.cs" />
     <Compile Include="Facade\FacadeResponse.cs" />
+    <Compile Include="Facade\UserPermissionsFascade.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -496,9 +498,12 @@
     <Content Include="Views\Sites\Pricing\_EmailSitePopup.cshtml" />
     <Content Include="Views\Sites\Pricing\_CompetitorSitePriceGridTable.cshtml" />
     <Content Include="Views\Diagnostics\Index.cshtml" />
+    <Content Include="Views\Shared\Layout\_TopNavigation.cshtml" />
+    <Content Include="Views\Shared\AccessDenied.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\uploads\" />
+    <Folder Include="Views\Layout\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />

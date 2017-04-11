@@ -1,0 +1,62 @@
+﻿@model JsPlc.Ssc.PetrolPricing.Models.ViewModels.Layout.TopNavigationViewModel
+
+<div class="navbar-collapse collapse">
+    <ul class="nav navbar-nav navbar-right" id="TopNav">
+
+        @if (Model.UserAccess.UserDiagnosticsAccess.CanView)
+        {
+            <li data-menu-item="nav-diagnostics">
+                <a href="@Url.Action("Index", "Diagnostics")"><i class="fa fa-bug"></i>Diagnositcs</a>
+            </li>
+        }
+
+        <li data-menu-item="nav-home">
+            <a href="@Url.Action("Index", "Home")"><i class="fa fa-home"></i>Home</a>
+        </li>
+
+        @if (Model.UserAccess.IsUserAuthenticated)
+        {
+            if (Model.UserAccess.UserFileUploadsAccess.CanView)
+            {
+                <li data-menu-item="nav-upload">
+                    <a href="@Url.Action("Index", "File")"><i class="fa fa-file"></i>Upload</a>
+                </li>
+            }
+            if (Model.UserAccess.UserSitePricingAccess.CanView)
+            {
+                <li data-menu-item="nav-site-pricing">
+                    <a href="@Url.Action("Prices", "Sites")"><i class="fa fa-gbp"></i>Site Pricing</a>
+                </li>
+            }
+            if (Model.UserAccess.UserSitesMaintenanceAccess.CanView)
+            {
+                <li data-menu-item="nav-site-maintenance">
+                    <a href="@Url.Action("Index", "Sites")"><i class="fa fa-gear"></i>Site Maintenance</a>
+                </li>
+            }
+            if (Model.UserAccess.UserReportsAccess.CanView)
+            {
+                <li data-menu-item="nav-reports">
+                    <a href="@Url.Action("Index", "PriceReports")"><i class="fa fa-bar-chart"></i>Reports</a>
+                </li>
+            }
+            if (Model.UserAccess.UserUserManagementAccess.CanView)
+            {
+                <li data-menu-item="nav-users">
+                    <a href="@Url.Action("Index", "PPUsers")"><i class="fa fa-user"></i>Users</a>
+                </li>
+            }
+        }
+        <li data-menu-item="nav-users">
+            <a href="@Url.Action("Contact", "Home")"><i class="fa fa-at"></i>Contact</a>
+        </li>
+
+
+        @if (Model.UserAccess.IsUserAuthenticated)
+        {
+            <li data-menu-item="nav-login">
+                <a href="@Url.Action("LogOff", "Account")"><i class="fa fa-sign-out"></i>Log off</a>
+            </li>
+        }
+    </ul>
+</div>

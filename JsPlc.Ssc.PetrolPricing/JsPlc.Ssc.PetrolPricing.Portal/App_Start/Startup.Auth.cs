@@ -76,6 +76,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal
                                     }
                                 }
                                 facade.RegisterUser(userName);
+                                facade.SuccessfulSignIn(userName);
                             }
                         }
                     }

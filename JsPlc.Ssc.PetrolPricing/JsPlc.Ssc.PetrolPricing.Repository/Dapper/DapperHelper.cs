@@ -15,7 +15,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository.Dapper
     {
         public static string DatabaseConnectionString = "";
 
-        public static void Execute(this DbContext context, string sprocName, DynamicParameters parameters, bool disableDapperLog = false)
+        public static void Execute(this DbContext context, string sprocName, object parameters, bool disableDapperLog = false)
         {
             if (!disableDapperLog)
                 LogDapperCall(sprocName, parameters);
@@ -30,7 +30,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository.Dapper
             }
         }
 
-        public static T QueryFirst<T>(this DbContext context, string sprocName, DynamicParameters parameters, bool disableDapperLog = false) where T : class
+        public static T QueryFirst<T>(this DbContext context, string sprocName, object parameters, bool disableDapperLog = false) where T : class
         {
             if (!disableDapperLog)
                 LogDapperCall(sprocName, parameters);
@@ -45,7 +45,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository.Dapper
             }
         }
 
-        public static int QueryScalar(this DbContext context, string sprocName, DynamicParameters parameters, bool disableDapperLog = false)
+        public static int QueryScalar(this DbContext context, string sprocName, object parameters, bool disableDapperLog = false)
         {
             if (!disableDapperLog)
                 LogDapperCall(sprocName, parameters);

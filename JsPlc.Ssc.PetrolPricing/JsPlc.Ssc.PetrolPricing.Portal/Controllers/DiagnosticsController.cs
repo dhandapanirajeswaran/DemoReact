@@ -1,6 +1,7 @@
 ﻿using JsPlc.Ssc.PetrolPricing.Core;
 using JsPlc.Ssc.PetrolPricing.Core.Interfaces;
 using JsPlc.Ssc.PetrolPricing.Models.ViewModels;
+using JsPlc.Ssc.PetrolPricing.Portal.Controllers.BaseClasses;
 using JsPlc.Ssc.PetrolPricing.Portal.Facade;
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,7 @@ using System.Web.Mvc;
 
 namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 {
-    public class DiagnosticsController : Controller
+    public class DiagnosticsController : BaseController
     {
         private readonly ServiceFacade _serviceFacade;
         private readonly ILogger _logger;
@@ -21,10 +22,11 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             _serviceFacade = new ServiceFacade(_logger);
         }
 
-
         [HttpGet]
         public ActionResult Index()
         {
+            if (!CanUserViewDiagnostics())
+                return AccessDenied();
             var daysAgo = 30;
             var model = _serviceFacade.GetDiagnostics(daysAgo);
             return View(model);
@@ -33,6 +35,8 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
         [HttpPost]
         public ActionResult Index(DiagnosticsSettingsViewModel model)
         {
+            if (!CanUserViewDiagnostics())
+                return AccessDenied();
             _serviceFacade.UpdateDiagnosticsSettings(model);
             return RedirectToAction("Index");
         }
@@ -40,8 +44,25 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
         [HttpPost]
         public ActionResult ClearLog()
         {
+            if (!CanUserViewDiagnostics())
+                return AccessDenied();
             _serviceFacade.ClearDiagnosticsLog();
             return RedirectToAction("Index");
         }
+
+        #region private methods
+        private bool CanUserViewDiagnostics()
+        {
+            var userAccess = base.GetUserAccessModel();
+            return userAccess.IsUserAuthenticated 
+                && userAccess.UserDiagnosticsAccess.CanView;
+        }
+
+        private ActionResult AccessDenied()
+        {
+            return base.AccessDenied("You do not have access to the Diagnostics section");
+        }
+
+        #endregion
     }
 }

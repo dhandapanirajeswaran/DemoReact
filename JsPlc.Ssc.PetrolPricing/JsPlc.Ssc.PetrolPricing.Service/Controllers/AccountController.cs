@@ -10,15 +10,17 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
 {
     public class AccountController : ApiController
     {
-        private readonly IAccountService _service;
+        private readonly IAccountService _accountService;
+        private readonly IPPUserService _userService;
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="service"></param>
-        public AccountController(IAccountService service)
+        public AccountController(IAccountService service, IPPUserService userService)
         {
-            _service = service;
+            _accountService = service;
+            _userService = userService;
         }
 
         /// <summary>
@@ -30,9 +32,18 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
         [Route("api/user")]
         public IHttpActionResult Register([FromUri]string email)
         {
-            _service.RegisterUser(email);
+            _accountService.RegisterUser(email);
 
             return Ok();
         }
+
+        [HttpPost]
+        [Route("api/signin")]
+        public IHttpActionResult SignIn([FromUri] string email)
+        {
+            _userService.SignIn(email);
+            return Ok();
+        }
+
     }
 }

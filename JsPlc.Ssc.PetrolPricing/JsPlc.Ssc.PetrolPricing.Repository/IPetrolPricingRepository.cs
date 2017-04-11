@@ -1,5 +1,6 @@
 ﻿using JsPlc.Ssc.PetrolPricing.Models;
 using JsPlc.Ssc.PetrolPricing.Models.ViewModels;
+using JsPlc.Ssc.PetrolPricing.Models.ViewModels.UserPermissions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +14,10 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
         PPUserList AddPPUser(PPUser ppUser);
         PPUserList DeletePPUser(string email);
+
+        PPUserDetails GetPPUserDetails(string userName);
+
+        PPUserDetails GetPPUserDetails(int id);
 
         PPUserList GetPPUsers();
 		IEnumerable<Site> GetSites();
@@ -271,7 +276,15 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
         IEnumerable<ContactDetail> GetContactDetails();
 
+        PPUserPermissions GetUserPermissions(int ppUserId);
+
+        bool UpsertUserPermissions(int requestingPPUserId, PPUserPermissions permissions);
+
         IEnumerable<DiagnosticsDatabaseObject> GetDiagnosticsRecentDatabaseObjectChanges(int daysAgo);
         DiagnosticsDatabaseObjectSummary GetDiagnosticsDatabaseObjectSummary();
+
+        UserAccessViewModel GetUserAccess(string userName);
+
+        void SignIn(string userName);
     }
 }

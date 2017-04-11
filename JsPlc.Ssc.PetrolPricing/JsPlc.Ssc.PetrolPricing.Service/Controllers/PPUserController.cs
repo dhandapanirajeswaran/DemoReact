@@ -15,6 +15,7 @@ using JsPlc.Ssc.PetrolPricing.Models;
 using JsPlc.Ssc.PetrolPricing.Models.Common;
 using Newtonsoft.Json;
 using JsPlc.Ssc.PetrolPricing.Core;
+using JsPlc.Ssc.PetrolPricing.Models.ViewModels.UserPermissions;
 
 namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
 {
@@ -72,6 +73,36 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
             return Ok(usersList);
         }
 
-      
+        [System.Web.Http.HttpGet]
+        [Route("api/PPUsers/Edit")]
+        public IHttpActionResult Edit(int id)
+        {
+            var model = _ppUserService.GetPPUserDetails(id);
+            return Ok(model);
+        }
+
+        [HttpGet]
+        [Route("api/PPUsers/Permissions")]
+        public IHttpActionResult GetPermissions([FromUri] int ppUserId)
+        {
+            var permissions = _ppUserService.GetPermissions(ppUserId);
+            return Ok(permissions);
+        }
+
+        [HttpPost]
+        [Route("api/PPUsers/Permissions")]
+        public IHttpActionResult UpsertPermissions([FromBody] int requestingPPUserId, [FromBody] PPUserPermissions permissions)
+        {
+            var result = _ppUserService.UpsertPermissions(requestingPPUserId, permissions);
+            return Ok(result);
+        }
+
+        [HttpGet]
+        [Route("api/PPUsers/Access")]
+        public IHttpActionResult GetUserAccess([FromUri] string userName)
+        {
+            var result = _ppUserService.GetUserAccess(userName);
+            return Ok(result);
+        }
     }
 }
