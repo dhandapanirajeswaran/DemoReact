@@ -12,6 +12,8 @@
         {"Uploaded", "<span class='label label-info'><i class='fa fa-upload'></i> Uploaded</span>" },
         {"Warning", "<span class='label label-warning'><i class='fa fa-warning'></i> Warning</span>" }
     };
+
+    var previousDaysAgo = -1;
 }
 
 @if (Model != null && Model.Any())
@@ -37,8 +39,10 @@
         </tr>
         @foreach (var item in Model)
         {
-            var isRecentUpload = DateTime.Now.Date.Subtract(item.UploadDateTime.Date).TotalDays < 2;
-            var rowClass = isRecentUpload ? "recent" : "";
+            var daysAgo = DateTime.Now.Date.Subtract(item.UploadDateTime.Date).TotalDays;
+            var wasToday = daysAgo < 1;
+            var wasYesterday = daysAgo == 1;
+            var rowClass = wasToday ? "uploaded-today" : wasYesterday ? "uploaded-yesterday" : "";
             <tr class="@rowClass">
                 <td>
                     @Html.DisplayFor(modelItem => item.OriginalFileName)
@@ -46,14 +50,14 @@
                 <td>
                     @Html.DisplayFor(modelItem => item.UploadType.UploadTypeName)
                 </td>
-                <td>
-                    @if (isRecentUpload)
+                <td data-infotip="Uploaded on [b]@(item.UploadDateTime.ToString("dd-MMM-yyyy"))[/b] at [b]@(item.UploadDateTime.ToString("HH:mm:ss"))[/b]">
+                    @if (wasToday || wasYesterday)
                     {
                        <strong>@Html.FormatFriendlyDateTime(item.UploadDateTime)</strong>
                     }
                     else
                     {
-                @Html.FormatFriendlyDateTime(item.UploadDateTime)
+                        @Html.FormatFriendlyDateTime(item.UploadDateTime)
                     }
                 </td>
                 <td>
@@ -70,7 +74,7 @@
                     @Html.DisplayFor(modelItem => item.UploadedBy)
                 </td>
                 <td>
-                    @Html.ActionLink("Details", "Details", new { id = item.Id.ToString(CultureInfo.InvariantCulture) })
+                    <a href="@Url.Action("Details", "File")/@item.Id">Details</a>
                 </td>
             </tr>
         }

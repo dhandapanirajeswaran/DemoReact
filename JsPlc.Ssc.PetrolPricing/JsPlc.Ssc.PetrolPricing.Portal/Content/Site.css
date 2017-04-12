@@ -521,12 +521,29 @@ table.fixed-header>tbody {
     color: #fff;
 }
 
-.recent-file-uploads tr.recent:nth-child(odd),
-#FileUploadContainer tr.recent:nth-child(odd) {
+
+#FileUploadContainer tr.uploaded-today:nth-child(odd) {
+        background-color:  #ffe;
+}
+
+#FileUploadContainer tr.uploaded-today:nth-child(even) {
+    background-color: #eed;
+}
+
+
+#FileUploadContainer tr.uploaded-yesterday:nth-child(odd) {
+        background-color:  #efe;
+}
+
+#FileUploadContainer tr.uploaded-yesterday:nth-child(even) {
+    background-color: #ded;
+}
+
+.recent-file-uploads tr.recent:nth-child(odd)
+{
     background-color:  #efe;
 }
-.recent-file-uploads tr.recent:nth-child(even),
-#FileUploadContainer tr.recent:nth-child(even) {
+.recent-file-uploads tr.recent:nth-child(even) {
     background-color: #ded;
 }
 

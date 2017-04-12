@@ -80,7 +80,7 @@
                                 <span><i></i>@row.ImportStatus</span>
                             }
                         </td>
-                        <td>
+                        <td data-infotip="Uploaded on [b]@(row.UploadDateTime.ToString("dd-MMM-yyyy"))[/b] at [b]@(row.UploadDateTime.ToString("HH:mm:ss"))[/b]">
                             @if (hasFileUpload == false)
                             {
                                 <span>&mdash;</span>
@@ -138,7 +138,7 @@
                 }
             </tbody>
         </table>
-        <a href="@Url.Action("Index","File")" class="btn btn-primary pull-right" data-infotip="Go to the File Uploads section"><i class="fa fa-upload"></i> Uploads</a>
+        <a href="@Url.Action("Index","File")" class="btn btn-primary pull-right" data-infotip="Go to the [b]File Uploads[/b] section"><i class="fa fa-upload"></i> Uploads</a>
     </div>
 </div>
 
