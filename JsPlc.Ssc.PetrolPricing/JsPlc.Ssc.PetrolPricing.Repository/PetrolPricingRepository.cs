@@ -3365,6 +3365,7 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
                 var sitePricingPermissions = (SitesPricingUserPermissions)permissions.SitePricingUserPermissions;
                 var sitesManagementPermissions = (SitesMaintenanceUserPermissions)permissions.SitesMaintenanceUserPermissions;
                 var reportsPermissions = (ReportsUserPermissions)permissions.ReportsUserPermissions;
+                var usersPermissions = (UsersManagementUserPermissions)permissions.UsersManagementUserPermissions;
                 var UserManagementPermissions = (UsersManagementUserPermissions)permissions.UsersManagementUserPermissions;
                 var diagnosticsPermissions = (DiagnosticsUserPermissions)permissions.DiagnosticsUserPermissions;
 
@@ -3393,6 +3394,13 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
                     {
                         CanView = reportsPermissions.HasFlag(ReportsUserPermissions.View),
                         CanExport = reportsPermissions.HasFlag(ReportsUserPermissions.Export)
+                    },
+                    UserUserManagementAccess = new UserUserManagementAccess
+                    {
+                        CanView = usersPermissions.HasFlag(UsersManagementUserPermissions.View),
+                        CanAdd = usersPermissions.HasFlag(UsersManagementUserPermissions.Add),
+                        CanDelete = usersPermissions.HasFlag(UsersManagementUserPermissions.Delete),
+                        CanEdit = usersPermissions.HasFlag(UsersManagementUserPermissions.Edit)
                     },
                     UserDiagnosticsAccess = new UserDiagnosticsAccess
                     {
