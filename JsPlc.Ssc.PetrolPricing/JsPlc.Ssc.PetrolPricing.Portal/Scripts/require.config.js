@@ -47,7 +47,7 @@ require.config({
         "competitorPriceNotePopup": "App/ViewScripts/CompetitorPriceNotePopup",
         "UploadCountdown": "App/ViewScripts/UploadCountdown",
         "FileUpload": "App/ViewScripts/FileUpload",
-        "Diagnostics": "App/viewScripts/Diagnostics"
+        "Diagnostics": "App/ViewScripts/Diagnostics"
     },
     shim: {
         "bootstrap-datepicker": { deps: ["jquery", "bootstrap"] },

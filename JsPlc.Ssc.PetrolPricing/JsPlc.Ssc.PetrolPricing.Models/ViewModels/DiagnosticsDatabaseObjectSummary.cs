@@ -9,5 +9,9 @@
         public int PrimaryKeyCount { get; set; }
         public int TableFunctionCount { get; set; }
         public int UserTableCount { get; set; }
+
+        public int TotalIndexCount { get; set; }
+        public int ClusteredIndexCount { get; set; }
+        public int NonClusteredIndexCount { get; set; }
     }
 }

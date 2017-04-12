@@ -27,7 +27,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
         {
             if (!CanUserViewDiagnostics())
                 return AccessDenied();
-            var daysAgo = 30;
+            var daysAgo = 14;
             var model = _serviceFacade.GetDiagnostics(daysAgo);
             return View(model);
         }

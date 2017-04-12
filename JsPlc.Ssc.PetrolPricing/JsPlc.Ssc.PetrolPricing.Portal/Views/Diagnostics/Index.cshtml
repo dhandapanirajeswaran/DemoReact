@@ -3,6 +3,15 @@
 @using JsPlc.Ssc.PetrolPricing.Portal.Helper.Extensions
 @{
     ViewBag.Title = "Petrol Pricing Diagnostics";
+
+    var totalDatabaseObjectCount = Model.DatabaseObjectSummary.DefaultConstraintCount
+        + Model.DatabaseObjectSummary.ForeignKeyCount
+        + Model.DatabaseObjectSummary.ScalarFunctionCount
+        + Model.DatabaseObjectSummary.StoredProcedureCount
+        + Model.DatabaseObjectSummary.PrimaryKeyCount
+        + Model.DatabaseObjectSummary.TableFunctionCount
+        + Model.DatabaseObjectSummary.UserTableCount
+        + Model.DatabaseObjectSummary.TotalIndexCount;
 }
 
 @section head {
@@ -17,20 +26,42 @@
             overflow: auto;
             max-height: 10em;
         }
-        .log-parameters-table th{
+
+        .log-parameters-table th {
             padding: 2px;
         }
+
         .auto-horz-scroll {
             width: 54em;
             overflow: auto;
         }
+
         .mono {
             font-family: monospace;
         }
+
+        .panel.collapsed .panel-body,
+        .panel.collapsed .panel-footer {
+            display: none;
+        }
+
+        [data-toggle-expand]:hover {
+            cursor: pointer;
+        }
+
+        [data-expand-all],
+        [data-collapse-all] {
+            cursor: pointer;
+            margin: 1px .5em;
+        }
+        big.badge {
+            font-size: 125%;
+        }
+
     </style>
 }
 
-<div class="jumbotron">
+<div class="jumbotron" id="DiagnosticsPanelList">
     <h1 class="site-hero-text"><i class="fa fa-bug"></i> Diagnostics</h1>
     <p class="lead">Petrol Pricing Diagnostics</p>
 
@@ -38,12 +69,18 @@
     {
         @Html.AntiForgeryToken()
 
-        <div class="panel panel-default">
+        <div class="expand-collapse-controls text-right">
+            <div class="btn-group" role="group">
+                <button type="button" class="btn btn-default" data-expand-all="#DiagnosticsPanelList"><i class="fa fa-caret-square-o-down"></i> Expand All</button>
+                <button type="button" class="btn btn-default" data-collapse-all="#DiagnosticsPanelList"><i class="fa fa-caret-square-o-down"></i> Collapse All</button>
+            </div>
+        </div>
+
+        <div class="panel panel-default collapsed" id="ControlPanel">
             <div class="panel-heading">
-                <h5>Control Panel</h5>
+                <h5 data-toggle-expand="#ControlPanel" data-infotip="Expand or Collapse panel">Control Panel <span class="pull-right"><i class="fa fa-2x fa-caret-square-o-down"></i></span></h5>
             </div>
             <div class="panel-body">
-
                 <fieldset>
                     <legend>Dapper</legend>
 
@@ -97,7 +134,7 @@
                             <div class="col-md-1">
                                 @if (Model.DiagnosticsSettings.CompetitorPrices_UseStoredProcedure)
                                 {
-                                <input type="checkbox" name="CompetitorPrices_UseStoredProcedure" id="CompetitorPrices_UseStoredProcedure" value="True" checked="checked" />
+                                    <input type="checkbox" name="CompetitorPrices_UseStoredProcedure" id="CompetitorPrices_UseStoredProcedure" value="True" checked="checked" />
                                 }
                                 else
                                 {
@@ -120,9 +157,9 @@
     }
 
     <!-- app settings -->
-    <div class="panel panel-default">
+    <div class="panel panel-default collapsed" id="AppSettingsPanel">
         <div class="panel-heading">
-            <h5>App Settings</h5>
+            <h5 data-toggle-expand="#AppSettingsPanel" data-infotip="Expand or Collapse panel">App Settings <big class="badge">@Model.AppSettings.Count()</big> <span class="pull-right"><i class="fa fa-2x fa-caret-square-o-down"></i></span></h5>
         </div>
         <div class="panel-body">
             <table class="table table-striped table-condensed">
@@ -147,10 +184,10 @@
         </div>
     </div>
 
-    <!-- app settings -->
-    <div class="panel panel-default">
+    <!-- core settings -->
+    <div class="panel panel-default collapsed" id="CoreSettingsPanel">
         <div class="panel-heading">
-            <h5>Core Settings</h5>
+            <h5 data-toggle-expand="#CoreSettingsPanel" data-infotip="Expand or Collapse panel">Core Settings <big class="badge">@(Model.CoreSettings.Count())</big> <span class="pull-right"><i class="fa fa-2x fa-caret-square-o-down"></i></span></h5>
         </div>
         <div class="panel-body">
             <table class="table table-striped table-condensed">
@@ -174,9 +211,9 @@
     </div>
 
     <!-- environment -->
-    <div class="panel panel-default">
+    <div class="panel panel-default collapsed" id="EnvironmentPanel">
         <div class="panel-heading">
-            <h5>Environment</h5>
+            <h5 data-toggle-expand="#EnvironmentPanel" data-infotip="Expand or Collapse panel">Environment <big class="badge">@(Model.Environment.Count())</big> <span class="pull-right"><i class="fa fa-2x fa-caret-square-o-down"></i></span></h5>
         </div>
         <div class="panel-body">
             <table class="table table-striped table-condensed">
@@ -201,9 +238,9 @@
 
 
     <!-- recent database object changes -->
-    <div class="panel panel-default">
+    <div class="panel panel-default collapsed" id="RecentDatabaseChangesPanel">
         <div class="panel-heading">
-            <h5>Recent Database Object Changes</h5>
+            <h5 data-toggle-expand="#RecentDatabaseChangesPanel" data-infotip="Expand or Collapse panel">Recent Database Object Changes <big class="badge">@(Model.RecentDatabaseObjectsChanges.Count())</big>  <span class="pull-right"><i class="fa fa-2x fa-caret-square-o-down"></i></span></h5>
         </div>
         <div class="panel-body">
             <table class="table table-striped table-condensed">
@@ -234,10 +271,10 @@
         </div>
     </div>
 
-    <!-- recent database object summary -->
-    <div class="panel panel-default">
+    <!-- database object summary -->
+    <div class="panel panel-default collapsed" id="DatabaseObjectSummaryPanel">
         <div class="panel-heading">
-            <h5>Database Object Summary</h5>
+            <h5 data-toggle-expand="#DatabaseObjectSummaryPanel" data-infotip="Expand or Collapse panel">Database Object Summary <big class="badge">@totalDatabaseObjectCount</big> <span class="pull-right"><i class="fa fa-2x fa-caret-square-o-down"></i></span></h5>
         </div>
         <div class="panel-body">
             <table class="table table-striped table-condensed">
@@ -245,10 +282,7 @@
                     <tr>
                         <th class="text-center">Default Contraints</th>
                         <th class="text-center">Foreign Keys</th>
-                        <th class="text-center">Scalar Functions</th>
-                        <th class="text-center">Stored Procedures</th>
                         <th class="text-center">Primary Keys</th>
-                        <th class="text-center">Table Funtions</th>
                         <th class="text-center">User Tables</th>
                     </tr>
                 </thead>
@@ -256,11 +290,32 @@
                     <tr>
                         <td class="text-center">@Model.DatabaseObjectSummary.DefaultConstraintCount</td>
                         <td class="text-center">@Model.DatabaseObjectSummary.ForeignKeyCount</td>
+                        <td class="text-center">@Model.DatabaseObjectSummary.PrimaryKeyCount</td>
+                        <td class="text-center">@Model.DatabaseObjectSummary.UserTableCount</td>
+                    </tr>
+
+                    <tr>
+                        <th class="text-center">Scalar Functions</th>
+                        <th class="text-center">Stored Procedures</th>
+                        <th class="text-center">Table Functions</th>
+                    </tr>
+
+                    <tr>
                         <td class="text-center">@Model.DatabaseObjectSummary.ScalarFunctionCount</td>
                         <td class="text-center">@Model.DatabaseObjectSummary.StoredProcedureCount</td>
-                        <td class="text-center">@Model.DatabaseObjectSummary.PrimaryKeyCount</td>
                         <td class="text-center">@Model.DatabaseObjectSummary.TableFunctionCount</td>
-                        <td class="text-center">@Model.DatabaseObjectSummary.UserTableCount</td>
+                    </tr>
+
+                    <tr>
+                        <th class="text-center">Indexes</th>
+                        <th class="text-center">Clustered</th>
+                        <th class="text-center">Non-Clustered</th>
+                    </tr>
+
+                    <tr>
+                        <td class="text-center">@Model.DatabaseObjectSummary.TotalIndexCount</td>
+                        <td class="text-center">@Model.DatabaseObjectSummary.ClusteredIndexCount</td>
+                        <td class="text-center">@Model.DatabaseObjectSummary.NonClusteredIndexCount</td>
                     </tr>
                 </tbody>
             </table>
@@ -269,9 +324,9 @@
 
 
     <!-- log entries -->
-    <div class="panel panel-default">
+    <div class="panel panel-default collapsed" id="LogEntriesPanel">
         <div class="panel-heading">
-            <h5>Log Entries (User Session Based)</h5>
+            <h5 data-toggle-expand="#LogEntriesPanel" data-infotip="Expand or Collapse panel">Log Entries (User Session Based) <big class="badge">@(Model.LogEntries.Count())</big> <span class="pull-right"><i class="fa fa-2x fa-caret-square-o-down"></i></span></h5>
         </div>
         <div class="panel-body">
             <table class="table table-striped table-condensed">
@@ -285,46 +340,46 @@
                 <tbody>
                     @foreach (var log in Model.LogEntries)
                     {
-                    <tr>
-                        <td><strong>@log.Created</strong></td>
-                        <td><strong>@log.Level</strong></td>
-                        <td><strong>@log.Message</strong></td>
-                    </tr>
+                        <tr>
+                            <td><strong>@log.Created</strong></td>
+                            <td><strong>@log.Level</strong></td>
+                            <td><strong>@log.Message</strong></td>
+                        </tr>
 
-                    if (log.Parameters.Count != 0)
-                    {
-                    <tr>
-                        <td class="text-right"><strong>Parameters:</strong></td>
-                        <td colspan="2">
-                            <table class="table log-parameters-table">
-                                <tbody>
-                                    @foreach (var kvp in log.Parameters)
-                                    {
-                                    <tr>
-                                        <th>@kvp.Key</th>
-                                        <td><div class="mono auto-horz-scroll">@kvp.Value</div></td>
-                                    </tr>
-                                    }
-                                </tbody>
-                            </table>
-                        </td>
-                    </tr>
-                    }
-
-                    if (log.Exception != "N/A")
-                    {
-                    <tr>
-                        <td colspan="3">
-                            <div class="code-listing mono">
-                                <strong>Exception:</strong>
-                                @log.Exception
-                            </div>
-                        </td>
-                    </tr>
+                        if (log.Parameters.Count != 0)
+                        {
+                            <tr>
+                                <td class="text-right"><strong>Parameters:</strong></td>
+                                <td colspan="2">
+                                    <table class="table log-parameters-table">
+                                        <tbody>
+                                            @foreach (var kvp in log.Parameters)
+                                            {
+                                                <tr>
+                                                    <th>@kvp.Key</th>
+                                                    <td><div class="mono auto-horz-scroll">@kvp.Value</div></td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </tr>
                         }
-                    <tr class="divider-row">
-                        <td colspan="3"></td>
-                    </tr>
+
+                        if (log.Exception != "N/A")
+                        {
+                            <tr>
+                                <td colspan="3">
+                                    <div class="code-listing mono">
+                                        <strong>Exception:</strong>
+                                        @log.Exception
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                        <tr class="divider-row">
+                            <td colspan="3"></td>
+                        </tr>
                     }
                 </tbody>
             </table>
@@ -343,6 +398,6 @@
 
 @section scripts {
     <script>
-        require(["diagnostics"], function () { })
+        require(["Diagnostics", "infotips"], function () { })
     </script>
 }
