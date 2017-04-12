@@ -185,7 +185,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
         public IEnumerable<NearbyGrocerPriceSiteStatus> GetNearbyGrocerPriceStatusForSites(DateTime forDate, string siteIds, int driveTime)
         {
-            const string sproc = "spNearbyByGrocerPriceStatusForSites";
+            const string sproc = "spNearbyGrocerPriceStatusForSites";
 
             DiagnosticLog.StartDebug("sproc: " + sproc);
 

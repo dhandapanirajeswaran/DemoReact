@@ -166,8 +166,7 @@ BEGIN
 		tp.Markup [Markup],
 		tp.CompetitorName [CompetitorName],
 		tp.IsTrailPrice [IsTrailPrice],
-		tp.CompetitorPriceOffset [CompetitorPriceOffset],
-		dbo.fn_DoesNearbyGrocerPriceExistForSite(@forDate, tp.SiteId, @DriveTime) [HasNearbyGrocerPrice]
+		tp.CompetitorPriceOffset [CompetitorPriceOffset]
 	FROM 
 		TodayPriceCTE tp
 

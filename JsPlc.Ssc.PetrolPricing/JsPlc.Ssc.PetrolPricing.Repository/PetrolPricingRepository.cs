@@ -548,8 +548,8 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
                 //_logger.Debug("Started: GetNearbyGrocerPriceStatus");
 
-                //const int driveTime = 5;
-                //GetNearbyGrocerPriceStatus(forDate, dbList, driveTime);
+                const int driveTime = 5;
+                GetNearbyGrocerPriceStatus(forDate, dbList, driveTime);
 
                 //_logger.Debug("Finished: GetNearbyGrocerPriceStatus");
 
@@ -592,7 +592,11 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             var statuses = _context.GetNearbyGrocerPriceStatusForSites(forDate, siteIds, driveTime);
             foreach(var status in statuses)
             {
-                sites.First(x => x.SiteId == status.SiteId).HasNearbyGrocerPrice = status.HasNearbyGrocerPrice;
+                var site = sites.First(x => x.SiteId == status.SiteId);
+
+                site.HasNearbyCompetitorDieselPrice = status.HasNearbyCompetitorDieselPrice;
+                site.HasNearbyCompetitorSuperUnleadedPrice = status.HasNearbyCompetitorSuperUnleadedPrice;
+                site.HasNearbyCompetitorUnleadedPrice = status.HasNearbyCompetitorUnleadedPrice;
             }
         }
 
@@ -715,6 +719,10 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                 var superUnleaded = fuelPricesForSite.First(x => x.FuelTypeId == (int)FuelTypeItem.Super_Unleaded);
                 var unleaded = fuelPricesForSite.First(x => x.FuelTypeId == (int)FuelTypeItem.Unleaded);
                 var diesel = fuelPricesForSite.First(x => x.FuelTypeId == (int)FuelTypeItem.Diesel);
+
+                superUnleaded.HasNearbyCompetitorPrice = site.HasNearbyCompetitorUnleadedPrice;
+                unleaded.HasNearbyCompetitorPrice = site.HasNearbyCompetitorUnleadedPrice;
+                diesel.HasNearbyCompetitorPrice = site.HasNearbyCompetitorDieselPrice;
 
                 site.FuelPrices.Add(superUnleaded);
                 site.FuelPrices.Add(unleaded);

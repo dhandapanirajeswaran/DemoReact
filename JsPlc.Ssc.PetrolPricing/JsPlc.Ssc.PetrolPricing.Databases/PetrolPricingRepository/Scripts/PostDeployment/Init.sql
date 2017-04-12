@@ -470,3 +470,27 @@ WHERE
 		)
 	);
 
+--
+-- Set up the Grocers
+--
+
+
+MERGE dbo.Grocers AS target
+USING (
+	SELECT 'SAINSBURYS' [BrandName], 1 [IsSainsburys]
+	UNION ALL
+	SELECT 'ASDA', 0
+	UNION ALL
+	SELECT 'TESCO', 0
+	UNION ALL
+	SELECT 'MORRISONS', 0
+) AS source
+ON (source.BrandName = target.BrandName)
+WHEN NOT MATCHED
+THEN INSERT (BrandName, IsSainsburys)
+	VALUES (source.BrandName, source.IsSainsburys)
+WHEN MATCHED
+THEN UPDATE SET
+	BrandName = source.BrandName, 
+	IsSainsburys = source.IsSainsburys;
+

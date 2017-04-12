@@ -39,7 +39,9 @@ namespace JsPlc.Ssc.PetrolPricing.Models.ViewModels
         }
         public string Notes { get; set; }
 
-        public bool HasNearbyGrocerPrice { get; set; }
+        public bool HasNearbyCompetitorDieselPrice { get; set; }
+        public bool HasNearbyCompetitorUnleadedPrice { get; set; }
+        public bool HasNearbyCompetitorSuperUnleadedPrice { get; set; }
     }
 
     // each fuel's price
@@ -73,5 +75,7 @@ namespace JsPlc.Ssc.PetrolPricing.Models.ViewModels
         public double CompetitorPriceOffset { get; set; }
 
         public bool IsBasedOnCompetitor { get; set; }
+
+        public bool HasNearbyCompetitorPrice { get; set; }
     }
 }

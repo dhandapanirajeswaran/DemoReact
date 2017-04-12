@@ -55,7 +55,9 @@ namespace JsPlc.Ssc.PetrolPricing.Service.DataMapping
                 .ForMember(co => co.CompetitorPriceOffset, i => i.MapFrom(p => p.CompetitorPriceOffset))
                 .ForMember(co => co.hasNotes, mo => mo.Ignore())
                 .ForMember(co => co.Notes, i => i.MapFrom(p => p.Notes))
-                .ForMember(co => co.HasNearbyGrocerPrice, i=> i.MapFrom(p => p.HasNearbyGrocerPrice));
+                .ForMember(co => co.HasNearbyCompetitorDieselPrice, i=> i.MapFrom(p => p.HasNearbyCompetitorDieselPrice))
+                .ForMember(co => co.HasNearbyCompetitorSuperUnleadedPrice, i=> i.MapFrom(p => p.HasNearbyCompetitorSuperUnleadedPrice))
+                .ForMember(co => co.HasNearbyCompetitorUnleadedPrice, i=> i.MapFrom(p => p.HasNearbyCompetitorUnleadedPrice));
         }
     }
 }

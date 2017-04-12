@@ -9,6 +9,8 @@ namespace JsPlc.Ssc.PetrolPricing.Models
     public class NearbyGrocerPriceSiteStatus
     {
         public int SiteId { get; set; }
-        public bool HasNearbyGrocerPrice { get; set; }
+        public bool HasNearbyCompetitorDieselPrice { get; set; }
+        public bool HasNearbyCompetitorUnleadedPrice { get; set; }
+        public bool HasNearbyCompetitorSuperUnleadedPrice { get; set; }
     }
 }
