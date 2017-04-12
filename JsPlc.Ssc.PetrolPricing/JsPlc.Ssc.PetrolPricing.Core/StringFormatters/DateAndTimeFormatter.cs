@@ -22,16 +22,28 @@ namespace JsPlc.Ssc.PetrolPricing.Core.StringFormatters
         public static string FormatFriendlyTimeAgo(TimeSpan timeAgo)
         {
             var totalSeconds = timeAgo.TotalSeconds;
+            int wholeYearsAgo = (int)timeAgo.TotalDays / 365;
 
             if (totalSeconds < 5)
                 return "a few seconds";
             if (totalSeconds < 60)
                 return "less than 1 minute";
             if (totalSeconds == 60)
-                return "1 minute";
-            if (totalSeconds % 60 == 0)
-                return String.Format("{0} minutes ago", timeAgo.TotalMinutes);
-            return String.Format("{0} and {1} seconds", timeAgo.TotalMinutes, timeAgo.Seconds);
+                return "1 minute ago";
+
+            if (timeAgo.TotalHours < 1)
+            {
+                if (totalSeconds % 60 == 0)
+                    return String.Format("{0} minutes ago", (int)timeAgo.TotalMinutes);
+                else
+                    return String.Format("{0} and {1} seconds", timeAgo.TotalMinutes, timeAgo.Seconds);
+            }
+
+            if (timeAgo.TotalHours < 24)
+                return String.Format("{0} hours ago", (int)timeAgo.TotalHours );
+            if (wholeYearsAgo < 1)
+                return String.Format("{0} days ago", (int)timeAgo.TotalDays);
+            return String.Format("{0} years and {1} days ago", wholeYearsAgo, timeAgo.TotalDays % 365);
         }
     }
 }

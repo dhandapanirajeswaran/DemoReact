@@ -14,6 +14,11 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Helper.Extensions
             return DateAndTimeFormatter.FormatFriendlyDateTime(datetime);
         }
 
+        public static string FormatFriendlyTimeAgo(this HtmlHelper helper, DateTime datetime)
+        {
+            return FormatFriendlyTimeAgo(helper, DateTime.Now.Subtract(datetime));
+        }
+
         public static string FormatFriendlyTimeAgo(this HtmlHelper helper, TimeSpan timeAgo)
         {
             return DateAndTimeFormatter.FormatFriendlyTimeAgo(timeAgo);

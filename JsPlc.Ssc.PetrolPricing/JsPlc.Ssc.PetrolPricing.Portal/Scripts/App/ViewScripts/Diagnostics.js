@@ -25,8 +25,7 @@
             $('[data-expand-all').on('click', function () {
                 var btn = $(this),
                     container = $(btn.data('expand-all'));
-                debugger;
-
+                
                 container.find('.collapsed [data-toggle-expand]').each(function () {
                     $(this).trigger('click');
                 });
@@ -35,7 +34,6 @@
             $('[data-collapse-all').on('click', function () {
                 var btn = $(this),
                     container = $(btn.data('collapse-all'));
-                debugger;
 
                 container.find('.expanded [data-toggle-expand]').each(function () {
                     $(this).trigger('click');

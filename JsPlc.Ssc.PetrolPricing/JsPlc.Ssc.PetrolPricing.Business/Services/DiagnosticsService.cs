@@ -7,6 +7,7 @@ using JsPlc.Ssc.PetrolPricing.Models.ViewModels;
 using JsPlc.Ssc.PetrolPricing.Repository;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace JsPlc.Ssc.PetrolPricing.Business.Services
@@ -36,6 +37,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business.Services
 
         public DiagnosticsViewModel GetDiagnostics(int daysAgo)
         {
+
             var model = new DiagnosticsViewModel()
             {
                 DiagnosticsSettings = new DiagnosticsSettingsViewModel()
@@ -77,6 +79,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business.Services
                 {"appSetting.EmailFrom", _appSettings.EmailFrom },
                 {"appSetting.FixedEmailTo", _appSettings.FixedEmailTo },
                 {"appSetting.SuperUnleadedMarkup", _appSettings.SuperUnleadedMarkup },
+                {"appSetting.UploadPath", _appSettings.UploadPath }
             };
 
             var coreSettings = new Dictionary<string, object>()
@@ -98,6 +101,8 @@ namespace JsPlc.Ssc.PetrolPricing.Business.Services
 
             model.RecentDatabaseObjectsChanges = _db.GetDiagnosticsRecentDatabaseObjectChanges(daysAgo).ToList();
             model.DatabaseObjectSummary = _db.GetDiagnosticsDatabaseObjectSummary();
+
+            model.FileUploadSummary = GetFileUploadsSummary(_appSettings.UploadPath);
 
             return model;
         }
@@ -125,6 +130,50 @@ namespace JsPlc.Ssc.PetrolPricing.Business.Services
                 sorted.Add(kvp.Key, kvp.Value == null ? "NULL" : kvp.Value.ToString());
 
             return sorted;
+        }
+
+        private DiagnosticsFileUploadSummaryViewModel GetFileUploadsSummary(string uploadPath)
+        {
+            var model = new DiagnosticsFileUploadSummaryViewModel();
+
+            try
+            {
+                var now = DateTime.Now.Date;
+                var directory = new DirectoryInfo(uploadPath);
+                var files = directory.GetFiles().ToList();
+                foreach(var file in files)
+                {
+                    var lastWriteTime = file.LastWriteTime;
+
+                    model.TotalFileCount++;
+                    model.TotalFileSize += file.Length;
+
+                    if (!model.OldestDateTime.HasValue || lastWriteTime < model.OldestDateTime)
+                        model.OldestDateTime = lastWriteTime;
+                    if (!model.NewestDateTime.HasValue || lastWriteTime > model.NewestDateTime)
+                        model.NewestDateTime = lastWriteTime;
+
+                    var daysAgo = now.Subtract(lastWriteTime.Date).TotalDays;
+
+                    if (daysAgo < 7)
+                        model.FilesInLast7Days++;
+                    else if (daysAgo < 30)
+                        model.FilesOlderThan7Days++;
+                    else if (daysAgo < 60)
+                        model.FilesOlderThan30Days++;
+                    else if (daysAgo < 90)
+                        model.FilesOlderThan60Days++;
+                    else if (daysAgo < 365)
+                        model.FilesOlderThan90Days++;
+                    else
+                        model.FilesOlderThan1Year++;
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+
+            return model;
         }
     }
 }
