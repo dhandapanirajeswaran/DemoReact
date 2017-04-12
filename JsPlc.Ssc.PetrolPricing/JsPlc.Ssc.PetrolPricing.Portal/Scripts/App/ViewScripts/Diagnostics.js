@@ -10,7 +10,7 @@
                 var btn = $(this),
                     target = $(btn.data('toggle-expand')),
                     isCollapsed = target.hasClass('collapsed'),
-                    icon = btn.find('i.fa:first');
+                    icon = btn.find('span i.fa:first');
 
                 if (isCollapsed) {
                     target.removeClass('collapsed').addClass('expanded');

@@ -12,7 +12,7 @@ namespace JsPlc.Ssc.PetrolPricing.Core.Settings
         {
             public static class Dapper
             {
-                public static bool LogDapperCalls = true;
+                public static bool LogDapperCalls = false;
             }
 
             public static class SitePrices

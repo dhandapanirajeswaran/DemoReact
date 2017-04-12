@@ -30,7 +30,10 @@ namespace JsPlc.Ssc.PetrolPricing.Core.Diagnostics
                 Parameters = CloneParameters(parameters)
             };
 
-            Entries = Entries.Take(MaxLogEntries).ToList();
+            if (Entries.Count() > MaxLogEntries) {
+                var deleteCount = Entries.Count() - MaxLogEntries;
+                Entries = Entries.Skip(deleteCount).Take(MaxLogEntries).ToList();
+            }
             Entries.Add(entry);
         }
 
