@@ -13,6 +13,7 @@ using Dapper;
 using JsPlc.Ssc.PetrolPricing.Core.Diagnostics;
 using JsPlc.Ssc.PetrolPricing.Core.Settings;
 using JsPlc.Ssc.PetrolPricing.Models.ViewModels.Diagnostics;
+using JsPlc.Ssc.PetrolPricing.Models.Enums;
 
 namespace JsPlc.Ssc.PetrolPricing.Repository
 {
@@ -221,5 +222,45 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             var model = DapperHelper.QueryFirst<DiagnosticsDatabaseObjectSummary>(this, sproc, null, disableDapperLog: true);
             return model;
         }
+
+        public void CreateDefaultUserPermissionsForNewUser(int ppUserId, int requestingPPUserId)
+        {
+            if (ppUserId == 0)
+                throw new ArgumentException("PPUserId cannot be zero");
+
+            const string sprocName = "spUpsertUserPermissions";
+
+            var parameters = new
+            {
+                @PPUserId = ppUserId,
+                @IsAdmin = 0,
+                @FileUploadsUserPermissions = FileUploadsUserPermissions.NewUserDefaults,
+                @SitePricingUserPermissions = SitesPricingUserPermissions.NewUserDefaults,
+                @SitesMaintenanceUserPermissions = SitesMaintenanceUserPermissions.NewUserDefaults,
+                @ReportsUserPermissions = ReportsUserPermissions.NewUserDefaults,
+                @UsersManagementUserPermissions = UsersManagementUserPermissions.NewUserDefaults,
+                @DiagnosticsUserPermissions = DiagnosticsUserPermissions.NewUserDefaults,
+                @RequestingPPUserId = requestingPPUserId
+            };
+
+            DapperHelper.Execute(this, sprocName, parameters);
+        }
+
+        public void DeleteUserPermissions(int ppUserId)
+        {
+            if (ppUserId == 0)
+                throw new ArgumentException("PPUserId cannot be zero");
+
+            const string sprocName = "spDeleteUserPermissions";
+
+            var parameters = new
+            {
+                @PPUserId = ppUserId
+            };
+
+            DapperHelper.Execute(this, sprocName, parameters);
+        }
+
+
     }
 }

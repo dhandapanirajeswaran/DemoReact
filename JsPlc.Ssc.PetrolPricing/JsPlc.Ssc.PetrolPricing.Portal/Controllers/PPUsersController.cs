@@ -18,12 +18,13 @@ using JsPlc.Ssc.PetrolPricing.Portal.Helper.Extensions;
 using Microsoft.Ajax.Utilities;
 using Newtonsoft.Json;
 using WebGrease.Css.Extensions;
+using JsPlc.Ssc.PetrolPricing.Portal.Controllers.BaseClasses;
 
 namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 {
    
     [System.Web.Mvc.Authorize]
-    public class PPUsersController : Controller
+    public class PPUsersController : BaseController
     {
         private readonly ServiceFacade _serviceFacade ;
         private readonly ILogger _logger;
@@ -39,6 +40,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             try
             {
                 var model = _serviceFacade.GetPPUsers();
+                model.CurrentUserId = base.GetUserAccessModel().PPUserId;
                 // Filtering based on search value     
                 return View(model);
             }

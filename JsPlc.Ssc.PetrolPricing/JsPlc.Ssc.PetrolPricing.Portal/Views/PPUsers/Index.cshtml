@@ -1,4 +1,5 @@
 ﻿@model JsPlc.Ssc.PetrolPricing.Models.PPUserList
+@using JsPlc.Ssc.PetrolPricing.Portal.Helper.Extensions
 @{
     ViewBag.Title = "Users Information";
 }
@@ -10,6 +11,12 @@
     .table-striped tr.selected:nth-child(odd) {
         background-color: #eeb;
     }
+    .table-striped .inactive-user {
+        background-color: #f2dede;
+        color: #999;
+        font-style: italic;
+    }
+
 </style>
 
 <div id="DeleteUserModal" class="modal fade" role="dialog" style="display: none;">
@@ -24,10 +31,10 @@
                 <p><strong id="deleteUserEmail"></strong></p>
                 <div class="row">
                     <div class="col-md-2 col-md-offset-3">
-                        <button type="button" class="btn btn-success btn-block" data-click="confirmDeleteUser"><i class="fa fa-check"></i> Yes</button>
+                        <button type="button" class="btn btn-success btn-block" data-click="confirmDeleteUser" data-infotip="Delete this user"><i class="fa fa-check"></i> Yes</button>
                     </div>
                     <div class="col-md-2 col-md-offset-2">
-                        <button type="button" class="btn btn-danger btn-block" data-dismiss="modal"><i class="fa fa-times"></i> No</button>
+                        <button type="button" class="btn btn-danger btn-block" data-dismiss="modal" data-infotip="Do [b]Not[/b] delete this User"><i class="fa fa-times"></i> No</button>
                     </div>
                 </div>
             </div>
@@ -52,10 +59,10 @@
                             </h4>
                         </div>
                         <div class="col-md-2 text-center query-builder__filterbuttons">
-                            <button type="button" class="btn btn-default" data-click="showData" title="Refresh page">
+                            <button type="button" class="btn btn-default" data-click="showData" data-infotip="Refresh page">
                                 <span class="glyphicon glyphicon-repeat"></span>
                             </button>
-                            <button type="button" class="btn btn-success" data-click="showEditableRow" title="Add a new User">
+                            <button type="button" class="btn btn-success" data-click="showEditableRow" data-infotip="Add a new User">
                                 <span class="glyphicon glyphicon-plus"></span>
                             </button>
                         </div>
@@ -90,10 +97,10 @@
                                     <input class="form-control" id="Email" placeholder="me@sainsburys.co.uk" type="email" required />
                                 </td>
                                 <td>
-                                    <button type="button" class="btn btn-danger" data-click="showData">
+                                    <button type="button" class="btn btn-danger" data-click="showData" data-infotip="Cancel">
                                         <span class="glyphicon glyphicon-remove"></span>
                                     </button>
-                                    <button id="btnAdd" type="button" class="btn btn-success" data-click="addUser">
+                                    <button id="btnAdd" type="button" class="btn btn-success" data-click="addUser" data-infotip="Add this user">
                                         <span class="glyphicon glyphicon-ok"></span>
                                     </button>
                                 </td>
@@ -108,6 +115,9 @@
                                 <th>First Name</th>
                                 <th>Last Name</th>
                                 <th>Email</th>
+                                <th class="text-center">Created On</th>
+                                <th class="text-center">Last Used On</th>
+                                <th class="text-center">Is Active</th>
                                 <th></th>
                             </tr>
                         </thead>
@@ -117,24 +127,48 @@
                                 foreach (var user in Model.Users)
                                 {
                                     var isSelected = Model.SelectedUserId == user.Id;
-                                    var rowClass = isSelected ? "selected" : "";
-                                    <tr class="@rowClass">
+                                    var isActive = user.IsActive;
+                                    var rowClass = (isSelected ? "selected" : "") + (isActive ? " active-user" : " inactive-user");
+                                    <tr class="@rowClass.Trim()">
                                         <td>
                                             <span>@user.FirstName</span>
 
                                         </td>
                                         <td>
                                             <span>@user.LastName</span>
-
                                         </td>
                                         <td>
                                             <span>@user.Email</span>
-
+                                        </td>
+                                        <td class="text-center">
+                                            <span>@user.CreatedOn</span><br />
+                                            @Html.FormatFriendlyTimeAgo(user.CreatedOn)
+                                        </td>
+                                        <td class="text-center">
+                                            <span>@user.LastUsedOn</span><br />
+                                            @Html.FormatFriendlyTimeAgo(user.LastUsedOn)
+                                        </td>
+                                        <td class="text-center">
+                                            @if (user.IsActive)
+                                            {
+                                                <span class="text-success" data-infotip="User [b]@(user.Email)[/b] is Active"><i class="fa fa-check"></i> Yes</span>
+                                            }
+                                            else
+                                            {
+                                            <span class="text-danger" data-infotip="User [b]@(user.Email)[/b] is [b]Not active[/b]"><i class="fa fa-times"></i> No</span>
+                                            }
                                         </td>
                                         <td>
-                                            <button type="button" class="btn btn-danger btn-sm" data-click="deleteUser" data-user-id="@user.Id" data-email="@user.Email" title="Delete user">
+                                            @if (user.Id == Model.CurrentUserId)
+                                            {
+
+                                            }
+                                            else
+                                            {
+                                            <button type="button" class="btn btn-danger btn-sm" data-click="deleteUser" data-user-id="@user.Id" data-email="@user.Email" data-infotip="Delete user">
                                                 <span class="fa fa-times"></span>
                                             </button>
+                                            }
                                         </td>
                                     </tr>
                                 }
@@ -148,8 +182,8 @@
 </div> 
 
 <script type="text/javascript">
-    require(['jquery', 'common', 'notify', 'busyloader'],
-        function ($, common, notify, busyloader) {
+    require(['jquery', 'common', 'notify', 'busyloader', 'infotips'],
+        function ($, common, notify, busyloader, infotips) {
 
             var selectedUser = {
                 id: 0,
@@ -202,7 +236,6 @@
 
             function confimDeleteUserClick() {
                 if (selectedUser.id > 0) {
-                    debugger;
                     $('#DeleteUserModal').modal('hide');
                     $('#ErrorMessage').hide();
                     busyloader.show({

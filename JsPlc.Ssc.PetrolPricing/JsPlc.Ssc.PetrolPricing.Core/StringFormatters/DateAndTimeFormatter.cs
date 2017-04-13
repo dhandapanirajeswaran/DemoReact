@@ -36,7 +36,7 @@ namespace JsPlc.Ssc.PetrolPricing.Core.StringFormatters
                 if (totalSeconds % 60 == 0)
                     return String.Format("{0} minutes ago", (int)timeAgo.TotalMinutes);
                 else
-                    return String.Format("{0} and {1} seconds", timeAgo.TotalMinutes, timeAgo.Seconds);
+                    return String.Format("{0} minutes {1} seconds ago", (int)timeAgo.TotalMinutes, timeAgo.Seconds);
             }
 
             if (timeAgo.TotalHours < 24)

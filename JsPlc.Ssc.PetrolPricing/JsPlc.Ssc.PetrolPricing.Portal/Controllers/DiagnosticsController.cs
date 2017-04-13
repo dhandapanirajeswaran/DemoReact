@@ -26,6 +26,8 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
         [HttpGet]
         public ActionResult Index()
         {
+            if (!base.IsUserAuthenticated)
+                return base.PleaseSignIn();
             if (!CanUserViewDiagnostics())
                 return AccessDenied();
             var daysAgo = 14;
@@ -36,6 +38,8 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
         [HttpPost]
         public ActionResult Index(DiagnosticsSettingsViewModel model)
         {
+            if (!base.IsUserAuthenticated)
+                return base.PleaseSignIn();
             if (!CanUserViewDiagnostics())
                 return AccessDenied();
             _serviceFacade.UpdateDiagnosticsSettings(model);
@@ -45,6 +49,8 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
         [HttpPost]
         public ActionResult ClearLog()
         {
+            if (!base.IsUserAuthenticated)
+                return base.PleaseSignIn();
             if (!CanUserViewDiagnostics())
                 return AccessDenied();
             _serviceFacade.ClearDiagnosticsLog();

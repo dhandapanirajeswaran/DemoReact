@@ -1,5 +1,6 @@
 ﻿using JsPlc.Ssc.PetrolPricing.Core;
 using JsPlc.Ssc.PetrolPricing.Core.Interfaces;
+using JsPlc.Ssc.PetrolPricing.Portal.Controllers.BaseClasses;
 using JsPlc.Ssc.PetrolPricing.Portal.Facade;
 using System;
 using System.Collections.Generic;
@@ -11,7 +12,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 {
   
     [Authorize]
-    public class HomeController : Controller
+    public class HomeController : BaseController
     {
         private readonly ServiceFacade _serviceFacade;
         private readonly ILogger _logger;
@@ -25,6 +26,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
         public ActionResult Index()
         {
             var model = _serviceFacade.GetRecentFileUploadSummary();
+            model.UserAccess = base.GetUserAccessModel();
             return View(model);
         }
 

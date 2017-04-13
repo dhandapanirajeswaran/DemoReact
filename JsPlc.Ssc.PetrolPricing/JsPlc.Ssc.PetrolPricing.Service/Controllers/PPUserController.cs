@@ -47,7 +47,10 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
             {
                 Email = email,
                 FirstName = firstname,
-                LastName = lastname
+                LastName = lastname,
+                IsActive = true,
+                CreatedOn = DateTime.Now,
+                UpdatedOn = DateTime.Now
             };
             
             return _ppUserService.AddUser(user); ;

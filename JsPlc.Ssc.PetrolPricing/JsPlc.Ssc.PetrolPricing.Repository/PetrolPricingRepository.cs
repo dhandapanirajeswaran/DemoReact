@@ -138,6 +138,8 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
                     selectedUserId = result.Id;
                     success = String.Format("Added User with email \"{0}\"", ppuser.Email);
+
+                    _context.CreateDefaultUserPermissionsForNewUser(selectedUserId, 0);
                 }
                 catch (Exception ex)
                 {
@@ -164,6 +166,8 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                 {
                     _context.PPUsers.Remove(ppUser);
                     _context.SaveChanges();
+
+                    _context.DeleteUserPermissions(ppUser.Id);
 
                     success = String.Format("Deleted User with email \"{0}\"", ppUser.Email);
                 }
@@ -3373,6 +3377,7 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
                 return new UserAccessViewModel()
                 {
                     IsUserAuthenticated = true,
+                    PPUserId = ppUser.Id,
                     UserName = ppUser.Email,
                     UserFileUploadsAccess = new UserFileUploadsAccess
                     {
@@ -3564,6 +3569,7 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
             }
             return distinctBrands;
         }
+
 
         #endregion private methods
 

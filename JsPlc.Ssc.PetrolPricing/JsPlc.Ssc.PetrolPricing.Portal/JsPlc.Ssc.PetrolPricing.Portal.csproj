@@ -500,6 +500,7 @@
     <Content Include="Views\Diagnostics\Index.cshtml" />
     <Content Include="Views\Shared\Layout\_TopNavigation.cshtml" />
     <Content Include="Views\Shared\AccessDenied.cshtml" />
+    <Content Include="Views\Shared\PleaseSignIn.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\uploads\" />

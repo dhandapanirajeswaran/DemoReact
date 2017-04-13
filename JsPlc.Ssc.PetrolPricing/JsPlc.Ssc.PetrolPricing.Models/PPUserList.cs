@@ -12,5 +12,6 @@ namespace JsPlc.Ssc.PetrolPricing.Models
         public int SelectedUserId = 0;
         public string ErrorMessage = "";
         public string SuccessMessage = "";
+        public int CurrentUserId = 0;
     }
 }

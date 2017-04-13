@@ -42,6 +42,10 @@
     </div>
 
     <div class="col-md-7" style="border-left: 1px dashed #ccc;">
+
+
+        @if (Model.UserAccess.UserFileUploadsAccess.CanView)
+        {
         <h2>Recent File Uploads</h2>
         <table class="table table-striped recent-file-uploads" style="margin-bottom: none;">
             <thead>
@@ -71,7 +75,8 @@
                             {
                                 <span>&mdash;</span>
 
-                            } else if (row.ImportStatus != null && statusMarkup.ContainsKey(row.ImportStatus))
+                            }
+                            else if (row.ImportStatus != null && statusMarkup.ContainsKey(row.ImportStatus))
                             {
                                 @Html.Raw(statusMarkup[row.ImportStatus])
                             }
@@ -108,7 +113,8 @@
                             @if (hasFileUpload)
                             {
                                 @row.UploadedBy
-                            } else
+                            }
+                            else
                             {
                                 <span>&mdash;</span>
                             }
@@ -138,7 +144,12 @@
                 }
             </tbody>
         </table>
-        <a href="@Url.Action("Index","File")" class="btn btn-primary pull-right" data-infotip="Go to the [b]File Uploads[/b] section"><i class="fa fa-upload"></i> Uploads</a>
+        <a href="@Url.Action("Index", "File")" class="btn btn-primary pull-right" data-infotip="Go to the [b]File Uploads[/b] section"><i class="fa fa-upload"></i> Uploads</a>
+        } else {
+            <h2>You are currently not signed</h2>
+            <p>To use the Petrol Pricing application you will need to sign in.</p>
+            <a class="btn btn-primary pull-right" href="@Url.Action("Index", "Home")">Sign in</a>
+        }
     </div>
 </div>
 
