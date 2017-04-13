@@ -34,7 +34,7 @@
             <div class="row pricing-filters-row" onclick="IsSitePriceFormClicked=1;" style="width:1280px;">
                 <!-- Date Picker -->
                 <div class="col-md-1">
-                    <label for="viewingDate">Date:</label> <button type="button" class="btn btn-xs btn-danger" data-bind="visible: $root.ViewingHistorical, click: $root.resetViewingDate" style="display: none;" data-infotip="View Today's Prices'"><i class="fa fa-power-off"></i> Reset</button>
+                    <label for="viewingDate">Date:</label> <button type="button" class="btn btn-xs btn-danger" data-bind="visible: $root.ViewingHistorical, click: $root.resetViewingDate" style="display: none;" data-infotip="View Today's Prices"><i class="fa fa-power-off"></i> Reset</button>
                     <input type="text" id="viewingDate" class="datepicker form-control" onmousedown="IsSitePriceFormClicked=1;" onclick="IsSitePriceFormClicked=1;"
                            style="width: 85px" name="viewingDate" maxlength="12"
                            data-bind="value: $root.InitDate" data-infotip="Enter a [b]Date[/b] to view" />
@@ -228,15 +228,15 @@
                         <strong>Price Highlighting:</strong>
                     </div>
 
-                    <div class="col-md-6">
-                        <button type="button" class="btn btn-sm" data-bind="click: toggleHighlightTrialPrices, css: {'btn-primary': $root.highlightTrialPrices()}" data-infotip="Toggle the [b]Trial Prices[/b] Highlighting"><i class="fa fa-flask "></i> Trial Prices</button>
-                        <button type="button" class="btn btn-sm" data-bind="click: toggleHighlightMatchCompetitors, css: {'btn-primary': $root.highlightMatchCompetitors()}" data-infotip="Toggle the [b]Match Competitors[/b] Highlighting"><i class="fa fa-clone"></i> Match Competitors</button>
-                        <button type="button" class="btn btn-sm" data-bind="click: toggleHighlightNoNearbyGrocerPrices, css: {'btn-primary': $root.highlightNoNearbyGrocerPrices() }" data-infotip="Toggle missing [b]Grocer Prices[/b] highlighting"><i class="fa fa-question"></i> No Grocer Prices</button>
-                        <button type="button" class="btn btn-sm" data-bind="click: toggleHighlightHasNearbyGrocerPrices, css: {'btn-primary': $root.highlightHasNearbyGrocerPrices() }" data-infotip="Toggle available [b]Grocer Prices[/b] highlighting"><i class="fa fa-clone"></i> Has Grocer Prices</button>
+                    <div class="col-md-7" data-bind="visible: !$root.busyLoadingData()" style="display: none;">
+                        <button type="button" class="btn btn-sm" data-bind="click: toggleHighlightTrialPrices, css: {'btn-primary': $root.highlightTrialPrices()}" data-infotip="Toggle the [b]Trial Prices[/b] Highlighting"><i class="fa fa-flask "></i> Trial Prices <span class="badge" data-bind="text: $root.TrialPricesCount"></span></button>
+                        <button type="button" class="btn btn-sm" data-bind="click: toggleHighlightMatchCompetitors, css: {'btn-primary': $root.highlightMatchCompetitors()}" data-infotip="Toggle the [b]Match Competitors[/b] Highlighting"><i class="fa fa-clone"></i> Match Competitors <span class="badge" data-bind="text: $root.MatchCompetitorsCount"></span></button>
+                        <button type="button" class="btn btn-sm" data-bind="click: toggleHighlightNoNearbyGrocerPrices, css: {'btn-primary': $root.highlightNoNearbyGrocerPrices() }" data-infotip="Toggle [b]No Grocer Prices[/b] highlighting"><i class="fa fa-question"></i> No Grocer Prices <span class="badge" data-bind="text: $root.NoGrocerPricesCount"></span></button>
+                        <button type="button" class="btn btn-sm" data-bind="click: toggleHighlightHasNearbyGrocerPrices, css: {'btn-primary': $root.highlightHasNearbyGrocerPrices() }" data-infotip="Toggle [b]Has Grocer Prices[/b] highlighting"><i class="fa fa-clone"></i> Has Grocer Prices <span class="badge" data-bind="text: $root.HasGrocerPricesCount"></span></button>
                         <button type="button" class="btn btn-sm btn-danger" data-bind="visible: $root.shouldShouldHighlightReset(), click: resetPriceHighlighting" data-infotip="Hide all the Highlighting"><i class="fa fa-power-off "></i> Reset</button>
                     </div>
-
-                    <div class="col-md-1">
+                    <div class="col-md-7 text-center" data-bind="visible: $root.busyLoadingData()">
+                        Loading prices...
                     </div>
 
                     <div class="col-md-3 col">
