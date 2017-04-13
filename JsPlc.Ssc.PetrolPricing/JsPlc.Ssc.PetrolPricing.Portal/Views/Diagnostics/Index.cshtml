@@ -1,4 +1,4 @@
-﻿@model JsPlc.Ssc.PetrolPricing.Models.ViewModels.DiagnosticsViewModel
+﻿@model JsPlc.Ssc.PetrolPricing.Models.ViewModels.Diagnostics.DiagnosticsViewModel
 @using JsPlc.Ssc.PetrolPricing.Core
 @using JsPlc.Ssc.PetrolPricing.Portal.Helper.Extensions
 @{
@@ -91,6 +91,32 @@
                 <h5 data-toggle-expand="#ControlPanel" data-infotip="Expand or Collapse panel"><i class="fa fa-wrench"></i> Control Panel <span class="pull-right"><i class="fa fa-2x fa-caret-square-o-down"></i></span></h5>
             </div>
             <div class="panel-body">
+
+                <fieldset>
+                    <legend>Logging</legend>
+
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-md-1">
+                                <input type="checkbox" class="pull-left" name="Logging_LogDebugMessages" id="Logging_LogDebugMessages" value="True" @(Model.DiagnosticsSettings.Logging_LogDebugMessages ? "checked='checked'" : "") />
+                            </div>
+                            <div class="col-md-3">
+                                <label for="Logging_LogDebugMessages">Log Debug Messages</label>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-1">
+                                <input type="checkbox" class="pull-left" name="Logging_LogInformationMessages" id="Logging_LogInformationMessages" value="True" @(Model.DiagnosticsSettings.Logging_LogInformationMessages ? "checked='checked'" : "") />
+                            </div>
+
+                            <div class="col-md-3">
+                                <label for="Logging_LogInformationMessages">Log Information Messages</label>
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+
                 <fieldset>
                     <legend>Dapper</legend>
 

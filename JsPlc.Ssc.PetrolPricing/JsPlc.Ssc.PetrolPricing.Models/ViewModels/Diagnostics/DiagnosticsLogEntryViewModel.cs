@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace JsPlc.Ssc.PetrolPricing.Models.ViewModels
+namespace JsPlc.Ssc.PetrolPricing.Models.ViewModels.Diagnostics
 {
     public class DiagnosticsLogEntryViewModel
     {

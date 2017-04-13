@@ -12,6 +12,7 @@ using System;
 using Dapper;
 using JsPlc.Ssc.PetrolPricing.Core.Diagnostics;
 using JsPlc.Ssc.PetrolPricing.Core.Settings;
+using JsPlc.Ssc.PetrolPricing.Models.ViewModels.Diagnostics;
 
 namespace JsPlc.Ssc.PetrolPricing.Repository
 {

@@ -8,6 +8,12 @@ namespace JsPlc.Ssc.PetrolPricing.Core.Settings
 {
     public static class CoreSettings
     {
+        public static class Logging
+        {
+            public static bool LogInformationMessages = false;
+            public static bool LogDebugMessages = false;
+        }
+
         public static class RepositorySettings
         {
             public static class Dapper

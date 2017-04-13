@@ -4,6 +4,7 @@ using JsPlc.Ssc.PetrolPricing.Core.Diagnostics;
 using JsPlc.Ssc.PetrolPricing.Core.Interfaces;
 using JsPlc.Ssc.PetrolPricing.Core.Settings;
 using JsPlc.Ssc.PetrolPricing.Models.ViewModels;
+using JsPlc.Ssc.PetrolPricing.Models.ViewModels.Diagnostics;
 using JsPlc.Ssc.PetrolPricing.Repository;
 using System;
 using System.Collections.Generic;
@@ -42,6 +43,8 @@ namespace JsPlc.Ssc.PetrolPricing.Business.Services
             {
                 DiagnosticsSettings = new DiagnosticsSettingsViewModel()
                 {
+                    Logging_LogDebugMessages = CoreSettings.Logging.LogDebugMessages,
+                    Logging_LogInformationMessages = CoreSettings.Logging.LogInformationMessages,
                     Dapper_LogDatabaseCalls = CoreSettings.RepositorySettings.Dapper.LogDapperCalls,
                     SitePrices_UseStoredProcedure = CoreSettings.RepositorySettings.SitePrices.UseStoredProcedure,
                     CompetitorPrices_UseStoredProcedure = CoreSettings.RepositorySettings.CompetitorPrices.UseStoredProcedure
@@ -109,6 +112,9 @@ namespace JsPlc.Ssc.PetrolPricing.Business.Services
 
         public bool UpdateDiagnosticsSettings(DiagnosticsSettingsViewModel settings)
         {
+            CoreSettings.Logging.LogDebugMessages = settings.Logging_LogDebugMessages;
+            CoreSettings.Logging.LogInformationMessages = settings.Logging_LogInformationMessages;
+
             CoreSettings.RepositorySettings.Dapper.LogDapperCalls = settings.Dapper_LogDatabaseCalls;
             CoreSettings.RepositorySettings.SitePrices.UseStoredProcedure = settings.SitePrices_UseStoredProcedure;
             CoreSettings.RepositorySettings.CompetitorPrices.UseStoredProcedure = settings.CompetitorPrices_UseStoredProcedure;

@@ -19,6 +19,7 @@ using System.Net.Mail;
 using JsPlc.Ssc.PetrolPricing.Core.Interfaces;
 using JsPlc.Ssc.PetrolPricing.Core.Diagnostics;
 using JsPlc.Ssc.PetrolPricing.Models.ViewModels.UserPermissions;
+using JsPlc.Ssc.PetrolPricing.Models.ViewModels.Diagnostics;
 
 namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
 {

@@ -1,6 +1,7 @@
 ﻿using JsPlc.Ssc.PetrolPricing.Core;
 using JsPlc.Ssc.PetrolPricing.Core.Interfaces;
 using JsPlc.Ssc.PetrolPricing.Models.ViewModels;
+using JsPlc.Ssc.PetrolPricing.Models.ViewModels.Diagnostics;
 using JsPlc.Ssc.PetrolPricing.Portal.Controllers.BaseClasses;
 using JsPlc.Ssc.PetrolPricing.Portal.Facade;
 using System;

@@ -1,5 +1,6 @@
 ﻿using JsPlc.Ssc.PetrolPricing.Models;
 using JsPlc.Ssc.PetrolPricing.Models.ViewModels;
+using JsPlc.Ssc.PetrolPricing.Models.ViewModels.Diagnostics;
 using JsPlc.Ssc.PetrolPricing.Models.ViewModels.UserPermissions;
 using System;
 using System.Collections.Generic;

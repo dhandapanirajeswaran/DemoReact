@@ -2,6 +2,7 @@
 using JsPlc.Ssc.PetrolPricing.Core;
 using JsPlc.Ssc.PetrolPricing.Core.Interfaces;
 using JsPlc.Ssc.PetrolPricing.Models.ViewModels;
+using JsPlc.Ssc.PetrolPricing.Models.ViewModels.Diagnostics;
 using System;
 using System.Web.Http;
 using System.Web.Http.Results;

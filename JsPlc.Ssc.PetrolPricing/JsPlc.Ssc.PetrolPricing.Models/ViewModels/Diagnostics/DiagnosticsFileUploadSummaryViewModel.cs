@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace JsPlc.Ssc.PetrolPricing.Models.ViewModels
+namespace JsPlc.Ssc.PetrolPricing.Models.ViewModels.Diagnostics
 {
     public class DiagnosticsFileUploadSummaryViewModel
     {

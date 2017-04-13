@@ -24,6 +24,7 @@ using Dapper;
 using JsPlc.Ssc.PetrolPricing.Repository.Debugging;
 using JsPlc.Ssc.PetrolPricing.Core.Settings;
 using JsPlc.Ssc.PetrolPricing.Models.ViewModels.UserPermissions;
+using JsPlc.Ssc.PetrolPricing.Models.ViewModels.Diagnostics;
 
 namespace JsPlc.Ssc.PetrolPricing.Repository
 {

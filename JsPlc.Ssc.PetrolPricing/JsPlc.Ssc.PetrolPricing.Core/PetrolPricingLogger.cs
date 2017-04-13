@@ -7,6 +7,7 @@ using NLog;
 using NLog.Common;
 using ILogger = JsPlc.Ssc.PetrolPricing.Core.Interfaces.ILogger;
 using JsPlc.Ssc.PetrolPricing.Core.Diagnostics;
+using JsPlc.Ssc.PetrolPricing.Core.Settings;
 
 namespace JsPlc.Ssc.PetrolPricing.Core
 {
@@ -37,32 +38,38 @@ namespace JsPlc.Ssc.PetrolPricing.Core
 
         public void Information(string message)
         {
-            _internalLogger.Log
-                (
+            if (CoreSettings.Logging.LogInformationMessages)
+            {
+                _internalLogger.Log
+                    (
+                        new LogEventInfo
+                        {
+                            Level = LogLevel.Info,
+                            Exception = new Exception(message),
+                            Message = message
+                        }
+                    );
+
+                DiagnosticLog.AddLog(LogLevel.Info.ToString(), message, null, "");
+            }
+        }
+
+        public void Debug(string message)
+        {
+            if (CoreSettings.Logging.LogDebugMessages)
+            {
+                _internalLogger.Log
+                    (
                     new LogEventInfo
                     {
-                        Level = LogLevel.Info,
+                        Level = LogLevel.Debug,
                         Exception = new Exception(message),
                         Message = message
                     }
                 );
 
-            DiagnosticLog.AddLog(LogLevel.Info.ToString(), message, null, "");
-        }
-
-        public void Debug(string message)
-        {
-            _internalLogger.Log
-                (
-                new LogEventInfo
-                {
-                    Level = LogLevel.Debug,
-                    Exception = new Exception(message),
-                    Message = message
-                }
-            );
-
-            DiagnosticLog.AddLog(LogLevel.Debug.ToString(), message, null, "");
+                DiagnosticLog.AddLog(LogLevel.Debug.ToString(), message, null, "");
+            }
         }
     }
 }
