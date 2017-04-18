@@ -1,4 +1,5 @@
-﻿using System;
+﻿using JsPlc.Ssc.PetrolPricing.Core.Settings;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -21,6 +22,13 @@ namespace JsPlc.Ssc.PetrolPricing.Core.Diagnostics
 
         public static void AddLog(string level, string message, Dictionary<string, string> parameters = null, string exception = "")
         {
+
+            if (String.Compare(level, "Debug", true) == 0 && !CoreSettings.Logging.LogDebugMessages)
+                return;
+
+            if (String.Compare(level, "Information", true) == 0 && !CoreSettings.Logging.LogInformationMessages)
+                return;
+
             var entry = new DiagnoticsLogEntry()
             {
                 Created = DateTime.Now,
