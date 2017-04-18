@@ -563,6 +563,7 @@ table.fixed-header>tbody {
     float: right;
     color: #999;
     font-style: italic;
+    letter-spacing: 1px;
 }
 
 .recent-file-uploads tr:nth-child(odd):hover {
