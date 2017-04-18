@@ -9,6 +9,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using JsPlc.Ssc.PetrolPricing.Portal.ActionFilters;
+using JsPlc.Ssc.PetrolPricing.Models.Enums;
 
 namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 {
@@ -24,52 +26,28 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
         }
 
         [HttpGet]
+        [AuthoriseDiagnostics(Permissions = DiagnosticsUserPermissions.View)]
         public ActionResult Index()
         {
-            if (!base.IsUserAuthenticated)
-                return base.PleaseSignIn();
-            if (!CanUserViewDiagnostics())
-                return AccessDenied();
             var daysAgo = 14;
             var model = _serviceFacade.GetDiagnostics(daysAgo);
             return View(model);
         }
 
         [HttpPost]
+        [AuthoriseDiagnostics(Permissions = DiagnosticsUserPermissions.View | DiagnosticsUserPermissions.Edit)]
         public ActionResult Index(DiagnosticsSettingsViewModel model)
         {
-            if (!base.IsUserAuthenticated)
-                return base.PleaseSignIn();
-            if (!CanUserViewDiagnostics())
-                return AccessDenied();
             _serviceFacade.UpdateDiagnosticsSettings(model);
             return RedirectToAction("Index");
         }
 
         [HttpPost]
+        [AuthoriseDiagnostics(Permissions = DiagnosticsUserPermissions.View)]
         public ActionResult ClearLog()
         {
-            if (!base.IsUserAuthenticated)
-                return base.PleaseSignIn();
-            if (!CanUserViewDiagnostics())
-                return AccessDenied();
             _serviceFacade.ClearDiagnosticsLog();
             return RedirectToAction("Index");
         }
-
-        #region private methods
-        private bool CanUserViewDiagnostics()
-        {
-            var userAccess = base.GetUserAccessModel();
-            return userAccess.IsUserAuthenticated 
-                && userAccess.UserDiagnosticsAccess.CanView;
-        }
-
-        private ActionResult AccessDenied()
-        {
-            return base.AccessDenied("You do not have access to the Diagnostics section");
-        }
-
-        #endregion
     }
 }

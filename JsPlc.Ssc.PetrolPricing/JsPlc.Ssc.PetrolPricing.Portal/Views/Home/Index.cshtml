@@ -17,10 +17,21 @@
     };
 }
 <style>
-    .spaced-list li {line-height: 2.5em;}
-    .good {color: green;}
-    .warning {color: orange;}
-    .error {color: #910048;}
+    .spaced-list li {
+        line-height: 2.5em;
+    }
+
+    .good {
+        color: green;
+    }
+
+    .warning {
+        color: orange;
+    }
+
+    .error {
+        color: #910048;
+    }
 </style>
 
 
@@ -43,22 +54,29 @@
 
     <div class="col-md-7" style="border-left: 1px dashed #ccc;">
 
+        @if (!Model.UserAccess.IsUserAuthenticated)
+        {
+            <h2>You are currently not signed</h2>
+            <p>To use the Petrol Pricing application you will need to sign in.</p>
+            <a class="btn btn-primary pull-right" href="@Url.Action("Index", "Home")">Sign in</a>
+        }
+
 
         @if (Model.UserAccess.UserFileUploadsAccess.CanView)
         {
-        <h2>Recent File Uploads</h2>
-        <table class="table table-striped recent-file-uploads" style="margin-bottom: none;">
-            <thead>
-                <tr>
-                    <th>Type</th>
-                    <th>Status</th>
-                    <th>Uploaded</th>
-                    <th>User</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var row in Model.Files)
+            <h2>Recent File Uploads</h2>
+            <table class="table table-striped recent-file-uploads" style="margin-bottom: none;">
+                <thead>
+                    <tr>
+                        <th>Type</th>
+                        <th>Status</th>
+                        <th>Uploaded</th>
+                        <th>User</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var row in Model.Files)
                 {
                     var hasFileUpload = row.UploadDateTime.Year > 1;
                     var daysAgo = DateTime.Now.Date.Subtract(row.UploadDateTime.Date).TotalDays;
@@ -68,87 +86,83 @@
                     var isOutdated = daysAgo > maxAgeInDays;
                     var isSuccessful = row.ImportStatusId == (int)ImportProcessStatuses.Success;
                     var warning = isSuccessful && isOutdated == false ? "" : isOutdated ? "Outdated" : "Non-successful upload";
-                    <tr class="@rowClass" style="cursor: pointer;" onclick="window.location='@Url.Action("Details", "File")/@row.FileUploadId'">
-                        <td>@row.UploadTypeName</td>
-                        <td>
-                            @if (hasFileUpload == false)
+                <tr class="@rowClass" style="cursor: pointer;" onclick="window.location='@Url.Action("Details", "File")/@row.FileUploadId'">
+                    <td>@row.UploadTypeName</td>
+                    <td>
+                        @if (hasFileUpload == false)
                             {
-                                <span>&mdash;</span>
+                            <span>&mdash;</span>
 
                             }
                             else if (row.ImportStatus != null && statusMarkup.ContainsKey(row.ImportStatus))
                             {
-                                @Html.Raw(statusMarkup[row.ImportStatus])
+                            @Html.Raw(statusMarkup[row.ImportStatus])
                             }
                             else
                             {
-                                <span><i></i>@row.ImportStatus</span>
+                            <span><i></i>@row.ImportStatus</span>
                             }
-                        </td>
-                        <td data-infotip="Uploaded on [b]@(row.UploadDateTime.ToString("dd-MMM-yyyy"))[/b] at [b]@(row.UploadDateTime.ToString("HH:mm:ss"))[/b]">
-                            @if (hasFileUpload == false)
+                    </td>
+                    <td data-infotip="Uploaded on [b]@(row.UploadDateTime.ToString("dd-MMM-yyyy"))[/b] at [b]@(row.UploadDateTime.ToString("HH:mm:ss"))[/b]">
+                        @if (hasFileUpload == false)
                             {
-                                <span>&mdash;</span>
+                            <span>&mdash;</span>
                             }
                             else
                             {
                                 if (isRecentUpload)
                                 {
-                                    <strong>@Html.FormatFriendlyDateTime(row.UploadDateTime)</strong>
+                            <strong>@Html.FormatFriendlyDateTime(row.UploadDateTime)</strong>
                                 }
                                 else
                                 {
                                     if (isOutdated)
                                     {
-                                        <span class="warning">@daysAgo Days Ago</span>
+                            <span class="warning">@daysAgo Days Ago</span>
                                     }
                                     else
                                     {
-                                        <span>@daysAgo Days Ago</span>
+                            <span>@daysAgo Days Ago</span>
                                     }
                                 }
                             }
-                        </td>
-                        <td>
-                            @if (hasFileUpload)
+                    </td>
+                    <td>
+                        @if (hasFileUpload)
                             {
-                                @row.UploadedBy
+                            @row.UploadedBy
                             }
                             else
                             {
-                                <span>&mdash;</span>
+                            <span>&mdash;</span>
                             }
-                        </td>
-                        <td>
-                            @if (String.IsNullOrEmpty(warning) == false)
+                    </td>
+                    <td>
+                        @if (String.IsNullOrEmpty(warning) == false)
                             {
                                 if (hasFileUpload == false)
                                 {
-                                    <i class="fa fa-file error" data-infotip="No file upload exists"></i>
+                            <i class="fa fa-file error" data-infotip="No file upload exists"></i>
                                 }
                                 else if (isOutdated)
                                 {
-                                    <i class="fa fa-calendar warning" data-infotip="@warning"></i>
+                            <i class="fa fa-calendar warning" data-infotip="@warning"></i>
                                 }
                                 else
                                 {
-                                    <i class="fa fa-warning error" data-infotip="@warning"></i>
+                            <i class="fa fa-warning error" data-infotip="@warning"></i>
                                 }
                             }
                             else
                             {
-                                <i class="fa fa-check good" data-infotip="Success"></i>
+                            <i class="fa fa-check good" data-infotip="Success"></i>
                             }
-                        </td>
-                    </tr>
+                    </td>
+                </tr>
                 }
-            </tbody>
-        </table>
-        <a href="@Url.Action("Index", "File")" class="btn btn-primary pull-right" data-infotip="Go to the [b]File Uploads[/b] section"><i class="fa fa-upload"></i> Uploads</a>
-        } else {
-            <h2>You are currently not signed</h2>
-            <p>To use the Petrol Pricing application you will need to sign in.</p>
-            <a class="btn btn-primary pull-right" href="@Url.Action("Index", "Home")">Sign in</a>
+                </tbody>
+            </table>
+            <a href="@Url.Action("Index", "File")" class="btn btn-primary pull-right" data-infotip="Go to the [b]File Uploads[/b] section"><i class="fa fa-upload"></i> Uploads</a>
         }
     </div>
 </div>

@@ -3370,49 +3370,23 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
                 var sitePricingPermissions = (SitesPricingUserPermissions)permissions.SitePricingUserPermissions;
                 var sitesManagementPermissions = (SitesMaintenanceUserPermissions)permissions.SitesMaintenanceUserPermissions;
                 var reportsPermissions = (ReportsUserPermissions)permissions.ReportsUserPermissions;
-                var usersPermissions = (UsersManagementUserPermissions)permissions.UsersManagementUserPermissions;
-                var UserManagementPermissions = (UsersManagementUserPermissions)permissions.UsersManagementUserPermissions;
+                var userManagementPermissions = (UsersManagementUserPermissions)permissions.UsersManagementUserPermissions;
                 var diagnosticsPermissions = (DiagnosticsUserPermissions)permissions.DiagnosticsUserPermissions;
 
-                return new UserAccessViewModel()
+                var model = new UserAccessViewModel()
                 {
                     IsUserAuthenticated = true,
+                    IsActive = permissions.IsActive,
                     PPUserId = ppUser.Id,
                     UserName = ppUser.Email,
-                    UserFileUploadsAccess = new UserFileUploadsAccess
-                    {
-                        CanView = uploadPermissions.HasFlag(FileUploadsUserPermissions.View),
-                        CanUpload = uploadPermissions.HasFlag(FileUploadsUserPermissions.Upload)
-                    },
-                    UserSitePricingAccess = new UserSitePricingAccess
-                    {
-                        CanView = sitePricingPermissions.HasFlag(SitesPricingUserPermissions.View),
-                        CanExport = sitePricingPermissions.HasFlag(SitesPricingUserPermissions.Export),
-                        CanUpdate = sitePricingPermissions.HasFlag(SitesPricingUserPermissions.Update)
-                    },
-                    UserSitesMaintenanceAccess = new UserSitesMaintenanceAccess
-                    {
-                        CanView = sitesManagementPermissions.HasFlag(SitesMaintenanceUserPermissions.View),
-                        CanAdd = sitesManagementPermissions.HasFlag(SitesMaintenanceUserPermissions.Add),
-                        CanEdit = sitesManagementPermissions.HasFlag(SitesMaintenanceUserPermissions.Edit)
-                    },
-                    UserReportsAccess = new UserReportsAccess
-                    {
-                        CanView = reportsPermissions.HasFlag(ReportsUserPermissions.View),
-                        CanExport = reportsPermissions.HasFlag(ReportsUserPermissions.Export)
-                    },
-                    UserUserManagementAccess = new UserUserManagementAccess
-                    {
-                        CanView = usersPermissions.HasFlag(UsersManagementUserPermissions.View),
-                        CanAdd = usersPermissions.HasFlag(UsersManagementUserPermissions.Add),
-                        CanDelete = usersPermissions.HasFlag(UsersManagementUserPermissions.Delete),
-                        CanEdit = usersPermissions.HasFlag(UsersManagementUserPermissions.Edit)
-                    },
-                    UserDiagnosticsAccess = new UserDiagnosticsAccess
-                    {
-                        CanView = diagnosticsPermissions.HasFlag(DiagnosticsUserPermissions.View)
-                    }
+                    UserFileUploadsAccess = new UserFileUploadsAccess(uploadPermissions),
+                    UserSitePricingAccess = new UserSitePricingAccess(sitePricingPermissions),
+                    UserSitesMaintenanceAccess = new UserSitesMaintenanceAccess(sitesManagementPermissions),
+                    UserReportsAccess = new UserReportsAccess(reportsPermissions),
+                    UserUserManagementAccess = new UserUserManagementAccess(userManagementPermissions),
+                    UserDiagnosticsAccess = new UserDiagnosticsAccess(diagnosticsPermissions)
                 };
+                return model;
             }
             return new UserAccessViewModel();
         }

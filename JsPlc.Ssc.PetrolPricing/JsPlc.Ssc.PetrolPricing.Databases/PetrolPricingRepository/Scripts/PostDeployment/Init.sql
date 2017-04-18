@@ -404,7 +404,7 @@ DECLARE @Default_SitePricingUserPermissions INT = 1 + 2 + 4 -- View, Export and 
 DECLARE @Default_SitesMaintenanceUserPermissions INT = 1 + 2 + 4 -- View, Add and Edit
 DECLARE @Default_ReportsUserPermissions INT = 1 + 2 -- View and Export
 DECLARE @Default_UsersManagementUserPermissions INT = 1 + 2 + 4 + 8 -- View, Add, Edit and Delete
-DECLARE @Default_DiagnosticsUserPermissions INT = 0 -- View
+DECLARE @Default_DiagnosticsUserPermissions INT = 0 -- None
 
 MERGE
 	dbo.PPUserPermissions AS target
@@ -455,7 +455,7 @@ UPDATE
 	dbo.PPUserPermissions
 SET 
 	IsAdmin = 1,
-	DiagnosticsUserPermissions = 1
+	DiagnosticsUserPermissions = 3
 WHERE 
 	PPUserId IN (
 	SELECT usr.Id

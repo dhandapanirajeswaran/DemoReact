@@ -8,6 +8,7 @@ BEGIN
 	SELECT TOP 1
 		up.[Id],
 		up.[PPUserId],
+		usr.IsActive [IsActive],
 		CASE WHEN usr.IsActive = 1 THEN up.[IsAdmin] ELSE 0 END [IsAdmin],
 		CASE WHEN usr.IsActive = 1 THEN up.FileUploadsUserPermissions ELSE 0 END [FileUploadsUserPermissions],
 		CASE WHEN usr.IsActive = 1 THEN up.SitePricingUserPermissions ELSE 0 END [SitePricingUserPermissions],

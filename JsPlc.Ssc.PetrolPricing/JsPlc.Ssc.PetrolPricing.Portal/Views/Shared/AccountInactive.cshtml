@@ -7,7 +7,7 @@
 <html>
 <head>
     <meta name="viewport" content="width=device-width" />
-    <title>Please Sign In</title>
+    <title>AccessDenied</title>
 </head>
 <body>
 
@@ -16,19 +16,18 @@
             <div class="col-md-8 col-md-offset-2">
                 <div class="panel panel-danger">
                     <div class="panel-heading">
-                        <h2><i class="fa fa-sign-in"></i> Please Sign In</h2>
+                        <h2><i class="fa fa-lock"></i> Account Inactive</h2>
                     </div>
                     <div class="panel-body">
-                        <p>You are not currently signed into this application</p>
-                        <p>Please sign in or contact the <a href="@Url.Action("Contact", "Home")"> System Administator</a></p>
+                        <p>Sorry, this account is currently suspended.</p>
+                        <p>Please contact the <a href="@Url.Action("Contact", "Home")"> System Administator</a></p>
                     </div>
                     <div class="panel-footer text-center">
-                        <a class="btn btn-primary" href="@Url.Action("Index", "Home")">Sign in</a>
+                        <a class="btn btn-primary" href="@Url.Action("Index", "Home")">Home Page</a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
 </body>
 </html>

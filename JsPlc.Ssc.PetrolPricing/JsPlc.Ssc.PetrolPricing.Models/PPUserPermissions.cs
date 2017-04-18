@@ -14,6 +14,7 @@ namespace JsPlc.Ssc.PetrolPricing.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         public int PPUserId { get; set; }
+        public bool IsActive { get; set; }
         public bool IsAdmin { get; set; }
         public int FileUploadsUserPermissions { get; set; }
         public int SitePricingUserPermissions { get; set; }

@@ -1,19 +1,14 @@
 ﻿using JsPlc.Ssc.PetrolPricing.Models.Enums;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Xml;
 
 namespace JsPlc.Ssc.PetrolPricing.Models.ViewModels.UserPermissions
 {
     public class UserAccessViewModel
     {
         public bool IsUserAuthenticated { get; set; }
-
+        public bool IsActive { get; set; }
         public int PPUserId { get; set; }
         public string UserName { get; set; }
-
         public bool IsAdmin { get; set; }
 
         public UserFileUploadsAccess UserFileUploadsAccess = new UserFileUploadsAccess();
@@ -26,6 +21,7 @@ namespace JsPlc.Ssc.PetrolPricing.Models.ViewModels.UserPermissions
         public UserAccessViewModel()
         {
             this.IsUserAuthenticated = false;
+            this.IsActive = false;
             this.PPUserId = 0;
             this.UserName = "";
             this.IsAdmin = false;
@@ -34,74 +30,156 @@ namespace JsPlc.Ssc.PetrolPricing.Models.ViewModels.UserPermissions
 
     public class UserFileUploadsAccess
     {
-        public bool CanView { get; set; }
-        public bool CanUpload { get; set; }
+        public FileUploadsUserPermissions Permissions { get; set; }
 
-        public UserFileUploadsAccess()
+        [System.Xml.Serialization.XmlIgnore]
+        public bool CanView
         {
-            this.CanView = false;
-            this.CanUpload = false;
+            get { return this.Permissions.HasFlag(FileUploadsUserPermissions.View); }
+        }
+
+        [System.Xml.Serialization.XmlIgnore]
+        public bool CanUpload
+        {
+            get { return this.Permissions.HasFlag(FileUploadsUserPermissions.Upload); }
+        }
+        public UserFileUploadsAccess(FileUploadsUserPermissions permissions = FileUploadsUserPermissions.None)
+        {
+            this.Permissions = permissions;
         }
     }
+
     public class UserSitePricingAccess
     {
-        public bool CanView { get; set; }
-        public bool CanExport { get; set; }
-        public bool CanUpdate { get; set; }
+        public SitesPricingUserPermissions Permissions { get; set; }
 
-        public UserSitePricingAccess()
+        [System.Xml.Serialization.XmlIgnore]
+        public bool CanView
         {
-            this.CanView = false;
-            this.CanExport = false;
-            this.CanUpdate = false;
+            get { return this.Permissions.HasFlag(SitesPricingUserPermissions.View); }
+        }
+
+        [System.Xml.Serialization.XmlIgnore]
+        public bool CanExport
+        {
+            get { return this.Permissions.HasFlag(SitesPricingUserPermissions.Export); }
+        }
+
+        [System.Xml.Serialization.XmlIgnore]
+        public bool CanUpdate
+        {
+            get { return this.Permissions.HasFlag(SitesPricingUserPermissions.Update); }
+        }
+
+        public UserSitePricingAccess(SitesPricingUserPermissions permissions = SitesPricingUserPermissions.None)
+        {
+            this.Permissions = permissions;
         }
     }
+
     public class UserSitesMaintenanceAccess
     {
-        public bool CanView { get; set; }
-        public bool CanAdd { get; set; }
-        public bool CanEdit { get; set; }
+        public SitesMaintenanceUserPermissions Permissions { get; set; }
 
-        public UserSitesMaintenanceAccess()
+        [System.Xml.Serialization.XmlIgnore]
+        public bool CanView
         {
-            this.CanView = false;
-            this.CanAdd = false;
-            this.CanEdit = false;
+            get { return this.Permissions.HasFlag(SitesMaintenanceUserPermissions.View); }
+        }
+
+        [System.Xml.Serialization.XmlIgnore]
+        public bool CanAdd
+        {
+            get { return this.Permissions.HasFlag(SitesMaintenanceUserPermissions.Add); }
+        }
+
+        [System.Xml.Serialization.XmlIgnore]
+        public bool CanEdit
+        {
+            get { return this.Permissions.HasFlag(SitesMaintenanceUserPermissions.Edit); }
+        }
+
+        public UserSitesMaintenanceAccess(SitesMaintenanceUserPermissions permissions = SitesMaintenanceUserPermissions.None)
+        {
+            this.Permissions = permissions;
         }
     }
+
     public class UserReportsAccess
     {
-        public bool CanView { get; set; }
-        public bool CanExport { get; set; }
+        public ReportsUserPermissions Permissions { get; set; }
 
-        public UserReportsAccess()
+        [System.Xml.Serialization.XmlIgnore]
+        public bool CanView
         {
-            this.CanView = false;
-            this.CanExport = false;
+            get { return this.Permissions.HasFlag(ReportsUserPermissions.View); }
+        }
+
+        [System.Xml.Serialization.XmlIgnore]
+        public bool CanExport
+        {
+            get { return this.Permissions.HasFlag(ReportsUserPermissions.Export); }
+        }
+
+        public UserReportsAccess(ReportsUserPermissions permissions = ReportsUserPermissions.None)
+        {
+            this.Permissions = permissions;
         }
     }
+
     public class UserUserManagementAccess
     {
-        public bool CanView { get; set; }
-        public bool CanAdd { get; set; }
-        public bool CanEdit { get; set; }
-        public bool CanDelete { get; set; }
+        public UsersManagementUserPermissions Permissions { get; set; }
 
-        public UserUserManagementAccess()
+        [System.Xml.Serialization.XmlIgnore]
+        public bool CanView
         {
-            this.CanView = false;
-            this.CanAdd = false;
-            this.CanEdit = false;
-            this.CanDelete = false;
+            get { return this.Permissions.HasFlag(UsersManagementUserPermissions.View); }
+        }
+
+        [System.Xml.Serialization.XmlIgnore]
+        public bool CanAdd
+        {
+            get { return this.Permissions.HasFlag(UsersManagementUserPermissions.Add); }
+        }
+
+        [System.Xml.Serialization.XmlIgnore]
+        public bool CanEdit
+        {
+            get { return this.Permissions.HasFlag(UsersManagementUserPermissions.Edit); }
+        }
+
+        [System.Xml.Serialization.XmlIgnore]
+        public bool CanDelete
+        {
+            get { return this.Permissions.HasFlag(UsersManagementUserPermissions.Delete); }
+        }
+
+        public UserUserManagementAccess(UsersManagementUserPermissions permissions = UsersManagementUserPermissions.None)
+        {
+            this.Permissions = permissions;
         }
     }
+
     public class UserDiagnosticsAccess
     {
-        public bool CanView { get; set; }
+        public DiagnosticsUserPermissions Permissions { get; set; }
 
-        public UserDiagnosticsAccess()
+        [System.Xml.Serialization.XmlIgnore]
+        public bool CanView
         {
-            this.CanView = false;
+            get { return this.Permissions.HasFlag(DiagnosticsUserPermissions.View); }
+        }
+
+        [System.Xml.Serialization.XmlIgnore]
+        public bool CanEdit
+        {
+            get { return this.Permissions.HasFlag(DiagnosticsUserPermissions.Edit); }
+        }
+
+        public UserDiagnosticsAccess(DiagnosticsUserPermissions permissions = DiagnosticsUserPermissions.None)
+        {
+            this.Permissions = permissions;
         }
     }
 }

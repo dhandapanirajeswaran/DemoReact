@@ -1,5 +1,6 @@
 ﻿using JsPlc.Ssc.PetrolPricing.Core;
 using JsPlc.Ssc.PetrolPricing.Core.Interfaces;
+using JsPlc.Ssc.PetrolPricing.Models.ViewModels;
 using JsPlc.Ssc.PetrolPricing.Portal.Controllers.BaseClasses;
 using JsPlc.Ssc.PetrolPricing.Portal.Facade;
 using System;
@@ -39,6 +40,25 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
         {
             var model = _serviceFacade.GetContactDetails();
             return View(model);
+        }
+
+        public ActionResult AccessDenied()
+        {
+            var model = new AccessDeniedViewModel()
+            {
+                Message = "You do not have permission to access this section."
+            };
+            return View("~/Views/Shared/AccessDenied.cshtml", model);
+        }
+
+        public ActionResult PleaseSignIn()
+        {
+            return View("~/Views/Shared/PleaseSignIn.cshtml");
+        }
+
+        public ActionResult AccountInactive()
+        {
+            return View("~/Views/Shared/AccountInactive.cshtml");
         }
     }
 }

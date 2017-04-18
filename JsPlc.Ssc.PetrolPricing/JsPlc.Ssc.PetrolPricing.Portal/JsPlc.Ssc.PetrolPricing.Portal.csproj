@@ -201,6 +201,14 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ActionFilters\AuthoriseReportsAttribute.cs" />
+    <Compile Include="Security\AuthorisationPermissionChecker.cs" />
+    <Compile Include="ActionFilters\AuthoriseDiagnosticsAttribute.cs" />
+    <Compile Include="ActionFilters\AuthoriseFileUploadsAttribute.cs" />
+    <Compile Include="ActionFilters\AuthoriseSitePricingAttribute.cs" />
+    <Compile Include="ActionFilters\AuthoriseSitesMaintenanceAttribute.cs" />
+    <Compile Include="ActionFilters\AuthoriseUsersManagementAttribute.cs" />
+    <Compile Include="ActionFilters\BaseAuthoriseAttribute.cs" />
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\IdentityConfig.cs" />
@@ -232,6 +240,7 @@
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Facade\ServiceFacade.cs" />
+    <Compile Include="Security\CurrentUser.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="StringMessages.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -501,6 +510,7 @@
     <Content Include="Views\Shared\Layout\_TopNavigation.cshtml" />
     <Content Include="Views\Shared\AccessDenied.cshtml" />
     <Content Include="Views\Shared\PleaseSignIn.cshtml" />
+    <Content Include="Views\Shared\AccountInactive.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\uploads\" />

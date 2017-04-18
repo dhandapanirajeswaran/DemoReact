@@ -70,6 +70,7 @@ namespace JsPlc.Ssc.PetrolPricing.Models.Enums
     {
         None = 0, // Access Denied
         View = 0x01,
+        Edit = 0x02,
 
         // Defaults for new user
         NewUserDefaults = DiagnosticsUserPermissions.None

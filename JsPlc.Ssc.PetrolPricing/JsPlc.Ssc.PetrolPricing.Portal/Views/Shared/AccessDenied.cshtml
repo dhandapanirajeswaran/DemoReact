@@ -22,7 +22,7 @@
                     <div class="panel-body">
                         <p>@Model.Message</p>
                         <p>Sorry, you do not currently have permission to access this section.</p>
-                        <p>Please contact the System Administator</p>
+                        <p>Please contact the <a href="@Url.Action("Contact", "Home")"> System Administator</a></p>
                     </div>
                     <div class="panel-footer text-center">
                         <a class="btn btn-primary" href="@Url.Action("Index", "Home")">Home Page</a>

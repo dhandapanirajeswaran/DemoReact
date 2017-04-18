@@ -52,20 +52,6 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers.BaseClasses
             return model;
         }
 
-        protected ActionResult AccessDenied(string message)
-        {
-            var model = new AccessDeniedViewModel()
-            {
-                Message = message
-            };
-            return View("~/Views/Shared/AccessDenied.cshtml", model);
-        }
-
-        protected ActionResult PleaseSignIn()
-        {
-            return View("~/Views/Shared/PleaseSignIn.cshtml");
-        }
-
         protected ActionResult SendExcelFile(string excelFilename, XLWorkbook wb, string downloadId)
         {
             Response.Clear();
