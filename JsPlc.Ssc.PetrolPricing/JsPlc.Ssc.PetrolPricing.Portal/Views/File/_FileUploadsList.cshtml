@@ -21,6 +21,10 @@
     <table class="table table-striped">
         <tr>
             <th>
+                File
+            </th>
+
+            <th>
                 @Html.DisplayNameFor(model => model.OriginalFileName)
             </th>
             <th>
@@ -42,8 +46,14 @@
             var daysAgo = DateTime.Now.Date.Subtract(item.UploadDateTime.Date).TotalDays;
             var wasToday = daysAgo < 1;
             var wasYesterday = daysAgo == 1;
-            var rowClass = wasToday ? "uploaded-today" : wasYesterday ? "uploaded-yesterday" : "";
-            <tr class="@rowClass">
+            var rowClass = (wasToday ? "uploaded-today" : wasYesterday ? "uploaded-yesterday" : "") + (item.FileExists ? " upload-file-exists" : " no-upload-file");
+            <tr class="@rowClass.Trim()">
+                <td>
+                    @if (item.FileExists)
+                    {
+                        <a class="text-success" href="@(Url.Action("Download", "File"))/@item.Id" data-infotip="Download the file [b]@(item.OriginalFileName)[/b]"><i class="fa fa-file"></i></a>
+                    }
+                </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.OriginalFileName)
                 </td>

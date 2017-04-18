@@ -39,6 +39,8 @@ namespace JsPlc.Ssc.PetrolPricing.Business.Services
         public DiagnosticsViewModel GetDiagnostics(int daysAgo)
         {
 
+            var systemSettings = _db.GetSystemSettings();
+
             var model = new DiagnosticsViewModel()
             {
                 DiagnosticsSettings = new DiagnosticsSettingsViewModel()
@@ -47,7 +49,8 @@ namespace JsPlc.Ssc.PetrolPricing.Business.Services
                     Logging_LogInformationMessages = CoreSettings.Logging.LogInformationMessages,
                     Dapper_LogDatabaseCalls = CoreSettings.RepositorySettings.Dapper.LogDapperCalls,
                     SitePrices_UseStoredProcedure = CoreSettings.RepositorySettings.SitePrices.UseStoredProcedure,
-                    CompetitorPrices_UseStoredProcedure = CoreSettings.RepositorySettings.CompetitorPrices.UseStoredProcedure
+                    CompetitorPrices_UseStoredProcedure = CoreSettings.RepositorySettings.CompetitorPrices.UseStoredProcedure,
+                    DataCleanseFilesAfterDays = systemSettings.DataCleanseFilesAfterDays
                 }
             };
 
@@ -98,9 +101,16 @@ namespace JsPlc.Ssc.PetrolPricing.Business.Services
                 {"CompetitorPrices.CompareOutputFilename", CoreSettings.RepositorySettings.CompetitorPrices.CompareOutputFilename },
             };
 
+            var sysSettings = new Dictionary<string, object>()
+            {
+                {"DataCleanseFilesAfterDays", systemSettings.DataCleanseFilesAfterDays },
+                {"LastDataCleanseFilesOn", systemSettings.LastDataCleanseFilesOn }
+            };
+
             model.Environment = SortDictionaryByKey(environment);
             model.AppSettings = SortDictionaryByKey(appSettings);
             model.CoreSettings = SortDictionaryByKey(coreSettings);
+            model.SystemSettings = SortDictionaryByKey(sysSettings);
 
             model.RecentDatabaseObjectsChanges = _db.GetDiagnosticsRecentDatabaseObjectChanges(daysAgo).ToList();
             model.DatabaseObjectSummary = _db.GetDiagnosticsDatabaseObjectSummary();
@@ -118,6 +128,15 @@ namespace JsPlc.Ssc.PetrolPricing.Business.Services
             CoreSettings.RepositorySettings.Dapper.LogDapperCalls = settings.Dapper_LogDatabaseCalls;
             CoreSettings.RepositorySettings.SitePrices.UseStoredProcedure = settings.SitePrices_UseStoredProcedure;
             CoreSettings.RepositorySettings.CompetitorPrices.UseStoredProcedure = settings.CompetitorPrices_UseStoredProcedure;
+
+            var systemSettings = _db.GetSystemSettings();
+
+            if (settings.DataCleanseFilesAfterDays >= Const.MinDataCleanseFilesAfterDays)
+            {
+                systemSettings.DataCleanseFilesAfterDays = settings.DataCleanseFilesAfterDays;
+                _db.UpdateSystemSettings(systemSettings);
+            }
+
             return true;
         }
 

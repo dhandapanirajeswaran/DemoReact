@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Operations Version="1.0" xmlns="http://schemas.microsoft.com/sqlserver/dac/Serialization/2012/02">
+  <Operation Name="Rename Refactor" Key="5c6af2ae-e49a-4307-97c7-9184815072b7" ChangeDateTime="04/18/2017 13:04:04">
+    <Property Name="ElementName" Value="[dbo].[SystemSettings].[DeleteFilesAfterDays]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[SystemSettings]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="DataCleanseFilesAfterDays" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="007c4a90-317d-4b60-8c81-10fddf57a4d8" ChangeDateTime="04/18/2017 13:05:12">
+    <Property Name="ElementName" Value="[dbo].[SystemSettings].[DataCleansedOn]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[SystemSettings]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="DataCleansedFilesOn" />
+  </Operation>
+</Operations>

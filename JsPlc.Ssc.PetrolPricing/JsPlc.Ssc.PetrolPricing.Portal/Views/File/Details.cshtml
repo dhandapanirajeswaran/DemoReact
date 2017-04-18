@@ -66,6 +66,23 @@
                 @Html.DisplayFor(model => model.UploadedBy)
                 <a class="btn btn-primary btn-sm" target="_blank" style="margin-left: 1em;" href="mailto:@Model.UploadedBy"><i class="fa fa-at"></i> Email</a>
             </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.FileExists)
+            </dt>
+
+            <dd>
+                @if (Model.FileExists)
+                {
+                    <span class="text-success" data-infotip="File exists"><i class="fa fa-check"></i> Yes &mdash;</span>
+                    <a class="btn btn-primary btn-sm" href="@Url.Action("Download", "File")/@Model.Id" data-infotip="Download the file"><i class="fa fa-download"></i> Download file</a>
+
+                } else
+                {
+                    <span class="text-danger" data-infotip="File [b]does not[/b] Exist."><i class="fa fa-times"></i> No</span><br />
+                    <p><em><strong>Note:</strong> Over time old files are removed from the system to help minimise the required storage space.</em></p>
+                }
+            </dd>
         </dl>
     </div>
     <div class="panel-footer">

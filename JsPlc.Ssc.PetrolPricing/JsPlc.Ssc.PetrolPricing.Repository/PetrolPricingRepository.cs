@@ -25,6 +25,7 @@ using JsPlc.Ssc.PetrolPricing.Repository.Debugging;
 using JsPlc.Ssc.PetrolPricing.Core.Settings;
 using JsPlc.Ssc.PetrolPricing.Models.ViewModels.UserPermissions;
 using JsPlc.Ssc.PetrolPricing.Models.ViewModels.Diagnostics;
+using System.IO;
 
 namespace JsPlc.Ssc.PetrolPricing.Repository
 {
@@ -3404,9 +3405,99 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
             }
         }
 
+        public FileDownloadViewModel GetFileDownload(int fileUploadId, string fileUploadPath)
+        {
+            if (fileUploadId == 0)
+                return new FileDownloadViewModel();
+
+            var fileUpload = _context.FileUploads.FirstOrDefault(x => x.Id == fileUploadId);
+            if (fileUpload == null)
+                throw new Exception("File does not exist");
+
+            var fullPath = System.IO.Path.Combine(fileUploadPath, fileUpload.StoredFileName);
+            var fileBytes = System.IO.File.ReadAllBytes(fullPath);
+
+            return new FileDownloadViewModel()
+            {
+                FileName = fileUpload.OriginalFileName,
+                FileBytes = fileBytes
+            };
+        }
+
+        public bool DataCleanseFileUploads(int daysAgo, string fileUploadPath)
+        {
+            var minDateTime = DateTime.Now.Date.AddDays(0 - daysAgo);
+
+            //
+            // first delete old FileUpload physical files older than minDateTime
+            //
+
+            var oldFileUploads = _context.FileUploads
+                .Where(x => x.FileExists && x.UploadDateTime < minDateTime)
+                .ToList();
+
+            var ids = new List<int>();
+
+            foreach(var file in oldFileUploads)
+            {
+                try
+                {
+                    var fullPath = System.IO.Path.Combine(fileUploadPath, file.StoredFileName);
+                    if (System.IO.File.Exists(fullPath))
+                    {
+                        System.IO.File.Delete(fullPath);
+                    }
+
+                    ids.Add(file.Id);
+                }
+                catch (Exception ex)
+                {
+                    _logger.Error(ex);
+                }
+            }
+
+            if (ids.Any())
+            {
+                var sql = "UPDATE dbo.FileUpload SET FileExists=0 WHERE FileExists=1 AND ID IN("
+                    + ids.Select(x => x.ToString()).Aggregate((x, y) => x + "," + y)
+                    + ");";
+
+                _context.Database.ExecuteSqlCommand(sql);
+            }
+
+            //
+            // now delete any other older files which have no associated FileUpload record
+            //
+            try
+            {
+                var directoryInfo = new DirectoryInfo(fileUploadPath);
+                var oldFiles = directoryInfo.EnumerateFiles().Where(x => x.CreationTime < minDateTime).ToList();
+                foreach (var file in oldFiles)
+                {
+                    File.Delete(file.FullName);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex);
+            }
+
+            return true;
+        }
+
+        public SystemSettings GetSystemSettings()
+        {
+            return _context.SystemSettings.FirstOrDefault();
+        }
+
+        public void UpdateSystemSettings(SystemSettings systemSettings)
+        {
+            _context.SaveChanges();
+        }
+
         #region private methods
 
-            // Move forward from the forDate and find a set of Prices which were recently uploaded..
+        // Move forward from the forDate and find a set of Prices which were recently uploaded..
         private DateTime? GetFirstDailyPriceDate(DateTime forDate)
         {
             using (var db = new RepositoryContext())

@@ -521,6 +521,11 @@ table.fixed-header>tbody {
     color: #fff;
 }
 
+#FileUploadContainer tr.no-upload-file {
+    font-style: italic;
+    color: #999;
+}
+
 
 #FileUploadContainer tr.uploaded-today:nth-child(odd) {
         background-color:  #ffe;

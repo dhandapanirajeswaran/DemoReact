@@ -20,6 +20,9 @@ namespace JsPlc.Ssc.PetrolPricing.Models.ViewModels.Diagnostics
         [Display(Name = "Log Debug Messages")]
         public bool Logging_LogDebugMessages { get; set; }
 
+        [Display(Name = "Data Cleanse Files After Days")]
+        public int DataCleanseFilesAfterDays { get; set; }
+
         public DiagnosticsSettingsViewModel()
         {
             this.Dapper_LogDatabaseCalls = false;
@@ -27,6 +30,7 @@ namespace JsPlc.Ssc.PetrolPricing.Models.ViewModels.Diagnostics
             this.CompetitorPrices_UseStoredProcedure = false;
             this.Logging_LogDebugMessages = false;
             this.Logging_LogInformationMessages = false;
+            this.DataCleanseFilesAfterDays = 0;
         }
     }
 }

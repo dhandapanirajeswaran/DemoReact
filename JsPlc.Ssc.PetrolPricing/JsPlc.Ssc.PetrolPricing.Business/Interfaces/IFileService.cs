@@ -1,4 +1,5 @@
 ﻿using JsPlc.Ssc.PetrolPricing.Models;
+using JsPlc.Ssc.PetrolPricing.Models.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -24,5 +25,9 @@ namespace JsPlc.Ssc.PetrolPricing.Business
         FileUpload ProcessQuarterlyFileNew(List<FileUpload> uploadedFiles);
 
 		void CleanupIntegrationTestsData(string testUserName = "Integration tests");
+
+        FileDownloadViewModel GetFileDownload(int fileUploadId);
+
+        bool DataCleanseFileUploads(int daysAgo);
     }
 }

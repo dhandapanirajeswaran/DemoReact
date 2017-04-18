@@ -287,5 +287,13 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         UserAccessViewModel GetUserAccess(string userName);
 
         void SignIn(string userName);
+
+        FileDownloadViewModel GetFileDownload(int fileUploadId, string uploadPath);
+
+        bool DataCleanseFileUploads(int daysAgo, string uploadPath);
+
+        SystemSettings GetSystemSettings();
+
+        void UpdateSystemSettings(SystemSettings systemSettings);
     }
 }

@@ -8,6 +8,8 @@ namespace JsPlc.Ssc.PetrolPricing.Core
 {
 	public static class Const
 	{
+        public const int MinDataCleanseFilesAfterDays = 7;
+
 		public const string Sainsburys = "Sainsburys";
 
 		public const string SAINSBURYS = "SAINSBURYS";

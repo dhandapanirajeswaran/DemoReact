@@ -39,6 +39,9 @@ namespace JsPlc.Ssc.PetrolPricing.Models
         [Display(Name = "Uploaded by")]
         public string UploadedBy { get; set; } // Emailaddr/Username of Uploader
 
+        [Display(Name = "File Exists")]
+        public bool FileExists { get; set; }
+
         public virtual ICollection<ImportProcessError> ImportProcessErrors { get; set; }
 	}
 }

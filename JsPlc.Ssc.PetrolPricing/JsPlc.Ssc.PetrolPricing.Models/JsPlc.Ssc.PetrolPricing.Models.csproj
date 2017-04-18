@@ -102,6 +102,7 @@
     <Compile Include="Enums\UserPermissionEnums.cs" />
     <Compile Include="GenericStatus.cs" />
     <Compile Include="ImportProcessError.cs" />
+    <Compile Include="SystemSettings.cs" />
     <Compile Include="LatestCompPrice.cs" />
     <Compile Include="NearbyGrocerPriceSiteStatus.cs" />
     <Compile Include="PPUser.cs" />
@@ -118,6 +119,7 @@
     <Compile Include="ViewModels\Diagnostics\DiagnosticsLogEntryViewModel.cs" />
     <Compile Include="ViewModels\Diagnostics\DiagnosticsDatabaseObject.cs" />
     <Compile Include="ViewModels\Diagnostics\DiagnosticsViewModel.cs" />
+    <Compile Include="ViewModels\FileDownloadViewModel.cs" />
     <Compile Include="ViewModels\JsonResultViewModel.cs" />
     <Compile Include="ViewModels\LatestCompPriceDataModel.cs" />
     <Compile Include="ViewModels\LatestPriceDataModel.cs" />

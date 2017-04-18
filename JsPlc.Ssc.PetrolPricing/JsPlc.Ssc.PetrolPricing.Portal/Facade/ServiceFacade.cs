@@ -1014,5 +1014,41 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
                 throw new Exception("Exception in GetUserAccessModel" + System.Environment.NewLine + ex.Message, ex);
             }
         }
+
+        public async Task<FileDownloadViewModel> DownloadFile(int fileUploadId)
+        {
+            try
+            {
+                var apiUrl = String.Format("api/File/Download/?fileUploadId={0}", fileUploadId);
+                var response = await _client.Value.GetAsync(apiUrl);
+                var result = response.Content.ReadAsAsync<FileDownloadViewModel>().Result;
+                return response.IsSuccessStatusCode
+                    ? result
+                    : new FileDownloadViewModel();
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex);
+                throw new Exception("Exception in DownloadFile" + System.Environment.NewLine + ex.Message, ex);
+            }
+        }
+
+        public async Task<bool> DataCleanseFileUploads()
+        {
+            try
+            {
+                var apiUrl = String.Format("api/File/DataCleanse");
+                var response = await _client.Value.GetAsync(apiUrl);
+                var result = response.Content.ReadAsAsync<bool>().Result;
+                return response.IsSuccessStatusCode
+                    ? result
+                    : false;
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex);
+                throw new Exception("Exception in DataCleanseFileUploads" + System.Environment.NewLine + ex.Message, ex);
+            }
+        }
     }
 }

@@ -15,6 +15,7 @@ namespace JsPlc.Ssc.PetrolPricing.Models.ViewModels.Diagnostics
         public Dictionary<string, string> AppSettings;
         public Dictionary<string, string> CoreSettings;
         public Dictionary<string, string> Environment;
+        public Dictionary<string, string> SystemSettings;
 
         public List<DiagnosticsLogEntryViewModel> LogEntries;
 
@@ -29,6 +30,7 @@ namespace JsPlc.Ssc.PetrolPricing.Models.ViewModels.Diagnostics
             this.AppSettings = new Dictionary<string, string>();
             this.CoreSettings = new Dictionary<string, string>();
             this.Environment = new Dictionary<string, string>();
+            this.SystemSettings = new Dictionary<string, string>();
             this.LogEntries = new List<DiagnosticsLogEntryViewModel>();
             this.RecentDatabaseObjectsChanges = new List<DiagnosticsDatabaseObject>();
             this.DatabaseObjectSummary = new DiagnosticsDatabaseObjectSummary();

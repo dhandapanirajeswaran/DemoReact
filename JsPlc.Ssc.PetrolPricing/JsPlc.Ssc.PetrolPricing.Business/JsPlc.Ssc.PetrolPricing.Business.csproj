@@ -127,6 +127,7 @@
     <Compile Include="Interfaces\IReportService.cs" />
     <Compile Include="Interfaces\IAppSettings.cs" />
     <Compile Include="Interfaces\ISiteService.cs" />
+    <Compile Include="Interfaces\ISystemSettingsService.cs" />
     <Compile Include="Services\AccountService.cs" />
     <Compile Include="Services\DiagnosticsService.cs" />
     <Compile Include="Services\EmailService.cs" />
@@ -141,6 +142,7 @@
     <Compile Include="Services\FileService.cs" />
     <Compile Include="Services\LookupService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\SystemSettingsService.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

@@ -44,6 +44,8 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
         public IDbSet<ExcludeBrands> ExcludeBrands { get; set; }
 
+        public IDbSet<SystemSettings> SystemSettings { get; set; }
+
 		public RepositoryContext()
 			: base("name=PetrolPricingRepository")
 		{

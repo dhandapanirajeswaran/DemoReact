@@ -62,6 +62,15 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
         {
             ViewBag.ErrorMessage = errMsg;
 
+            try
+            {
+                await DataCleanseFileUploads();
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex);
+            }
+
             var model = new UploadViewModel
             {
                 UploadTypes = GetUploadTypes(),
@@ -214,6 +223,13 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             return _serviceFacade.CleanupIntegrationTestsData(testUserName);
         }
 
+
+        public async Task<ActionResult> Download(int id)
+        {
+            var model = await _serviceFacade.DownloadFile(id);
+            return File(model.FileBytes, System.Net.Mime.MediaTypeNames.Application.Octet, model.FileName);
+        }
+
         #region private methods
         /// <summary>
         /// 
@@ -232,6 +248,12 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
                 return svcFacade.GetUploadTypes();
             }
         }
+
+        private async Task<bool> DataCleanseFileUploads()
+        {
+            return await _serviceFacade.DataCleanseFileUploads();
+        }
+
         #endregion
     }
 

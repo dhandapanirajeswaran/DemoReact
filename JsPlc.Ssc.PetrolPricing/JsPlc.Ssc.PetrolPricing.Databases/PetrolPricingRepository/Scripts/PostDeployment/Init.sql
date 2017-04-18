@@ -494,3 +494,11 @@ THEN UPDATE SET
 	BrandName = source.BrandName, 
 	IsSainsburys = source.IsSainsburys;
 
+--
+-- Set up init SystemSettings
+--
+IF NOT EXISTS(SELECT TOP 1 NULL FROM dbo.SystemSettings)
+BEGIN
+	INSERT INTO dbo.SystemSettings (DataCleanseFilesAfterDays, LastDataCleanseFilesOn)
+	VALUES(60, NULL)
+END

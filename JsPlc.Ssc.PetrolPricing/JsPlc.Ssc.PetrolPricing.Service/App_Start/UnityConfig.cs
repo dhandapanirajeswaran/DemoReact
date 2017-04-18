@@ -42,6 +42,7 @@ namespace JsPlc.Ssc.PetrolPricing.Service
 			container.RegisterType<IDataFileReader, DataFileReader>();
             container.RegisterType<IAccountService, AccountService>();
             container.RegisterType<IPPUserService, PPUserService>();
+            container.RegisterType<ISystemSettingsService, SystemSettingsService>();
 
             config.DependencyResolver = new UnityDependencyResolver(container);
         }

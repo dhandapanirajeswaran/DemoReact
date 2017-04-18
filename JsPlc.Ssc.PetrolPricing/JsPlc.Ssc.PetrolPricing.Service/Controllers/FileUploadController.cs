@@ -23,11 +23,13 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
     {
         IFileService _fileService;
         IAppSettings _appSettings;
+        ISystemSettingsService _systemSettingsService;
 
-        public FileUploadController(IFileService fileService,IAppSettings appSettings)
+        public FileUploadController(IFileService fileService,IAppSettings appSettings, ISystemSettingsService systemSettingsService)
         {
             _fileService = fileService;
             _appSettings = appSettings;
+            _systemSettingsService = systemSettingsService;
         }
 
         [HttpPost]
@@ -106,6 +108,7 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
                     return BadRequest("File with that name already exists. Please try again.");
                 }
 
+                fileUpload.FileExists = true;
                 var fu = _fileService.NewUpload(fileUpload);
 
                 return Ok(fu);
@@ -251,6 +254,24 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
         public async Task<IHttpActionResult> CalcDailyPrices(int siteId)
         {
             return Ok(_fileService.CalcDailyPrices(siteId));
+        }
+
+        [HttpGet]
+        [Route("api/File/Download")]
+        public async Task<IHttpActionResult> FileDownload([FromUri] int fileUploadId)
+        {
+            return Ok(_fileService.GetFileDownload(fileUploadId));
+        }
+
+        [HttpGet]
+        [Route("api/File/DataCleanse")]
+        public async Task<IHttpActionResult> DataCleanseFileUploads()
+        {
+            var systemSettings = _systemSettingsService.GetSettings();
+
+            var daysAgo = systemSettings.DataCleanseFilesAfterDays;
+
+            return Ok(_fileService.DataCleanseFileUploads(daysAgo));
         }
     }
 }

@@ -111,20 +111,17 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 			return _db.GetFileUpload(id);
 		}
 
-
-
-
-		/// <summary>
-		/// Reads uploaded files one by one and imports them to DailyPrices table
-		/// - Picks files with Status 1 = Uploaded
-		/// - Sets status 5 = Processing, Reads thru file and adds records to DP,
-		/// - Sets FileUpload status to 10 Success or 15 if any error at all
-		/// - NEW DeleteRecordsForOlderImportsOfDate (yet to test)
-		/// We stop at the first successful file since we should only process the latest files (no-brainer)
-		/// </summary>
-		/// <param name="listOfFiles"></param>
-		/// <returns></returns>
-		public FileUpload ProcessDailyPrice(List<FileUpload> listOfFiles)
+        /// <summary>
+        /// Reads uploaded files one by one and imports them to DailyPrices table
+        /// - Picks files with Status 1 = Uploaded
+        /// - Sets status 5 = Processing, Reads thru file and adds records to DP,
+        /// - Sets FileUpload status to 10 Success or 15 if any error at all
+        /// - NEW DeleteRecordsForOlderImportsOfDate (yet to test)
+        /// We stop at the first successful file since we should only process the latest files (no-brainer)
+        /// </summary>
+        /// <param name="listOfFiles"></param>
+        /// <returns></returns>
+        public FileUpload ProcessDailyPrice(List<FileUpload> listOfFiles)
 		{
 			listOfFiles = listOfFiles.OrderByDescending(x => x.UploadDateTime).ToList(); // start processing with the most recent file first
 			FileUpload retval = null;
@@ -883,7 +880,18 @@ namespace JsPlc.Ssc.PetrolPricing.Business
             }
             return true;
         }
-		#endregion
 
-	}
+        public FileDownloadViewModel GetFileDownload(int fileUploadId)
+        {
+            var model = _db.GetFileDownload(fileUploadId, _appSettings.UploadPath);
+            return model;
+        }
+
+        public bool DataCleanseFileUploads(int daysAgo)
+        {
+            return _db.DataCleanseFileUploads(daysAgo, _appSettings.UploadPath);
+        }
+
+        #endregion
+    }
 }
