@@ -159,6 +159,8 @@
     <Build Include="dbo\Stored Procedures\spNearbyGrocerPriceStatusForSites.sql" />
     <Build Include="dbo\Stored Procedures\spDeleteUserPermissions.sql" />
     <Build Include="dbo\Tables\SystemSettings.sql" />
+    <Build Include="dbo\Tables\QuarterlyUploadArchive.sql" />
+    <Build Include="dbo\Stored Procedures\spArchiveQuarterlyUploadData.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Scripts\PostDeployment\Script.PostDeployment.sql" />

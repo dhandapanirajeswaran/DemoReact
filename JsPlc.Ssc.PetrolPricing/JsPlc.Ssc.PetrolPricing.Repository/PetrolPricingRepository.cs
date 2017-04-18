@@ -1828,13 +1828,12 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         {
             using (var db = new RepositoryContext())
             {
+                db.Database.ExecuteSqlCommand("EXEC dbo.spArchiveQuarterlyUploadData");
+
                 db.Database.ExecuteSqlCommand("Truncate table QuarterlyUploadStaging");
                 db.Database.ExecuteSqlCommand("DBCC CHECKIDENT ('QuarterlyUploadStaging',RESEED, 0)");
-
-                  
             }
         }
-
 
         private void TruncateLatestCompPrices()
         {
