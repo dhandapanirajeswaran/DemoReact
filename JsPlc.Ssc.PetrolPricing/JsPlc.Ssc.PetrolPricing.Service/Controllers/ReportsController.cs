@@ -2,16 +2,21 @@
 using System;
 using System.Web.Http;
 using JsPlc.Ssc.PetrolPricing.Models.ViewModels;
+using System.Linq;
+using AutoMapper;
+using JsPlc.Ssc.PetrolPricing.Models;
 
 namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
 {
     public class ReportsController : ApiController
     {
         IReportService _reportService;
+        IFileService _fileService;
 
-        public ReportsController(IReportService reportService)
+        public ReportsController(IReportService reportService, IFileService fileService)
         {
             _reportService = reportService;
+            _fileService = fileService;
         }
 
         /// <summary>
@@ -123,6 +128,64 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
         {
             var result = _reportService.GetReportPriceMovement(brandName, from, to, fuelTypeId, siteName);
             return Ok(result);
+        }
+
+        [HttpGet]
+        [Route("api/GetQuarterlyFileUploadOptions")]
+        public IHttpActionResult GetQuarterlyFileUploadOptions()
+        {
+            var result = _reportService.GetQuarterlyFileUploadOptions();
+            return Ok(result);
+        }
+
+        [HttpGet]
+        [Route("api/GetQuarterlySiteAnalysisReport/{leftId}/{rightId}")]
+        public IHttpActionResult GetQuarterlySiteAnalysisReport([FromUri] int leftId, [FromUri] int rightId)
+        {
+            var result = _reportService.GetQuarterlySiteAnalysisReport(leftId, rightId);
+            return Ok(result);
+        }
+
+        [HttpGet]
+        [Route("api/GetQuarterlySiteAnalysisContainerViewModel/{leftFileUploadId}/{rightFileUploadId}")]
+        public IHttpActionResult GetQuarterlySiteAnalysisContainerViewModel([FromUri] int leftFileUploadId, [FromUri] int rightFileUploadId)
+        {
+            var leftFile = _fileService.GetFileUploadInformation(leftFileUploadId);
+            var rightFile = _fileService.GetFileUploadInformation(rightFileUploadId);
+
+            var errorMessage = leftFileUploadId == 0
+                ? "Please select a left Quarterly File to compare"
+                : rightFileUploadId == 0
+                ? "Please select a right Quarterly File to compare"
+                : leftFileUploadId == rightFileUploadId
+                ? "You cannot compare the same Quarterly file to itself. Please select two different files"
+                : "";
+
+
+            var options = _reportService.GetQuarterlyFileUploadOptions().ToList();
+            options.Insert(0, new SelectItemViewModel()
+            {
+                Id = 0,
+                Name = "--- Please select ---"
+            }
+            );
+
+
+            var model = new QuarterlySiteAnalysisContainerViewModel()
+            {
+                ErrorMessage = errorMessage,
+                LeftFileUploadId = leftFileUploadId,
+                RightFileUploadId = rightFileUploadId,
+                LeftFile = Mapper.Map<FileUpload,FileUploadViewModel>(leftFile),
+                RightFile = Mapper.Map<FileUpload, FileUploadViewModel>(rightFile),
+                FileUploadOptions = options,
+                Report = new QuarterlySiteAnalysisReportViewModel()
+            };
+
+            if (String.IsNullOrWhiteSpace(errorMessage))
+                model.Report = _reportService.GetQuarterlySiteAnalysisReport(leftFileUploadId, rightFileUploadId);
+
+            return Ok(model);
         }
     }
 }

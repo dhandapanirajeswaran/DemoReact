@@ -91,7 +91,7 @@ namespace JsPlc.Ssc.PetrolPricing.Models.Common
                 Suburb = site.Suburb,
                 Town = site.Town,
                 TrailPriceCompetitorId = site.TrailPriceCompetitorId,
-                CompetitorPriceOffsetNew=site.CompetitorPriceOffsetNew,
+                CompetitorPriceOffsetNew = site.CompetitorPriceOffsetNew,
                 CompetitorPriceOffset = site.CompetitorPriceOffset
             };
 
@@ -299,7 +299,7 @@ namespace JsPlc.Ssc.PetrolPricing.Models.Common
         public static DataTable ToNationalAverageReportDataTable(
             this NationalAverageReportContainerViewModel reportContainer, string tableName = "National Average")
         {
-           
+
             var dt = new DataTable(tableName);
             dt.Columns.Add("Date");
             dt.Columns.Add("Day");
@@ -307,11 +307,11 @@ namespace JsPlc.Ssc.PetrolPricing.Models.Common
 
             foreach (var fuelType in reportContainer.NationalAverageReport.Fuels)
             {
-                dt.Columns.Add(fuelType.FuelName + " (£)");               
+                dt.Columns.Add(fuelType.FuelName + " (£)");
             }
             foreach (var fuelType in reportContainer.NationalAverageReport.Fuels)
             {
-                dt.Columns.Add("Variance "+ fuelType.FuelName + " (£)");
+                dt.Columns.Add("Variance " + fuelType.FuelName + " (£)");
             }
 
             dt.Columns.Add("Average Variance (£)");
@@ -506,7 +506,7 @@ namespace JsPlc.Ssc.PetrolPricing.Models.Common
                 dr[7] = brandTimes.CountMoreThan30;
                 dt.Rows.Add(dr);
             }
-            
+
             return dt;
         }
 
@@ -577,6 +577,39 @@ namespace JsPlc.Ssc.PetrolPricing.Models.Common
             }
 
             return dt;
+        }
+
+        public static List<DataTable> ToQuarterlySiteAnalysisDataTable(this QuarterlySiteAnalysisContainerViewModel source, string tableName = "Quarterly Site Analysis")
+        {
+            var dt = new DataTable(tableName);
+            dt.Columns.Add("CatNo");
+            dt.Columns.Add("SiteName");
+            dt.Columns.Add("LeftOwnership");
+            dt.Columns.Add("RightOwnership");
+            dt.Columns.Add("HasOwnershipChanged");
+            dt.Columns.Add("WasSiteAdded");
+            dt.Columns.Add("WasSiteDeleted");
+            dt.Columns.Add("Changed");
+
+            foreach(var row in source.Report.Rows)
+            {
+                var dr = dt.NewRow();
+                dr[0] = row.CatNo;
+                dr[1] = row.SiteName;
+                dr[2] = row.LeftOwnership;
+                dr[3] = row.RightOwnership;
+                dr[4] = row.HasOwnershipChanged;
+                dr[5] = row.WasSiteAdded;
+                dr[6] = row.WasSiteDeleted;
+                dr[7] = row.HasOwnershipChanged || row.WasSiteAdded || row.WasSiteDeleted;
+
+                dt.Rows.Add(dr);
+            }
+
+            return new List<DataTable>()
+            {
+                dt
+            };
         }
     }
 }

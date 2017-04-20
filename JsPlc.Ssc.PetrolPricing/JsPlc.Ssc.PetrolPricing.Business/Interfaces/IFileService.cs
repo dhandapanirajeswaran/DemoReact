@@ -29,5 +29,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
         FileDownloadViewModel GetFileDownload(int fileUploadId);
 
         bool DataCleanseFileUploads(int daysAgo);
+
+        FileUpload GetFileUploadInformation(int fileUploadId);
     }
 }

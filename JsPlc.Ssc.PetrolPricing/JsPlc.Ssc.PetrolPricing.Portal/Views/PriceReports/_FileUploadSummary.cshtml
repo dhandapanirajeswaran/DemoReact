@@ -1,0 +1,36 @@
+﻿@model JsPlc.Ssc.PetrolPricing.Models.ViewModels.FileUploadViewModel
+@using JsPlc.Ssc.PetrolPricing.Portal.Helper.Extensions
+@{
+    Layout = null;
+}
+
+<table class="table table-condensed table-striped">
+    <tbody>
+        <tr>
+            <th>Original FileName</th>
+            <td>@(Model.OriginalFileName)</td>
+        </tr>
+        <tr>
+            <th>Upload DateTime</th>
+            <td>@(Model.UploadDateTime.ToString("dd-MMM-yyyy HH:mm:ss")) &mdash; @(Html.FormatFriendlyTimeAgo(Model.UploadDateTime))</td>
+        </tr>
+        <tr>
+            <th>Uploaded By</th>
+            <td>@(Model.UploadedBy)</td>
+        </tr>
+        <tr>
+            <th>File Exists</th>
+            <td>
+                @if (Model.FileExists)
+                {
+                    <span class="text-success" data-infotip="File exists"><i class="fa fa-check"></i> Yes</span>
+                    <a class="btn btn-primary btn-sm pull-right" href="@Url.Action("Download", "File")/@Model.Id" data-infotip="Download the file"><i class="fa fa-download"></i> Download file</a>
+                }
+                else
+                {
+                    <span class="text-danger" data-infotip="File [b]does not[/b] Exist."><i class="fa fa-times"></i> No</span><br />
+                }
+        </td>
+        </tr>
+    </tbody>
+</table>

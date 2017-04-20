@@ -273,5 +273,13 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
 
             return Ok(_fileService.DataCleanseFileUploads(daysAgo));
         }
+
+        [HttpGet]
+        [Route("api/GetFileUploadInformation/{fileUploadId}")]
+        public async Task<IHttpActionResult> GetFileUploadInformation([FromUri]int fileUploadId)
+        {
+            var result = _fileService.GetFileUploadInformation(fileUploadId);
+            return Ok(result);
+        }
     }
 }

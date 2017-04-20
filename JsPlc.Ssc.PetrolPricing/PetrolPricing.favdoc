@@ -12,5 +12,15 @@
         <lineHash>Yt51mPITFJEGbbUfX/GJlv6dY95AGlYaJN/0JQJ8Byw=</lineHash>
       </position>
     </Favorite>
+    <Favorite>
+      <name>FileService.cs</name>
+      <path>JsPlc.Ssc.PetrolPricing.Business\Services\FileService.cs</path>
+      <absolutePath>C:\Users\garry.leeder\Source\Repos\PetrolPricing\JsPlc.Ssc.PetrolPricing\JsPlc.Ssc.PetrolPricing.Business\Services\FileService.cs</absolutePath>
+      <position>
+        <line>222</line>
+        <column>44</column>
+        <lineHash>No3T7fda98RqLsC/OWoxJlXFvtXQY/Q2Mh6FVbw9WzM=</lineHash>
+      </position>
+    </Favorite>
   </favorites>
 </Favorites>

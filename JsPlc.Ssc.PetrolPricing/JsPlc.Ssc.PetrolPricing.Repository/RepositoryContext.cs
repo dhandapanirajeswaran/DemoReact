@@ -263,6 +263,35 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             DapperHelper.Execute(this, sprocName, parameters);
         }
 
+        public void ArchiveQuarterlyUploadStagingData()
+        {
+            const string sprocName = "spArchiveQuarterlyUploadData";
 
+            var parameters = new { };
+
+            DapperHelper.Execute(this, sprocName, parameters);
+        }
+
+        public IEnumerable<SelectItemViewModel> GetQuarterlyFileUploadOptions()
+        {
+            const string sprocName = "spGetQuarterlyFileUploadOptions";
+
+            var parameters = new { };
+
+            return DapperHelper.QueryList<SelectItemViewModel>(this, sprocName, parameters);
+        }
+
+        public IEnumerable<QuarterlySiteAnalysisReportRowViewModel> GetQuarterlySiteAnalysisReportRows(int leftFileUploadId, int rightFileUploadId)
+        {
+            const string sprocName = "spGetQuarterlySiteAnalysisReport";
+
+            var parameters = new
+            {
+                @LeftFileUploadId = leftFileUploadId,
+                @RightFileUploadId = rightFileUploadId
+            };
+
+            return DapperHelper.QueryList<QuarterlySiteAnalysisReportRowViewModel>(this, sprocName, parameters);
+        }
     }
 }

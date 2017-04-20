@@ -295,6 +295,11 @@ textarea {
     background-color: #910048;
 }
 
+.nav-condensed > li > a {
+    padding-top: 6px;
+    padding-bottom: 6px;
+}
+
 /* The following rule clipped the menu opton in sm view*/
 /*.nav {margin-left:-25px;}*/
 

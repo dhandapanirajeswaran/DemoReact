@@ -38,6 +38,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             {"NationalAverageReport2", ReportExportFileType.NationalAverageReport2},
             {"PriceMovementReport", ReportExportFileType.PriceMovementReport},
             {"PricePointsReport", ReportExportFileType.PricePointsReport},
+            {"QuarterlySiteAnalysisReport", ReportExportFileType.QuarterlySiteAnalysis },
 
             // alternative filenames !
             {"SAINSBURYS PriceMovementReport", ReportExportFileType.PriceMovementReport }
@@ -289,14 +290,29 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
                 return View();
             }
 		}
-		#endregion
 
-		#region Export
-		//### #### #### #### ####
-		//### EXPORT REPORTS ####
-		//### #### #### #### ####
+        [System.Web.Mvc.HttpGet]
+        public ActionResult QuarterlySiteAnalysis()
+        {
+            var model = PopulateQuarterlySiteAnalysisModel();
+            return View(model);
+        }
 
-		[System.Web.Mvc.HttpGet]
+        [System.Web.Mvc.HttpPost]
+        public ActionResult QuarterlySiteAnalysis(QuarterlySiteAnalysisContainerViewModel model)
+        {
+            var viewModel = PopulateQuarterlySiteAnalysisModel(model.LeftFileUploadId, model.RightFileUploadId);
+            return View(viewModel);
+        }
+
+        #endregion
+
+        #region Export
+        //### #### #### #### ####
+        //### EXPORT REPORTS ####
+        //### #### #### #### ####
+
+        [System.Web.Mvc.HttpGet]
 		public ActionResult ExportPriceMovement([FromUri]string downloadId, [FromUri]DateTime DateFrom, [FromUri]DateTime DateTo, [FromUri]int FuelTypeId = 0, [FromUri]string BrandName = "")
 		{
 			var model = new PriceMovementReportContainerViewModel
@@ -430,10 +446,27 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 
             return ExcelDocumentStream(tables, "PricePointsReport", filenameSuffix, downloadId);
 		}
-		#endregion
 
-		#region Private
-		private PriceMovementReportContainerViewModel LoadPriceMovementReport(PriceMovementReportContainerViewModel model)
+        [System.Web.Mvc.HttpGet]
+        public ActionResult ExportQuarterlySiteAnalysis(string downloadId, string leftFileUploadId, string rightFileUploadId)
+        {
+
+            var leftId = Convert.ToInt32(leftFileUploadId);
+            var rightId = Convert.ToInt32(rightFileUploadId);
+
+            var reportContainer = _serviceFacade.GetQuarterlySiteAnalysisContainerViewModel(leftId, rightId);
+
+            var tables = reportContainer.ToQuarterlySiteAnalysisDataTable();
+
+            string filenameSuffix = String.Format("[{0}]", DateTime.Now.ToString("dd-MMM-yyyy"));
+
+            return ExcelDocumentStream(tables, "QuarterlySiteAnalysisReport", filenameSuffix, downloadId);
+        }
+
+        #endregion
+
+        #region Private
+        private PriceMovementReportContainerViewModel LoadPriceMovementReport(PriceMovementReportContainerViewModel model)
 		{
 			model.FuelTypes = LoadFuels(new[] { 1, 2, 6 });
 			model.Brands = _serviceFacade.GetBrands().ToList();
@@ -700,8 +733,10 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
                                 }
                             }
                             cellAlphabet++;
-
                         }
+                    }
+                    if (reportType == ReportExportFileType.QuarterlySiteAnalysis)
+                    {
 
                     }
 
@@ -716,6 +751,13 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
                 return base.SendExcelFile(excelFilename, wb, downloadId);
             }
         }
+
+        private QuarterlySiteAnalysisContainerViewModel  PopulateQuarterlySiteAnalysisModel(int leftFileUploadId=0, int rightFileUploadId=0)
+        {
+            var model = _serviceFacade.GetQuarterlySiteAnalysisContainerViewModel(leftFileUploadId, rightFileUploadId);
+            return model;
+        }
+
 		#endregion
 	}
 }

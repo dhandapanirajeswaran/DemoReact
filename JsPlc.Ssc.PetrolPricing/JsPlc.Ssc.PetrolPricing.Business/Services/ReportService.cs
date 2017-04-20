@@ -3,6 +3,7 @@ using System.Runtime.Caching;
 using JsPlc.Ssc.PetrolPricing.Models.ViewModels;
 using System;
 using JsPlc.Ssc.PetrolPricing.Repository;
+using System.Collections.Generic;
 
 namespace JsPlc.Ssc.PetrolPricing.Business
 {
@@ -103,6 +104,18 @@ namespace JsPlc.Ssc.PetrolPricing.Business
             return report;
         }
 
+        public IEnumerable<SelectItemViewModel> GetQuarterlyFileUploadOptions()
+        {
+            var options = _db.GetQuarterlyFileUploadOptions();
+            return options;
+        }
+
+        public QuarterlySiteAnalysisReportViewModel GetQuarterlySiteAnalysisReport(int leftId, int rightId)
+        {
+            var report = _db.GetQuarterlySiteAnalysisReport(leftId, rightId);
+            return report;
+        }
+
         #region Private Methods
 
         private static string MakeCacheKey(string format, params object[] cacheKeyStrings)
@@ -111,8 +124,5 @@ namespace JsPlc.Ssc.PetrolPricing.Business
         }
 
         #endregion
-
-
-      
     }
 }

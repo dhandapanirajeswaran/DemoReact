@@ -295,5 +295,13 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         SystemSettings GetSystemSettings();
 
         void UpdateSystemSettings(SystemSettings systemSettings);
+
+        void ArchiveQuarterlyUploadStagingData();
+
+        IEnumerable<SelectItemViewModel> GetQuarterlyFileUploadOptions();
+
+        QuarterlySiteAnalysisReportViewModel GetQuarterlySiteAnalysisReport(int leftFileUploadId, int rightFileUploadId);
+
+        FileUpload GetFileUploadInformation(int fileUploadId);
     }
 }

@@ -58,6 +58,19 @@ namespace JsPlc.Ssc.PetrolPricing.Service.DataMapping
                 .ForMember(co => co.HasNearbyCompetitorDieselPrice, i=> i.MapFrom(p => p.HasNearbyCompetitorDieselPrice))
                 .ForMember(co => co.HasNearbyCompetitorSuperUnleadedPrice, i=> i.MapFrom(p => p.HasNearbyCompetitorSuperUnleadedPrice))
                 .ForMember(co => co.HasNearbyCompetitorUnleadedPrice, i=> i.MapFrom(p => p.HasNearbyCompetitorUnleadedPrice));
+
+            Mapper.CreateMap<FileUpload, FileUploadViewModel>()
+                .ForMember(fu => fu.Id, mo => mo.MapFrom(p => p.Id))
+                .ForMember(fu => fu.OriginalFileName, mo => mo.MapFrom(p => p.OriginalFileName))
+                .ForMember(fu => fu.StoredFileName, mo => mo.MapFrom(p => p.StoredFileName))
+                .ForMember(fu => fu.UploadTypeId, mo => mo.Ignore())
+                .ForMember(fu => fu.UploadType, mo => mo.MapFrom(p => p.UploadType))
+                .ForMember(fu => fu.UploadDateTime, mo => mo.MapFrom(p => p.UploadDateTime))
+                .ForMember(fu => fu.StatusId, mo => mo.MapFrom(p => p.StatusId))
+                .ForMember(fu => fu.Status, mo => mo.MapFrom(p => p.Status))
+                .ForMember(fu => fu.UploadedBy, mo => mo.MapFrom(p => p.UploadedBy))
+                .ForMember(fu => fu.FileExists, mo => mo.MapFrom(p => p.FileExists))
+                .ForMember(fu => fu.ImportProcessErrors, mo => mo.Ignore());
         }
     }
 }

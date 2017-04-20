@@ -1,0 +1,301 @@
+﻿@model JsPlc.Ssc.PetrolPricing.Models.ViewModels.QuarterlySiteAnalysisContainerViewModel
+
+@using JsPlc.Ssc.PetrolPricing.Portal.Helper.Extensions
+
+@{
+    ViewBag.Title = "Report - Quarterly Site Analysis";
+
+    var reportInformationViewModel = new JsPlc.Ssc.PetrolPricing.Models.ViewModels.ReportInformationViewModel()
+    {
+        Introduction = "The Quarterly Site Analysis report shows which sites have been added, which have closed and which have changed ownership."
+    };
+
+    var hasValidLeftSelection = Model.LeftFileUploadId != 0;
+    var hasValidRightSelection = Model.RightFileUploadId != 0;
+    var hasSameSelection = hasValidLeftSelection && hasValidRightSelection && Model.LeftFileUploadId == Model.RightFileUploadId;
+
+    var hasValidSelection = hasValidLeftSelection && hasValidRightSelection && !hasSameSelection;
+}
+
+<style>
+    .vertical-scroll {
+        height: 500px;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+</style>
+
+<div class="row">
+    <div class="col-md-8">
+        <h1><i class="fa fa-bar-chart"></i> @ViewBag.Title.</h1>
+    </div>
+    <div class="col-md-4 text-right" style="padding-top: 20px">
+        <button type="button" class="btn btn-primary" id="btnExportReport" @(hasValidSelection ? "" : " disabled='disabled'")><i class="fa fa-download"></i> Export to Excel</button>
+    </div>
+</div>
+<hr />
+<style>
+</style>
+
+@using (Html.BeginForm("QuarterlySiteAnalysis", "PriceReports", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+
+    @Html.Partial("_ReportIntroduction", reportInformationViewModel)
+
+    <div class="row">
+        <div class="col-md-5">
+            <label for="SiteId"><i class="fa fa-file"></i> Left Quarterly File:</label>&nbsp;
+            @Html.DropDownList("LeftFileUploadId", new SelectList(Model.FileUploadOptions, "Id", "Name", Model.LeftFileUploadId), new { @class = "form-control" })
+        </div>
+
+        <div class="col-md-1 text-center">
+            <label>&nbsp;</label><br />
+            <span id="btnSwapFiles" class="btn btn-primary"><i class="fa fa-arrow-left"></i> Swap <i class="fa fa-arrow-right"></i></span>
+        </div>
+
+        <div class="col-md-5">
+            <label for="SiteId"><i class="fa fa-file"></i> Right Quarterly File:</label>&nbsp;
+            @Html.DropDownList("RightFileUploadId", new SelectList(Model.FileUploadOptions, "Id", "Name", Model.RightFileUploadId), new { @class = "form-control" })
+        </div>
+
+        <div class="col-md-1">
+            <label>&nbsp;</label>
+            <button type="button" class="btn btn-danger btn-block" id="btnResetReport"><i class="fa fa-power-off"></i> Reset</button>
+        </div>
+    </div>
+
+    if (!hasValidLeftSelection || !hasValidRightSelection)
+    {
+        <div class="row">
+            <div class="col-md-5 text-danger">
+                @if (!hasValidLeftSelection)
+                {
+                    <i class="fa fa-warning"></i>
+                    @:Please select a Quarterly file to compare
+                }
+            </div>
+            <div class="col-md-1">
+            </div>
+            <div class="col-md-5 text-danger">
+                @if (!hasValidRightSelection)
+                {
+                    <i class="fa fa-warning"></i>
+                    @:Please select a Quarterly file to compare
+                    }
+                else if (hasSameSelection)
+                {
+                    <i class="fa fa-warning"></i>
+                    @:You cannot compare against the same Quarterly file
+                }
+            </div>
+        </div>
+    }
+
+    if (!String.IsNullOrWhiteSpace(Model.ErrorMessage))
+    {
+        <br />
+        <div class="container">
+            <div class="row">
+                <div class="col-md-11 alert alert-danger text-center">
+                    @Model.ErrorMessage
+                </div>
+            </div>
+        </div>
+    }
+
+    if (String.IsNullOrWhiteSpace(Model.ErrorMessage))
+    {
+        <div class="container">
+            <div class="row">
+                <div class="col-md-5">
+                    @if (Model.LeftFile != null)
+                    {
+                        <br />
+                        Html.RenderPartial("_FileUploadSummary", Model.LeftFile);
+                    }
+                </div>
+                <div class="col-md-1">
+                </div>
+                <div class="col-md-5">
+                    @if (Model.RightFile != null)
+                    {
+                        <br />
+                        Html.RenderPartial("_FileUploadSummary", Model.RightFile);
+                    }
+                </div>
+            </div>
+        </div>
+    }
+}
+<hr />
+@if (hasValidSelection)
+{
+    <div class="container">
+        <ul class="nav nav-tabs nav-condensed">
+            <li class="active">
+                <a href="#SummaryTab" data-toggle="tab">Summary</a>
+            </li>
+            <li>
+                <a href="#NewSitesTab" data-toggle="tab">New Sites <span class="badge">@(Model.Report.NewSiteCount.ToString("N0"))</span></a>
+            </li>
+            <li>
+                <a href="#DeletedSitesTab" data-toggle="tab">Deleted Sites <span class="badge">@(Model.Report.DeletedSiteCount.ToString("N0"))</span></a>
+            </li>
+            <li>
+                <a href="#ChangedOwnershipTab" data-toggle="tab">Changed Ownership <span class="badge">@(Model.Report.ChangeOwnershipCount.ToString("N0"))</span></a>
+            </li>
+        </ul>
+
+        <div class="tab-content clearfix">
+            <!-- [SummaryTab] -->
+            <div class="tab-pane active" id="SummaryTab">
+
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <h3>Quarterly Site Analysis - Summary</h3>
+
+                            <table class="table table-hover table-condensed">
+                                <tbody>
+                                    <tr>
+                                        <th>New Sites:</th>
+                                        <td class="text-right">@(Model.Report.NewSiteCount.ToString("N0"))</td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <th>Deleted Sites:</th>
+                                        <td class="text-right">@(Model.Report.DeletedSiteCount.ToString("N0"))</td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <th>Existing Sites:</th>
+                                        <td class="text-right">@(Model.Report.ExistingSiteCount.ToString("N0"))</td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <th>Total Sites:</th>
+                                        <td class="text-right">@(Model.Report.TotalSiteCount.ToString("N0"))</td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <th>Changed Ownership:</th>
+                                        <td class="text-right">@(Model.Report.ChangeOwnershipCount.ToString("N0"))</td>
+                                        <td></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- [NewSitesTab] -->
+            <div class="tab-pane" id="NewSitesTab">
+
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-11">
+                            <h3>Quarterly Site Analysis - New Sites</h3>
+                            <div class="vertical-scroll">
+                                <table class="table table-hover table-condensed">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-right">Cat No</th>
+                                            <th></th>
+                                            <th>Site Name</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var row in Model.Report.Rows.Where(x => x.WasSiteAdded))
+                                        {
+                                            <tr>
+                                                <td class="text-right">@(row.CatNo)</td>
+                                                <td></td>
+                                                <td>@(row.SiteName)</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        </div>
+
+        <!-- [DeletedSitesTab] -->
+        <div class="tab-pane" id="DeletedSitesTab">
+
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-11">
+                        <h3>Quarterly Site Analysis - Deleted Sites</h3>
+                        <div class="vertical-scroll">
+                            <table class="table table-hover table-condensed">
+                                <thead>
+                                    <tr>
+                                        <th class="text-right">Cat No</th>
+                                        <th></th>
+                                        <th>Site Name</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var row in Model.Report.Rows.Where(x => x.WasSiteDeleted))
+                                    {
+                                        <tr>
+                                            <td class="text-right">@(row.CatNo)</td>
+                                            <td></td>
+                                            <td>@(row.SiteName)</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- [ChangeOwnershipTab] -->
+        <div class="tab-pane" id="ChangedOwnershipTab">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-11">
+                        <h3>Quarterly Site Analysis - Changed Ownership</h3>
+                        <div class="vertical-scroll">
+                            <table class="table table-hover table-condensed">
+                                <thead>
+                                    <tr>
+                                        <th class="text-right">Cat No</th>
+                                        <th></th>
+                                        <th>Site Name</th>
+                                        <th>Previous Ownership</th>
+                                        <th>New Ownership</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var row in Model.Report.Rows.Where(x => x.HasOwnershipChanged))
+                                    {
+                                        <tr>
+                                            <td class="text-right">@(row.CatNo)</td>
+                                            <td></td>
+                                            <td>@(row.SiteName)</td>
+                                            <td>@(row.LeftOwnership)</td>
+                                            <td>@(row.RightOwnership)</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+}
+@Html.Partial("_BackToReports")
+
+@section scripts {
+    <script src="~/Scripts/PriceReports/quarterlySiteAnalysis.js"></script>
+}

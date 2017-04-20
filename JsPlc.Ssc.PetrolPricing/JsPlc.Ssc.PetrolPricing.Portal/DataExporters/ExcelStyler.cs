@@ -39,6 +39,44 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.DataExporters
             cell.Style.Alignment.SetHorizontal(XLAlignmentHorizontalValues.Left);
         }
 
+        public static void GeneralRedYesFormatter(IXLCell cell)
+        {
+            var value = cell.Value.ToString().ToUpper();
+            if (value == "1" || value == "TRUE" || value == "YES")
+            {
+                cell.Value = "Yes";
+                cell.DataType = XLCellValues.Text;
+                cell.Style.Alignment.SetHorizontal(XLAlignmentHorizontalValues.Center);
+                cell.Style.Font.FontColor = XLColor.Red;
+            }
+            else if (value == "0" || value == "FALSE" || value == "NO")
+            {
+                cell.Value = "";
+                cell.DataType = XLCellValues.Text;
+                cell.Style.Alignment.SetHorizontal(XLAlignmentHorizontalValues.Center);
+                cell.Style.Font.FontColor = XLColor.Black;
+            }
+        }
+
+        public static void GeneralYesNoFormatter(IXLCell cell)
+        {
+            var value = cell.Value.ToString().ToUpper();
+            if (value == "1" || value == "TRUE" || value == "YES")
+            {
+                cell.Value = "Yes";
+                cell.DataType = XLCellValues.Text;
+                cell.Style.Alignment.SetHorizontal(XLAlignmentHorizontalValues.Center);
+                cell.Style.Font.FontColor = XLColor.Red;
+            }
+            else if (value == "0" || value == "FALSE" || value == "NO")
+            {
+                cell.Value = "No";
+                cell.DataType = XLCellValues.Text;
+                cell.Style.Alignment.SetHorizontal(XLAlignmentHorizontalValues.Center);
+                cell.Style.Font.FontColor = XLColor.Black;
+            }
+        }
+
         public static void GeneralPriceFormatter(IXLCell cell)
         {
             decimal tempDecimal;
@@ -183,6 +221,10 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.DataExporters
                     FormatReportPricePointsReport(worksheet, totalColumns, totalRows);
                     break;
 
+                case ReportExportFileType.QuarterlySiteAnalysis:
+                    FormatQuarterlySiteAnalysisReport(worksheet, totalColumns, totalRows);
+                    break;
+
                 default:
                     throw new ArgumentException("Unsupport ReportType: " + reportType);
             }
@@ -271,6 +313,22 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.DataExporters
 
             new ExcelColumnStyler(worksheet, firstDataRow, lastDataRow)
                 .FormatColumnRange(2, totalColumns, ExcelStyleFormatters.GeneralIntegerFormatter);
+        }
+
+        private void FormatQuarterlySiteAnalysisReport(IXLWorksheet worksheet, int totalColumns, int totalRows)
+        {
+            var firstDataRow = 2;
+            var lastDataRow = 2 + totalRows - 1;
+
+            new ExcelColumnStyler(worksheet, firstDataRow, lastDataRow)
+                .FormatColumn(1, ExcelStyleFormatters.GeneralIntegerFormatter) // CatNo
+                .FormatColumn(2, ExcelStyleFormatters.GeneralTextLeftAlignedFormatter) // SiteName
+                .FormatColumn(3, ExcelStyleFormatters.GeneralTextLeftAlignedFormatter) // LeftOwnership
+                .FormatColumn(4, ExcelStyleFormatters.GeneralTextLeftAlignedFormatter) // RightOwnership
+                .FormatColumn(5, ExcelStyleFormatters.GeneralRedYesFormatter) // HasOwnershipChanged
+                .FormatColumn(6, ExcelStyleFormatters.GeneralRedYesFormatter) // WasSiteAdded
+                .FormatColumn(7, ExcelStyleFormatters.GeneralRedYesFormatter) // WasSiteDeleted
+                .FormatColumn(8, ExcelStyleFormatters.GeneralYesNoFormatter); // NoChange
         }
 
         private void FormatExportAllWorksheet(IXLWorksheet worksheet, int totalRows)

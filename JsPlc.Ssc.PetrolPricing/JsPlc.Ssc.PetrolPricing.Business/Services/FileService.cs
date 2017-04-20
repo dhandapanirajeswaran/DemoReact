@@ -249,6 +249,9 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 
 				var success = importQuarterlyRecordsToStaging(aFile, dataRows, out gotWarning); // dumps all rows into the quarterly staging table
 
+                // archive the Quarterly Staging data - used by the QuarterlySiteAnalysis report
+                _db.ArchiveQuarterlyUploadStagingData();
+
 				if (!success)
 				{
 					throw new ImportQuarterlyRecordsToStagingException("Unable to populate staging table in db. Contact support team.");
@@ -258,8 +261,6 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 					aFile.StatusId = (int)ImportProcessStatuses.Warning;
 
 				var newQuarterlyRecords = _db.GetQuarterlyRecords();
-
-
 
 				try
 				{
@@ -890,6 +891,11 @@ namespace JsPlc.Ssc.PetrolPricing.Business
         public bool DataCleanseFileUploads(int daysAgo)
         {
             return _db.DataCleanseFileUploads(daysAgo, _appSettings.UploadPath);
+        }
+
+        public FileUpload GetFileUploadInformation(int fileUploadId)
+        {
+            return _db.GetFileUploadInformation(fileUploadId);
         }
 
         #endregion

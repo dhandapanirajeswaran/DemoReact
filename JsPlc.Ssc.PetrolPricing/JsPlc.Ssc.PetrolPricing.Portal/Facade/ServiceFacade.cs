@@ -1050,5 +1050,88 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
                 throw new Exception("Exception in DataCleanseFileUploads" + System.Environment.NewLine + ex.Message, ex);
             }
         }
+
+        public IEnumerable<SelectItemViewModel> GetQuarterlyFileUploadOptions()
+        {
+            try
+            {
+                var apiUrl = String.Format("api/GetQuarterlyFileUploadOptions");
+                var response = _client.Value.GetAsync(apiUrl).Result;
+                var result = response.Content.ReadAsAsync<IEnumerable<SelectItemViewModel>>().Result;
+                return response.IsSuccessStatusCode
+                    ? result
+                    : new List<SelectItemViewModel>();
+            }
+            catch(Exception ex)
+            {
+                _logger.Error(ex);
+                throw new Exception("Exception in GetQuarterlyFileUploadOptions" + System.Environment.NewLine + ex.Message, ex);
+            }
+        }
+
+        public FacadeResponse<QuarterlySiteAnalysisReportViewModel> GetQuarterlySiteAnalysisReport(int leftFileUploadId, int rightFileuploadId)
+        {
+            try
+            {
+                var apiUrl = String.Format("api/GetQuarterlySiteAnalysisReport/{0}/{1}", leftFileUploadId, rightFileuploadId);
+                var response = _client.Value.GetAsync(apiUrl).Result;
+                var result = response.Content.ReadAsAsync<QuarterlySiteAnalysisReportViewModel>().Result;
+
+                var model = new FacadeResponse<QuarterlySiteAnalysisReportViewModel>();
+
+                if (response.IsSuccessStatusCode)
+                {
+                    model.ViewModel = result;
+                }
+                else
+                {
+                    var joResponse = JObject.Parse(response.Content.ReadAsStringAsync().Result);
+                    model.ErrorMessage = joResponse["Message"].ToString();
+                }
+                return model;
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex);
+                throw new Exception("Exception in GetQuarterlySiteAnalysisReport" + System.Environment.NewLine + ex.Message, ex);
+            }
+        }
+
+        public FileUpload GetFileUploadInformation(int fileUploadId)
+        {
+            try
+            {
+                var apiUrl = String.Format("api/GetFileUploadInformation/{0}", fileUploadId);
+                var response = _client.Value.GetAsync(apiUrl).Result;
+                var result = response.Content.ReadAsAsync<FileUpload>().Result;
+                return response.IsSuccessStatusCode
+                    ? result
+                    : new FileUpload();
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex);
+                throw new Exception("Exception in GetFileUploadInformation" + System.Environment.NewLine + ex.Message, ex);
+            }
+        }
+
+
+        public QuarterlySiteAnalysisContainerViewModel GetQuarterlySiteAnalysisContainerViewModel(int leftFileUploadId, int rightFileUploadId)
+        {
+            try
+            {
+                var apiUrl = String.Format("api/GetQuarterlySiteAnalysisContainerViewModel/{0}/{1}", leftFileUploadId, rightFileUploadId);
+                var response = _client.Value.GetAsync(apiUrl).Result;
+                var result = response.Content.ReadAsAsync<QuarterlySiteAnalysisContainerViewModel>().Result;
+                return response.IsSuccessStatusCode
+                    ? result
+                    : new QuarterlySiteAnalysisContainerViewModel();
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex);
+                throw new Exception("Exception in GetQuarterlySiteAnalysisContainerViewModel" + System.Environment.NewLine + ex.Message, ex);
+            }
+        }
     }
 }

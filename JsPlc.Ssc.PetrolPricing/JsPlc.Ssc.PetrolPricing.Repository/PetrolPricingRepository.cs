@@ -1828,8 +1828,6 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         {
             using (var db = new RepositoryContext())
             {
-                db.Database.ExecuteSqlCommand("EXEC dbo.spArchiveQuarterlyUploadData");
-
                 db.Database.ExecuteSqlCommand("Truncate table QuarterlyUploadStaging");
                 db.Database.ExecuteSqlCommand("DBCC CHECKIDENT ('QuarterlyUploadStaging',RESEED, 0)");
             }
@@ -3492,6 +3490,53 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
         public void UpdateSystemSettings(SystemSettings systemSettings)
         {
             _context.SaveChanges();
+        }
+
+        public void ArchiveQuarterlyUploadStagingData()
+        {
+            _context.ArchiveQuarterlyUploadStagingData();
+        }
+
+        public IEnumerable<SelectItemViewModel> GetQuarterlyFileUploadOptions()
+        {
+            var options = _context.GetQuarterlyFileUploadOptions();
+            return options;
+        }
+
+        public QuarterlySiteAnalysisReportViewModel GetQuarterlySiteAnalysisReport(int leftId, int rightId)
+        {
+            if (leftId == 0 || rightId == 0 || leftId == rightId)
+                return new QuarterlySiteAnalysisReportViewModel();
+
+            var model = new QuarterlySiteAnalysisReportViewModel()
+            {
+                NewSiteCount = 0,
+                DeletedSiteCount = 0,
+                ExistingSiteCount = 0,
+                TotalSiteCount = 0,
+                ChangeOwnershipCount = 0,
+                Rows = _context.GetQuarterlySiteAnalysisReportRows(leftId, rightId)
+            };
+
+            // gather statistics
+            if (model.Rows.Any())
+            {
+                model.NewSiteCount = model.Rows.Count(x => x.WasSiteAdded);
+                model.DeletedSiteCount = model.Rows.Count(x => x.WasSiteDeleted);
+                model.ExistingSiteCount = model.Rows.Count(x => !x.WasSiteAdded && !x.WasSiteDeleted);
+                model.TotalSiteCount = model.Rows.Count();
+                model.ChangeOwnershipCount = model.Rows.Count(x => x.HasOwnershipChanged);
+            }
+
+            return model;
+        }
+
+        public FileUpload GetFileUploadInformation(int fileUploadId)
+        {
+            var fileUpload = _context.FileUploads.FirstOrDefault(x => x.Id == fileUploadId);
+            return fileUpload != null
+                ? fileUpload
+                : new FileUpload();
         }
 
         #region private methods

@@ -24,5 +24,9 @@ namespace JsPlc.Ssc.PetrolPricing.Business
         PriceMovementReportViewModel GetReportPriceMovement(string brandName, DateTime from, DateTime to, int fuelTypeId,string siteName);
 
         ComplianceReportViewModel GetReportCompliance(DateTime forDate);
+
+        IEnumerable<SelectItemViewModel> GetQuarterlyFileUploadOptions();
+
+        QuarterlySiteAnalysisReportViewModel GetQuarterlySiteAnalysisReport(int leftId, int rightId);
     }
 }
