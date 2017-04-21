@@ -16,5 +16,19 @@ namespace JsPlc.Ssc.PetrolPricing.Models
 
         public int DataCleanseFilesAfterDays { get; set; }
         public DateTime? LastDataCleanseFilesOn { get; set; }
+
+        public int MinUnleadedPrice { get; set; }
+        public int MaxUnleadedPrice { get; set; }
+        public int MinDieselPrice { get; set; }
+        public int MaxDieselPrice { get; set; }
+        public int MinSuperUnleadedPrice { get; set; }
+        public int MaxSuperUnleadedPrice { get; set; }
+        public int MinUnleadedPriceChange { get; set; }
+        public int MaxUnleadedPriceChange { get; set; }
+        public int MinDieselPriceChange { get; set; }
+        public int MaxDieselPriceChange { get; set; }
+        public int MinSuperUnleadedPriceChange { get; set; }
+        public int MaxSuperUnleadedPriceChange { get; set; }
+        public int MaxGrocerDriveTimeMinutes { get; set; }
     }
 }

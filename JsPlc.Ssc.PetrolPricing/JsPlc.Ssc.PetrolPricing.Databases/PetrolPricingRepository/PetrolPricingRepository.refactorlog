@@ -14,4 +14,25 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="DataCleansedFilesOn" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="4173e07d-b675-4453-8396-700d77b438c0" ChangeDateTime="04/20/2017 15:55:36">
+    <Property Name="ElementName" Value="[dbo].[SystemSettings].[Min]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[SystemSettings]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="MinUnleadedPrice" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="4394889c-901f-4485-8d93-3ff5d566ca69" ChangeDateTime="04/20/2017 15:58:59">
+    <Property Name="ElementName" Value="[dbo].[SystemSettings].[MaxDieselPriceChange]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[SystemSettings]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="MinDieselPriceChange" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="9741723d-b082-4986-97d2-9febf9fe5f85" ChangeDateTime="04/20/2017 16:00:41">
+    <Property Name="ElementName" Value="[dbo].[SystemSettings].[MaxGrocerDriveTime]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[SystemSettings]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="MaxGrocerDriveTimeMinutes" />
+  </Operation>
 </Operations>

@@ -169,6 +169,7 @@
     <Compile Include="ViewModels\CompetitorPriceViewModel.cs" />
     <Compile Include="ViewModels\SitePriceViewModel.cs" />
     <Compile Include="ViewModels\StatusViewModel.cs" />
+    <Compile Include="ViewModels\SystemSettings\SystemSettingsViewModel.cs" />
     <Compile Include="ViewModels\UploadViewModel.cs" />
     <Compile Include="ViewModels\UserPermissions\UserPermissionsOptionViewModel.cs" />
     <Compile Include="ViewModels\UserPermissions\EditUserPermissionsViewModel.cs" />
