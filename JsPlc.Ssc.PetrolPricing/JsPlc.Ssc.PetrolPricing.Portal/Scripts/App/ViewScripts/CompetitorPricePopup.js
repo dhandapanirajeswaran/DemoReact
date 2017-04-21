@@ -367,7 +367,14 @@ function ($, ko, common, compNotePopup, notify) {
         highlightSiteRow(siteId, true);
     };
 
+    function isPopupVisible() {
+        return $('#competitorPricesPopup').is(':visible');
+    };
+
     function showAllNotes() {
+        if (!isPopupVisible())
+            return;
+
         state.showNotes = true;
         showOrHideNotePanels(true);
         setActiveToggleButtons(config.selectors.showAllNotesButton, config.selectors.hideAllNotesButton);
