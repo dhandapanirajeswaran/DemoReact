@@ -196,29 +196,32 @@
                     <div class="col-md-2" style="width: 18em;">
                         <div class="input-group">
                             <span class="input-group-addon" data-bind="text: changeType"></span>
-                            <input id="txtOverrideUnleaded" type="text" class="form-control input-override" maxlength="8" data-bind="value: $root.unleadedOffset" data-infotip="Enter a value for [b]Unleaded[/b]" />
+                            <input id="txtOverrideUnleaded" type="text" class="form-control input-override" maxlength="8" data-bind="textInput: $root.unleadedOffset" data-infotip="Enter a value for [b]Unleaded[/b]" />
                             <span class="input-group-btn">
                                 <button id="btnGoOverrideUnleaded" type="button" class="btn btn-primary btn-go" data-bind="click: changePricePerLitreUnleaded" data-infotip="Update all the [b]Unleaded[/b] Prices">Go</button>
                             </span>
                         </div>
+                        <div style="display: none;" data-bind="visible: $root.hasUnleadedOverrideExceededLimits()" class="text-danger text-center override-exceeded-bubble"><i class="fa fa-warning"></i> <span data-bind="text: $root.unleadedExceedMessage()"></span></div>
                     </div>
                     <div class="col-md-2" style="width: 18em;">
                         <div class="input-group">
                             <span class="input-group-addon" data-bind="text: changeType"></span>
-                            <input id="txtOverrideDiesel" type="text" class="form-control input-override" maxlength="8" data-bind="value: $root.dieselOffset" data-infotip="Enter a value for [b]Diesel[/b]" />
+                            <input id="txtOverrideDiesel" type="text" class="form-control input-override" maxlength="8" data-bind="textInput: $root.dieselOffset" data-infotip="Enter a value for [b]Diesel[/b]" />
                             <span class="input-group-btn">
                                 <button id="btnGoOverrideDiesel" type="button" class="btn btn-primary btn-go" data-bind="click: changePricePerLitreDiesel" data-infotip="Update all the [b]Diesel[/b] Prices">Go</button>
                             </span>
                         </div>
+                        <div style="display: none;" data-bind="visible: $root.hasDieselOverrideExceededLimits()" class="text-danger text-center override-exceeded-bubble"><i class="fa fa-warning"></i> <span data-bind="text: $root.dieselExceedMessage()"></span></div>
                     </div>
                     <div class="col-md-2" style="width: 18em;">
                         <div class="input-group">
                             <span class="input-group-addon" data-bind="text: changeType"></span>
-                            <input id="txtOverrideSuperUnleaded" type="text" class="form-control input-override" maxlength="8" data-bind="value: $root.superOffset" data-infotip="Enter a value for [b]Super Unleaded[/b]" />
+                            <input id="txtOverrideSuperUnleaded" type="text" class="form-control input-override" maxlength="8" data-bind="textInput: $root.superOffset" data-infotip="Enter a value for [b]Super Unleaded[/b]" />
                             <span class="input-group-btn">
                                 <button id="btnGoSuperUnleaded" type="button" class="btn btn-primary btn-go" data-bind="click: changePricePerLitreSuper" data-infotip="Update all the [b]Super Unleaded[/b] Prices">Go</button>
                             </span>
                         </div>
+                        <div style="display: none;" data-bind="visible: $root.hasSuperUnleadedOverrideExceededLimits()" class="text-danger text-center override-exceeded-bubble"><i class="fa fa-warning"></i> <span data-bind="text: $root.superUnleadedExceedMessage()"></span></div>
                     </div>
                 </div>
                 <br />
