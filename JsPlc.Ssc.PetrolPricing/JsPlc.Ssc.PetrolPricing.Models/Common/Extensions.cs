@@ -64,7 +64,9 @@ namespace JsPlc.Ssc.PetrolPricing.Models.Common
                 SiteName = site.SiteName,
                 StoreNo = site.StoreNo,
                 Suburb = site.Suburb,
-                Town = site.Town
+                Town = site.Town,
+                CompetitorPriceOffset = site.CompetitorPriceOffset,
+                TrailPriceCompetitorId = site.TrailPriceCompetitorId
             }));
             return sitesVm;
         }

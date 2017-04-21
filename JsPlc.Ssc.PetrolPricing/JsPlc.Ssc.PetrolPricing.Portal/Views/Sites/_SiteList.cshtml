@@ -30,19 +30,25 @@
     thead {
         /* fallback */
     }
-
-
         tbody td, thead th {
-            width: 11%;
+            width: 10.5%;
             float: left;
         }
 
 .site-grid > thead > tr > th {background-color: #eee; border-left: 1px solid #fff;}
+
+
+    .site-inactive {
+        color: #999;
+        font-style: italic;
+    }
+
 </style>
 
 <table class="table table-striped header-fixed site-grid" style="margin-bottom: 0;">
     <thead>
         <tr>
+            <th style="width: 2em;"></th>
             <th>
                 @Html.DisplayNameFor(model => model.CatNo)
             </th>
@@ -75,7 +81,7 @@
             <th>
                 @Html.DisplayNameFor(model => model.IsActive)
             </th>
-            <th>
+            <th style="width: 10em;">
             </th>
         </tr>
 
@@ -91,13 +97,37 @@
 
     </table>
 
-<table class="table table-striped header-fixed site-grid">
+<table class="table table-striped header-fixed site-grid" id="SiteListTable">
     <tbody>
         @if (Model != null)
         {
             foreach (var item in Model)
             {
-                <tr>
+                var isActive = item.IsActive;
+                var isMatchCompetitor = item.CompetitorPriceOffset != 0;
+                var isTrialPrice = item.TrailPriceCompetitorId.HasValue;
+                var isNeitherPrice = !isTrialPrice && !isMatchCompetitor;
+                var rowClasses = (isActive ? "site-active" : "site-inactive")
+                    + (isMatchCompetitor ? " site-trial-price" : "")
+                    + (isTrialPrice ? " site-match-competitor" : "")
+                    + (isNeitherPrice ? " site-neither-price" : "");
+
+                <tr class="@(rowClasses)">
+                    <td style="width: 2em;">
+                        @if (isMatchCompetitor)
+                        {
+                            <span class="match-competitor-price" data-infotip="[b]Match Competitor[/b]"><i class="fa fa-clone"></i></span>
+                        }
+                        @if (isTrialPrice)
+                        {
+                            <span class="trial-price" data-infotip="[b]Trial Price"><i class="fa fa-flask"></i></span>
+                        }
+                        @if (isNeitherPrice)
+                        {
+                            <span class="none-price" data-infotip="[b]No[/b] Match Competitor or Trial Price"><i class="fa fa-minus"></i></span>
+                        }
+                    </td>
+
                     <td class="filterable-cell text-center">
                         @Html.DisplayFor(modelItem => item.CatNo)
                     </td>
@@ -130,13 +160,13 @@
                     <td class="filterable-cell text-center">
                         @if(item.IsActive)
                         {
-                            <span style="color: green"><i class="fa fa-check"></i>&nbsp;Yes</span>
+                            <span class="text-success"><i class="fa fa-check"></i>&nbsp;Yes</span>
                         } else
                         {
-                            <span style="color: red;"><i class="fa fa-times"></i>&nbsp;No</span>
+                            <span class="text-danger"><i class="fa fa-times"></i>&nbsp;No</span>
                         }
                     </td>
-                    <td class="filterable-cell text-center">
+                    <td class="filterable-cell text-center" style="width: 10em;">
                         @if (item.IsSainsburysSite)
                         {
                             <a class="btn btn-xs btn-primary" href="@Url.Action("Edit", "Sites", new {id = item.Id})"><i class="fa fa-pencil"></i>&nbsp;Edit</a>
@@ -146,13 +176,12 @@
                         <br /><br />
                         @if (item.Emails == null || !item.Emails.Any())
                         {
-                            <span style="color: red;"><i class="fa fa-warning"></i>  No Emails...</span>
+                            <span class="text-danger"><i class="fa fa-warning"></i>  No Emails...</span>
                         } else if (item.Emails != null && item.Emails.Any())
                         {
-                            <span style="color: green;"><i class="fa fa-check"></i> @item.Emails.Count() Emails</span>
+                            <span class="text-success"><i class="fa fa-check"></i> @item.Emails.Count() Emails</span>
                         }
                     </td>
-
                 </tr>
             }
         }

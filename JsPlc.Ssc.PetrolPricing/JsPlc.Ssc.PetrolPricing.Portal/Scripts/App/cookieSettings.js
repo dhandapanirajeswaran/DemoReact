@@ -13,7 +13,13 @@
                 'pricing.priceChangeFilterNone',
                 'pricing.priceChangeFilterUp',
                 'pricing.highlightNoNearbyGrocerPrices',
-                'pricing.highlightHasNearbyGrocerPrices'
+                'pricing.highlightHasNearbyGrocerPrices',
+
+                'sites.showActiveSites',
+                'sites.showInactiveSites',
+                'sites.highlightTrialPrices',
+                'sites.highlightMatchCompetitors',
+                'sites.highlightNonePrices'
             ],
             values = readSettingsCookie();
 
@@ -60,12 +66,30 @@
             write(name, value ? '1' : '0');
         };
 
+        function updateObject(map, obj) {
+            var key;
+            for (key in map) {
+                if (key in obj)
+                    writeBoolean(map[key], obj[key]);
+            }
+        };
+
+        function restoreObject(map, obj) {
+            var key;
+            for (key in map) {
+                if (key in obj)
+                    obj[key] = readBoolean(map[key], false);
+            }
+        };
+
         // API
         return {
             read: read,
             readBoolean: readBoolean,
             write: write,
-            writeBoolean: writeBoolean
+            writeBoolean: writeBoolean,
+            restore: restoreObject,
+            update: updateObject
         };
     }
 );

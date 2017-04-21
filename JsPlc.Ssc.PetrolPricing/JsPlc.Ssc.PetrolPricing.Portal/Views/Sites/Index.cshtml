@@ -1,7 +1,68 @@
 ﻿@model IEnumerable<JsPlc.Ssc.PetrolPricing.Models.Site>
 @{
     ViewBag.Title = "Sainsbury's sites";
+
+    var activeSiteCount = 0;
+    var inactiveSiteCount = 0;
+    var totalSiteCount = 0;
+    var trialPriceSiteCount = 0;
+    var matchCompetitorSiteCount = 0;
+    var siloSiteCount = 0;
+
+    if (Model != null)
+    {
+        foreach (var site in Model)
+        {
+            if (site.IsActive)
+            {
+                activeSiteCount++;
+            }
+            else
+            {
+                inactiveSiteCount++;
+            }
+
+            if (site.TrailPriceCompetitorId.HasValue)
+            {
+                matchCompetitorSiteCount++;
+            }
+            else if (site.CompetitorPriceOffset != 0)
+            {
+                trialPriceSiteCount++;
+            }
+            else
+            {
+                siloSiteCount++;
+            }
+
+            totalSiteCount++;
+        }
+    }
 }
+
+
+<style>
+    .match-competitor-price,
+    .trial-price,
+    .none-price {
+        color: #ccc;
+    }
+
+    .highlight-match-competitors .match-competitor-price {
+        background-color: #cff;
+        color: #000;
+    }
+
+    .highlight-trial-prices .trial-price {
+        background-color: #ff8;
+        color: #000;
+    }
+
+    .highlight-none-prices .none-price {
+        background-color: #cfc;
+        color: #000;
+    }
+</style>
 
 <div class="row">
     <div class="col-md-6">
@@ -65,37 +126,40 @@
 <hr />
 @if (Model != null)
 {
+    <div class="row">
+        <div class="col-md-1">
+            <strong>Highlighting:</strong>
+        </div>
+        <div class="col-md-4">
+            <div class="btn-group">
+                <button id="btnToggleHighlightTrialPriceSites" type="button" class="btn btn-sm btn-default" data-infotip="Toggle [b]Trial Price[/b] Sites Highlighting"><i class="fa fa-flask"></i> Trial Prices <span class="badge">@(trialPriceSiteCount)</span></button>
+                <button id="btnToggleHighlightMatchCompetitors" type="button" class="btn btn-sm btn-default" data-infotip="Toggle [b]Match Competitor[/b] Highlighting"><i class="fa fa-clone"></i> Match Competitors <span class="badge">@(matchCompetitorSiteCount)</span> </button>
+                <button id="btnToggleHighlightNonePrices" type="button" class="btn btn-sm btn-default" data-infotip="Toggle [b][/b] Highlighting"><i class="fa fa-minus"></i> None <span class="badge">@(siloSiteCount)</span></button>
+            </div>
+        </div>
+
+        <div class="col-md-3"></div>
+
+
+        <div class="col-md-1 text-right">
+            <strong>Show:</strong>
+        </div>
+
+        <div class="col-md-3 text-right">
+            <button id="btnResetActiveSites" type="button" style="display: none;" class="btn btn-sm btn-danger" data-infotip="Show [b]All[/b] the Sites"><i class="fa fa-power-off "></i> Reset</button>
+            <div class="btn-group">
+                <button id="btnShowActiveSites" type="button" class="btn btn-sm btn-default" data-infotip="Show or Hide the [b]Active[/b] Sites"><i class="fa fa-square"></i> Active <span class="badge">@(activeSiteCount)</span></button>
+                <button id="btnShowInActiveSites" type="button" class="btn btn-sm btn-default" data-infotip="Show or Hide the [b]In-active[/b] Sites"><i class="fa fa-square-o"></i> Inactive <span class="badge">@(inactiveSiteCount)</span></button>
+            </div>
+        </div>
+    </div>
+    <hr />
+
     @Html.Partial("_SiteList", Model)
 }
 
-
 <script type="text/javascript">
-
-    $("#viewingStoreTown").keyup(function (event) {
-        if (event.keyCode == 13) {
-            $("#btnGO").click();
-        }
-    });
-
-    $("#viewingStoreName").keyup(function (event) {
-        if (event.keyCode == 13) {
-            $("#btnGO").click();
-        }
-    });
-
-    $("#viewingStoreNo").keyup(function (event) {
-        if (event.keyCode == 13) {
-            $("#btnGO").click();
-        }
-    });
-
-    $("#viewingCatNo").keyup(function (event) {
-        if (event.keyCode == 13) {
-            $("#btnGO").click();
-        }
-    });
-
-    require(["SitePricing"], function (prices) {
-        prices.go();
-    });
+    require(["SiteMaintenance"],
+        function (sitemaintenance) { }
+    );
 </script>
