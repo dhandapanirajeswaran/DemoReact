@@ -1,4 +1,5 @@
-﻿using System;
+﻿using JsPlc.Ssc.PetrolPricing.Models.Enums;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -30,6 +31,8 @@ namespace JsPlc.Ssc.PetrolPricing.Models.ViewModels
         public List<FuelPriceViewModel> FuelPrices { get; set; } // list item contains price for each fuel
 
         public bool IsTrailPrice { get; set; } // if true, then trial price has been selected 
+
+        public PriceMatchType PriceMatchType { get; set; }
 
         public bool HasEmails { get; set; }
 

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using JsPlc.Ssc.PetrolPricing.Models.Enums;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
@@ -79,13 +80,15 @@ namespace JsPlc.Ssc.PetrolPricing.Models
 
         [Display(Name = "Competitor Trial price (+/-)")]
         [Range(-4000, 4000)]
-        public double CompetitorPriceOffsetNew { get; set; }        
+        public double CompetitorPriceOffsetNew { get; set; }
 
         public string Notes { get; set; }
 
         public bool HasNearbyCompetitorDieselPrice { get; set; }
         public bool HasNearbyCompetitorUnleadedPrice { get; set; }
         public bool HasNearbyCompetitorSuperUnleadedPrice { get; set; }
+
+        public PriceMatchType PriceMatchType { get; set; }
 
         public SiteViewModel()
         {

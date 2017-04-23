@@ -99,6 +99,7 @@
     <Compile Include="DTOs\EmailToSet.cs" />
     <Compile Include="EmailSendLog.cs" />
     <Compile Include="Enums\FuelTypeEnum.cs" />
+    <Compile Include="Enums\PriceMatchType.cs" />
     <Compile Include="Enums\UserPermissionEnums.cs" />
     <Compile Include="GenericStatus.cs" />
     <Compile Include="ImportProcessError.cs" />

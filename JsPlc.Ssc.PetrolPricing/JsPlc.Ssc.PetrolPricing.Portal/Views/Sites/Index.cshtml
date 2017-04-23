@@ -7,7 +7,7 @@
     var totalSiteCount = 0;
     var trialPriceSiteCount = 0;
     var matchCompetitorSiteCount = 0;
-    var siloSiteCount = 0;
+    var soloSiteCount = 0;
 
     if (Model != null)
     {
@@ -32,7 +32,7 @@
             }
             else
             {
-                siloSiteCount++;
+                soloSiteCount++;
             }
 
             totalSiteCount++;
@@ -44,7 +44,7 @@
 <style>
     .match-competitor-price,
     .trial-price,
-    .none-price {
+    .solo-price {
         color: #ccc;
     }
 
@@ -58,10 +58,46 @@
         color: #000;
     }
 
-    .highlight-none-prices .none-price {
+    .highlight-solo-prices .solo-price {
         background-color: #cfc;
         color: #000;
     }
+
+    .table thead th:nth-child(1),
+    .table tbody td:nth-child(1) {width: 6%;}
+    .table thead th:nth-child(2),
+    .table tbody td:nth-child(2) {width: 8%;}
+    .table thead th:nth-child(3),
+    .table tbody td:nth-child(3) {width: 8%;}
+    .table thead th:nth-child(4),
+    .table tbody td:nth-child(4) {width: 8%;}
+    .table thead th:nth-child(5),
+    .table tbody td:nth-child(5) {width: 16%;}
+    .table thead th:nth-child(6),
+    .table tbody td:nth-child(6) {width: 14%;}
+    .table thead th:nth-child(7),
+    .table tbody td:nth-child(7) {width: 8%;}
+    .table thead th:nth-child(8),
+    .table tbody td:nth-child(8) {width: 12%;}
+    .table thead th:nth-child(9),
+    .table tbody td:nth-child(9) {width: 6%;}
+    .table thead th:nth-child(10),
+    .table tbody td:nth-child(10) {width: 6%;}
+
+    .table .match-competitor-price{
+        display: block;
+        font-variant: small-caps;
+    }
+    .table .solo-price {
+        display: block;
+        font-variant: small-caps;
+    }
+    .table .trial-price {
+        display: block;
+        font-variant: small-caps;
+    }
+
+
 </style>
 
 <div class="row">
@@ -130,22 +166,19 @@
         <div class="col-md-1">
             <strong>Highlighting:</strong>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-5">
             <div class="btn-group">
                 <button id="btnToggleHighlightTrialPriceSites" type="button" class="btn btn-sm btn-default" data-infotip="Toggle [b]Trial Price[/b] Sites Highlighting"><i class="fa fa-flask"></i> Trial Prices <span class="badge">@(trialPriceSiteCount)</span></button>
                 <button id="btnToggleHighlightMatchCompetitors" type="button" class="btn btn-sm btn-default" data-infotip="Toggle [b]Match Competitor[/b] Highlighting"><i class="fa fa-clone"></i> Match Competitors <span class="badge">@(matchCompetitorSiteCount)</span> </button>
-                <button id="btnToggleHighlightNonePrices" type="button" class="btn btn-sm btn-default" data-infotip="Toggle [b][/b] Highlighting"><i class="fa fa-minus"></i> None <span class="badge">@(siloSiteCount)</span></button>
+                <button id="btnToggleHighlightSoloPrices" type="button" class="btn btn-sm btn-default" data-infotip="Toggle [b]Solo Price[/b] Highlighting"><i class="fa fa-dot-circle-o"></i> Solo Prices <span class="badge">@(soloSiteCount)</span></button>
+                <button id="btnResetHighlighting" type="button" class="btn btn-sm btn-danger" data-infotip="Remove [b]All[/b] Highlighting"><i class="fa fa-power-off"></i> Reset</button>
             </div>
         </div>
 
-        <div class="col-md-3"></div>
+        <div class="col-md-2"></div>
 
-
-        <div class="col-md-1 text-right">
+        <div class="col-md-4 text-right">
             <strong>Show:</strong>
-        </div>
-
-        <div class="col-md-3 text-right">
             <button id="btnResetActiveSites" type="button" style="display: none;" class="btn btn-sm btn-danger" data-infotip="Show [b]All[/b] the Sites"><i class="fa fa-power-off "></i> Reset</button>
             <div class="btn-group">
                 <button id="btnShowActiveSites" type="button" class="btn btn-sm btn-default" data-infotip="Show or Hide the [b]Active[/b] Sites"><i class="fa fa-square"></i> Active <span class="badge">@(activeSiteCount)</span></button>
@@ -159,6 +192,15 @@
 }
 
 <script type="text/javascript">
+
+    var counts = {
+        activeSites: '@(activeSiteCount)',
+        inactiveSites: '@(inactiveSiteCount)',
+        trialSites: '@(trialPriceSiteCount)',
+        matchCompetitorSites: '@(matchCompetitorSiteCount)',
+        soloPriceSites: '@(soloSiteCount)'
+    };
+
     require(["SiteMaintenance"],
         function (sitemaintenance) { }
     );

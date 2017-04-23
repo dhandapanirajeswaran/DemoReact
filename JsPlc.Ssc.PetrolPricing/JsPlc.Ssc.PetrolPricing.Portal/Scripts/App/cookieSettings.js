@@ -9,6 +9,7 @@
                 'pricing.expandGrid',
                 'pricing.highlightTrialPrices',
                 'pricing.highlightMatchCompetitors',
+                'pricing.highlightSoloPrices',
                 'pricing.priceChangeFilterDown',
                 'pricing.priceChangeFilterNone',
                 'pricing.priceChangeFilterUp',
@@ -19,7 +20,7 @@
                 'sites.showInactiveSites',
                 'sites.highlightTrialPrices',
                 'sites.highlightMatchCompetitors',
-                'sites.highlightNonePrices'
+                'sites.highlightSoloPrices'
             ],
             values = readSettingsCookie();
 

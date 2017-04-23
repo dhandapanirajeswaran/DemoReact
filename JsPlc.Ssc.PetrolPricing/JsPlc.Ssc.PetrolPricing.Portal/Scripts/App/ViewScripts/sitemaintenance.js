@@ -2,20 +2,12 @@
     function (prices, notify, infotip, cookieSettings) {
         "use strict";
 
-        var counts = {
-            activeSites: '@(activeSiteCount)',
-            inactiveSites: '@(inactiveSiteCount)',
-            trialSites: '@(trialPriceSiteCount)',
-            matchCompetitorSites: '@(matchCompetitorSiteCount)',
-            nonePriceSite: '@(siloSiteCount)'
-        };
-
         var siteFilters = {
             showActiveSites: true,
             showInactiveSites: true,
             highlightTrialPrices: true,
             highlightMatchCompetitors: true,
-            highlightNonePrices: true
+            highlightSoloPrices: true
         };
 
         var settingsMap = {
@@ -23,7 +15,7 @@
             showInactiveSites: 'sites.showInactiveSites',
             highlightTrialPrices: 'sites.highlightTrialPrices',
             highlightMatchCompetitors: 'sites.highlightMatchCompetitors',
-            highlightNonePrices: 'sites.highlightNonePrices'
+            highlightSoloPrices: 'sites.highlightSoloPrices'
         };
 
         function applyRowFilters() {
@@ -47,15 +39,19 @@
                 button.removeClass('btn-primary').addClass('btn-default');
         }
 
-        function redrawPriceFilterButtons() {
+        function redrawHighlightingButtons() {
             var toggleTrialPriceButton = $('#btnToggleHighlightTrialPriceSites'),
                 toggleMatchCompetitorsButton = $('#btnToggleHighlightMatchCompetitors'),
-                toggleNonePriceButton = $('#btnToggleHighlightNonePrices');
+                toggleSoloPriceButton = $('#btnToggleHighlightSoloPrices'),
+                isResetVisible = siteFilters.highlightMatchCompetitors || siteFilters.highlightSoloPrices || siteFilters.highlightTrialPrices,
+                resetButton = $('#btnResetHighlighting');
 
             setButtonClassState(toggleTrialPriceButton, siteFilters.highlightTrialPrices);
             setButtonClassState(toggleMatchCompetitorsButton, siteFilters.highlightMatchCompetitors);
-            setButtonClassState(toggleNonePriceButton, siteFilters.highlightNonePrices);
+            setButtonClassState(toggleSoloPriceButton, siteFilters.highlightSoloPrices);
             applyRowFilters();
+
+            resetButton[isResetVisible ? 'show' : 'hide']();
         };
 
         function commonToggleButtonFilter(opts) {
@@ -63,7 +59,7 @@
                 message = newState ? opts.showing : opts.hiding;
 
             siteFilters[opts.state] = newState;
-            redrawPriceFilterButtons();
+            redrawHighlightingButtons();
             redrawSiteFilterButtons();
             applyRowFilters();
             notify.info(message);
@@ -74,7 +70,7 @@
         function restoreCookieSettings() {
             cookieSettings.restore(settingsMap, siteFilters);
 
-            redrawPriceFilterButtons();
+            redrawHighlightingButtons();
             redrawSiteFilterButtons();
             redrawHighlighting();
             applyRowFilters();
@@ -95,9 +91,9 @@
                 ? table.addClass('highlight-trial-prices')
                 : table.removeClass('highlight-trial-prices');
 
-            siteFilters.highlightNonePrices
-                ? table.addClass('highlight-none-prices')
-                : table.removeClass('highlight-none-prices');
+            siteFilters.highlightSoloPrices
+                ? table.addClass('highlight-solo-prices')
+                : table.removeClass('highlight-solo-prices');
         };
 
 
@@ -106,7 +102,7 @@
 
             siteFilters[opts.state] = newState;
 
-            redrawPriceFilterButtons();
+            redrawHighlightingButtons();
             redrawHighlighting();
 
             notify.info(newState ? opts.showing : opts.hiding);
@@ -126,20 +122,30 @@
         function toggleHighlightShowMatchCompetitors() {
             var opts = {
                 state: 'highlightMatchCompetitors',
-                showing: 'Highlighting ' + counts.matchCompetitors + ' Match Competitor Sites',
+                showing: 'Highlighting ' + counts.matchCompetitorSites + ' Match Competitor Sites',
                 hiding: ''
             };
             commonToggleHighlights(opts);
         };
 
-        function toggleHighlightNonePrices() {
-            var enabled = !siteFilters.highlightNonePrices,
+        function toggleHighlightSoloPrices() {
+            var enabled = !siteFilters.highlightSoloPrices,
                 opts = {
-                    state: 'highlightNonePrices',
-                    showing: 'Highlight ' + counts.nonePrices + ' Non Price-matched Sites',
+                    state: 'highlightSoloPrices',
+                    showing: 'Highlight ' + counts.soloPriceSites + ' Solo Price Sites',
                     hiding: ''
                 };
             commonToggleHighlights(opts);
+        };
+
+        function resetHighlighting() {
+            siteFilters.highlightMatchCompetitors = false;
+            siteFilters.highlightSoloPrices = false;
+            siteFilters.highlightTrialPrices = false;
+            redrawHighlightingButtons();
+            redrawHighlighting();
+            notify.info('Removed all Price highlighting');
+            updateCookieSettings();
         };
 
         function redrawSiteFilterButtons() {
@@ -194,7 +200,8 @@
 
             $('#btnToggleHighlightTrialPriceSites').off().on('click', toggleHighlightShowTrialPrices);
             $('#btnToggleHighlightMatchCompetitors').off().on('click', toggleHighlightShowMatchCompetitors);
-            $('#btnToggleHighlightNonePrices').off().on('click', toggleHighlightNonePrices);
+            $('#btnToggleHighlightSoloPrices').off().on('click', toggleHighlightSoloPrices);
+            $('#btnResetHighlighting').off().on('click', resetHighlighting);
 
             $('#btnShowActiveSites').off().on('click', toggleShowActiveSites);
             $('#btnShowInActiveSites').off().on('click', toggleShowInActiveSites);
@@ -206,7 +213,7 @@
             bindEvents();
             restoreCookieSettings();
             redrawSiteFilterButtons();
-            redrawPriceFilterButtons();
+            redrawHighlightingButtons();
         };
 
         $(docReady);

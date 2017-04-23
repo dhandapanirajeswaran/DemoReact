@@ -48,7 +48,7 @@
 <table class="table table-striped header-fixed site-grid" style="margin-bottom: 0;">
     <thead>
         <tr>
-            <th style="width: 2em;"></th>
+            <th>Price</th>
             <th>
                 @Html.DisplayNameFor(model => model.CatNo)
             </th>
@@ -106,25 +106,25 @@
                 var isActive = item.IsActive;
                 var isMatchCompetitor = item.CompetitorPriceOffset != 0;
                 var isTrialPrice = item.TrailPriceCompetitorId.HasValue;
-                var isNeitherPrice = !isTrialPrice && !isMatchCompetitor;
+                var isSoloPrice = !isTrialPrice && !isMatchCompetitor;
                 var rowClasses = (isActive ? "site-active" : "site-inactive")
                     + (isMatchCompetitor ? " site-trial-price" : "")
                     + (isTrialPrice ? " site-match-competitor" : "")
-                    + (isNeitherPrice ? " site-neither-price" : "");
+                    + (isSoloPrice ? " site-solo-price" : "");
 
                 <tr class="@(rowClasses)">
-                    <td style="width: 2em;">
+                    <td class="text-center">
                         @if (isMatchCompetitor)
                         {
-                            <span class="match-competitor-price" data-infotip="[b]Match Competitor[/b]"><i class="fa fa-clone"></i></span>
+                            <span class="match-competitor-price" data-infotip="[b]Match Competitor[/b]"><i class="fa fa-clone"></i> match</span>
                         }
                         @if (isTrialPrice)
                         {
-                            <span class="trial-price" data-infotip="[b]Trial Price"><i class="fa fa-flask"></i></span>
+                            <span class="trial-price" data-infotip="[b]Trial Price"><i class="fa fa-flask"></i> Trial</span>
                         }
-                        @if (isNeitherPrice)
+                        @if (isSoloPrice)
                         {
-                            <span class="none-price" data-infotip="[b]No[/b] Match Competitor or Trial Price"><i class="fa fa-minus"></i></span>
+                            <span class="solo-price" data-infotip="[b]Solo[/b] Price (not Match Competitor or Trial Price)"><i class="fa fa-dot-circle-o"></i> Solo</span>
                         }
                     </td>
 
@@ -167,12 +167,7 @@
                         }
                     </td>
                     <td class="filterable-cell text-center" style="width: 10em;">
-                        @if (item.IsSainsburysSite)
-                        {
-                            <a class="btn btn-xs btn-primary" href="@Url.Action("Edit", "Sites", new {id = item.Id})"><i class="fa fa-pencil"></i>&nbsp;Edit</a>
-                            <span>&nbsp;</span>
-                        }
-                        <a class="btn btn-xs btn-primary" href="@Url.Action("Details","Sites", new { id = item.Id})"><i class="fa fa-info"></i>&nbsp;Details</a>
+                        <a class="btn btn-primary" href="@Url.Action("Details","Sites", new { id = item.Id})"><i class="fa fa-info"></i>&nbsp;Details</a>
                         <br /><br />
                         @if (item.Emails == null || !item.Emails.Any())
                         {
