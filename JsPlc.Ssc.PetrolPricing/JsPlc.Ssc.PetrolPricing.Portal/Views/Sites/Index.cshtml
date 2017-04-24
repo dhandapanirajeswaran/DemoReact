@@ -64,40 +64,69 @@
     }
 
     .table thead th:nth-child(1),
-    .table tbody td:nth-child(1) {width: 6%;}
-    .table thead th:nth-child(2),
-    .table tbody td:nth-child(2) {width: 8%;}
-    .table thead th:nth-child(3),
-    .table tbody td:nth-child(3) {width: 8%;}
-    .table thead th:nth-child(4),
-    .table tbody td:nth-child(4) {width: 8%;}
-    .table thead th:nth-child(5),
-    .table tbody td:nth-child(5) {width: 16%;}
-    .table thead th:nth-child(6),
-    .table tbody td:nth-child(6) {width: 14%;}
-    .table thead th:nth-child(7),
-    .table tbody td:nth-child(7) {width: 8%;}
-    .table thead th:nth-child(8),
-    .table tbody td:nth-child(8) {width: 12%;}
-    .table thead th:nth-child(9),
-    .table tbody td:nth-child(9) {width: 6%;}
-    .table thead th:nth-child(10),
-    .table tbody td:nth-child(10) {width: 6%;}
+    .table tbody td:nth-child(1) {
+        width: 6%;
+    }
 
-    .table .match-competitor-price{
+    .table thead th:nth-child(2),
+    .table tbody td:nth-child(2) {
+        width: 8%;
+    }
+
+    .table thead th:nth-child(3),
+    .table tbody td:nth-child(3) {
+        width: 8%;
+    }
+
+    .table thead th:nth-child(4),
+    .table tbody td:nth-child(4) {
+        width: 8%;
+    }
+
+    .table thead th:nth-child(5),
+    .table tbody td:nth-child(5) {
+        width: 16%;
+    }
+
+    .table thead th:nth-child(6),
+    .table tbody td:nth-child(6) {
+        width: 14%;
+    }
+
+    .table thead th:nth-child(7),
+    .table tbody td:nth-child(7) {
+        width: 8%;
+    }
+
+    .table thead th:nth-child(8),
+    .table tbody td:nth-child(8) {
+        width: 12%;
+    }
+
+    .table thead th:nth-child(9),
+    .table tbody td:nth-child(9) {
+        width: 6%;
+    }
+
+    .table thead th:nth-child(10),
+    .table tbody td:nth-child(10) {
+        width: 6%;
+    }
+
+    .table .match-competitor-price {
         display: block;
         font-variant: small-caps;
     }
+
     .table .solo-price {
         display: block;
         font-variant: small-caps;
     }
+
     .table .trial-price {
         display: block;
         font-variant: small-caps;
     }
-
-
 </style>
 
 <div class="row">
@@ -105,7 +134,7 @@
         <h1><i class="fa fa-gear"></i> Sainsbury's sites</h1>
     </div>
     <div class="col-md-6 text-right" style="padding-top: 20px">
-        <button type="button" onclick="location.href='@Url.Action("Create", "Sites" )'" class="btn btn-primary"><i class="fa fa-star"></i> New Sainsbury's site</button>
+        <button type="button" onclick="location.href='@Url.Action("Create", "Sites" )'" class="btn btn-primary" data-infotip="Create a New Sainsbury's site'"><i class="fa fa-star"></i> New Sainsbury's site</button>
     </div>
 </div>
 
@@ -151,11 +180,12 @@
     </div>
 
     <div class="col-md-1">
-        <button style="margin-top: 24px" type="button" id="btnGO" class="btn btn-success" data-bind="click: searchSainsburysStores">Go</button>
+        <button id="btnGo" style="margin-top: 24px" type="button" id="btnGO" class="btn btn-success" data-bind="click: searchSainsburysStores">Go</button>
     </div>
 
     <div class="col-md-3">
         <button style="margin-top: 24px" type="button" class="btn btn-default" data-bind="click: function() { reloadSearchPage('Sites') }">Show all</button>
+        <a href="@Url.Action("Index", "Sites")" style="margin-top: 24px;" class="btn btn-success pull-right" data-infotip="Clear the Search Criteria"><i class="fa fa-eraser"></i> Reset</a>
     </div>
 
 </div>
@@ -171,15 +201,15 @@
                 <button id="btnToggleHighlightTrialPriceSites" type="button" class="btn btn-sm btn-default" data-infotip="Toggle [b]Trial Price[/b] Sites Highlighting"><i class="fa fa-flask"></i> Trial Prices <span class="badge">@(trialPriceSiteCount)</span></button>
                 <button id="btnToggleHighlightMatchCompetitors" type="button" class="btn btn-sm btn-default" data-infotip="Toggle [b]Match Competitor[/b] Highlighting"><i class="fa fa-clone"></i> Match Competitors <span class="badge">@(matchCompetitorSiteCount)</span> </button>
                 <button id="btnToggleHighlightSoloPrices" type="button" class="btn btn-sm btn-default" data-infotip="Toggle [b]Solo Price[/b] Highlighting"><i class="fa fa-dot-circle-o"></i> Solo Prices <span class="badge">@(soloSiteCount)</span></button>
-                <button id="btnResetHighlighting" type="button" class="btn btn-sm btn-danger" data-infotip="Remove [b]All[/b] Highlighting"><i class="fa fa-power-off"></i> Reset</button>
             </div>
+            <button id="btnResetHighlighting" type="button" style="display: none;" class="btn btn-sm btn-danger" data-infotip="Remove [b]All[/b] Highlighting"><i class="fa fa-eraser"></i> Clear</button>
         </div>
 
         <div class="col-md-2"></div>
 
         <div class="col-md-4 text-right">
             <strong>Show:</strong>
-            <button id="btnResetActiveSites" type="button" style="display: none;" class="btn btn-sm btn-danger" data-infotip="Show [b]All[/b] the Sites"><i class="fa fa-power-off "></i> Reset</button>
+            <button id="btnResetActiveSites" type="button" style="display: none;" class="btn btn-sm btn-danger" data-infotip="Show [b]All[/b] the Sites"><i class="fa fa-eraser "></i> Clear</button>
             <div class="btn-group">
                 <button id="btnShowActiveSites" type="button" class="btn btn-sm btn-default" data-infotip="Show or Hide the [b]Active[/b] Sites"><i class="fa fa-square"></i> Active <span class="badge">@(activeSiteCount)</span></button>
                 <button id="btnShowInActiveSites" type="button" class="btn btn-sm btn-default" data-infotip="Show or Hide the [b]In-active[/b] Sites"><i class="fa fa-square-o"></i> Inactive <span class="badge">@(inactiveSiteCount)</span></button>
@@ -187,6 +217,12 @@
         </div>
     </div>
     <hr />
+
+    <div style="display: none;" id="divNoResultsAlert" class="alert alert-info">
+        <p class="text-center font125pc">
+            There are 0 site matches. You could try to <span id="btnResetActiveFilters" class="btn btn-danger btn-sm" href="#"><i class="fa fa-eraser"></i> Clear</span> the filters or  change your search criteria, or, <a href="@Url.Action("Index", "Sites")" class="btn btn-success btn-sm"><i class="fa fa-eraser"></i> Reset</a> the Search Criteria.
+        </p>
+    </div>
 
     @Html.Partial("_SiteList", Model)
 }

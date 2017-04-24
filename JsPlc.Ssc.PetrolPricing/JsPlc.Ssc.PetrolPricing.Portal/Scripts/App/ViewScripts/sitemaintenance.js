@@ -29,7 +29,8 @@
         };
 
         function applyRowFilters() {
-            var rows = $('#SiteListTable>tbody>tr');
+            var rows = $('#SiteListTable>tbody>tr'),
+                noresults = $('#divNoResultsAlert');
 
             rows.each(function (index, item) {
                 var row = $(item),
@@ -40,6 +41,11 @@
 
                 visible ? row.show() : row.hide();
             });
+
+            if (rows.find(':visible').length == 0)
+                noresults.show();
+            else
+                noresults.hide();
         };
 
         function setButtonClassState(button, isOn) {
@@ -205,6 +211,23 @@
                 $("#btnGO").click();
         };
 
+        function resetActiveFilters() {
+            siteFilters.showActiveSites = true;
+            siteFilters.showInactiveSites = true;
+            redrawSiteFilterButtons();
+            applyRowFilters();
+            notify.info('Reset the Active/Inactive filters');
+            updateCookieSettings();
+        };
+
+        function resetSearchCriteria() {
+            $('#viewingCatNo').val('');
+            $('#viewingStoreNo').val('');
+            $('#viewingStoreName').val('');
+            $('#viewingStoreTown').val('');
+            $('#btnGo').trigger('click');
+        };
+
         function bindEvents() {
             $("#viewingStoreTown, #viewingStoreName, #viewingStoreNo, #viewingCatNo").keyup(clickGoOnEnter);
 
@@ -216,6 +239,10 @@
             $('#btnShowActiveSites').off().on('click', toggleShowActiveSites);
             $('#btnShowInActiveSites').off().on('click', toggleShowInActiveSites);
             $('#btnResetActiveSites').off().on('click', resetActiveSites);
+
+            $('#btnResetActiveFilters').off().on('click', resetActiveFilters);
+
+            $('#btnResetSearchCriteria').off().on('click', resetSearchCriteria);
         };
 
         function docReady() {
