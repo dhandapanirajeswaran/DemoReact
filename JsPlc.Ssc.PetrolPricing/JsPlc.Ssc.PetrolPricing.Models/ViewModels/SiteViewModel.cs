@@ -88,6 +88,8 @@ namespace JsPlc.Ssc.PetrolPricing.Models
         public bool HasNearbyCompetitorUnleadedPrice { get; set; }
         public bool HasNearbyCompetitorSuperUnleadedPrice { get; set; }
 
+        [Required]
+        [Display(Name ="Price Match Type")]
         public PriceMatchType PriceMatchType { get; set; }
 
         public SiteViewModel()

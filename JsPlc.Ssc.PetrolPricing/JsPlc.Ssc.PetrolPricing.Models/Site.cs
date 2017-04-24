@@ -61,6 +61,8 @@ namespace JsPlc.Ssc.PetrolPricing.Models
 
         public double CompetitorPriceOffsetNew { get; set; }
 
+        public int PriceMatchType { get; set; }
+
         public bool hasNotes
         {
             get { return String.IsNullOrWhiteSpace(Notes) == false; }

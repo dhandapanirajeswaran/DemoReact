@@ -8,6 +8,7 @@ using System.Threading;
 using JsPlc.Ssc.PetrolPricing.Models.Dtos;
 using JsPlc.Ssc.PetrolPricing.Models.ViewModels;
 using System.Globalization;
+using JsPlc.Ssc.PetrolPricing.Models.Enums;
 
 namespace JsPlc.Ssc.PetrolPricing.Models.Common
 {
@@ -66,7 +67,8 @@ namespace JsPlc.Ssc.PetrolPricing.Models.Common
                 Suburb = site.Suburb,
                 Town = site.Town,
                 CompetitorPriceOffset = site.CompetitorPriceOffset,
-                TrailPriceCompetitorId = site.TrailPriceCompetitorId
+                TrailPriceCompetitorId = site.TrailPriceCompetitorId,
+                PriceMatchType = (PriceMatchType)site.PriceMatchType
             }));
             return sitesVm;
         }
@@ -94,7 +96,8 @@ namespace JsPlc.Ssc.PetrolPricing.Models.Common
                 Town = site.Town,
                 TrailPriceCompetitorId = site.TrailPriceCompetitorId,
                 CompetitorPriceOffsetNew = site.CompetitorPriceOffsetNew,
-                CompetitorPriceOffset = site.CompetitorPriceOffset
+                CompetitorPriceOffset = site.CompetitorPriceOffset,
+                PriceMatchType = (PriceMatchType) site.PriceMatchType
             };
 
             return siteVm;
@@ -121,7 +124,8 @@ namespace JsPlc.Ssc.PetrolPricing.Models.Common
                 Town = site.Town,
                 TrailPriceCompetitorId = site.TrailPriceCompetitorId,
                 CompetitorPriceOffsetNew = site.CompetitorPriceOffsetNew,
-                CompetitorPriceOffset = site.CompetitorPriceOffset
+                CompetitorPriceOffset = site.CompetitorPriceOffset,
+                PriceMatchType = (int)site.PriceMatchType
             };
 
             return siteVm;

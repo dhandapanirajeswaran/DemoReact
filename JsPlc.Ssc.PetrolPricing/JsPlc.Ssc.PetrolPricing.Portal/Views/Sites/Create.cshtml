@@ -16,6 +16,8 @@
         <div class="panel-body">
 
             <div class="form-horizontal">
+
+                <!-- first column -->
                 <div class="col-md-6">
                     <div class="form-group">
                         @Html.LabelFor(model => model.CatNo, htmlAttributes: new { @class = "control-label col-md-2" })
@@ -72,9 +74,8 @@
                             @Html.ValidationMessageFor(model => model.PostCode, "", new { @class = "text-danger" })
                         </div>
                     </div>
-
                 </div>
-
+                <!-- start of second column -->
                 <div class="col-md-6">
 
                     <div class="form-group">
@@ -144,6 +145,8 @@
                         </div>
                     </div>
                 </div>
+
+                @Html.Partial("~/Views/Sites/_PriceMatchPanel.cshtml", Model)
             </div>
         </div>
         <div class="panel-footer">
@@ -171,8 +174,23 @@
                     });
                 };
 
+                function priceMatchTypeChange() {
+                    var priceMatchType = $('#PriceMatchType').val(),
+                        trialPricePanel = $('#divTrialPrice'),
+                        matchCompetitorPanel = $('#divMatchCompetitor');
+
+                    priceMatchType == 2
+                        ? trialPricePanel.show()
+                        : trialPricePanel.hide();
+
+                    priceMatchType == 3
+                        ? matchCompetitorPanel.show()
+                        : matchCompetitorPanel.hide();
+                };
+
                 function bindEvents() {
-                    $('#CreateSiteButton').off().on('click', createSiteClick)
+                    $('#CreateSiteButton').off().on('click', createSiteClick);
+                    $('#PriceMatchType').off().on('change', priceMatchTypeChange);
                 };
 
                 function init() {

@@ -583,3 +583,5 @@ table.fixed-header>tbody {
     background-color: #dd8;
 }
 
+.wait-for-js {display:none;}
+.js-loading {display: block;}

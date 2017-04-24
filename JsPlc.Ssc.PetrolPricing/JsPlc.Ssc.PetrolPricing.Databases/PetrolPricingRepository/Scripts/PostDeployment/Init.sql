@@ -502,3 +502,21 @@ BEGIN
 	INSERT INTO dbo.SystemSettings (DataCleanseFilesAfterDays, LastDataCleanseFilesOn)
 	VALUES(60, NULL)
 END
+
+--
+-- Determine PriceMatchType for existing sites
+--
+
+UPDATE 
+	st
+SET 
+	PriceMatchType = CASE 
+		WHEN st.TrailPriceCompetitorId IS NOT NULL THEN 3 -- Match Competitor
+		WHEN st.CompetitorPriceOffset <> 0 THEN 2 -- Trail Price
+		ELSE 1 -- Solo Price
+	END
+FROM 
+	dbo.Site st
+WHERE
+	st.PriceMatchType IS NULL
+

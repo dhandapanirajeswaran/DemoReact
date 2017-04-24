@@ -42,7 +42,8 @@ BEGIN
 			st.CompetitorPriceOffset * 10 [TrialPrice],
 			ft.FuelTypeId,
 			ft.AliasFuelTypeId,
-			ft.FuelMarkup
+			ft.FuelMarkup,
+			st.PriceMatchType
 		FROM
 			dbo.tf_SplitIdsOnComma(@SiteIds) ids
 			INNER JOIN dbo.Site st on st.Id = ids.Id
@@ -79,6 +80,7 @@ BEGIN
 			sf.CatNo [CatNo],
 			sf.CompetitorPriceOffset * 10 [TrialPrice],
 			sf.FuelMarkup,
+			sf.PriceMatchType,
 			CASE WHEN spd.Id IS NULL 
 				THEN 0 
 				ELSE 1 
@@ -132,6 +134,7 @@ BEGIN
 				THEN spr.IsTrailPrice
 				ELSE CONVERT(BIT, 0)
 			END [IsTrailPrice],
+			spr.PriceMatchType,
 			spr.CompetitorPriceOffset
 
 			,ovp.OverriddenPrice [ovp_OverriddenPrice]
@@ -166,7 +169,8 @@ BEGIN
 		tp.Markup [Markup],
 		tp.CompetitorName [CompetitorName],
 		tp.IsTrailPrice [IsTrailPrice],
-		tp.CompetitorPriceOffset [CompetitorPriceOffset]
+		tp.CompetitorPriceOffset [CompetitorPriceOffset],
+		tp.PriceMatchType [PriceMatchType]
 	FROM 
 		TodayPriceCTE tp
 

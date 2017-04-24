@@ -534,13 +534,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                     sitePriceRow.FuelPrices = new List<FuelPriceViewModel>();
                     sitePriceRow.Notes = site.Notes;
                     sitePriceRow.HasEmails = site.Emails.Any();
-
-                    if (site.TrailPriceCompetitorId.HasValue)
-                        sitePriceRow.PriceMatchType = PriceMatchType.MatchCompetitorPrice;
-                    else if (site.CompetitorPriceOffset > 0)
-                        sitePriceRow.PriceMatchType = PriceMatchType.TrailPrice;
-                    else
-                        sitePriceRow.PriceMatchType = PriceMatchType.SoloPrice;
+                    sitePriceRow.PriceMatchType = (PriceMatchType)site.PriceMatchType;
 
                     #region OLD CODE
                     if (useNewCode == false)

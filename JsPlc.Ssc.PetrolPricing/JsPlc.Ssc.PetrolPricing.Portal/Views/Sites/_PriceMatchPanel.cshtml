@@ -1,0 +1,41 @@
+﻿@model JsPlc.Ssc.PetrolPricing.Models.SiteViewModel
+@using JsPlc.Ssc.PetrolPricing.Models.Enums
+<div class="col-md-12">
+    <fieldset>
+        <legend>Price Match</legend>
+    </fieldset>
+
+    <label class="col-md-1">Strategy:</label>
+    <div class="col-md-3">
+        <select id="PriceMatchType" name="PriceMatchType" class="form-control">
+            <option value="@((int)PriceMatchType.SoloPrice)" @(Model.PriceMatchType == PriceMatchType.SoloPrice ? "selected='selected'" : "")>Solo Price</option>
+            <option value="@((int)PriceMatchType.TrailPrice)" @(Model.PriceMatchType == PriceMatchType.TrailPrice ? "selected='selected'" : "")>Trial Price</option>
+            <option value="@((int)PriceMatchType.MatchCompetitorPrice)" @(Model.PriceMatchType == PriceMatchType.MatchCompetitorPrice ? "selected='selected'" : "")>Match Competitor</option>
+        </select>
+    </div>
+
+    <div id="divTrialPrice" class="form-group" style="@(Model.PriceMatchType == PriceMatchType.TrailPrice ? "" : "display: none;")">
+        @Html.LabelFor(model => model.CompetitorPriceOffset, htmlAttributes: new { @class = "control-label col-md-3" })
+        <div class="col-md-3">
+            @Html.EditorFor(model => model.CompetitorPriceOffset, new { htmlAttributes = new { @class = "form-control", @maxlength = "8", onkeydown = "return ValidateNumber(event);" } })
+            @Html.ValidationMessageFor(model => model.CompetitorPriceOffset, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div id="divMatchCompetitor" style="@(Model.PriceMatchType == PriceMatchType.MatchCompetitorPrice ? "" : "display:none;")">
+
+        @Html.LabelFor(model => model.TrailPriceCompetitorId, htmlAttributes: new { @class = "control-label col-md-3" })
+        <div class="col-md-5">
+            @Html.DropDownListFor(model => model.TrailPriceCompetitorId, Model.Competitors.Select(c => new SelectListItem { Value = c.Id > 0 ? c.Id.ToString() : string.Empty, Text = c.SiteName.ToString(), Selected = c.Id == Model.TrailPriceCompetitorId }), new { @class = "form-control" })
+            @Html.ValidationMessageFor(model => model.TrailPriceCompetitorId, "", new { @class = "text-danger" })
+        </div>
+
+        <div class="col-md-12">&nbsp;</div>
+
+        @Html.LabelFor(model => model.CompetitorPriceOffsetNew, htmlAttributes: new { @class = "control-label col-md-3 col-md-offset-4" })
+        <div class="col-md-5">
+            @Html.EditorFor(model => model.CompetitorPriceOffsetNew, new { htmlAttributes = new { @class = "form-control", @maxlength = "8" } })
+            @Html.ValidationMessageFor(model => model.CompetitorPriceOffsetNew, "", new { @class = "text-danger" })
+        </div>
+    </div>
+</div>

@@ -224,7 +224,21 @@
         </p>
     </div>
 
-    @Html.Partial("_SiteList", Model)
+    <div class="loading-js alert alert-info">
+        <div class="row">
+            <div class="col-md-1 text-center">
+                <i class="fa fa-clock-o fa-2x spinner"></i>
+            </div>
+            <div class="col-md-11 text-center">
+                <strong>Loading Site Maintenance information. Please wait...</strong>
+            </div>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+
+    <div class="wait-for-js">
+        @Html.Partial("_SiteList", Model)
+    </div>
 }
 
 <input type="hidden" id="hdnActiveSitesCount" value="@(activeSiteCount)" />

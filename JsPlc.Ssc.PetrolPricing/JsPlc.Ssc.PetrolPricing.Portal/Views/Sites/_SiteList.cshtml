@@ -1,5 +1,6 @@
-﻿@using JsPlc.Ssc.PetrolPricing.Models
-@model IEnumerable<JsPlc.Ssc.PetrolPricing.Models.Site>
+﻿@model IEnumerable<JsPlc.Ssc.PetrolPricing.Models.Site>
+@using JsPlc.Ssc.PetrolPricing.Models
+@using JsPlc.Ssc.PetrolPricing.Models.Enums
 
 <style>
     table {
@@ -104,12 +105,14 @@
             foreach (var item in Model)
             {
                 var isActive = item.IsActive;
-                var isMatchCompetitor = item.CompetitorPriceOffset != 0;
-                var isTrialPrice = item.TrailPriceCompetitorId.HasValue;
-                var isSoloPrice = !isTrialPrice && !isMatchCompetitor;
+                var priceMatchType = item.PriceMatchType;
+                var isMatchCompetitor = priceMatchType == (int)PriceMatchType.MatchCompetitorPrice;
+                var isTrialPrice = priceMatchType == (int)PriceMatchType.TrailPrice;
+                var isSoloPrice = priceMatchType == (int)PriceMatchType.SoloPrice;
+
                 var rowClasses = (isActive ? "site-active" : "site-inactive")
-                    + (isMatchCompetitor ? " site-trial-price" : "")
-                    + (isTrialPrice ? " site-match-competitor" : "")
+                    + (isTrialPrice ? " site-trial-price" : "")
+                    + (isMatchCompetitor ? " site-match-competitor" : "")
                     + (isSoloPrice ? " site-solo-price" : "");
 
                 <tr class="@(rowClasses)">

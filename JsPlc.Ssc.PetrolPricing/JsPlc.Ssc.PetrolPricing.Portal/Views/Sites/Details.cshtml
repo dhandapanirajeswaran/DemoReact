@@ -1,4 +1,5 @@
 ﻿@model JsPlc.Ssc.PetrolPricing.Models.SiteViewModel
+@using JsPlc.Ssc.PetrolPricing.Models.Enums
 @{
     ViewBag.Title = "Site details";
 }
@@ -62,6 +63,29 @@
                 <dd>
                     @Html.DisplayFor(model => model.PostCode)
                 </dd>
+
+                <dt>&nbsp;</dt>
+                <dd>&nbsp;</dd>
+
+                <dt>
+                    Price Match Strategy
+                </dt>
+                <dd>
+                    @if (Model.PriceMatchType == PriceMatchType.SoloPrice)
+                    {
+                        <span>Solo Price</span>
+                    }
+                    else if (Model.PriceMatchType == PriceMatchType.TrailPrice)
+                    {
+                        <span>Trail Price</span>
+
+                    }
+                    else if (Model.PriceMatchType == PriceMatchType.MatchCompetitorPrice)
+                    {
+                        <span>Match Competitor</span>
+                    }
+                </dd>
+
             </dl>
         </div>
         <div class="col-md-6">
@@ -105,11 +129,11 @@
                 <dd>
                     @if (Model.IsSainsburysSite)
                     {
-                        <span style="color: green"><i class="fa fa-check"></i>&nbsp;Yes</span> <text>&mdash;</text> <span style="color: orange;">@Model.Brand</span>
+                    <span style="color: green"><i class="fa fa-check"></i>&nbsp;Yes</span> <text>&mdash;</text> <span style="color: orange;">@Model.Brand</span>
                     }
                     else
                     {
-                        <span style="color: red;"><i class="fa fa-times"></i>&nbsp;No</span>                        <text>&mdash;</text>  <span style="color: grey;">@Model.Brand</span>
+                    <span style="color: red;"><i class="fa fa-times"></i>&nbsp;No</span>                        <text>&mdash;</text>  <span style="color: grey;">@Model.Brand</span>
                     }
                 </dd>
 
@@ -120,11 +144,11 @@
                 <dd>
                     @if (Model.IsActive)
                     {
-                        <span style="color: green"><i class="fa fa-check"></i>&nbsp;Yes</span>
+                    <span style="color: green"><i class="fa fa-check"></i>&nbsp;Yes</span>
                     }
                     else
                     {
-                        <span style="color: red;"><i class="fa fa-times"></i>&nbsp;No</span>
+                    <span style="color: red;"><i class="fa fa-times"></i>&nbsp;No</span>
                     }
                 </dd>
 
@@ -142,12 +166,15 @@
             </dl>
         </div>
     </div>
-    <div class="panel-footer">
-        <a class="btn btn-default" href="@Url.Action("Index", "Sites")"><i class="fa fa-backward"> Back to List</i></a>
 
-        @if (Model.IsSainsburysSite)
-        {
-            <a class="btn btn-primary pull-right" href="@Url.Action("Edit", "Sites", new {id = Model.Id})"><i class="fa fa-pencil"></i>&nbsp;Edit</a>
-        }
-    </div>
+
+</div>
+<div class="panel-footer">
+    <a class="btn btn-default" href="@Url.Action("Index", "Sites")"><i class="fa fa-backward"> Back to List</i></a>
+
+    @if (Model.IsSainsburysSite)
+    {
+        <a class="btn btn-primary pull-right" href="@Url.Action("Edit", "Sites", new {id = Model.Id})"><i class="fa fa-pencil"></i>&nbsp;Edit</a>
+    }
+</div>
 </div>

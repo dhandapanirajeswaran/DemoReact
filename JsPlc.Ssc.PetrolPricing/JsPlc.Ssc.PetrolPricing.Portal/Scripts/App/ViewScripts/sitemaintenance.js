@@ -10,8 +10,6 @@
             soloSites: $('#hdnSoloPriceSitesCount').val() || 0
         };
 
-        console.log(counts);
-
         var siteFilters = {
             showActiveSites: true,
             showInactiveSites: true,
@@ -247,10 +245,12 @@
 
         function docReady() {
             prices.go();
+            var waiters = $('.wait-for-js').removeClass('wait-for-js');
             bindEvents();
             restoreCookieSettings();
             redrawSiteFilterButtons();
             redrawHighlightingButtons();
+            $('.loading-js').hide();
         };
 
         $(docReady);

@@ -24,6 +24,7 @@ using ClosedXML.Excel;
 using JsPlc.Ssc.PetrolPricing.Portal.DataExporters;
 using JsPlc.Ssc.PetrolPricing.Portal.Controllers.BaseClasses;
 using JsPlc.Ssc.PetrolPricing.Core.Diagnostics;
+using JsPlc.Ssc.PetrolPricing.Models.Enums;
 
 namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 {
@@ -220,6 +221,8 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
         [System.Web.Mvc.HttpPost]
         public ActionResult Create(SiteViewModel site)
         {
+            ValidateSiteEditOrCreate(site);
+
             if (!ModelState.IsValid)
             {
                 ViewBag.ErrorMessage = "Please check for validation errors under each field.";
@@ -351,6 +354,30 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             var dt = exporter.ExportDataTable(forDate, sitesViewModelsWithPrices, pfsList);
 
             return dt;
+        }
+
+        private void ValidateSiteEditOrCreate(SiteViewModel site)
+        {
+            switch (site.PriceMatchType)
+            {
+                case PriceMatchType.SoloPrice:
+                    site.CompetitorPriceOffset = 0.0;
+                    site.TrailPriceCompetitorId = null;
+                    site.CompetitorPriceOffsetNew = 0;
+                    break;
+
+                case PriceMatchType.TrailPrice:
+                    site.TrailPriceCompetitorId = null;
+                    site.CompetitorPriceOffsetNew = 0;
+                    break;
+
+                case PriceMatchType.MatchCompetitorPrice:
+                    if (!site.TrailPriceCompetitorId.HasValue || site.TrailPriceCompetitorId.Value == 0)
+                        ModelState.AddModelError("TrailPriceCompetitorId", "Please choose a Competitor Site");
+                    else
+                        site.CompetitorPriceOffset = 0.0;
+                    break;
+            }
         }
 
         private List<int> GetJsSitesByPfsNum()
@@ -900,6 +927,8 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
         public ActionResult Edit(SiteViewModel site)
         {
 			var model = _serviceFacade.GetSite(site.Id);
+
+            ValidateSiteEditOrCreate(site);
 
 			List<SiteViewModel> sortedCompetitors = model.Competitors.Where(c => c.IsSainsburysSite == false).OrderBy(c => c.SiteName).ToList();
            
