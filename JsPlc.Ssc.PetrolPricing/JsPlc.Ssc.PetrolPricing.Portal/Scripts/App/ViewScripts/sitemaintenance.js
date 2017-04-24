@@ -2,6 +2,16 @@
     function (prices, notify, infotip, cookieSettings) {
         "use strict";
 
+        var counts = {
+            activeSites: $('#hdnActiveSitesCount').val() || 0,
+            inactiveSites: $('#hdnInactiveSitesCount').val() || 0,
+            trialSites: $('#hdnTrialSitesCount').val() || 0,
+            matchCompetitorSites: $('#hdnMatchCompetitorSitesCount').val() || 0,
+            soloSites: $('#hdnSoloPriceSitesCount').val() || 0
+        };
+
+        console.log(counts);
+
         var siteFilters = {
             showActiveSites: true,
             showInactiveSites: true,
@@ -132,7 +142,7 @@
             var enabled = !siteFilters.highlightSoloPrices,
                 opts = {
                     state: 'highlightSoloPrices',
-                    showing: 'Highlight ' + counts.soloPriceSites + ' Solo Price Sites',
+                    showing: 'Highlight ' + counts.soloSites + ' Solo Price Sites',
                     hiding: ''
                 };
             commonToggleHighlights(opts);
@@ -168,8 +178,8 @@
         function toggleShowActiveSites() {
             var opts = {
                 state: 'showActiveSites',
-                showing: 'Showing ' + counts.active + ' Active Sites',
-                hiding: 'Hiding ' + counts.active + ' Active Sites'
+                showing: 'Showing ' + counts.activeSites + ' Active Sites',
+                hiding: 'Hiding ' + counts.activeSites + ' Active Sites'
             };
             commonToggleButtonFilter(opts);
         };
@@ -177,8 +187,8 @@
         function toggleShowInActiveSites() {
             var opts = {
                 state: 'showInactiveSites',
-                showing: 'Showing ' + counts.inactive + ' Inactive Sites',
-                hiding: 'Hiding ' + counts.inactive + ' Inactive Sites'
+                showing: 'Showing ' + counts.inactiveSites + ' Inactive Sites',
+                hiding: 'Hiding ' + counts.inactiveSites + ' Inactive Sites'
             };
             commonToggleButtonFilter(opts);
         };

@@ -191,16 +191,13 @@
     @Html.Partial("_SiteList", Model)
 }
 
+<input type="hidden" id="hdnActiveSitesCount" value="@(activeSiteCount)" />
+<input type="hidden" id="hdnInactiveSitesCount" value="@(inactiveSiteCount)" />
+<input type="hidden" id="hdnTrialSitesCount" value="@(trialPriceSiteCount)" />
+<input type="hidden" id="hdnMatchCompetitorSitesCount" value="@(matchCompetitorSiteCount)" />
+<input type="hidden" id="hdnSoloPriceSitesCount" value="@(soloSiteCount)" />
+
 <script type="text/javascript">
-
-    var counts = {
-        activeSites: '@(activeSiteCount)',
-        inactiveSites: '@(inactiveSiteCount)',
-        trialSites: '@(trialPriceSiteCount)',
-        matchCompetitorSites: '@(matchCompetitorSiteCount)',
-        soloPriceSites: '@(soloSiteCount)'
-    };
-
     require(["SiteMaintenance"],
         function (sitemaintenance) { }
     );
