@@ -8,6 +8,8 @@ namespace JsPlc.Ssc.PetrolPricing.Models.ViewModels.Diagnostics
 {
     public class DiagnosticsViewModel
     {
+        public string ActionMessage { get; set; }
+
         public string ApiExceptionMessage { get; set; }
 
         public DiagnosticsSettingsViewModel DiagnosticsSettings;
@@ -25,6 +27,7 @@ namespace JsPlc.Ssc.PetrolPricing.Models.ViewModels.Diagnostics
 
         public DiagnosticsViewModel()
         {
+            this.ActionMessage = "";
             this.ApiExceptionMessage = "";
             this.DiagnosticsSettings = new DiagnosticsSettingsViewModel();
             this.AppSettings = new Dictionary<string, string>();

@@ -27,10 +27,11 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 
         [HttpGet]
         [AuthoriseDiagnostics(Permissions = DiagnosticsUserPermissions.View)]
-        public ActionResult Index()
+        public ActionResult Index(string message = "")
         {
             var daysAgo = 14;
             var model = _serviceFacade.GetDiagnostics(daysAgo);
+            model.ActionMessage = message;
             return View(model);
         }
 
@@ -39,7 +40,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
         public ActionResult Index(DiagnosticsSettingsViewModel model)
         {
             _serviceFacade.UpdateDiagnosticsSettings(model);
-            return RedirectToAction("Index");
+            return RedirectToAction("Index", new { message = "Diagnostic Settings Updated" });
         }
 
         [HttpPost]
@@ -47,7 +48,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
         public ActionResult ClearLog()
         {
             _serviceFacade.ClearDiagnosticsLog();
-            return RedirectToAction("Index");
+            return RedirectToAction("Index", new { message = "Diagnostics Log Cleared" });
         }
     }
 }

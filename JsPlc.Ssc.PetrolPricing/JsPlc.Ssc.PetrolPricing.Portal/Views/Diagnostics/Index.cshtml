@@ -54,6 +54,7 @@
             cursor: pointer;
             margin: 1px .5em;
         }
+
         big.badge {
             font-size: 125%;
         }
@@ -62,12 +63,11 @@
             border-right: 1px solid #ccc;
             border-bottom: 1px solid #ccc;
         }
-        .table-dividers th,
-        .table-dividers td {
-            border-left: 1px solid #ccc;
-        }
 
-
+            .table-dividers th,
+            .table-dividers td {
+                border-left: 1px solid #ccc;
+            }
     </style>
 }
 
@@ -340,7 +340,9 @@
                             <td class="text-center">
                                 @Html.FormatFriendlyTimeAgo(Model.FileUploadSummary.NewestDateTime.Value)
                             </td>
-                        } else {
+                        }
+                        else
+                        {
                             <td class="text-center">N/A</td>
                             <td></td>
                         }
@@ -353,7 +355,9 @@
                             <td class="text-center">
                                 @Html.FormatFriendlyTimeAgo(Model.FileUploadSummary.OldestDateTime.Value)
                             </td>
-                        } else {
+                        }
+                        else
+                        {
                             <td class="text-center">N/A</td>
                             <td></td>
                         }
@@ -544,6 +548,13 @@
 
 @section scripts {
     <script>
-        require(["Diagnostics", "infotips"], function () { })
+        require(["Diagnostics", "infotips", "notify"],
+            function (diagnostics, infotips, notify) {
+
+                @if (!String.IsNullOrWhiteSpace(Model.ActionMessage)) {
+                    @:notify.success('@(Model.ActionMessage)');
+                }
+            }
+        );
     </script>
 }
