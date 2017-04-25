@@ -1133,5 +1133,23 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
                 throw new Exception("Exception in GetQuarterlySiteAnalysisContainerViewModel" + System.Environment.NewLine + ex.Message, ex);
             }
         }
+
+        public bool DeleteAllData()
+        {
+            try
+            {
+                var apiUrl = String.Format("api/DeleteAllData");
+                var response = _client.Value.GetAsync(apiUrl).Result;
+                var result = response.Content.ReadAsAsync<bool>().Result;
+                return response.IsSuccessStatusCode
+                    ? result
+                    : false;
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex);
+                throw new Exception("Exception in DeleteAllData" + System.Environment.NewLine + ex.Message, ex);
+            }
+        }
     }
 }

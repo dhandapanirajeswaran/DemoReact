@@ -303,5 +303,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         QuarterlySiteAnalysisReportViewModel GetQuarterlySiteAnalysisReport(int leftFileUploadId, int rightFileUploadId);
 
         FileUpload GetFileUploadInformation(int fileUploadId);
+
+        bool DeleteAllData(string uploadPath);
     }
 }

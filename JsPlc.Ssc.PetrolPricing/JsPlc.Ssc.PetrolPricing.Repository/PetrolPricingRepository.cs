@@ -3435,7 +3435,9 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
 
         public bool DataCleanseFileUploads(int daysAgo, string fileUploadPath)
         {
-            var minDateTime = DateTime.Now.Date.AddDays(0 - daysAgo);
+            var minDateTime = daysAgo == 0 
+                ? DateTime.Now.Date.AddDays(1) // Delete ALL files
+                : DateTime.Now.Date.AddDays(0 - daysAgo);
 
             //
             // first delete old FileUpload physical files older than minDateTime
@@ -3549,6 +3551,15 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
             return fileUpload != null
                 ? fileUpload
                 : new FileUpload();
+        }
+
+        public bool DeleteAllData(string fileUploadPath)
+        {
+            // delete ALL FileUpLOAD files
+            DataCleanseFileUploads(0, fileUploadPath);
+
+            // delete ALL non static database data
+            return _context.DeleteAllData();
         }
 
         #region private methods

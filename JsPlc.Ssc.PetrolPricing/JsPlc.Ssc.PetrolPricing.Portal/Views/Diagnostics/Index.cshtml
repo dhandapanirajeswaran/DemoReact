@@ -68,11 +68,24 @@
             .table-dividers td {
                 border-left: 1px solid #ccc;
             }
+
+        #DiagnosticsPanelList {
+            position: relative;
+        }
+
+        #btnResetDatabase {
+            position: absolute;
+            right: 2em;
+            box-shadow: 4px 4px 10px #000;
+        }
     </style>
 }
 
 <div class="jumbotron" id="DiagnosticsPanelList">
-    <h1 class="site-hero-text"><i class="fa fa-bug"></i> Diagnostics</h1>
+
+    <button id="btnResetDatabase" style="display: none;" class="btn btn-danger" data-toggle="modal" data-target="#ConfirmDeleteDatabaseModal" data-infotip="[B]DANGER[/b] Delete [b]ALL[/b] data in database!"><i class="fa fa-power-off"></i> RESET DATABASE</button>
+
+    <h1 class="site-hero-text"><i class="fa fa-bug" data-infotip="Here be dragons..."></i> Diagnostics</h1>
     <p class="lead">Petrol Pricing Diagnostics</p>
 
     @using (Html.BeginForm("Index", "Diagnostics"))
@@ -546,6 +559,50 @@
     </div>
 </div>
 
+<div id="ConfirmDeleteDatabaseModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="alert alert-danger">
+                    <h4><i class="fa fa-warning fa-2x"></i>  DANGER &mdash; Do you wish to delete <strong>ALL</strong> the data in the database?</h4>
+                </div>
+            </div>
+            <div class="modal-body text-center">
+
+                <h2>
+                    <i class="fa fa-warning fa-2x"></i><span class="font150pc">Are you sure you wish to do this?</span>
+                </h2>
+
+                <p>
+                    <div class="row">
+                        <div class="col-md-8 col-md-offset-2">
+                            <ul class="text-left">
+                                <li>Delete all the File Uploads</li>
+                                <li>Delete all the non-static database data</li>
+                            </ul>
+                        </div>
+                    </div>
+                </p>
+
+                <form method="post" action="@Url.Action("DeleteAllData", "Diagnostics")">
+                    <p>
+                        <hr />
+                        <button type="submit" id="btnConfirmDeleteDatabase" class="btn btn-danger"><i class="fa fa-warning"></i> YES - Delete ALL data and File Uploads</button>
+                        <hr />
+                    </p>
+                </form>
+                <p class="text-danger">
+                    <em>NOTE:</em> The files and data <strong>CANNOT</strong> be recovered once they are deleted!
+                </p>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal"><i class="fa fa-times"></i> Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @section scripts {
     <script>
         require(["Diagnostics", "infotips", "notify"],
@@ -553,7 +610,27 @@
 
                 @if (!String.IsNullOrWhiteSpace(Model.ActionMessage)) {
                     @:notify.success('@(Model.ActionMessage)');
-                }
+                                }
+
+                function bindEvents() {
+                    $('body').on('click', '#btnConfirmDeleteDatabase', function () {
+                    });
+
+                    $('.fa-bug').off().on('dblclick', function () {
+                        var button = $('#btnResetDatabase');
+
+                        if (!button.is(':visible')) {
+                            button.delay(500).slideDown(500);
+                            notify.info('With great power comes great responsibility!!');
+                        }
+                    });
+                };
+
+                function docReady() {
+                    bindEvents();
+                };
+
+                $(docReady);
             }
         );
     </script>

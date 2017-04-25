@@ -29,7 +29,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
         [AuthoriseDiagnostics(Permissions = DiagnosticsUserPermissions.View)]
         public ActionResult Index(string message = "")
         {
-            var daysAgo = 14;
+            var daysAgo = 7;
             var model = _serviceFacade.GetDiagnostics(daysAgo);
             model.ActionMessage = message;
             return View(model);
@@ -49,6 +49,17 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
         {
             _serviceFacade.ClearDiagnosticsLog();
             return RedirectToAction("Index", new { message = "Diagnostics Log Cleared" });
+        }
+
+        [HttpPost]
+        [AuthoriseDiagnostics(Permissions = DiagnosticsUserPermissions.Edit)] 
+        public ActionResult DeleteAllData()
+        {
+            var success = _serviceFacade.DeleteAllData();
+            if (success)
+                return RedirectToAction("Index", new { message = "All Database Data Deleted" });
+            else
+                return RedirectToAction("Index", new { message = "Error - Unable to delete data!" });
         }
     }
 }

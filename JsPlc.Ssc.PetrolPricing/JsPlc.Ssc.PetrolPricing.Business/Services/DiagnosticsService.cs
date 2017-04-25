@@ -146,6 +146,20 @@ namespace JsPlc.Ssc.PetrolPricing.Business.Services
             return true;
         }
 
+        public bool DeleteAllData()
+        {
+            try
+            {
+                var result = _db.DeleteAllData(_appSettings.UploadPath);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex);
+                throw new Exception("Exception in DeleteAllData" + Environment.NewLine + ex.Message, ex);
+            }
+        }
+
         #endregion implementation of IDiagnosticsService
 
         private Dictionary<string, string> SortDictionaryByKey(Dictionary<string, object> dictionary)

@@ -164,6 +164,7 @@
     <Build Include="dbo\Tables\QuarterlyFileUpload.sql" />
     <Build Include="dbo\Stored Procedures\spGetQuarterlyFileUploadOptions.sql" />
     <Build Include="dbo\Stored Procedures\spGetQuarterlySiteAnalysisReport.sql" />
+    <Build Include="dbo\Stored Procedures\spDeleteAllData.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Scripts\PostDeployment\Script.PostDeployment.sql" />

@@ -293,5 +293,12 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
             return DapperHelper.QueryList<QuarterlySiteAnalysisReportRowViewModel>(this, sprocName, parameters);
         }
+
+        public bool DeleteAllData()
+        {
+            const string sprocName = "spDeleteAllData";
+            var parameters = new { };
+            return DapperHelper.QueryScalar(this, sprocName, parameters, true) == 0;
+        }
     }
 }

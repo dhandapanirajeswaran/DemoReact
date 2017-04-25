@@ -13,5 +13,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business.Interfaces
         DiagnosticsViewModel GetDiagnostics(int daysAgo);
         bool UpdateDiagnosticsSettings(DiagnosticsSettingsViewModel settings);
         bool ClearDiagnosticsLog();
+
+        bool DeleteAllData();
     }
 }

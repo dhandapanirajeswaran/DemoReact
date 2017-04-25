@@ -68,5 +68,22 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
             }
         }
 
+        [System.Web.Http.HttpGet]
+        [System.Web.Http.Route("api/DeleteAllData")]
+        public IHttpActionResult DeleteAllData()
+        {
+            try
+            {
+                var result = _diagnosticService.DeleteAllData();
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex);
+                return new ExceptionResult(ex, this);
+            }
+        }
+
+
     }
 }
