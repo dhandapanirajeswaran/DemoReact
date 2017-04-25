@@ -76,6 +76,11 @@ table.competitorTable td, th {
     font-style: italic;
 }
 
+#competitorPricePopupPrices .sainsburys-row {
+    border-top: 2px solid orange;
+    border-bottom: 2px solid orange;
+}
+
 #competitorPricePopupHeader th {
     background: #eee;
 }
@@ -239,8 +244,12 @@ span.jsdiff {
 
 .site-row.focused,
 .site-row.focused:hover {
-    background-color: #cec;
     background-color: #ffc580;
+}
+
+.site-row.viewing-site-competitors {
+    border-top: 2px solid orange;
+    border-bottom: 2px solid orange;
 }
 
 .site-row.row-errors {
