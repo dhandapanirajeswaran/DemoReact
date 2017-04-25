@@ -167,6 +167,8 @@
     <Build Include="dbo\Stored Procedures\spDeleteAllData.sql" />
     <Build Include="dbo\Stored Procedures\spSetSitePriceMatchTypeDefaults.sql" />
     <Build Include="dbo\Stored Procedures\spGetDiagnosticsRecordCounts.sql" />
+    <Build Include="dbo\Stored Procedures\spPostQuarterlyFileUpload.sql" />
+    <Build Include="dbo\Stored Procedures\spInitSainsburysStoreInformation.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Scripts\PostDeployment\Script.PostDeployment.sql" />

@@ -3568,6 +3568,11 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
             _context.SetSitePriceMatchTypeDefaults();
         }
 
+        public void RunPostQuarterlyFileUploadTasks()
+        {
+            _context.RunPostQuarterlyFileUploadTasks();
+        }
+
         public IEnumerable<DiagnosticsRecordCountViewModel> GetDatabaseRecordCounts()
         {
             return _context.GetDatabaseRecordCounts();

@@ -308,6 +308,8 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
         void SetSitePriceMatchTypeDefaults();
 
+        void RunPostQuarterlyFileUploadTasks();
+
         IEnumerable<DiagnosticsRecordCountViewModel> GetDatabaseRecordCounts();
 
     }

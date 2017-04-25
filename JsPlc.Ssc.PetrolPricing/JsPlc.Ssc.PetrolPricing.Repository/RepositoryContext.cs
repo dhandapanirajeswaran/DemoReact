@@ -308,6 +308,13 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             DapperHelper.Execute(this, sprocName, parameters, true);
         }
 
+        public void RunPostQuarterlyFileUploadTasks()
+        {
+            const string sprocName = "spPostQuarterlyFileUpload";
+            var parameters = new { };
+            DapperHelper.Execute(this, sprocName, parameters, true);
+        }
+
         public IEnumerable<DiagnosticsRecordCountViewModel> GetDatabaseRecordCounts()
         {
             const string sprocName = "spGetDiagnosticsRecordCounts";

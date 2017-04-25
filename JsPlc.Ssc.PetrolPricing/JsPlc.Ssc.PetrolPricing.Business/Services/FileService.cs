@@ -327,8 +327,10 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 
 				_db.UpdateImportProcessStatus(aFile.StatusId, aFile); //ok 10, failed 15
 
+                // do post Quarterly file upload tasks
+
                 // set Site Defaults (Price Match Type)
-                _db.SetSitePriceMatchTypeDefaults();
+                _db.RunPostQuarterlyFileUploadTasks();
 
 			}
 			catch (ExcelParseFileException ex)
