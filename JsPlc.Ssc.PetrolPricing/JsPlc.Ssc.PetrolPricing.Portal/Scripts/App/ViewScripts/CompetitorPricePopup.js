@@ -91,8 +91,6 @@ function ($, ko, common, compNotePopup, notify) {
         $(config.selectors.showAllNotesButton).hide();
         $(config.selectors.hideAllNotesButton).hide();
 
-        //        populateReadOnlyPopupPrices(siteItem);
-
         $('.compitatorData .storeName').text(siteItem.StoreName);
 
         hideAllNotes(true);
@@ -102,34 +100,24 @@ function ($, ko, common, compNotePopup, notify) {
         var row = $('#SiteHeading' + siteId),
             cells = row.find('>td');
 
-        console.log(row, cells.length);
-
-        //cloneAsReadonlyHtml('#readonlyUnleadedYesterday', cells.get(7));
-        //cloneAsReadonlyHtml('#readonlyUnleadedToday', cells.get(8));
-        //cloneAsReadonlyHtml('#readonlyDieselYesterday', cells.get(9));
-        //cloneAsReadonlyHtml('#readonlyDieselToday', cells.get(10));
-        //cloneAsReadonlyHtml('#readonlySuperUnleadedYesterday', cells.get(11));
-        //cloneAsReadonlyHtml('#readonlySuperUnleadedToday', cells.get(12));
+        cloneAsReadonlyHtml('.readonlyUnleadedYesterday', cells.get(7));
+        cloneAsReadonlyHtml('.readonlyUnleadedToday', cells.get(8));
+        cloneAsReadonlyHtml('.readonlyDieselYesterday', cells.get(9));
+        cloneAsReadonlyHtml('.readonlyDieselToday', cells.get(10));
+        cloneAsReadonlyHtml('.readonlySuperUnleadedYesterday', cells.get(11));
+        cloneAsReadonlyHtml('.readonlySuperUnleadedToday', cells.get(12));
 
         $(config.selectors.popup).find('#readonlyUnleadedYesterday').text('testing');
 
     };
     function cloneAsReadonlyHtml(selector, ele) {
-        var popup = $(config.selectors.popup);
-        popup.find(selector).text('blah blah');
+        var popup = $(config.selectors.popup),
+            html = ($(ele).html() + '')
+            .replace(/data-bind="[^"]+"/i, '')
+            .replace(/<!--[^>]+-->/g, '')
+            .replace(/\s+/g, ' ');
 
-
-        //var from = $(ele),
-        //    html = '' + from.html(),
-        //    value = from.val() || '',
-        //    clone;
-        ////html = html.replace(/<!--[^>]+-->/g, '');
-        ////clone = $(html);
-        //////clone.find('[data-bind]').attr('data-bind', null);
-        ////// clone.find('input').val(value).attr('readonly', true);
-        ////html = '<div>' + clone.html() + '</div>';
-        //html = 'blah blah';
-        //$(selector).html(html);
+        popup.find(selector).html(html);
     };
 
     function drawPopup(siteItem) {
