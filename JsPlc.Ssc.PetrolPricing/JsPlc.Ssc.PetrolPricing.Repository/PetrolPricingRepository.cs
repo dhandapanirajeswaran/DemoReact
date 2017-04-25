@@ -735,9 +735,14 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                 site.FuelPrices.Add(unleaded);
                 site.FuelPrices.Add(diesel);
 
-                superUnleaded.AutoPrice = unleaded.AutoPrice.HasValue ? unleaded.AutoPrice.Value + 50 : (int?)null;
-                superUnleaded.TodayPrice = unleaded.TodayPrice.HasValue ? unleaded.TodayPrice.Value + 50 : (int?)null;
-                superUnleaded.Difference = unleaded.AutoPrice.HasValue && unleaded.TodayPrice.HasValue
+
+                var hasUnleadedAutoPrice = unleaded.AutoPrice.HasValue && unleaded.AutoPrice != 0;
+                var hasUnleadedTodayPrice = unleaded.TodayPrice.HasValue && unleaded.TodayPrice != 0;
+
+
+                superUnleaded.AutoPrice = hasUnleadedAutoPrice ? unleaded.AutoPrice.Value + 50 : (int?)null;
+                superUnleaded.TodayPrice = hasUnleadedTodayPrice ? unleaded.TodayPrice.Value + 50 : (int?)null;
+                superUnleaded.Difference = hasUnleadedAutoPrice && hasUnleadedTodayPrice
                     ? unleaded.TodayPrice - unleaded.AutoPrice
                     : null;
             }
