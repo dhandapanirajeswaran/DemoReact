@@ -386,10 +386,10 @@ span.jsdiff {
 .price-diff-bar-chart .higher-price:hover,
 .price-diff-bar-chart .same-price:hover {background-color: #ffc; box-shadow: 2px 4px 4px #000; cursor: pointer;}*/
 
-.price-diff-bar-chart .lower-price {color:#610018;}
-.price-diff-bar-chart .higher-price {color: #449D44;}
-.price-diff-bar-chart .same-price {color: #F2A83E;}
-.price-diff-bar-chart .na-price {color: #000;}
+.price-diff-bar-chart .lower-price {color:#610018; letter-spacing: 1px;}
+.price-diff-bar-chart .higher-price {color: #449D44; letter-spacing: 1px;}
+.price-diff-bar-chart .same-price {color: #F2A83E; letter-spacing: 1px}
+.price-diff-bar-chart .na-price {color: #000; letter-spacing: 1px;}
 
 .price-diff-bar-chart td {position: relative; text-align: center; border-left: 2px solid #fff;}
 .price-diff-bar-chart-key {
