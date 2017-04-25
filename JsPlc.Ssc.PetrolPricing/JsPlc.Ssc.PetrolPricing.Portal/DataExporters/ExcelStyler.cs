@@ -98,6 +98,17 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.DataExporters
             }
             cell.Style.Alignment.SetHorizontal(XLAlignmentHorizontalValues.Right);
         }
+
+        public static void GeneralNumber2DPFormatter(IXLCell cell)
+        {
+            decimal tempDecimal;
+            if (decimal.TryParse(cell.Value.ToString(), out tempDecimal))
+            {
+                cell.DataType = XLCellValues.Number;
+                cell.Style.NumberFormat.Format = "0.00";
+            }
+            cell.Style.Alignment.SetHorizontal(XLAlignmentHorizontalValues.Right);
+        }
     }
 
     public class ExcelStyler
@@ -294,7 +305,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.DataExporters
             var lastDataRow = 2 + totalRows - 1;
 
             new ExcelColumnStyler(worksheet, firstDataRow, lastDataRow)
-                .FormatColumnRange(3, totalColumns, ExcelStyleFormatters.GeneralNumberFormatter);
+                .FormatColumnRange(3, totalColumns, ExcelStyleFormatters.GeneralNumber2DPFormatter);
         }
 
         private void FormatReportPriceMovementReport(IXLWorksheet worksheet, int totalColumns, int totalRows)

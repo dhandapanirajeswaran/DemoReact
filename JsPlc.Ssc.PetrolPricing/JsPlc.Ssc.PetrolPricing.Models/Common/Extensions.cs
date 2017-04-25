@@ -461,7 +461,7 @@ namespace JsPlc.Ssc.PetrolPricing.Models.Common
             {
                 foreach (var brand in fuelType.Brands)
                 {
-                    dr[i] = (brand.Average / 10.0).ToString("###0.0");
+                    dr[i] = (brand.Average / 10.0).ToString("###0.00");
                     i += 2;
                 }
                 i = 3;
@@ -476,7 +476,7 @@ namespace JsPlc.Ssc.PetrolPricing.Models.Common
                 {
                     if (brand.BrandName == "SAINSBURYS") continue;
                     int diff = brand.Average > 0 ? (brand.Average - fuelType.SainsburysPrice) : 0;
-                    dr[i] = (diff / 10.0).ToString("###0.0");
+                    dr[i] = (diff / 10.0).ToString("###0.00");
                     i += 2;
                 }
                 i = 5;

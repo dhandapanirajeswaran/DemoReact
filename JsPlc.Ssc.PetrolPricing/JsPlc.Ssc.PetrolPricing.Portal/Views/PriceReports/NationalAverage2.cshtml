@@ -89,7 +89,7 @@
                         </td>
                         @foreach (var brand in fuelType.Brands)
                         {
-                            <td>@((brand.Average / 10.0).ToString("###0.0"))</td>
+                            <td>@((brand.Average / 10.0).ToString("###0.00"))</td>
                         }
                     </tr>
                     <tr>
@@ -107,7 +107,7 @@
                                 color = "green";
                             }
 
-                            <td style="color: @color">@((diff / 10.0).ToString("###0.0"))</td>
+                            <td style="color: @color">@((diff / 10.0).ToString("###0.00"))</td>
                         }
                     </tr>
                 }
