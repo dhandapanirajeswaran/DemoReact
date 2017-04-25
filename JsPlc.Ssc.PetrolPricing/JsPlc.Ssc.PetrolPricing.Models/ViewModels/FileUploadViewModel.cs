@@ -36,5 +36,10 @@ namespace JsPlc.Ssc.PetrolPricing.Models.ViewModels
         public bool FileExists { get; set; }
 
         public virtual ICollection<ImportProcessError> ImportProcessErrors { get; set; }
+
+
+        public bool IsMostRecentForDate { get; set; }
+        public bool IsForDifferentDay { get; set; }
+
     }
 }

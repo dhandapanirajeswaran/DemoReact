@@ -45,7 +45,8 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             using (var svc = new ServiceFacade(_logger))
             {
                 var model = await svc.GetFileUploads(null, null);
-                return View(model);
+                var viewModel = model.ConvertToFileUploadViewModel();
+                return View(viewModel);
             }
         }
 
@@ -54,7 +55,8 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             using (var svc = new ServiceFacade(_logger))
             {
                 var model = await svc.GetFileUploads(null, null);
-                return PartialView("~/Views/File/_FileUploadsList.cshtml", model);
+                var viewModel = model.ConvertToFileUploadViewModel();
+                return PartialView("~/Views/File/_FileUploadsList.cshtml", viewModel);
             }
         }
 
@@ -173,11 +175,13 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
                 return RedirectToAction("Upload", new { errMsg = StringMessages.Error_ReuploadFile });
             }
 
+            var fileUploads = await ExistingDailyUploads(fileUpload.UploadDateTime);
+
             var model = new UploadConfirmationViewModel
             {
                 OriginalFileName = fileUpload.OriginalFileName,
                 Guid = guidKey,
-                ExistingFiles = await ExistingDailyUploads(fileUpload.UploadDateTime)
+                ExistingFiles = fileUploads.ConvertToFileUploadViewModel()
             };
             return View(model);
         }
@@ -259,6 +263,48 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 
     public static class FileUploadExtensions
     {
+        public static IEnumerable<FileUploadViewModel> ConvertToFileUploadViewModel(this IEnumerable<FileUpload> uploads)
+        {
+            var viewModel = new List<FileUploadViewModel>();
+
+            var lastDate = DateTime.Now.Date.AddYears(1);
+            var mostRecent = new Dictionary<int, FileUploadViewModel>();
+
+            foreach (var upload in uploads)
+            {
+                var vm = new FileUploadViewModel()
+                {
+                    Id = upload.Id,
+                    OriginalFileName = upload.OriginalFileName,
+                    StoredFileName = upload.StoredFileName,
+                    UploadTypeId = upload.UploadTypeId,
+                    UploadType = upload.UploadType,
+                    UploadDateTime = upload.UploadDateTime,
+                    StatusId = upload.StatusId,
+                    Status = upload.Status,
+                    UploadedBy = upload.UploadedBy,
+                    FileExists = upload.FileExists,
+                    IsMostRecentForDate = false,
+                    IsForDifferentDay = false
+                };
+
+                if (mostRecent.ContainsKey(vm.UploadTypeId) == false)
+                {
+                    vm.IsMostRecentForDate = true;
+                    mostRecent.Add(vm.UploadTypeId, vm);
+                }
+
+                if (vm.UploadDateTime.Date != lastDate)
+                {
+                    vm.IsForDifferentDay = true;
+                    lastDate = vm.UploadDateTime.Date;
+                }
+
+                viewModel.Add(vm);
+            }
+            return viewModel;
+        }
+
         public static FileUpload ToFileUpload(this HttpPostedFileBase uploadedFile, string userName, DateTime? uploadDate, int uploadTypeId)
         {
             var uploadDateTime = uploadDate ?? DateTime.Now;
@@ -290,7 +336,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
         public string OriginalFileName { get; set; }
         public string Guid { get; set; } // key to session object
         public bool Response { get; set; } // Upload, Cancel
-        public IEnumerable<FileUpload> ExistingFiles { get; set; } // Show list of files existing for the day
+        public IEnumerable<FileUploadViewModel> ExistingFiles { get; set; } // Show list of files existing for the day
     }
 
     public class FileUploadModel
@@ -402,5 +448,6 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             var heldFile = Path.Combine(_uploadHoldPath, _fileUpload.StoredFileName);
             File.Delete(heldFile);
         }
+
     }
 }

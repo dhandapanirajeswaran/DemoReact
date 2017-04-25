@@ -70,7 +70,9 @@ namespace JsPlc.Ssc.PetrolPricing.Service.DataMapping
                 .ForMember(fu => fu.Status, mo => mo.MapFrom(p => p.Status))
                 .ForMember(fu => fu.UploadedBy, mo => mo.MapFrom(p => p.UploadedBy))
                 .ForMember(fu => fu.FileExists, mo => mo.MapFrom(p => p.FileExists))
-                .ForMember(fu => fu.ImportProcessErrors, mo => mo.Ignore());
+                .ForMember(fu => fu.ImportProcessErrors, mo => mo.Ignore())
+                .ForMember(fu => fu.IsMostRecentForDate, mo => mo.Ignore())
+                .ForMember(fu => fu.IsForDifferentDay, mo => mo.Ignore());
         }
     }
 }

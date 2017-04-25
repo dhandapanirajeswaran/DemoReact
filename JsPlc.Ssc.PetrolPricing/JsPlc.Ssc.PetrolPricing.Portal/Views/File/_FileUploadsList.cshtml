@@ -1,6 +1,6 @@
 ﻿@using System.Globalization
 @using JsPlc.Ssc.PetrolPricing.Portal.Helper.Extensions
-@model IEnumerable<JsPlc.Ssc.PetrolPricing.Models.FileUpload>
+@model IEnumerable<JsPlc.Ssc.PetrolPricing.Models.ViewModels.FileUploadViewModel>
 
 @{ 
     var statusMarkup = new Dictionary<string, string>()
@@ -19,34 +19,47 @@
 @if (Model != null && Model.Any())
 {
     <table class="table table-striped">
-        <tr>
-            <th>
-                File
-            </th>
-
-            <th>
-                @Html.DisplayNameFor(model => model.OriginalFileName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.UploadType.UploadTypeName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.UploadDateTime)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Status.Status)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.UploadedBy)
-            </th>
-            <th></th>
-        </tr>
         @foreach (var item in Model)
         {
-            var daysAgo = DateTime.Now.Date.Subtract(item.UploadDateTime.Date).TotalDays;
+            var daysAgo = (int)DateTime.Now.Date.Subtract(item.UploadDateTime.Date).TotalDays;
             var wasToday = daysAgo < 1;
             var wasYesterday = daysAgo == 1;
-            var rowClass = (wasToday ? "uploaded-today" : wasYesterday ? "uploaded-yesterday" : "") + (item.FileExists ? " upload-file-exists" : " no-upload-file");
+            var friendlyDaysAgo = wasToday ? "Today" : wasYesterday ? "Yesterday" : daysAgo + " Days ago";
+            var rowClass = (wasToday ? "uploaded-today" : wasYesterday ? "uploaded-yesterday" : "")
+                + (item.FileExists ? " upload-file-exists" : " no-upload-file")
+                + (item.IsMostRecentForDate ? " most-recent-for-date" : " older-file");
+
+            if (item.IsForDifferentDay)
+            {
+                <tr class="date-row">
+                    <td colspan="8"><h4><i class="fa fa-calendar"></i> &nbsp;&nbsp; @(item.UploadDateTime.Date.ToString("dd-MMM-yyy")) &mdash; @(friendlyDaysAgo)</h4></td>
+                </tr>
+
+                <tr class="header-row">
+                    <th>
+                        File
+                    </th>
+
+                    <th>
+                        @Html.DisplayNameFor(model => model.OriginalFileName)
+                    </th>
+                    <th></th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.UploadType.UploadTypeName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.UploadDateTime)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Status.Status)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.UploadedBy)
+                    </th>
+                    <th></th>
+                </tr>
+            }
+
             <tr class="@rowClass.Trim()">
                 <td>
                     @if (item.FileExists)
@@ -58,12 +71,18 @@
                     @Html.DisplayFor(modelItem => item.OriginalFileName)
                 </td>
                 <td>
+                    @if (item.IsMostRecentForDate)
+                    {
+                        <i class="fa fa-star" data-infotip="Most Recent File"></i>
+                    }
+                </td>
+                <td>
                     @Html.DisplayFor(modelItem => item.UploadType.UploadTypeName)
                 </td>
                 <td data-infotip="Uploaded on [b]@(item.UploadDateTime.ToString("dd-MMM-yyyy"))[/b] at [b]@(item.UploadDateTime.ToString("HH:mm:ss"))[/b]">
                     @if (wasToday || wasYesterday)
                     {
-                       <strong>@Html.FormatFriendlyDateTime(item.UploadDateTime)</strong>
+                        <strong>@Html.FormatFriendlyDateTime(item.UploadDateTime)</strong>
                     }
                     else
                     {
@@ -73,7 +92,7 @@
                 <td>
                     @if (statusMarkup.ContainsKey(item.Status.Status))
                     {
-                @Html.Raw(statusMarkup[item.Status.Status])
+                        @Html.Raw(statusMarkup[item.Status.Status])
                     }
                     else
                     {
@@ -84,7 +103,7 @@
                     @Html.DisplayFor(modelItem => item.UploadedBy)
                 </td>
                 <td>
-                    <a href="@Url.Action("Details", "File")/@item.Id">Details</a>
+                    <a class="btn btn-primary btn-xs" href="@Url.Action("Details", "File")/@item.Id" data-infotip="View File Upload Details">Details</a>
                 </td>
             </tr>
         }

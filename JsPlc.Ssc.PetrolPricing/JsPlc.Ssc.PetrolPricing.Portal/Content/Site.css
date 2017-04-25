@@ -531,6 +531,14 @@ table.fixed-header>tbody {
     color: #999;
 }
 
+#FileUploadContainer .date-row {
+    background-color: transparent;
+}
+
+#FileUploadContainer .header-row {
+    background-color: #eee;
+}
+
 
 #FileUploadContainer tr.uploaded-today:nth-child(odd) {
         background-color:  #ffe;
@@ -547,6 +555,14 @@ table.fixed-header>tbody {
 
 #FileUploadContainer tr.uploaded-yesterday:nth-child(even) {
     background-color: #ded;
+}
+
+#FileUploadContainer tr.most-recent-for-date {
+    font-weight: bold;
+}
+#FileUploadContainer tr.older-file {
+    font-style: italic;
+    color: #666;
 }
 
 .recent-file-uploads tr.recent:nth-child(odd)
