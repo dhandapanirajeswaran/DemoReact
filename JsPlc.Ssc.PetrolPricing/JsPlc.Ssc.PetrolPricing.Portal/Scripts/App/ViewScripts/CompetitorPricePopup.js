@@ -112,10 +112,13 @@ function ($, ko, common, compNotePopup, notify) {
     };
     function cloneAsReadonlyHtml(selector, ele) {
         var popup = $(config.selectors.popup),
-            html = ($(ele).html() + '')
+            src = $(ele),
+            value = src.find('input').val() || '',
+            html = (src.html() + '')
             .replace(/data-bind="[^"]+"/i, '')
             .replace(/<!--[^>]+-->/g, '')
-            .replace(/\s+/g, ' ');
+            .replace(/\s+/g, ' ')
+            .replace(/<input/i, '<input readonly="readonly" value="' + value + '"');
 
         popup.find(selector).html(html);
     };
