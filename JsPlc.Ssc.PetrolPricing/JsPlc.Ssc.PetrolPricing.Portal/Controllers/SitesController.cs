@@ -264,7 +264,9 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             SiteViewModel model = new SiteViewModel();
 
             // model.ExcludeBrands = _serviceFacade.GetBrands().ToList();
-            model.AllBrands = _serviceFacade.GetBrands().ToList();
+
+            var allBrands = _serviceFacade.GetBrands();
+            model.AllBrands = allBrands != null ? allBrands.ToList() : new List<string>();
             var excludebrands = _serviceFacade.GetExcludeBrands();
             model.ExcludeBrands = excludebrands != null ? excludebrands.ToList() : null;
             model.ExcludeBrandsOrg = model.ExcludeBrands;
