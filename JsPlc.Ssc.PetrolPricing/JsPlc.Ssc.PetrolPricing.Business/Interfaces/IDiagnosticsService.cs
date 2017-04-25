@@ -15,5 +15,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business.Interfaces
         bool ClearDiagnosticsLog();
 
         bool DeleteAllData();
+
+        IEnumerable<DiagnosticsRecordCountViewModel> GetDatabaseRecordCounts();
     }
 }

@@ -305,5 +305,10 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         FileUpload GetFileUploadInformation(int fileUploadId);
 
         bool DeleteAllData(string uploadPath);
+
+        void SetSitePriceMatchTypeDefaults();
+
+        IEnumerable<DiagnosticsRecordCountViewModel> GetDatabaseRecordCounts();
+
     }
 }

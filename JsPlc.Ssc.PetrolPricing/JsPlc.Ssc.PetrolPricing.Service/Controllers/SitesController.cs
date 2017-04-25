@@ -266,7 +266,11 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
 		{
 			if (!forDate.HasValue) forDate = DateTime.Now;
 			IEnumerable<SitePriceViewModel> siteWithPrices = _siteService.GetCompetitorsWithPrices(forDate.Value, siteId, pageNo, pageSize);
-			return Ok(siteWithPrices.ToList());
+
+            siteWithPrices = siteWithPrices == null
+                ? new List<SitePriceViewModel>()
+                : siteWithPrices.ToList();
+            return Ok(siteWithPrices);
 		}
 
 		[System.Web.Http.HttpGet]

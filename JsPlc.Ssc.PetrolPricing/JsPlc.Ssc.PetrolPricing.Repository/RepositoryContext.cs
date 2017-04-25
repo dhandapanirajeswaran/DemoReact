@@ -300,5 +300,19 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             var parameters = new { };
             return DapperHelper.QueryScalar(this, sprocName, parameters, true) == 0;
         }
+
+        public void SetSitePriceMatchTypeDefaults()
+        {
+            const string sprocName = "spSetSitePriceMatchTypeDefaults";
+            var parameters = new { };
+            DapperHelper.Execute(this, sprocName, parameters, true);
+        }
+
+        public IEnumerable<DiagnosticsRecordCountViewModel> GetDatabaseRecordCounts()
+        {
+            const string sprocName = "spGetDiagnosticsRecordCounts";
+            var parameters = new { };
+            return DapperHelper.QueryList<DiagnosticsRecordCountViewModel>(this, sprocName, parameters, true);
+        }
     }
 }

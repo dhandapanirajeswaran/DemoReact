@@ -117,6 +117,8 @@ namespace JsPlc.Ssc.PetrolPricing.Business.Services
 
             model.FileUploadSummary = GetFileUploadsSummary(_appSettings.UploadPath);
 
+            model.DatabaseRecordCounts = GetDatabaseRecordCounts().ToList();
+
             return model;
         }
 
@@ -157,6 +159,20 @@ namespace JsPlc.Ssc.PetrolPricing.Business.Services
             {
                 _logger.Error(ex);
                 throw new Exception("Exception in DeleteAllData" + Environment.NewLine + ex.Message, ex);
+            }
+        }
+
+        public IEnumerable<DiagnosticsRecordCountViewModel> GetDatabaseRecordCounts()
+        {
+            try
+            {
+                var result = _db.GetDatabaseRecordCounts();
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex);
+                throw new Exception("Exception in GetDatabaseRecordCounts" + Environment.NewLine + ex.Message, ex);
             }
         }
 

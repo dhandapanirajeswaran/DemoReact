@@ -3562,6 +3562,17 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
             return _context.DeleteAllData();
         }
 
+
+        public void SetSitePriceMatchTypeDefaults()
+        {
+            _context.SetSitePriceMatchTypeDefaults();
+        }
+
+        public IEnumerable<DiagnosticsRecordCountViewModel> GetDatabaseRecordCounts()
+        {
+            return _context.GetDatabaseRecordCounts();
+        }
+
         #region private methods
 
         // Move forward from the forDate and find a set of Prices which were recently uploaded..
