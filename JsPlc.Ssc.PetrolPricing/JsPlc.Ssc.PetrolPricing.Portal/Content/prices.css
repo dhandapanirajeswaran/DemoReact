@@ -204,8 +204,11 @@ span.jsdiff {
     background-color: #ebccd1;
     color: #910048
 }
-
-
+.txtPrice.override-increment-exceeds {
+    border-color: #910048;
+    background-color: #ffc;
+    color: #910048;
+}
 
 .padded-price-right {
     min-width: 3em;
@@ -255,6 +258,10 @@ span.jsdiff {
 .site-row.row-errors {
     background-color: #fee;
 }
+.site-row.row-override-increase-exceeds {
+    background: #fcf8e3;
+}
+
 
 .site-row .col-editing {
     border-bottom: 3px solid #000;
@@ -341,6 +348,11 @@ span.jsdiff {
     .pricing-grid > tbody > tr.row-errors > td:nth-child(10),
     .pricing-grid > tbody > tr.row-errors > td:nth-child(11) {
         background-color: #edd;
+    }
+
+    .pricing-grid > tbody > tr.row-override-increase-exceeds > td:nth-child(10),
+    .pricing-grid > tbody > tr.row-override-increase-exceeds > td:nth-child(11) {
+        background-color: #dcd8c3;
     }
 
 .price-diff-up {color: #5cb85c}

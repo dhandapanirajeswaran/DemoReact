@@ -25,7 +25,7 @@
             if (!ele || ele == element)
                 return;
 
-            var markup = convertToMarkup(ele.data('infotip')),
+            var markup = convertToMarkup(ele.attr('data-infotip')),
                 dock = (ele.data('infotip-dock') || 'above').toLowerCase(),
                 offset = ele.offset(),
                 eleWidth = Math.floor(ele.width()),
