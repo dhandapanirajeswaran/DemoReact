@@ -10,6 +10,8 @@ AS
 
 			TRUNCATE TABLE dbo.ExcludeBrands
 
+			TRUNCATE TABLE dbo.EmailSendLog
+
 			TRUNCATE TABLE dbo.DailyPrice
 			TRUNCATE TABLE dbo.DailyUploadStaging
 			TRUNCATE TABLE dbo.LatestCompPrice
@@ -32,6 +34,7 @@ AS
 
 			-- Reseed the database tables
 
+			DBCC CHECKIDENT ('EmailSendLog', RESEED, 0)
 			DBCC CHECKIDENT ('DailyPrice', RESEED, 0)
 			DBCC CHECKIDENT ('DailyUploadStaging', RESEED, 0)
 			DBCC CHECKIDENT ('LatestCompPrice', RESEED, 0)
