@@ -29,6 +29,22 @@ AS
 
 			-- NOTE: TRUNCATE TABLE dbo.FileUpload will not work
 			DELETE FROM dbo.FileUpload
+
+			-- Reseed the database tables
+
+			DBCC CHECKIDENT ('DailyPrice', RESEED, 0)
+			DBCC CHECKIDENT ('DailyUploadStaging', RESEED, 0)
+			DBCC CHECKIDENT ('LatestCompPrice', RESEED, 0)
+			DBCC CHECKIDENT ('ImportProcessError', RESEED, 0)
+			DBCC CHECKIDENT ('LatestPrice', RESEED, 0)
+			DBCC CHECKIDENT ('QuarterlyFileUpload', RESEED, 0)
+			DBCC CHECKIDENT ('QuarterlyUploadArchive', RESEED, 0)
+			DBCC CHECKIDENT ('QuarterlyUploadStaging', RESEED, 0)
+			DBCC CHECKIDENT ('SiteEmail', RESEED, 0)
+			DBCC CHECKIDENT ('SitePrice', RESEED, 0)
+			DBCC CHECKIDENT ('SiteToCompetitor', RESEED, 0)
+			DBCC CHECKIDENT ('Site', RESEED, 0)
+			DBCC CHECKIDENT ('FileUpload', RESEED, 0)
 		COMMIT TRAN
 	END TRY
 	BEGIN CATCH
