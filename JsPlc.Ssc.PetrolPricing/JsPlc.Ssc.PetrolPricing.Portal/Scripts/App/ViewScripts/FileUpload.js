@@ -116,7 +116,7 @@
                 $(selectors.errorPanel).hide();
                 $(selectors.filenameAndIcon).show();
                 $(selectors.uploadButton).show();
-                $("#fileimage").attr("src", common.getSiteRoot() + fileType.image).attr('title', fileType.title);
+                $("#fileimage").attr("src", common.reportRootFolder() + fileType.image).attr('title', fileType.title);
             } else {
                 $(selectors.errorPanel).show().text("Please Select valid file...").delay(3000).fadeOut();
                 $(selectors.filenameAndIcon).hide();

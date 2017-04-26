@@ -27,7 +27,9 @@
 }
 <hr />
 <h3>Existing Daily Price files</h3>
-@Html.Partial("_FileUploadsList", Model.ExistingFiles)
+<div id="FileUploadContainer">
+    @Html.Partial("_FileUploadsList", Model.ExistingFiles)
+</div>
 
 <script>
     require(["jquery", "common", "busyloader", "infotips"],

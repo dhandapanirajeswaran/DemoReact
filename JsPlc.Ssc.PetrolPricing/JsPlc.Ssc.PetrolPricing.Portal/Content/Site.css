@@ -531,11 +531,11 @@ table.fixed-header>tbody {
     color: #999;
 }
 
-#FileUploadContainer .date-row {
+#FileUploadContainer .table > tbody > tr.date-row {
     background-color: transparent;
 }
 
-#FileUploadContainer .header-row {
+#FileUploadContainer .table > tbody > tr.header-row {
     background-color: #eee;
 }
 
@@ -592,10 +592,10 @@ table.fixed-header>tbody {
     letter-spacing: 1px;
 }
 
-.recent-file-uploads tr:nth-child(odd):hover {
+.recent-file-uploads tbody > tr:nth-child(odd):hover {
     background-color: #ee9;
 }
-.recent-file-uploads tr:nth-child(even):hover {
+.recent-file-uploads tbody > tr:nth-child(even):hover {
     background-color: #dd8;
 }
 
