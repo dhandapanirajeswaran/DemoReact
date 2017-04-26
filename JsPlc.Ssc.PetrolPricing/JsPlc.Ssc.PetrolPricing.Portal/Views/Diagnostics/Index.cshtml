@@ -91,6 +91,8 @@
     <h1 class="site-hero-text"><i class="fa fa-bug" data-infotip="Here be dragons..."></i> Diagnostics</h1>
     <p class="lead">Petrol Pricing Diagnostics</p>
 
+    @Html.Action("DataSanityCheckSummary", "Layout")
+
     @using (Html.BeginForm("Index", "Diagnostics"))
     {
         @Html.AntiForgeryToken()

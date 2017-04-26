@@ -5,6 +5,7 @@ using JsPlc.Ssc.PetrolPricing.Core.Interfaces;
 using JsPlc.Ssc.PetrolPricing.Core.Settings;
 using JsPlc.Ssc.PetrolPricing.Models.ViewModels;
 using JsPlc.Ssc.PetrolPricing.Models.ViewModels.Diagnostics;
+using JsPlc.Ssc.PetrolPricing.Models.ViewModels.SelfTest;
 using JsPlc.Ssc.PetrolPricing.Repository;
 using System;
 using System.Collections.Generic;
@@ -40,9 +41,12 @@ namespace JsPlc.Ssc.PetrolPricing.Business.Services
         {
 
             var systemSettings = _db.GetSystemSettings();
+            var dataSanityCheck = _db.GetDataSanityCheckSummary();
 
             var model = new DiagnosticsViewModel()
             {
+                DataSanityCheck = dataSanityCheck,
+
                 DiagnosticsSettings = new DiagnosticsSettingsViewModel()
                 {
                     Logging_LogDebugMessages = CoreSettings.Logging.LogDebugMessages,
@@ -173,6 +177,20 @@ namespace JsPlc.Ssc.PetrolPricing.Business.Services
             {
                 _logger.Error(ex);
                 throw new Exception("Exception in GetDatabaseRecordCounts" + Environment.NewLine + ex.Message, ex);
+            }
+        }
+
+        public DataSanityCheckSummaryViewModel GetDataSanityCheckSummary()
+        {
+            try
+            {
+                var result = _db.GetDataSanityCheckSummary();
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex);
+                throw new Exception("Exception in GetDataSanityCheckSummary" + Environment.NewLine + ex.Message, ex);
             }
         }
 

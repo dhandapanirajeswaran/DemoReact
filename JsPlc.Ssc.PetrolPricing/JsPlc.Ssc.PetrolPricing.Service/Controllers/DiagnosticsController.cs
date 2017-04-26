@@ -84,6 +84,20 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
             }
         }
 
-
+        [System.Web.Http.HttpGet]
+        [System.Web.Http.Route("api/GetDataSanityCheckSummary")]
+        public IHttpActionResult GetDataSanityCheckSummary()
+        {
+            try
+            {
+                var result = _diagnosticService.GetDataSanityCheckSummary();
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex);
+                return new ExceptionResult(ex, this);
+            }
+        }
     }
 }

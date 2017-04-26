@@ -1,4 +1,5 @@
-﻿using System;
+﻿using JsPlc.Ssc.PetrolPricing.Models.ViewModels.SelfTest;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,6 +14,8 @@ namespace JsPlc.Ssc.PetrolPricing.Models.ViewModels.Diagnostics
         public string ApiExceptionMessage { get; set; }
 
         public DiagnosticsSettingsViewModel DiagnosticsSettings;
+
+        public DataSanityCheckSummaryViewModel DataSanityCheck;
 
         public Dictionary<string, string> AppSettings;
         public Dictionary<string, string> CoreSettings;
@@ -31,6 +34,7 @@ namespace JsPlc.Ssc.PetrolPricing.Models.ViewModels.Diagnostics
         {
             this.ActionMessage = "";
             this.ApiExceptionMessage = "";
+            this.DataSanityCheck = new DataSanityCheckSummaryViewModel();
             this.DiagnosticsSettings = new DiagnosticsSettingsViewModel();
             this.AppSettings = new Dictionary<string, string>();
             this.CoreSettings = new Dictionary<string, string>();

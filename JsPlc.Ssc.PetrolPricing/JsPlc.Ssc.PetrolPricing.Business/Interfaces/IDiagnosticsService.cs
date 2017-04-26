@@ -1,5 +1,6 @@
 ﻿using JsPlc.Ssc.PetrolPricing.Models.ViewModels;
 using JsPlc.Ssc.PetrolPricing.Models.ViewModels.Diagnostics;
+using JsPlc.Ssc.PetrolPricing.Models.ViewModels.SelfTest;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,5 +18,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business.Interfaces
         bool DeleteAllData();
 
         IEnumerable<DiagnosticsRecordCountViewModel> GetDatabaseRecordCounts();
+
+        DataSanityCheckSummaryViewModel GetDataSanityCheckSummary();
     }
 }

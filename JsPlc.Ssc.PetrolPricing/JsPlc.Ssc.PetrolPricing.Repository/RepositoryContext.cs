@@ -14,6 +14,7 @@ using JsPlc.Ssc.PetrolPricing.Core.Diagnostics;
 using JsPlc.Ssc.PetrolPricing.Core.Settings;
 using JsPlc.Ssc.PetrolPricing.Models.ViewModels.Diagnostics;
 using JsPlc.Ssc.PetrolPricing.Models.Enums;
+using JsPlc.Ssc.PetrolPricing.Models.ViewModels.SelfTest;
 
 namespace JsPlc.Ssc.PetrolPricing.Repository
 {
@@ -320,6 +321,13 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             const string sprocName = "spGetDiagnosticsRecordCounts";
             var parameters = new { };
             return DapperHelper.QueryList<DiagnosticsRecordCountViewModel>(this, sprocName, parameters, true);
+        }
+
+        internal DataSanityCheckSummaryViewModel GetDataSanityCheckSummary()
+        {
+            const string sprocName = "spGetSanityCheckSummary";
+            var parameters = new { };
+            return DapperHelper.QueryFirst<DataSanityCheckSummaryViewModel>(this, sprocName, parameters, true);
         }
     }
 }

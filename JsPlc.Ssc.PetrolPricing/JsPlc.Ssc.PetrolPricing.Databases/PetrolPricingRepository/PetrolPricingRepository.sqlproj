@@ -169,6 +169,7 @@
     <Build Include="dbo\Stored Procedures\spGetDiagnosticsRecordCounts.sql" />
     <Build Include="dbo\Stored Procedures\spPostQuarterlyFileUpload.sql" />
     <Build Include="dbo\Stored Procedures\spInitSainsburysStoreInformation.sql" />
+    <Build Include="dbo\Stored Procedures\spGetSanityCheckSummary.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Scripts\PostDeployment\Script.PostDeployment.sql" />

@@ -30,5 +30,11 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             };
             return PartialView("~/Views/Shared/Layout/_TopNavigation.cshtml", model);
         }
+
+        public PartialViewResult DataSanityCheckSummary()
+        {
+            var model = _serviceFacade.GetDataSanityCheckSummary();
+            return PartialView("~/Views/Shared/Layout/_DataSanityCheckSummary.cshtml", model);
+        }
     }
 }

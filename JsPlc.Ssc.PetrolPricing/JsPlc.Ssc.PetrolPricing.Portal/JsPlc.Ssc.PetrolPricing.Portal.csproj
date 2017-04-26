@@ -516,6 +516,7 @@
     <Content Include="Views\PriceReports\QuarterlySiteAnalysis.cshtml" />
     <Content Include="Views\PriceReports\_FileUploadSummary.cshtml" />
     <Content Include="Views\Sites\_PriceMatchPanel.cshtml" />
+    <Content Include="Views\Shared\Layout\_DataSanityCheckSummary.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\uploads\" />

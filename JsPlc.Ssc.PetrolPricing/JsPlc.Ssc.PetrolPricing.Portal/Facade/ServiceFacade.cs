@@ -20,6 +20,7 @@ using JsPlc.Ssc.PetrolPricing.Core.Interfaces;
 using JsPlc.Ssc.PetrolPricing.Core.Diagnostics;
 using JsPlc.Ssc.PetrolPricing.Models.ViewModels.UserPermissions;
 using JsPlc.Ssc.PetrolPricing.Models.ViewModels.Diagnostics;
+using JsPlc.Ssc.PetrolPricing.Models.ViewModels.SelfTest;
 
 namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
 {
@@ -1149,6 +1150,24 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             {
                 _logger.Error(ex);
                 throw new Exception("Exception in DeleteAllData" + System.Environment.NewLine + ex.Message, ex);
+            }
+        }
+
+        public DataSanityCheckSummaryViewModel GetDataSanityCheckSummary()
+        {
+            try
+            {
+                var apiUrl = String.Format("api/GetDataSanityCheckSummary");
+                var response = _client.Value.GetAsync(apiUrl).Result;
+                var result = response.Content.ReadAsAsync<DataSanityCheckSummaryViewModel>().Result;
+                return response.IsSuccessStatusCode
+                    ? result
+                    : new DataSanityCheckSummaryViewModel();
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex);
+                throw new Exception("Exception in GetDataSanityCheckSummary" + System.Environment.NewLine + ex.Message, ex);
             }
         }
     }

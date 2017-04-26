@@ -1,0 +1,98 @@
+﻿@model JsPlc.Ssc.PetrolPricing.Models.ViewModels.SelfTest.DataSanityCheckSummaryViewModel
+@{
+    var anyErrors = !Model.SitesExist
+        || Model.DailyPriceFileUploadExist
+        || !Model.QuarterlyFileUploadExist
+        || !Model.LatestJSPriceFileUploadExist
+        || !Model.LatestCompPriceFileUploadExist
+        || !Model.SitePricesExist
+        || !Model.SiteCompetitorsExist
+        || !Model.LatestCompPricesExist
+        || !Model.LatestPricesExist;
+
+}
+<div class="text-center" style="border: 1px solid #ccc; border-radius: 8px; background: #eee; padding: 1em; margin: 4px;">
+    <strong>Data Sanity Check:</strong>&nbsp;
+    @if (!Model.SitesExist)
+    {
+    <span class="btn btn-xs btn-danger" data-infotip="There are no [b]Sites[/b]"><i class="fa fa-times"></i> Sites</span>
+    }
+    else
+    {
+    <span class="btn btn-xs btn-success"><i class="fa fa-check"></i> Sites</span>
+    }
+
+
+    @if (!Model.DailyPriceFileUploadExist)
+    {
+    <span class="btn btn-xs btn-danger" data-infotip="There is no successful [b]Daily Price Data[/b] File Upload"><i class="fa fa-times"></i> Daily Price</span>
+    }
+    else
+    {
+    <span class="btn btn-xs btn-success"><i class="fa fa-check"></i> Daily Price</span>
+    }
+
+    @if (!Model.QuarterlyFileUploadExist)
+    {
+    <span class="btn btn-xs btn-danger" data-infotip="There is no successful [b]QuarterlyFile[/b] Upload"><i class="fa fa-times"></i> Quarterly File</span>
+    }
+    else
+    {
+    <span class="btn btn-xs btn-success"><i class="fa fa-check"></i> Quarterly File</span>
+    }
+
+    @if (!Model.LatestJSPriceFileUploadExist)
+    {
+    <span class="btn btn-xs btn-danger" data-infotip="There is no successful [b]Latest JS Price[/b] File Upload"><i class="fa fa-times"></i> Latest JS Price</span>
+    }
+    else
+    {
+    <span class="btn btn-xs btn-success"><i class="fa fa-check"></i> Latest JS Price</span>
+    }
+
+    @if (!Model.LatestCompPriceFileUploadExist)
+    {
+    <span class="btn btn-xs btn-danger" data-infotip="There is no successful [b]Latest Competitor Price[/b] File Upload"><i class="fa fa-times"></i> Latest Competitor Price</span>
+    }
+    else
+    {
+    <span class="btn btn-xs btn-success"><i class="fa fa-check"></i> Latest Competitor Price</span>
+    }
+
+    @if (!Model.SitePricesExist)
+    {
+    <span class="btn btn-xs btn-danger" data-infotip="There is no [b]Site Prices[/b] data"><i class="fa fa-times"></i> Site Prices</span>
+    }
+    else
+    {
+    <span class="btn btn-xs btn-success"><i class="fa fa-check"></i> Site Prices</span>
+    }
+
+    @if (!Model.SiteCompetitorsExist)
+    {
+    <span class="btn btn-xs btn-danger" data-infotip="There are no [b]Competitors[/b]"><i class="fa fa-times"></i> Competitors</span>
+    }
+    else
+    {
+    <span class="btn btn-xs btn-success"><i class="fa fa-check"></i> Competitors</span>
+    }
+
+    @if (!Model.SiteCompetitorsExist)
+    {
+    <span class="btn btn-xs btn-danger" data-infotip="There is no [b]Competitor Prices[/b] data"><i class="fa fa-times"></i> Competitor Prices</span>
+    }
+    else
+    {
+    <span class="btn btn-xs btn-success"><i class="fa fa-check"></i> Competitor Prices</span>
+    }
+
+    @if (!Model.LatestPricesExist)
+    {
+    <span class="btn btn-xs btn-danger" data-infotip="There is no [b]Latest Price[/b] Data"><i class="fa fa-times"></i> Latest Price Data</span>
+    }
+    else
+    {
+    <span class="btn btn-xs btn-success"><i class="fa fa-check"></i> Latest Price Data</span>
+    }
+</div>
+

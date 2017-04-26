@@ -26,6 +26,7 @@ using JsPlc.Ssc.PetrolPricing.Core.Settings;
 using JsPlc.Ssc.PetrolPricing.Models.ViewModels.UserPermissions;
 using JsPlc.Ssc.PetrolPricing.Models.ViewModels.Diagnostics;
 using System.IO;
+using JsPlc.Ssc.PetrolPricing.Models.ViewModels.SelfTest;
 
 namespace JsPlc.Ssc.PetrolPricing.Repository
 {
@@ -3576,6 +3577,11 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
         public IEnumerable<DiagnosticsRecordCountViewModel> GetDatabaseRecordCounts()
         {
             return _context.GetDatabaseRecordCounts();
+        }
+
+        public DataSanityCheckSummaryViewModel GetDataSanityCheckSummary()
+        {
+            return _context.GetDataSanityCheckSummary();
         }
 
         #region private methods

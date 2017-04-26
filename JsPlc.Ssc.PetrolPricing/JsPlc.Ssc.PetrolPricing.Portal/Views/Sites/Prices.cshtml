@@ -323,8 +323,9 @@
 
                 <div class="row" id="SorryNoResultsPanel" data-bind="visible: $root.shouldShowSorryResults" style="display: none; padding: 3em 2em;">
                     <div class="col-md-13 text-center font150pc">
-                        Sorry, no data was found. Try a different search criteria or
+                        Sorry, no data was found. Try a different search criteria
                         <!-- ko if: !$root.priceChangeFilterUp() || !$root.priceChangeFilterDown() || !$root.priceChangeFilterNone() -->
+                        or
                         <button type="button" class="btn btn-danger btn-sm" data-bind="click: resetPriceChangeFilters"><i class="fa fa-power-off"></i> Reset</button> the Price Change filters.
                         <!-- /ko -->
                     </div>
