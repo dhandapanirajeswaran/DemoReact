@@ -1,5 +1,6 @@
 ﻿.infotip {
-    background-color: #666;
+    background-color: #333;
+    border: 3px solid #333;
     border-radius: 6px;
     color: #fff;
     padding: 4px 16px;
@@ -7,7 +8,7 @@
     text-align: center;
     min-width: 10em;
     max-width: 60em;
-    box-shadow: 2px 4px 8px #999;
+    box-shadow: 2px 4px 8px #666;
     font-size: 110%;
     z-index: 4000;
 }
@@ -24,12 +25,12 @@
 }
 
 .infotip-above::after {
-    border-color: #666 transparent transparent transparent;
+    border-color: #333 transparent transparent transparent;
     top: 100%;
 }
 
 .infotip-below::after {
-    border-color: transparent transparent #666 transparent;
+    border-color: transparent transparent #333 transparent;
     bottom: calc(100% - 2px)
 }
 
@@ -40,4 +41,9 @@
 .infotip b {
     color: yellow;
     text-shadow: 1px 1px 2px #000;
+}
+.infotip em {
+    color: orange;
+    font-style: normal;
+    font-weight: bold;
 }
