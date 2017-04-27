@@ -12,87 +12,106 @@
 
 }
 <div class="text-center" style="border: 1px solid #ccc; border-radius: 8px; background: #eee; padding: 1em; margin: 4px;">
-    <strong>Data Sanity Check:</strong>&nbsp;
-    @if (!Model.SitesExist)
-    {
-    <span class="btn btn-xs btn-danger" data-infotip="There are no [b]Sites[/b]"><i class="fa fa-times"></i> Sites</span>
-    }
-    else
-    {
-    <span class="btn btn-xs btn-success"><i class="fa fa-check"></i> Sites</span>
-    }
+    <strong class="pull-left">Data Sanity Check:</strong>&nbsp;
+
+    <a href="@Url.Action("Upload", "File")?UploadType=QuarterlySiteData">
+        @if (!Model.SitesExist)
+        {
+            <span class="btn btn-xs btn-danger" data-infotip="There are no [b]Sites[/b]"><i class="fa fa-times"></i> Sites</span>
+        }
+        else
+        {
+            <span class="btn btn-xs btn-success" data-infotip-dock="below" data-infotip="Upload Sites..."><i class="fa fa-check"></i> Sites</span>
+        }
+    </a>
 
 
-    @if (!Model.DailyPriceFileUploadExist)
-    {
-    <span class="btn btn-xs btn-danger" data-infotip="There is no successful [b]Daily Price Data[/b] File Upload"><i class="fa fa-times"></i> Daily Price</span>
-    }
-    else
-    {
-    <span class="btn btn-xs btn-success"><i class="fa fa-check"></i> Daily Price</span>
-    }
+    <a href="@Url.Action("Upload","File")?UploadType=DailyPriceData">
+        @if (!Model.DailyPriceFileUploadExist)
+        {
+            <span class="btn btn-xs btn-danger" data-infotip="There is no successful [b]Daily Price Data[/b] File Upload"><i class="fa fa-times"></i> Daily Price</span>
+        }
+        else
+        {
+            <span class="btn btn-xs btn-success" data-infotip-dock="below" data-infotip="Upload [b]Daily Price data[/b]"><i class="fa fa-check"></i> Daily Price</span>
+        }
+    </a>
 
-    @if (!Model.QuarterlyFileUploadExist)
-    {
-    <span class="btn btn-xs btn-danger" data-infotip="There is no successful [b]QuarterlyFile[/b] Upload"><i class="fa fa-times"></i> Quarterly File</span>
-    }
-    else
-    {
-    <span class="btn btn-xs btn-success"><i class="fa fa-check"></i> Quarterly File</span>
-    }
+    <a href="@Url.Action("Upload", "File")?UploadType=QuarterlySiteData">
+        @if (!Model.QuarterlyFileUploadExist)
+        {
+            <span class="btn btn-xs btn-danger" data-infotip="There is no successful [b]QuarterlyFile[/b] Upload"><i class="fa fa-times"></i> Quarterly File</span>
+        }
+        else
+        {
+            <span class="btn btn-xs btn-success" data-infotip-dock="below" data-infotip="Upload [b]Quarterly File[/b]"><i class="fa fa-check"></i> Quarterly File</span>
+        }
+    </a>
 
-    @if (!Model.LatestJSPriceFileUploadExist)
-    {
-    <span class="btn btn-xs btn-danger" data-infotip="There is no successful [b]Latest JS Price[/b] File Upload"><i class="fa fa-times"></i> Latest JS Price</span>
-    }
-    else
-    {
-    <span class="btn btn-xs btn-success"><i class="fa fa-check"></i> Latest JS Price</span>
-    }
+    <a href="@Url.Action("Upload", "File")?UploadType=LatestJsPriceData">
+        @if (!Model.LatestJSPriceFileUploadExist)
+        {
+            <span class="btn btn-xs btn-danger" data-infotip="There is no successful [b]Latest JS Price[/b] File Upload"><i class="fa fa-times"></i> Latest JS Price</span>
+        }
+        else
+        {
+            <span class="btn btn-xs btn-success" data-infotip-dock="below" data-infotip="Upload [b]Latest JS Prices[/b]"><i class="fa fa-check"></i> Latest JS Price</span>
+        }
+    </a>
 
-    @if (!Model.LatestCompPriceFileUploadExist)
-    {
-    <span class="btn btn-xs btn-danger" data-infotip="There is no successful [b]Latest Competitor Price[/b] File Upload"><i class="fa fa-times"></i> Latest Competitor Price</span>
-    }
-    else
-    {
-    <span class="btn btn-xs btn-success"><i class="fa fa-check"></i> Latest Competitor Price</span>
-    }
+    <a href="@Url.Action("Upload", "File")/?UploadType=LatestCompPriceData">
+        @if (!Model.LatestCompPriceFileUploadExist)
+        {
+            <span class="btn btn-xs btn-danger" data-infotip="There is no successful [b]Latest Competitor Price[/b] File Upload"><i class="fa fa-times"></i> Latest Competitor Price</span>
+        }
+        else
+        {
+            <span class="btn btn-xs btn-success" data-infotip-dock="below" data-infotip="Upload [b]Latest Competitor Prices[/b]"><i class="fa fa-check"></i> Latest Competitor Price</span>
+        }
+    </a>
 
-    @if (!Model.SitePricesExist)
-    {
-    <span class="btn btn-xs btn-danger" data-infotip="There is no [b]Site Prices[/b] data"><i class="fa fa-times"></i> Site Prices</span>
-    }
-    else
-    {
-    <span class="btn btn-xs btn-success"><i class="fa fa-check"></i> Site Prices</span>
-    }
+    <a href="@Url.Action("Upload", "File")?UploadType=DailyPriceData">
+        @if (!Model.SitePricesExist)
+        {
+            <span class="btn btn-xs btn-danger" data-infotip="There is no [b]Site Prices[/b] data"><i class="fa fa-times"></i> Site Prices</span>
+        }
+        else
+        {
+            <span class="btn btn-xs btn-success" data-infotip-dock="below" data-infotip="Upload [b]Site Prices[/b]"><i class="fa fa-check"></i> Site Prices</span>
+        }
+    </a>
 
-    @if (!Model.SiteCompetitorsExist)
-    {
-    <span class="btn btn-xs btn-danger" data-infotip="There are no [b]Competitors[/b]"><i class="fa fa-times"></i> Competitors</span>
-    }
-    else
-    {
-    <span class="btn btn-xs btn-success"><i class="fa fa-check"></i> Competitors</span>
-    }
+    <a href="@Url.Action("Upload", "File")?UploadType=QuarterlySiteData">
+        @if (!Model.SiteCompetitorsExist)
+        {
+            <span class="btn btn-xs btn-danger" data-infotip="There are no [b]Competitors[/b]"><i class="fa fa-times"></i> Competitors</span>
+        }
+        else
+        {
+            <span class="btn btn-xs btn-success" data-infotip-dock="below" data-infotip="Upload [b]Competitors[/b]"><i class="fa fa-check"></i> Competitors</span>
+        }
+    </a>
 
-    @if (!Model.SiteCompetitorsExist)
-    {
-    <span class="btn btn-xs btn-danger" data-infotip="There is no [b]Competitor Prices[/b] data"><i class="fa fa-times"></i> Competitor Prices</span>
-    }
-    else
-    {
-    <span class="btn btn-xs btn-success"><i class="fa fa-check"></i> Competitor Prices</span>
-    }
+    <a href="@Url.Action("Upload", "File")?UploadType=QuarterlySiteData">
+        @if (!Model.SiteCompetitorsExist)
+        {
+            <span class="btn btn-xs btn-danger" data-infotip="There is no [b]Competitor Prices[/b] data"><i class="fa fa-times"></i> Competitor Prices</span>
+        }
+        else
+        {
+            <span class="btn btn-xs btn-success" data-infotip-dock="below" data-infotip="Upload [b]Competitor Prices[/b]"><i class="fa fa-check"></i> Competitor Prices</span>
+        }
+    </a>
 
-    @if (!Model.LatestPricesExist)
-    {
-    <span class="btn btn-xs btn-danger" data-infotip="There is no [b]Latest Price[/b] Data"><i class="fa fa-times"></i> Latest Price Data</span>
-    }
-    else
-    {
-    <span class="btn btn-xs btn-success"><i class="fa fa-check"></i> Latest Price Data</span>
-    }
+    <a href="@Url.Action("Upload", "File")?UploadType=LatestJsPriceData">
+        @if (!Model.LatestPricesExist)
+        {
+            <span class="btn btn-xs btn-danger" data-infotip="There is no [b]Latest Price[/b] Data"><i class="fa fa-times"></i> Latest Price Data</span>
+        }
+        else
+        {
+            <span class="btn btn-xs btn-success" data-infotip-dock="below" data-infotip="Upload [b]Latest Price Data[/b]"><i class="fa fa-check"></i> Latest Price Data</span>
+        }
+    </a>
 </div>
 
