@@ -7,7 +7,7 @@ BEGIN
 
 ----DEBUG:START
 --DECLARE	@ForDate DATE = GetDate()
---DECLARE	@SiteId INT = 8
+--DECLARE	@SiteId INT = 6166
 ----DEBUG:END
 	
 	-- constants
@@ -119,7 +119,7 @@ BEGIN
 		FROM
 			dbo.LatestCompPrice lcp
 		WHERE
-			lcp.UploadId = (SELECT MAX(Id) FROM fileUploadLatestCompPricesToday)
+			lcp.UploadId = (SELECT MAX(UploadId) FROM fileUploadLatestCompPricesToday)
 	)
 	, fileUploadDailyPriceDataToday AS (
 		SELECT TOP 1
@@ -225,6 +225,11 @@ BEGIN
 				THEN (caft.LatestPriceYesterday / 10) + caft.nOffset
 				ELSE caft.DailyPriceYesterday + caft.nOffset
 			END [YesterdayPrice]
+
+			--- DEBUG
+			, LatestPriceToday [DEBUG_LatestPriceToday]
+
+
 		FROM 
 			CompetitorAndFuelsTypes caft
 	)
@@ -239,6 +244,8 @@ BEGIN
 			THEN cfp.TodayPrice - cfp.YesterdayPrice
 			ELSE 0
 		END [Difference]
+
+		,cfp.[DEBUG_LatestPriceToday]
 	FROM 
 		CompetitorsFuelsAndPrices cfp
 
