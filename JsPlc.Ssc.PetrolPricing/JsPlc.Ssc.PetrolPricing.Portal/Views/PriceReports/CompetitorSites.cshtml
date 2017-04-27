@@ -12,7 +12,7 @@
         <h1><i class="fa fa-bar-chart"></i> @ViewBag.Title.</h1>
     </div>
     <div class="col-md-4 text-right" style="padding-top: 20px">
-        <button type="button" class="btn btn-primary" id="btnExportReport"><i class="fa fa-download"></i> Export to Excel</button>
+        <button type="button" class="btn btn-primary" id="btnExportReport" @(Model == null ? " disabled='disabled'" : "")><i class="fa fa-download"></i> Export to Excel</button>
     </div>
 </div>
 <hr />
@@ -43,6 +43,8 @@
 
     @Html.Partial("_ReportIntroduction", reportInformationViewModel)
 
+    if (Model != null)
+    {
     <div class="row">
         <div class="col-md-4">
             <label for="SiteId">Site:</label>&nbsp;
@@ -57,7 +59,8 @@
             <button type="button" class="btn btn-danger btn-block" id="btnResetReport"><i class="fa fa-power-off"></i> Reset</button>
         </div>
     </div>
-}
+        }
+    }
 
 @if (Model != null && Model.Report.BrandTimes.Any())
 {
@@ -141,6 +144,9 @@
 else if (Model != null && Model.SiteId > 0)
 {
     <div class="alert alert-info" role="alert">Data for <strong>@Model.Report.SiteName</strong> site is not found</div>
+} else if (Model == null)
+{
+    <div class="alert alert-info" role="alert">Sorry, there was no data found</div>
 }
 
 @Html.Partial("_BackToReports")

@@ -187,7 +187,16 @@
 }
 else
 {
-    <div class="alert alert-info" role="alert">No data found at @Model.Date.ToString("dd-MMM-yyyy")</div>
+    <div class="alert alert-info" role="alert">
+        @if (Model == null)
+        {
+            @:No data found
+        }
+        else
+        {
+            @:No data found at @(Model.Date.ToString("dd-MMM-yyyy"))
+        }
+    </div>
 }
 
 @Html.Partial("_BackToReports")
