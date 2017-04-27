@@ -12,9 +12,11 @@ namespace JsPlc.Ssc.PetrolPricing.Models.ViewModels
         public int Id { get; set; }
 
         [Required]
+        [Display(Name ="Original FileName")]
         public string OriginalFileName { get; set; }
 
         [Required]
+        [Display(Name = "Stored FileName")]
         public string StoredFileName { get; set; }
 
         public int UploadTypeId { get; set; }
@@ -23,6 +25,7 @@ namespace JsPlc.Ssc.PetrolPricing.Models.ViewModels
         public UploadType UploadType { get; set; } // Daily, Quarterly
 
         [Required]
+        [Display(Name = "Upload Date/Time")]
         public DateTime UploadDateTime { get; set; }
 
         public int StatusId { get; set; }
@@ -30,6 +33,7 @@ namespace JsPlc.Ssc.PetrolPricing.Models.ViewModels
         public ImportProcessStatus Status { get; set; }
 
         [Required]
+        [Display(Name = "Uploaded By")]
         public string UploadedBy { get; set; } // Emailaddr/Username of Uploader
 
         [Display(Name = "File Exists")]

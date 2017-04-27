@@ -68,7 +68,7 @@
         </div>
 
         <div class="col-md-3" id="ChooseDatePanel">
-            @Html.TextBoxFor(m => m.UploadDate, "{0:dd/MM/yyyy}", new { @class = "datepicker form-control", style="width: 50%", id = "caldattimepicker", @maxlength = "12" })
+            @Html.TextBoxFor(m => m.UploadDate, "{0:dd/MM/yyyy}", new { @class = "datepicker form-control", style="width: 50%", id = "caldattimepicker", @maxlength = "12", @data_infotip="This will be displayed as the [b]Upload Date/Time[/b]" })
         </div>
 
         <div class="col-md-6">
@@ -105,12 +105,15 @@
 <br />
 <div class="row">
     <div class="col-md-1">
-        <a class="btn btn-default" href="~/File"><i class="fa fa-backward"></i> Back</a>
+        <a class="btn btn-default" href="~/File"><i class="fa fa-backward"></i> Back to list</a>
     </div>
 </div>
+
+<input type="hidden" id="hdnSelectedFileUploadType" value="@(Model.SelectedFileUploadType)" />
+
 <script type="text/javascript">
-    require(['FileUpload'],
-        function (fileupload) {
+    require(['FileUpload', 'infotips'],
+        function (fileupload, infotips) {
             fileupload.init();
         });
 </script>

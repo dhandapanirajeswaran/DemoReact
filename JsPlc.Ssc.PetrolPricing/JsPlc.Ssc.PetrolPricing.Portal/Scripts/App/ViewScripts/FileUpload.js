@@ -246,6 +246,8 @@
         };
 
         function docReady() {
+            var uploadTypeMenu = $(selectors.uploadTypeName),
+                selectedUploadType = $('#hdnSelectedFileUploadType').val() || '';
             removeHideClass();
             showSteps(2);
             bindEvents();
@@ -253,6 +255,10 @@
             redrawTemplateButtons(1);
             redrawStepLabels();
             drawCalculatedAsDate($(selectors.calculatedAsDate).text());
+            if (selectedUploadType != '') {
+                uploadTypeMenu.val(selectedUploadType);
+                uploadTypeMenu.trigger('change');
+            }
         };
 
         function init() {

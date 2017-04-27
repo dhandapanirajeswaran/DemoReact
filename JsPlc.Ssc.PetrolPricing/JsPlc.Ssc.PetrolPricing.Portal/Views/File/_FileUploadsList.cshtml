@@ -2,7 +2,7 @@
 @using JsPlc.Ssc.PetrolPricing.Portal.Helper.Extensions
 @model IEnumerable<JsPlc.Ssc.PetrolPricing.Models.ViewModels.FileUploadViewModel>
 
-@{ 
+@{
     var statusMarkup = new Dictionary<string, string>()
     {
         {"Calculating", "<span class='label label-info'><i class='fa fa-calculator'></i> Calculating</span>" },
@@ -77,7 +77,8 @@
                     @if (item.IsMostRecentForDate)
                     {
                         <i class="fa fa-star" data-infotip="Most Recent File"></i>
-                    } else
+                    }
+                    else
                     {
                         <i class="fa fa-circle-o" data-infotip="Older File."></i>
                     }
@@ -117,5 +118,10 @@
 }
 else
 {
-    <div class="alert alert-info">No files uploaded yet</div>
+    <div class="alert alert-info">
+        <strong>
+            <i class="fa fa-info-circle fa-2x"></i> No files uploaded yet
+            &mdash; Please upload a <a href="@Url.Action("Upload","File")/?uploadType=QuarterlySiteData" class="btn btn-success"><i class="fa fa-upload"></i> Quarterly Price Data</a> and one or more <a href="@Url.Action("Upload", "File")/?uploadType=DailyPriceData" class="btn btn-success"><i class="fa fa-upload"></i> Daily Price Data</a> files.
+        </strong>
+    </div>
 }

@@ -34,7 +34,7 @@
             <div class="row pricing-filters-row" onclick="IsSitePriceFormClicked=1;" style="width:1280px;">
                 <!-- Date Picker -->
                 <div class="col-md-1">
-                    <label for="viewingDate">Date:</label> <button type="button" class="btn btn-xs btn-danger" data-bind="visible: $root.ViewingHistorical, click: $root.resetViewingDate" style="display: none;" data-infotip="View Today's Prices"><i class="fa fa-power-off"></i> Reset</button>
+                    <label for="viewingDate">Date:</label> <button type="button" class="btn btn-xs btn-warning" data-bind="visible: $root.ViewingHistorical, click: $root.resetViewingDate" style="display: none;" data-infotip="View Today's Prices"><i class="fa fa-eraser"></i> Reset</button>
                     <input type="text" id="viewingDate" class="datepicker form-control" onmousedown="IsSitePriceFormClicked=1;" onclick="IsSitePriceFormClicked=1;"
                            style="width: 85px" name="viewingDate" maxlength="12"
                            data-bind="value: $root.InitDate" data-infotip="Enter a [b]Date[/b] to view" />
@@ -88,7 +88,7 @@
                 <div class="col-md-2">
                     <label>Price changes: </label>
                     <!-- ko if: !$root.priceChangeFilterDown() || !$root.priceChangeFilterNone() || !priceChangeFilterUp() -->
-                    <button class="btn btn-danger btn-xs" style="margin-left: 2.5em" data-bind="click: resetPriceChangeFilters"><i class="fa fa-power-off"></i> Reset</button>
+                    <button class="btn btn-warning btn-xs" style="margin-left: 2.5em" data-bind="click: resetPriceChangeFilters"><i class="fa fa-eraser"></i> Reset</button>
                     <!-- /ko -->
                     <br />
                     <div class="btn-group" role="group">
@@ -243,7 +243,7 @@
                             <button type="button" class="btn btn-sm" data-bind="click: toggleHighlightNoNearbyGrocerPrices, css: {'btn-primary': $root.highlightNoNearbyGrocerPrices() }" data-infotip="Toggle [b]No Grocer[/b] highlighting"><i class="fa fa-question"></i> No Grocer Prices <span class="badge" data-bind="text: $root.NoGrocerPricesCount"></span></button>
                             <button type="button" class="btn btn-sm" data-bind="click: toggleHighlightHasNearbyGrocerPrices, css: {'btn-primary': $root.highlightHasNearbyGrocerPrices() }" data-infotip="Toggle [b]Has Grocer[/b] highlighting"><i class="fa fa-clone"></i> Has Grocer Prices <span class="badge" data-bind="text: $root.HasGrocerPricesCount"></span></button>
                         </div>
-                        <button type="button" class="btn btn-sm btn-danger" data-bind="visible: $root.shouldShouldHighlightReset(), click: resetPriceHighlighting" data-infotip="Hide all the Highlighting"><i class="fa fa-power-off "></i> Reset</button>
+                        <button type="button" class="btn btn-sm btn-warning" data-bind="visible: $root.shouldShouldHighlightReset(), click: resetPriceHighlighting" data-infotip="Hide all the Highlighting"><i class="fa fa-eraser "></i> Reset</button>
                     </div>
                     <div class="col-md-7 text-center" data-bind="visible: $root.busyLoadingData()">
                         Loading prices...
@@ -323,10 +323,10 @@
 
                 <div class="row" id="SorryNoResultsPanel" data-bind="visible: $root.shouldShowSorryResults" style="display: none; padding: 3em 2em;">
                     <div class="col-md-13 text-center font150pc">
-                        Sorry, no data was found. Try a different search criteria
+                        Sorry, no data was found. &mdash; Try a different search criteria or use the <a class="btn btn-sm btn-success" href="@Url.Action("Upload","File")" data-infotip="Upload some data files"><i class="fa fa-upload"></i> File Upload</a>
                         <!-- ko if: !$root.priceChangeFilterUp() || !$root.priceChangeFilterDown() || !$root.priceChangeFilterNone() -->
                         or
-                        <button type="button" class="btn btn-danger btn-sm" data-bind="click: resetPriceChangeFilters"><i class="fa fa-power-off"></i> Reset</button> the Price Change filters.
+                        <button type="button" class="btn btn-warning btn-sm" data-bind="click: resetPriceChangeFilters"><i class="fa fa-eraser"></i> Reset</button> the Price Change filters.
                         <!-- /ko -->
                     </div>
                 </div>

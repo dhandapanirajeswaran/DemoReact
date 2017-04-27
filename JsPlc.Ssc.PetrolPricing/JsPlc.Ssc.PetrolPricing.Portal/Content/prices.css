@@ -25,7 +25,7 @@
     height: auto;
 }
 .actualdata.collapsed {
-    height: 500px;
+    max-height: 500px;
 }
 
 table.competitorTable td, th {

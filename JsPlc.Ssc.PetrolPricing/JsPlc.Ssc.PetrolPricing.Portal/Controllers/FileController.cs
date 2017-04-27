@@ -60,7 +60,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             }
         }
 
-        public async Task<ActionResult> Upload(string errMsg = "")
+        public async Task<ActionResult> Upload(string errMsg = "", FileUploadTypes uploadType = FileUploadTypes.DailyPriceData)
         {
             ViewBag.ErrorMessage = errMsg;
 
@@ -76,7 +76,8 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             var model = new UploadViewModel
             {
                 UploadTypes = GetUploadTypes(),
-                UploadDate = DateTime.Now
+                UploadDate = DateTime.Now,
+                SelectedFileUploadType = (int)uploadType
             };
             var existingUploads = await ExistingDailyUploads(model.UploadDate);
             if (existingUploads != null && existingUploads.Any())

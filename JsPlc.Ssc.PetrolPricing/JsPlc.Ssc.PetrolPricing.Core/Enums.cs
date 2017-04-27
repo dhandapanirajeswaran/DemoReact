@@ -6,7 +6,14 @@ using System.Threading.Tasks;
 
 namespace JsPlc.Ssc.PetrolPricing.Core
 {
-    public enum FileUploadTypes { DailyPriceData = 1, QuarterlySiteData = 2, LatestJsPriceData = 3, LatestCompPriceData = 4 }
+    public enum FileUploadTypes
+    {
+        None = 0,
+        DailyPriceData = 1,
+        QuarterlySiteData = 2,
+        LatestJsPriceData = 3,
+        LatestCompPriceData = 4
+    }
 
     public enum ImportProcessStatuses
     {
