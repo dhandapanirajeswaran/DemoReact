@@ -16,6 +16,9 @@
     var previousDaysAgo = -1;
 }
 
+@Html.Action("DataSanityCheckSummary", "Layout")
+
+
 @if (Model != null && Model.Any())
 {
     <table class="table table-striped">
