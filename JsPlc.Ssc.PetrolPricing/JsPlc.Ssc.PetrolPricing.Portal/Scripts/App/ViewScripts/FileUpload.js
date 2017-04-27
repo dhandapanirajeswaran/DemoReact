@@ -37,6 +37,7 @@
             fileUploadTitle: '#FileUploadTitle',
             selectFilePrompt: '#SelectFilePrompt',
             calculateDateInfo: '#CalculateDateInfo',
+            calculateDateInfo2: '#CalculateDateInfo2',
 
             downloadQuarterlyTemplateButton: '#DownloadQuarterlyTemplateButton',
             downloadLatestPriceTemplateButton: '#DownloadLatestPriceTemplateButton',
@@ -205,6 +206,7 @@
                     break;
             }
             $(selectors.calculateDateInfo).html(friendly);
+            $(selectors.calculateDateInfo2).html(friendly);
         };
 
         function uploadfileButtonClick() {

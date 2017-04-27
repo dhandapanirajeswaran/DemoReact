@@ -69,6 +69,7 @@
 
         <div class="col-md-3" id="ChooseDatePanel">
             @Html.TextBoxFor(m => m.UploadDate, "{0:dd/MM/yyyy}", new { @class = "datepicker form-control", style="width: 50%", id = "caldattimepicker", @maxlength = "12", @data_infotip="This will be displayed as the [b]Upload Date/Time[/b]" })
+            <span id="CalculateDateInfo2" class="badge"></span>
         </div>
 
         <div class="col-md-6">

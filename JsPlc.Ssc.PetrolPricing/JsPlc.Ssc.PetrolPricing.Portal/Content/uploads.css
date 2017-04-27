@@ -47,3 +47,12 @@
     top: 4px;
     margin-right: 1em;
 }
+
+#caldattimepicker {
+    display: inline-block;
+}
+
+#CalculateDateInfo2 {
+    font-size: 125%;
+    font-weight: normal;
+}
