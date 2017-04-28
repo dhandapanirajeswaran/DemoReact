@@ -3096,18 +3096,28 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
             var retval = new ComplianceReportViewModel();
             try
             {
+                forDate = forDate.Date; // remove time so its Date only
+
                 var fuelTypesList = new[] { 2, 6, 1 }; // Unl, Diesel, Super
                 var nextday = forDate.AddDays(1);
                 var prevday = forDate.AddDays(-1);
 
+                //var fileUpload_LatestCompPriceData_PrevDay = _context.FileUploads.Where(
+                //               x =>
+                //                   x.UploadDateTime.Month == prevday.Month &&
+                //                   x.UploadDateTime.Day == prevday.Day &&
+                //                   x.UploadDateTime.Year == prevday.Year && x.UploadTypeId == (int)FileUploadTypes.DailyPriceData && x.Status.Id == 10)
+                //                   .OrderByDescending(x => x.Id).ToList();
 
-                var fileUpload_LatestCompPriceData_PrevDay = _context.FileUploads.Where(
-                               x =>
-                                   x.UploadDateTime.Month == prevday.Month &&
-                                   x.UploadDateTime.Day == prevday.Day &&
-                                   x.UploadDateTime.Year == prevday.Year && x.UploadTypeId == (int)FileUploadTypes.DailyPriceData && x.Status.Id == 10).OrderByDescending(x => x.Id).ToList();
+                //var fileUploadId_LatestCompPriceData_PrevDay = fileUpload_LatestCompPriceData_PrevDay.Count > 0 ? fileUpload_LatestCompPriceData_PrevDay[0].Id : 0;
 
-                var fileUploadId_LatestCompPriceData_PrevDay = fileUpload_LatestCompPriceData_PrevDay.Count > 0 ? fileUpload_LatestCompPriceData_PrevDay[0].Id : 0;
+                var fileUpload_LatestCompPriceData_PrevDay = _context.FileUploads.OrderByDescending(x => x.Id)
+                    .FirstOrDefault(x =>
+                        x.StatusId == 10
+                        && x.UploadTypeId == (int)FileUploadTypes.DailyPriceData
+                    );
+
+                var fileUploadId_LatestCompPriceData_PrevDay = fileUpload_LatestCompPriceData_PrevDay == null ? 0 : fileUpload_LatestCompPriceData_PrevDay.Id;
 
                 var dailyPrices = new List<DailyPrice>();
                 dailyPrices = GetDailyPricesForDate(nextday);
@@ -3119,7 +3129,6 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
                 var sites = GetJsSites();
 
                 var reportFuels = GetFuelTypes().Where(x => fuelTypesList.Contains(x.Id)).ToList();
-               
 
                 foreach (var site in sites)
                 {

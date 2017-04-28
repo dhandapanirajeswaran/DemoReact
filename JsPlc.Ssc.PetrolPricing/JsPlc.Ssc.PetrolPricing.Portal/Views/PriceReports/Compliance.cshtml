@@ -42,24 +42,42 @@
 
 
      .actualdata {
-    height: 500px;
-    width:1200px;
+        height: 500px;
+        width:1200px;
         overflow-y: auto;
         overflow-x: hidden; 
-}
+    }
 
 
         .alternativerow:nth-child(2n+1){
-    background:#F5F5F5;
-    
-}
-        .alternativerow
-        {
-           
-           
-    border-bottom:1px solid #b9b2b2
+            background:#F5F5F5;
         }
 
+        .alternativerow
+        {
+            border-bottom:1px solid #b9b2b2
+        }
+
+        .leftDivider {
+            border-left: 1px solid #999;
+        }
+
+
+        .diff-complies,
+        .diff-negative,
+        .diff-positive,
+        .diff-na {
+            display: none;
+
+        }
+
+        .highlight-complies .diff-complies,
+        .highlight-negative .diff-negative,
+        .highlight-positive .diff-positive,
+        .highlight-na .diff-na
+        {
+            display: block;
+        }
 
 </style>
 
@@ -103,7 +121,7 @@
     <div id="msgs"></div>
     @using (Html.BeginForm("Compliance", "PriceReports", FormMethod.Get, new { onkeydown = "return event.keyCode!=13", onsubmit = "return false" }))
     {
-        <div class="row">
+        <div class="row" style="width: 1280px;">
             <div class="col-md-2">
                 <label for="DateFor">Date:</label>&nbsp;
                 <input type="text" class="datepicker form-control" id="DateFor" name="dateFor" value='@requestedForDate'>
@@ -116,6 +134,18 @@
                 <label>&nbsp;</label>
                 <button type="button" class="btn btn-danger btn-block" id="btnResetReport"><i class="fa fa-power-off"></i> Reset</button>
             </div>
+
+            <div class="col-md-6 col-md-offset-1">
+                <div>
+                    <label>Show Differences:</label>
+                    <button style="margin-left: 2em; display: none;" id="btnResetHighlighting" type="button" class="btn btn-xs btn-danger"><i class="fa fa-power-off"></i> Reset</button>
+                </div>
+                <button id="btnToggleHighlightComplies" type="button" class="btn btn-sm btn-primary"><i class="fa fa-minus"></i> Complies <span class="badge"></span></button>
+                <button id="btnToggleHighlightNegative" type="button" class="btn btn-sm btn-primary"><i class="fa fa-arrow-down"></i> Negative <span class="badge"></span></button>
+                <button id="btnToggleHighlightPositive" type="button" class="btn btn-sm btn-primary"><i class="fa fa-arrow-up"></i> Positive <span class="badge"></span></button>
+                <button id="btnToggleHighlightNA" type="button" class="btn btn-sm btn-primary"><i class="fa fa-question"></i> N/A <span class="badge"></span></button>
+            </div>
+
         </div>
     }
 
@@ -123,14 +153,7 @@
     {
         <hr />
         <!-- Report Data -->
-        
-        
-        
-        
-        
-        
-        <div class="divtable">
-            
+        <div class="divtable highlight-complies highlight-negative highlight-positive highlight-na" id="ReportGrid">
             <div class="row" style="font-weight: bold;">
                 <div class="col-sm-1" style="width:100px">PfsNo </div>
                 <div class="col-sm-1" style="width:100px">CatNo</div>
@@ -141,7 +164,7 @@
                     <div class="col-sm-3" style="width:230px">
                         <div><center>@(fuel)</center></div>
                         <div class="row">
-                            <div class="col-sm-1" style="width:100px">Cat&nbsp@(fuel)</div>
+                            <div class="col-sm-1" style="width:100px;">Cat&nbsp@(fuel)</div>
                             <div class="col-sm-1" style="width:70px">Expected</div>
                             <div class="col-sm-1" style="width:60px">Diff</div>
                         </div>
@@ -164,16 +187,17 @@
                         <div class="col-sm-1">There is no data available for site</div>
                         }
                             @foreach (var dataItem in siteRow.DataItems.Take(2)) // 3 dataItems for 3 fuels, each with data per fuel
-                        {
-                            var diffClassName = !dataItem.DiffValid ? "diffNa"
-                                :
-                                dataItem.Diff > 0 ? "diffPositive"
-                                :
-                                dataItem.Diff < 0 ? "diffNegative" : "diffZero"; // diffNa, diffNegative, diffPositive, diffZero
-                                string color =dataItem.DiffValid ? ( 0 > dataItem.Diff ? "red" : dataItem.Diff > 0 ? "green" : "orange") : "gray";
+                            {
+                                var diffClassName = !dataItem.DiffValid ? "diffNa"
+                                    :
+                                    dataItem.Diff > 0 ? "diffPositive"
+                                    :
+                                    dataItem.Diff < 0 ? "diffNegative" : "diffZero"; // diffNa, diffNegative, diffPositive, diffZero
+                                string color = dataItem.DiffValid ? ( 0 > dataItem.Diff ? "red" : dataItem.Diff > 0 ? "green" : "orange") : "gray";
+                                string diffCss = dataItem.DiffValid ? (0 > dataItem.Diff ? "diff-negative" : dataItem.Diff > 0 ? "diff-positive" : "diff-complies") : "diff-na";
                         <div class="col-sm-3" style="width:230px">
-                            <div class="row">
-                                <div class="col-sm-1" style="width:100px">@( dataItem.FoundCatPrice ? (dataItem.CatPriceValue / 10.0).ToString("###0.0") : "n/a")</div>
+                            <div class="row @(diffCss)">
+                                <div class="col-sm-1 leftDivider" style="width:100px">@( dataItem.FoundCatPrice ? (dataItem.CatPriceValue / 10.0).ToString("###0.0") : "n/a")</div>
                                 <div class="col-sm-1" style="width:70px">@( dataItem.FoundExpectedPrice ? (dataItem.ExpectedPriceValue / 10.0).ToString("###0.0") : "n/a")</div>
 
 
