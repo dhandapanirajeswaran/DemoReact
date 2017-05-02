@@ -311,6 +311,7 @@
     <Content Include="images\sort_desc_disabled.png" />
     <Content Include="images\txtfileicon.png" />
     <Content Include="Logs\placeholder.txt" />
+    <Content Include="Scripts\App\bootbox.min.js" />
     <Content Include="Scripts\App\busyloader.html" />
     <Content Include="Scripts\App\busyloader.js" />
     <Content Include="Scripts\App\common.js" />
@@ -329,6 +330,7 @@
     <Content Include="Scripts\App\ViewScripts\UploadCountdown.js" />
     <Content Include="Scripts\App\ViewScripts\SitePricing.js" />
     <Content Include="Scripts\App\Services\PetrolPricingService.js" />
+    <Content Include="Scripts\bootbox.min.js" />
     <Content Include="Scripts\bootstrap-datepicker.js" />
     <Content Include="Scripts\bootstrap-datepicker.min.js" />
     <Content Include="Scripts\bootstrap-datetimepicker.js" />
