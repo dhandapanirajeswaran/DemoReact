@@ -3099,7 +3099,7 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
                 forDate = forDate.Date; // remove time so its Date only
 
                 var fuelTypesList = new[] { 2, 6, 1 }; // Unl, Diesel, Super
-                var nextday = forDate.AddDays(1);
+                var nextday = forDate;
                 var prevday = forDate.AddDays(-1);
 
                 //var fileUpload_LatestCompPriceData_PrevDay = _context.FileUploads.Where(
