@@ -222,7 +222,9 @@ BEGIN
 			END [TodayPrice],
 
 			CASE WHEN caft.LatestPriceYesterday > 0
-				THEN (caft.LatestPriceYesterday / 10) + caft.nOffset
+				--THEN (caft.LatestPriceYesterday / 10) + caft.nOffset
+				-- possible fix for issue 4: In site pricing page earlier today we seen some odd site price can we check this also please
+				THEN (caft.LatestPriceYesterday) + caft.nOffset
 				ELSE caft.DailyPriceYesterday + caft.nOffset
 			END [YesterdayPrice]
 
