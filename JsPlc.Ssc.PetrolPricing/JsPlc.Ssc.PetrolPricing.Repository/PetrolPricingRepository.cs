@@ -775,7 +775,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             if (sitePriceData != null)
             {
                 var autoPrice = sitePriceData.SuggestedPrice + fuelMarkup;
-                autoPrice = SetLastDigitTo9(autoPrice);
+                //autoPrice = SetLastDigitTo9(autoPrice);
 
                 var overridePrice = 0;
 
@@ -795,14 +795,14 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                 {
                     overridePrice = dieselPriceOverride.OverriddenPrice;
                     overridePrice += trialPrice;
-                    overridePrice = SetLastDigitTo9(overridePrice);
+                    //overridePrice = SetLastDigitTo9(overridePrice);
                 }
 
                 //today Price Calculation
                 var todayPriceFromCalculation = GetTodayPrice(fuelType, site, forDate);
 
                 var todayPrice = todayPriceFromCalculation + fuelMarkup;
-                todayPrice = SetLastDigitTo9(todayPrice);
+                //todayPrice = SetLastDigitTo9(todayPrice);
 
                 var competitorId = sitePriceData.CompetitorId.HasValue ? sitePriceData.CompetitorId.Value : 0;
                 var competitorName = "Unknown";

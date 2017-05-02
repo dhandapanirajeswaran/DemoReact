@@ -55,11 +55,13 @@ BEGIN
 			sf.FuelTypeId,
 			sf.AliasFuelTypeId,
 			CASE WHEN spd.Id IS NOT NULL 
-				THEN COALESCE(dbo.fn_ReplaceLastPriceDigit(spd.SuggestedPrice + sf.FuelMarkup, '9'), 0)
+				--THEN COALESCE(dbo.fn_ReplaceLastPriceDigit(spd.SuggestedPrice + sf.FuelMarkup, '9'), 0)
+				THEN COALESCE(spd.SuggestedPrice + sf.FuelMarkup, 0)
 				ELSE 0
 			END [AutoPrice],
 			CASE WHEN dpo.Id IS NOT NULL
-				THEN dbo.fn_ReplaceLastPriceDigit(dpo.OverriddenPrice + sf.TrialPrice, '9')
+				--THEN dbo.fn_ReplaceLastPriceDigit(dpo.OverriddenPrice + sf.TrialPrice, '9')
+				THEN dpo.OverriddenPrice + sf.TrialPrice
 				ELSE 0 
 			END [overridePrice],
 			CASE WHEN spd.Id IS NULL 
@@ -113,18 +115,31 @@ BEGIN
 				THEN spr.overridePrice
 				ELSE 0
 			END [OverridePrice],
-			dbo.fn_ReplaceLastPriceDigit(
-				dbo.fn_CalculateTodayPrice(
-					fu.UploadDateTime,
-					lp.Id,
-					lp.ModalPrice,
-					ovp.Id,
-					ovp.DateOfPrice,
-					ovp.OverriddenPrice,
-					tp.Id,
-					tp.DateOfPrice,
-					tp.ModalPrice
-				) + spr.FuelMarkup, '9') [TodayPrice],
+			--dbo.fn_ReplaceLastPriceDigit(
+			--	dbo.fn_CalculateTodayPrice(
+			--		fu.UploadDateTime,
+			--		lp.Id,
+			--		lp.ModalPrice,
+			--		ovp.Id,
+			--		ovp.DateOfPrice,
+			--		ovp.OverriddenPrice,
+			--		tp.Id,
+			--		tp.DateOfPrice,
+			--		tp.ModalPrice
+			--	) + spr.FuelMarkup, '9') [TodayPrice],
+
+			dbo.fn_CalculateTodayPrice(
+				fu.UploadDateTime,
+				lp.Id,
+				lp.ModalPrice,
+				ovp.Id,
+				ovp.DateOfPrice,
+				ovp.OverriddenPrice,
+				tp.Id,
+				tp.DateOfPrice,
+				tp.ModalPrice
+			) + spr.FuelMarkup [TodayPrice],
+
 			CASE WHEN spr.HasSitePriceData = 1
 				THEN spr.Markup
 				ELSE 0
