@@ -91,78 +91,82 @@
                             ? "Uploaded on [b]" + row.UploadDateTime.ToString("dd-MMM-yyyy") + "[/b] at [b]" + row.UploadDateTime.ToString("HH:mm:ss") + "[/b]"
                             : "";
 
-                        <tr class="@rowClass" style="cursor: pointer;" onclick="window.location='@Url.Action("Details", "File")/@row.FileUploadId'">
-                            <td>@row.UploadTypeName</td>
-                            <td>
-                                @if (hasFileUpload == false)
-                                {
-                                    <span>&mdash;</span>
-                                }
-                                else if (row.ImportStatus != null && statusMarkup.ContainsKey(row.ImportStatus))
-                                {
-                                    @Html.Raw(statusMarkup[row.ImportStatus])
-                                }
-                                else
-                                {
-                                    <span><i></i>@row.ImportStatus</span>
-                                }
-                            </td>
-                            <td @Html.Raw((hasFileUpload ? " data-infotip='" + uploadedInfoTip + "'" : ""))>
-                                @if (hasFileUpload == false)
-                                {
-                                    <span>&mdash;</span>
-                                }
-                                else
-                                {
-                                    if (isRecentUpload)
+                        var clickHandler = row.FileUploadId == 0
+                            ? ""
+                            : "window.location='" + Url.Action("Details", "File") + row.FileUploadId + "'";
+
+                            <tr class="@rowClass" style="cursor: pointer;" onclick="@(clickHandler)">
+                                <td>@row.UploadTypeName</td>
+                                <td>
+                                    @if (hasFileUpload == false)
                                     {
-                                        <strong>@Html.FormatFriendlyDateTime(row.UploadDateTime)</strong>
+                                        <span>&mdash;</span>
+                                    }
+                                    else if (row.ImportStatus != null && statusMarkup.ContainsKey(row.ImportStatus))
+                                    {
+                                        @Html.Raw(statusMarkup[row.ImportStatus])
                                     }
                                     else
                                     {
-                                        if (isOutdated)
+                                        <span><i></i>@row.ImportStatus</span>
+                                    }
+                                </td>
+                                <td @Html.Raw((hasFileUpload ? " data-infotip='" + uploadedInfoTip + "'" : ""))>
+                                    @if (hasFileUpload == false)
+                                    {
+                                        <span>&mdash;</span>
+                                    }
+                                    else
+                                    {
+                                        if (isRecentUpload)
                                         {
-                                            <span class="warning">@daysAgo Days Ago</span>
+                                            <strong>@Html.FormatFriendlyDateTime(row.UploadDateTime)</strong>
                                         }
                                         else
                                         {
-                                            <span>@daysAgo Days Ago</span>
+                                            if (isOutdated)
+                                            {
+                                                <span class="warning">@daysAgo Days Ago</span>
+                                            }
+                                            else
+                                            {
+                                                <span>@daysAgo Days Ago</span>
+                                            }
                                         }
                                     }
-                                }
-                            </td>
-                            <td>
-                                @if (hasFileUpload)
-                                {
-                                    @row.UploadedBy
-                                }
-                                else
-                                {
-                                    <span>&mdash;</span>
-                                }
-                            </td>
-                            <td>
-                                @if (String.IsNullOrEmpty(warning) == false)
-                                {
-                                    if (hasFileUpload == false)
+                                </td>
+                                <td>
+                                    @if (hasFileUpload)
                                     {
-                                        <i class="fa fa-file error" data-infotip="No file upload exists"></i>
-                                    }
-                                    else if (isOutdated)
-                                    {
-                                        <i class="fa fa-calendar warning" data-infotip="@warning"></i>
+                                        @row.UploadedBy
                                     }
                                     else
                                     {
-                                        <i class="fa fa-warning error" data-infotip="@warning"></i>
+                                        <span>&mdash;</span>
                                     }
-                                }
-                                else
-                                {
-                                    <i class="fa fa-check good" data-infotip="Success"></i>
-                                }
-                            </td>
-                        </tr>
+                                </td>
+                                <td>
+                                    @if (String.IsNullOrEmpty(warning) == false)
+                                    {
+                                        if (hasFileUpload == false)
+                                        {
+                                            <i class="fa fa-file error" data-infotip="No file upload exists"></i>
+                                        }
+                                        else if (isOutdated)
+                                        {
+                                            <i class="fa fa-calendar warning" data-infotip="@warning"></i>
+                                        }
+                                        else
+                                        {
+                                            <i class="fa fa-warning error" data-infotip="@warning"></i>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <i class="fa fa-check good" data-infotip="Success"></i>
+                                    }
+                                </td>
+                            </tr>
                     }
                 </tbody>
             </table>
