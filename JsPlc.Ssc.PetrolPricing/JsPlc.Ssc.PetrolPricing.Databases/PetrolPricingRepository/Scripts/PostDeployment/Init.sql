@@ -147,7 +147,7 @@ UPDATE
 	dbo.PPUserPermissions
 SET 
 	IsAdmin = 1,
-	DiagnosticsUserPermissions = 3
+	DiagnosticsUserPermissions = 7
 WHERE 
 	PPUserId IN (
 	SELECT usr.Id
