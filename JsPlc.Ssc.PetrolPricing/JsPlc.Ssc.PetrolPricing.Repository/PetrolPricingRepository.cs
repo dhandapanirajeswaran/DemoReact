@@ -2062,7 +2062,7 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
             return _context.FileUploads.Where(x => x.UploadTypeId == 1
                 && DbFunctions.TruncateTime(x.UploadDateTime) == forDate.Date
                 && validForUploadStatuses.Contains(x.StatusId))
-                .OrderByDescending(x => x.UploadDateTime)
+                .OrderByDescending(x => x.Id)
                 .FirstOrDefault();
         }
 
@@ -3100,7 +3100,7 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
 
                 var fuelTypesList = new[] { 2, 6, 1 }; // Unl, Diesel, Super
                 var nextday = forDate;
-                var prevday = forDate.AddDays(-1);
+             //   var prevday = forDate;
 
                 //var fileUpload_LatestCompPriceData_PrevDay = _context.FileUploads.Where(
                 //               x =>
