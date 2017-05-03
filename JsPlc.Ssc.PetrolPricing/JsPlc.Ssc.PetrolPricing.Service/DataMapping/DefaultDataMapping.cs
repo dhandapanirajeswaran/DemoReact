@@ -17,7 +17,7 @@ namespace JsPlc.Ssc.PetrolPricing.Service.DataMapping
             Mapper.CreateMap<OverridePricePostViewModel, SitePrice>()
                 .ForMember(co => co.FuelTypeId, mo => mo.MapFrom(p => p.FuelTypeId))
                 .ForMember(co => co.SiteId, mo => mo.MapFrom(p => p.SiteId))
-                .ForMember(co => co.OverriddenPrice, i => i.MapFrom(p => Math.Truncate(p.OverridePrice * 10)))
+                .ForMember(co => co.OverriddenPrice, i => i.MapFrom(p => Convert.ToInt32(p.OverridePrice * 10)))
                 .ForMember(co => co.Id, mo => mo.Ignore())
                 .ForMember(co => co.JsSite, mo => mo.Ignore())
                 .ForMember(co => co.FuelType, mo => mo.Ignore())
