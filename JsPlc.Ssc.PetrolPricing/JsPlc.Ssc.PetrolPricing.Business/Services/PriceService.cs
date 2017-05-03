@@ -143,7 +143,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 				DateOfCalc = usingPricesforDate.Date, // Only date component
 				DateOfPrice = usingPricesforDate.Date.AddDays(-1),
 				SuggestedPrice = 0,
-				UploadId = 0,
+                UploadId = calcTaskData.FileUpload.Id,
 				CompetitorId = null
 			};
 
