@@ -1247,7 +1247,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             string cacheKey = usingPricesforDate.Ticks.ToString() ;
             Dictionary<string, DailyPrice> dailyPricesCache = PetrolPricingRepositoryMemoryCache.CacheObj.Get(cacheKey) as Dictionary<string, DailyPrice>;
 
-            if (dailyPricesCache == null)
+            //if (dailyPricesCache == null)
             {
                 lock (cachedGetDailyPricesForFuelByCompetitorsLock)
                 {
@@ -1262,7 +1262,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                                 x =>
                                     x.UploadDateTime.Month == usingPricesforDate.Month &&
                                     x.UploadDateTime.Day == usingPricesforDate.Day &&
-                                    x.UploadDateTime.Year == usingPricesforDate.Year).ToList();
+                                    x.UploadDateTime.Year == usingPricesforDate.Year).OrderByDescending(x=>x.Id).ToList();
                         if (fileUpload.Count > 0)
                         {
                             int fileUploadId = fileUpload[0].Id;
@@ -3126,7 +3126,7 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
                 var dailyPrices = new List<DailyPrice>();
                 dailyPrices = GetDailyPricesForDate(nextday);
 
-                var sitePrices = _context.SitePrices.Where(x => x.UploadId == fileUploadId_LatestCompPriceData_PrevDay).ToList();
+                var sitePrices = _context.SitePrices.Where(x => x.UploadId == fileUploadId_LatestCompPriceData_PrevDay).OrderByDescending(x=>x.Id).ToList();
 
                 if (dailyPrices.Count == 0 || sitePrices.Count == 0) return null;
 
@@ -3164,13 +3164,27 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
                             FuelTypeName = fuel.FuelTypeName
                         };
                         dataItems.Add(dataItem);
+                      
+                        var expected_nextdayList= sitePrices.Where(x => x.SiteId == site.Id && x.FuelTypeId == fuelId).ToList();
+                       
 
-                        var expected_nextday = sitePrices.FirstOrDefault(x => x.SiteId.Equals(site.Id) && x.FuelTypeId == fuel.Id);
-                        // Find the ExpectedPrice
-                        if (expected_nextday != null)
-                        {  
+                         // Find the ExpectedPrice
+                        if (expected_nextdayList.Count>0)
+                        {
+                            var ExpectedPriceValue = 0;
+                            var itemTocheckOverridePrice = expected_nextdayList.Find(x => x.DateOfCalc.Year == nextday.Year && x.DateOfCalc.Day == nextday.Day && x.DateOfCalc.Month == nextday.Month);
+                            if (itemTocheckOverridePrice != null && itemTocheckOverridePrice.OverriddenPrice>0)
+                            {
+                                ExpectedPriceValue = itemTocheckOverridePrice.OverriddenPrice;
+                            }
+                            else
+                            {
+                                expected_nextdayList = expected_nextdayList.OrderByDescending(x => x.Id).ToList();
+                                ExpectedPriceValue = expected_nextdayList[0].SuggestedPrice;
+                            }
+
                             dataItem.FoundExpectedPrice = true;
-                            dataItem.ExpectedPriceValue = expected_nextday.SuggestedPrice;                          
+                            dataItem.ExpectedPriceValue = ExpectedPriceValue;                          
                         }
 
                         var dailyPrice = dailyPrices.FirstOrDefault(x => x.CatNo.Equals(site.CatNo) && x.FuelTypeId == fuel.Id);
