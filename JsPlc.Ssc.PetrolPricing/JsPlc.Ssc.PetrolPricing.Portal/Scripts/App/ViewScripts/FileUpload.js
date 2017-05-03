@@ -108,16 +108,27 @@
         function inputTypeFileChange() {
             showSteps(3);
             var uploadtype = $('#UploadTypeName').val(),
+                filename = this.files[0].name.toLowerCase(),
+                isDateFilename = /^2\d{7}\./.test(filename),
                 ext = '.' + this.files[0].name.split(".").pop().toLowerCase(),
                 typeDef = uploadTypeDefs[uploadtype],
                 isValid = typeDef && typeDef.accept.split(/\s*,\s*/).indexOf(ext) != -1,
-                fileType = fileTypes[ext.replace('.', '')];
-                
+                fileType = fileTypes[ext.replace('.', '')],
+                tempDate,
+                datePicker = $(selectors.chosenDate);
+
             if (isValid) {
                 $(selectors.errorPanel).hide();
                 $(selectors.filenameAndIcon).show();
                 $(selectors.uploadButton).show();
                 $("#fileimage").attr("src", common.reportRootFolder() + fileType.image).attr('title', fileType.title);
+
+                if (uploadtype == 1 && isDateFilename) {
+                    tempDate = filename.substring(6, 8) + '/' + filename.substring(4, 6) + '/' + filename.substring(0, 4);
+                    datePicker.val(tempDate);
+                    datePicker.trigger('change');
+                    notify.info('Date changed ' + tempDate + ' to match upload filename');
+                }
             } else {
                 $(selectors.errorPanel).show().text("Please Select valid file...").delay(3000).fadeOut();
                 $(selectors.filenameAndIcon).hide();
@@ -200,7 +211,7 @@
                     break;
                 default:
                     if (diffDays < 0)
-                        friendly = '<span class="past-days">' + diffDays + ' Days Ago</span>';
+                        friendly = '<span class="past-days">' + Math.abs(diffDays) + ' Days Ago</span>';
                     else
                         friendly = '<span class="future-days">' + diffDays + ' Days</span>';
                     break;
