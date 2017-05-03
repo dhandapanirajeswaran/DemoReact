@@ -2124,6 +2124,10 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
                     SitePrice p1 = p; // to prevent closure issue
                     var entry =
                         dbPricesForDate.FirstOrDefault(x => x.SiteId == p1.SiteId && x.FuelTypeId == p1.FuelTypeId);
+
+                    // handle -1 for removing Price Override
+                    var newOverridePrice = p.OverriddenPrice < 0 ? 0 : p.OverriddenPrice;
+
                     if (entry == null)
                     {
                         entry = new SitePrice
@@ -2133,7 +2137,7 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
                             DateOfCalc = forDate.Value,
                             DateOfPrice = forDate.Value,
                             SuggestedPrice = 0,
-                            OverriddenPrice = p.OverriddenPrice
+                            OverriddenPrice = newOverridePrice
                         };
                         db.Entry(entry).State = EntityState.Added;
                         //throw new ApplicationException(
@@ -2141,7 +2145,7 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
                     }
                     else
                     {
-                        entry.OverriddenPrice = p.OverriddenPrice;
+                        entry.OverriddenPrice = newOverridePrice;
                         db.Entry(entry).State = EntityState.Modified;
                     }
                     //db.Entry(entry).Property(x => x.OverriddenPrice).IsModified = true;

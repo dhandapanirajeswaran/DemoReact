@@ -175,12 +175,12 @@ BEGIN
 		CASE WHEN @catalistFileExits = 1
 			THEN tp.AutoPrice
 			ELSE 0
-		END [TodayPrice], -- crazy
+		END [AutoPrice],
 		CASE WHEN ovp_OverriddenPrice IS NULL -- fix for invisible Override Prices for Match Competitor sites...
 			THEN tp.overridePrice
 			ELSE ovp_OverriddenPrice
 		END [OverridePrice],
-		tp.TodayPrice [AutoPrice], -- crazy
+		tp.TodayPrice [TodayPrice],
 		tp.Markup [Markup],
 		tp.CompetitorName [CompetitorName],
 		tp.IsTrailPrice [IsTrailPrice],

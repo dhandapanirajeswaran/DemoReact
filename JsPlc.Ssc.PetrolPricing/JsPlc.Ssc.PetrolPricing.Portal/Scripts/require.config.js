@@ -33,6 +33,7 @@ require.config({
         "scrollToTop": "App/scrollToTop",
         "infotips": "App/infotips",
         "cookieSettings": "App/cookieSettings",
+        "bootbox": "App/bootbox.min",
 
         //"ko-binding-handlers": "App/ko-binding-handlers",
 
@@ -56,7 +57,10 @@ require.config({
         "jqueryval": { deps: ["jquery"] },
         "knockout": { deps: ["jquery"] },
         "bootstrap": { deps: ["jquery"] },
-        "SitePricing": { deps: ["jquery", "bootstrap-datepickerGB"] }
+        "SitePricing": { deps: ["jquery", "bootstrap-datepickerGB"] },
+        'bootbox': {
+            deps: ['jquery']
+        }
         //"ko-binding-handlers": { deps: ["jquery"] }
         //"tableedit": { deps: ["tabletools"] }
     },
