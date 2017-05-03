@@ -160,7 +160,7 @@ BEGIN
 			LEFT JOIN dbo.LatestPrice lp ON lp.Id = (SELECT MIN(Id) FROM dbo.LatestPrice WHERE PfsNo = spr.PfsNo AND StoreNo = spr.StoreNo AND FuelTypeId = spr.FuelTypeId)
 
 			-- OverridePriceIfAny
-			LEFT JOIN dbo.SitePrice ovp ON ovp.Id = (SELECT MAX(Id) FROM dbo.SitePrice WHERE SiteId = spr.SiteId AND FuelTypeId = spr.FuelTypeId AND OverriddenPrice > 0)
+			LEFT JOIN dbo.SitePrice ovp ON ovp.Id = (SELECT MAX(Id) FROM dbo.SitePrice WHERE SiteId = spr.SiteId AND FuelTypeId = spr.FuelTypeId AND OverriddenPrice > 0 AND DateOfCalc >= @forDate AND DateOfCalc < @forDateNextDay)
 
 			-- TodayPriceSortByDate
 			LEFT JOIN dbo.DailyPrice tp ON tp.id = (SELECT MAX(Id) FROM dbo.DailyPrice WHERE CatNo = spr.CatNo AND FuelTypeId = spr.FuelTypeId AND ModalPrice > 0)
