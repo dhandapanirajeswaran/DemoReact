@@ -20,7 +20,9 @@
                 'sites.showInactiveSites',
                 'sites.highlightTrialPrices',
                 'sites.highlightMatchCompetitors',
-                'sites.highlightSoloPrices'
+                'sites.highlightSoloPrices',
+                'sites.showHasEmails',
+                'sites.showNoEmails'
             ],
             values = readSettingsCookie();
 

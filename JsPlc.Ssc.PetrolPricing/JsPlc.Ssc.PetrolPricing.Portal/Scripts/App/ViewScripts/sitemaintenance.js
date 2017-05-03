@@ -7,10 +7,14 @@
             inactiveSites: $('#hdnInactiveSitesCount').val() || 0,
             trialSites: $('#hdnTrialSitesCount').val() || 0,
             matchCompetitorSites: $('#hdnMatchCompetitorSitesCount').val() || 0,
-            soloSites: $('#hdnSoloPriceSitesCount').val() || 0
+            soloSites: $('#hdnSoloPriceSitesCount').val() || 0,
+            hasEmails: $('#hdnHasEmailsSiteCount').val() || 0,
+            hasNoEmails: $('#hdnHasNoEmailsSiteCount').val() || 0,
         };
 
         var siteFilters = {
+            showHasEmails: true,
+            showNoEmails: true,
             showActiveSites: true,
             showInactiveSites: true,
             highlightTrialPrices: true,
@@ -19,6 +23,8 @@
         };
 
         var settingsMap = {
+            showHasEmails: 'sites.showHasEmails',
+            showNoEmails: 'sites.showNoEmails',
             showActiveSites: 'sites.showActiveSites',
             showInactiveSites: 'sites.showInactiveSites',
             highlightTrialPrices: 'sites.highlightTrialPrices',
@@ -33,8 +39,14 @@
             rows.each(function (index, item) {
                 var row = $(item),
                     visible = (
-                            (row.hasClass('site-active') && siteFilters.showActiveSites)
-                            || (row.hasClass('site-inactive') && siteFilters.showInactiveSites)
+                            (
+                                (row.hasClass('site-active') && siteFilters.showActiveSites)
+                                || (row.hasClass('site-inactive') && siteFilters.showInactiveSites)
+                            )
+                            && (
+                                (row.hasClass('has-emails') && siteFilters.showHasEmails)
+                                || (row.hasClass('no-email') && siteFilters.showNoEmails)
+                            )
                         );
 
                 visible ? row.show() : row.hide();
@@ -165,17 +177,21 @@
         function redrawSiteFilterButtons() {
             var activeButton = $('#btnShowActiveSites'),
                 inactiveButton = $('#btnShowInActiveSites'),
+                withEmailsButton = $('#btnShowWithEmails'),
+                withNoEmailsButton = $('#btnShowNoEmails'),
                 resetButton = $('#btnResetActiveSites'),
                 activeRows = $('tr.site-active'),
                 inactiveRows = $('tr.site-inactive');
 
-            if (siteFilters.showActiveSites && siteFilters.showInactiveSites)
+            if (siteFilters.showActiveSites && siteFilters.showInactiveSites && siteFilters.showHasEmails && siteFilters.showNoEmails)
                 resetButton.hide();
             else
                 resetButton.show();
 
             setButtonClassState(activeButton, siteFilters.showActiveSites);
             setButtonClassState(inactiveButton, siteFilters.showInactiveSites);
+            setButtonClassState(withEmailsButton, siteFilters.showHasEmails);
+            setButtonClassState(withNoEmailsButton, siteFilters.showNoEmails);
             applyRowFilters();
         };
 
@@ -197,7 +213,27 @@
             commonToggleButtonFilter(opts);
         };
 
+        function toggleShowWithEmails() {
+            var opts = {
+                state: 'showHasEmails',
+                showing: 'Showing ' + counts.hasEmails + ' Sites with Emails',
+                hiding: 'Hiding ' + counts.hasEmails + ' Sites with Emails'
+            };
+            commonToggleButtonFilter(opts);
+        };
+
+        function toggleShowWithNoEmails() {
+            var opts = {
+                state: 'showNoEmails',
+                showing: 'Showing ' + counts.hasNoEmails + ' Sites with NO emails',
+                hiding: 'Hiding ' + counts.hasNoEmails + ' Sites with NO emails'
+            };
+            commonToggleButtonFilter(opts);
+        };
+
         function resetActiveSites() {
+            siteFilters.showHasEmails = true;
+            siteFilters.showNoEmails = true;
             siteFilters.showActiveSites = true;
             siteFilters.showInactiveSites = true;
             redrawSiteFilterButtons();
@@ -212,6 +248,8 @@
         function resetActiveFilters() {
             siteFilters.showActiveSites = true;
             siteFilters.showInactiveSites = true;
+            siteFilters.showHasEmails = true;
+            siteFilters.showNoEmails = true;
             redrawSiteFilterButtons();
             applyRowFilters();
             notify.info('Reset the Active/Inactive filters');
@@ -234,6 +272,8 @@
             $('#btnToggleHighlightSoloPrices').off().on('click', toggleHighlightSoloPrices);
             $('#btnResetHighlighting').off().on('click', resetHighlighting);
 
+            $('#btnShowWithEmails').off().on('click', toggleShowWithEmails);
+            $('#btnShowNoEmails').off().on('click', toggleShowWithNoEmails);
             $('#btnShowActiveSites').off().on('click', toggleShowActiveSites);
             $('#btnShowInActiveSites').off().on('click', toggleShowInActiveSites);
             $('#btnResetActiveSites').off().on('click', resetActiveSites);

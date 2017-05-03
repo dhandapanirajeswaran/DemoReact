@@ -565,8 +565,8 @@ table.fixed-header>tbody {
 }
 
 #FileUploadContainer .file-upload-scroller {
-    max-height: 1024px;
-    overflow: auto;
+    /*max-height: 1024px;
+    overflow: auto;*/
 }
 
 

@@ -109,11 +109,13 @@
                 var isMatchCompetitor = priceMatchType == (int)PriceMatchType.MatchCompetitorPrice;
                 var isTrialPrice = priceMatchType == (int)PriceMatchType.TrailPrice;
                 var isSoloPrice = priceMatchType == (int)PriceMatchType.SoloPrice;
+                var hasEmails = item.Emails != null && item.Emails.Any();
 
                 var rowClasses = (isActive ? "site-active" : "site-inactive")
                     + (isTrialPrice ? " site-trial-price" : "")
                     + (isMatchCompetitor ? " site-match-competitor" : "")
-                    + (isSoloPrice ? " site-solo-price" : "");
+                    + (isSoloPrice ? " site-solo-price" : "")
+                    + (hasEmails ? " has-emails" : " no-email");
 
                 <tr class="@(rowClasses)">
                     <td class="text-center">
