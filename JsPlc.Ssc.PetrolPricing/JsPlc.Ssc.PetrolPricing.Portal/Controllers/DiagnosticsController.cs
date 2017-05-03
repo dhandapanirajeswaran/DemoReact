@@ -52,7 +52,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
         }
 
         [HttpPost]
-        [AuthoriseDiagnostics(Permissions = DiagnosticsUserPermissions.Edit)] 
+        [AuthoriseDiagnostics(Permissions = DiagnosticsUserPermissions.ResetDatabase)] 
         public ActionResult DeleteAllData()
         {
             var success = _serviceFacade.DeleteAllData();
