@@ -565,7 +565,7 @@ table.fixed-header>tbody {
 }
 
 #FileUploadContainer .file-upload-scroller {
-    max-height: 550px;
+    max-height: 1024px;
     overflow: auto;
 }
 
@@ -584,15 +584,28 @@ table.fixed-header>tbody {
 
 .file-uploader-grid .date-header {
     border-radius: 0 24px 24px 0;
-    padding: 4px 12px 4px 4px;
+    padding: 8px 24px 8px 32px;
     margin-left: -8px;
     width: auto;
     display: inline-block;
     background-color: #aaa;
-    color: #333;
+    color: #000;
     opacity: 0.5;
 }
 
+.file-uploader-grid .date-header.date-today {
+    border-left: 8px solid #666;
+    background-color: #dda;
+    color: #000;
+    opacity: 1;
+}
+
+.file-uploader-grid .date-header.date-yesterday {
+    border-left: 8px solid #666;
+    background-color: #CCE1CC;
+    color: #000;
+    opacity: 1;
+}
 
 .recent-file-uploads tr.recent:nth-child(odd)
 {

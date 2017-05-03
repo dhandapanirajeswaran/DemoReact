@@ -56,19 +56,21 @@
         <div class="file-upload-scroller">
             <table class="table table-striped file-uploader-grid">
                 @foreach (var item in Model)
-            {
-                var daysAgo = (int)DateTime.Now.Date.Subtract(item.UploadDateTime.Date).TotalDays;
-                var wasToday = daysAgo < 1;
-                var wasYesterday = daysAgo == 1;
-                var friendlyDaysAgo = wasToday ? "Today" : wasYesterday ? "Yesterday" : daysAgo + " Days ago";
-                var rowClass = (wasToday ? "uploaded-today" : wasYesterday ? "uploaded-yesterday" : "")
-                    + (item.FileExists ? " upload-file-exists" : " no-upload-file")
-                    + (item.IsMostRecentForDate ? " most-recent-for-date" : " older-file");
+                        {
+                            var daysAgo = (int)DateTime.Now.Date.Subtract(item.UploadDateTime.Date).TotalDays;
+                            var wasToday = daysAgo < 1;
+                            var wasYesterday = daysAgo == 1;
+                            var friendlyDaysAgo = wasToday ? "Today" : wasYesterday ? "Yesterday" : daysAgo + " Days ago";
+                            var rowClass = (wasToday ? "uploaded-today" : wasYesterday ? "uploaded-yesterday" : "")
+                                + (item.FileExists ? " upload-file-exists" : " no-upload-file")
+                                + (item.IsMostRecentForDate ? " most-recent-for-date" : " older-file");
 
-                if (item.IsForDifferentDay)
-                {
-            <tr class="date-row">
-                <td colspan="8"><h4 class="date-header"><i class="fa fa-calendar"></i> &nbsp;&nbsp; @(item.UploadDateTime.Date.ToString("dd-MMM-yyy")) &mdash; @(friendlyDaysAgo)</h4></td>
+                            var dateHeaderCss = "date-header" + (wasToday ? " date-today" : wasYesterday ? " date-yesterday" : "");
+
+                            if (item.IsForDifferentDay)
+                            {
+            <tr class="date-row dashed-divider">
+                <td colspan="8"><h4 class="@(dateHeaderCss)"><i class="fa fa-calendar"></i> &nbsp;&nbsp; @(item.UploadDateTime.Date.ToString("dd-MMM-yyy")) &mdash; @(friendlyDaysAgo)</h4></td>
             </tr>
                 }
 
