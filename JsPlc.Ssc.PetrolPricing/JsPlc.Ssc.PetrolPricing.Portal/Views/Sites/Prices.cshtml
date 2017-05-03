@@ -272,19 +272,25 @@
                             <th class="col-header-unleaded" colspan="2">
                                 <h4>
                                     <span class="label label-success">&nbsp;Unleaded&nbsp;</span>
+                                    <!-- ko if: !$root.ViewingHistorical()-->
                                     <button type="button" class="btn btn-danger btn-xs" data-bind="click: removeAllOverrideUnleaded" data-infotip="Remove all [b]Price Overrides[/b] for [b]Unleaded[/b]"><i class="fa fa-power-off"></i></button>
+                                    <!-- /ko -->
                                 </h4>
                             </th>
                             <th class="col-header-diesel" colspan="2">
                                 <h4>
                                     <span class="label label-black">&nbsp;Diesel&nbsp;</span>
+                                    <!-- ko if: !$root.ViewingHistorical()-->
                                     <button type="button" class="btn btn-danger btn-xs" data-bind="click: removeAllOverrideDiesel" data-infotip="Remove all [b]Price Overrides[/b] for [b]Diesel[/b]"><i class="fa fa-power-off"></i></button>
+                                    <!-- /ko -->
                                 </h4>
                             </th>
                             <th class="col-header-super-unleaded" colspan="2">
                                 <h4>
                                     <span class="label label-success-inverted">&nbsp;Super Unleaded&nbsp;</span>
+                                    <!-- ko if: !$root.ViewingHistorical()-->
                                     <button type="button" class="btn btn-danger btn-xs" data-bind="click: removeAllOverrideSuperUnleaded" data-infotip="Remove all [b]Price Overrides[/b] for [b]Super Unleaded[/b]"><i class="fa fa-power-off"></i></button>
+                                    <!-- /ko -->
                                 </h4>
                             </th>
                         </tr>
