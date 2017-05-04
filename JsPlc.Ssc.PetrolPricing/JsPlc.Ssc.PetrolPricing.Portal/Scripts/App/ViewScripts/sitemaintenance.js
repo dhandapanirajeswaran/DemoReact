@@ -237,7 +237,8 @@
             siteFilters.showActiveSites = true;
             siteFilters.showInactiveSites = true;
             redrawSiteFilterButtons();
-            notify.info('Showing both Active and Inactive Sites');
+            notify.info('Showing all Sites');
+            updateCookieSettings();
         };
 
         function clickGoOnEnter(ev) {
