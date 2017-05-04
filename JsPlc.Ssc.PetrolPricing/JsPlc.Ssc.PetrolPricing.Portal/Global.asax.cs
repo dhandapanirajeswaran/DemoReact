@@ -80,8 +80,10 @@ namespace JsPlc.Ssc.PetrolPricing.Portal
         private void GetBuildInformation()
         {
             var assembly = Assembly.GetExecutingAssembly();
+            var lastWriteTime = new FileInfo(assembly.Location).LastWriteTime;
             BuildInfoHelper.BuildVersion = assembly.GetName().Version.ToString();
-            BuildInfoHelper.BuildDateTime = new FileInfo(assembly.Location).LastWriteTime;
+            BuildInfoHelper.BuildDateTime = lastWriteTime;
+            BuildInfoHelper.ScriptVersionNumber = lastWriteTime.ToString("yyyyMMddHHmmss");
         }
     }
 }

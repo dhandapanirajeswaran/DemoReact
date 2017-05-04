@@ -9,5 +9,6 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Helper
     {
         public static DateTime BuildDateTime { get; set; }
         public static string BuildVersion { get; set; }
+        public static string ScriptVersionNumber { get; set; }
     }
 }
