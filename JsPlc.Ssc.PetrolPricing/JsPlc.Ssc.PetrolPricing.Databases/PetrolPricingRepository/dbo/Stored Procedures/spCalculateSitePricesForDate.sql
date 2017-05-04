@@ -180,7 +180,10 @@ BEGIN
 			THEN tp.overridePrice
 			ELSE ovp_OverriddenPrice
 		END [OverridePrice],
-		tp.TodayPrice [TodayPrice],
+		CASE WHEN tp.OverridePrice > 0
+			THEN tp.OverridePrice
+			ELSE tp.TodayPrice
+		END [TodayPrice],
 		tp.Markup [Markup],
 		tp.CompetitorName [CompetitorName],
 		tp.IsTrailPrice [IsTrailPrice],
