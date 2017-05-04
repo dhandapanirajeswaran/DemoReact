@@ -3126,7 +3126,7 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
                 var dailyPrices = new List<DailyPrice>();
                 dailyPrices = GetDailyPricesForDate(nextday);
 
-                var siteVMLlist = GetSitesWithPrices(forDate);
+                var siteVMLlist = GetSitesWithPrices(nextday.AddDays(-1));
 
                 if (dailyPrices.Count == 0 || siteVMLlist.Count() == 0) return null;
 
