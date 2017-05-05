@@ -5,12 +5,13 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Net.Mail;
 using System.Threading.Tasks;
+using JsPlc.Ssc.PetrolPricing.Models.ViewModels;
 
 namespace JsPlc.Ssc.PetrolPricing.Business
 {
     public interface IEmailService
     {
-        Task<ConcurrentDictionary<int, EmailSendLog>> SendEmailAsync(IEnumerable<Site> listSites,
+        Task<ConcurrentDictionary<int, EmailSendLog>> SendEmailAsync(List<SitePriceViewModel> listSites,
             DateTime endTradeDate,
             string reportBackEmailAddr);
 

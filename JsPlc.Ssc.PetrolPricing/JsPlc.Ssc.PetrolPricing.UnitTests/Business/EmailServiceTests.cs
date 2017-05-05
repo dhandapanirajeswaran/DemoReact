@@ -10,6 +10,7 @@ using System.Net.Mail;
 using System.Text;
 using System.Threading.Tasks;
 using JsPlc.Ssc.PetrolPricing.Core.Interfaces;
+using JsPlc.Ssc.PetrolPricing.Models.ViewModels;
 
 namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 {
@@ -30,6 +31,8 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 		Mock<ISmtpClient> _mockSmtpClient;
 
 		Models.Site _site;
+
+        SitePriceViewModel _siteVM;
 
 		const string _expectedEmailAddress = "andrey.shihov@sainsburys.co.uk";
 
@@ -65,6 +68,13 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 				Id = 1,
 				SiteName = "Test site"
 			};
+
+            _siteVM = new SitePriceViewModel
+            {
+                CatNo = 1,                                 
+                SiteId = 1,
+                StoreName = "Test site"
+            };
 		}
 
 		[TestCase(BuildEmailBodyTestCases.NoPreviousTradeDatePriceFound)]
@@ -82,7 +92,7 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 			#endregion
 
 			//Act
-			var result = EmailService.BuildEmailBody(_site, DateTime.Today);
+            var result = EmailService.BuildEmailBody(_siteVM, DateTime.Today);
 
 			//Assert
 			//email body is not empty
@@ -106,7 +116,7 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 			#endregion
 
 			//Act
-			var result = EmailService.BuildEmailBody(_site, DateTime.Today);
+            var result = EmailService.BuildEmailBody(_siteVM, DateTime.Today);
 
 			//Assert
 			//email body is not empty
@@ -132,9 +142,9 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 				}
 			};
 
-			var expectedEmailBody = EmailService.BuildEmailBody(_site, DateTime.Today);
+            var expectedEmailBody = EmailService.BuildEmailBody(_siteVM, DateTime.Today);
 
-			List<Models.Site> sites = new List<Models.Site> { _site };
+            List<SitePriceViewModel> sites = new List<SitePriceViewModel> { _siteVM };
 
             var sut = new EmailService(_mockRepository.Object, _mockAppSettings.Object, _mockFactory.Object);
 
@@ -175,9 +185,9 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 				}
 			};
 
-			var expectedEmailBody = EmailService.BuildEmailBody(_site, DateTime.Today);
+            var expectedEmailBody = EmailService.BuildEmailBody(_siteVM, DateTime.Today);
 
-			List<Models.Site> sites = new List<Models.Site> { _site };
+            List<SitePriceViewModel> sites = new List<SitePriceViewModel> { _siteVM };
 
             var sut = new EmailService(_mockRepository.Object, _mockAppSettings.Object, _mockFactory.Object);
 

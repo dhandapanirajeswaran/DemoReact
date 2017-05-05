@@ -22,6 +22,7 @@ using System.Diagnostics;
 using System.IO;
 using JsPlc.Ssc.PetrolPricing.Core;
 using JsPlc.Ssc.PetrolPricing.Core.Interfaces;
+using JsPlc.Ssc.PetrolPricing.Models.ViewModels;
 
 namespace JsPlc.Ssc.PetrolPricing.Business
 {
@@ -57,13 +58,13 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 		/// <param name="reportBackEmailAddr">Emails the send log to reportBackEmailAddr(LoginUser)</param>
 		/// <returns></returns>
 		public async Task<ConcurrentDictionary<int, EmailSendLog>> SendEmailAsync(
-			IEnumerable<Site> listSites,
+            List<SitePriceViewModel> listSites,
 			DateTime endTradeDate,
 			string reportBackEmailAddr)
 		{
-			var sites = listSites as IList<Site> ?? listSites.ToList();
+            var sites = listSites as IList<SitePriceViewModel> ?? listSites.ToList();
 			// SERIES execution for now.
-			foreach (Site site in sites)
+            foreach (SitePriceViewModel site in sites)
 			{
 				var logEntry = new EmailSendLog();
 				try
@@ -71,9 +72,9 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 					var sendable = true;
 					// This Try can be a Task to run in parallel, 
 					// completion of each task can add entry to "sendLog"
-					_sendLog.TryAdd(site.Id, logEntry);
+					_sendLog.TryAdd(site.SiteId, logEntry);
 
-					logEntry = logEntry.SetupLogEntry1(site.Id, endTradeDate, reportBackEmailAddr, DateTime.Now);
+                    logEntry = logEntry.SetupLogEntry1(site.SiteId, endTradeDate, reportBackEmailAddr, DateTime.Now);
 
 					// EMAIL Task
 					//one email built per sites for multiple user in site email list
@@ -87,7 +88,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 						var message = new MailMessage();
 
 						message.From = new MailAddress(emailFrom, emailFrom); // TODO - DisplayName same as fromEmail
-						message.Subject = site.SiteName + " - " + emailSubject;
+						message.Subject = site.StoreName + " - " + emailSubject;
 						message.Body = emailBody;
 						message.BodyEncoding = Encoding.ASCII;
 						message.IsBodyHtml = true;
@@ -115,8 +116,8 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 						if (!emailToSet.ListOfEmailTo.Any()) // In Test mode, this would not be True ever !! 
 						{
 							logEntry.AddWarningMessageToLogEntry(
-								string.Format("Warning: No email(s) setup for siteId={0}, siteName={1}. ", site.Id,
-									site.SiteName));
+								string.Format("Warning: No email(s) setup for siteId={0}, siteName={1}. ", site.SiteId,
+                                    site.StoreName));
 							if (sendMode == EmailSendMode.Live)
 							{
 								sendable = false;
@@ -130,8 +131,8 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 							logEntry.AddWarningMessageToLogEntry(
 								string.Format(
 									"Warning: No email to send for siteId={0}, siteName={1}. Possibly no valid prices set to communicate for site.",
-									site.Id,
-									site.SiteName));
+									site.SiteId,
+                                    site.StoreName));
 							//continue; // In LIVE Mode, we shouldnt send email if body is blank  
 							sendable = false;
 						}
@@ -147,9 +148,9 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 				{
                     _logger.Error(ex);
 					EmailSendLog existingEntry;
-					if (!_sendLog.TryGetValue(site.Id, out existingEntry))
+                    if (!_sendLog.TryGetValue(site.SiteId, out existingEntry))
 					{
-						_sendLog.TryAdd(site.Id, logEntry);
+                        _sendLog.TryAdd(site.SiteId, logEntry);
 						existingEntry = logEntry;
 					}
 					existingEntry.AddErrorMessageToLogEntry(ex.Message);
@@ -161,7 +162,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 			return _sendLog;
 		}
 
-		public static string BuildEmailBody(Site site, DateTime endTradeDate)
+        public static string BuildEmailBody(SitePriceViewModel site, DateTime endTradeDate)
 		{
 			var emailForSite = new EmailSiteData();
 
@@ -325,27 +326,19 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 		/// <param name="emailForSite"></param>
 		/// <param name="endTradeDate"></param>
 		/// <returns></returns>
-		private static EmailSiteData emailSetValues(Site site, EmailSiteData emailForSite, DateTime endTradeDate)
+        private static EmailSiteData emailSetValues(SitePriceViewModel site, EmailSiteData emailForSite, DateTime endTradeDate)
 		{
-			emailForSite.SiteName = site.SiteName;
+			emailForSite.SiteName = site.StoreName;
 			emailForSite.ChangeDate = endTradeDate;
 			
-			//trade date prices
-			var pricesWithDateCalcAsEndTradeDate = new List<SitePrice>();
-
-			if (site.Prices != null && site.Prices.Any())
-			{
-				pricesWithDateCalcAsEndTradeDate = site.Prices.Where(x => x.DateOfCalc.Date.Equals(endTradeDate.Date)).ToList();
-			}
-
-			if (false == pricesWithDateCalcAsEndTradeDate.Any())
+			if (site.FuelPrices == null || site.FuelPrices.Count==0)
 			{
 				emailForSite.AtLeastOnePriceAvailable = false;
 				return emailForSite;
 			}
 
 			//previous trade date prices
-			var priceDifferenceFound = findPriceDifference(site, endTradeDate, pricesWithDateCalcAsEndTradeDate);
+			var priceDifferenceFound = findPriceDifference(site);
 
 			//send email if we have got here
 			var atLeastOne = false;
@@ -357,21 +350,36 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 			//- prices for previous trading date not found
 			if (priceDifferenceFound)
 			{
-				foreach (SitePrice sp in pricesWithDateCalcAsEndTradeDate)
+                foreach (var fuelPrice in site.FuelPrices)
 				{
-					if (sp.FuelTypeId == 2) // unleaded
+                    if (fuelPrice.FuelTypeId == 2) // unleaded
 					{
-						emailForSite.PriceUnleaded = (sp.OverriddenPrice == 0) ? sp.SuggestedPrice : sp.OverriddenPrice;
+                        var overridePrice = 0;
+                        if (fuelPrice.OverridePrice.HasValue)
+                        {
+                            overridePrice = fuelPrice.OverridePrice.Value;
+                        }
+                        emailForSite.PriceUnleaded = (overridePrice == 0) ? fuelPrice.AutoPrice.Value : overridePrice;
 						atLeastOne = true;
 					}
-					if (sp.FuelTypeId == 1) // Super unl.
+                    if (fuelPrice.FuelTypeId == 1) // Super unl.
 					{
-						emailForSite.PriceSuper = (sp.OverriddenPrice == 0) ? sp.SuggestedPrice : sp.OverriddenPrice;
+					    var overridePrice = 0;
+                        if (fuelPrice.OverridePrice.HasValue)
+                        {
+                            overridePrice = fuelPrice.OverridePrice.Value;
+                        }
+                        emailForSite.PriceSuper = (overridePrice == 0) ? fuelPrice.AutoPrice.Value : overridePrice;
 						atLeastOne = true;
 					}
-					if (sp.FuelTypeId == 6) // diesel
+                    if (fuelPrice.FuelTypeId == 6) // diesel
 					{
-						emailForSite.PriceDiesel = (sp.OverriddenPrice == 0) ? sp.SuggestedPrice : sp.OverriddenPrice;
+						var overridePrice = 0;
+                        if (fuelPrice.OverridePrice.HasValue)
+                        {
+                            overridePrice = fuelPrice.OverridePrice.Value;
+                        }
+                        emailForSite.PriceDiesel = (overridePrice == 0) ? fuelPrice.AutoPrice.Value : overridePrice;
 						atLeastOne = true;
 					}
 
@@ -381,74 +389,31 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 			return emailForSite;
 		}
 
-		private static bool findPriceDifference(Site site, DateTime endTradeDate, List<SitePrice> pricesWithDateCalcAsEndTradeDate)
+        private static bool findPriceDifference(SitePriceViewModel site )
 		{
 			bool result = false;
+            foreach (var fuelprice in site.FuelPrices)
+            {
 
-			var pricesWithDateCalcAsPreviousEndTradeDate = new List<SitePrice>();
+                //previous trading date price
+                var previousTradingDatePrice = fuelprice.TodayPrice;
 
-			if (site.Prices != null && site.Prices.Any())
-			{
-				//find previousTradeDate
-				var previousTradeDate = site.Prices.Where(x => x.DateOfCalc.Date < endTradeDate.Date).OrderByDescending(x => x.DateOfCalc).FirstOrDefault();
+                //current trading date price
+                var currentTradingDatePrice = fuelprice.OverridePrice == 0
+                ? fuelprice.AutoPrice
+                : fuelprice.OverridePrice;
 
-				//send email if previous trading date not found
-				if (previousTradeDate == null)
-				{
-					result = true;
-				}
-				else
-				{
-					pricesWithDateCalcAsPreviousEndTradeDate = site.Prices.Where(x => x.DateOfCalc.Date.Equals(previousTradeDate.DateOfCalc)).ToList();
-				}
-			}
+                //compare prices
+                if (previousTradingDatePrice - currentTradingDatePrice != 0)
+                {
+                    result = true;
+                    break;
+                }
 
-			//send email - if no prices found for previous trade date
-			if (pricesWithDateCalcAsPreviousEndTradeDate.Any() == false)
-			{
-				result = true;
-			}
-			else
-			{
-				//send email - if quantity of trading fuels has changed.
-				if (pricesWithDateCalcAsPreviousEndTradeDate.Count != pricesWithDateCalcAsEndTradeDate.Count)
-				{
-					result = true;
-				}
-				else
-				{
-					foreach (var priceWithDateCalcAsEndTradeDate in pricesWithDateCalcAsEndTradeDate)
-					{
-						foreach (var priceWithDateCalcAsPreviousEndTradeDate in pricesWithDateCalcAsPreviousEndTradeDate)
-						{
-							//find matching fuel
-							if (priceWithDateCalcAsEndTradeDate.FuelTypeId == priceWithDateCalcAsPreviousEndTradeDate.FuelTypeId)
-							{
-								//previous trading date price
-								var previousTradingDatePrice = priceWithDateCalcAsPreviousEndTradeDate.OverriddenPrice == 0
-									? priceWithDateCalcAsPreviousEndTradeDate.SuggestedPrice
-									: priceWithDateCalcAsPreviousEndTradeDate.OverriddenPrice;
-
-								//current trading date price
-								var currentTradingDatePrice = priceWithDateCalcAsEndTradeDate.OverriddenPrice == 0
-									? priceWithDateCalcAsEndTradeDate.SuggestedPrice
-									: priceWithDateCalcAsEndTradeDate.OverriddenPrice;
-
-								//compare prices
-								if (previousTradingDatePrice - currentTradingDatePrice != 0)
-								{
-									result = true;
-									break;
-								}
-							}
-						}
-
-						//if at least one price differece found don't need to go further
-						if (result)
-							break;
-					}
-				}
-			}
+                //if at least one price differece found don't need to go further
+                if (result)
+                    break;
+            }
 			return result;
 		}
 
@@ -475,7 +440,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 		/// </summary>
 		/// <param name="site"></param>
 		/// <returns></returns>
-		private Task<EmailToSet> getEmailToAddresses(Site site)
+        private Task<EmailToSet> getEmailToAddresses(SitePriceViewModel site)
 		{
 			EmailToSet emailToSet = new EmailToSet();
 
@@ -485,8 +450,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 
 			emailToSet.ListOfEmailTo = new List<string>();
 
-			emailToSet.ListOfEmailTo.AddRange(site.Emails.Where(x => !string.IsNullOrEmpty(x.EmailAddress))
-					.Select(email => email.EmailAddress));
+            emailToSet.ListOfEmailTo = site.Emails;
 			emailToSet.CommaSeprListOfEmailTo = String.Join(",", emailToSet.ListOfEmailTo);
 			
 			return Task.FromResult(emailToSet);
@@ -494,6 +458,8 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 
 		#endregion
 
-	}
+
+      
+    }
 }
 

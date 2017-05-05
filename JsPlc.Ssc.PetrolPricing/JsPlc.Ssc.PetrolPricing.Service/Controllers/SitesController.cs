@@ -300,24 +300,24 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
 					endTradeDate = DateTime.Now;
 				}
 
-				var listOfSites = new List<Site>();
+                var listOfSites = new List<SitePriceViewModel>();
 
 				var sendLog = new ConcurrentDictionary<int, EmailSendLog>();
 
 				if (siteId != 0)
 				{
-					var site = _siteService.GetSitesWithEmailsAndPrices()
-						.FirstOrDefault(x => x.Id == siteId);
-					if (site != null) listOfSites.Add(site);
+					var siteVMList = _siteService.GetSitesWithPrices(endTradeDate.Value,"",0,0,"",siteId).ToList();
+
+                    if (siteVMList != null) listOfSites.AddRange(siteVMList);
 				}
 				else
 				{
-					listOfSites = _siteService.GetSitesWithEmailsAndPrices().ToList();
+					listOfSites = _siteService.GetSitesWithPrices(endTradeDate.Value).ToList();
 				}
 
 				if (listOfSites.Any())
 				{
-                    sendLog = await _emailService.SendEmailAsync(listOfSites, endTradeDate.Value, "ramaraju.vittanala@sainsburys.co.uk");  //Todo:Ram    replace my email id with loginUserEmail
+                    sendLog = await _emailService.SendEmailAsync(listOfSites, endTradeDate.Value, loginUserEmail); 
 					// We continue sending on failure.. Log shows which passed or failed
 				}
 
@@ -372,9 +372,9 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
 		[System.Web.Http.Route("api/ShowEmailBody")]
 		public HttpResponseMessage ShowSitesEmailBody(int siteId = 0, DateTime? endTradeDate = null)
 		{
-			if (endTradeDate == null) endTradeDate = DateTime.Now;
+			/*if (endTradeDate == null) endTradeDate = DateTime.Now;
 
-			var listOfSites = new List<Site>();
+			var listOfSites = new List<SiteViewModel>();
 			var emailBodies = new List<string>();
 
 			if (siteId != 0)
@@ -400,7 +400,9 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
 			var response = new HttpResponseMessage();
 			response.Content = new StringContent(htmlListOfEmails);
 			response.Content.Headers.ContentType = new MediaTypeHeaderValue("text/html");
-			return response;
+			return response;*/
+
+            return null;
 		}
 
         [System.Web.Http.HttpGet]

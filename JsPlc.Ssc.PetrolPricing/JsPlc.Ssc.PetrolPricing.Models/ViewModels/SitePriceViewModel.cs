@@ -36,6 +36,7 @@ namespace JsPlc.Ssc.PetrolPricing.Models.ViewModels
 
         public bool HasEmails { get; set; }
 
+        public List<String> Emails { get; set; }
         public bool hasNotes
         {
             get { return String.IsNullOrWhiteSpace(Notes) == false; }
