@@ -41,7 +41,9 @@
 
             downloadQuarterlyTemplateButton: '#DownloadQuarterlyTemplateButton',
             downloadLatestPriceTemplateButton: '#DownloadLatestPriceTemplateButton',
-            downloadLatestCompPriceTemplateButton:'#DownloadLatestCompPriceTemplateButton'
+            downloadLatestCompPriceTemplateButton: '#DownloadLatestCompPriceTemplateButton',
+
+            showDatePickerCheckbox: '#chkShowDatePicker'
         };
 
         function bindEvents() {
@@ -57,6 +59,8 @@
             $(selectors.downloadLatestCompPriceTemplateButton).off().on('click', downloadLatestCompPriceTemplate);
             $(selectors.downloadLatestPriceTemplateButton).off().on('click', downloadLatestPriceTemplate);
             $(selectors.downloadQuarterlyTemplateButton).off().on('click', downloadQuarterlyTemplateButton);
+
+            $(selectors.showDatePickerCheckbox).off().on('change click', redrawStepLabels);
         };
 
         function downloadLatestCompPriceTemplate() {
@@ -174,8 +178,9 @@
         };
 
         function redrawStepLabels() {
-            var value = $(selectors.uploadTypeName).val();
-            if (value == 1) {
+            var value = $(selectors.uploadTypeName).val(),
+                alwaysShowDatePicker = $(selectors.showDatePickerCheckbox).is(":checked");
+            if (value == 1 || alwaysShowDatePicker) {
                 $(selectors.chooseDatePanel).show();
                 $(selectors.step2Label).text('Date & File:');
             } else {
