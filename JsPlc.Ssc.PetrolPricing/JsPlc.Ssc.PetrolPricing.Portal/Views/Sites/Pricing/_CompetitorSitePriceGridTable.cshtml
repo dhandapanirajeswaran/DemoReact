@@ -8,9 +8,10 @@
         <div class="compitatorData">
             <table class="competitorTable table-striped table-hover full-width">
                 <colgroup>
-                    <col width="13%" />
+                    <col width="9%" />
                     <col width="5%" />
                     <col width="20%" />
+                    <col width="4%" />
                     <col width="4%" />
                     <col width="4%" />
 
@@ -30,7 +31,7 @@
                 <thead>
                     <tr class="sainsburys-row">
                         <th></th>
-                        <th colspan="4" class="text-right" style="color: #ED8B00;"><big class="storeName"></big>&nbsp;</th>
+                        <th colspan="5" class="text-right" style="color: #ED8B00;"><big class="storeName"></big>&nbsp;</th>
 
                         <th class="readonlyUnleadedYesterday tblHighlight text-center">-</th>
                         <th class="readonlyUnleadedToday tblHighlight text-center" colspan="2">-</th>
@@ -47,7 +48,8 @@
                         <th class="num2"><span>Notes</span></th>
                         <th class="num3"><span>Marker</span></th>
                         <th class="num4"><span>Drive-Time</span></th>
-                        <th class="num5"><span>Cat No.</span></th>
+                        <th class="num5"><span data-infotip="Markup price based on Drive Time">+P</span></th>
+                        <th class="num6"><span>Cat No.</span></th>
 
                         <th colspan="3" class="tblHighlight text-center dividerLeft">
                             <h4>
@@ -68,30 +70,30 @@
                         </th>
                     </tr>
                     <tr>
-                        <th colspan="5"></th>
-                        <th class="num6 tblHighlight text-center"><span class="compyday">Yesterday</span></th>
-                        <th class="num7 tblHighlight text-center"><span class="comptoday">Today</span></th>
-                        <th class="num8 tblHighlight text-center"><span class="jsdiff">JS_Diff</span></th>
+                        <th colspan="6"></th>
+                        <th class="num7 tblHighlight text-center"><span class="compyday">Yesterday</span></th>
+                        <th class="num8 tblHighlight text-center"><span class="comptoday">Today</span></th>
+                        <th class="num9 tblHighlight text-center"><span class="jsdiff">JS_Diff</span></th>
 
-                        <th class="num9 text-center"><span class="compyday">Yesterday</span></th>
-                        <th class="num10 text-center"><span class="comptoday">Today</span></th>
-                        <th class="num11 text-center"><span class="jsdiff">JS_Diff</span></th>
+                        <th class="num10 text-center"><span class="compyday">Yesterday</span></th>
+                        <th class="num11 text-center"><span class="comptoday">Today</span></th>
+                        <th class="num12 text-center"><span class="jsdiff">JS_Diff</span></th>
 
-                        <th class="num12 tblHighlight text-center"><span class="compyday">Yesterday</span></th>
-                        <th class="num13 tblHighlight text-center"><span class="comptoday">Today</span></th>
-                        <th class="num14 tblHighlight text-center"><span class="jsdiff">JS_Diff</span></th>
+                        <th class="num13 tblHighlight text-center"><span class="compyday">Yesterday</span></th>
+                        <th class="num14 tblHighlight text-center"><span class="comptoday">Today</span></th>
+                        <th class="num15 tblHighlight text-center"><span class="jsdiff">JS_Diff</span></th>
                     </tr>
                 </thead>
                 <tbody>
                     <!-- ko if: loadingCompetitors() -->
                     <tr>
-                        <td colspan="14" class="noSiteData text-center"><span class="please-wait"><i class="fa fa-clock-o spinner"></i> Loading... Please wait</span></td>
+                        <td colspan="15" class="noSiteData text-center"><span class="please-wait"><i class="fa fa-clock-o spinner"></i> Loading... Please wait</span></td>
                     </tr>
                     <!-- /ko -->
                     <!-- ko if: !loadingCompetitors() -->
                     <!-- ko if: !hasCompetitors() -->
                     <tr>
-                        <td colspan="14" class="noSiteData text-center"><span class="no-competitors"><i class="fa fa-info-circle"></i> Sorry, no competitors available</span></td>
+                        <td colspan="15" class="noSiteData text-center"><span class="no-competitors"><i class="fa fa-info-circle"></i> Sorry, no competitors available</span></td>
                     </tr>
                     <!-- /ko -->
                     <!-- ko if: hasCompetitors() -->
@@ -104,7 +106,8 @@
                         </td>
                         <td class="num3"><span data-bind="text: StoreName"></span></td>
                         <td class="num4"><b><span data-bind="text: DriveTime, attr: {'data-infotip': 'Drive Time of [b]' + DriveTime + '[/b] Minutes'}"></span></b></td>
-                        <td class="num5"><span data-bind="text: CatNo, attr: {'data-infotip': 'Catalist Number: [b]' + CatNo + '[/b]'}"></span></td>
+                        <td class="num5"><span data-bind="text: (Math.floor(DriveTime/5))"></span></td>
+                        <td class="num6"><span data-bind="text: CatNo, attr: {'data-infotip': 'Catalist Number: [b]' + CatNo + '[/b]'}"></span></td>
 
                         <!-- ko foreach: FuelPricesToDisplay -->
                         <!-- ko if: siteSupportsFuel -->
@@ -149,7 +152,6 @@
                                 <div class="comp-js-price-diff-na" data-bind="if: ($parents[1].FuelPricesToDisplay[2].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1) == 'NaN' ">
                                     <span>n/a</span>
                                 </div>
-
                             </div>
                         </td>
                         <!-- /ko -->
@@ -159,7 +161,7 @@
                         <!-- /ko -->
                     </tr>
                     <tr class="note-row" data-bind="attr:{id:'CompetitorNote_' + SiteId}">
-                        <td colspan="14">
+                        <td colspan="15">
                             <div class="note-panel">
                                 <p class="note-panel-text" data-bind="formatSiteNote: Notes" data-infotip="Click to edit"></p>
                             </div>

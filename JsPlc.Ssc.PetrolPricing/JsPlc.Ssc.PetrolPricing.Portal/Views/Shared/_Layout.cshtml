@@ -10,6 +10,19 @@
     <base href="@(Request.ApplicationPath == "/" ? "/" : Request.ApplicationPath + "/")">
     <link rel="shortcut icon icon" type="image/ico" href="favicon.ico" />
     <title>@ViewBag.Title - Petrol Pricing</title>
+
+    <script type="text/javascript">
+        var JSPLC = (function () {
+            var isLocalHost = /^localhost/i.test(window.location.hostname),
+                scriptVersion = '@BuildInfoHelper.ScriptVersionNumber';
+            return {
+                PetrolPricing: {
+                    scriptVersion: scriptVersion
+                }
+            };
+        })();
+    </script>
+
     @Scripts.Render("~/bundles/jquery")
     
     @Styles.Render("~/Content/css")

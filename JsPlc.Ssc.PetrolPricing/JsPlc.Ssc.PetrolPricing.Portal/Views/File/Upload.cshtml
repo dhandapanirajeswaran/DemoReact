@@ -47,7 +47,8 @@
 
         <div class="col-md-3">
             @Html.DropDownListFor(model => model.UploadTypes, new SelectList(
-                        Model.UploadTypes, "Id", "UploadTypeName"), new { @class = "form-control", id = "UploadTypeName" })
+                        Model.UploadTypes, "Id", "UploadTypeName"), new { @class = "form-control", id = "UploadTypeName" })<br />
+            <label data-infotip="Always show the date picker (for historic uploads)"><input type="checkbox" id="chkShowDatePicker" value="1" /> Always show the date picker</label>
         </div>
 
         <div class="col-md-5 col-md-offset-1">

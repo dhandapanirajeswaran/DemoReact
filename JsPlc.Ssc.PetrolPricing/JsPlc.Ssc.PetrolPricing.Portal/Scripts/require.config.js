@@ -1,79 +1,84 @@
 ﻿/// <reference path="App/Services/PetrolPricingService.js" />
 /// <reference path="App/ViewScripts/SitePricing.js" />
 //Must omit extension on right side (in values)
-require.config({
-    waitSeconds: 200,
-    baseUrl: "Scripts",
-    paths: {
-        "modernizr": "modernizr-2.6.2",
-        "jquery": "jquery-1.10.2",
-        "jqueryval": "jquery.validate.min",
-        "knockout": "knockout-3.4.0.debug",
-        "moment": 'moment-with-locales',
-        "bootstrap": "bootstrap.min",
-        "bootstrap-datepicker": "bootstrap-datepicker",
-        "bootstrap-datepickerGB": "locales/bootstrap-datepicker.en-GB.min",
-        "URI": "UriJs/Uri",
-        "underscore": "underscore",
 
-        // LINK Specific js files.
-        "helpers": "Utils/helpers",
-        "petrolpricingDatePickers": "utils/petrolpricingDatePickers",
-        "text": "text.min",
-        //komoment: 'path/to/komoment', // KoMoment potentially useful
-        //"datatables": "DataTables/jquery.dataTables",
+(function () {
+    var scriptVersion = JSPLC.PetrolPricing.scriptVersion,
+        config = {
+        waitSeconds: 200,
+        baseUrl: "Scripts",
+        urlArgs: 'v=' + scriptVersion,
+        paths: {
+            "modernizr": "modernizr-2.6.2",
+            "jquery": "jquery-1.10.2",
+            "jqueryval": "jquery.validate.min",
+            "knockout": "knockout-3.4.0.debug",
+            "moment": 'moment-with-locales',
+            "bootstrap": "bootstrap.min",
+            "bootstrap-datepicker": "bootstrap-datepicker",
+            "bootstrap-datepickerGB": "locales/bootstrap-datepicker.en-GB.min",
+            "URI": "UriJs/Uri",
+            "underscore": "underscore",
 
-        //App modules
-        "common": "App/common",
-        "busyloader": "App/busyloader",
-        "notify": "App/notify",
-        "cookie": "App/cookie",
-        "downloader": "App/downloader",
-        "layout": "App/layout",
-        "scrollToTop": "App/scrollToTop",
-        "infotips": "App/infotips",
-        "cookieSettings": "App/cookieSettings",
-        "bootbox": "App/bootbox.min",
+            // LINK Specific js files.
+            "helpers": "Utils/helpers",
+            "petrolpricingDatePickers": "utils/petrolpricingDatePickers",
+            "text": "text.min",
+            //komoment: 'path/to/komoment', // KoMoment potentially useful
+            //"datatables": "DataTables/jquery.dataTables",
 
-        //"ko-binding-handlers": "App/ko-binding-handlers",
+            //App modules
+            "common": "App/common",
+            "busyloader": "App/busyloader",
+            "notify": "App/notify",
+            "cookie": "App/cookie",
+            "downloader": "App/downloader",
+            "layout": "App/layout",
+            "scrollToTop": "App/scrollToTop",
+            "infotips": "App/infotips",
+            "cookieSettings": "App/cookieSettings",
+            "bootbox": "App/bootbox.min",
 
-        //"RegisterKoComponents": "App/kocomponents/RegisterKoComponents",
+            //"ko-binding-handlers": "App/ko-binding-handlers",
 
-        //Services
-        "PetrolPricingService": "App/Services/PetrolPricingService",
+            //"RegisterKoComponents": "App/kocomponents/RegisterKoComponents",
 
-        //View scripts
-        "SitePricing": "App/ViewScripts/SitePricing",
-        "competitorPricePopup": "App/ViewScripts/CompetitorPricePopup",
-        "competitorPriceNotePopup": "App/ViewScripts/CompetitorPriceNotePopup",
-        "UploadCountdown": "App/ViewScripts/UploadCountdown",
-        "FileUpload": "App/ViewScripts/FileUpload",
-        "Diagnostics": "App/ViewScripts/Diagnostics",
-        "SiteMaintenance": "App/ViewScripts/SiteMaintenance"
-    },
-    shim: {
-        "bootstrap-datepicker": { deps: ["jquery", "bootstrap"] },
-        "bootstrap-datepickerGB": { deps: ["jquery", "bootstrap", "bootstrap-datepicker"] },
-        "jqueryval": { deps: ["jquery"] },
-        "knockout": { deps: ["jquery"] },
-        "bootstrap": { deps: ["jquery"] },
-        "SitePricing": { deps: ["jquery", "bootstrap-datepickerGB"] },
-        'bootbox': {
-            deps: ['jquery']
+            //Services
+            "PetrolPricingService": "App/Services/PetrolPricingService",
+
+            //View scripts
+            "SitePricing": "App/ViewScripts/SitePricing",
+            "competitorPricePopup": "App/ViewScripts/CompetitorPricePopup",
+            "competitorPriceNotePopup": "App/ViewScripts/CompetitorPriceNotePopup",
+            "UploadCountdown": "App/ViewScripts/UploadCountdown",
+            "FileUpload": "App/ViewScripts/FileUpload",
+            "Diagnostics": "App/ViewScripts/Diagnostics",
+            "SiteMaintenance": "App/ViewScripts/SiteMaintenance"
+        },
+        shim: {
+            "bootstrap-datepicker": { deps: ["jquery", "bootstrap"] },
+            "bootstrap-datepickerGB": { deps: ["jquery", "bootstrap", "bootstrap-datepicker"] },
+            "jqueryval": { deps: ["jquery"] },
+            "knockout": { deps: ["jquery"] },
+            "bootstrap": { deps: ["jquery"] },
+            "SitePricing": { deps: ["jquery", "bootstrap-datepickerGB"] },
+            'bootbox': {
+                deps: ['jquery']
+            }
+            //"ko-binding-handlers": { deps: ["jquery"] }
+            //"tableedit": { deps: ["tabletools"] }
+        },
+        map: {
+            //typeahead: "typeahead-helper!typeahead.bundle"
+            "URI": {
+                "IPv6": "URIjs/punycode",
+                "punycode": "URIjs/punycode",
+                "SecondLevelDomains": "URIjs/punycode"
+            }
         }
-        //"ko-binding-handlers": { deps: ["jquery"] }
-        //"tableedit": { deps: ["tabletools"] }
-    },
-    map: {
-        //typeahead: "typeahead-helper!typeahead.bundle"
-        "URI": {
-            "IPv6": "URIjs/punycode",
-            "punycode": "URIjs/punycode",
-            "SecondLevelDomains": "URIjs/punycode"
-        }
-
-    }
-});
+    };
+    require.config(config);
+})();
 
 //To load essential modules first
 //require(["RegisterKoComponents"]);

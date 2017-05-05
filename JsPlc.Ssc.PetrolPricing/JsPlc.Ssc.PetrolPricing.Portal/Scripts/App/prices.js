@@ -286,15 +286,15 @@ function refreshDates(selectedDate) {
     currentDay = buildDateHeadingAndMarkup(currentDate);
     nextDay = buildDateHeadingAndMarkup(dateAdd('d', +1, currentDate));
 
-    $('#today1').html(currentDay.markup + '<br />' + currentDay.formatted);
-    $('#today2').html(currentDay.markup + '<br />' + currentDay.formatted);
-    $('#today3').html(currentDay.markup + '<br />' + currentDay.formatted);
+    $('#today1').html('Today<br />' + currentDay.formatted);
+    $('#today2').html('Today<br />' + currentDay.formatted);
+    $('#today3').html('Today<br />' + currentDay.formatted);
 
     $(".comptoday").html(currentDay.formatted);
 
-    $('#tomorrow1').html(nextDay.markup + '<br />' + nextDay.formatted);
-    $('#tomorrow2').html(nextDay.markup + '<br />' + nextDay.formatted);
-    $('#tomorrow3').html(nextDay.markup + '<br />' + nextDay.formatted);
+    $('#tomorrow1').html('Tomorrow<br />' + nextDay.formatted);
+    $('#tomorrow2').html('Tomorrow<br />' + nextDay.formatted);
+    $('#tomorrow3').html('Tomorrow<br />' + nextDay.formatted);
 
     $(".compyday").html(previousDay.formatted);
 }
