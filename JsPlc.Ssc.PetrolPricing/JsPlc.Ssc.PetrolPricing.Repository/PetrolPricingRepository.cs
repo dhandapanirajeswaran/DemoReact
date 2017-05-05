@@ -293,7 +293,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                 .Where(x => x.IsActive && x.IsSainsburysSite)
                 .OrderBy(q => q.Id).ToList();
 
-           /* int daysBetweenFromAndTo =
+            int daysBetweenFromAndTo =
                 Convert.ToInt32((toPriceDate.Value - fromPriceDate.Value).TotalDays);
 
             var rangedDatePrices = _context.SitePrices.Select(x => new
@@ -307,10 +307,10 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             }).Where(x => x.DiffFromDays >= 0 && x.DiffToDays <= daysBetweenFromAndTo);
 
             IQueryable<SitePrice> pricesForAllSitesBetweenDates = from f in rangedDatePrices
-                select f.Price;
+                                                                  select f.Price;
 
             var getPricesForSite = new Func<int, List<SitePrice>>(i =>
-                    pricesForAllSitesBetweenDates.Where(p => p.SiteId == i).ToList());*/
+                    pricesForAllSitesBetweenDates.Where(p => p.SiteId == i).ToList());
 
             //List<SitePrice> pricesForSite = getPricesForSite(2); // sample
             foreach (var site in retval)
@@ -319,9 +319,9 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                 site.Emails.ForEach(x => emails.Add(x.EmailAddress));
                 _context.Entry(site).State = EntityState.Detached;
 
-                /*var prices = getPricesForSite(site.Id);
+                var prices = getPricesForSite(site.Id);
                 site.Prices = new List<SitePrice>();
-                site.Prices = prices;*/
+                site.Prices = prices;
 
                 emails.ForEach(x => site.Emails.Add(new SiteEmail
                 {
