@@ -6,11 +6,10 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-
-------DEBUG:START
---DECLARE @forDate DATE = GetDate()
---DECLARE @SiteIds VARCHAR(MAX) = '8'
-------DEBUG:END
+----DEBUG:START
+--DECLARE @forDate DATE = '2017-05-05'
+--DECLARE @SiteIds VARCHAR(MAX) = '6188'
+----DEBUG:END
 
 	-- constants
 	DECLARE @DriveTime INT = 5
@@ -153,6 +152,18 @@ BEGIN
 			spr.CompetitorPriceOffset
 
 			,ovp.OverriddenPrice [ovp_OverriddenPrice]
+
+			---- DEBUG
+			----
+			--,fu.UploadDateTime [debug_fu.UploadDateTime]
+			--,lp.Id [debug_lp.Id]
+			--,lp.ModalPrice [debug_lp.ModalPrice]
+			--,ovp.Id [debug_ovp.Id]
+			--,ovp.DateOfPrice [debug_ovp.DateOfPrice]
+			--,ovp.OverriddenPrice [debug_ovp.OverriddenPrice]
+			--,tp.Id [debug_tp.Id]
+			--,tp.DateOfPrice [debug_tp.DateOfPrice]
+			--,tp.ModalPrice [debug_tp.ModalPrice]
 		FROM 
 			SitePriceRowCTE spr
 
@@ -168,22 +179,31 @@ BEGIN
 			-- FileUpload
 			LEFT JOIN dbo.FileUpload fu ON fu.Id = lp.UploadId
 	)
-	-- Resultset
 	SELECT 
 		tp.SiteId [SiteId],
 		tp.FuelTypeId [FuelTypeId],
-		CASE WHEN @catalistFileExits = 1
-			THEN tp.AutoPrice
-			ELSE 0
+		--CASE WHEN @catalistFileExits = 1
+		--	THEN tp.AutoPrice
+		--	ELSE 0
+		--END [AutoPrice],
+
+		CASE WHEN tp.OverridePrice > 0
+			THEN tp.OverridePrice
+			ELSE tp.AutoPrice
 		END [AutoPrice],
+
 		CASE WHEN ovp_OverriddenPrice IS NULL -- fix for invisible Override Prices for Match Competitor sites...
 			THEN tp.overridePrice
 			ELSE ovp_OverriddenPrice
 		END [OverridePrice],
-		CASE WHEN tp.OverridePrice > 0
-			THEN tp.OverridePrice
-			ELSE tp.TodayPrice
-		END [TodayPrice],
+
+		--CASE WHEN tp.OverridePrice > 0
+		--	THEN tp.OverridePrice
+		--	ELSE tp.TodayPrice
+		--END [TodayPrice],
+
+		tp.TodayPrice [TodayPrice],
+
 		tp.Markup [Markup],
 		tp.CompetitorName [CompetitorName],
 		tp.IsTrailPrice [IsTrailPrice],
@@ -191,5 +211,4 @@ BEGIN
 		tp.PriceMatchType [PriceMatchType]
 	FROM 
 		TodayPriceCTE tp
-
 END
