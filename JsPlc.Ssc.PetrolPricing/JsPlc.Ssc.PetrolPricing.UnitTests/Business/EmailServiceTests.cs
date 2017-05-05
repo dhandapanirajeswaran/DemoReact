@@ -90,7 +90,7 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 			Assert.IsNotEmpty(result);
 
 			//overriden price appeard in email's body
-			Assert.IsTrue(result.Contains("100.1"));
+			Assert.IsTrue(result.Contains("100.1"));  
 		}
 
 		[TestCase(BuildEmailBodyTestCases.NoPreviousTradeDatePriceFound)]
@@ -104,10 +104,16 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 			//Arrange
 			#region Arrange
 			populateSitePricesWithoutChanges(testCase);
-			#endregion
-
+			var siteNewVM = new SitePriceViewModel
+            {
+                CatNo = 1,
+                SiteId = 1,
+                StoreName = "Test site"
+            };
+            #endregion
+          
 			//Act
-            var result = EmailService.BuildEmailBody(_siteVM, DateTime.Today);
+            var result = EmailService.BuildEmailBody(siteNewVM, DateTime.Today);
 
 			//Assert
 			//email body is not empty
@@ -174,9 +180,16 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 				
 			};
 
-            var expectedEmailBody = EmailService.BuildEmailBody(_siteVM, DateTime.Today);
+            var siteNewVM = _siteVM;
+            foreach(var fuelprice in siteNewVM.FuelPrices)
+            {
+                fuelprice.OverridePrice = 0;
+                fuelprice.TodayPrice = fuelprice.AutoPrice;
+            }
 
-            List<SitePriceViewModel> sites = new List<SitePriceViewModel> { _siteVM };
+            var expectedEmailBody = EmailService.BuildEmailBody(siteNewVM, DateTime.Today);
+
+            List<SitePriceViewModel> sites = new List<SitePriceViewModel> { siteNewVM };
 
             var sut = new EmailService(_mockRepository.Object, _mockAppSettings.Object, _mockFactory.Object);
 
@@ -282,7 +295,7 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 						OverridePrice = 1005
 					},
 					new FuelPriceViewModel {
-						FuelTypeId = 1,
+						FuelTypeId = 6,
 						AutoPrice = 1000,
 						OverridePrice = 1001
 					},
@@ -303,7 +316,7 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 						OverridePrice = 1001
 					},
 					new FuelPriceViewModel {
-						FuelTypeId = 1,
+						FuelTypeId = 2,
 						AutoPrice = 1002,
 						OverridePrice = 1003
 					}
