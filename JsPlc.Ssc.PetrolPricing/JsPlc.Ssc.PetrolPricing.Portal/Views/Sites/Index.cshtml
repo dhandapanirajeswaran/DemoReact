@@ -178,7 +178,7 @@
         <h1><i class="fa fa-gear"></i> Sainsbury's sites</h1>
     </div>
     <div class="col-md-6 text-right" style="padding-top: 20px">
-        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#SiteEmailsPopup"><i class="fa fa-at"></i> Site Email List</button>
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#SiteEmailsPopup" data-infotip="Show all the [b]Email Addresses[/b] for all Sainsbury's Sites'"><i class="fa fa-at"></i> Site Email List</button>&nbsp;
 
         <button type="button" onclick="location.href='@Url.Action("Create", "Sites" )'" class="btn btn-primary" data-infotip="Create a New Sainsbury's site'"><i class="fa fa-star"></i> New Sainsbury's site</button>
     </div>
@@ -362,6 +362,11 @@
                         }
                     </tbody>
                 </table>
+                <div class="text-center" style="font-size: 125%;">
+                    <strong>
+                        <span class="text-danger">@(hasEmailSiteCount) Sites with emails</span> &mdash; <span class="text-success">@(hasNoEmailSiteCount) Sites with no emails</span>
+                    </strong>
+                </div>
             </div>
             <div class="modal-footer text-right">
                 <button type="button" class="btn btn-primary" data-dismiss="modal"><i class="fa fa-times"></i> Close</button>
