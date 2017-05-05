@@ -30,8 +30,7 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
     
 		Mock<ISmtpClient> _mockSmtpClient;
 
-		Models.Site _site;
-
+	
         SitePriceViewModel _siteVM;
 
 		const string _expectedEmailAddress = "andrey.shihov@sainsburys.co.uk";
@@ -60,15 +59,7 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 
           
 
-			_site = new Models.Site
-			{
-				CatNo = 1,
-				IsActive = true,
-				IsSainsburysSite = true,
-				Id = 1,
-				SiteName = "Test site"
-			};
-
+		
             _siteVM = new SitePriceViewModel
             {
                 CatNo = 1,                                 
@@ -135,11 +126,10 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 			#region Arrange
 			populateSitePricesWithChanges(testCase);
 
-			_site.Emails = new List<Models.SiteEmail>
+			_siteVM.Emails = new List<String>
 			{
-				new Models.SiteEmail {
-					EmailAddress = _expectedEmailAddress
-				}
+				 _expectedEmailAddress
+				
 			};
 
             var expectedEmailBody = EmailService.BuildEmailBody(_siteVM, DateTime.Today);
@@ -178,11 +168,10 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 			//test when there is not change in price - email should NOT be sent
 			populateSitePricesWithoutChanges(testCase);
 
-			_site.Emails = new List<Models.SiteEmail>
+            _siteVM.Emails = new List<String>
 			{
-				new Models.SiteEmail {
-					EmailAddress = _expectedEmailAddress
-				}
+				 _expectedEmailAddress
+				
 			};
 
             var expectedEmailBody = EmailService.BuildEmailBody(_siteVM, DateTime.Today);
@@ -213,66 +202,58 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 			if (testCase == BuildEmailBodyTestCases.NoPreviousTradeDatePriceFound)
 			{
 				//test when there is price for the previous trade day and it's not changed
-				_site.Prices = new List<Models.SitePrice> { 
-					new Models.SitePrice {
-						DateOfCalc = DateTime.Today,
+                _siteVM.FuelPrices = new List<FuelPriceViewModel> { 
+					new FuelPriceViewModel {
 						FuelTypeId = 1,
-						SuggestedPrice = 1000,
-						OverriddenPrice = 1001
+						AutoPrice = 1000,
+						OverridePrice = 1001
 					}, 
-					new Models.SitePrice {
-						DateOfCalc = DateTime.Today.AddDays(-1),
+					new FuelPriceViewModel {
 						FuelTypeId = 1,
-						SuggestedPrice = 1000,
-						OverriddenPrice = 1001
+						AutoPrice = 1000,
+						OverridePrice = 1001
 					}
 				};
 			}
 			else if (testCase == BuildEmailBodyTestCases.FuelTypeTradeChange)
 			{
 				//test when there are same fuel types sold for two trade dates and price is not changed
-				_site.Prices = new List<Models.SitePrice> { 
-					new Models.SitePrice {
-						DateOfCalc = DateTime.Today,
+                _siteVM.FuelPrices = new List<FuelPriceViewModel> { 
+					new FuelPriceViewModel {
 						FuelTypeId = 2,
-						SuggestedPrice = 1004,
-						OverriddenPrice = 1005
+						AutoPrice = 1004,
+						OverridePrice = 1005
 					},
-					new Models.SitePrice {
-						DateOfCalc = DateTime.Today.AddDays(-1),
+					new FuelPriceViewModel {
 						FuelTypeId = 2,
-						SuggestedPrice = 1004,
-						OverriddenPrice = 1005
+						AutoPrice = 1004,
+						OverridePrice = 1005
 					},
-					new Models.SitePrice {
-						DateOfCalc = DateTime.Today,
+					new FuelPriceViewModel {
 						FuelTypeId = 1,
-						SuggestedPrice = 1002,
-						OverriddenPrice = 1003
+						AutoPrice = 1002,
+						OverridePrice = 1003
 					},
-					new Models.SitePrice {
-						DateOfCalc = DateTime.Today.AddDays(-1),
+					new FuelPriceViewModel {
 						FuelTypeId = 1,
-						SuggestedPrice = 1002,
-						OverriddenPrice = 1003
+						AutoPrice = 1002,
+						OverridePrice = 1003
 					}
 				};
 			}
 			else if (testCase == BuildEmailBodyTestCases.PriceDifferenceChange)
 			{
 				//test when there is no price change for two trade dates
-				_site.Prices = new List<Models.SitePrice> { 
-					new Models.SitePrice {
-						DateOfCalc = DateTime.Today,
-						FuelTypeId = 1,
-						SuggestedPrice = 1002,
-						OverriddenPrice = 1003
+                _siteVM.FuelPrices = new List<FuelPriceViewModel> { 
+					new FuelPriceViewModel {					
+                        FuelTypeId = 1,
+						AutoPrice = 1002,
+						OverridePrice = 1003
 					},
-					new Models.SitePrice {
-						DateOfCalc = DateTime.Today.AddDays(-1),
+					new FuelPriceViewModel {
 						FuelTypeId = 1,
-						SuggestedPrice = 1002,
-						OverriddenPrice = 1003
+						AutoPrice = 1002,
+						OverridePrice = 1003
 					}
 				};
 			}
@@ -283,54 +264,48 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 			if (testCase == BuildEmailBodyTestCases.NoPreviousTradeDatePriceFound)
 			{
 				//test when there is no price for the previous trade day
-				_site.Prices = new List<Models.SitePrice> { 
-					new Models.SitePrice {
-						DateOfCalc = DateTime.Today,
+                _siteVM.FuelPrices = new List<FuelPriceViewModel> { 
+					new FuelPriceViewModel {					
 						FuelTypeId = 1,
-						SuggestedPrice = 1000,
-						OverriddenPrice = 1001
+						AutoPrice = 1000,
+						OverridePrice = 1001
 					}
 				};
 			}
 			else if (testCase == BuildEmailBodyTestCases.FuelTypeTradeChange)
 			{
 				//test when fuels has been added/removed
-				_site.Prices = new List<Models.SitePrice> { 
-					new Models.SitePrice {
-						DateOfCalc = DateTime.Today,
+                _siteVM.FuelPrices = new List<FuelPriceViewModel> { 
+					new FuelPriceViewModel {
 						FuelTypeId = 2,
-						SuggestedPrice = 1004,
-						OverriddenPrice = 1005
+						AutoPrice = 1004,
+						OverridePrice = 1005
 					},
-					new Models.SitePrice {
-						DateOfCalc = DateTime.Today,
+					new FuelPriceViewModel {
 						FuelTypeId = 1,
-						SuggestedPrice = 1000,
-						OverriddenPrice = 1001
+						AutoPrice = 1000,
+						OverridePrice = 1001
 					},
-					new Models.SitePrice {
-						DateOfCalc = DateTime.Today.AddDays(-1),
+					new FuelPriceViewModel {
 						FuelTypeId = 1,
-						SuggestedPrice = 1002,
-						OverriddenPrice = 1003
+						AutoPrice = 1002,
+						OverridePrice = 1003
 					}
 				};
 			}
 			else if (testCase == BuildEmailBodyTestCases.PriceDifferenceChange)
 			{
 				//test when fuel price has changed
-				_site.Prices = new List<Models.SitePrice> { 
-					new Models.SitePrice {
-						DateOfCalc = DateTime.Today,
+                _siteVM.FuelPrices = new List<FuelPriceViewModel> { 
+					new FuelPriceViewModel {
 						FuelTypeId = 1,
-						SuggestedPrice = 1000,
-						OverriddenPrice = 1001
+						AutoPrice = 1000,
+						OverridePrice = 1001
 					},
-					new Models.SitePrice {
-						DateOfCalc = DateTime.Today.AddDays(-1),
+					new FuelPriceViewModel {
 						FuelTypeId = 1,
-						SuggestedPrice = 1002,
-						OverriddenPrice = 1003
+						AutoPrice = 1002,
+						OverridePrice = 1003
 					}
 				};
 			}
