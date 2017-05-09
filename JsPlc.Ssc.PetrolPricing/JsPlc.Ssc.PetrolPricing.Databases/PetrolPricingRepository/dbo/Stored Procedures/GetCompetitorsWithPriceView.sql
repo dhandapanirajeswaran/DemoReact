@@ -3,14 +3,18 @@
 	@SiteId INT
 AS
 BEGIN
-	SET NOCOUNT ON
+SET NOCOUNT ON
 
 ----DEBUG:START
---DECLARE	@ForDate DATE = GetDate()
---DECLARE	@SiteId INT = 6166
+--DECLARE	@ForDate DATE = '2017-05-08 00:00:00'
+--DECLARE	@SiteId INT = 6188
 ----DEBUG:END
 	
 	-- constants
+	DECLARE @MaxDriveTime INT = 25
+
+	DECLARE @ImportProcessStatus_Success INT = 10
+
 	DECLARE @FileUploadTypes_DailyPriceData INT = 1;
 	DECLARE @FileUploadTypes_QuarterlySiteData INT = 2;
 	DECLARE @FileUploadTypes_LatestJsPriceData INT = 3;
@@ -39,7 +43,7 @@ BEGIN
 		AND
 		stc.IsExcluded = 0
 		AND
-		stc.DriveTime < 25
+		stc.DriveTime < @MaxDriveTime
 		AND
 		NOT EXISTS(SELECT NULL FROM dbo.ExcludeBrands WHERE BrandName = compsite.Brand)
 
@@ -65,7 +69,7 @@ BEGIN
 		FROM
 			dbo.FileUpload fu
 		WHERE
-			fu.StatusId = 10
+			fu.StatusId = @ImportProcessStatus_Success
 			AND
 				fu.UploadDateTime >= @yesterday AND fu.UploadDateTime < @forDateNextDay
 	)
@@ -95,7 +99,7 @@ BEGIN
 			AND
 			stc.IsExcluded = 0
 			AND
-			stc.DriveTime < 25
+			stc.DriveTime < @MaxDriveTime
 	),
 	fileUploadLatestCompPriceDataToday AS (
 		SELECT TOP 1
@@ -192,7 +196,27 @@ BEGIN
 			COALESCE((SELECT TOP 1 ModalPrice FROM dailyPriceListToday WHERE FuelTypeId = ft.Id AND CatNo = compsite.CatNo), 0) [DailyPriceToday],
 			COALESCE((SELECT TOP 1 ModalPrice FROM dailyPriceListYesterday WHERE FuelTypeId = ft.Id AND CatNo = compsite.CatNo), 0) [DailyPriceYesterday],
 			COALESCE((SELECT TOP 1 ModalPrice FROM latestCompPricesToday WHERE FuelTypeId = ft.Id AND CatNo = compsite.CatNo), 0) [LatestPriceToday],
-			COALESCE((SELECT TOP 1 ModalPrice FROM latestCompPricesYesterday WHERE FuelTypeId = ft.Id AND CatNo = compsite.CatNo), 0) [LatestPriceYesterday]
+			--COALESCE((SELECT TOP 1 ModalPrice FROM test_latestCompPricesYesterday WHERE FuelTypeId = ft.Id AND CatNo = compsite.CatNo), 0) [LatestPriceYesterday]
+
+			COALESCE((
+				SELECT TOP 1
+					CASE WHEN dbo.SitePrice.OverriddenPrice > 0
+						THEN dbo.SitePrice.OverriddenPrice
+						ELSE dbo.SitePrice.SuggestedPrice
+					END
+				FROM 
+					dbo.SitePrice
+				WHERE
+					dbo.SitePrice.Id = (
+						SELECT MAX(dbo.SitePrice.Id) 
+						FROM dbo.SitePrice 
+						INNER JOIN dbo.FileUpload ON dbo.FileUpload.Id = dbo.SitePrice.UploadId
+						WHERE dbo.FileUpload.UploadDateTime < @ForDate
+						AND dbo.SitePrice.CompetitorId = compsite.Id
+						AND dbo.SitePrice.FuelTypeId = ft.Id
+						AND (dbo.SitePrice.SuggestedPrice > 0 OR dbo.SitePrice.OverriddenPrice > 0)
+					)
+			), 0) [LatestPriceYesterday]
 		FROM 
 			CompetitorsWithinDriveTime comp
 			LEFT JOIN dbo.Site compsite ON compsite.Id = comp.CompetitorId AND compsite.IsActive = 1
@@ -228,9 +252,10 @@ BEGIN
 				ELSE caft.DailyPriceYesterday + caft.nOffset
 			END [YesterdayPrice]
 
-			--- DEBUG
-			, LatestPriceToday [DEBUG_LatestPriceToday]
-
+			----- DEBUG
+			--, LatestPriceToday [DEBUG_LatestPriceToday]
+			--, caft.DailyPriceYesterday [DEBUG_caft.DailyPriceYesterday]
+			--, caft.nOffset [DEBUG_caft.nOffset]
 
 		FROM 
 			CompetitorAndFuelsTypes caft
@@ -247,9 +272,12 @@ BEGIN
 			ELSE 0
 		END [Difference]
 
-		,cfp.[DEBUG_LatestPriceToday]
+		---- DEBUG
+		--,'--DEBUG--'
+		--,cfp.[DEBUG_caft.DailyPriceYesterday]
+		--,cfp.[DEBUG_caft.nOffset]
+		--,cfp.DEBUG_LatestPriceToday
 	FROM 
 		CompetitorsFuelsAndPrices cfp
-
 END
 RETURN 0

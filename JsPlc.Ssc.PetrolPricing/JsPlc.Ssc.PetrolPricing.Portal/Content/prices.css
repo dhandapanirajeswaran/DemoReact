@@ -171,6 +171,13 @@ span.jsdiff {
 
 }
 
+#txtOverrideUnleaded,
+#txtOverrideDiesel,
+#txtOverrideSuperUnleaded
+{
+    font-family: monospace;
+}
+
 .txtPrice {
     padding: 1px 2px;
     font-size: 115%;
