@@ -85,13 +85,13 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
         /// <param name="siteId"></param>
         /// <returns></returns>
         [ScriptMethod(UseHttpGet = true)]
-        public async Task<JsonResult> SendEmailToSite(int siteId = 0)
+        public async Task<JsonResult> SendEmailToSite(string siteIdsList)
         {
             List<EmailSendLog> sendLog = null;
-            try
+              try
             {
                 // Email all sites
-                var response = await _serviceFacade.EmailUpdatedPricesSites(siteId);
+                var response = await _serviceFacade.EmailUpdatedPricesSites(siteIdsList);
                 sendLog = response;
                 var sendSummaryString = sendLog.ToSendSummary();
                 return (response == null || !response.Any())

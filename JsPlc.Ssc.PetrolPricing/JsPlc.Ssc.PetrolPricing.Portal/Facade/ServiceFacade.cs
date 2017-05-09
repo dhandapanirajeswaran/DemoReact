@@ -153,10 +153,10 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             return resultViewModel;
         }
 
-        public async Task<List<EmailSendLog>> EmailUpdatedPricesSites(int siteId = 0, DateTime? forDate = null, string apiName = "emailSites")
+        public async Task<List<EmailSendLog>> EmailUpdatedPricesSites(string siteIdsList, DateTime? forDate = null, string apiName = "emailSites")
         {
             string filters = (forDate.HasValue) ? "endTradeDate=" + forDate.Value.ToString("yyyy-MM-dd") + "&" : "";
-            filters = filters + "siteId=" + siteId + "&";
+            filters = filters + "siteIdsList=" + siteIdsList + "&";
             var apiUrl = String.IsNullOrEmpty(filters) ? String.Format("api/{0}/", apiName) : String.Format("api/{0}/?{1}", apiName, filters);
 
             var response = await _client.Value.GetAsync(apiUrl);
