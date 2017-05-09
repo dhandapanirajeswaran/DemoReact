@@ -2,6 +2,8 @@
     function ($, common) {
         "use strict";
 
+        // force build !!
+
         var ui = $('<div class="infotip">testing</div>'),
             isVisible = false,
             element = null,

@@ -291,7 +291,7 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
 		/// <returns></returns>
 		[System.Web.Http.HttpGet]
 		[System.Web.Http.Route("api/emailSites")]
-		public async Task<IHttpActionResult> EmailSites(int siteId = 0, DateTime? endTradeDate = null, string loginUserEmail = "")
+		public async Task<IHttpActionResult> EmailSites(string siteIdsList, DateTime? endTradeDate = null, string loginUserEmail = "")
 		{
 			try
 			{
@@ -303,10 +303,11 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
                 var listOfSites = new List<SitePriceViewModel>();
 
 				var sendLog = new ConcurrentDictionary<int, EmailSendLog>();
-
-				if (siteId != 0)
+                List<string> siteIds = siteIdsList.Split(',').ToList();
+                List<int> siteIdNumsList = siteIds.Select(int.Parse).ToList();
+                if (siteIdNumsList.Count ==1)
 				{
-					var siteVMList = _siteService.GetSitesWithPrices(endTradeDate.Value,"",0,0,"",siteId).ToList();
+                    var siteVMList = _siteService.GetSitesWithPrices(endTradeDate.Value, "", 0, 0, "", siteIdNumsList[0]).ToList();
 
                     if (siteVMList != null) listOfSites.AddRange(siteVMList);
 				}
@@ -314,6 +315,8 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
 				{
 					listOfSites = _siteService.GetSitesWithPrices(endTradeDate.Value).ToList();
 				}
+
+               listOfSites.RemoveAll(x =>  !siteIdNumsList.Contains(x.SiteId));
 
 				if (listOfSites.Any())
 				{

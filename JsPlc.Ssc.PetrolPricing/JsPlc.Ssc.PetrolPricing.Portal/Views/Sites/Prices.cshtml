@@ -297,14 +297,21 @@
 
                         <!-- second row -->
                         <tr>
-                            <th colspan="3">
+                            <th colspan="4">
                                 <!-- EMAIL all Button, only loads popup -->
-                                <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#emailAllSites" data-infotip="Email [b]All[/b] Sites"
-                                        data-bind="visible: !$root.ViewingHistorical() && $root.dataAvailable() == true">
-                                    Email all &nbsp;<i class="fa fa-envelope-o"></i>
-                                </button>
+                                <div >
+                                    <button style="margin-left:0px " type="button" class="btn btn-primary btn-sm" data-bind="disable:!$root.isAnySiteChecked(), visible: !$root.ViewingHistorical() && $root.dataAvailable() == true,click: $root.sendEmailSelectedSites">
+                                        Email &nbsp;<i class="fa fa-envelope-o"></i>
+                                    </button>
+                                    <button type="button" data-bind="visible: !$root.ViewingHistorical() && $root.dataAvailable() == true,click: $root.selectAll" class="btn btn-primary btn-sm" style="margin-left:0px ">
+                                        Select All
+                                    </button>
+                                    <button type="button" data-bind="visible: !$root.ViewingHistorical() && $root.dataAvailable() == true,click: $root.clearAll" class="btn btn-primary btn-sm" style="margin-left:0px ">
+                                        Clear All
+                                    </button>
+                                </div>
                             </th>
-                            <th colspan="4"></th>
+                            <th colspan="3"></th>
                             <th class="col-header-yesterday-unleaded">
                                 <span id="today1">-</span>
                             </th>
@@ -363,24 +370,7 @@
                                 <td class="col-store-no text-center" data-bind="text: StoreNo"></td>
                                 <!-- Email envelope... -->
                                 <td class="col-email">
-                                    <span>
-                                        <!-- ko if: $root.ViewingHistorical()-->
-                                        <i class="fa fa-clock-o" data-infotip="Viewing historical data" style="color: grey;"></i>
-                                        <!-- /ko -->
-                                        <!-- ko if: !$root.ViewingHistorical() -->
-                                        <i class="fa fa-warning text-danger" data-bind="visible: !HasEmails" data-infotip="[i class='fa fa-warning'][/i] Site has no emails."></i>
-                                        <a tabindex="-1" href="#" data-toggle="modal" data-target="#emailSite" data-bind="click: bindEmailTemplate" data-infotip="Email Site">
-                                            <i class="fa fa-envelope-o" data-bind="visible: HasEmails && canSendEmail()"></i>
-                                            <!-- ko if: hasEmailSendLogEntry() -->
-                                            <!-- ko with: EmailSendLogEntry -->
-                                            <i class="fa fa-check" data-bind="visible: IsSuccess, attr: {title:'Email sent..'}" style="color: green"></i>
-                                            <i class="fa fa-warning" data-bind="visible: IsWarning, attr: {title:WarningMessage}" style="color: orange"></i>
-                                            <i class="fa fa-ban" data-bind="visible: IsError, attr: {title:ErrorMessage}" style="color: red"></i>
-                                            <!-- /ko -->
-                                            <!-- /ko -->
-                                        </a>
-                                        <!-- /ko -->
-                                    </span>
+                                    <input type="checkbox" data-bind="disable:!HasEmails, checked: checkedEmail">
                                 </td>
                                 <td class="col-store-name"><a tabindex="-1" data-bind="attr: {'href': ('@Url.Action("Edit", "Sites")/' + SiteId), 'data-infotip': 'Edit Site [b]' + StoreName + '[/b]'}"><span data-bind="text: StoreName"></span> <i class="fa fa-edit"></i></a></td>
                                 <td class="col-store-town"><span data-bind="text: Town"></span></td>
