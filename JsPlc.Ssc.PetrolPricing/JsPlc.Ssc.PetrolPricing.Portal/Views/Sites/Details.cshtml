@@ -157,6 +157,11 @@
                 </dt>
 
                 <dd>
+                    @if (Model.Emails == null || !Model.Emails.Any())
+                    {
+                        <span class="text-danger">&mdash; none &mdash;</span>
+                    }
+
                     @foreach (var email in Model.Emails)
                     {
                     <a href="@("mailto:" + email.EmailAddress)">@email.EmailAddress</a>
