@@ -50,11 +50,11 @@
 
             switch (dock) {
                 case 'above':
-                    top = Math.floor(offset.top + 0.5) - uiHeight - uiMarginHeight - gap;
+                    top = Math.floor(offset.top + 0.5 - uiHeight - uiMarginHeight - gap);
                     left = Math.floor(offset.left + (eleWidth - uiWidth) / 2 - uiMarginWidth);
                     break;
                 case 'below':
-                    top = Math.floor(offset.top + 0.5) + eleHeight + uiMarginHeight + gap,
+                    top = Math.floor(offset.top + 0.5 + eleHeight + uiMarginHeight + gap),
                     left = Math.floor(offset.left + (eleWidth - uiWidth)/2 - uiMarginWidth)
                     break;
             }
