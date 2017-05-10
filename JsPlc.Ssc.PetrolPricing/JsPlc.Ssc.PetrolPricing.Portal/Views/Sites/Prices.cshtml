@@ -1,4 +1,5 @@
 ﻿@using JsPlc.Ssc.PetrolPricing.Models
+@using JsPlc.Ssc.PetrolPricing.Models.Enums
 @model JsPlc.Ssc.PetrolPricing.Models.SiteViewModel
 
 @{
@@ -380,7 +381,7 @@
                                     <input type="checkbox" data-bind="visible:HasEmails, checked: checkedEmail, click: clickCheckedEmail">
                                     <i class="fa fa-warning text-danger" style="opacity: 0.5" data-bind="visible: !HasEmails" data-infotip="Site has [b]No[/b] Email addresses"></i>
                                 </td>
-                                <td class="col-store-name"><a tabindex="-1" data-bind="attr: {'href': ('@Url.Action("Edit", "Sites")/' + SiteId), 'data-infotip': 'Edit Site [b]' + StoreName + '[/b]'}"><span data-bind="text: StoreName"></span> <i class="fa fa-edit"></i></a></td>
+                                <td class="col-store-name"><a tabindex="-1" data-bind="attr: {'href': ('@Url.Action("Edit", "Sites")/?id=' + SiteId + '&calledFromSection=@(SiteSectionType.SitePricing)' ), 'data-infotip': 'Edit Site [b]' + StoreName + '[/b]'}"><span data-bind="text: StoreName"></span> <i class="fa fa-edit"></i></a></td>
                                 <td class="col-store-town"><span data-bind="text: Town"></span></td>
                                 <td class="col-cat-no text-center"><span data-bind="text: CatNo"></span></td>
                                 <td class="col-pfs-no text-center"><span data-bind="text: PfsNo"></span></td>

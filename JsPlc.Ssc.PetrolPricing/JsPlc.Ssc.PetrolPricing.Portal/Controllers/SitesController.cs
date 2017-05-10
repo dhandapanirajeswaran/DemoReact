@@ -293,9 +293,10 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             return View("Prices");
         }
 
-        public ActionResult Edit(int id)
+        public ActionResult Edit(int id, SiteSectionType calledFromSection = SiteSectionType.None)
         {
             var model = _serviceFacade.GetSite(id);
+            model.CalledFromSection = calledFromSection;
 
             var sortedCompetitors = model.Competitors.Where(c => c.IsSainsburysSite == false).OrderBy(c => c.SiteName).ToList();
 
@@ -959,7 +960,12 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             var editSite = _serviceFacade.EditSite(site);
             _serviceFacade.CalcDailyPrices(site.Id);
             if (editSite.ViewModel != null)
-				return RedirectToAction("Index", new { msg = "Site: " + editSite.ViewModel.SiteName + " updated successfully" });
+            {
+                if (site.CalledFromSection == SiteSectionType.SitePricing)
+                    return RedirectToAction("Prices", "Sites");
+                else
+                    return RedirectToAction("Index", new { msg = "Site: " + editSite.ViewModel.SiteName + " updated successfully" });
+            }
 
 			ViewBag.ErrorMessage = editSite.ErrorMessage;
 

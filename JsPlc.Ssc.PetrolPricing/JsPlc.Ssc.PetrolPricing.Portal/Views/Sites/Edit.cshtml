@@ -13,6 +13,8 @@
 {
     @Html.AntiForgeryToken()
 
+    @Html.Hidden("CalledFromSection", Model.CalledFromSection)
+
     <div class="panel panel-default">
         <div class="panel-body">
 
@@ -85,7 +87,7 @@
                             @Html.ListBoxFor(model => model.ExcludeCompetitors, new MultiSelectList(Model.Competitors, "Id", "SiteName"), new { @data_placeholder = "Select Competitors...", @class = "chosen-select", style = "width: 430px;", id = "lstbxexcludecompetitors" })
                         </div>
                     </div>
-                     
+
                 </div>
                 <!-- end of first column -->
 
@@ -142,14 +144,14 @@
 
     foreach (var email in emails)
     {
-        <input type="hidden" name=@("Emails[" + i + "].Id") class="form-control" id=@("Emails_" + i + "_Id")
-               value="@email.Id" />
+                            <input type="hidden" name=@("Emails[" + i + "].Id") class="form-control" id=@("Emails_" + i + "_Id")
+                                   value="@email.Id" />
 
-                                <input type="text" name=@("Emails[" + i + "].EmailAddress") class="form-control" id=@("Emails_" + i + "_EmailAddress")
-                                       value="@email.EmailAddress" />
-                                @Html.ValidationMessage("Emails[" + i + "].EmailAddress", new { @class = "text-danger" })
+                            <input type="text" name=@("Emails[" + i + "].EmailAddress") class="form-control" id=@("Emails_" + i + "_EmailAddress")
+                                   value="@email.EmailAddress" />
+                            @Html.ValidationMessage("Emails[" + i + "].EmailAddress", new { @class = "text-danger" })
         i += 1;
-        <br />
+                            <br />
     }
                             }
                         </div>
@@ -183,7 +185,14 @@
         </div>
         <div class="panel-footer">
             <div class="col-md-6">
-                <a class="btn btn-default" href="@Url.Action("Index", "Sites")"><i class="fa fa-backward"></i> Back to List</a>
+                @if (Model.CalledFromSection == SiteSectionType.None)
+                {
+                    <a class="btn btn-default" href="@Url.Action("Index", "Sites")"><i class="fa fa-backward"></i> Back to List</a>
+                }
+                else if (Model.CalledFromSection == SiteSectionType.SitePricing)
+                {
+                    <a class="btn btn-default" href="@Url.Action("Prices","Sites")"><i class="fa fa-gbp"></i> Back to Site Pricing</a>
+                }
             </div>
             <div class="col-md-6 text-right">
                 <button id="SubmitSiteButton" type="submit" class="btn btn-primary"><i class="fa fa-check"></i> Update</button>
@@ -191,7 +200,7 @@
             <div class="clearfix"></div>
         </div>
     </div>
-}
+                                }
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")

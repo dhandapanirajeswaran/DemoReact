@@ -12,6 +12,8 @@ namespace JsPlc.Ssc.PetrolPricing.Models
 {
     public class SiteViewModel
     {
+        public SiteSectionType CalledFromSection { get; set; }
+
         public int Id { get; set; }
 
         [Required]
@@ -94,6 +96,7 @@ namespace JsPlc.Ssc.PetrolPricing.Models
 
         public SiteViewModel()
         {
+            CalledFromSection = SiteSectionType.None;
             Competitors = new List<SiteViewModel>();
             ExcludeCompetitors = new List<int>();
         }
