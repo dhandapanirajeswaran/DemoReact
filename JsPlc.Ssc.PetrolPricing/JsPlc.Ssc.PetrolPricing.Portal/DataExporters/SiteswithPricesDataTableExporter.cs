@@ -74,16 +74,16 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.DataExporters
                 var priceString = "";
                 var diffString = "";
 
-                if (fuelPrice != null && fuelPrice.TodayPrice.HasValue)
+                if (fuelPrice != null && fuelPrice.AutoPrice.HasValue)
                 {
-                    priceString = FormatPriceDivideBy10(fuelPrice.TodayPrice);
+                    priceString = FormatPriceDivideBy10(fuelPrice.AutoPrice);
                     var diff = 0;
 
-                    if (fuelPrice.OverridePrice.HasValue && fuelPrice.OverridePrice > 0)
+                    if (fuelPrice.OverridePrice.HasValue && fuelPrice.OverridePrice > 0 && fuelPrice.TodayPrice.HasValue && fuelPrice.TodayPrice > 0)
                     {
                         diff = fuelPrice.OverridePrice.Value - fuelPrice.TodayPrice.Value;
                     }
-                    else if (fuelPrice.AutoPrice.HasValue && fuelPrice.AutoPrice > 0)
+                    else if (fuelPrice.AutoPrice.HasValue && fuelPrice.AutoPrice > 0 && fuelPrice.TodayPrice.HasValue && fuelPrice.TodayPrice > 0)
                     {
                         diff = fuelPrice.AutoPrice.Value - fuelPrice.TodayPrice.Value;
                     }
