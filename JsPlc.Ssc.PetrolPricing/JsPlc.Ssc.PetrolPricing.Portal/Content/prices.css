@@ -397,6 +397,11 @@ span.jsdiff {
 .pricing-grid.highlight-no-nearby-grocer-prices .no-nearby-grocer-price {visibility: visible; background-color: #ffdc9a; color: #000;}
 .pricing-grid.highlight-has-nearby-grocer-prices .has-nearby-grocer-price {visibility: visible; background-color: #cfffc8; color: #000;}
 
+.pricing-grid.show-checked-sites .has-checked-email {}
+.pricing-grid.hide-checked-sites .has-checked-email {display: none;}
+.pricing-grid.show-unchecked-sites .no-checked-email {}
+.pricing-grid.hide-unchecked-sites .no-checked-email {display: none;}
+
 #PriceDifferenceBarChart {
     border: 1px solid #999;
     border-radius: 12px;

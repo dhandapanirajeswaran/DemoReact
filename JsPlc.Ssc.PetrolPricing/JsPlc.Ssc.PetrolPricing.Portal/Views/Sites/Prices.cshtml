@@ -297,26 +297,28 @@
 
                         <!-- second row -->
                         <tr>
-                            <th colspan="6">
+                            <th colspan="7">
                                 <!-- EMAIL all Button, only loads popup -->
                                 <div>
                                     <button style="margin-left:0px " type="button" class="btn btn-success btn-sm" data-bind="disable:!$root.isAnySiteChecked(), visible: !$root.ViewingHistorical() && $root.dataAvailable() == true,click: $root.sendEmailSelectedSites">
                                         <i class="fa fa-envelope-o"></i> Email <span class="badge" data-bind="text: $root.checkedEmailCount()" >0</span>
                                     </button>
+                                    &nbsp;
                                     <div class="btn-group">
                                         <button type="button" data-bind="visible: !$root.ViewingHistorical() && $root.dataAvailable() == true,click: $root.selectAll" class="btn btn-primary btn-sm" style="margin-left:0px" data-infotip="Select ALL Sites [b]with[/b] Emails">
                                             <i class="fa fa-check-square-o"></i> Select All
                                         </button>
-                                        <button type="button" data-bind="visible: !$root.ViewingHistorical() && $root.dataAvailable() == true,click: $root.selectSitesByPriceChange" class="btn btn-primary btn-sm" style="margin-left:0px" data-infotip="Select Sites by [b]Price Change[/b] range (Min and Max)">
+                                        <button type="button" data-bind="visible: !$root.ViewingHistorical() && $root.dataAvailable() == true,click: $root.selectSitesByPriceChange" class="btn btn-primary btn-sm" style="margin-left:0px" data-infotip="Select Sites by [b]Price Change[/b]">
                                             <i class="fa fa-area-chart"></i> By Change
                                         </button>
                                     </div>
                                     <button type="button" data-bind="visible: !$root.ViewingHistorical() && $root.dataAvailable() == true,click: $root.clearAll" class="btn btn-primary btn-sm" style="margin-left:0px" data-infotip="Deselect ALL sites">
                                         <i class="fa fa-eraser"></i> Clear All
                                     </button>
+
                                 </div>
                             </th>
-                            <th colspan="1"></th>
+
                             <th class="col-header-yesterday-unleaded">
                                 <span id="today1">-</span>
                             </th>
