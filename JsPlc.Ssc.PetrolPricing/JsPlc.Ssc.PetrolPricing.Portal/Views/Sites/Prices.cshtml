@@ -317,6 +317,16 @@
                                         <i class="fa fa-eraser"></i> Clear All
                                     </button>
 
+                                    <div class="btn-group pull-right">
+                                        <select class="btn btn-default" style="width: 9em; margin-left: 1em;" data-bind="value: $root.siteEmailFilter, event: {change: $root.siteEmailFilterChange}" data-infotip="Filter the Sites by Emails/Selection">
+                                            <option>All Sites</option>
+                                            <option>No Emails</option>
+                                            <option>With Emails</option>
+                                            <option>Selected</option>
+                                            <option>Not Selected</option>
+                                        </select>
+                                        <button type="button" class="btn btn-warning btn-sm" style="padding-bottom: 9px;" data-bind="click: $root.resetSiteEmailFilter" data-infotip="Clear the Site Email Filter"><i class="fa fa-eraser"></i></button>
+                                    </div>
                                 </div>
                             </th>
 
