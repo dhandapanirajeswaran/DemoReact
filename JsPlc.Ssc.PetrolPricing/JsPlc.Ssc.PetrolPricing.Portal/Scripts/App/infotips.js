@@ -38,7 +38,7 @@
                 uiMarginHeight = 26,
                 top,
                 left,
-                gap = 16;
+                gap = 4;
 
             lastArea.left = offset.left;
             lastArea.top = offset.top;
