@@ -7,208 +7,224 @@ BEGIN
 	SET NOCOUNT ON;
 
 ----DEBUG:START
---DECLARE @forDate DATE = '2017-05-05'
---DECLARE @SiteIds VARCHAR(MAX) = '6188'
+--DECLARE @forDate DATE = '2017-05-10'
+--DECLARE @SiteIds VARCHAR(MAX) = '13,6188,1173'
 ----DEBUG:END
 
-	-- constants
-	DECLARE @DriveTime INT = 5
 
-	-- variables
-	DECLARE @forDateNextDay DATE = DATEADD(DAY, 1, @forDate)
+DECLARE @StartOfToday date = @forDate
+DECLARE @StartOfTomorrow DATE = DATEADD(Day, 1, @StartOfToday)
+DECLARE @StartOfYesterday DATE = DATEADD(DAY, -1, @StartOfToday)
 
-	DECLARE @catalistFileExits bit = 
-		CASE WHEN EXISTS(SELECT NULL FROM FileUpload WHERE UploadTypeId = 1 AND UploadDateTime >= @forDate AND UploadDateTime < @forDateNextDay) 
-			THEN 1 
-			ELSE 0 
-		END
-
-	DECLARE @FuelsTypesTV TABLE (FuelTypeId INT, FuelMarkup INT, AliasFuelTypeId INT)
-	INSERT INTO @FuelsTypesTV
-	VALUES 
-		(1, 50, 2),	-- Super Unleaded - NOTE: maps to Unleaded with 5.0p markup
-		(2, 0, 2),	-- Unleaded
-		(6, 0, 6)	-- Diesel
-
-	;WITH SiteFuelsCTE AS (
-		SELECT
-			ids.Id [SiteId],
-			st.CompetitorPriceOffset,
-			st.TrailPriceCompetitorId,
-			st.PfsNo,
-			st.StoreNo,
-			st.CatNo,
-			st.CompetitorPriceOffset * 10 [TrialPrice],
-			ft.FuelTypeId,
-			ft.AliasFuelTypeId,
-			ft.FuelMarkup,
-			st.PriceMatchType
-		FROM
-			dbo.tf_SplitIdsOnComma(@SiteIds) ids
-			INNER JOIN dbo.Site st on st.Id = ids.Id
-			CROSS APPLY @FuelsTypesTV ft
-	)
-	, SitePriceRowCTE AS (
-		SELECT
-			sf.SiteId,
-			sf.FuelTypeId,
-			sf.AliasFuelTypeId,
-			CASE WHEN spd.Id IS NOT NULL 
-				--THEN COALESCE(dbo.fn_ReplaceLastPriceDigit(spd.SuggestedPrice + sf.FuelMarkup, '9'), 0)
-				THEN COALESCE(spd.SuggestedPrice + sf.FuelMarkup, 0)
-				ELSE 0
-			END [AutoPrice],
-			CASE WHEN dpo.Id IS NOT NULL
-				--THEN dbo.fn_ReplaceLastPriceDigit(dpo.OverriddenPrice + sf.TrialPrice, '9')
-				THEN dpo.OverriddenPrice + sf.TrialPrice
-				ELSE 0 
-			END [overridePrice],
-			CASE WHEN spd.Id IS NULL 
-				THEN 0
-				ELSE spd.Markup 
-			END [Markup],
-			CASE WHEN trial.Id IS NULL 
-				THEN 'Unknown' 
-				ELSE trial.Brand + '/' + trial.SiteName 
-			END [CompetitorName],
-			CASE WHEN spd.Id IS NULL
-				THEN 0
-				ELSE spd.IsTrailPrice
-			END [IsTrailPrice],
-			sf.CompetitorPriceOffset [CompetitorPriceOffset],
-			sf.PfsNo [PfsNo],
-			sf.StoreNo [StoreNo],
-			sf.CatNo [CatNo],
-			sf.CompetitorPriceOffset * 10 [TrialPrice],
-			sf.FuelMarkup,
-			sf.PriceMatchType,
-			CASE WHEN spd.Id IS NULL 
-				THEN 0 
-				ELSE 1 
-			END [HasSitePriceData]
-
-		FROM
-			SiteFuelsCTE sf
-
-			-- sitePriceData
-			LEFT JOIN dbo.SitePrice spd on spd.Id = (SELECT MAX(id) FROM dbo.SitePrice WHERE SiteId = sf.SiteId AND (SuggestedPrice > 0 OR OverriddenPrice > 0) and FuelTypeId = sf.FuelTypeId)
-
-			-- dieselPriceOverride (original C# name, its ANY fuel)
-			LEFT JOIN dbo.SitePrice dpo on spd.Id IS NOT NULL AND dpo.Id = (SELECT MIN(id) FROM dbo.SitePrice WHERE SiteId = sf.SiteId AND FuelTypeId = sf.FuelTypeId AND DateOfPrice >= @forDate AND DateOfPrice < @forDateNextDay AND OverriddenPrice > 0)
-
-			-- competitor site
-			LEFT JOIN dbo.Site comp on comp.Id = sf.TrailPriceCompetitorId
-			
-			-- trial price competitor site
-			LEFT JOIN dbo.Site trial on trial.Id = spd.CompetitorId
-	)
-	, TodayPriceCTE AS (
-		SELECT 
-			spr.SiteId,
-			spr.FuelTypeId,
-			CASE WHEN spr.HasSitePriceData = 1
-				THEN spr.AutoPrice
-				ELSE 0
-			END [AutoPrice],
-			CASE WHEN spr.HasSitePriceData = 1
-				THEN spr.overridePrice
-				ELSE 0
-			END [OverridePrice],
-			--dbo.fn_ReplaceLastPriceDigit(
-			--	dbo.fn_CalculateTodayPrice(
-			--		fu.UploadDateTime,
-			--		lp.Id,
-			--		lp.ModalPrice,
-			--		ovp.Id,
-			--		ovp.DateOfPrice,
-			--		ovp.OverriddenPrice,
-			--		tp.Id,
-			--		tp.DateOfPrice,
-			--		tp.ModalPrice
-			--	) + spr.FuelMarkup, '9') [TodayPrice],
-
-			dbo.fn_CalculateTodayPrice(
-				fu.UploadDateTime,
-				lp.Id,
-				lp.ModalPrice,
-				ovp.Id,
-				ovp.DateOfPrice,
-				ovp.OverriddenPrice,
-				tp.Id,
-				tp.DateOfPrice,
-				tp.ModalPrice
-			) + spr.FuelMarkup [TodayPrice],
-
-			CASE WHEN spr.HasSitePriceData = 1
-				THEN spr.Markup
-				ELSE 0
-			END [Markup],
-			spr.CompetitorName,
-			CASE WHEN spr.HasSitePriceData = 1
-				THEN spr.IsTrailPrice
-				ELSE CONVERT(BIT, 0)
-			END [IsTrailPrice],
-			spr.PriceMatchType,
-			spr.CompetitorPriceOffset
-
-			,ovp.OverriddenPrice [ovp_OverriddenPrice]
-
-			---- DEBUG
-			----
-			--,fu.UploadDateTime [debug_fu.UploadDateTime]
-			--,lp.Id [debug_lp.Id]
-			--,lp.ModalPrice [debug_lp.ModalPrice]
-			--,ovp.Id [debug_ovp.Id]
-			--,ovp.DateOfPrice [debug_ovp.DateOfPrice]
-			--,ovp.OverriddenPrice [debug_ovp.OverriddenPrice]
-			--,tp.Id [debug_tp.Id]
-			--,tp.DateOfPrice [debug_tp.DateOfPrice]
-			--,tp.ModalPrice [debug_tp.ModalPrice]
-		FROM 
-			SitePriceRowCTE spr
-
-			-- LatestPrice
-			LEFT JOIN dbo.LatestPrice lp ON lp.Id = (SELECT MIN(Id) FROM dbo.LatestPrice WHERE PfsNo = spr.PfsNo AND StoreNo = spr.StoreNo AND FuelTypeId = spr.FuelTypeId)
-
-			-- OverridePriceIfAny
-			LEFT JOIN dbo.SitePrice ovp ON ovp.Id = (SELECT MAX(Id) FROM dbo.SitePrice WHERE SiteId = spr.SiteId AND FuelTypeId = spr.FuelTypeId AND OverriddenPrice > 0 AND DateOfCalc >= @forDate AND DateOfCalc < @forDateNextDay)
-
-			-- TodayPriceSortByDate
-			LEFT JOIN dbo.DailyPrice tp ON tp.id = (SELECT MAX(Id) FROM dbo.DailyPrice WHERE CatNo = spr.CatNo AND FuelTypeId = spr.FuelTypeId AND ModalPrice > 0)
-
-			-- FileUpload
-			LEFT JOIN dbo.FileUpload fu ON fu.Id = lp.UploadId
-	)
+;With OurSites AS (
+	SELECT
+		st.*
+	FROM
+		dbo.tf_SplitIdsOnComma(@SiteIds) ids
+		INNER JOIN dbo.Site st ON st.Id = ids.Id
+),
+FuelTypes AS (
+	SELECT 1 [FuelTypeId],
+		50 [FuelMarkup], -- mark up of 5.0 per litre
+		2 [AliasFuelTypeId] -- Super unleaded (** NOTE: map Super Unleaded >> Unleaded)
+	UNION ALL
+	SELECT 2 [FuelTypeId],
+		0 [FuelMarkup],
+		2 [AliasFuelTypeId] -- Unleaded
+	UNION ALL
+	SELECT 6 [FuelTypeId],
+		0 [FuelMarkup],
+		6 [AliasFuelTypeId] -- Diesel
+),
+SiteFuels AS (
+	SELECT
+		os.*,
+		ft.AliasFuelTypeId,
+		ft.FuelMarkup,
+		ft.FuelTypeId
+	FROM
+		OurSites os
+		CROSS APPLY FuelTypes ft
+),
+latestPrices AS (
 	SELECT 
-		tp.SiteId [SiteId],
-		tp.FuelTypeId [FuelTypeId],
-		--CASE WHEN @catalistFileExits = 1
-		--	THEN tp.AutoPrice
-		--	ELSE 0
-		--END [AutoPrice],
-
-		CASE WHEN tp.OverridePrice > 0
-			THEN tp.OverridePrice
-			ELSE tp.AutoPrice
-		END [AutoPrice],
-
-		CASE WHEN ovp_OverriddenPrice IS NULL -- fix for invisible Override Prices for Match Competitor sites...
-			THEN tp.overridePrice
-			ELSE ovp_OverriddenPrice
-		END [OverridePrice],
-
-		--CASE WHEN tp.OverridePrice > 0
-		--	THEN tp.OverridePrice
-		--	ELSE tp.TodayPrice
-		--END [TodayPrice],
-
-		tp.TodayPrice [TodayPrice],
-
-		tp.Markup [Markup],
-		tp.CompetitorName [CompetitorName],
-		tp.IsTrailPrice [IsTrailPrice],
-		tp.CompetitorPriceOffset [CompetitorPriceOffset],
-		tp.PriceMatchType [PriceMatchType]
+		lp.ModalPrice,
+		lp.FuelTypeId,
+		lp.StoreNo,
+		lp.PfsNo,
+		st.Id [SiteId]
 	FROM 
-		TodayPriceCTE tp
+		SiteFuels st
+		INNER JOIN dbo.LatestPrice lp ON lp.PfsNo = st.PfsNo
+		INNER JOIN dbo.FileUpload fu ON fu.Id = lp.UploadId
+	WHERE
+		fu.UploadDateTime >= @StartOfToday AND fu.UploadDateTime < @StartOfTomorrow
+		AND 
+		lp.FuelTypeId = st.AliasFuelTypeId
+),
+Catalist AS (
+	SELECT
+		dp.*,
+		st.Id [SiteId],
+		fu.UploadDateTime
+	FROM 
+		SiteFuels st
+		INNER JOIN dbo.DailyPrice dp ON st.CatNo = dp.CatNo
+		INNER JOIN dbo.FileUpload fu ON fu.Id = dp.DailyUploadId
+	WHERE
+		fu.UploadDateTime >= @StartOfToday AND fu.UploadDateTime < @StartOfTomorrow
+		AND
+		dp.FuelTypeId = st.FuelTypeId
+)
+,
+CalculatedTemp AS (
+	-- ============= CASE 1: LATEST PRICE FOR "TODAY"
+	SELECT
+		lp.ModalPrice [TodayPrice],		-- latestprice
+		lp.FuelTypeId,
+		lp.SiteId,
+		'3000-01-01' [DateOfCalc], -- Latest Price ALWAYS at the top !
+		CONVERT(BIT, 0) [IsTrailPrice],
+		'latest' [debug_source]
+	FROM 
+		latestPrices lp
+
+	UNION ALL
+	-- ============= CASE 2: CATALYST PRICE FOR "TODAY"
+	SELECT 
+		cat.ModalPrice [TodayPrice],
+		cat.FuelTypeId,
+		cat.SiteId,
+		cat.UploadDateTime [DateOfCalc],
+		CONVERT(BIT, 0) [IsTrailPrice],
+		'catalyst' [debug_source]
+	FROM
+		Catalist cat
+
+	UNION ALL
+	-- ============= CASE 3: YESTERDAY'S OVERRIDE FOR "TODAY" COLUMN
+	SELECT
+		sp.OverriddenPrice [TodayPrice],
+		sp.FuelTypeId,
+		sp.SiteId,
+		DATEADD(SECOND, 1, CONVERT(DATETIME, @StartOfToday)) [DateOfCalc],
+		sp.IsTrailPrice,
+		'Override' [debug_source]
+	FROM
+		SiteFuels st
+		INNER JOIN dbo.SitePrice sp ON sp.SiteId = st.Id
+	WHERE
+		sp.FuelTypeId = st.FuelTypeId
+		AND
+		sp.OverriddenPrice > 0 -- search for Override (if any)
+		AND
+		sp.DateOfCalc < @StartOfToday -- any record BEFORE Today
+
+	UNION ALL
+	-- ============= CASE 3: YESTERDAY'S SUGGESTED FOR "TODAY" COLUMN
+	SELECT
+		sp.SuggestedPrice [TodayPrice],
+		sp.FuelTypeId,
+		sp.SiteId,
+		--sp.DateOfCalc,
+		@StartOfToday [DateOfCalc],
+		sp.IsTrailPrice,
+		'Suggested' [debug_source]
+	FROM
+		SiteFuels st 
+		INNER JOIN dbo.SitePrice sp ON sp.SiteId = st.Id
+	WHERE
+		sp.FuelTypeId = st.FuelTypeId
+		AND
+		sp.SuggestedPrice > 0	-- search for Suggested (if any)
+		AND
+		sp.DateOfCalc < @StartOfToday -- any record BEFORE Today
+),
+
+IndexedCalculated AS (
+	SELECT ct.*, 
+		ROW_NUMBER() OVER (PARTITION BY SiteId, FuelTypeId ORDER BY DateOfCalc DESC) [RowIndex]
+	FROM
+		CalculatedTemp ct
+),
+TomorrowPrices AS (
+	SELECT
+		sp.SuggestedPrice+sp.Markup [TodaySuggestedPrice],
+		sp.OverriddenPrice [TodayOverridePrice],
+		sp.FuelTypeId,
+		sp.SiteId,
+		sp.CompetitorId,
+		sp.Markup
+	FROM
+		SiteFuels st 
+		INNER JOIN dbo.SitePrice sp ON sp.SiteId = st.Id
+	WHERE
+		sp.FuelTypeId = st.FuelTypeId
+		AND
+		sp.SuggestedPrice > 0	-- search for Suggested (if any)
+		AND
+		sp.DateOfCalc >= @StartOfToday AND sp.DateOfCalc < @StartOfTomorrow -- Today
+),
+
+Calculated AS (
+	SELECT 
+		st.Id [SiteId],
+		st.FuelTypeId,
+		COALESCE(tp.TodaySuggestedPrice, 0) [AutoPrice],
+		COALESCE(tp.TodayOverridePrice, 0) [OverridePrice],
+		ic.TodayPrice [TodayPrice],
+		COALESCE(tp.Markup, 0) [Markup],
+
+		CASE WHEN st.TrailPriceCompetitorId IS NOT NULL
+			THEN COALESCE(matchcomp.Brand + '/' + matchcomp.SiteName, '') -- Match Competitor Price Match ?
+			ELSE COALESCE(compsite.Brand + '/' + compsite.SiteName, '') -- Else best Competitor
+		END [CompetitorName],
+		ic.IsTrailPrice [IsTrailPrice],
+		st.CompetitorPriceOffset [CompetitorPriceOffset],
+		st.PriceMatchType [PriceMatchType]
+	FROM
+		SiteFuels st
+		LEFT JOIN dbo.Site matchcomp ON matchcomp.Id = st.TrailPriceCompetitorId
+		LEFT JOIN IndexedCalculated ic ON ic.SiteId = st.Id AND ic.FuelTypeId = st.FuelTypeId AND ic.RowIndex = 1
+		LEFT JOIN TomorrowPrices tp ON tp.SiteId = st.Id AND tp.FuelTypeId = st.FuelTypeId
+		LEFT JOIN dbo.Site compsite ON compsite.Id = tp.CompetitorId
+),
+
+AllFuelPrices AS (
+	SELECT * 
+	FROM Calculated cal
+	WHERE cal.FuelTypeId != 1
+	UNION ALL
+	SELECT
+		cal.SiteId,
+		1 [FuelTypeId], -- Super Unleaded
+		super.AutoPrice,
+		super.OverridePrice,
+		cal.TodayPrice + 50 [TodayPrice], -- add 5.0 for Super Unleaded
+		super.Markup [Markup],
+		super.CompetitorName,
+		cal.IsTrailPrice,
+		cal.CompetitorPriceOffset,
+		cal.PriceMatchType
+	 FROM Calculated cal 
+		INNER JOIN Calculated super ON super.SiteId = cal.SiteId AND super.FuelTypeId = 1 -- SUPER UNLEADED fuel
+	 WHERE cal.FuelTypeId = 2
+)
+SELECT
+	afp.SiteId [SiteId],
+	afp.FuelTypeId [FuelTypeId],
+	afp.AutoPrice [AutoPrice], -- used for Tomorrow
+	afp.OverridePrice [OverridePrice], -- used for Tomorrow
+	afp.TodayPrice [TodayPrice], -- Today's
+	afp.Markup [Markup],
+	afp.CompetitorName [CompetitorName],
+	afp.IsTrailPrice [IsTrailPrice],
+	afp.CompetitorPriceOffset [CompetitorPriceOffset],
+	afp.PriceMatchType [PriceMatchType]
+FROM 
+	AllFuelPrices afp
+ORDER BY 
+	SiteId, FuelTypeId
+
+
 END
