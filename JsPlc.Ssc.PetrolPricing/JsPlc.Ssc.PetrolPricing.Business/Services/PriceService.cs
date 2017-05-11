@@ -170,13 +170,22 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 				{
 					cheapestPrice.IsTrailPrice = true;
 					cheapestCompetitor = new KeyValuePair<CheapestCompetitor, int>(foundCompetitorPrices, 0);
-                    minPriceFound = foundCompetitorPrices.DailyPrice.ModalPrice;
+                    if (foundCompetitorPrices.DailyPrice != null)
+                    {
+                        minPriceFound = foundCompetitorPrices.DailyPrice.ModalPrice;
+                    }
+                    else
+                    {
+                        minPriceFound = foundCompetitorPrices.LatestCompPrice.ModalPrice;
+                    }
 				}
 				else
 				{
                     cheapestPrice.IsTrailPrice = true;
                     minPriceFound = 0;
 				}
+
+                 cheapestPrice.IsTrailPrice = minPriceFound > 0;
 			}
          
 			//when inheritin competitor price, if price wasn't found to this fuel type - find normal suggested price
@@ -205,8 +214,17 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 				
 				foreach (var currentCompetitor in allCompetitors)
 				{
-					var priceWithMarkup = currentCompetitor.Key.DailyPrice.ModalPrice + currentCompetitor.Value * 10;
+                    var priceWithMarkup = 0;
+                    if (currentCompetitor.Key.DailyPrice != null)
+                    {
+                        priceWithMarkup = currentCompetitor.Key.DailyPrice.ModalPrice + currentCompetitor.Value * 10;
+                    }
+                    else
+                    {
+                        priceWithMarkup = currentCompetitor.Key.LatestCompPrice.ModalPrice + currentCompetitor.Value * 10;
+                    }
 
+					
 					if (minPriceFound > priceWithMarkup)
 					{
 						cheapestCompetitor = currentCompetitor;
@@ -223,7 +241,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
                 var markup = site.CompetitorPriceOffsetNew;
                 cheapestPrice.DateOfPrice = calcTaskData.ForDate;
                 cheapestPrice.UploadId = calcTaskData.FileUpload.Id; // If we can provide traceability to calc file, then why not
-                cheapestPrice.SuggestedPrice = minPriceFound + (int)markup * 10; // since modalPrice is held in pence*10 (Catalist format)
+                cheapestPrice.SuggestedPrice =   minPriceFound + (int)markup * 10; // since modalPrice is held in pence*10 (Catalist format)
 		        cheapestPrice.CompetitorId = site.TrailPriceCompetitorId;
                 cheapestPrice.Markup = (int)markup;
 		    }
@@ -337,18 +355,40 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 			// Method call
 			var pricesForFuelByCompetitors = db.GetDailyPricesForFuelByCompetitors(competitorCatNos, fuelId, usingPricesforDate);
 
-			if (!pricesForFuelByCompetitors.Any())
-				return null;
+			if (pricesForFuelByCompetitors.Any())
+            {
+                // Sort asc and pick first (i.e. cheapest)
+                var cheapestPrice = pricesForFuelByCompetitors.OrderBy(x => x.ModalPrice).First();
+                var competitor = competitors.Where(x => x.Competitor.CatNo.HasValue).First(x => x.Competitor.CatNo == cheapestPrice.CatNo);
 
-			// Sort asc and pick first (i.e. cheapest)
-			var cheapestPrice = pricesForFuelByCompetitors.OrderBy(x => x.ModalPrice).First();
-			var competitor = competitors.Where(x => x.Competitor.CatNo.HasValue).First(x => x.Competitor.CatNo == cheapestPrice.CatNo);
+                return new CheapestCompetitor
+                {
+                    CompetitorWithDriveTime = competitor,
+                    DailyPrice = cheapestPrice
+                };
+            }
+            else
+            {
+                var latestCompPrice = db.GetLatestCompetitorPricesForFuel(competitorCatNos, fuelId, usingPricesforDate);
+                if (latestCompPrice.Any())
+                {
+                    // Sort asc and pick first (i.e. cheapest)
+                    var cheapestPriceFromCompPrice = latestCompPrice.OrderBy(x => x.ModalPrice).First();
+                    var competitor = competitors.Where(x => x.Competitor.CatNo.HasValue).First(x => x.Competitor.CatNo == cheapestPriceFromCompPrice.CatNo);
 
-			return new CheapestCompetitor
-			{
-				CompetitorWithDriveTime = competitor,
-				DailyPrice = cheapestPrice
-			};
+                    return new CheapestCompetitor
+                    {
+                        CompetitorWithDriveTime = competitor,
+                        LatestCompPrice = cheapestPriceFromCompPrice
+                    };
+                }
+
+
+
+            }
+
+            return null;
+			
 		}
 
 		private void calculatePrices(PriceCalculationTaskData calcTaskData)

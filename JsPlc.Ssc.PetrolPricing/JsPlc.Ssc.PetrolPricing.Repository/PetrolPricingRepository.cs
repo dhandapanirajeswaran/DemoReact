@@ -1298,6 +1298,48 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             return result;
         }
 
+
+        public IEnumerable<LatestCompPrice> GetLatestCompetitorPricesForFuel(IEnumerable<int> competitorCatNos, int fuelId,
+           DateTime usingPricesforDate)
+        {
+
+            Dictionary<string, LatestCompPrice> latestCompPrices =new Dictionary<string, LatestCompPrice>();
+
+            var fileUpload =
+                _context.FileUploads.Where(
+                    x =>
+                        x.UploadDateTime.Month == usingPricesforDate.Month &&
+                        x.UploadDateTime.Day == usingPricesforDate.Day &&
+                        x.UploadDateTime.Year == usingPricesforDate.Year && x.UploadTypeId==4).OrderByDescending(x => x.Id).ToList();
+            if (fileUpload.Count > 0)
+            {
+                int fileUploadId = fileUpload[0].Id;
+               
+                var LatestCP=_context.LatestCompPrices.ToList();
+                latestCompPrices = LatestCP.Where(
+                        x =>
+                            x.UploadId == fileUploadId)
+                    .ToDictionary(k => string.Format("{0}_{1}", k.FuelTypeId, k.CatNo), v => v);
+                
+               
+              
+            }
+
+
+            List<LatestCompPrice> result = new List<LatestCompPrice>();
+
+            foreach (var catNo in competitorCatNos)
+            {
+                var key = string.Format("{0}_{1}", fuelId, catNo);
+                if (latestCompPrices.ContainsKey(key))
+                {
+                    result.Add(latestCompPrices[key]);
+                }
+            }
+
+            return result;
+        }
+
         public Site GetSite(int id)
         {
             return _context.Sites.Include(s => s.Emails).FirstOrDefault(q => q.Id == id);
