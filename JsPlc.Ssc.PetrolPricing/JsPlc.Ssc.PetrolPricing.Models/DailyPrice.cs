@@ -30,6 +30,7 @@ namespace JsPlc.Ssc.PetrolPricing.Models
     {
         public SiteToCompetitor CompetitorWithDriveTime { get; set; }
         public DailyPrice DailyPrice { get; set; } // Specific product price
+        public LatestCompPrice LatestCompPrice { get; set; } // Specific product price
     }
 
 }

@@ -112,6 +112,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 		IQueryable<Site> GetSitesIncludePrices(DateTime? forDate = null);
 
 		IEnumerable<DailyPrice> GetDailyPricesForFuelByCompetitors(IEnumerable<int> competitorCatNos, int fuelId, DateTime usingPricesForDate);
+        IEnumerable<LatestCompPrice> GetLatestCompetitorPricesForFuel(IEnumerable<int> competitorCatNos, int fuelId, DateTime usingPricesforDate);
 
 		void UpdateImportProcessStatus(int statusId, FileUpload fileUpload);
 
