@@ -8,13 +8,19 @@ BEGIN
 
 ----DEBUG:START
 --DECLARE @forDate DATE = '2017-05-10'
---DECLARE @SiteIds VARCHAR(MAX) = '13,6188,1173'
+--DECLARE @SiteIds VARCHAR(MAX) = '6188,9'
 ----DEBUG:END
 
 
 DECLARE @StartOfToday date = @forDate
 DECLARE @StartOfTomorrow DATE = DATEADD(Day, 1, @StartOfToday)
 DECLARE @StartOfYesterday DATE = DATEADD(DAY, -1, @StartOfToday)
+
+DECLARE @Markup_For_Super_Unleaded INT = 50
+
+DECLARE @FuelType_SUPER_UNLEADED INT  = 1
+DECLARE @FuelType_UNLEADED INT  = 2
+DECLARE @FuelType_DIESEL INT  = 6
 
 ;With OurSites AS (
 	SELECT
@@ -24,23 +30,15 @@ DECLARE @StartOfYesterday DATE = DATEADD(DAY, -1, @StartOfToday)
 		INNER JOIN dbo.Site st ON st.Id = ids.Id
 ),
 FuelTypes AS (
-	SELECT 1 [FuelTypeId],
-		50 [FuelMarkup], -- mark up of 5.0 per litre
-		2 [AliasFuelTypeId] -- Super unleaded (** NOTE: map Super Unleaded >> Unleaded)
+	SELECT @FuelType_SUPER_UNLEADED [FuelTypeId]
 	UNION ALL
-	SELECT 2 [FuelTypeId],
-		0 [FuelMarkup],
-		2 [AliasFuelTypeId] -- Unleaded
+	SELECT @FuelType_UNLEADED [FuelTypeId]
 	UNION ALL
-	SELECT 6 [FuelTypeId],
-		0 [FuelMarkup],
-		6 [AliasFuelTypeId] -- Diesel
+	SELECT @FuelType_DIESEL [FuelTypeId]
 ),
 SiteFuels AS (
 	SELECT
 		os.*,
-		ft.AliasFuelTypeId,
-		ft.FuelMarkup,
 		ft.FuelTypeId
 	FROM
 		OurSites os
@@ -60,7 +58,7 @@ latestPrices AS (
 	WHERE
 		fu.UploadDateTime >= @StartOfToday AND fu.UploadDateTime < @StartOfTomorrow
 		AND 
-		lp.FuelTypeId = st.AliasFuelTypeId
+		lp.FuelTypeId = st.FuelTypeId
 ),
 Catalist AS (
 	SELECT
@@ -85,7 +83,7 @@ CalculatedTemp AS (
 		lp.SiteId,
 		'3000-01-01' [DateOfCalc], -- Latest Price ALWAYS at the top !
 		CONVERT(BIT, 0) [IsTrailPrice],
-		'latest' [debug_source]
+		'latest' [PriceSource]
 	FROM 
 		latestPrices lp
 
@@ -97,7 +95,7 @@ CalculatedTemp AS (
 		cat.SiteId,
 		cat.UploadDateTime [DateOfCalc],
 		CONVERT(BIT, 0) [IsTrailPrice],
-		'catalyst' [debug_source]
+		'catalyst' [PriceSource]
 	FROM
 		Catalist cat
 
@@ -109,7 +107,7 @@ CalculatedTemp AS (
 		sp.SiteId,
 		DATEADD(SECOND, 1, CONVERT(DATETIME, @StartOfToday)) [DateOfCalc],
 		sp.IsTrailPrice,
-		'Override' [debug_source]
+		'Override' [PriceSource]
 	FROM
 		SiteFuels st
 		INNER JOIN dbo.SitePrice sp ON sp.SiteId = st.Id
@@ -129,7 +127,7 @@ CalculatedTemp AS (
 		--sp.DateOfCalc,
 		@StartOfToday [DateOfCalc],
 		sp.IsTrailPrice,
-		'Suggested' [debug_source]
+		'Suggested' [PriceSource]
 	FROM
 		SiteFuels st 
 		INNER JOIN dbo.SitePrice sp ON sp.SiteId = st.Id
@@ -181,7 +179,8 @@ Calculated AS (
 		END [CompetitorName],
 		ic.IsTrailPrice [IsTrailPrice],
 		st.CompetitorPriceOffset [CompetitorPriceOffset],
-		st.PriceMatchType [PriceMatchType]
+		st.PriceMatchType [PriceMatchType],
+		ic.PriceSource
 	FROM
 		SiteFuels st
 		LEFT JOIN dbo.Site matchcomp ON matchcomp.Id = st.TrailPriceCompetitorId
@@ -191,24 +190,63 @@ Calculated AS (
 ),
 
 AllFuelPrices AS (
-	SELECT * 
-	FROM Calculated cal
-	WHERE cal.FuelTypeId != 1
-	UNION ALL
+	-- UNLEADED and DIESEL
 	SELECT
 		cal.SiteId,
-		1 [FuelTypeId], -- Super Unleaded
-		super.AutoPrice,
-		super.OverridePrice,
-		cal.TodayPrice + 50 [TodayPrice], -- add 5.0 for Super Unleaded
-		super.Markup [Markup],
-		super.CompetitorName,
+		cal.FuelTypeId,
+		cal.AutoPrice,
+		cal.OverridePrice,
+		cal.TodayPrice,
+		cal.Markup,
+		cal.CompetitorName,
 		cal.IsTrailPrice,
 		cal.CompetitorPriceOffset,
-		cal.PriceMatchType
-	 FROM Calculated cal 
-		INNER JOIN Calculated super ON super.SiteId = cal.SiteId AND super.FuelTypeId = 1 -- SUPER UNLEADED fuel
-	 WHERE cal.FuelTypeId = 2
+		cal.PriceMatchType,
+		cal.PriceSource
+	FROM 
+		Calculated cal
+	WHERE
+		(cal.FuelTypeId = @FuelType_UNLEADED OR cal.FuelTypeId = @FuelType_DIESEL)
+
+	UNION ALL
+	-- SUPER UNLEADED when PriceSource = "Latest"
+	SELECT
+		cal.SiteId,
+		cal.FuelTypeId,
+		cal.AutoPrice,
+		cal.OverridePrice,
+		cal.TodayPrice,
+		cal.Markup,
+		cal.CompetitorName,
+		cal.IsTrailPrice,
+		cal.CompetitorPriceOffset,
+		cal.PriceMatchType,
+		cal.PriceSource
+	FROM 
+		Calculated cal
+	WHERE
+		(cal.FuelTypeId = @FuelType_SUPER_UNLEADED AND cal.PriceSource = 'latest') -- Super Unleaded
+	UNION ALL
+	-- SUPER UNLEADED when Price Source is NOT 'latest'
+	SELECT
+		cal.SiteId,
+		@FuelType_SUPER_UNLEADED [FuelTypeId],
+		cal.AutoPrice,
+		cal.OverridePrice,
+		cal.TodayPrice + @Markup_For_Super_Unleaded, -- markup Super Unleaded
+		cal.Markup,
+		cal.CompetitorName,
+		cal.IsTrailPrice,
+		cal.CompetitorPriceOffset,
+		cal.PriceMatchType,
+		cal.PriceSource
+	FROM 
+		Calculated cal
+	WHERE
+		cal.FuelTypeId = @FuelType_UNLEADED
+		AND
+		cal.PriceSource != 'latest' 
+
 )
 SELECT
 	afp.SiteId [SiteId],
@@ -220,11 +258,10 @@ SELECT
 	afp.CompetitorName [CompetitorName],
 	afp.IsTrailPrice [IsTrailPrice],
 	afp.CompetitorPriceOffset [CompetitorPriceOffset],
-	afp.PriceMatchType [PriceMatchType]
+	afp.PriceMatchType [PriceMatchType],
+	afp.PriceSource
 FROM 
 	AllFuelPrices afp
 ORDER BY 
 	SiteId, FuelTypeId
-
-
 END
