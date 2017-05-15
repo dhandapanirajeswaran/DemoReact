@@ -98,7 +98,7 @@
                     <!-- /ko -->
                     <!-- ko if: hasCompetitors() -->
                     <!-- ko foreach: competitors -->
-                    <tr class="competitor-row hoverable" data-bind="attr:{id:'CompetitorSiteRow_' + SiteId}, style: {background : $parent.FuelPricesToDisplay[0].FuelPrice.CompetitorName == Brand + '/' + StoreName  && $parent.FuelPricesToDisplay[0].FuelPrice.AutoPrice >0 ?  'yellow' : 'lightgray'}">
+                    <tr class="competitor-row hoverable" data-bind="attr:{id:'CompetitorSiteRow_' + SiteId},style: {background :'lightgray'}">
                         <td class="num1"><span data-bind="text: Brand"></span></td>
                         <td class="num2">
                             <button type="button" class="btn btn-default btn-xs triggerEditSiteNote" data-bind="attr:{id: 'EditSiteNoteButton_' + SiteId}" data-infotip="Create or edit note"><i class="fa fa-pencil"></i></button>
@@ -112,17 +112,21 @@
                         <!-- ko foreach: FuelPricesToDisplay -->
                         <!-- ko if: siteSupportsFuel -->
                         <td style="border-left: 2px solid #666" class="text-center">
+
                             <span data-bind="html: FuelPrice.ForecourtYestPriceHtml(), attr: {'data-infotip': FuelPrice.YestPriceInfotip()}"></span>
+
                         </td>
                         <td style="border-left: 1px solid #ccc;">
-                            <span data-bind="html: FuelPrice.ForecourtTodayPriceHtml(), attr: {'data-infotip': FuelPrice.CompTodayPriceInfotip()}"></span>
+                            <div data-bind="style: {background :$parents[1].FuelPricesToDisplay[0].FuelPrice.CompetitorName == $parents[0].Brand + '/' + $parents[0].StoreName  && $parents[1].FuelPricesToDisplay[0].FuelPrice.AutoPrice >0 && FuelPrice.FuelTypeId==2 ?  'yellow' : $parents[1].FuelPricesToDisplay[1].FuelPrice.CompetitorName == $parents[0].Brand + '/' + $parents[0].StoreName  && $parents[1].FuelPricesToDisplay[1].FuelPrice.AutoPrice >0 && FuelPrice.FuelTypeId==6? 'aqua': $parents[1].FuelPricesToDisplay[2].FuelPrice.CompetitorName == $parents[0].Brand + '/' + $parents[0].StoreName  && $parents[1].FuelPricesToDisplay[2].FuelPrice.AutoPrice >0 && FuelPrice.FuelTypeId==1? 'orchid ' : 'lightgray'}">
+                                <span data-bind="html: FuelPrice.ForecourtTodayPriceHtml(), attr: {'data-infotip': FuelPrice.CompTodayPriceInfotip()}"></span>
 
-                            <i data-bind="attr: {class: (FuelPrice.Difference ==0 || FuelPrice.Difference == '-' ) ? 'fa fa-arrow-right' : (FuelPrice.Difference <= 0.1) ? 'fa fa-arrow-down': 'fa fa-arrow-up', style: (FuelPrice.Difference == 0 || FuelPrice.Difference == '-') ? 'color: grey' : (FuelPrice.Difference <= 0.1) ? 'color: red': 'color: green', }"></i>
-                            &nbsp;<span data-bind="text: (FuelPrice.Difference == 0 || FuelPrice.Difference == '-') ? '-' : (FuelPrice.Difference/10)"></span>
-
+                                <i data-bind="attr: {class: (FuelPrice.Difference ==0 || FuelPrice.Difference == '-' ) ? 'fa fa-arrow-right' : (FuelPrice.Difference <= 0.1) ? 'fa fa-arrow-down': 'fa fa-arrow-up', style: (FuelPrice.Difference == 0 || FuelPrice.Difference == '-') ? 'color: grey' : (FuelPrice.Difference <= 0.1) ? 'color: red': 'color: green', }"></i>
+                                &nbsp;<span data-bind="text: (FuelPrice.Difference == 0 || FuelPrice.Difference == '-') ? '-' : (FuelPrice.Difference/10)"></span>
+                            </div>
 
                         </td>
                         <td style="border-left: 1px solid #ccc;" class="text-center" data-bind="class: (FuelPrice.FuelTypeId==2 ? 'diesel-fuel' : '')">
+
 
                             <div data-bind="if: FuelPrice.FuelTypeId==2">
                                 <div data-bind="if: ($parents[1].FuelPricesToDisplay[0].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1)  != 'NaN' ">
@@ -133,6 +137,7 @@
                                     <span>n/a</span>
                                 </div>
                             </div>
+
 
                             <div data-bind="if: FuelPrice.FuelTypeId==6" class="text-center">
                                 <div data-bind="if: ($parents[1].FuelPricesToDisplay[1].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1)  != 'NaN' ">

@@ -1,4 +1,5 @@
-﻿CREATE PROCEDURE [dbo].[spCalculateSitePricesForDate] (
+﻿
+CREATE PROCEDURE [dbo].[spCalculateSitePricesForDate] (
 	@forDate DATE,
 	@SiteIds VARCHAR(MAX)
 )
@@ -6,10 +7,10 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-----DEBUG:START
---DECLARE @forDate DATE = '2017-05-10'
---DECLARE @SiteIds VARCHAR(MAX) = '6188,9'
-----DEBUG:END
+--DEBUG:START
+--DECLARE @forDate DATE = '2017-05-15'
+--DECLARE @SiteIds VARCHAR(MAX) = '490'
+--DEBUG:END
 
 
 DECLARE @StartOfToday date = @forDate
@@ -44,6 +45,7 @@ SiteFuels AS (
 		OurSites os
 		CROSS APPLY FuelTypes ft
 ),
+
 latestPrices AS (
 	SELECT 
 		lp.ModalPrice,
@@ -60,6 +62,7 @@ latestPrices AS (
 		AND 
 		lp.FuelTypeId = st.FuelTypeId
 ),
+
 Catalist AS (
 	SELECT
 		dp.*,
@@ -139,6 +142,7 @@ CalculatedTemp AS (
 		sp.DateOfCalc < @StartOfToday -- any record BEFORE Today
 ),
 
+
 IndexedCalculated AS (
 	SELECT ct.*, 
 		ROW_NUMBER() OVER (PARTITION BY SiteId, FuelTypeId ORDER BY DateOfCalc DESC) [RowIndex]
@@ -189,6 +193,7 @@ Calculated AS (
 		LEFT JOIN dbo.Site compsite ON compsite.Id = tp.CompetitorId
 ),
 
+
 AllFuelPrices AS (
 	-- UNLEADED and DIESEL
 	SELECT
@@ -229,19 +234,21 @@ AllFuelPrices AS (
 	UNION ALL
 	-- SUPER UNLEADED when Price Source is NOT 'latest'
 	SELECT
-		cal.SiteId,
+		super.SiteId,
 		@FuelType_SUPER_UNLEADED [FuelTypeId],
-		cal.AutoPrice,
-		cal.OverridePrice,
+		super.AutoPrice,
+		super.OverridePrice,
 		cal.TodayPrice + @Markup_For_Super_Unleaded, -- markup Super Unleaded
-		cal.Markup,
-		cal.CompetitorName,
-		cal.IsTrailPrice,
-		cal.CompetitorPriceOffset,
-		cal.PriceMatchType,
-		cal.PriceSource
+		super.Markup,
+		super.CompetitorName,
+		super.IsTrailPrice,
+		super.CompetitorPriceOffset,
+		super.PriceMatchType,
+		super.PriceSource
 	FROM 
 		Calculated cal
+	    INNER JOIN Calculated super ON super.SiteId=cal.SiteId and super.FuelTypeId=@FuelType_SUPER_UNLEADED
+	
 	WHERE
 		cal.FuelTypeId = @FuelType_UNLEADED
 		AND
