@@ -9,6 +9,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 {
     public interface ISystemSettingsService
     {
-        SystemSettings GetSettings();
+        SystemSettings GetSystemSettings();
+        SystemSettings UpdateSystemSettings(SystemSettings model);
     }
 }

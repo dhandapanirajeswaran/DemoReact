@@ -93,6 +93,8 @@
     <Compile Include="Diagnostics\DurationTotaliser.cs" />
     <Compile Include="Enums.cs" />
     <Compile Include="Exceptions.cs" />
+    <Compile Include="ExtensionMethods\NumberExtensions.cs" />
+    <Compile Include="ExtensionMethods\StringExtensions.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="Interfaces\IAutoMapperInitialise.cs" />
     <Compile Include="Interfaces\IDataFileReader.cs" />

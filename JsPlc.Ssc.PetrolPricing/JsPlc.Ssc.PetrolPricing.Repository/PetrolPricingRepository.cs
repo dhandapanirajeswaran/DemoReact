@@ -737,16 +737,6 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                 site.FuelPrices.Add(unleaded);
                 site.FuelPrices.Add(diesel);
 
-
-                var hasUnleadedAutoPrice = unleaded.AutoPrice.HasValue && unleaded.AutoPrice != 0;
-                var hasUnleadedTodayPrice = unleaded.TodayPrice.HasValue && unleaded.TodayPrice != 0;
-
-
-                superUnleaded.AutoPrice = hasUnleadedAutoPrice ? unleaded.AutoPrice.Value + 50 : (int?)null;
-                superUnleaded.TodayPrice = hasUnleadedTodayPrice ? unleaded.TodayPrice.Value + 50 : (int?)null;
-                superUnleaded.Difference = hasUnleadedAutoPrice && hasUnleadedTodayPrice
-                    ? unleaded.TodayPrice - unleaded.AutoPrice
-                    : null;
             }
         }
 
@@ -3452,6 +3442,7 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
                 var reportsPermissions = (ReportsUserPermissions)permissions.ReportsUserPermissions;
                 var userManagementPermissions = (UsersManagementUserPermissions)permissions.UsersManagementUserPermissions;
                 var diagnosticsPermissions = (DiagnosticsUserPermissions)permissions.DiagnosticsUserPermissions;
+                var systemSettingsPermissions = (SystemSettingsUserPermissions)permissions.SystemSettingsUserPermissions;
 
                 var model = new UserAccessViewModel()
                 {
@@ -3464,7 +3455,8 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
                     UserSitesMaintenanceAccess = new UserSitesMaintenanceAccess(sitesManagementPermissions),
                     UserReportsAccess = new UserReportsAccess(reportsPermissions),
                     UserUserManagementAccess = new UserUserManagementAccess(userManagementPermissions),
-                    UserDiagnosticsAccess = new UserDiagnosticsAccess(diagnosticsPermissions)
+                    UserDiagnosticsAccess = new UserDiagnosticsAccess(diagnosticsPermissions),
+                    UserSystemSettingsAccess = new UserSystemSettingsAccess(systemSettingsPermissions)
                 };
                 return model;
             }
@@ -3573,6 +3565,31 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
 
         public void UpdateSystemSettings(SystemSettings systemSettings)
         {
+            var row = _context.SystemSettings.FirstOrDefault();
+
+            // safety check !
+            if (systemSettings.DataCleanseFilesAfterDays >= Const.MinDataCleanseFilesAfterDays)
+            {
+                row.DataCleanseFilesAfterDays = systemSettings.DataCleanseFilesAfterDays;
+            }
+
+            // copy from new record values into single Entity-Framework record row
+            row.MinUnleadedPrice = systemSettings.MinUnleadedPrice;
+            row.MaxUnleadedPrice = systemSettings.MaxUnleadedPrice;
+            row.MinDieselPrice = systemSettings.MinDieselPrice;
+            row.MaxDieselPrice = systemSettings.MaxDieselPrice;
+            row.MinSuperUnleadedPrice = systemSettings.MinSuperUnleadedPrice;
+            row.MaxSuperUnleadedPrice = systemSettings.MaxSuperUnleadedPrice;
+            row.MinUnleadedPriceChange = systemSettings.MinUnleadedPriceChange;
+            row.MaxUnleadedPriceChange = systemSettings.MaxUnleadedPriceChange;
+            row.MinDieselPriceChange = systemSettings.MinDieselPriceChange;
+            row.MaxDieselPriceChange = systemSettings.MaxDieselPriceChange;
+            row.MinSuperUnleadedPriceChange = systemSettings.MinSuperUnleadedPriceChange;
+            row.MaxSuperUnleadedPriceChange = systemSettings.MaxSuperUnleadedPriceChange;
+            row.MaxGrocerDriveTimeMinutes = systemSettings.MaxGrocerDriveTimeMinutes;
+            row.PriceChangeVarianceThreshold = systemSettings.PriceChangeVarianceThreshold;
+            row.SuperUnleadedMarkupPrice = systemSettings.SuperUnleadedMarkupPrice;
+
             _context.SaveChanges();
         }
 

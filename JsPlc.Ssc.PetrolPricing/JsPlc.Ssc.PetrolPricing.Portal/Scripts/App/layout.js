@@ -13,7 +13,8 @@
             "nav-site-maintenance": ["^/sites"],
             "nav-reports": ["^/pricereports"],
             "nav-users": ["^/ppusers"],
-            "nav-diagnostics": ["^/diagnostics"]
+            "nav-diagnostics": ["^/diagnostics"],
+            "nav-settings": ["^/settings"]
         };
 
         function setNavigationTab() {

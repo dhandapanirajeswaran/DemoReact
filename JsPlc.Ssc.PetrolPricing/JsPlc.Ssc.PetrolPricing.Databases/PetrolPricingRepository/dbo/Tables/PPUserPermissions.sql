@@ -13,5 +13,6 @@
     [CreatedBy] INT NOT NULL, 
     [UpdatedOn] DATETIME NOT NULL, 
     [UpdatedBy] INT NOT NULL,
-	CONSTRAINT UC_PPUserPermissions_PPUserId UNIQUE(PPUserId)
+	[SystemSettingsUserPermissions] INT NOT NULL DEFAULT (0), 
+    CONSTRAINT UC_PPUserPermissions_PPUserId UNIQUE(PPUserId)
 )

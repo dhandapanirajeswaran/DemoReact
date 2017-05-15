@@ -202,6 +202,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ActionFilters\AuthoriseReportsAttribute.cs" />
+    <Compile Include="ActionFilters\AuthoriseSystemSettingsAttribute.cs" />
+    <Compile Include="Controllers\SettingsController.cs" />
     <Compile Include="Security\AuthorisationPermissionChecker.cs" />
     <Compile Include="ActionFilters\AuthoriseDiagnosticsAttribute.cs" />
     <Compile Include="ActionFilters\AuthoriseFileUploadsAttribute.cs" />
@@ -518,6 +520,7 @@
     <Content Include="Views\PriceReports\_FileUploadSummary.cshtml" />
     <Content Include="Views\Sites\_PriceMatchPanel.cshtml" />
     <Content Include="Views\Shared\Layout\_DataSanityCheckSummary.cshtml" />
+    <Content Include="Views\Settings\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\uploads\" />
@@ -546,6 +549,9 @@
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>StringMessages.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

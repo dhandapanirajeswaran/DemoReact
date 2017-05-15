@@ -267,7 +267,7 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
         [Route("api/File/DataCleanse")]
         public async Task<IHttpActionResult> DataCleanseFileUploads()
         {
-            var systemSettings = _systemSettingsService.GetSettings();
+            var systemSettings = _systemSettingsService.GetSystemSettings();
 
             var daysAgo = systemSettings.DataCleanseFilesAfterDays;
 

@@ -97,6 +97,7 @@ DECLARE @Default_SitesMaintenanceUserPermissions INT = 1 + 2 + 4 -- View, Add an
 DECLARE @Default_ReportsUserPermissions INT = 1 + 2 -- View and Export
 DECLARE @Default_UsersManagementUserPermissions INT = 1 + 2 + 4 + 8 -- View, Add, Edit and Delete
 DECLARE @Default_DiagnosticsUserPermissions INT = 0 -- None
+DECLARE @Default_SystemSettingsUserPermissions INT = 1 + 2 -- View and Edit
 
 MERGE
 	dbo.PPUserPermissions AS target
@@ -124,7 +125,8 @@ MERGE
            [CreatedOn],
            [CreatedBy],
            [UpdatedOn],
-           [UpdatedBy]
+           [UpdatedBy],
+		   [SystemSettingsUserPermissions]
 		   )
      VALUES
 			(source.PPUserId,
@@ -138,7 +140,8 @@ MERGE
 			GetDate(),
 			0,
 			GetDate(),
-			0);
+			0,
+			@Default_SystemSettingsUserPermissions);
 
 --
 -- Setup the Admins
@@ -147,7 +150,8 @@ UPDATE
 	dbo.PPUserPermissions
 SET 
 	IsAdmin = 1,
-	DiagnosticsUserPermissions = 7
+	DiagnosticsUserPermissions = 7,
+	SystemSettingsUserPermissions = 3
 WHERE 
 	PPUserId IN (
 	SELECT usr.Id
@@ -187,7 +191,7 @@ THEN UPDATE SET
 	IsSainsburys = source.IsSainsburys;
 
 --
--- Set up init SystemSettings
+-- Set up init SystemSettings (NOTE: other values have default constraints on the table itself)
 --
 IF NOT EXISTS(SELECT TOP 1 NULL FROM dbo.SystemSettings)
 BEGIN

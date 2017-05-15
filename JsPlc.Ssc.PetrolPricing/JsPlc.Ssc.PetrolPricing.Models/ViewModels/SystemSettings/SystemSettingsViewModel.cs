@@ -4,69 +4,102 @@ namespace JsPlc.Ssc.PetrolPricing.Models.ViewModels.SystemSettings
 {
     public class SystemSettingsViewModel
     {
+        public StatusViewModel Status { get; set; }
+
+        public int Id { get; set; }
+
         [Required]
-        [Range(0, 1000000)]
+        [Range(0, 1000.0)]
         [Display(Name = "Minimum Unleaded Price")]
-        public int MinUnleadedPrice { get; set; }
+        [DisplayFormat(DataFormatString = "{0:n0}")]
+        public double MinUnleadedPrice { get; set; }
 
         [Required]
-        [Range(0, 1000000)]
+        [Range(0, 1000.0)]
         [Display(Name = "Maximum Unleaded Price")]
-        public int MaxUnleadedPrice { get; set; }
+        [DisplayFormat(DataFormatString = "{0:n0}")]
+        public double MaxUnleadedPrice { get; set; }
 
         [Required]
-        [Range(0, 1000000)]
+        [Range(0, 1000.0)]
         [Display(Name = "Minimum Diesel Price")]
-        public int MinDieselPrice { get; set; }
+        [DisplayFormat(DataFormatString = "{0:n0}")]
+        public double MinDieselPrice { get; set; }
 
         [Required]
-        [Range(0, 1000000)]
+        [Range(0, 1000.0)]
         [Display(Name = "Maximum Diesel Price")]
-        public int MaxDieselPrice { get; set; }
+        [DisplayFormat(DataFormatString = "{0:n0}")]
+        public double MaxDieselPrice { get; set; }
 
         [Required]
-        [Range(0, 1000000)]
+        [Range(0, 1000.0)]
         [Display(Name = "Minimum Super-Unleaded Price")]
-        public int MinSuperUnleadedPrice { get; set; }
+        [DisplayFormat(DataFormatString = "{0:n0}")]
+        public double MinSuperUnleadedPrice { get; set; }
 
         [Required]
-        [Range(0, 1000000)]
-        [Display(Name = "Maximum Supert-Unleaded Price")]
-        public int MaxSuperUnleadedPrice { get; set; }
+        [Range(0, 1000.0)]
+        [Display(Name = "Maximum Super-Unleaded Price")]
+        [DisplayFormat(DataFormatString = "{0:n0}")]
+        public double MaxSuperUnleadedPrice { get; set; }
 
         [Required]
-        [Range(0, 1000000)]
+        [Range(-100.0, 100.0)]
         [Display(Name = "Minimum Unleaded Price Change")]
-        public int MinUnleadedPriceChange { get; set; }
+        [DisplayFormat(DataFormatString = "{0:n0}")]
+        public double MinUnleadedPriceChange { get; set; }
 
         [Required]
-        [Range(0, 1000000)]
+        [Range(-100.0, 100.0)]
         [Display(Name = "Maximum Unleaded Price Change")]
-        public int MaxUnleadedPriceChange { get; set; }
+        [DisplayFormat(DataFormatString = "{0:n0}")]
+        public double MaxUnleadedPriceChange { get; set; }
 
         [Required]
-        [Range(0, 1000000)]
+        [Range(-100.0, 100.0)]
         [Display(Name = "Minimum Diesel Price Change")]
-        public int MinDieselPriceChange { get; set; }
+        [DisplayFormat(DataFormatString = "{0:n0}")]
+        public double MinDieselPriceChange { get; set; }
 
         [Required]
-        [Range(0, 1000000)]
+        [Range(-100.0, 100.0)]
         [Display(Name = "Maximum Diesel Price Change")]
-        public int MaxDieselPriceChange { get; set; }
+        [DisplayFormat(DataFormatString = "{0:n0}")]
+        public double MaxDieselPriceChange { get; set; }
 
         [Required]
-        [Range(0, 1000000)]
+        [Range(-100.0, 100.0)]
         [Display(Name ="Minimum Super-Unleaded Price Change")]
-        public int MinSuperUnleadedPriceChange { get; set; }
+        [DisplayFormat(DataFormatString = "{0:n0}")]
+        public double MinSuperUnleadedPriceChange { get; set; }
 
         [Required]
-        [Range(0, 1000000)]
+        [Range(-100.0, 100.0)]
         [Display(Name ="Maximum Super-Unleaded Price Change")]
-        public int MaxSuperUnleadedPriceChange { get; set; }
+        [DisplayFormat(DataFormatString = "{0:n0}")]
+        public double MaxSuperUnleadedPriceChange { get; set; }
 
         [Required]
-        [Range(0, 1000000)]
+        [Range(-100.0, 100.0)]
         [Display(Name ="Maximum Grocer DriveTime in Minutes")]
         public int MaxGrocerDriveTimeMinutes { get; set; }
+
+        [Required]
+        [Range(0.0, 100.0)]
+        [Display(Name = "Price Change Variance Threshold")]
+        [DisplayFormat(DataFormatString = "{0:n0}")]
+        public double PriceChangeVarianceThreshold { get; set; }
+
+        [Required]
+        [Range(0.0, 500.0)]
+        [Display(Name = "Super Unleaded Markup Price")]
+        [DisplayFormat(DataFormatString = "{0:n0}")]
+        public double SuperUnleadedMarkupPrice { get; set; }
+
+        public SystemSettingsViewModel()
+        {
+            this.Status = new StatusViewModel();
+        }
     }
 }

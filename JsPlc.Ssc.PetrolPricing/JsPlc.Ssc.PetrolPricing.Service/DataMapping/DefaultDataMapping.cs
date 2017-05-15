@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using JsPlc.Ssc.PetrolPricing.Core;
+using JsPlc.Ssc.PetrolPricing.Core.ExtensionMethods;
 using JsPlc.Ssc.PetrolPricing.Models;
 using JsPlc.Ssc.PetrolPricing.Models.ViewModels;
+using JsPlc.Ssc.PetrolPricing.Models.ViewModels.SystemSettings;
 using System;
 
 namespace JsPlc.Ssc.PetrolPricing.Service.DataMapping
@@ -73,6 +75,59 @@ namespace JsPlc.Ssc.PetrolPricing.Service.DataMapping
                 .ForMember(fu => fu.ImportProcessErrors, mo => mo.Ignore())
                 .ForMember(fu => fu.IsMostRecentForDate, mo => mo.Ignore())
                 .ForMember(fu => fu.IsForDifferentDay, mo => mo.Ignore());
+
+            //
+            // SystemSettings >> SystemSettingsViewModel
+            //
+            Mapper.CreateMap<SystemSettings, SystemSettingsViewModel>()
+                .ForMember(dst => dst.Id, src => src.MapFrom(p => p.Id))
+
+                .ForMember(dst => dst.Status, src =>src.Ignore()) 
+
+                .ForMember(dst => dst.MinUnleadedPrice, src => src.MapFrom(p => p.MinUnleadedPrice.ToActualPrice()))
+                .ForMember(dst => dst.MaxUnleadedPrice, src => src.MapFrom(p => p.MaxUnleadedPrice.ToActualPrice()))
+                .ForMember(dst => dst.MinDieselPrice, src => src.MapFrom(p => p.MinDieselPrice.ToActualPrice()))
+                .ForMember(dst => dst.MaxDieselPrice, src => src.MapFrom(p => p.MaxDieselPrice.ToActualPrice()))
+                .ForMember(dst => dst.MinSuperUnleadedPrice, src => src.MapFrom(p => p.MinSuperUnleadedPrice.ToActualPrice()))
+                .ForMember(dst => dst.MaxSuperUnleadedPrice, src => src.MapFrom(p => p.MaxSuperUnleadedPrice.ToActualPrice()))
+                .ForMember(dst => dst.MinUnleadedPriceChange, src => src.MapFrom(p => p.MinUnleadedPriceChange.ToActualPrice()))
+                .ForMember(dst => dst.MaxUnleadedPriceChange, src => src.MapFrom(p => p.MaxUnleadedPriceChange.ToActualPrice()))
+                .ForMember(dst => dst.MinDieselPriceChange, src => src.MapFrom(p => p.MinDieselPriceChange.ToActualPrice()))
+                .ForMember(dst => dst.MaxDieselPriceChange, src => src.MapFrom(p => p.MaxDieselPriceChange.ToActualPrice()))
+                .ForMember(dst => dst.MinSuperUnleadedPriceChange, src => src.MapFrom(p => p.MinSuperUnleadedPriceChange.ToActualPrice()))
+                .ForMember(dst => dst.MaxSuperUnleadedPriceChange, src => src.MapFrom(p => p.MaxSuperUnleadedPriceChange.ToActualPrice()))
+
+                .ForMember(dst => dst.MaxGrocerDriveTimeMinutes, src => src.MapFrom(p => p.MaxGrocerDriveTimeMinutes))
+
+                .ForMember(dst => dst.PriceChangeVarianceThreshold, src => src.MapFrom(p => p.PriceChangeVarianceThreshold.ToActualPrice()))
+                .ForMember(dst => dst.SuperUnleadedMarkupPrice, src => src.MapFrom(p => p.SuperUnleadedMarkupPrice.ToActualPrice()));
+
+            //
+            // SystemSettingsViewModel >> SystemSettings
+            //
+            Mapper.CreateMap<SystemSettingsViewModel, SystemSettings>()
+                .ForMember(dst => dst.Id, src => src.MapFrom(p => p.Id))
+
+                .ForMember(dst => dst.DataCleanseFilesAfterDays, src => src.Ignore())
+                .ForMember(dst => dst.LastDataCleanseFilesOn, src => src.Ignore())
+
+                .ForMember(dst => dst.MinUnleadedPrice, src => src.MapFrom(p => p.MinUnleadedPrice.ToModalPrice()))
+                .ForMember(dst => dst.MaxUnleadedPrice, src => src.MapFrom(p => p.MaxUnleadedPrice.ToModalPrice()))
+                .ForMember(dst => dst.MinDieselPrice, src => src.MapFrom(p => p.MinDieselPrice.ToModalPrice()))
+                .ForMember(dst => dst.MaxDieselPrice, src => src.MapFrom(p => p.MaxDieselPrice.ToModalPrice()))
+                .ForMember(dst => dst.MinSuperUnleadedPrice, src => src.MapFrom(p => p.MinSuperUnleadedPrice.ToModalPrice()))
+                .ForMember(dst => dst.MaxSuperUnleadedPrice, src => src.MapFrom(p => p.MaxSuperUnleadedPrice.ToModalPrice()))
+                .ForMember(dst => dst.MinUnleadedPriceChange, src => src.MapFrom(p => p.MinUnleadedPriceChange.ToModalPrice()))
+                .ForMember(dst => dst.MaxUnleadedPriceChange, src => src.MapFrom(p => p.MaxUnleadedPriceChange.ToModalPrice()))
+                .ForMember(dst => dst.MinDieselPriceChange, src => src.MapFrom(p => p.MinDieselPriceChange.ToModalPrice()))
+                .ForMember(dst => dst.MaxDieselPriceChange, src => src.MapFrom(p => p.MaxDieselPriceChange.ToModalPrice()))
+                .ForMember(dst => dst.MinSuperUnleadedPriceChange, src => src.MapFrom(p => p.MinSuperUnleadedPriceChange.ToModalPrice()))
+                .ForMember(dst => dst.MaxSuperUnleadedPriceChange, src => src.MapFrom(p => p.MaxSuperUnleadedPriceChange.ToModalPrice()))
+
+                .ForMember(dst => dst.MaxGrocerDriveTimeMinutes, src => src.MapFrom(p => p.MaxGrocerDriveTimeMinutes))
+
+                .ForMember(dst => dst.PriceChangeVarianceThreshold, src => src.MapFrom(p => p.PriceChangeVarianceThreshold.ToModalPrice()))
+                .ForMember(dst => dst.SuperUnleadedMarkupPrice, src => src.MapFrom(p => p.SuperUnleadedMarkupPrice.ToModalPrice()));
         }
     }
 }

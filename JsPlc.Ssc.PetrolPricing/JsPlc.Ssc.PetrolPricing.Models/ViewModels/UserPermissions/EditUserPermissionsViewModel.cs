@@ -16,6 +16,7 @@ namespace JsPlc.Ssc.PetrolPricing.Models.ViewModels.UserPermissions
         public UserPermissionsOptionListViewModel ReportsPermissionsOptionList { get; set; }
         public UserPermissionsOptionListViewModel UsersPermissionsOptionList { get; set; }
         public UserPermissionsOptionListViewModel DiagnosticsPermissionsOptionList { get; set; }
+        public UserPermissionsOptionListViewModel SystemSettingsPermissionsOptionList { get; set; }
 
         public DateTime CreatedOn { get; set; }
         public int CreatedBy { get; set; }

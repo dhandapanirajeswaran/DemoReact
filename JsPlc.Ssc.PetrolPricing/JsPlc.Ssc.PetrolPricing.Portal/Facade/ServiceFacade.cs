@@ -18,9 +18,11 @@ using Newtonsoft.Json.Linq;
 using System.Net.Mail;
 using JsPlc.Ssc.PetrolPricing.Core.Interfaces;
 using JsPlc.Ssc.PetrolPricing.Core.Diagnostics;
+using JsPlc.Ssc.PetrolPricing.Core.ExtensionMethods;
 using JsPlc.Ssc.PetrolPricing.Models.ViewModels.UserPermissions;
 using JsPlc.Ssc.PetrolPricing.Models.ViewModels.Diagnostics;
 using JsPlc.Ssc.PetrolPricing.Models.ViewModels.SelfTest;
+using JsPlc.Ssc.PetrolPricing.Models.ViewModels.SystemSettings;
 
 namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
 {
@@ -1169,6 +1171,65 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
                 _logger.Error(ex);
                 throw new Exception("Exception in GetDataSanityCheckSummary" + System.Environment.NewLine + ex.Message, ex);
             }
+        }
+
+        public SystemSettingsViewModel GetSystemSettings()
+        {
+            try
+            {
+                var apiUrl = String.Format("api/GetSystemSettings");
+                var response = _client.Value.GetAsync(apiUrl).Result;
+                var result = response.Content.ReadAsAsync<SystemSettingsViewModel>().Result;
+                return response.IsSuccessStatusCode
+                    ? result
+                    : new SystemSettingsViewModel();
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex);
+                throw new Exception("Exception in GetSystemSettings" + System.Environment.NewLine + ex.Message, ex);
+            }
+        }
+
+        public SystemSettingsViewModel UpdateSystemSettings(SystemSettingsViewModel model)
+        {
+            if (!ValidateSystemSettings(model))
+                return model;
+
+            try
+            {
+                var apiUrl = String.Format("api/UpdateSystemSettings");
+                var response = _client.Value.PostAsync(apiUrl, model, new JsonMediaTypeFormatter()).Result;
+                var result = response.Content.ReadAsAsync<SystemSettingsViewModel>().Result;
+                if (response.IsSuccessStatusCode)
+                {
+                    result.Status.SuccessMessage = "Saved System Settings";
+                }
+                else
+                {
+                    result = new SystemSettingsViewModel()
+                    {
+                        Status = new StatusViewModel()
+                        {
+                            ErrorMessage = "Unable to save System Settings"
+                        }
+                    };
+                }
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex);
+                throw new Exception("Exception in UpdateSystemSettings" + System.Environment.NewLine + ex.Message, ex);
+            }
+        }
+
+        private bool ValidateSystemSettings(SystemSettingsViewModel model)
+        {
+            if (model.MinUnleadedPrice.is)
+
+
+            return true;
         }
     }
 }
