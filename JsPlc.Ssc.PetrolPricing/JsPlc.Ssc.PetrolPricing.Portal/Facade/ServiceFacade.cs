@@ -1193,9 +1193,6 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
 
         public SystemSettingsViewModel UpdateSystemSettings(SystemSettingsViewModel model)
         {
-            if (!ValidateSystemSettings(model))
-                return model;
-
             try
             {
                 var apiUrl = String.Format("api/UpdateSystemSettings");
@@ -1222,14 +1219,6 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
                 _logger.Error(ex);
                 throw new Exception("Exception in UpdateSystemSettings" + System.Environment.NewLine + ex.Message, ex);
             }
-        }
-
-        private bool ValidateSystemSettings(SystemSettingsViewModel model)
-        {
-            if (model.MinUnleadedPrice.is)
-
-
-            return true;
         }
     }
 }
