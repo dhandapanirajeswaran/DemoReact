@@ -1547,7 +1547,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                                 if (!String.IsNullOrEmpty(LatestPriceDataModel.UnleadedPrice))
                                 {
                                     AddOrUpdateLatestPrice(newDbContext, LatestPriceDataModel, fileDetails,
-                                        (int)FuelTypeItem.Unleaded, (int)Convert.ToDouble(LatestPriceDataModel.UnleadedPrice));
+                                        (int)FuelTypeItem.Unleaded, Convert.ToDouble(LatestPriceDataModel.UnleadedPrice));
                                   
 
                                 }
@@ -1555,14 +1555,14 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                                 {
                                   
                                     AddOrUpdateLatestPrice(newDbContext, LatestPriceDataModel, fileDetails,
-                                     (int)FuelTypeItem.Super_Unleaded, (int)Convert.ToDouble(LatestPriceDataModel.SuperUnleadedPrice));
+                                     (int)FuelTypeItem.Super_Unleaded, Convert.ToDouble(LatestPriceDataModel.SuperUnleadedPrice));
                             
 
                                 }
                                 if (!String.IsNullOrEmpty(LatestPriceDataModel.DieselPrice))
                                 {
                                      AddOrUpdateLatestPrice(newDbContext, LatestPriceDataModel, fileDetails,
-                                   (int)FuelTypeItem.Diesel, (int)Convert.ToDouble(LatestPriceDataModel.DieselPrice));
+                                   (int)FuelTypeItem.Diesel, Convert.ToDouble(LatestPriceDataModel.DieselPrice));
                                 }
                             }
 
@@ -1691,7 +1691,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             }
         }
 
-        public void AddOrUpdateLatestPrice(RepositoryContext newDbContext,LatestPriceDataModel latestPriceDataModel, FileUpload fileDetails,int fuelTypeId,int fuelPrice)
+        public void AddOrUpdateLatestPrice(RepositoryContext newDbContext,LatestPriceDataModel latestPriceDataModel, FileUpload fileDetails,int fuelTypeId,double fuelPrice)
         {
             LatestPrice dbRecord = null;
             bool iNewRecord = false;
@@ -1716,7 +1716,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             dbRecord.PfsNo = latestPriceDataModel.PfsNo;
             dbRecord.StoreNo = latestPriceDataModel.StoreNo;
             dbRecord.FuelTypeId = fuelTypeId;
-            dbRecord.ModalPrice = fuelPrice * 10;
+            dbRecord.ModalPrice = (int)(fuelPrice * 10);
             newDbContext.LatestPrices.Add(dbRecord);
             
         }
