@@ -1220,5 +1220,23 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
                 throw new Exception("Exception in UpdateSystemSettings" + System.Environment.NewLine + ex.Message, ex);
             }
         }
+
+        public SitePricingSettings GetSitePricingSettings()
+        {
+            try
+            {
+                var apiUrl = "api/GetSitePricingSettings";
+                var response = _client.Value.GetAsync(apiUrl).Result;
+                var result = response.Content.ReadAsAsync<SitePricingSettings>().Result;
+                return response.IsSuccessStatusCode
+                    ? result
+                    : null;
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex);
+                throw new Exception("Exception in GetSitePricingSettings" + System.Environment.NewLine + ex.Message, ex);
+            }
+        }
     }
 }

@@ -198,7 +198,7 @@
                     <div class="col-md-2" style="width: 18em;">
                         <div class="input-group">
                             <span class="input-group-addon" data-bind="text: changeType"></span>
-                            <input id="txtOverrideUnleaded" type="text" class="form-control input-override" maxlength="8" data-bind="textInput: $root.unleadedOffset" data-infotip="Enter a value for the [b]Unleaded[/b] Override[br /][b]Note:[/b] this Override the [em]Today Price[/em]" />
+                            <input id="txtOverrideUnleaded" type="text" class="form-control input-override" maxlength="8" data-bind="textInput: $root.unleadedOffset" data-infotip="Enter a value for the [b]Unleaded[/b] Override[br /][b]Note:[/b] this Overrides the [em]Today Price[/em]" />
                             <span class="input-group-btn">
                                 <button id="btnGoOverrideUnleaded" type="button" class="btn btn-primary btn-go" data-bind="click: changePricePerLitreUnleaded" data-infotip="Update all the [b]Unleaded[/b] Prices">Go</button>
                             </span>
@@ -208,7 +208,7 @@
                     <div class="col-md-2" style="width: 18em;">
                         <div class="input-group">
                             <span class="input-group-addon" data-bind="text: changeType"></span>
-                            <input id="txtOverrideDiesel" type="text" class="form-control input-override" maxlength="8" data-bind="textInput: $root.dieselOffset" data-infotip="Enter a value for the [b]Diesel[/b] Override[br /][b]Note:[/b] this Override the [em]Today Price[/em]" />
+                            <input id="txtOverrideDiesel" type="text" class="form-control input-override" maxlength="8" data-bind="textInput: $root.dieselOffset" data-infotip="Enter a value for the [b]Diesel[/b] Override[br /][b]Note:[/b] this Overrides the [em]Today Price[/em]" />
                             <span class="input-group-btn">
                                 <button id="btnGoOverrideDiesel" type="button" class="btn btn-primary btn-go" data-bind="click: changePricePerLitreDiesel" data-infotip="Update all the [b]Diesel[/b] Prices">Go</button>
                             </span>
@@ -218,7 +218,7 @@
                     <div class="col-md-2" style="width: 18em;">
                         <div class="input-group">
                             <span class="input-group-addon" data-bind="text: changeType"></span>
-                            <input id="txtOverrideSuperUnleaded" type="text" class="form-control input-override" maxlength="8" data-bind="textInput: $root.superOffset" data-infotip="Enter a value for the [b]Super Unleaded[/b] Override[br /][b]Note:[/b] this Override the [em]Today Price[/em]" />
+                            <input id="txtOverrideSuperUnleaded" type="text" class="form-control input-override" maxlength="8" data-bind="textInput: $root.superOffset" data-infotip="Enter a value for the [b]Super Unleaded[/b] Override[br /][b]Note:[/b] this Overrides the [em]Today Price[/em]" />
                             <span class="input-group-btn">
                                 <button id="btnGoSuperUnleaded" type="button" class="btn btn-primary btn-go" data-bind="click: changePricePerLitreSuper" data-infotip="Update all the [b]Super Unleaded[/b] Prices">Go</button>
                             </span>
@@ -301,7 +301,7 @@
                             <th colspan="7">
                                 <!-- EMAIL all Button, only loads popup -->
                                 <div>
-                                    <button style="margin-left:0px " type="button" class="btn btn-success btn-sm" data-bind="disable:!$root.isAnySiteChecked(), visible: !$root.ViewingHistorical() && $root.dataAvailable() == true,click: $root.sendEmailSelectedSites">
+                                    <button style="margin-left:0px " type="button" class="btn btn-success btn-sm" data-bind="disable:!$root.isAnySiteChecked() || $root.sendingEmails(), visible: !$root.ViewingHistorical() && $root.dataAvailable() == true,click: $root.sendEmailSelectedSites">
                                         <i class="fa fa-envelope-o"></i> Email <span class="badge" data-bind="text: $root.checkedEmailCount()" >0</span>
                                     </button>
                                     &nbsp;

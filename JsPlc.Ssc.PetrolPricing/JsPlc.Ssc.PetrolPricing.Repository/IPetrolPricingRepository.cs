@@ -298,6 +298,8 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
         void UpdateSystemSettings(SystemSettings systemSettings);
 
+        SitePricingSettings GetSitePricingSettings();
+
         void ArchiveQuarterlyUploadStagingData();
 
         IEnumerable<SelectItemViewModel> GetQuarterlyFileUploadOptions();

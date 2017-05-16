@@ -324,6 +324,7 @@
     <Content Include="Scripts\App\layout.js" />
     <Content Include="Scripts\App\prices.js" />
     <Content Include="Scripts\App\scrollToTop.js" />
+    <Content Include="Scripts\App\sitePricingSettings.js" />
     <Content Include="Scripts\App\ViewScripts\CompetitorPriceNotePopup.js" />
     <Content Include="Scripts\App\ViewScripts\CompetitorPricePopup.js" />
     <Content Include="Scripts\App\ViewScripts\Diagnostics.js" />

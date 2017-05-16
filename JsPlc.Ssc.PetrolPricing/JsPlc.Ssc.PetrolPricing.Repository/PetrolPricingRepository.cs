@@ -19,6 +19,7 @@ using JsPlc.Ssc.PetrolPricing.Core.Interfaces;
 using EntityState = System.Data.Entity.EntityState;
 
 using JsPlc.Ssc.PetrolPricing.Core.Diagnostics;
+using JsPlc.Ssc.PetrolPricing.Core.ExtensionMethods;
 using JsPlc.Ssc.PetrolPricing.Repository.Dapper;
 using Dapper;
 using JsPlc.Ssc.PetrolPricing.Repository.Debugging;
@@ -3591,6 +3592,31 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
             row.SuperUnleadedMarkupPrice = systemSettings.SuperUnleadedMarkupPrice;
 
             _context.SaveChanges();
+        }
+
+        public SitePricingSettings GetSitePricingSettings()
+        {
+            var settings = GetSystemSettings();
+            var model = new SitePricingSettings()
+            {
+                MinUnleadedPrice = settings.MinUnleadedPrice.ToActualPrice(),
+                MaxUnleadedPrice = settings.MaxUnleadedPrice.ToActualPrice(),
+                MinDieselPrice = settings.MinDieselPrice.ToActualPrice(),
+                MaxDieselPrice = settings.MaxDieselPrice.ToActualPrice(),
+                MinSuperUnleadedPrice = settings.MinSuperUnleadedPrice.ToActualPrice(),
+                MaxSuperUnleadedPrice = settings.MaxSuperUnleadedPrice.ToActualPrice(),
+                MinUnleadedPriceChange = settings.MinUnleadedPriceChange.ToActualPrice(),
+                MaxUnleadedPriceChange = settings.MaxUnleadedPriceChange.ToActualPrice(),
+                MinDieselPriceChange = settings.MinDieselPriceChange.ToActualPrice(),
+                MaxDieselPriceChange = settings.MaxDieselPriceChange.ToActualPrice(),
+                MinSuperUnleadedPriceChange = settings.MinSuperUnleadedPriceChange.ToActualPrice(),
+                MaxSuperUnleadedPriceChange = settings.MaxSuperUnleadedPriceChange.ToActualPrice(),
+                MaxGrocerDriveTimeMinutes = settings.MaxGrocerDriveTimeMinutes,
+                PriceChangeVarianceThreshold = settings.PriceChangeVarianceThreshold.ToActualPrice(),
+                SuperUnleadedMarkupPrice = settings.SuperUnleadedMarkupPrice.ToActualPrice(),
+            };
+
+            return model;
         }
 
         public void ArchiveQuarterlyUploadStagingData()

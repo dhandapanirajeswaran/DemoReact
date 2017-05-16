@@ -11,5 +11,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
     {
         SystemSettings GetSystemSettings();
         SystemSettings UpdateSystemSettings(SystemSettings model);
+
+        SitePricingSettings GetSitePricingSettings();
     }
 }

@@ -38,6 +38,7 @@
             "infotips": "App/infotips",
             "cookieSettings": "App/cookieSettings",
             "bootbox": "App/bootbox.min",
+            "sitePricingSettings": "App/sitePricingSettings",
 
             //"ko-binding-handlers": "App/ko-binding-handlers",
 

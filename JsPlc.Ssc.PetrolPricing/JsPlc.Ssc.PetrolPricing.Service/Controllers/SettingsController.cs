@@ -80,5 +80,20 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
                 return new ExceptionResult(ex, this);
             }
         }
+
+        [Route("api/GetSitePricingSettings")]
+        public async Task<IHttpActionResult> GetSitePricingSettings()
+        {
+            try
+            {
+                var result = _systemSettingsService.GetSitePricingSettings();
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex);
+                return new ExceptionResult(ex, this);
+            }
+        }
 	}
 }

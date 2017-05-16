@@ -212,6 +212,12 @@ span.jsdiff {
     background-color: #ebccd1;
     color: #910048
 }
+.txtPrice.override-within-price-change-variance {
+    border-color: #999;
+    background: #ccc;
+    color: #666;
+}
+
 .txtPrice.override-increment-exceeds {
     border-color: #910048;
     background-color: #ffc;
