@@ -57,7 +57,10 @@ namespace JsPlc.Ssc.PetrolPricing.Service.DataMapping
                 .ForMember(co => co.Notes, i => i.MapFrom(p => p.Notes))
                 .ForMember(co => co.HasNearbyCompetitorDieselPrice, i=> i.MapFrom(p => p.HasNearbyCompetitorDieselPrice))
                 .ForMember(co => co.HasNearbyCompetitorSuperUnleadedPrice, i=> i.MapFrom(p => p.HasNearbyCompetitorSuperUnleadedPrice))
-                .ForMember(co => co.HasNearbyCompetitorUnleadedPrice, i=> i.MapFrom(p => p.HasNearbyCompetitorUnleadedPrice));
+                .ForMember(co => co.HasNearbyCompetitorUnleadedPrice, i=> i.MapFrom(p => p.HasNearbyCompetitorUnleadedPrice))
+                .ForMember(co => co.HasNearbyCompetitorDieselWithOutPrice, i => i.MapFrom(p => p.HasNearbyCompetitorDieselWithOutPrice))
+                .ForMember(co => co.HasNearbyCompetitorSuperUnleadedWithOutPrice, i => i.MapFrom(p => p.HasNearbyCompetitorSuperUnleadedWithOutPrice))
+                .ForMember(co => co.HasNearbyCompetitorUnleadedWithOutPrice, i => i.MapFrom(p => p.HasNearbyCompetitorUnleadedWithOutPrice));
 
             Mapper.CreateMap<FileUpload, FileUploadViewModel>()
                 .ForMember(fu => fu.Id, mo => mo.MapFrom(p => p.Id))

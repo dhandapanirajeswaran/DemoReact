@@ -90,6 +90,10 @@ namespace JsPlc.Ssc.PetrolPricing.Models
         public bool HasNearbyCompetitorUnleadedPrice { get; set; }
         public bool HasNearbyCompetitorSuperUnleadedPrice { get; set; }
 
+        public bool HasNearbyCompetitorDieselWithOutPrice { get; set; }
+        public bool HasNearbyCompetitorUnleadedWithOutPrice { get; set; }
+        public bool HasNearbyCompetitorSuperUnleadedWithOutPrice { get; set; }
+
         [Required]
         [Display(Name ="Price Match Type")]
         public PriceMatchType PriceMatchType { get; set; }

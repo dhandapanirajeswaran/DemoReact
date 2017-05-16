@@ -606,6 +606,9 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                 site.HasNearbyCompetitorDieselPrice = status.HasNearbyCompetitorDieselPrice;
                 site.HasNearbyCompetitorSuperUnleadedPrice = status.HasNearbyCompetitorSuperUnleadedPrice;
                 site.HasNearbyCompetitorUnleadedPrice = status.HasNearbyCompetitorUnleadedPrice;
+                site.HasNearbyCompetitorDieselWithOutPrice = status.HasNearbyCompetitorDieselWithOutPrice;
+                site.HasNearbyCompetitorSuperUnleadedWithOutPrice = status.HasNearbyCompetitorSuperUnleadedWithOutPrice;
+                site.HasNearbyCompetitorUnleadedWithOutPrice = status.HasNearbyCompetitorUnleadedWithOutPrice;
             }
         }
 
@@ -732,6 +735,9 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                 superUnleaded.HasNearbyCompetitorPrice = site.HasNearbyCompetitorUnleadedPrice;
                 unleaded.HasNearbyCompetitorPrice = site.HasNearbyCompetitorUnleadedPrice;
                 diesel.HasNearbyCompetitorPrice = site.HasNearbyCompetitorDieselPrice;
+                superUnleaded.HasNearbyCompetitorWithOutPrice = site.HasNearbyCompetitorUnleadedWithOutPrice;
+                unleaded.HasNearbyCompetitorWithOutPrice = site.HasNearbyCompetitorUnleadedPrice;
+                diesel.HasNearbyCompetitorWithOutPrice = site.HasNearbyCompetitorDieselPrice;
 
                 site.FuelPrices.Add(superUnleaded);
                 site.FuelPrices.Add(unleaded);

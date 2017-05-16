@@ -287,11 +287,18 @@ span.jsdiff {
     width: 1em;
     visibility: hidden;
 }
+.pricing-grid .has-nearby-grocer-with-out-price {
+    display: inline-block;
+    width: 1em;
+    visibility: hidden;
+}
 
 .pricing-grid .no-nearby-grocer-price {
     text-align: center;
 }
 .pricing-grid .has-nearby-grocer-price {
+}
+.pricing-grid .has-nearby-grocer-with-out-price {
 }
 
 .pricing-grid > tbody > .site-row.focused > td:nth-child(10),
@@ -396,6 +403,7 @@ span.jsdiff {
 .pricing-grid.highlight-solo-prices .solo-price {background-color: #efa;}
 .pricing-grid.highlight-no-nearby-grocer-prices .no-nearby-grocer-price {visibility: visible; background-color: #ffdc9a; color: #000;}
 .pricing-grid.highlight-has-nearby-grocer-prices .has-nearby-grocer-price {visibility: visible; background-color: #cfffc8; color: #000;}
+.pricing-grid.highlight-has-nearby-grocer-with-out-prices .has-nearby-grocer-with-out-price {visibility: visible; background-color: #cc33ff; color: #000;}
 
 .pricing-grid.show-checked-sites .has-checked-email {}
 .pricing-grid.hide-checked-sites .has-checked-email {display: none;}
