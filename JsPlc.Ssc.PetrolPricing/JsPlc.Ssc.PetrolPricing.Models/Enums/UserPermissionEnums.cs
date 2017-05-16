@@ -76,4 +76,15 @@ namespace JsPlc.Ssc.PetrolPricing.Models.Enums
         // Defaults for new user
         NewUserDefaults = DiagnosticsUserPermissions.None
     }
+
+    [Flags]
+    public enum SystemSettingsUserPermissions
+    {
+        None = 0, // Access Denied
+        View = 0x01,
+        Edit = 0x02,
+
+        // Default for new user
+        NewUserDefaults = SystemSettingsUserPermissions.None
+    }
 }

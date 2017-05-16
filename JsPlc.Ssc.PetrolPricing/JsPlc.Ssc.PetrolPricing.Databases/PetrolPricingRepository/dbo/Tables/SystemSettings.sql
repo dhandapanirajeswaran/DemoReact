@@ -15,5 +15,7 @@
     [MaxDieselPriceChange] INT NOT NULL DEFAULT (50), 
     [MinSuperUnleadedPriceChange] INT NOT NULL DEFAULT (-50), 
     [MaxSuperUnleadedPriceChange] INT NOT NULL DEFAULT (50), 
-    [MaxGrocerDriveTimeMinutes] INT NOT NULL DEFAULT (5)
+    [MaxGrocerDriveTimeMinutes] INT NOT NULL DEFAULT (5), 
+    [PriceChangeVarianceThreshold] INT NOT NULL DEFAULT (3), 
+    [SuperUnleadedMarkupPrice] INT NOT NULL DEFAULT (50)
 )

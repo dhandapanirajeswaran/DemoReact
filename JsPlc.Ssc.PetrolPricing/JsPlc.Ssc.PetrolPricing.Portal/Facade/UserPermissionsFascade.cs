@@ -54,6 +54,14 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
                 new UserPermissionsOptionViewModel(DiagnosticsUserPermissions.None, "Access Denied"),
                 new UserPermissionsOptionViewModel(DiagnosticsUserPermissions.View, "View Only")
             };
+
+        public static IEnumerable<UserPermissionsOptionViewModel> UserSystemSettingsPermissionsOptions = new List<UserPermissionsOptionViewModel>()
+        {
+            new UserPermissionsOptionViewModel(SystemSettingsUserPermissions.None, "Access Denied"),
+            new UserPermissionsOptionViewModel(SystemSettingsUserPermissions.View, "View Only"),
+            new UserPermissionsOptionViewModel(SystemSettingsUserPermissions.View | SystemSettingsUserPermissions.Edit, "View and Edit")
+        };
+
     }
 
     public static class UserPermissionsFascade
@@ -70,6 +78,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
                 ReportsPermissionsOptionList = new UserPermissionsOptionListViewModel(permissions.ReportsUserPermissions.ToString(), UserPermissionsOptionLists.UserReportsPermissionsOptions),
                 UsersPermissionsOptionList = new UserPermissionsOptionListViewModel(permissions.UsersManagementUserPermissions.ToString(), UserPermissionsOptionLists.UserUsersPermissionsOptions),
                 DiagnosticsPermissionsOptionList = new UserPermissionsOptionListViewModel(permissions.DiagnosticsUserPermissions.ToString(), UserPermissionsOptionLists.UserDiagnosticsPermissionsOptions),
+                SystemSettingsPermissionsOptionList = new UserPermissionsOptionListViewModel(permissions.SystemSettingsUserPermissions.ToString(), UserPermissionsOptionLists.UserSystemSettingsPermissionsOptions),
                 CreatedOn = permissions.CreatedOn,
                 CreatedBy = permissions.CreatedBy,
                 UpdatedOn = permissions.UpdatedOn,

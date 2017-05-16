@@ -643,3 +643,42 @@ table.fixed-header>tbody {
 
 .wait-for-js {display:none;}
 .js-loading {display: block;}
+
+
+.fuel-sign::before {
+    border: 1px solid #666;
+    border-radius: 6px;
+    margin: 2px 8px;
+    display: inline-block;
+    width: 8em;
+    text-align: center;
+    line-height: 1.75em;
+    font-weight: bold;
+    box-shadow: 0 2px 4px #666;
+}
+
+.fuel-sign-unleaded::before {
+    content: 'Unleaded';
+    background-color:#5cb85c;
+    color: #fff;
+}
+
+.fuel-sign-super-unleaded::before {
+    content: 'Super-Unleaded';
+    background-color:#fff;
+    color: #000;
+}
+
+.fuel-sign-diesel::before {
+    content: 'Diesel';
+    background-color:#000;
+    color: #fff;
+}
+
+input[type=text].mono-font {
+    font-family: monospace;
+}
+
+.newline {
+    padding-top: 1.85em;
+}

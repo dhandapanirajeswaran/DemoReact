@@ -31,7 +31,7 @@
             if (Model.UserAccess.UserSitesMaintenanceAccess.CanView)
             {
                 <li data-menu-item="nav-site-maintenance">
-                    <a href="@Url.Action("Index", "Sites")"><i class="fa fa-gear"></i>Site Maintenance</a>
+                    <a href="@Url.Action("Index", "Sites")"><i class="fa fa-gear"></i>Sites</a>
                 </li>
             }
             if (Model.UserAccess.UserReportsAccess.CanView)
@@ -44,6 +44,12 @@
             {
                 <li data-menu-item="nav-users">
                     <a href="@Url.Action("Index", "PPUsers")"><i class="fa fa-user"></i>Users</a>
+                </li>
+            }
+            if (Model.UserAccess.UserSystemSettingsAccess.CanView)
+            {
+                <li data-menu-item="nav-settings">
+                    <a href="@Url.Action("Index", "Settings")"><i class="fa fa-cogs"></i>Settings</a>
                 </li>
             }
         }

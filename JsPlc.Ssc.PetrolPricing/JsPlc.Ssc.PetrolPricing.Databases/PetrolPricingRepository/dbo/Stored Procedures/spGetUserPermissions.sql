@@ -16,6 +16,7 @@ BEGIN
 		CASE WHEN usr.IsActive = 1 THEN up.ReportsUserPermissions ELSE 0 END [ReportsUserPermissions],
 		CASE WHEN usr.IsActive = 1 THEN up.UsersManagementUserPermissions ELSE 0 END [UsersManagementUserPermissions],
 		CASE WHEN usr.IsActive = 1 THEN up.DiagnosticsUserPermissions ELSE 0 END [DiagnosticsUserPermissions],
+		CASE WHEN usr.IsActive = 1 THEN up.SystemSettingsUserPermissions ELSE 0 END [SystemSettingsUserPermissions],
 		up.[CreatedOn],
 		up.[CreatedBy],
 		up.[UpdatedOn],

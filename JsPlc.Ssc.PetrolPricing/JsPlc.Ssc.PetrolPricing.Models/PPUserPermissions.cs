@@ -26,5 +26,7 @@ namespace JsPlc.Ssc.PetrolPricing.Models
         public int CreatedBy { get; set; }
         public DateTime UpdatedOn { get; set; }
         public int UpdatedBy { get; set; }
+
+        public int SystemSettingsUserPermissions { get; set; }
     }
 }

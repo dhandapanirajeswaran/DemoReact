@@ -17,6 +17,7 @@ namespace JsPlc.Ssc.PetrolPricing.Models.ViewModels.UserPermissions
         public UserReportsAccess UserReportsAccess = new UserReportsAccess();
         public UserUserManagementAccess UserUserManagementAccess = new UserUserManagementAccess();
         public UserDiagnosticsAccess UserDiagnosticsAccess = new UserDiagnosticsAccess();
+        public UserSystemSettingsAccess UserSystemSettingsAccess = new UserSystemSettingsAccess();
 
         public UserAccessViewModel()
         {
@@ -178,6 +179,28 @@ namespace JsPlc.Ssc.PetrolPricing.Models.ViewModels.UserPermissions
         }
 
         public UserDiagnosticsAccess(DiagnosticsUserPermissions permissions = DiagnosticsUserPermissions.None)
+        {
+            this.Permissions = permissions;
+        }
+    }
+
+    public class UserSystemSettingsAccess
+    {
+        public SystemSettingsUserPermissions Permissions { get; set; }
+        
+        [System.Xml.Serialization.XmlIgnore]
+        public bool CanView
+        {
+            get { return this.Permissions.HasFlag(SystemSettingsUserPermissions.View); }
+        }
+
+        [System.Xml.Serialization.XmlIgnore]
+        public bool canEdit
+        {
+            get { return this.Permissions.HasFlag(SystemSettingsUserPermissions.Edit); }
+        }
+
+        public UserSystemSettingsAccess(SystemSettingsUserPermissions permissions = SystemSettingsUserPermissions.None)
         {
             this.Permissions = permissions;
         }
