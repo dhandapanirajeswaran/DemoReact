@@ -77,6 +77,15 @@ namespace JsPlc.Ssc.PetrolPricing.Models
 
         [NotMapped]
         public bool HasNearbyCompetitorSuperUnleadedPrice { get; set; }
+
+        [NotMapped]
+        public bool HasNearbyCompetitorDieselWithOutPrice { get; set; }
+
+        [NotMapped]
+        public bool HasNearbyCompetitorUnleadedWithOutPrice { get; set; }
+
+        [NotMapped]
+        public bool HasNearbyCompetitorSuperUnleadedWithOutPrice { get; set; }
     }
 
     public class SiteEmail

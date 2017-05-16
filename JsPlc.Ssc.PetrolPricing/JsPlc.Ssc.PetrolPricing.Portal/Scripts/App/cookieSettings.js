@@ -15,7 +15,7 @@
                 'pricing.priceChangeFilterUp',
                 'pricing.highlightNoNearbyGrocerPrices',
                 'pricing.highlightHasNearbyGrocerPrices',
-
+                'pricing.highlightHasNearbyGrocerWithOutPrices',
                 'sites.showActiveSites',
                 'sites.showInactiveSites',
                 'sites.highlightTrialPrices',
