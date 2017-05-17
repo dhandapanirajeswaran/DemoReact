@@ -93,6 +93,8 @@ function ($, ko, common, compNotePopup, notify) {
 
         $('.compitatorData .storeName').text(siteItem.StoreName);
 
+        $('.chosen-date').text($('#viewingDate').val());
+
         hideAllNotes(true);
     };
 

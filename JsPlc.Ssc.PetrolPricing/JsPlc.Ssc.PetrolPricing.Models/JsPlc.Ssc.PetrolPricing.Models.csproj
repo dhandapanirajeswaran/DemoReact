@@ -104,6 +104,7 @@
     <Compile Include="Enums\UserPermissionEnums.cs" />
     <Compile Include="GenericStatus.cs" />
     <Compile Include="ImportProcessError.cs" />
+    <Compile Include="SitePricingSettings.cs" />
     <Compile Include="SystemSettings.cs" />
     <Compile Include="LatestCompPrice.cs" />
     <Compile Include="NearbyGrocerPriceSiteStatus.cs" />

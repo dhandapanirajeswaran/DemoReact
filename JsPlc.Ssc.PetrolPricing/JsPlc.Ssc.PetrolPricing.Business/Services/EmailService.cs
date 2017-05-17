@@ -39,13 +39,18 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 
 	    protected readonly ILogger _logger;
 
+        private ISystemSettingsService _systemSettingsService;
+
+
 		public EmailService(IPetrolPricingRepository db,
 			IAppSettings appSettings,
-			IFactory factory)
+			IFactory factory,
+            ISystemSettingsService systemSettingsService)
 		{
 			_db = db;
 			_factory = factory;
 			_appSettings = appSettings;
+            _systemSettingsService = systemSettingsService;
 		    _logger = new PetrolPricingLogger();
 		}
 
@@ -162,7 +167,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 			return _sendLog;
 		}
 
-        public static string BuildEmailBody(SitePriceViewModel site, DateTime endTradeDate)
+        public string BuildEmailBody(SitePriceViewModel site, DateTime endTradeDate)
 		{
 			var emailForSite = new EmailSiteData();
 
@@ -326,7 +331,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 		/// <param name="emailForSite"></param>
 		/// <param name="endTradeDate"></param>
 		/// <returns></returns>
-        private static EmailSiteData emailSetValues(SitePriceViewModel site, EmailSiteData emailForSite, DateTime endTradeDate)
+        private EmailSiteData emailSetValues(SitePriceViewModel site, EmailSiteData emailForSite, DateTime endTradeDate)
 		{
 			emailForSite.SiteName = site.StoreName;
 			emailForSite.ChangeDate = endTradeDate;
@@ -337,8 +342,11 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 				return emailForSite;
 			}
 
-			//previous trade date prices
-			var priceDifferenceFound = findPriceDifference(site);
+
+            var pricingSettings = _systemSettingsService.GetSitePricingSettings();
+
+            //previous trade date prices
+            var priceDifferenceFound = findPriceDifference(site, pricingSettings);
 
 			//send email if we have got here
 			var atLeastOne = false;
@@ -389,12 +397,11 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 			return emailForSite;
 		}
 
-        private static bool findPriceDifference(SitePriceViewModel site )
+        private static bool findPriceDifference(SitePriceViewModel site, SitePricingSettings pricingSettings)
 		{
 			bool result = false;
             foreach (var fuelprice in site.FuelPrices)
             {
-
                 //previous trading date price
                 var previousTradingDatePrice = fuelprice.TodayPrice;
 
@@ -403,11 +410,19 @@ namespace JsPlc.Ssc.PetrolPricing.Business
                 ? fuelprice.AutoPrice
                 : fuelprice.OverridePrice;
 
-                //compare prices
-                if (previousTradingDatePrice - currentTradingDatePrice != 0)
+                if (previousTradingDatePrice > 0 && currentTradingDatePrice > 0)
                 {
-                    result = true;
-                    break;
+                    var diff = previousTradingDatePrice - currentTradingDatePrice;
+
+                    //compare prices
+                    if (diff.HasValue) {
+                        var changePerLitre = (double)diff.Value / 10;
+                        if (Math.Abs(changePerLitre) >= pricingSettings.PriceChangeVarianceThreshold)
+                        {
+                            result = true;
+                            break;
+                        }
+                    }
                 }
 
                 //if at least one price differece found don't need to go further

@@ -1013,5 +1013,18 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 
             return jsonResult;
         }
+
+        [System.Web.Mvc.HttpGet]
+        public ActionResult SitePricingSettings()
+        {
+            var result = _serviceFacade.GetSitePricingSettings();
+
+            var jsonResult = new JsonResult()
+            {
+                JsonRequestBehavior = JsonRequestBehavior.AllowGet,
+                Data = result
+            };
+            return jsonResult;
+        }
     }
 }

@@ -27,5 +27,10 @@ namespace JsPlc.Ssc.PetrolPricing.Business.Services
             _repository.UpdateSystemSettings(settings);
             return _repository.GetSystemSettings();
         }
+
+        public SitePricingSettings GetSitePricingSettings()
+        {
+            return _repository.GetSitePricingSettings();
+        }
     }
 }
