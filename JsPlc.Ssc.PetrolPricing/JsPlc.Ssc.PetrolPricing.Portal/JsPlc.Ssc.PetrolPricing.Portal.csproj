@@ -314,6 +314,7 @@
     <Content Include="images\txtfileicon.png" />
     <Content Include="Logs\placeholder.txt" />
     <Content Include="Scripts\App\bootbox.min.js" />
+    <Content Include="Scripts\App\buildDetector.js" />
     <Content Include="Scripts\App\busyloader.html" />
     <Content Include="Scripts\App\busyloader.js" />
     <Content Include="Scripts\App\common.js" />

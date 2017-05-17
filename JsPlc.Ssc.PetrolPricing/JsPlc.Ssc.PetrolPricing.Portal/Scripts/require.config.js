@@ -39,6 +39,7 @@
             "cookieSettings": "App/cookieSettings",
             "bootbox": "App/bootbox.min",
             "sitePricingSettings": "App/sitePricingSettings",
+            "buildDetector": "App/buildDetector",
 
             //"ko-binding-handlers": "App/ko-binding-handlers",
 

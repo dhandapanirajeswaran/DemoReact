@@ -1,5 +1,12 @@
 ﻿@using System.Configuration;
 @using JsPlc.Ssc.PetrolPricing.Portal.Helper;
+
+@{ 
+    var isDevServer = Request.Url.ToString().ToLower().Contains("/dev.petrolpricing.js-devops.co.uk/");
+    var correctedBuildDateTime = isDevServer
+        ? BuildInfoHelper.BuildDateTime.AddHours(1)
+        : BuildInfoHelper.BuildDateTime;
+}
 <!DOCTYPE html>
 <html lang="en-gb">
 <head>
@@ -104,7 +111,7 @@
             <footer>
                 <p>
                     &copy; @DateTime.Today.Year - Sainsbury's Petrol Pricing
-                    <span class="build-information">Build @(BuildInfoHelper.BuildVersion) - on @(BuildInfoHelper.BuildDateTime.ToString("yyyy-MM-dd a\\t HH:mm:ss")) </span>
+                    <span class="build-information">Build @(BuildInfoHelper.BuildVersion) - on @(correctedBuildDateTime.ToString("yyyy-MM-dd a\\t HH:mm:ss")) </span>
                 </p>
             </footer>
         </div>
@@ -115,9 +122,10 @@
     @RenderSection("scripts", required: false)
 
     <script type="text/javascript">
-        require(['layout'],
-            function (layout) {
+        require(['layout', 'buildDetector'],
+            function (layout, buildDetector) {
                 layout.init();
+                buildDetector.init('@(correctedBuildDateTime.ToString("yyyy-MM-dd a\\t HH:mm:ss"))');
             }
         );
     </script>
