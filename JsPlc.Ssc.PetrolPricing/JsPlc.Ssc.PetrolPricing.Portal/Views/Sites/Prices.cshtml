@@ -233,7 +233,7 @@
                         <strong>Price Highlighting:</strong>
                     </div>
 
-                    <div class="col-md-7" data-bind="visible: !$root.busyLoadingData()" style="display: none;">
+                    <div class="col-md-8" data-bind="visible: !$root.busyLoadingData()" style="display: none;">
                         <div class="btn-group">
                             <button type="button" class="btn btn-sm" data-bind="click: toggleHighlightTrialPrices, css: {'btn-primary': $root.highlightTrialPrices()}" data-infotip="Toggle the [b]Trial Prices[/b] Highlighting"><i class="fa fa-flask "></i> Trial <span class="badge" data-bind="text: $root.TrialPricesCount"></span></button>
                             <button type="button" class="btn btn-sm" data-bind="click: toggleHighlightMatchCompetitors, css: {'btn-primary': $root.highlightMatchCompetitors()}" data-infotip="Toggle the [b]Match Competitors[/b] Highlighting"><i class="fa fa-clone"></i> Match Competitors <span class="badge" data-bind="text: $root.MatchCompetitorsCount"></span></button>
@@ -241,19 +241,17 @@
                         </div>
                         &nbsp;
                         <div class="btn-group">
-                            <button type="button" class="btn btn-sm" data-bind="click: toggleHighlightNoNearbyGrocerPrices, css: {'btn-primary': $root.highlightNoNearbyGrocerPrices() }" data-infotip="Toggle [b]No Grocer[/b] highlighting"><i class="fa fa-times"></i> No Grocer Prices <span class="badge" data-bind="text: $root.NoGrocerPricesCount"></span></button>
-                            <button type="button" class="btn btn-sm" data-bind="click: toggleHighlightHasNearbyGrocerPrices, css: {'btn-primary': $root.highlightHasNearbyGrocerPrices() }" data-infotip="Toggle [b]Has Grocer[/b] highlighting"><i class="fa fa-clone"></i> Has Grocer With Prices <span class="badge" data-bind="text: $root.HasGrocerPricesCount"></span></button>
-
-                            <button type="button" class="btn btn-sm" data-bind="click: toggleHighlightHasNearbyGrocerWithOutPrices, css: {'btn-primary': $root.highlightHasNearbyGrocerWithOutPrices() }" data-infotip="Toggle [b]Has Grocer[/b] highlighting"><i class="fa fa-check"></i> Has Grocer With Out Prices <span class="badge" data-bind="text: $root.HasGrocerWithOutPricesCount"></span></button>
-                        
+                            <button type="button" class="btn btn-sm" data-bind="click: toggleHighlightNoNearbyGrocerPrices, css: {'btn-primary': $root.highlightNoNearbyGrocerPrices() }" data-infotip="Toggle highlighting for Site Fuels[br /] with [b]No Nearby Grocers[/b]"><i class="fa fa-times"></i> No Grocers <span class="badge" data-bind="text: $root.NoGrocerPricesCount"></span></button>
+                            <button type="button" class="btn btn-sm" data-bind="click: toggleHighlightHasNearbyGrocerWithOutPrices, css: {'btn-primary': $root.highlightHasNearbyGrocerWithOutPrices() }" data-infotip="Toggle highlighting for Site Fuels[br /][b]with Nearby Grocers[/b] but [em]no[/em] Prices"><i class="fa fa-question"></i> No Prices <span class="badge" data-bind="text: $root.HasGrocerWithOutPricesCount"></span></button>
+                            <button type="button" class="btn btn-sm" data-bind="click: toggleHighlightHasNearbyGrocerPrices, css: {'btn-primary': $root.highlightHasNearbyGrocerPrices() }" data-infotip="Toggle highlighting for Site Fuels[br /][b]with Nearby Grocers[/b] and [b]with Prices[/b]"><i class="fa fa-gbp"></i> With Prices <span class="badge" data-bind="text: $root.HasGrocerPricesCount"></span></button>
                         </div>
-                        <button type="button" class="btn btn-sm btn-warning" data-bind="visible: $root.shouldShouldHighlightReset(), click: resetPriceHighlighting" data-infotip="Hide all the Highlighting"><i class="fa fa-eraser "></i> Reset</button>
+                        <button type="button" class="btn btn-sm btn-warning" data-bind="visible: $root.shouldShouldHighlightReset(), click: resetPriceHighlighting" data-infotip="Hide all the Highlighting"><i class="fa fa-eraser "></i></button>
                     </div>
-                    <div class="col-md-7 text-center" data-bind="visible: $root.busyLoadingData()">
+                    <div class="col-md-8 text-center" data-bind="visible: $root.busyLoadingData()">
                         Loading prices...
                     </div>
 
-                    <div class="col-md-3 col">
+                    <div class="col-md-2 col">
                         <div class="btn-group pull-right" role="group">
                             <button type="button" class="btn btn-sm btn-primary" data-click="setExpandMode" data-mode="collapsed" data-states="expanded,collapsed" data-target="#PricingPanelScroller" data-message="Price grid collapsed" data-infotip-dock="below" data-infotip="Collapse the Pricing Grid"><i class="fa fa-toggle-up"></i> Collapse</button>
                             <button type="button" class="btn btn-sm" data-click="setExpandMode" data-mode="expanded" data-states="expanded,collapsed" data-target="#PricingPanelScroller" data-message="Price grid expanded" data-infotip-dock="below" data-infotip="Expand the Pricing Grid"><i class="fa fa-toggle-down"></i> Expand</button>
@@ -403,17 +401,9 @@
                                 <!-- ko if: siteSupportsFuel -->
                                 <td data-bind="css: ('col-yesterday' + (isEditingFuel() ? ' col-editing' : '') + (hasValidValue() ? ' col-valid' : ' col-invalid'))">
                                     <span data-bind="css: ('fuel-price-change-' + UpDownSignCss()), html: FuelPrice.ForecourtTodayPriceHtml, attr: {'data-infotip': FuelPrice.CurrentPriceInfoTip()}"></span>
-
-                                    <!-- ko if: !hasNearbyCompetitorPrice() -->
-                                    <span class="no-nearby-grocer-price" data-infotip="[b]No Grocer[/b] Price data within [b]5 Minutes[/b] for Date"><i class="fa fa-times"></i></span>
-                                    <!-- /ko -->
-                                    <!-- ko if: hasNearbyCompetitorPrice() -->
-                                    <span class="has-nearby-grocer-price" data-infotip="[b]Grocer[/b] Price are [b]Available[/b] within 5 Minutes for Date"><i class="fa fa-clone"></i></span>
-                                    <!-- /ko -->
-
-                                    <!-- ko if: hasNearbyCompetitorWithOutPrice() -->
-                                    <span class="has-nearby-grocer-with-out-price" data-infotip="[b]Grocer[/b] Price are [b] Not Available[/b] within 5 Minutes for Date"><i class="fa fa-check"></i></span>
-                                    <!-- /ko -->
+                                    <span data-bind="visible: !hasNearbyCompetitorPrice() && !hasNearbyCompetitorWithOutPrice()" class="no-nearby-grocer-price" data-infotip="There are [b]No Grocers[/b] within [b]5 Minutes[/b] Drive Time"><i class="fa fa-times"></i></span>
+                                    <span data-bind="visible: hasNearbyCompetitorPrice()" class="has-nearby-grocer-price" data-infotip="[b]Grocer[/b] and Price are [b]Available[/b] within 5 Minutes for Date"><i class="fa fa-gbp"></i></span>
+                                    <span data-bind="visible: hasNearbyCompetitorWithOutPrice()" class="has-nearby-grocer-with-out-price" data-infotip="[b]Grocer[/b] found but [b]No Price[/b] Available within 5 Minutes for Date"><i class="fa fa-question"></i></span>
                                 </td>
                                 <td data-bind="css: ('col-today' + (isEditingFuel() ? ' col-editing' : '') + (hasValidValue() ? ' col-valid' : ' col-invalid'))">
                                     <div data-bind="css: ('fuel-price-change-' + UpDownSignCss())">
