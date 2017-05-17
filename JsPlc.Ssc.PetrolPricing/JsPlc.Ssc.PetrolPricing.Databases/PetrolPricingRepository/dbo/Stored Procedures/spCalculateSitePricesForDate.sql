@@ -1,5 +1,4 @@
-﻿
-CREATE PROCEDURE [dbo].[spCalculateSitePricesForDate] (
+﻿CREATE PROCEDURE [dbo].[spCalculateSitePricesForDate] (
 	@forDate DATE,
 	@SiteIds VARCHAR(MAX)
 )
@@ -236,7 +235,7 @@ AllFuelPrices AS (
 	SELECT
 		super.SiteId,
 		@FuelType_SUPER_UNLEADED [FuelTypeId],
-		super.AutoPrice,
+		cal.AutoPrice+ @Markup_For_Super_Unleaded,
 		super.OverridePrice,
 		cal.TodayPrice + @Markup_For_Super_Unleaded, -- markup Super Unleaded
 		super.Markup,
