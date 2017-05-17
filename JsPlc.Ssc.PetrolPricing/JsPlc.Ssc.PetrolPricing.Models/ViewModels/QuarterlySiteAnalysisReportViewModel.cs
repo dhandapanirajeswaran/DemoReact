@@ -13,6 +13,8 @@ namespace JsPlc.Ssc.PetrolPricing.Models.ViewModels
         public int ExistingSiteCount { get; set; }
         public int TotalSiteCount { get; set; }
         public int ChangeOwnershipCount { get; set; }
+        public int LeftTotalRecordCount { get; set; }
+        public int RightTotalRecordCount { get; set; }
 
         public IEnumerable<QuarterlySiteAnalysisReportRowViewModel> Rows = new List<QuarterlySiteAnalysisReportRowViewModel>();
     }

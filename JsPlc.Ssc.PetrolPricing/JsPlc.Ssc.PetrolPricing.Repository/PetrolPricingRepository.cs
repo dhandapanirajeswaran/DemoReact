@@ -3641,6 +3641,8 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
             if (leftId == 0 || rightId == 0 || leftId == rightId)
                 return new QuarterlySiteAnalysisReportViewModel();
 
+            var report = _context.GetQuarterlySiteAnalysisReportRows(leftId, rightId);
+
             var model = new QuarterlySiteAnalysisReportViewModel()
             {
                 NewSiteCount = 0,
@@ -3648,7 +3650,7 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
                 ExistingSiteCount = 0,
                 TotalSiteCount = 0,
                 ChangeOwnershipCount = 0,
-                Rows = _context.GetQuarterlySiteAnalysisReportRows(leftId, rightId)
+                Rows = report.Rows
             };
 
             // gather statistics
@@ -3659,6 +3661,8 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
                 model.ExistingSiteCount = model.Rows.Count(x => !x.WasSiteAdded && !x.WasSiteDeleted);
                 model.TotalSiteCount = model.Rows.Count();
                 model.ChangeOwnershipCount = model.Rows.Count(x => x.HasOwnershipChanged);
+                model.LeftTotalRecordCount = report.Stats.LeftTotalRecordCount;
+                model.RightTotalRecordCount = report.Stats.RightTotalRecordCount;
             }
 
             return model;

@@ -282,7 +282,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             return DapperHelper.QueryList<SelectItemViewModel>(this, sprocName, parameters);
         }
 
-        public IEnumerable<QuarterlySiteAnalysisReportRowViewModel> GetQuarterlySiteAnalysisReportRows(int leftFileUploadId, int rightFileUploadId)
+        public QuarterlySiteAnalysisReport GetQuarterlySiteAnalysisReportRows(int leftFileUploadId, int rightFileUploadId)
         {
             const string sprocName = "spGetQuarterlySiteAnalysisReport";
 
@@ -292,9 +292,15 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                 @RightFileUploadId = rightFileUploadId
             };
 
-            return DapperHelper.QueryList<QuarterlySiteAnalysisReportRowViewModel>(this, sprocName, parameters);
+            return DapperHelper.QueryMultiple<QuarterlySiteAnalysisReport>(this, sprocName, parameters, FillQuaterlySiteAnalysisReport);
         }
 
+        private void FillQuaterlySiteAnalysisReport(QuarterlySiteAnalysisReport model, SqlMapper.GridReader multiReader)
+        {
+            model.Rows = multiReader.Read<QuarterlySiteAnalysisReportRowViewModel>();
+            model.Stats = multiReader.ReadFirstOrDefault<QuaterlySiteAnalysisStats>();
+        }
+        
         public bool DeleteAllData()
         {
             const string sprocName = "spDeleteAllData";

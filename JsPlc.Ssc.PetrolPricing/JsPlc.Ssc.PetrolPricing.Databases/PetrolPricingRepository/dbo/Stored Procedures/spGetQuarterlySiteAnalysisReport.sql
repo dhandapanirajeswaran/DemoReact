@@ -4,6 +4,9 @@
 AS
 	SET NOCOUNT ON
 
+--DECLARE	@LeftFileUploadId INT = 21
+--DECLARE	@RightFileUploadId INT = 22
+
 	;WITH LeftSites AS (
 		SELECT DISTINCT
 			qua.CatNo, 
@@ -71,5 +74,12 @@ AS
 		LEFT JOIN RightSites rs ON rs.CatNo = both.CatNo
 	ORDER BY 
 		both.SiteName
+
+	--
+	-- Recordset #2
+	--
+	SELECT
+		(SELECT COUNT(1) FROM dbo.QuarterlyUploadArchive qua WHERE qua.QuarterlyUploadId = @LeftFileUploadId) [LeftTotalRecordCount],
+		(SELECT COUNT(1) FROM dbo.QuarterlyUploadArchive qua WHERE qua.QuarterlyUploadId = @RightFileUploadId) [RightTotalRecordCount]
 
 RETURN 0

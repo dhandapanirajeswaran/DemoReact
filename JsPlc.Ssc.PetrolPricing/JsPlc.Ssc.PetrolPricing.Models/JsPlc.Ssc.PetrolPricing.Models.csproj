@@ -149,6 +149,7 @@
     <Compile Include="ViewModels\NationalAverageReportViewModel.cs" />
     <Compile Include="ViewModels\PricePointReportViewModel.cs" />
     <Compile Include="ViewModels\QuarterlySiteAnalysisContainerViewModel.cs" />
+    <Compile Include="ViewModels\QuarterlySiteAnalysisReport.cs" />
     <Compile Include="ViewModels\QuarterlySiteAnalysisReportViewModel.cs" />
     <Compile Include="ViewModels\RecentFileUploadSummary.cs" />
     <Compile Include="ViewModels\RecentFileUploadSummaryItem.cs" />
