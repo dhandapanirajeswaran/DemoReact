@@ -410,7 +410,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
                 ? fuelprice.AutoPrice
                 : fuelprice.OverridePrice;
 
-                if (previousTradingDatePrice != 0 && currentTradingDatePrice != 0)
+                if (previousTradingDatePrice > 0 && currentTradingDatePrice > 0)
                 {
                     var diff = previousTradingDatePrice - currentTradingDatePrice;
 

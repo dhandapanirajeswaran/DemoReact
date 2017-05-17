@@ -59,6 +59,24 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 				.Returns(_mockSmtpClient.Object);
 
             _mockSystemSettings = new Mock<ISystemSettingsService>();
+            _mockSystemSettings.Setup(ss => ss.GetSitePricingSettings()).Returns(new Models.SitePricingSettings()
+            {
+                MinUnleadedPrice = 50.0,
+                MaxUnleadedPrice = 400.0,
+                MinDieselPrice = 50.0,
+                MaxDieselPrice = 400.0,
+                MinSuperUnleadedPrice = 50.0,
+                MaxSuperUnleadedPrice = 400.0,
+                MinUnleadedPriceChange = 50.0,
+                MaxUnleadedPriceChange = 400.0,
+                MinDieselPriceChange = -5.0,
+                MaxDieselPriceChange = 5.0,
+                MinSuperUnleadedPriceChange = -5.0,
+                MaxSuperUnleadedPriceChange = 5.0,
+                MaxGrocerDriveTimeMinutes = 5,
+                PriceChangeVarianceThreshold = 0.5,
+                SuperUnleadedMarkupPrice = 5.0
+            });
 		
             _siteVM = new SitePriceViewModel
             {
@@ -68,7 +86,7 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
             };
 		}
 
-		[TestCase(BuildEmailBodyTestCases.NoPreviousTradeDatePriceFound)]
+		//[TestCase(BuildEmailBodyTestCases.NoPreviousTradeDatePriceFound)]
 		[TestCase(BuildEmailBodyTestCases.FuelTypeTradeChange)]
 		[TestCase(BuildEmailBodyTestCases.PriceDifferenceChange)]
 		public void When_BuildEmailBody_Method_Called_And_All_Requirements_Met_Then_Valid_Email_Body_Should_Be_Returned
@@ -123,7 +141,7 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 			Assert.IsEmpty(result);
 		}
 
-		[TestCase(BuildEmailBodyTestCases.NoPreviousTradeDatePriceFound)]
+		//[TestCase(BuildEmailBodyTestCases.NoPreviousTradeDatePriceFound)]
 		[TestCase(BuildEmailBodyTestCases.FuelTypeTradeChange)]
 		[TestCase(BuildEmailBodyTestCases.PriceDifferenceChange)]
 		public void When_SendEmailAsync_Method_Called_And_All_Requirements_Are_Met_Then_Email_Should_Be_Sent
@@ -283,7 +301,8 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 					new FuelPriceViewModel {					
 						FuelTypeId = 1,
 						AutoPrice = 1000,
-						OverridePrice = 1001
+						OverridePrice = 1001,
+                        TodayPrice = 0
 					}
 				};
 			}
@@ -294,17 +313,20 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 					new FuelPriceViewModel {
 						FuelTypeId = 2,
 						AutoPrice = 1004,
-						OverridePrice = 1005
+						OverridePrice = 1005,
+                        TodayPrice = 900
 					},
 					new FuelPriceViewModel {
 						FuelTypeId = 6,
 						AutoPrice = 1000,
-						OverridePrice = 1001
+						OverridePrice = 1001,
+                        TodayPrice = 900
 					},
 					new FuelPriceViewModel {
 						FuelTypeId = 1,
 						AutoPrice = 1002,
-						OverridePrice = 1003
+						OverridePrice = 1003,
+                        TodayPrice = 900
 					}
 				};
 			}
@@ -315,12 +337,14 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 					new FuelPriceViewModel {
 						FuelTypeId = 1,
 						AutoPrice = 1000,
-						OverridePrice = 1001
+						OverridePrice = 1001,
+                        TodayPrice = 900
 					},
 					new FuelPriceViewModel {
 						FuelTypeId = 2,
 						AutoPrice = 1002,
-						OverridePrice = 1003
+						OverridePrice = 1003,
+                        TodayPrice = 900
 					}
 				};
 			}
