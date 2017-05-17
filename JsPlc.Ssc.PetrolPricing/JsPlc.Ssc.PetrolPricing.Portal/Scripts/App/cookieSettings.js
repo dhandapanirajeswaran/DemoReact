@@ -22,7 +22,8 @@
                 'sites.highlightMatchCompetitors',
                 'sites.highlightSoloPrices',
                 'sites.showHasEmails',
-                'sites.showNoEmails'
+                'sites.showNoEmails',
+                'build.date'
             ],
             values = readSettingsCookie();
 
