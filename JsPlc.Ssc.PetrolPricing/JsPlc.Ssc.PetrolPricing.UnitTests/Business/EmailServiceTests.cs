@@ -27,8 +27,9 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 		Mock<IPetrolPricingRepository> _mockRepository;
 		Mock<IAppSettings> _mockAppSettings;
 		Mock<IFactory> _mockFactory;
-    
-		Mock<ISmtpClient> _mockSmtpClient;
+        Mock<ISystemSettingsService> _mockSystemSettings;
+
+        Mock<ISmtpClient> _mockSmtpClient;
 
 	
         SitePriceViewModel _siteVM;
@@ -57,8 +58,7 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 				.Setup(f => f.Create<ISmtpClient>(CreationMethod.ServiceLocator, null))
 				.Returns(_mockSmtpClient.Object);
 
-          
-
+            _mockSystemSettings = new Mock<ISystemSettingsService>();
 		
             _siteVM = new SitePriceViewModel
             {
@@ -80,10 +80,12 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 			//Arrange
 			#region Arrange
 			populateSitePricesWithChanges(testCase);
-			#endregion
+            #endregion
 
-			//Act
-            var result = EmailService.BuildEmailBody(_siteVM, DateTime.Today);
+            //Act
+            var sut = new EmailService(_mockRepository.Object, _mockAppSettings.Object, _mockFactory.Object, _mockSystemSettings.Object);
+
+            var result = sut.BuildEmailBody(_siteVM, DateTime.Today);
 
 			//Assert
 			//email body is not empty
@@ -111,9 +113,10 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
                 StoreName = "Test site"
             };
             #endregion
-          
-			//Act
-            var result = EmailService.BuildEmailBody(siteNewVM, DateTime.Today);
+
+            //Act
+            var sut = new EmailService(_mockRepository.Object, _mockAppSettings.Object, _mockFactory.Object, _mockSystemSettings.Object);
+            var result = sut.BuildEmailBody(siteNewVM, DateTime.Today);
 
 			//Assert
 			//email body is not empty
@@ -138,11 +141,11 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 				
 			};
 
-            var expectedEmailBody = EmailService.BuildEmailBody(_siteVM, DateTime.Today);
+            var sut = new EmailService(_mockRepository.Object, _mockAppSettings.Object, _mockFactory.Object, _mockSystemSettings.Object);
+
+            var expectedEmailBody = sut.BuildEmailBody(_siteVM, DateTime.Today);
 
             List<SitePriceViewModel> sites = new List<SitePriceViewModel> { _siteVM };
-
-            var sut = new EmailService(_mockRepository.Object, _mockAppSettings.Object, _mockFactory.Object);
 
 			#endregion
 			//Act
@@ -187,11 +190,10 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
                 fuelprice.TodayPrice = fuelprice.AutoPrice;
             }
 
-            var expectedEmailBody = EmailService.BuildEmailBody(siteNewVM, DateTime.Today);
+            var sut = new EmailService(_mockRepository.Object, _mockAppSettings.Object, _mockFactory.Object, _mockSystemSettings.Object);
+            var expectedEmailBody = sut.BuildEmailBody(siteNewVM, DateTime.Today);
 
             List<SitePriceViewModel> sites = new List<SitePriceViewModel> { siteNewVM };
-
-            var sut = new EmailService(_mockRepository.Object, _mockAppSettings.Object, _mockFactory.Object);
 
 			#endregion
 			//Act
