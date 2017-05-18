@@ -509,3 +509,25 @@ span.jsdiff {
     color: #5cb85c;
 }
 
+.site-name-overlay {
+    position: absolute;
+    left: 0;
+    top: 0;
+    padding: 4px 8px 8px 8px;
+    width: 100%;
+}
+.site-name-overlay .hide-hover {display: none; clear: both;}
+
+.site-name-overlay:hover {
+    background-color: #337ab7;
+    color: #fff;
+    box-shadow: 2px 4px 6px #999;
+    border-radius: 0 0 12px 12px;
+    z-index: 2000;
+}
+
+.site-name-overlay:hover .hide-hover {
+    display: block;
+}
+
+

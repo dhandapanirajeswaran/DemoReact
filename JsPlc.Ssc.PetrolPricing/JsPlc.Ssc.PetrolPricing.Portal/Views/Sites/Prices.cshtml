@@ -313,10 +313,10 @@
                                         <button type="button" data-bind="visible: !$root.ViewingHistorical() && $root.dataAvailable() == true,click: $root.selectSitesByPriceChange" class="btn btn-primary btn-sm" style="margin-left:0px" data-infotip="Select Sites by [b]Price Change[/b]">
                                             <i class="fa fa-area-chart"></i> By Change
                                         </button>
+                                        <button type="button" data-bind="visible: !$root.ViewingHistorical() && $root.dataAvailable() == true,click: $root.clearAll" class="btn btn-warning btn-sm" style="margin-left:0px" data-infotip="Deselect ALL sites">
+                                            <i class="fa fa-eraser"></i>
+                                        </button>
                                     </div>
-                                    <button type="button" data-bind="visible: !$root.ViewingHistorical() && $root.dataAvailable() == true,click: $root.clearAll" class="btn btn-primary btn-sm" style="margin-left:0px" data-infotip="Deselect ALL sites">
-                                        <i class="fa fa-eraser"></i> Clear All
-                                    </button>
 
                                     <div class="btn-group pull-right">
                                         <select class="btn btn-default" style="width: 9em; margin-left: 1em;" data-bind="value: $root.siteEmailFilter, event: {change: $root.siteEmailFilterChange}" data-infotip="Filter the Sites by Emails/Selection">
@@ -394,7 +394,25 @@
                                     <input type="checkbox" data-bind="visible:HasEmails && !$root.ViewingHistorical(), checked: checkedEmail, click: clickCheckedEmail">
                                     <i class="fa fa-warning text-danger" style="opacity: 0.5" data-bind="visible: !HasEmails" data-infotip="Site has [b]No[/b] Email addresses"></i>
                                 </td>
-                                <td class="col-store-name"><a tabindex="-1" data-bind="attr: {'href': ('@Url.Action("Edit", "Sites")/?id=' + SiteId + '&calledFromSection=@(SiteSectionType.SitePricing)' ), 'data-infotip': 'Edit Site [b]' + StoreName + '[/b]'}"><span data-bind="text: StoreName"></span> <i class="fa fa-edit"></i></a></td>
+                                <td class="col-store-name" style="position: relative;">
+                                    <div class="site-name-overlay">
+                                        <span class="site-name" data-bind="text: StoreName"></span>
+                                        <div class="hide-hover">
+                                            <a class="btn btn-default btn-xs" data-bind="attr: {'href': ('@Url.Action("Edit", "Sites")/?id=' + SiteId + '&calledFromSection=@(SiteSectionType.SitePricing)' ), 'data-infotip-dock': 'below', 'data-infotip': 'Edit Site [b]' + StoreName + '[/b]'}"><i class="fa fa-edit"></i> Edit</a>
+                                            <!-- ko: if !$root.ViewingHistorical() -->
+                                            <a tabindex="-1" class="btn btn-default btn-xs" style="margin-left: 1em;" data-bind="click: bindEmailTemplate" data-toggle="modal" data-target="#emailSite" data-infotip-dock="below" data-infotip="Open Email Popup" ><i class="fa fa-at"></i> Email</a>
+                                            <!-- ko if: hasEmailSendLogEntry() -->
+                                            <!-- ko with: EmailSendLogEntry -->
+                                            <i class="fa fa-check" data-infotip-dock="below" data-bind="visible: IsSuccess, attr: {'data-infotip': '[b]Email sent..[/b]'}" style="color: green"></i>
+                                            <i class="fa fa-warning" data-infotip-dock="below" data-bind="visible: IsWarning, attr: {'data-infotip': '[em]' + WarningMessage + '[/em]'}" style="color: orange"></i>
+                                            <i class="fa fa-ban" data-infotip-dock="below" data-bind="visible: IsError, attr: {'data-infotip': '[em]' + ErrorMessage + '[/em]'}" style="color: red"></i>
+                                            <!-- /ko -->
+                                            <!-- /ko -->
+                                            <!-- /ko -->
+                                        </div>
+                                    </div>
+                                    @*<a tabindex="-1" data-bind="attr: {'href': ('@Url.Action("Edit", "Sites")/?id=' + SiteId + '&calledFromSection=@(SiteSectionType.SitePricing)' ), 'data-infotip': 'Edit Site [b]' + StoreName + '[/b]'}"><span data-bind="text: StoreName"></span> <i class="fa fa-edit"></i></a>*@
+                                </td>
                                 <td class="col-store-town"><span data-bind="text: Town"></span></td>
                                 <td class="col-cat-no text-center"><span data-bind="text: CatNo"></span></td>
                                 <td class="col-pfs-no text-center"><span data-bind="text: PfsNo"></span></td>
