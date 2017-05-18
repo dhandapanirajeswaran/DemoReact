@@ -503,3 +503,9 @@ span.jsdiff {
     margin-top: -1.25em;
 }
 
+.col-header-tomorrow-unleaded,
+.col-header-tomorrow-diesel,
+.col-header-tomorrow-super-unleaded {
+    color: #5cb85c;
+}
+

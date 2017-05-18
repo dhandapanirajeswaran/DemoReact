@@ -323,8 +323,10 @@
                                             <option>All Sites</option>
                                             <option>No Emails</option>
                                             <option>With Emails</option>
-                                            <option>Selected</option>
-                                            <option>Not Selected</option>
+                                            <option>With Overrides</option>
+                                            <option>No Overrides</option>
+                                            <option data-bind="visible: !$root.ViewingHistorical()">Selected</option>
+                                            <option data-bind="visible: !$root.ViewingHistorical()">Not Selected</option>
                                         </select>
                                         <button type="button" class="btn btn-warning btn-sm" style="padding-bottom: 9px;" data-bind="click: $root.resetSiteEmailFilter" data-infotip="Clear the Site Email Filter"><i class="fa fa-eraser"></i></button>
                                     </div>
@@ -389,7 +391,7 @@
                                 <td class="col-store-no text-center" data-bind="text: StoreNo"></td>
                                 <!-- Email envelope... -->
                                 <td class="col-email">
-                                    <input type="checkbox" data-bind="visible:HasEmails, checked: checkedEmail, click: clickCheckedEmail">
+                                    <input type="checkbox" data-bind="visible:HasEmails && !$root.ViewingHistorical(), checked: checkedEmail, click: clickCheckedEmail">
                                     <i class="fa fa-warning text-danger" style="opacity: 0.5" data-bind="visible: !HasEmails" data-infotip="Site has [b]No[/b] Email addresses"></i>
                                 </td>
                                 <td class="col-store-name"><a tabindex="-1" data-bind="attr: {'href': ('@Url.Action("Edit", "Sites")/?id=' + SiteId + '&calledFromSection=@(SiteSectionType.SitePricing)' ), 'data-infotip': 'Edit Site [b]' + StoreName + '[/b]'}"><span data-bind="text: StoreName"></span> <i class="fa fa-edit"></i></a></td>
