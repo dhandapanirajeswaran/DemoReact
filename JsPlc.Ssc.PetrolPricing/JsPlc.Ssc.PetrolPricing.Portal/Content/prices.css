@@ -530,4 +530,12 @@ span.jsdiff {
     display: block;
 }
 
-
+.competitor-fuel-unleaded {
+    background-color: #ffc;
+}
+.competitor-fuel-diesel {
+    background-color: #cff;
+}
+.competitor-fuel-super-unleaded {
+    background-color: #fcf;
+}

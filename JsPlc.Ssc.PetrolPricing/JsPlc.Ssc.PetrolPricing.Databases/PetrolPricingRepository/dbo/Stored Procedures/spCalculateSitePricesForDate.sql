@@ -6,10 +6,10 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
---DEBUG:START
---DECLARE @forDate DATE = '2017-05-15'
---DECLARE @SiteIds VARCHAR(MAX) = '490'
---DEBUG:END
+----DEBUG:START
+--DECLARE @forDate DATE = '2017-05-17'
+--DECLARE @SiteIds VARCHAR(MAX) = '6188'
+----DEBUG:END
 
 
 DECLARE @StartOfToday date = @forDate
@@ -235,7 +235,10 @@ AllFuelPrices AS (
 	SELECT
 		super.SiteId,
 		@FuelType_SUPER_UNLEADED [FuelTypeId],
-		cal.AutoPrice+ @Markup_For_Super_Unleaded,
+		CASE WHEN cal.AutoPrice = 0
+			THEN 0
+			ELSE cal.AutoPrice + @Markup_For_Super_Unleaded
+		END,
 		super.OverridePrice,
 		cal.TodayPrice + @Markup_For_Super_Unleaded, -- markup Super Unleaded
 		super.Markup,
