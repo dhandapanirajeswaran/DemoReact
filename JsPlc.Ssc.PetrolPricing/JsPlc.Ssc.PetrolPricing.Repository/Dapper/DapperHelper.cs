@@ -15,7 +15,15 @@ namespace JsPlc.Ssc.PetrolPricing.Repository.Dapper
     {
         public static string DatabaseConnectionString = "";
 
-        public static void Execute(this DbContext context, string sprocName, object parameters, bool disableDapperLog = false)
+        /// <summary>
+        /// Execute a Stored Procedure using Dapper (no result set)
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="sprocName"></param>
+        /// <param name="parameters"></param>
+        /// <param name="disableDapperLog"></param>
+        /// <param name="commandTimeoutInSeconds"></param>
+        public static void Execute(this DbContext context, string sprocName, object parameters, bool disableDapperLog = false, int commandTimeoutInSeconds = 30)
         {
             if (!disableDapperLog)
                 LogDapperCall(sprocName, parameters);
@@ -30,7 +38,17 @@ namespace JsPlc.Ssc.PetrolPricing.Repository.Dapper
             }
         }
 
-        public static T QueryFirst<T>(this DbContext context, string sprocName, object parameters, bool disableDapperLog = false) where T : class
+        /// <summary>
+        /// Query a single object from a Stored Procedure using Dapper
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="context"></param>
+        /// <param name="sprocName"></param>
+        /// <param name="parameters"></param>
+        /// <param name="disableDapperLog"></param>
+        /// <param name="commandTimeoutInSeconds"></param>
+        /// <returns></returns>
+        public static T QueryFirst<T>(this DbContext context, string sprocName, object parameters, bool disableDapperLog = false, int commandTimeoutInSeconds = 30) where T : class
         {
             if (!disableDapperLog)
                 LogDapperCall(sprocName, parameters);
@@ -45,7 +63,16 @@ namespace JsPlc.Ssc.PetrolPricing.Repository.Dapper
             }
         }
 
-        public static int QueryScalar(this DbContext context, string sprocName, object parameters, bool disableDapperLog = false)
+        /// <summary>
+        /// Query a single value (Scalar) from a Stored Procedure using Dapper
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="sprocName"></param>
+        /// <param name="parameters"></param>
+        /// <param name="disableDapperLog"></param>
+        /// <param name="commandTimeoutInSeconds"></param>
+        /// <returns></returns>
+        public static int QueryScalar(this DbContext context, string sprocName, object parameters, bool disableDapperLog = false, int commandTimeoutInSeconds = 30)
         {
             if (!disableDapperLog)
                 LogDapperCall(sprocName, parameters);
@@ -60,7 +87,17 @@ namespace JsPlc.Ssc.PetrolPricing.Repository.Dapper
             }
         }
 
-        public static List<T> QueryList<T>(this DbContext context, string sprocName, object parameters, bool disableDapperLog = false) where T : class
+        /// <summary>
+        /// Query a list of object T from a Stored Procedure using Dapper
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="context"></param>
+        /// <param name="sprocName"></param>
+        /// <param name="parameters"></param>
+        /// <param name="disableDapperLog"></param>
+        /// <param name="commandTimeoutInSeconds"></param>
+        /// <returns></returns>
+        public static List<T> QueryList<T>(this DbContext context, string sprocName, object parameters, bool disableDapperLog = false, int commandTimeoutInSeconds = 30 ) where T : class
         {
             if (!disableDapperLog)
                 LogDapperCall(sprocName, parameters);
@@ -71,10 +108,20 @@ namespace JsPlc.Ssc.PetrolPricing.Repository.Dapper
             var conn = CreateConnection();
             using (conn)
             {
-                return conn.Query<T>(sprocName, parameters, null, false, null, CommandType.StoredProcedure).ToList();
+                return conn.Query<T>(sprocName, parameters, null, false, commandTimeoutInSeconds , CommandType.StoredProcedure).ToList();
             }
         }
 
+        /// <summary>
+        /// Query mutiple different object T from a Stored Procedure using Dapper
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="context"></param>
+        /// <param name="sprocName"></param>
+        /// <param name="parameters"></param>
+        /// <param name="filler">Action to fill the result set</param>
+        /// <param name="disableDapperLog"></param>
+        /// <returns></returns>
         public static T QueryMultiple<T>(this DbContext context, string sprocName, object parameters, Action<T, SqlMapper.GridReader> filler, bool disableDapperLog = false) where T : class, new()
         {
             if (!disableDapperLog)
