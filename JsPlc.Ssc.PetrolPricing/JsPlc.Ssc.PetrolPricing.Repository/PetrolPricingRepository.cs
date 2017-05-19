@@ -3141,19 +3141,14 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
             try
             {
                 forDate = forDate.Date; // remove time so its Date only
+                var today = forDate.Date;
+                var tomorrow = forDate.Date.AddDays(1);
 
-                var fuelTypesList = new[] { 2, 6, 1 }; // Unl, Diesel, Super
-                var nextday = forDate.AddDays(1);
-             //   var prevday = forDate;
-
-                //var fileUpload_LatestCompPriceData_PrevDay = _context.FileUploads.Where(
-                //               x =>
-                //                   x.UploadDateTime.Month == prevday.Month &&
-                //                   x.UploadDateTime.Day == prevday.Day &&
-                //                   x.UploadDateTime.Year == prevday.Year && x.UploadTypeId == (int)FileUploadTypes.DailyPriceData && x.Status.Id == 10)
-                //                   .OrderByDescending(x => x.Id).ToList();
-
-                //var fileUploadId_LatestCompPriceData_PrevDay = fileUpload_LatestCompPriceData_PrevDay.Count > 0 ? fileUpload_LatestCompPriceData_PrevDay[0].Id : 0;
+                var fuelTypesList = new[] {
+                    (int)FuelTypeItem.Unleaded,
+                    (int)FuelTypeItem.Diesel,
+                    (int)FuelTypeItem.Super_Unleaded
+                };
 
                 var fileUpload_LatestCompPriceData_PrevDay = _context.FileUploads.OrderByDescending(x => x.Id)
                     .FirstOrDefault(x =>
@@ -3164,9 +3159,9 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
                 var fileUploadId_LatestCompPriceData_PrevDay = fileUpload_LatestCompPriceData_PrevDay == null ? 0 : fileUpload_LatestCompPriceData_PrevDay.Id;
 
                 var dailyPrices = new List<DailyPrice>();
-                dailyPrices = GetDailyPricesForDate(nextday);
+                dailyPrices = GetDailyPricesForDate(tomorrow);
 
-                var siteVMLlist = GetSitesWithPrices(nextday.AddDays(-1));
+                var siteVMLlist = GetSitesWithPrices(today);
 
                 if (dailyPrices.Count == 0 || siteVMLlist.Count() == 0) return null;
 
@@ -3174,7 +3169,6 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
 
                 var reportFuels = GetFuelTypes().Where(x => fuelTypesList.Contains(x.Id)).ToList();
 
-               
                 foreach (var site in sites)
                 {
                     var dataRow = new ComplianceReportRow
@@ -3187,18 +3181,18 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
                         DataItems = new List<ComplianceReportDataItem>()
                     };
                     retval.ReportRows.Add(dataRow);
-                   
+
                     var dataItems = dataRow.DataItems;
 
                     var siteVM = siteVMLlist.FirstOrDefault(x => x.SiteId == site.Id);
-                   
+
                     foreach (var fuelId in fuelTypesList) // report order as per array - Unl, Diesel, Super
                     {
                         FuelType fuel = reportFuels.FirstOrDefault(x => x.Id == fuelId);
 
                         if (fuel == null)
                         {
-                           throw new ApplicationException("FuelId:" + fuelId + " not found in database.");
+                            throw new ApplicationException("FuelId:" + fuelId + " not found in database.");
                         }
 
                         var dataItem = new ComplianceReportDataItem
@@ -3207,25 +3201,21 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
                             FuelTypeName = fuel.FuelTypeName
                         };
                         dataItems.Add(dataItem);
-                      
+
                         var fuelPrice = siteVM.FuelPrices.FirstOrDefault(x => x.FuelTypeId == fuelId);
                         if (fuelPrice != null)
                         {
                             dataItem.FoundExpectedPrice = true;
-                            int overridePrice = fuelPrice.OverridePrice.HasValue? fuelPrice.OverridePrice.Value:0;
+                            int overridePrice = fuelPrice.OverridePrice.HasValue ? fuelPrice.OverridePrice.Value : 0;
                             int todayPrice = fuelPrice.TodayPrice.HasValue ? fuelPrice.TodayPrice.Value : 0;
-
-                            dataItem.ExpectedPriceValue = overridePrice > 0 ? overridePrice : todayPrice; 
-                           
-                      
+                            dataItem.ExpectedPriceValue = overridePrice > 0 ? overridePrice : todayPrice;
                         }
                         else
                         {
                             dataItem.FoundExpectedPrice = false;
-                            dataItem.ExpectedPriceValue = 0; 
-
+                            dataItem.ExpectedPriceValue = 0;
                         }
-                       
+
                         var dailyPrice = dailyPrices.FirstOrDefault(x => x.CatNo.Equals(site.CatNo) && x.FuelTypeId == fuel.Id);
                         if (dailyPrice != null)
                         {
@@ -3234,10 +3224,9 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
                         }
                         if (!dataItem.FoundCatPrice || !dataItem.FoundExpectedPrice) continue;
 
-                        dataItem.Diff = (dataItem.CatPriceValue - dataItem.ExpectedPriceValue) / 10;
+                        dataItem.Diff = (double)(dataItem.CatPriceValue - dataItem.ExpectedPriceValue) / 10;
                         dataItem.DiffValid = true;
                     }
-                                       
                 }
                 return retval;
             }

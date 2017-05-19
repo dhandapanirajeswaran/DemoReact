@@ -75,6 +75,14 @@
     .highlight-na .diff-na {
         display: block;
     }
+
+    .diff-value {
+        display: inline-block;
+        text-align: right;
+        float: right;
+        letter-spacing: 1px;
+    }
+
 </style>
 
 
@@ -157,7 +165,7 @@
                 <div class="col-sm-1" style="width:360px">SiteName</div>
                 @foreach (var fuel in Model.ComplianceReport.ReportRows.First().DataItems.Select(x => x.FuelTypeName).Take(2))
                 {
-                    <div class="col-sm-3" style="width:230px; border-left: 1px solid #999;">
+                    <div class="col-sm-3" style="width:250px; border-left: 1px solid #999;">
                         <div>
                             <center style="font-size: 125%;">
                                 @if (fuel == "Unleaded")
@@ -177,7 +185,7 @@
                         <div class="row">
                             <div class="col-sm-1" style="width:100px;">Cat Diff</div>
                             <div class="col-sm-1" style="width:70px">Expected</div>
-                            <div class="col-sm-1" style="width: 50px">Diff</div>
+                            <div class="col-sm-1" style="width:70px">Difference</div>
                         </div>
                     </div>
                 }
@@ -206,13 +214,13 @@
                                     dataItem.Diff < 0 ? "diffNegative" : "diffZero"; // diffNa, diffNegative, diffPositive, diffZero
                                 string color = dataItem.DiffValid ? (0 > dataItem.Diff ? "red" : dataItem.Diff > 0 ? "green" : "orange") : "gray";
                                 string diffCss = dataItem.DiffValid ? (0 > dataItem.Diff ? "diff-negative" : dataItem.Diff > 0 ? "diff-positive" : "diff-complies") : "diff-na";
-                                <div class="col-sm-3" style="width:230px">
+                                string diffIcon = dataItem.DiffValid ? (0 > dataItem.Diff ? "fa fa-arrow-down" : dataItem.Diff > 0 ? "fa fa-arrow-up" : "fa fa-minus") : "";
+                                <div class="col-sm-3" style="width:250px">
                                     <div class="row @(diffCss)">
                                         <div class="col-sm-1 leftDivider" style="width:100px">@( dataItem.FoundCatPrice ? (dataItem.CatPriceValue / 10.0).ToString("###0.0") : "n/a")</div>
                                         <div class="col-sm-1" style="width:70px">@( dataItem.FoundExpectedPrice ? (dataItem.ExpectedPriceValue / 10.0).ToString("###0.0") : "n/a")</div>
 
-
-                                        <div class="col-sm-1" style="width:60px;color:@color;">@( dataItem.DiffValid ? dataItem.Diff.ToString("0.0") : "n/a")</div>
+                                        <div class="col-sm-1" style="width:80px;color:@color;"><i class="@(diffIcon)"></i> <span class="diff-value"> @( dataItem.DiffValid ? dataItem.Diff.ToString("0.0") : "n/a")</span></div>
                                     </div>
                                 </div>
                             }

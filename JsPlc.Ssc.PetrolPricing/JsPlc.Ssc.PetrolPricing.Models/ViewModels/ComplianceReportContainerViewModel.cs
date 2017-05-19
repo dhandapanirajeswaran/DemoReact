@@ -55,7 +55,7 @@ namespace JsPlc.Ssc.PetrolPricing.Models.ViewModels
         //public DateTime PriceDate { get; set; }
         public int CatPriceValue { get; set; } // ModalPrice value from daily price (render this as value/10 format ###0.0)
         public int ExpectedPriceValue { get; set; } // SitePrice value from site price (render this as value/10 format ###0.0)
-        public int Diff { get; set; } // Diff in value (Cat - Expected) e.g. 106.9 - 108.9 = -2.0
+        public double Diff { get; set; } // Diff in value (Cat - Expected) e.g. 106.9 - 108.9 = -2.0
 
         public bool DiffValid { get; set; } // Diff will be invalid if either one value of Price is not found in the respective prices
     }
