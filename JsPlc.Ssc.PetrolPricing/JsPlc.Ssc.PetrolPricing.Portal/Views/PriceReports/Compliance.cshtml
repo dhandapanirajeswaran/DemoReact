@@ -82,6 +82,10 @@
         float: right;
         letter-spacing: 1px;
     }
+    .site-not-complies {}
+    .site-complies {
+        color: green;
+    }
 
 </style>
 
@@ -183,7 +187,7 @@
                             </center>
                         </div>
                         <div class="row">
-                            <div class="col-sm-1" style="width:100px;">Cat Diff</div>
+                            <div class="col-sm-1" style="width:100px;">Catalyst</div>
                             <div class="col-sm-1" style="width:70px">Expected</div>
                             <div class="col-sm-1" style="width:70px">Difference</div>
                         </div>
@@ -200,7 +204,13 @@
                             <div class="col-sm-1" style="width:100px">@siteRow.PfsNo</div>
                             <div class="col-sm-1" style="width:100px">@siteRow.CatNo</div>
                             <div class="col-sm-1" style="width:100px">@siteRow.StoreNo</div>
-                            <div class="col-sm-1" style="width:360px">@siteRow.SiteName</div>
+                            <div class="col-sm-1" style="width:360px">
+                                @if (siteRow.DataItems.Take(2).Any(x => x.DiffValid && x.Diff != 0)) {
+                                    <span class="site-not-complies"><i class="fa fa-times"></i> @siteRow.SiteName</span>
+                                } else {
+                                    <span class="site-complies"><i class="fa fa-check"></i> @(siteRow.SiteName)</span>
+                                }
+                            </div>
                             @if (!siteRow.DataItems.Any())
                             {
                                 <div class="col-sm-1">There is no data available for site</div>
@@ -228,14 +238,14 @@
                     </div>
 
 
-                }
+                                }
             </div>
         </div>
-    }
+                }
     else
     {
-        <div class="alert alert-info" role="alert">No data found at @requestedForDate</div>
-    }
+                    <div class="alert alert-info" role="alert">No data found at @requestedForDate</div>
+        }
 </div>
 
 @Html.Partial("_BackToReports")
