@@ -32,8 +32,8 @@
                 offset = ele.offset(),
                 eleWidth = Math.floor(ele.width()),
                 eleHeight = ele.height(),
-                uiWidth = Math.floor(ui.width()),
-                uiHeight = ui.height(),
+                uiWidth,
+                uiHeight,
                 uiMarginWidth = 10,
                 uiMarginHeight = 26,
                 top,
@@ -49,6 +49,11 @@
             ui.detach()
             ui.html(markup);
             ui.removeClass('infotip-above infotip-below').addClass('infotip-' + dock)
+            ui.show()
+                .appendTo(document.body);
+
+            uiWidth = Math.floor(ui.width());
+            uiHeight = ui.height();
 
             switch (dock) {
                 case 'above':

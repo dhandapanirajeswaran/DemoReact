@@ -104,6 +104,9 @@ span.jsdiff {
 .competitorTable .competitor-row  {
     border-top: 1px solid #eee;
 }
+.competitorTable .competitor-row.drive-time-boundary {
+    border-top: 2px solid #666;
+}
 
 .competitorTable tbody tr.highlight td {
     background-color: orange;

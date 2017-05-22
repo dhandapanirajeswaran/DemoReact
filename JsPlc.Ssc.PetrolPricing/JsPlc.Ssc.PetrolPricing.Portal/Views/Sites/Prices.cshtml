@@ -439,11 +439,11 @@
                                         <span class="padded-price-right match-competitor-price" data-bind="attr: {'data-infotip': FuelPrice.MatchCompetitorInfoTip()}, html: FuelPrice.ForecourtAutoPriceHtml()"></span>
                                         <!-- /ko -->
 
-                                        <span class="past-override-text" data-bind="visible: $root.ViewingHistorical()" data-infotip='[i class="fa fa-clock"][/i] Historical [b]Override[/b] Price'><em data-bind="text: (FuelPrice.OverridePrice || 'Past')"></em></span>
+                                        <span class="past-override-text" data-bind="visible: $root.ViewingHistorical()"><em data-bind="text: (FuelPrice.OverridePrice || 'Past'), attr: {'data-infotip' : '[i class=&quot;fa fa-clock&quot;][/i] Historical [b]Override Price[/b] of [em]' + FuelPrice.OverridePrice() + '[/em]'}"></em></span>
+
                                         <input type="text" data-bind="value: FuelPrice.OverridePrice, visible: !$root.ViewingHistorical(),
                                 id: ('OverridePrice_' + $parent.SiteId + '_' + FuelPrice.FuelTypeId), event:{keyup: changeProp, blur: blurred, focus: focused}, css: ('txtPrice ' + OverrideInputCss()), attr: {'data-infotip': FuelPrice.PriceOverrideInfoTip()}" maxlength="8" />
 
-                                        @*<span data-bind="attr :{id: ('OverridePriceHighlight_' + $parent.SiteId + '_' + FuelPrice.FuelTypeId)}"></span>*@
                                         <!-- note: override prices can be extracted using $('#SiteId-FueldTypeId-overridePrice') -->
                                         <i data-bind="attr: {class: (UpDownIconCss()), 'data-infotip': FuelPrice.UpDownInfoTip()}"></i>
                                         &nbsp;<span class="price-diff" data-bind="text: (UpDownText()), attr: {'data-infotip': FuelPrice.UpDownInfoTip()}"></span>

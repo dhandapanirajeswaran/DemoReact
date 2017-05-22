@@ -81,8 +81,13 @@ namespace JsPlc.Ssc.PetrolPricing.Models.ViewModels
 
         public double CompetitorPriceOffset { get; set; }
 
+        public string PriceSource { get; set; }
+        public string PriceSourceDateTime { get; set; }
+        public int CompetitorSiteId { get; set; } // 0 = none
+        public double Distance { get; set; }
+        public double DriveTime { get; set; }
+        public int DriveTimePence { get; set; }
         public bool IsBasedOnCompetitor { get; set; }
-
         public bool HasNearbyCompetitorPrice { get; set; }
         public bool HasNearbyCompetitorWithOutPrice { get; set; }
     }

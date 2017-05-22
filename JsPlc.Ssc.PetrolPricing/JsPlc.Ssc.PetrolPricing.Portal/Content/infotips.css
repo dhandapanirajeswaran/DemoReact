@@ -47,3 +47,13 @@
     font-style: normal;
     font-weight: bold;
 }
+.infotip q {
+    color: #88ffff;
+    font-style: normal;
+    font-weight: bold;
+}
+.infotip q::before,
+.infotip q::after {
+    content: "";
+    display: none;
+}

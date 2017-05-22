@@ -98,7 +98,7 @@
                     <!-- /ko -->
                     <!-- ko if: hasCompetitors() -->
                     <!-- ko foreach: competitors -->
-                    <tr class="competitor-row hoverable" data-bind="attr:{id:'CompetitorSiteRow_' + SiteId},style: {background :'lightgray'}">
+                    <tr class="competitor-row hoverable" data-bind="css: (isDriveTimeBoundary ? 'drive-time-boundary' : ''), attr:{id:'CompetitorSiteRow_' + SiteId},style: {background :'lightgray'}">
                         <td class="num1"><span data-bind="text: Brand"></span></td>
                         <td class="num2">
                             <button type="button" class="btn btn-default btn-xs triggerEditSiteNote" data-bind="attr:{id: 'EditSiteNoteButton_' + SiteId}" data-infotip="Create or edit note"><i class="fa fa-pencil"></i></button>
