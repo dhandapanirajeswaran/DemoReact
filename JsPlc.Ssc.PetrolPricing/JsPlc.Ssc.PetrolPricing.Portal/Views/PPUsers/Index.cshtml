@@ -11,10 +11,31 @@
     .table-striped tr.selected:nth-child(odd) {
         background-color: #eeb;
     }
-    .table-striped .inactive-user {
+    .table-striped .inactive-user:nth-child(odd) {
+        background-color: #e2cece;
+        color: #999;
+        font-style: italic;
+    }
+    .table-striped .inactive-user:nth-child(even) {
         background-color: #f2dede;
         color: #999;
         font-style: italic;
+    }
+
+    .inactive-users-control {
+        float: right;
+        font-size: 75%;
+        font-weight: normal;
+        border: 1px solid #C9D8C2;
+        border-radius: 8px;
+        padding: 4px 1em;
+        vertical-align: middle;
+        margin: 0;
+        line-height: 1em;
+    }
+
+    .table-striped.hide-inactive-users .inactive-user {
+        display: none;
     }
 
 </style>
@@ -56,6 +77,9 @@
                             <h4>
                                 <i class="fa fa-bar-chart"></i>
                                 Users Information
+
+                                <label class="input-group inactive-users-control" data-infotip-dock="below" data-infotip="Show or Hide Inactive Users"><input type="checkbox" value="1" id="chkShowInactiveUsers" /> Show Inactive Users</label>
+
                             </h4>
                         </div>
                         <div class="col-md-2 text-center query-builder__filterbuttons">
@@ -109,7 +133,7 @@
                     </table>
                 </div>
                 <div id="datarow">
-                    <table class="table table-striped">
+                    <table class="table table-striped hide-inactive-users">
                         <thead>
                             <tr>
                                 <th>First Name</th>
@@ -287,12 +311,25 @@
                 return (lastAtPos < lastDotPos && lastAtPos > 0 && AtPos == -1 && lastDotPos > 2 && (email.length - lastDotPos) > 2);
             }
 
+            function showInactiveUsersClick() {
+                var grid = $('.table-striped');
+                if ($('#chkShowInactiveUsers').is(':checked')) {
+                    grid.removeClass('hide-inactive-users');
+                    notify.info('Showing Inactive Users');
+                }
+                else {
+                    grid.addClass('hide-inactive-users');
+                    notify.info('Hiding Inactive Users');
+                }
+            };
+
             function bindEvents() {
                 $('[data-click="showData"]').off().on('click', showDataClick);
                 $('[data-click="showEditableRow"]').off().on('click', showEditableRowClick);
                 $('[data-click="addUser"]').off().on('click', addUserClick);
                 $('[data-click="deleteUser"]').off().on('click', deleteUserClick);
                 $('[data-click="confirmDeleteUser"]').off().on('click', confimDeleteUserClick);
+                $('#chkShowInactiveUsers').off().on('change', showInactiveUsersClick);
             };
 
             function docReady() {
