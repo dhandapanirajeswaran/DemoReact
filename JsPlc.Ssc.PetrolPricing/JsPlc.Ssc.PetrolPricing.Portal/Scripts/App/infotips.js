@@ -2,9 +2,8 @@
     function ($, common) {
         "use strict";
 
-        // force build !!
-
-        var ui = $('<div class="infotip">testing</div>'),
+        var isEnabled = true,
+            ui = $('<div class="infotip">testing</div>'),
             isVisible = false,
             element = null,
             lastArea = {
@@ -12,99 +11,144 @@
                 top: 0,
                 width: 0,
                 height: 0
+            },
+            lastTrigger = {
+                left: 0,
+                top: 0,
+                text: '',
+                dock: '',
+                width: 0,
+                height: 0
             };
 
-        var timings = {
-            fadeOut: 1000,
-            fadeIn: 100
+        var settings = {
+            marginWidth: 10,
+            marginHeight: 26,
+            gap: 16
         };
 
         function convertToMarkup(text) {
             return text.split('[').join('<').split(']').join('>');
         };
 
-        function show(ele) {
-            if (!ele || ele == element)
+        function hasSamePropertyValues(left, right) {
+            for (var prop in left) {
+                if (!(prop in right) || right[prop] != left[prop])
+                    return false;
+            }
+            return true;
+        };
+
+        function showInfotip(ele, mouseX, mouseY) {
+            if (!ele) {
+                hideInfotip();
                 return;
-
-            var markup = convertToMarkup(ele.attr('data-infotip')),
-                dock = (ele.data('infotip-dock') || 'above').toLowerCase(),
-                offset = ele.offset(),
-                eleWidth = Math.floor(ele.width()),
-                eleHeight = ele.height(),
-                uiWidth,
-                uiHeight,
-                uiMarginWidth = 10,
-                uiMarginHeight = 26,
-                top,
-                left,
-                gap = 4;
-
-            lastArea.left = offset.left;
-            lastArea.top = offset.top;
-            lastArea.width = eleWidth;
-            lastArea.height = eleHeight;
-
-            element = ele;
-            ui.detach()
-            ui.html(markup);
-            ui.removeClass('infotip-above infotip-below').addClass('infotip-' + dock)
-            ui.show()
-                .appendTo(document.body);
-
-            uiWidth = Math.floor(ui.width());
-            uiHeight = ui.height();
-
-            switch (dock) {
-                case 'above':
-                    top = Math.floor(offset.top + 0.5 - uiHeight - uiMarginHeight - gap);
-                    left = Math.floor(offset.left + (eleWidth - uiWidth) / 2 - uiMarginWidth);
-                    break;
-                case 'below':
-                    top = Math.floor(offset.top + 0.5 + eleHeight + uiMarginHeight + gap),
-                    left = Math.floor(offset.left + (eleWidth - uiWidth)/2 - uiMarginWidth)
-                    break;
             }
 
-            ui.css({top: top, left: left})
-                .show()
-                .appendTo(document.body);
+            var eleOffset = ele.offset(),
+                trigger = {
+                    left: Math.floor(eleOffset.left),
+                    top: Math.floor(eleOffset.top),
+                    text: ele.attr('data-infotip'),
+                    dock: (ele.data('infotip-dock') || 'above').toLowerCase(),
+                    width: Math.floor(ele.innerWidth()),
+                    height: Math.floor(ele.innerHeight())
+                };
+
+            // already drawn same infotip ?
+            if (hasSamePropertyValues(trigger, lastTrigger))
+                return;
+
+            lastTrigger = $.extend({}, trigger);
+
+            ui.html(convertToMarkup(trigger.text))
+                .removeClass('infotip-above infotip-below').addClass('infotip-' + trigger.dock)
+                .css({ left: 0, top: 0, visibility: 'hidden' })
+                .show();
+
+            if (!setPosition(trigger))
+                setPosition(trigger); // reposition due to page edge/infotip word wrap
+
             isVisible = true;
         };
 
-        function hide() {
+        function setPosition(trigger) {
+            var infotip = {
+                top: 0,
+                left: 0,
+                width: Math.floor(ui.outerWidth()),
+                height: Math.floor(ui.outerHeight())
+            };
+
+            switch (trigger.dock) {
+                case 'above':
+                    infotip.top = trigger.top - infotip.height - settings.gap;
+                    infotip.left = trigger.left + (trigger.width - infotip.width) / 2;
+                    break;
+                case 'below':
+                    infotip.top = trigger.top + trigger.height + settings.gap;
+                    infotip.left = trigger.left + (trigger.width - infotip.width) / 2;
+                    break;
+            }
+
+            ui.css({
+                top: infotip.top,
+                left: infotip.left,
+                visibility: 'visible'
+            });
+
+            return Math.floor(ui.outerWidth()) == infotip.width && Math.floor(ui.outerHeight()) == infotip.height;
+        };
+
+        function hideInfotip() {
             isVisible = false;
-            if (element == null)
-                return;
+            if (element != null) {
+                element.data('infotip-active', false);
+                element = null;
+            }
             ui.hide();
+            lastTrigger.width = 0;
         };
 
         function injectDom() {
             ui.hide().appendTo(document.body);
         };
 
-        function isMouseInsideArea(ev, area) {
-            if (!area || area.width == 0 || area.height == 0)
+        function isMouseInsideLastTrigger(ev) {
+            if (lastTrigger.width == 0  || lastTrigger.height == 0)
                 return false;
-            return ev.pageX >= area.left
-                && ev.pageX <= (area.left + area.width)
-                && ev.pageY >= area.top
-                && ev.pageY <= (area.top + area.height);
-        }
+            return ev.pageX >= lastTrigger.left
+                && ev.pageX <= (lastTrigger.left + lastTrigger.width)
+                && ev.pageY >= lastTrigger.top
+                && ev.pageY <= (lastTrigger.top + lastTrigger.height);
+        };
 
         function mouseMoved(ev) {
+            if (!isEnabled)
+                return;
+
             var ele = $(ev.target).closest('[data-infotip]');
-            if (ele.length == 0 && isMouseInsideArea(ev, lastArea) && element.is(':visible'))
+            if (ele.length == 0 && isMouseInsideLastTrigger(ev) && element && element.is(':visible'))
                 ele = element;
 
-            if (ele.length) {
-                show(ele)
+            if (ele.length != 0) {
+                showInfotip(ele, ev.pageX, ev.pageY)
             } else
-                hide();
+                hideInfotip();
+        };
+
+        function show() {
+            isEnabled = true;
+        };
+
+        function hide() {
+            if (isEnabled)
+                hideInfotip();
+            isEnabled = false;
         };
 
         function bindEvents() {
-            $(document.body).on('mousemove', mouseMoved);
+            $(document.body).on('mousemove', mouseMoved).on('scroll', mouseMoved);
         };
 
         function docReady() {
@@ -117,7 +161,7 @@
         // API
         return {
             show: show,
-            hide: hide
+            hide: hide,
         };
     }
 );
