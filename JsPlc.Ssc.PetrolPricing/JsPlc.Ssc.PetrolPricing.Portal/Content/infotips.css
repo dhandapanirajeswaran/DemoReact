@@ -41,19 +41,30 @@
 .infotip b {
     color: yellow;
     text-shadow: 1px 1px 2px #000;
+    letter-spacing 0.5px;
 }
 .infotip em {
     color: orange;
     font-style: normal;
     font-weight: bold;
+    letter-spacing 0.5px;
 }
 .infotip q {
     color: #88ffff;
     font-style: normal;
     font-weight: bold;
+    letter-spacing 0.5px;
 }
 .infotip q::before,
 .infotip q::after {
     content: "";
     display: none;
+}
+
+.infotip u {
+    color: #ccffcc;
+    font-style: normal;
+    font-weight: bold;
+    letter-spacing: 0.5px;
+    text-decoration: none;
 }
