@@ -170,6 +170,7 @@
     <Build Include="dbo\Stored Procedures\spPostQuarterlyFileUpload.sql" />
     <Build Include="dbo\Stored Procedures\spInitSainsburysStoreInformation.sql" />
     <Build Include="dbo\Stored Procedures\spGetSanityCheckSummary.sql" />
+    <Build Include="dbo\Functions\Scalar Functions\fn_RoundTomorrowPriceByPriceChangeVariance.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Scripts\PostDeployment\Script.PostDeployment.sql" />
