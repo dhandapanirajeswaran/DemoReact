@@ -176,20 +176,23 @@ CalculatedTemp AS (
 
 	UNION ALL
 	-- ============= CASE 2: CATALYST PRICE FOR "TODAY"
-	SELECT 
-		cat.ModalPrice [TodayPrice],
-		cat.FuelTypeId,
-		cat.SiteId,
-		@LatestCatalyst_UploadDateTime [DateOfCalc],
-		CONVERT(BIT, 0) [IsTrailPrice],
-		'Catalyst' [PriceSource],
-		@LatestCatalyst_UploadDateTime [PriceSourceDateTime]
-	FROM
-		Catalist cat
-	WHERE
-		@LatestCatalyst_FileUploadId IS NOT NULL
 
-	UNION ALL
+	-- NOTE: no longer required: See Ram's email 11/05/2017
+
+	--SELECT 
+	--	cat.ModalPrice [TodayPrice],
+	--	cat.FuelTypeId,
+	--	cat.SiteId,
+	--	@LatestCatalyst_UploadDateTime [DateOfCalc],
+	--	CONVERT(BIT, 0) [IsTrailPrice],
+	--	'Catalyst' [PriceSource],
+	--	@LatestCatalyst_UploadDateTime [PriceSourceDateTime]
+	--FROM
+	--	Catalist cat
+	--WHERE
+	--	@LatestCatalyst_FileUploadId IS NOT NULL
+
+	--UNION ALL
 	-- ============= CASE 3: YESTERDAY'S OVERRIDE FOR "TODAY" COLUMN
 	SELECT
 		sp.OverriddenPrice [TodayPrice],
