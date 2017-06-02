@@ -241,10 +241,15 @@ function formatUKDate() {
     return padZero2Digit(day) + '/' + padZero2Digit(month) + '/' + year;
 };
 
-function buildRelativeDayHtml(datetime) {
-    var today = new Date(),
-        timeDiff = datetime.getTime() - today.getTime(),
+function getDaysAgo(datetime) {
+    var now = new Date(),
+        timeDiff = new Date(datetime).getTime() - now.getTime(),
         diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
+    return diffDays;
+};
+
+function buildRelativeDayHtml(datetime) {
+    var diffDays = getDaysAgo(datetime);
 
         switch (diffDays) {
             case -1:
@@ -274,7 +279,10 @@ function refreshDates(selectedDate) {
 
     var currentDate,
         currentDay,
-        nextDay;
+        nextDay,
+        previousDay,
+        minus2Day,
+        selectedDaysAgo;
 
     if (isUKDate(selectedDate)) {
         dateParts = selectedDate.split('/');
@@ -283,6 +291,10 @@ function refreshDates(selectedDate) {
         currentDate = new Date();
     }
 
+    selectedDaysAgo = getDaysAgo(currentDate);
+
+    minus2Day = buildDateHeadingAndMarkup(dateAdd('d', -2, currentDate));
+    previousDay = buildDateHeadingAndMarkup(dateAdd('d', -1, currentDate));
     currentDay = buildDateHeadingAndMarkup(currentDate);
     nextDay = buildDateHeadingAndMarkup(dateAdd('d', +1, currentDate));
 
@@ -290,13 +302,16 @@ function refreshDates(selectedDate) {
     $('#today2').html('Today<br />' + currentDay.formatted);
     $('#today3').html('Today<br />' + currentDay.formatted);
 
-    $(".comptoday").html(currentDay.formatted);
-
     $('#tomorrow1').html('Tomorrow<br />' + nextDay.formatted);
     $('#tomorrow2').html('Tomorrow<br />' + nextDay.formatted);
     $('#tomorrow3').html('Tomorrow<br />' + nextDay.formatted);
 
-    $(".compyday").html(previousDay.formatted);
+    // competitor headings
+    var minus2InfoTip = (selectedDaysAgo - 2) + ' days ago',
+        minus1Infotip = (selectedDaysAgo - 1) + ' days ago';
+
+    $(".compyday").html(minus2Day.formatted).attr('data-infotip', minus2InfoTip);
+    $(".comptoday").html(previousDay.formatted).attr('data-infotip', minus1Infotip);
 }
 
 
