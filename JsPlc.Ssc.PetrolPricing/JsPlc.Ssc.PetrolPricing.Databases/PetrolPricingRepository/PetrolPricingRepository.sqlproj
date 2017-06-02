@@ -171,6 +171,7 @@
     <Build Include="dbo\Stored Procedures\spInitSainsburysStoreInformation.sql" />
     <Build Include="dbo\Stored Procedures\spGetSanityCheckSummary.sql" />
     <Build Include="dbo\Functions\Scalar Functions\fn_RoundTomorrowPriceByPriceChangeVariance.sql" />
+    <Build Include="dbo\Tables\EmailTemplate.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Scripts\PostDeployment\Script.PostDeployment.sql" />

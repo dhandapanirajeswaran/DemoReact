@@ -45,8 +45,14 @@
 
             //"RegisterKoComponents": "App/kocomponents/RegisterKoComponents",
 
+            "EditInPlace" : "App/EditInPlace/edit-in-place",
+
+            // popups
+            "SiteEmailPopup" : "App/Popups/SiteEmailPopup",
+
             //Services
             "PetrolPricingService": "App/Services/PetrolPricingService",
+            "EmailTemplateService": "App/Services/EmailTemplateService",
 
             //View scripts
             "SitePricing": "App/ViewScripts/SitePricing",

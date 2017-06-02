@@ -203,6 +203,7 @@
   <ItemGroup>
     <Compile Include="ActionFilters\AuthoriseReportsAttribute.cs" />
     <Compile Include="ActionFilters\AuthoriseSystemSettingsAttribute.cs" />
+    <Compile Include="Controllers\EmailTemplateController.cs" />
     <Compile Include="Controllers\SettingsController.cs" />
     <Compile Include="Security\AuthorisationPermissionChecker.cs" />
     <Compile Include="ActionFilters\AuthoriseDiagnosticsAttribute.cs" />
@@ -321,10 +322,17 @@
     <Content Include="Scripts\App\cookie.js" />
     <Content Include="Scripts\App\cookieSettings.js" />
     <Content Include="Scripts\App\downloader.js" />
+    <Content Include="Scripts\App\EditInPlace\edit-in-place.css" />
+    <Content Include="Scripts\App\EditInPlace\edit-in-place.html" />
+    <Content Include="Scripts\App\EditInPlace\edit-in-place.js" />
     <Content Include="Scripts\App\infotips.js" />
     <Content Include="Scripts\App\layout.js" />
+    <Content Include="Scripts\App\Popups\SiteEmailPopup.html" />
+    <Content Include="Scripts\App\Popups\SiteEmailPopup.js" />
     <Content Include="Scripts\App\prices.js" />
     <Content Include="Scripts\App\scrollToTop.js" />
+    <Content Include="Scripts\App\Services\EmailTemplateService.js" />
+    <Content Include="Scripts\App\Popups\SiteEmailHelp.html" />
     <Content Include="Scripts\App\sitePricingSettings.js" />
     <Content Include="Scripts\App\ViewScripts\CompetitorPriceNotePopup.js" />
     <Content Include="Scripts\App\ViewScripts\CompetitorPricePopup.js" />
@@ -526,6 +534,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\uploads\" />
+    <Folder Include="Views\EmailTemplate\" />
     <Folder Include="Views\Layout\" />
   </ItemGroup>
   <ItemGroup>

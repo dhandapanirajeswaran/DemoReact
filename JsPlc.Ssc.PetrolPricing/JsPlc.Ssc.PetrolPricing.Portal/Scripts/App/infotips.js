@@ -59,6 +59,12 @@
             if (hasSamePropertyValues(trigger, lastTrigger))
                 return;
 
+            // empty infotip ?
+            if (!/\S/.test(trigger.text)) {
+                hideInfotip();
+                return;
+            }
+
             lastTrigger = $.extend({}, trigger);
 
             ui.html(convertToMarkup(trigger.text))
@@ -131,7 +137,7 @@
             if (ele.length == 0 && isMouseInsideLastTrigger(ev) && element && element.is(':visible'))
                 ele = element;
 
-            if (ele.length != 0) {
+            if (ele.length != 0 && !ele.attr('disabled')) {
                 showInfotip(ele, ev.pageX, ev.pageY)
             } else
                 hideInfotip();

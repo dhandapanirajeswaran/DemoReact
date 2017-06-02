@@ -3695,6 +3695,82 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
             return _context.GetDataSanityCheckSummary();
         }
 
+        #region Email Templates
+        public IEnumerable<EmailTemplateName> GetEmailTemplateNames()
+        {
+            var names = (from item in _context.EmailTemplates
+                         select new EmailTemplateName()
+                         {
+                             EmailTemplateId = item.EmailTemplateId,
+                             TemplateName = item.TemplateName,
+                             IsDefault = item.IsDefault,
+                             SubjectLine = item.SubjectLine
+                         }
+                        ).ToList();
+
+            return names;
+        }
+
+        public EmailTemplate CreateEmailTemplateClone(int ppUserId, int emailTemplateId, string templateName)
+        {
+            var sourceTemplate = _context.EmailTemplates.FirstOrDefault(x => x.EmailTemplateId == emailTemplateId);
+
+            var template = new EmailTemplate()
+            {
+                IsDefault = false, // NOTE: There should only be 1 default (aka standard email template)
+                TemplateName = templateName,
+                SubjectLine = sourceTemplate.SubjectLine,
+                PPUserId = ppUserId,
+                EmailBody = sourceTemplate.EmailBody
+            };
+            _context.EmailTemplates.Add(template);
+            _context.SaveChanges();
+            return template;
+        }
+
+        public EmailTemplate GetEmailTemplate(int emailTemplateId)
+        {
+            if (emailTemplateId == 0)
+            {
+                var defaultTemplate = _context.EmailTemplates.FirstOrDefault(x => x.IsDefault);
+                return defaultTemplate;
+            }
+
+            var template = _context.EmailTemplates.FirstOrDefault(x => x.EmailTemplateId == emailTemplateId);
+            return template;
+        }
+
+        public EmailTemplate UpdateEmailTemplate(EmailTemplate template)
+        {
+            var existingTemplate = _context.EmailTemplates.FirstOrDefault(x => x.EmailTemplateId == template.EmailTemplateId);
+            if (existingTemplate == null)
+                return null;
+
+            // cannot update Delete template !
+            if (existingTemplate.IsDefault)
+                return null;
+
+            existingTemplate.SubjectLine = template.SubjectLine;
+            existingTemplate.EmailBody = template.EmailBody;
+
+            _context.SaveChanges();
+
+            return existingTemplate;
+        }
+
+        public bool DeleteEmailTemplate(int ppUserId, int emailTemplateId)
+        {
+            var template = _context.EmailTemplates.FirstOrDefault(x => x.EmailTemplateId == emailTemplateId && x.IsDefault == false);
+            if (template == null)
+                return false;
+
+            _context.EmailTemplates.Remove(template);
+            _context.SaveChanges();
+            return true;
+        }
+
+        #endregion
+
         #region private methods
 
         // Move forward from the forDate and find a set of Prices which were recently uploaded..
@@ -3837,6 +3913,5 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
 
 
         #endregion private methods
-
     }
 }

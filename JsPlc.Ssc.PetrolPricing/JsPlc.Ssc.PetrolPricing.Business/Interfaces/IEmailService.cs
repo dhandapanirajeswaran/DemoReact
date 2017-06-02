@@ -11,7 +11,8 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 {
     public interface IEmailService
     {
-        Task<ConcurrentDictionary<int, EmailSendLog>> SendEmailAsync(List<SitePriceViewModel> listSites,
+        Task<ConcurrentDictionary<int, EmailSendLog>> SendEmailAsync(EmailTemplate emailTemplate, 
+            List<SitePriceViewModel> listSites,
             DateTime endTradeDate,
             string reportBackEmailAddr);
 

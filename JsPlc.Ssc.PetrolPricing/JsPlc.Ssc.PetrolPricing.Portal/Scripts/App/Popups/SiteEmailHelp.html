@@ -1,0 +1,216 @@
+﻿<div class="edit-in-place-help">
+    <span id="btnSiteEmailCloseHelp" style="position: absolute; right: 1em; font-weight: bold; cursor: pointer;" class=""><i class="fa fa-times"></i> Close</span>
+    <h3 class="text-center">Site Email Help</h3>
+    <div class="edit-in-place-help-scroller">
+        <section>
+            <h4 id="SiteEmailHelp_Editor">Using the Editor</h4>
+            <p>To edit a section of the Site email, simply click on the area you wish to edit. </p>
+            <p>For complex sections (such as the Email Body itself) you might have to click a second time to select a particular item to edit.</p>
+
+            <table>
+                <tr>
+                    <th colspan="2">Learning about the Site Email editor</th>
+                </tr>
+                <tr>
+                    <td>
+                        <button type="button" class="btn btn-success"><i class="fa fa-question"></i> Help</button>
+                    </td>
+                    <td>
+                        Opens or closes the Help window.
+                    </td>
+                </tr>
+            </table>
+        </section>
+
+        <section>
+            <h4 id="SiteEmailHelp_Templates">Email Templates</h4>
+            <p>The appearance of an Email is controlled by an Email Template. The template consists of static text, styles and tokens (which are placeholders for site-specific values).</p>
+            <p><strong>Note:</strong>You cannot edit or delete the "Default Email Template".</p>
+
+            <table>
+                <tr>
+                    <th colspan="2">Template controls</th>
+                </tr>
+                <tr>
+                    <td>
+                        <button class="btn btn-danger btn-sm"><i class="fa fa-remove"></i></button>
+                    </td>
+                    <td>
+                        Deletes the currently selected email template.<br />
+                        <strong>Note:</strong> You cannot delete the "Default Email Template"
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <button class="btn btn-primary btn-sm"><i class="fa fa-copy"></i></button>
+                    </td>
+                    <td>
+                        Makes a copy or clone of the currently selected email template, prompting you to enter a name for the template.
+                    </td>
+                </tr>
+            </table>
+        </section>
+
+        <section>
+            <h4 id="SiteEmailHelp_Imporance">Importance</h4>
+            <p>The Importance represents the styling of individual items of email text. The important style will affect the font colour and weight.</p>
+            <p>To change the importance/appearance of an email item, simply click it and change its importance in the dropdown menu.</p>
+            <p>Currently there are 4 difference importance types</p>
+            <ol>
+                <li><strong>Normal</strong> &mdash; Normal text and weight.</li>
+
+                <li><strong>Information</strong> &mdash; Low importance. Text will appear in green.</li>
+
+                <li><strong>Warning</strong> &mdash; Medium importance. Text will appear in orange.</li>
+
+                <li><strong>Urgent!</strong> &mdash; This is the high importance. Text will appear in red.</li>
+            </ol>
+        </section>
+
+        <section>
+            <h4 id="SiteEmailHelp_Tokens">{ Tokens }</h4>
+            <p>Tokens represent placeholders which are replaced before the email is sent.</p>
+            <p>You can either manually type the token into the editor input box or use the dropdown menu and press <strong>Add</strong></p>
+
+            <table>
+                <tr>
+                    <th colspan="2">Inserting tokens using the menu.</th>
+                </tr>
+                <tr>
+                    <td>
+                        <button type="button" class="btn btn-primary"><i class="fa fa-tag"></i> Insert</button>
+                    </td>
+                    <td>
+                        Inserts the selected <strong>Token</strong> at the end of the item you are currently editing.
+                    </td>
+                </tr>
+            </table>
+
+            <p>The currently supported tokens are:-</p>
+
+            <dl>
+                <dt>{SiteName}</dt>
+                <dd>Name of the current site</dd>
+
+                <dt>{DayMonthYear}</dt>
+                <dd>The effective date of the change (e.g. 30/05/2017)</dd>
+
+                <dt>{UnleadedPrice}</dt>
+                <dd>The price change for Unleaded</dd>
+
+                <dt>{SuperPrice}</dt>
+                <dd>The price change for Super-Unleaded</dd>
+
+                <dt>{DieselPrice}</dt>
+                <dd>The price change for Diesel</dd>
+            </dl>
+        </section>
+
+
+        <section>
+            <h4 id="SiteEmailHelp_Controls">The main editor controls</h4>
+            <p>
+                <strong><em>Note:</em></strong> The control panel will only show controls which are relevant to the item you're editing.
+            </p>
+            <p>
+                The controls provide basic editing, re-ordering, deleting and adding of small set of HTML elements.
+            </p>
+
+            <table>
+                <tbody>
+                    <tr>
+                        <th colspan="2">Changing the order of items in the Email Template</th>
+                    </tr>
+                    <tr>
+                        <td>
+                            <button class="btn btn-default btn-xs"><i class="fa fa-arrow-up"></i></button>
+                            <button class="btn btn-default btn-xs"><i class="fa fa-arrow-down"></i></button>
+                        </td>
+                        <td>
+                            Moves the currently selected item up or down.
+                        </td>
+                    </tr>
+                    <tr>
+                        <th colspan="2">Adding new items</th>
+                    </tr>
+                    <tr>
+                        <td>
+                            <button class="btn btn-primary btn-sm"><i class="fa fa-plus"></i> Add</button>
+                        </td>
+                        <td>
+                            <ol>
+                                <li>Select the <strong>type</strong> of item you wish to add using the dropdown menu</li>
+                                <li>Click the <strong>Add</strong> button.</li>
+                            </ol>
+                            <p>The new item will appear after the currently selected one.</p>
+                            <p><em>Tip: you can always change the order afterwards using the Up and Down buttons.</em></p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th colspan="2">Saving the changes / Closing the editor</th>
+                    </tr>
+                    <tr>
+                        <td>
+                            <button class="btn btn-success btn-sm"><i class="fa fa-check"></i> Save</button>
+                        </td>
+                        <td>
+                            Saves all the changes to the Email Template.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <button type="button" class="btn btn-danger btn-sm"><i class="fa fa-times"></i></button>
+                        </td>
+                        <td>
+                            Closes the editing window (also prompts to save any unsaved changes).
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+        </section>
+
+        <section>
+            <h4 id="SiteEmailHelp_Tables">Tables, Rows, Columns and Cells</h4>
+            <p>
+                Table represents grid-based tabular information. It's structure consists of a number cells arranged in
+                horizontal <strong>Rows</strong> and vertical <strong>Columns</strong>
+            </p>
+            <p>
+                The following controls are only available when editing a <strong>table cell</strong>.
+            </p>
+            <table>
+                <tbody>
+                    <tr>
+                        <th colspan="2">
+                            Table Rows, Columns and Cells
+                        </th>
+                    </tr>
+                    <tr>
+                        <td>
+                            <button class="btn btn-default btn-xs"><i class="fa fa-arrow-left"></i></button>
+                            <button class="btn btn-default btn-xs"><i class="fa fa-arrow-right"></i></button>
+                        </td>
+                        <td>Move the entire table <strong>Column</strong> either left or right.</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <button class="btn btn-primary btn-xs"><i class="fa fa-plus"></i></button>
+                        </td>
+                        <td>
+                            Adds a new <strong>Column</strong> after the current cell
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <button class="btn btn-danger btn-xs"><i class="fa fa-minus"></i></button>
+                        </td>
+                        <td>
+                            Deletes the currently selected <strong>Column</strong> from the table.
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+    </div>
+</div>

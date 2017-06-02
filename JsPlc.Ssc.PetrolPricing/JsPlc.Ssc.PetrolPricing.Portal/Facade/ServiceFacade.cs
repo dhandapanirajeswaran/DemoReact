@@ -1,28 +1,26 @@
-﻿using System;
-using System.IO;
-using System.Linq;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Net.Http;
-using System.Net.Http.Formatting;
-using System.Net.Http.Headers;
-using System.Text;
-using System.Web;
-using System.Web.Security;
-using System.Threading.Tasks;
+﻿using JsPlc.Ssc.PetrolPricing.Core.Diagnostics;
+using JsPlc.Ssc.PetrolPricing.Core.Interfaces;
 using JsPlc.Ssc.PetrolPricing.Models;
 using JsPlc.Ssc.PetrolPricing.Models.Enums;
 using JsPlc.Ssc.PetrolPricing.Models.ViewModels;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System.Net.Mail;
-using JsPlc.Ssc.PetrolPricing.Core.Interfaces;
-using JsPlc.Ssc.PetrolPricing.Core.Diagnostics;
-using JsPlc.Ssc.PetrolPricing.Core.ExtensionMethods;
-using JsPlc.Ssc.PetrolPricing.Models.ViewModels.UserPermissions;
 using JsPlc.Ssc.PetrolPricing.Models.ViewModels.Diagnostics;
 using JsPlc.Ssc.PetrolPricing.Models.ViewModels.SelfTest;
 using JsPlc.Ssc.PetrolPricing.Models.ViewModels.SystemSettings;
+using JsPlc.Ssc.PetrolPricing.Models.ViewModels.UserPermissions;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System;
+using System.Collections.Generic;
+using System.Configuration;
+using System.IO;
+using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Formatting;
+using System.Net.Http.Headers;
+using System.Net.Mail;
+using System.Text;
+using System.Threading.Tasks;
+using System.Web;
 
 namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
 {
@@ -56,19 +54,17 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
 
             var result = response.Content.ReadAsAsync<PPUserList>().Result;
             return (response.IsSuccessStatusCode) ? result : null;
-
         }
 
         public PPUserList AddPPUser(PPUser user)
         {
-            var querystring = "api/PPUsers/Add?email=" + user.Email + "&firstname="+ user.FirstName+"&lastname="+ user.LastName;
+            var querystring = "api/PPUsers/Add?email=" + user.Email + "&firstname=" + user.FirstName + "&lastname=" + user.LastName;
 
-            var response = _client.Value.PostAsync(querystring,null).Result;
+            var response = _client.Value.PostAsync(querystring, null).Result;
 
             var result = response.Content.ReadAsAsync<PPUserList>().Result;
 
-            return (response.IsSuccessStatusCode) ? result : null;  
-
+            return (response.IsSuccessStatusCode) ? result : null;
         }
 
         public PPUserList DeletePPUser(string email)
@@ -80,7 +76,6 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             var result = response.Content.ReadAsAsync<PPUserList>().Result;
 
             return (response.IsSuccessStatusCode) ? result : null;
-
         }
 
         // Get a list of brands
@@ -155,10 +150,10 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             return resultViewModel;
         }
 
-        public async Task<List<EmailSendLog>> EmailUpdatedPricesSites(string siteIdsList, DateTime? forDate = null, string apiName = "emailSites")
+        public async Task<List<EmailSendLog>> EmailUpdatedPricesSites(int emailTemplateId, string siteIdsList, DateTime? forDate = null, string apiName = "emailSites")
         {
             string filters = (forDate.HasValue) ? "endTradeDate=" + forDate.Value.ToString("yyyy-MM-dd") + "&" : "";
-            filters = filters + "siteIdsList=" + siteIdsList + "&";
+            filters = filters + "emailTemplateId=" + emailTemplateId + "&siteIdsList=" + siteIdsList + "&";
             var apiUrl = String.IsNullOrEmpty(filters) ? String.Format("api/{0}/", apiName) : String.Format("api/{0}/?{1}", apiName, filters);
 
             var response = await _client.Value.GetAsync(apiUrl);
@@ -234,8 +229,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             {
                 DiagnosticLog.FailedDebug("GetSitePrices failed - " + response.StatusCode);
                 return null;
-            } 
-            
+            }
         }
 
         /// <summary>
@@ -263,8 +257,8 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             var response = await _client.Value.GetAsync(apiUrl);
             if (response.IsSuccessStatusCode)
             {
-               var result = response.Content.ReadAsAsync<IEnumerable<FileUpload>>().Result;
-               return result;
+                var result = response.Content.ReadAsAsync<IEnumerable<FileUpload>>().Result;
+                return result;
             }
             else
             {
@@ -285,8 +279,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             else
             {
                 return null;
-            } 
-
+            }
         }
 
         public FileUpload NewUpload(FileUpload fu) // 1 = Daily, 2 = Qtryly
@@ -302,8 +295,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             else
             {
                 return null;
-            } 
-          
+            }
         }
 
         public Object SaveHoldFile(string heldFile, string destFile)
@@ -319,7 +311,6 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
 
         public Object SaveFile(HttpPostedFileBase _uploadedFile, string fileName) // 1 = Daily, 2 = Qtryly
         {
-
             string apiUrl = string.Format("api/SaveFile?file={0}", fileName);
 
             MemoryStream target = new MemoryStream();
@@ -335,10 +326,8 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             else
             {
                 return null;
-            }   
-
+            }
         }
-
 
         public async Task<IEnumerable<FileUpload>> ExistingDailyUploads(DateTime uploadDatetime)
         {
@@ -353,9 +342,9 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             else
             {
                 return null;
-            }   
-          
+            }
         }
+
         public string GetUploadPath()
         {
             var response = _client.Value.GetAsync("api/settings/" + SettingsKeys.UploadPath).Result;
@@ -368,7 +357,6 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             {
                 return null;
             }
-
         }
 
         public IEnumerable<UploadType> GetUploadTypes()
@@ -386,7 +374,6 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             {
                 return null;
             }
-
         }
 
         public IEnumerable<FuelType> GetFuelTypes()
@@ -404,8 +391,6 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             {
                 return null;
             }
-
-           
         }
 
         public IEnumerable<ImportProcessStatus> GetProcessStatuses()
@@ -422,9 +407,8 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             else
             {
                 return null;
-            }   
+            }
         }
-
 
         public async Task<string> ReInitDb(string option = "")
         {
@@ -480,6 +464,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
                 return response;
             }
         }
+
         public void Dispose()
         {
             _client = null;
@@ -498,8 +483,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
                 else
                 {
                     return null;
-                }                
-               
+                }
             }
             catch (Exception ex)
             {
@@ -523,9 +507,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
                 else
                 {
                     return null;
-                }   
-                
-               
+                }
             }
             catch (Exception ex)
             {
@@ -549,7 +531,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
                 else
                 {
                     return null;
-                }   
+                }
             }
             catch (Exception ex)
             {
@@ -575,8 +557,6 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
                 {
                     return null;
                 }
-
-
             }
             catch (Exception ex)
             {
@@ -602,8 +582,6 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
                 {
                     return null;
                 }
-
-
             }
             catch (Exception ex)
             {
@@ -613,7 +591,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             return null;
         }
 
-        public NationalAverageReportViewModel GetNationalAverage2(DateTime when, bool bViewAllCompetitors=false)
+        public NationalAverageReportViewModel GetNationalAverage2(DateTime when, bool bViewAllCompetitors = false)
         {
             try
             {
@@ -628,9 +606,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
                 else
                 {
                     return null;
-                }    
-              
-               
+                }
             }
             catch (Exception ex)
             {
@@ -640,7 +616,6 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             return null;
         }
 
-    
         public CompetitorsPriceRangeByCompanyViewModel GetCompetitorsPriceRangeByCompany(DateTime when, string companyName, string brandName)
         {
             try
@@ -656,8 +631,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
                 else
                 {
                     return null;
-                }              
-               
+                }
             }
             catch (Exception ex)
             {
@@ -667,14 +641,14 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             return null;
         }
 
-        public PriceMovementReportViewModel GetPriceMovement(string brandName, DateTime fromDate, DateTime toDate, int fuelTypeId,string siteName)
+        public PriceMovementReportViewModel GetPriceMovement(string brandName, DateTime fromDate, DateTime toDate, int fuelTypeId, string siteName)
         {
             try
             {
-                var url = string.Format("api/GetPriceMovement/{0}/{1}/{2}/{3}/{4}", fromDate.ToString("ddMMMyyyy"), toDate.ToString("ddMMMyyyy"), fuelTypeId, brandName, siteName==null? "empty": siteName);
+                var url = string.Format("api/GetPriceMovement/{0}/{1}/{2}/{3}/{4}", fromDate.ToString("ddMMMyyyy"), toDate.ToString("ddMMMyyyy"), fuelTypeId, brandName, siteName == null ? "empty" : siteName);
 
                 var response = _client.Value.GetAsync(url).Result;
-             
+
                 if (response.IsSuccessStatusCode)
                 {
                     var result = response.Content.ReadAsAsync<PriceMovementReportViewModel>().Result;
@@ -709,7 +683,6 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
                 {
                     return null;
                 }
-              
             }
             catch (Exception ex)
             {
@@ -723,16 +696,15 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
         {
             var usersList = GetPPUsers();
             var user = (from PPUser a in usersList.Users
-                       where a.Email.ToLower() == email.ToLower()
-                       select a).SingleOrDefault();
+                        where a.Email.ToLower() == email.ToLower()
+                        select a).SingleOrDefault();
             MailAddress address = new MailAddress(email);
             string host = address.Host;
-            if ((user != null && host=="sainsburys.co.uk") || (user != null && host== "jsCoventryDev.onmicrosoft.com") )
+            if ((user != null && host == "sainsburys.co.uk") || (user != null && host == "jsCoventryDev.onmicrosoft.com"))
             {
                 var apiUrl = string.Format("api/user?email={0}", email);
 
                 var response = _client.Value.PostAsync(apiUrl, new { }, new JsonMediaTypeFormatter()).Result;
-
             }
             else
             {
@@ -752,7 +724,6 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
                 _logger.Error(ex);
             }
         }
-
 
         public PPUserDetailsViewModel GetPPUser(int ppUserId)
         {
@@ -841,7 +812,6 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
                 }
                 else
                     return null;
-
             }
             catch (Exception ex)
             {
@@ -973,7 +943,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
                 var result = response.Content.ReadAsAsync<bool>().Result;
                 return result;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _logger.Error(ex);
                 return false;
@@ -995,7 +965,6 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
                 throw new Exception("Exception in ClearDiagnosticsLog" + System.Environment.NewLine + ex.Message, ex);
             }
         }
-
 
         public UserAccessViewModel GetUserAccessModel(string userName)
         {
@@ -1065,7 +1034,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
                     ? result
                     : new List<SelectItemViewModel>();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _logger.Error(ex);
                 throw new Exception("Exception in GetQuarterlyFileUploadOptions" + System.Environment.NewLine + ex.Message, ex);
@@ -1117,7 +1086,6 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
                 throw new Exception("Exception in GetFileUploadInformation" + System.Environment.NewLine + ex.Message, ex);
             }
         }
-
 
         public QuarterlySiteAnalysisContainerViewModel GetQuarterlySiteAnalysisContainerViewModel(int leftFileUploadId, int rightFileUploadId)
         {
@@ -1238,5 +1206,73 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
                 throw new Exception("Exception in GetSitePricingSettings" + System.Environment.NewLine + ex.Message, ex);
             }
         }
+
+        public async Task<IEnumerable<EmailTemplateNameViewModel>> GetEmailTemplateNames()
+        {
+            var apiUrl = "api/GetEmailTemplateNames";
+            return CallAndCatchAsyncGet<IEnumerable<EmailTemplateNameViewModel>>("GetEmailTemplateNames", apiUrl);
+        }
+
+        public async Task<EmailTemplateViewModel> CreateEmailTemplateClone(int ppUserid, int emailTemplateId, string templateName)
+        {
+            var apiUrl = String.Format("api/CreateEmailTemplateClone/{0}/{1}/{2}", ppUserid, emailTemplateId, templateName);
+            return CallAndCatchAsyncGet<EmailTemplateViewModel>("CreateEmailTemplateClone", apiUrl);
+        }
+
+        public async Task<EmailTemplateViewModel> GetEmailTemplate(int emailTemplateId)
+        {
+            var apiUrl = String.Format("api/GetEmailTemplate/{0}", emailTemplateId);
+            return CallAndCatchAsyncGet<EmailTemplateViewModel>("GetEmailTemplate", apiUrl);
+        }
+
+        public async Task<EmailTemplateViewModel> UpdateEmailTemplate(EmailTemplateViewModel template)
+        {
+            var apiUrl = "api/UpdateEmailTemplate";
+            return CallAndCatchAsyncPost<EmailTemplateViewModel, EmailTemplateViewModel>("UpdateEmailTemplate", apiUrl, template);
+        }
+
+        public async Task<bool> DeleteEmailTemplate(int ppUserId, int emailTemplateId)
+        {
+            var apiUrl = String.Format("api/DeleteEmailTemplate/{0}/{1}", ppUserId, emailTemplateId);
+            return CallAndCatchAsyncGet<bool>("DeleteEmailTemplate", apiUrl);
+        }
+
+        #region private methods
+
+        private T CallAndCatchAsyncGet<T>(string methodName, string apiUrl)
+        {
+            try
+            {
+                var response = _client.Value.GetAsync(apiUrl).Result;
+                if (response.IsSuccessStatusCode)
+                    return response.Content.ReadAsAsync<T>().Result;
+                else
+                    return default(T);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex);
+                throw new Exception("Exception in " + methodName + System.Environment.NewLine + ex.Message, ex);
+            }
+        }
+
+        private Tdst CallAndCatchAsyncPost<Tdst, Tsrc>(string methodName, string apiUrl, Tsrc data)
+        {
+            try
+            {
+                var response = _client.Value.PostAsync(apiUrl, data, new JsonMediaTypeFormatter()).Result;
+                if (response.IsSuccessStatusCode)
+                    return response.Content.ReadAsAsync<Tdst>().Result;
+                else
+                    return default(Tdst);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex);
+                throw new Exception("Exception in " + methodName + System.Environment.NewLine + ex.Message, ex);
+            }
+        }
+
+        #endregion private methods
     }
 }

@@ -557,3 +557,105 @@ span.jsdiff {
 .competitor-fuel-super-unleaded {
     background-color: #fcf;
 }
+
+.highlight-email-tokens .token {
+    background-color: #f0ad4e; 
+    color: #000;
+    font-weight: bold; 
+    font-family: monospace;
+}
+
+.readonly-email-field {
+    padding: 1em;
+    margin: 4px;
+}
+
+.editable-email-field {
+    padding: 1em; 
+    border: 2px dashed #ccc; 
+    border-radius: 12px; 
+    margin: 4px;
+}
+
+.editable-email-field:hover {
+    background-color: #ffc;
+    border: 2px dashed #ccc;
+}
+
+.editing-email-field {
+    border: 2px solid #999;
+    padding: 1em;
+    margin: 4px;
+}
+
+#SiteEmailPopup_EmailBody th, 
+#SiteEmailPopup_EmailBody td {
+    padding: 2px 4px;
+}
+
+#SiteEmailPopup_EmailBody .importance-normal {}
+#SiteEmailPopup_EmailBody .importance-info { font-weight: bold; color: green;}
+#SiteEmailPopup_EmailBody .importance-warning {font-weight: bold; color: orange;}
+#SiteEmailPopup_EmailBody .importance-danger {font-weight: bold; color: red;}
+
+
+/* move these out of here.... */
+
+.edit-in-place-help {
+    border: 2px solid #999;
+    border-radius: 0 0 12px 12px;
+    box-shadow: 2px 2px #000;
+    padding: 0.5em 1em;
+    width: 50em;
+    z-index: 2100;
+    background-color: #fff;
+    color: #000;
+    position: fixed;
+    left: 1em;
+    top: -2px;
+    box-shadow: 4px 8px 20px #000;
+}
+
+.edit-in-place-help .edit-in-place-help-scroller {
+    border-top: 2px solid #999;
+    max-height: 400px;
+    overflow: auto;
+}
+
+
+.edit-in-place-help table {
+    width: 98%;
+    margin: 4px;
+    border: 1px solid #999;
+}
+.edit-in-place-help th {
+    text-align: center;
+    line-height: 1.75em;
+    background-color: #eee;
+}
+.edit-in-place-help td {
+    padding: 2px 0.5em;
+}
+.edit-in-place-help td:nth-child(1) {
+    text-align: center;
+}
+
+.edit-in-place-help dd {
+    margin: 1px 1px 1px 2em;
+}
+.edit-in-place-help section {
+    border-bottom: 1px dashed #000;
+    padding-bottom: 2em;
+    margin-top: 2em;
+}
+
+    .edit-in-place-help h4 {
+        color: #3c983c;
+        font-weight: bold;
+        border-left: 8px solid #ccc;
+        padding-left: 0.5em;
+    }
+
+.bootbox.modal {
+    z-index: 5000;
+}

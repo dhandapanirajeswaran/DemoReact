@@ -11,6 +11,9 @@ using JsPlc.Ssc.PetrolPricing.Core.Interfaces;
 using JsPlc.Ssc.PetrolPricing.Core;
 using JsPlc.Ssc.PetrolPricing.Models.ViewModels.UserPermissions;
 using JsPlc.Ssc.PetrolPricing.Models.ViewModels;
+using JsPlc.Ssc.PetrolPricing.Portal.Helper.Extensions;
+using System.Net.Http;
+using System.Net;
 
 namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers.BaseClasses
 {
@@ -81,6 +84,11 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers.BaseClasses
             Response.Cookies.Add(new System.Web.HttpCookie(downloadId, DateTime.Now.Ticks.ToString()));
         }
 
+        protected JsonResult StandardJsonResultMessage(object payload)
+        {
+            return new HttpResponseMessage(HttpStatusCode.OK)
+                .ToJsonResult(payload, null, "ApiSuccess");
+        }
 
         #region private methods
 

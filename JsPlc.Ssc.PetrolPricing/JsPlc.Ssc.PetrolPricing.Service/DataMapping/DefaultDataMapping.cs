@@ -131,6 +131,36 @@ namespace JsPlc.Ssc.PetrolPricing.Service.DataMapping
 
                 .ForMember(dst => dst.PriceChangeVarianceThreshold, src => src.MapFrom(p => p.PriceChangeVarianceThreshold.ToModalPrice()))
                 .ForMember(dst => dst.SuperUnleadedMarkupPrice, src => src.MapFrom(p => p.SuperUnleadedMarkupPrice.ToModalPrice()));
+
+
+            Mapper.CreateMap<EmailTemplate, EmailTemplateViewModel>()
+                .ForMember(dst => dst.EmailTemplateId, src => src.MapFrom(p => p.EmailTemplateId))
+                .ForMember(dst => dst.IsDefault, src => src.MapFrom(p => p.IsDefault))
+                .ForMember(dst => dst.TemplateName, src => src.MapFrom(p => p.TemplateName))
+                .ForMember(dst => dst.SubjectLine, src => src.MapFrom(p => p.SubjectLine))
+                .ForMember(dst => dst.PPUserId, src => src.MapFrom(p => p.PPUserId))
+                .ForMember(dst => dst.PPUserEmail, src => src.Ignore())
+                .ForMember(dst => dst.EmailBody, src => src.MapFrom(p => p.EmailBody));
+
+            Mapper.CreateMap<EmailTemplateViewModel, EmailTemplate>()
+                .ForMember(dst => dst.EmailTemplateId, src => src.MapFrom(p => p.EmailTemplateId))
+                .ForMember(dst => dst.IsDefault, src => src.MapFrom(p => p.IsDefault))
+                .ForMember(dst => dst.TemplateName, src => src.MapFrom(p => p.TemplateName))
+                .ForMember(dst => dst.SubjectLine, src => src.MapFrom(p => p.SubjectLine))
+                .ForMember(dst => dst.PPUserId, src => src.MapFrom(p => p.PPUserId))
+                .ForMember(dst => dst.EmailBody, src => src.MapFrom(p => p.EmailBody));
+
+            Mapper.CreateMap<EmailTemplateName, EmailTemplateNameViewModel>()
+                .ForMember(dst => dst.EmailTemplateId, src => src.MapFrom(p => p.EmailTemplateId))
+                .ForMember(dst => dst.TemplateName, src => src.MapFrom(p => p.TemplateName))
+                .ForMember(dst => dst.IsDefault, src => src.MapFrom(p => p.IsDefault))
+                .ForMember(dst => dst.SubjectLine, src => src.MapFrom(p => p.SubjectLine));
+
+            Mapper.CreateMap<EmailTemplateNameViewModel, EmailTemplateName>()
+                .ForMember(dst => dst.EmailTemplateId, src => src.MapFrom(p => p.EmailTemplateId))
+                .ForMember(dst => dst.TemplateName, src => src.MapFrom(p => p.TemplateName))
+                .ForMember(dst => dst.IsDefault, src => src.MapFrom(p => p.IsDefault))
+                .ForMember(dst => dst.SubjectLine, src => src.MapFrom(p => p.SubjectLine));
         }
     }
 }

@@ -317,5 +317,11 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         IEnumerable<DiagnosticsRecordCountViewModel> GetDatabaseRecordCounts();
 
         DataSanityCheckSummaryViewModel GetDataSanityCheckSummary();
+
+        IEnumerable<EmailTemplateName> GetEmailTemplateNames();
+        EmailTemplate CreateEmailTemplateClone(int ppUserId, int emailTemplateId, string templateName);
+        EmailTemplate GetEmailTemplate(int emailTemplateId);
+        EmailTemplate UpdateEmailTemplate(EmailTemplate template);
+        bool DeleteEmailTemplate(int ppUserId, int emailTemplateId);
     }
 }

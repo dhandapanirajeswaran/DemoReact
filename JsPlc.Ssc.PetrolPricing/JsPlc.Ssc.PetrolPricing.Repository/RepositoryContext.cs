@@ -47,6 +47,9 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
         public IDbSet<SystemSettings> SystemSettings { get; set; }
 
+        public IDbSet<EmailTemplate> EmailTemplates { get; set; }
+
+
 		public RepositoryContext()
 			: base("name=PetrolPricingRepository")
 		{
@@ -143,14 +146,11 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             }
         }
 
-
         public IEnumerable<ContactDetail> GetContactDetails()
         {
             const string sproc = "spGetContactDetailsList";
 
-            var parameters = new
-            {
-            };
+            var parameters = new { };
 
             var model = DapperHelper.QueryList<ContactDetail>(this, sproc, parameters);
             return model;
@@ -216,6 +216,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             {
                 @DaysAgo = daysAgo
             };
+
             var model = DapperHelper.QueryList<DiagnosticsDatabaseObject>(this, sproc, parameters, disableDapperLog: true);
             return model;
         }

@@ -200,6 +200,47 @@ BEGIN
 END
 
 --
+-- Default Email Template
+--
+MERGE dbo.EmailTemplate AS target
+USING (
+	SELECT 
+		N'** Default Email Template' [TemplateName],
+		N'{SiteName} - (Not sent to site)FAO Store/duty manager - URGENT FUEL PRICE CHANGE' [SubjectLine],
+		N'<h1>FAO Store/duty manager - URGENT FUEL PRICE CHANGE</h1>
+<p>Queries to the Trading Hotline using Option 1 Trading, Option 2 Grocery and Option 8 Petrol and Kiosk </p>
+<h2>{SiteName}</h2>
+<p><strong>Petrol price changes, effective end of trade {StartDateMonthYear}</strong></p>
+<table>
+	<tr><td><strong>Product</strong></td><td><strong>New Price</strong></td></tr>
+	<tr><td>Unleaded</td><td>{UnleadedPrice}</td></tr>
+	<tr><td>Super (if applicable)</td><td>{SuperPrice}</td></tr>
+	<tr><td>Diesel</td><td>{DieselPrice}</td></tr>
+</table>
+<ul>
+	<li>All fuel price changes must be actioned at the end of trade only</li>
+	<li>Colleague actioning the price change must ensure the changes have applied on the pumps, enter the time of the change and then sign as confirmation before filing this message at the PFS</li>
+	<li>Ensure you enter the new prices correctly into REPOS e.g. If the price is 129.90ppl, then enter 129.90 in the new price field (make sure there are no fuel sales outstanding on the REPOS system or pumps before making the price change, <strong>ALL</strong> working pumps <strong>MUST</strong> be left <strong>ON</strong> and nozzle placed in the pump holders)</li>
+	<li>You are reminded that only fuel price changes sent to you by email should be actioned. Please ignore REPOS price change reports.</li>
+</ul>
+<h3>24 hour sites</h3>
+<ul>
+	<li>Action the price change in conjunction with the REPOS EOD routine between midnight and 2am. Colleague actioning the price change must ensure that the changes have applied on the pumps, enter the time of the change and then sign as confirmation before filing this message at the PFS.</li>
+</ul>' [EmailBody]
+
+) AS Source
+ON (target.IsDefault = 1)
+WHEN NOT MATCHED
+THEN INSERT (IsDefault, TemplateName, SubjectLine, PPUserId, EmailBody)
+	VALUES(1, source.TemplateName, source.SubjectLine, 0, source.EmailBody)
+WHEN MATCHED
+THEN UPDATE SET
+	TemplateName = source.TemplateName,
+	SubjectLine = source.SubjectLine,
+	PPUserId = 0,
+	EmailBody = source.EmailBody;
+
+--
 -- Determine PriceMatchType for existing sites
 --
 

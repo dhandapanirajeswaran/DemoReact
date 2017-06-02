@@ -28,6 +28,15 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 {
 	public class EmailService : IEmailService
 	{
+        private static Dictionary<string, string> _importanceInlineStyles = new Dictionary<string, string>()
+        {
+            {"importance-normal", "" },
+            {"importance-info", "font-weight: bold; color: green;" },
+            {"importance-warning", "font-weight: bold; color: orange;" },
+            {"importance-danger", "font-weight: bold; color: red;" }
+        };
+
+
 		private readonly ConcurrentDictionary<int, EmailSendLog> _sendLog =
 			new ConcurrentDictionary<int, EmailSendLog>();
 
@@ -63,6 +72,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 		/// <param name="reportBackEmailAddr">Emails the send log to reportBackEmailAddr(LoginUser)</param>
 		/// <returns></returns>
 		public async Task<ConcurrentDictionary<int, EmailSendLog>> SendEmailAsync(
+            EmailTemplate emailTemplate,
             List<SitePriceViewModel> listSites,
 			DateTime endTradeDate,
 			string reportBackEmailAddr)
@@ -83,18 +93,19 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 
 					// EMAIL Task
 					//one email built per sites for multiple user in site email list
-					var emailBody = BuildEmailBody(site, endTradeDate);
+					var emailBody = BuildEmailBody(emailTemplate, site, endTradeDate);
 
-					var emailSubject = _appSettings.EmailSubject;
-					var emailFrom = _appSettings.EmailFrom;
+                    var emailSubject = ReplaceEmailSubjectLineTokens(emailTemplate, site, endTradeDate);
+
+                    var emailFrom = _appSettings.EmailFrom;
 
 					using (var smtpClient = createSmtpClient())
 					{
 						var message = new MailMessage();
 
 						message.From = new MailAddress(emailFrom, emailFrom); // TODO - DisplayName same as fromEmail
-						message.Subject = site.StoreName + " - " + emailSubject;
-						message.Body = emailBody;
+                        message.Subject = emailSubject;
+                        message.Body = emailBody;
 						message.BodyEncoding = Encoding.ASCII;
 						message.IsBodyHtml = true;
 
@@ -167,7 +178,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 			return _sendLog;
 		}
 
-        public string BuildEmailBody(SitePriceViewModel site, DateTime endTradeDate)
+        public string BuildEmailBody(EmailTemplate emailTemplate, SitePriceViewModel site, DateTime endTradeDate)
 		{
 			var emailForSite = new EmailSiteData();
 
@@ -178,11 +189,11 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 				return string.Empty;
 			}
 
-			emailForSite.EmailBody = emailGetLayout();
+            emailForSite.EmailBody = emailReplaceTemplateKeys(emailTemplate, emailForSite);
 
-			emailForSite.EmailBody = emailReplaceTemplateKeys(emailForSite);
+            emailForSite.EmailBody = ApplyEmailStyles(emailForSite.EmailBody);
 
-			return emailForSite.EmailBody;
+            return emailForSite.EmailBody;
 		}
 
 		public async Task<List<EmailSendLog>> SaveEmailLogToRepositoryAsync(List<EmailSendLog> logEntries)
@@ -304,25 +315,25 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 		}
 
 		//Below helper methods used by build email. 
-		private static string emailGetLayout()
-		{
-			var filePathAndName = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Templates/EmailTemplate.html");
+		//private static string emailGetLayout()
+		//{
+		//	var filePathAndName = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Templates/EmailTemplate.html");
 
-            if (!System.IO.File.Exists(filePathAndName))
-            {
-                filePathAndName = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "bin/Templates/EmailTemplate.html");
-            }
+  //          if (!System.IO.File.Exists(filePathAndName))
+  //          {
+  //              filePathAndName = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "bin/Templates/EmailTemplate.html");
+  //          }
 
         
-			StringBuilder sb = new StringBuilder();
+		//	StringBuilder sb = new StringBuilder();
 
-			using (StreamReader sr = new StreamReader(filePathAndName))
-			{
-				sb.Append(sr.ReadToEnd());
-			}
+		//	using (StreamReader sr = new StreamReader(filePathAndName))
+		//	{
+		//		sb.Append(sr.ReadToEnd());
+		//	}
 
-			return sb.ToString();
-		}
+		//	return sb.ToString();
+		//}
 
 		/// <summary>
 		/// Get SitePrice data for email, returns null if not found
@@ -432,12 +443,20 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 			return result;
 		}
 
-		private static string emailReplaceTemplateKeys(EmailSiteData emailForSite)
+        private static string ReplaceEmailSubjectLineTokens(EmailTemplate emailTemplate, SitePriceViewModel emailForSite, DateTime changeDate)
+        {
+            var subjectline = emailTemplate.SubjectLine;
+            subjectline = subjectline.Replace("{SiteName}", emailForSite.StoreName);
+            subjectline =  subjectline.Replace("{DayMonthYear}", changeDate.ToString("dd MMM yyyy", CultureInfo.InvariantCulture));
+            return subjectline;
+        }
+
+		private static string emailReplaceTemplateKeys(EmailTemplate emailTemplate, EmailSiteData emailForSite)
 		{
-			var emailBody = new StringBuilder(emailForSite.EmailBody);
+            var emailBody = new StringBuilder(emailTemplate.EmailBody);
 
 			emailBody.Replace("{SiteName}", emailForSite.SiteName);
-			emailBody.Replace("{StartDateMonthYear}", emailForSite.ChangeDate.ToString("dd MMM yyyy", CultureInfo.InvariantCulture));
+			emailBody.Replace("{DayMonthYear}", emailForSite.ChangeDate.ToString("dd MMM yyyy", CultureInfo.InvariantCulture));
 			emailBody.Replace("{UnleadedPrice}", getPriceFormattedPriceForEmail(emailForSite.PriceUnleaded));
 			emailBody.Replace("{SuperPrice}", getPriceFormattedPriceForEmail(emailForSite.PriceSuper));
 			emailBody.Replace("{DieselPrice}", getPriceFormattedPriceForEmail(emailForSite.PriceDiesel)); 
@@ -445,7 +464,18 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 			return emailForSite.EmailBody = emailBody.ToString();
 		}
 
-		private static string getPriceFormattedPriceForEmail(decimal price)
+        private static string ApplyEmailStyles(string emailBody)
+        {
+            foreach(var item in _importanceInlineStyles)
+            {
+                var oldText = String.Format("class=\"{0}\"", item.Key);
+                var newText = String.Format("style=\"{0}\"", item.Value);
+                emailBody = emailBody.Replace(oldText, newText);
+            }
+            return emailBody;
+        }
+
+        private static string getPriceFormattedPriceForEmail(decimal price)
 		{
 			return (price == 0) ? Constants.EmailPriceReplacementStringForZero : (price / 10).ToString("####.0");
 		}

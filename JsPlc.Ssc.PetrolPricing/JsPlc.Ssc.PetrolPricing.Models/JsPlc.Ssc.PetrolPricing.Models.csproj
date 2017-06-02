@@ -98,6 +98,8 @@
     <Compile Include="ContactDetail.cs" />
     <Compile Include="DTOs\EmailToSet.cs" />
     <Compile Include="EmailSendLog.cs" />
+    <Compile Include="EmailTemplate.cs" />
+    <Compile Include="EmailTemplateName.cs" />
     <Compile Include="Enums\FuelTypeEnum.cs" />
     <Compile Include="Enums\PriceMatchType.cs" />
     <Compile Include="Enums\SiteSectionType.cs" />
@@ -123,6 +125,8 @@
     <Compile Include="ViewModels\Diagnostics\DiagnosticsDatabaseObject.cs" />
     <Compile Include="ViewModels\Diagnostics\DiagnosticsRecordCountViewModel.cs" />
     <Compile Include="ViewModels\Diagnostics\DiagnosticsViewModel.cs" />
+    <Compile Include="ViewModels\EmailTemplateNameViewModel.cs" />
+    <Compile Include="ViewModels\EmailTemplateViewModel.cs" />
     <Compile Include="ViewModels\FileDownloadViewModel.cs" />
     <Compile Include="ViewModels\JsonResultViewModel.cs" />
     <Compile Include="ViewModels\LatestCompPriceDataModel.cs" />

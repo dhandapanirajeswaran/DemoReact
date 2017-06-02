@@ -1,0 +1,105 @@
+﻿.edit-in-place {
+}
+
+.edit-in-place-editable:hover {
+    background-color: #ffc;
+    box-shadow: 0 0 8px #000;
+    background-color: #000;
+    color: #fff;
+    cursor: pointer;
+}
+
+.edit-in-place-editable:hover::after {
+    content: "Click to Edit";
+    background: #337ab7;
+    padding: 2px 1em;
+    border-radius: 0 0 12px 0;
+    color: #fff;
+    font-weight: normal;
+    font-size: 12px;
+    display: block;
+    position:absolute;
+}
+
+
+.edit-in-place-overlay {
+    background: #000;
+    opacity: 0.3;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 2000;
+    cursor: pointer;
+}
+
+.edit-in-place-prompt {
+    z-index: 2080;
+    background: #337ab7;
+    color: #fff;
+    position: absolute;
+    padding: 0.5em 2em;
+    border-radius: 64px 64px 0 0;
+    border-bottom: 4px solid #183956;
+}
+
+.edit-in-place-panel {
+    z-index: 2080;
+    background: #000;
+    color: #fff;
+    position: absolute;
+    border-radius: 12px;
+    padding: 2px 0.5em;
+    width: auto;
+}
+
+.edit-in-place-panel #mnuSiteEmailStyle,
+.edit-in-place-panel #mnuElementType {
+    width: 10em;
+}
+
+.edit-in-place-panel .vert-divider {
+    display: inline-block;
+    padding: 0 0.5em;
+    color: #999;
+}
+
+.edit-in-place-item {
+}
+
+.edit-in-place-editor {
+    font-family: monospace;
+    font-size: 12px;
+    line-height: 1em;
+    background: #ffc;
+    border: 2px solid #000;
+    min-height: 2em;
+    max-height: 10em;
+    margin: 0;
+}
+
+.edit-in-place-border {
+    background-color: rgba(0,0,0,0.5);
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 0;
+    height: 0;
+    z-index: 2010;
+}
+
+.edit-in-place-choose li:hover,
+.edit-in-place-choose p:hover,
+.edit-in-place-choose th:hover,
+.edit-in-place-choose td:hover,
+.edit-in-place-choose h1:hover,
+.edit-in-place-choose h2:hover,
+.edit-in-place-choose h3:hover,
+.edit-in-place-choose h4:hover,
+.edit-in-place-choose h5:hover,
+.edit-in-place-choose h6:hover {
+    background-color: #337ab7;
+    color: #fff;
+    box-shadow: 2px 2px 4px #183956;
+}

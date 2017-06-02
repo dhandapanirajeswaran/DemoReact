@@ -24,6 +24,7 @@ using WebGrease.Css.Extensions;
 using AutoMapper;
 using JsPlc.Ssc.PetrolPricing.Core;
 using JsPlc.Ssc.PetrolPricing.Core.Interfaces;
+using JsPlc.Ssc.PetrolPricing.Business.Interfaces;
 
 namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
 {
@@ -32,17 +33,20 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
 		ISiteService _siteService;
 		IPriceService _priceService;
 		IEmailService _emailService;
+        IEmailTemplateService _emailTemplateService;
 	    private ILogger _logger;
 		
 		public SitesController(
 			ISiteService siteService,
 			IPriceService priceService,
-			IEmailService emailService
+			IEmailService emailService,
+            IEmailTemplateService emailTemplateService
            )
 		{
 			_siteService = siteService;
 			_priceService = priceService;
 			_emailService = emailService;
+            _emailTemplateService = emailTemplateService;
 		    _logger = new PetrolPricingLogger();
 		}
 
@@ -282,16 +286,17 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
 			return Ok(result);
 		}
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="siteId">0 to send for all sites, otherwise specific siteID</param>
-		/// <param name="endTradeDate">Normally todays date, prefer Y-M-D format</param>
-		/// <param name="loginUserEmail">Reports send log back to this emailaddr</param>
-		/// <returns></returns>
-		[System.Web.Http.HttpGet]
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="emailTemplateId">Id of the EmailTemplate</param>
+        /// <param name="siteIdsList">0 to send for all sites, otherwise specific siteID</param>
+        /// <param name="endTradeDate">Normally todays date, prefer Y-M-D format</param>
+        /// <param name="loginUserEmail">Reports send log back to this emailaddr</param>
+        /// <returns></returns>
+        [System.Web.Http.HttpGet]
 		[System.Web.Http.Route("api/emailSites")]
-		public async Task<IHttpActionResult> EmailSites(string siteIdsList, DateTime? endTradeDate = null, string loginUserEmail = "")
+		public async Task<IHttpActionResult> EmailSites(int emailTemplateId, string siteIdsList, DateTime? endTradeDate = null, string loginUserEmail = "")
 		{
 			try
 			{
@@ -299,6 +304,10 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
 				{
 					endTradeDate = DateTime.Now;
 				}
+
+                var emailTemplate = _emailTemplateService.GetEmailTemplate(emailTemplateId);
+                if (emailTemplate == null)
+                    throw new Exception("Unable to find Email Template");
 
                 var listOfSites = new List<SitePriceViewModel>();
 
@@ -320,7 +329,7 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
 
 				if (listOfSites.Any())
 				{
-                    sendLog = await _emailService.SendEmailAsync(listOfSites, endTradeDate.Value, loginUserEmail); 
+                    sendLog = await _emailService.SendEmailAsync(emailTemplate, listOfSites, endTradeDate.Value, loginUserEmail);
 					// We continue sending on failure.. Log shows which passed or failed
 				}
 
