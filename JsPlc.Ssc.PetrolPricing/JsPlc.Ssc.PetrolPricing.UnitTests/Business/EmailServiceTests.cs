@@ -29,7 +29,7 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 		Mock<IAppSettings> _mockAppSettings;
 		Mock<IFactory> _mockFactory;
         Mock<ISystemSettingsService> _mockSystemSettings;
-        Mock<EmailTemplate> _mockEmailTemplate;
+        EmailTemplate _emailTemplate;
 
         Mock<ISmtpClient> _mockSmtpClient;
 
@@ -90,8 +90,11 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
             const string subjectline = "{SiteName}";
             const string emailBody = "URGENT FUEL PRICE CHANGE. {SiteName}. Unleaded: {UnleadedPrice}. Super: {SuperPrice}. Diesel: {DieselPrice}.";
 
-            _mockEmailTemplate.Setup(ss => ss.SubjectLine).Returns(subjectline);
-            _mockEmailTemplate.Setup(ss => ss.EmailBody).Returns(emailBody);
+            _emailTemplate = new EmailTemplate()
+            {
+                SubjectLine = subjectline,
+                EmailBody = emailBody
+            };
 		}
 
 		//[TestCase(BuildEmailBodyTestCases.NoPreviousTradeDatePriceFound)]
@@ -111,7 +114,7 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
             //Act
             var sut = new EmailService(_mockRepository.Object, _mockAppSettings.Object, _mockFactory.Object, _mockSystemSettings.Object);
 
-            var result = sut.BuildEmailBody(_mockEmailTemplate.Object, _siteVM, DateTime.Today);
+            var result = sut.BuildEmailBody(_emailTemplate, _siteVM, DateTime.Today);
 
 			//Assert
 			//email body is not empty
@@ -142,7 +145,7 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 
             //Act
             var sut = new EmailService(_mockRepository.Object, _mockAppSettings.Object, _mockFactory.Object, _mockSystemSettings.Object);
-            var result = sut.BuildEmailBody(_mockEmailTemplate.Object, siteNewVM, DateTime.Today);
+            var result = sut.BuildEmailBody(_emailTemplate, siteNewVM, DateTime.Today);
 
 			//Assert
 			//email body is not empty
@@ -169,13 +172,13 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 
             var sut = new EmailService(_mockRepository.Object, _mockAppSettings.Object, _mockFactory.Object, _mockSystemSettings.Object);
 
-            var expectedEmailBody = sut.BuildEmailBody(_mockEmailTemplate.Object, _siteVM, DateTime.Today);
+            var expectedEmailBody = sut.BuildEmailBody(_emailTemplate, _siteVM, DateTime.Today);
 
             List<SitePriceViewModel> sites = new List<SitePriceViewModel> { _siteVM };
 
 			#endregion
 			//Act
-			var result = sut.SendEmailAsync(_mockEmailTemplate.Object, sites, DateTime.Today, _expectedEmailAddress).Result;
+			var result = sut.SendEmailAsync(_emailTemplate, sites, DateTime.Today, _expectedEmailAddress).Result;
 
 			//Assert
 			Assert.IsTrue(result.Count == 1);
@@ -217,13 +220,13 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
             }
 
             var sut = new EmailService(_mockRepository.Object, _mockAppSettings.Object, _mockFactory.Object, _mockSystemSettings.Object);
-            var expectedEmailBody = sut.BuildEmailBody(_mockEmailTemplate.Object, siteNewVM, DateTime.Today);
+            var expectedEmailBody = sut.BuildEmailBody(_emailTemplate, siteNewVM, DateTime.Today);
 
             List<SitePriceViewModel> sites = new List<SitePriceViewModel> { siteNewVM };
 
 			#endregion
 			//Act
-			var result = sut.SendEmailAsync(_mockEmailTemplate.Object, sites, DateTime.Today, _expectedEmailAddress).Result;
+			var result = sut.SendEmailAsync(_emailTemplate, sites, DateTime.Today, _expectedEmailAddress).Result;
 
 			//Assert
 			Assert.IsTrue(result.Count == 1);
