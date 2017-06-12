@@ -76,6 +76,7 @@
             };
 
             function windowScrolled() {
+                console.log('scrolled!');
                 setTimeout(redraw, 100);
             };
 
@@ -147,6 +148,8 @@
             var element;
 
             var prompt = $('<div class="edit-in-place-prompt">Please click an item to edit</div>');
+            var promptControls = $('<div class="edit-in-place-controls"><button id="btnEditInPlacePromptSave" type="button" class="btn btn-success btn-sm">Save</button>'
+                + '&nbsp;&nbsp;<button id="btnEditInPlacePromptClose" type="button" class="btn btn-danger btn-sm"><i class="fa fa-times"></i></button></div>');
 
             var defaultOptions = {
                 container: undefined,
@@ -292,6 +295,7 @@
                 $('#btnEditInPlaceClose').off().click(function () {
                     events.close();
                 });
+
             };
 
             function event(evt, handler) {
@@ -336,6 +340,7 @@
                     panelHeight;
 
                 prompt.hide();
+                promptControls.hide();
 
                 panel.html(layouts[opts.layout]);
 
@@ -368,6 +373,7 @@
 
                 panel.hide().off().detach();
                 prompt.hide().off().detach();
+                promptControls.hide().off().detach();
             };
 
             function redrawControls() {
@@ -434,26 +440,48 @@
                 $('#mnuEditInPlaceElement').val(tag);
             };
 
-            function showPrompt(container, message) {
-                var offs = container.offset(),
+            function showPrompt(opts) {
+                var offs = opts.container.offset(),
                     conLeft = offs.left,
                     conTop = offs.top,
-                    conWidth = container.outerWidth(),
-                    conHeight = container.outerHeight();
+                    conWidth = opts.container.outerWidth(),
+                    conHeight = opts.container.outerHeight();
 
-                prompt.html(message).appendTo(document.body);
+                prompt.html(opts.message).appendTo(document.body);
 
                 prompt.css({
                     left: conLeft + conWidth / 2 - prompt.outerWidth() / 2,
                     top: conTop - prompt.outerHeight()
                 });
                 prompt.show();
+
+                promptControls.appendTo(document.body);
+
+                promptControls.css({
+                    left: conLeft,
+                    top: conTop - promptControls.outerHeight(),
+                    width: conWidth
+                });
+                promptControls.show();
+
+                bindPromptEvents(opts.save, opts.close);
             };
 
             function hidePrompt() {
+                unbindPromptEvents();
                 prompt.hide();
+                promptControls.hide();
             };
 
+            function bindPromptEvents(save, close) {
+                $('#btnEditInPlacePromptSave').off().click(save || slacker);
+                $('#btnEditInPlacePromptClose').off().click(close || slacker);
+            };
+
+            function unbindPromptEvents() {
+                $('#btnEditInPlacePromptSave').off();
+                $('#btnEditInPlacePromptClose').off();
+            };
            
             // API
             return {
@@ -1065,7 +1093,12 @@
 
             controlPanel.hide();
             borderOverlays.show(container, chooseBorderClick);
-            controlPanel.showPrompt(container, "Please click an item to edit...");
+            controlPanel.showPrompt({
+                container: container,
+                message: "Please click an item to edit...",
+                save: saveAndClose,
+                close: chooseBorderClick
+            });
         };
 
         function enterEditMode(ele) {

@@ -6,6 +6,10 @@
         var popup = $(popupHtml);
         var help = $(siteEmailHelpHtml).hide();
 
+        var dimensions = {
+            minModalHeight: 0
+        };
+
         var params = {
             siteIdList: [],
             siteName: '',
@@ -143,20 +147,52 @@
         function openPopup(parameters) {
             params = $.extend({}, parameters);
 
+            popup.find(selectors.emailBody).html('');
+
             $(document.body).append(popup);
             redrawTemplateButtons();
             redrawEditableZones();
-            states.IsLoading = true;
             refresh();
+            states.IsLoading = true;
             var opts = {
                 show: true,
                 keyboard: true,
             };
             popup.modal(opts);
-            bindEvents();
-            loadTemplateOptions();
-            loadEmailTemplate(0); // load default email template
+
+            popup.on('shown.bs.modal', afterModalShown);
+
             $(document.body).append(help);
+        };
+
+        function afterModalShown() {
+            limitEmailBodyHeight();
+            showContent();
+            $(window).on('resize', windowResized);
+        };
+
+        function windowResized() {
+            limitEmailBodyHeight();
+        };
+
+        function limitEmailBodyHeight() {
+            $(selectors.emailBody).hide();
+
+            var dialog = popup.find('.modal-dialog'),
+                dialogHeight = dialog.outerHeight(),
+                winHeight = $(window).height(),
+                safetyGap = 80,
+                maxContentHeight = winHeight - dialogHeight - safetyGap;
+
+            $(selectors.emailBody).css({ 'maxHeight': maxContentHeight, 'overflow': 'auto' });
+
+            $(selectors.emailBody).show();
+        };
+
+        function showContent() {
+            loadTemplateOptions();
+            loadDefaultEmailTemplate();
+            bindEvents();
         };
 
         function closePopup() {
@@ -269,6 +305,10 @@
 
             startLoading();
             emailTemplateService.getTemplateNames(success, failure);
+        };
+
+        function loadDefaultEmailTemplate() {
+            loadEmailTemplate(0);
         };
 
         function loadEmailTemplate(emailTemplateId) {
@@ -559,7 +599,7 @@
 
         function deleteEmailTemplate(emailTemplateId) {
             function success() {
-                loadEmailTemplate(0);
+                loadDefaultEmailTemplate();
                 loadTemplateOptions();
                 notify.success('Email Template has been deleted.');
             };
@@ -596,6 +636,7 @@
 
         function unbindEvents() {
             popup.off();
+            $(window).off('resize', windowResized);
         };
 
         // API

@@ -44,6 +44,16 @@
     border-bottom: 4px solid #183956;
 }
 
+.edit-in-place-controls {
+    z-index: 2070;
+    padding: 0.5em 2em;
+    position: absolute;
+    background: #000;
+    border-radius: 48px 48px 0 0;
+    text-align: right;
+    width: 20em;
+}
+
 .edit-in-place-panel {
     z-index: 2080;
     background: #000;
