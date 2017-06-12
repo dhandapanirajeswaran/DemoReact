@@ -92,7 +92,7 @@
         function getStandardTokens() {
             var tokens = {
                 '{SiteName}': params.siteName,
-                '{StartDateMonthYear}': params.startDateMonthYear,
+                '{DayMonthYear}': params.dayMonthYear,
                 '{UnleadedPrice}': params.prices.unleaded,
                 '{SuperPrice}': params.prices.superUnleaded,
                 '{DieselPrice}': params.prices.diesel

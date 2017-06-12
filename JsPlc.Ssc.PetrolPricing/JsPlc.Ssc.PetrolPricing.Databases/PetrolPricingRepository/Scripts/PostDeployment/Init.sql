@@ -210,7 +210,7 @@ USING (
 		N'<h1>FAO Store/duty manager - URGENT FUEL PRICE CHANGE</h1>
 <p>Queries to the Trading Hotline using Option 1 Trading, Option 2 Grocery and Option 8 Petrol and Kiosk </p>
 <h2>{SiteName}</h2>
-<p><strong>Petrol price changes, effective end of trade {StartDateMonthYear}</strong></p>
+<p><strong>Petrol price changes, effective end of trade {DayMonthYear}</strong></p>
 <table>
 	<tr><td><strong>Product</strong></td><td><strong>New Price</strong></td></tr>
 	<tr><td>Unleaded</td><td>{UnleadedPrice}</td></tr>
@@ -239,6 +239,14 @@ THEN UPDATE SET
 	SubjectLine = source.SubjectLine,
 	PPUserId = 0,
 	EmailBody = source.EmailBody;
+
+--
+-- Fix Email Templates (map old tokens to new tokens)
+--
+UPDATE dbo.EmailTemplate 
+SET EmailBody = REPLACE(EmailBody, '{StartDateMonthYear}', '{DayMonthYear}'),
+	SubjectLine = REPLACE(SubjectLine, '{StartDateMonthYear}', '{DayMonthYear}');
+
 
 --
 -- Determine PriceMatchType for existing sites
