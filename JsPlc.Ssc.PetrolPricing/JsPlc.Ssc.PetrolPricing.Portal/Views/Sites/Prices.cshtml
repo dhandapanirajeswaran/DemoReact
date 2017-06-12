@@ -401,7 +401,8 @@
                                         <div class="hide-hover">
                                             <a class="btn btn-success btn-xs edit-site-link" data-bind="attr: {'href': ('@Url.Action("Edit", "Sites")/?id=' + SiteId + '&calledFromSection=@(SiteSectionType.SitePricing)' ), 'data-infotip-dock': 'below', 'data-infotip': 'Edit Site [b]' + StoreName + '[/b]'}"><i class="fa fa-edit"></i> Edit...</a>
                                             <!-- ko: if !$root.ViewingHistorical() -->
-                                            <a tabindex="-1" class="btn btn-default btn-xs" data-bind="click: bindEmailTemplate" data-toggle="modal" data-target="#emailSite" data-infotip-dock="below" data-infotip="Open Email Popup" ><i class="fa fa-at"></i> Email</a>
+                                            <a tabindex="-1" class="btn btn-default btn-xs" data-bind="visible:HasEmails, click: bindEmailTemplate" data-toggle="modal" data-target="#emailSite" data-infotip-dock="below" data-infotip="Open Email Popup" ><i class="fa fa-at"></i> Email</a>
+                                            <a tagindex="-1" class="btn btn-danger btn-xs" data-bind="visible:!HasEmails" data-infotip-dock="below" data-infotip="Site has [em]No[/em] emails"><i class="fa fa-times"></i> No Emails</a>
                                             <!-- ko if: hasEmailSendLogEntry() -->
                                             <!-- ko with: EmailSendLogEntry -->
                                             <i class="fa fa-check" data-infotip-dock="below" data-bind="visible: IsSuccess, attr: {'data-infotip': '[b]Email sent..[/b]'}" style="color: green"></i>
