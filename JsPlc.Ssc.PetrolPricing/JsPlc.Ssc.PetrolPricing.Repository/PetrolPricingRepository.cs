@@ -522,6 +522,8 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
                 var catalistFileExits = fileUploadedObj != null;
 
+                var fuelPriceSettings = GetAllFuelPriceSettings();
+
                 var dbList = new List<SitePriceViewModel>();
                 foreach (Site site in filteredSainsburysSites)
                 {
@@ -545,11 +547,11 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                         var TrialPrice = (int)site.CompetitorPriceOffset;
                         TrialPrice = TrialPrice * 10;
 
-                        AddSitePriceRow(FuelTypeItem.Diesel, site, TrialPrice, forDate, catalistFileExits, sitePriceRow.FuelPrices);
+                        AddSitePriceRow(FuelTypeItem.Diesel, site, TrialPrice, forDate, catalistFileExits, sitePriceRow.FuelPrices, fuelPriceSettings);
 
-                        AddSitePriceRow(FuelTypeItem.Unleaded, site, TrialPrice, forDate, catalistFileExits, sitePriceRow.FuelPrices);
+                        AddSitePriceRow(FuelTypeItem.Unleaded, site, TrialPrice, forDate, catalistFileExits, sitePriceRow.FuelPrices, fuelPriceSettings);
 
-                        AddSitePriceRow(FuelTypeItem.Super_Unleaded, site, TrialPrice, forDate, catalistFileExits, sitePriceRow.FuelPrices);
+                        AddSitePriceRow(FuelTypeItem.Super_Unleaded, site, TrialPrice, forDate, catalistFileExits, sitePriceRow.FuelPrices, fuelPriceSettings);
                     }
                     #endregion
 
@@ -747,8 +749,18 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             }
         }
 
+        private FuelPriceSettings GetAllFuelPriceSettings()
+        {
+            var allFuels = _context.GetAllFuelPriceSettings();
+            var settings = new FuelPriceSettings()
+            {
+                AllFuels = allFuels
+            };
+            return settings;
+        }
+
         private void AddSitePriceRow(FuelTypeItem fuelType, Site site, int trialPrice, DateTime forDate,
-            bool doesCatalistFileExist, List<FuelPriceViewModel> list)
+            bool doesCatalistFileExist, List<FuelPriceViewModel> list, FuelPriceSettings fuelPriceSettings)
         {
             int fuelMarkup = 0;
             var orgFuelTypeID = fuelType;
@@ -756,7 +768,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             if (fuelType == FuelTypeItem.Super_Unleaded)
             {
                 fuelType = FuelTypeItem.Unleaded;
-                fuelMarkup = 50;
+                fuelMarkup = fuelPriceSettings.SuperUnleaded.Markup;
             }
 
             var sitePriceData =
@@ -844,13 +856,6 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         private int SetLastDigitTo9(int value)
         {
             return (value / 10) * 10 + 9;
-        }
-
-        private int GetMarkupForFuel(FuelTypeItem fuelType)
-        {
-            return fuelType == FuelTypeItem.Super_Unleaded
-                ? 50
-                : 0;
         }
 
         private int GetTodayPrice(FuelTypeItem fuelType, Site site, DateTime forDate)
@@ -946,34 +951,6 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
             }
             return 0;
-        }
-
-        /// <summary>
-        /// Apply a 5P markup for Super unleaded for non-competing sites
-        /// </summary>
-        /// <param name="dbList"></param>
-        private static void Apply5PMarkupForSuperUnleadedForNonCompetitorSites(List<SitePriceViewModel> dbList)
-        {
-            foreach (var site in dbList)
-            {
-                var unleaded = site.FuelPrices.FirstOrDefault(x => x.FuelTypeId == (int) FuelTypeItem.Unleaded);
-                //if (unleaded != null && unleaded.IsBasedOnCompetitor == false)
-                if (unleaded != null)
-                {
-                    var superunleaded =
-                        site.FuelPrices.FirstOrDefault(x => x.FuelTypeId == (int) FuelTypeItem.Super_Unleaded);
-                    //if (superunleaded != null && superunleaded.IsBasedOnCompetitor == false && unleaded.AutoPrice.HasValue && unleaded.AutoPrice.Value > 0)
-                    if (superunleaded != null && unleaded.AutoPrice.HasValue && unleaded.AutoPrice.Value > 0 &&
-                        unleaded.TodayPrice.HasValue && unleaded.TodayPrice.Value > 0)
-                    {
-                        superunleaded.Markup = 5;
-                        superunleaded.AutoPrice = unleaded.AutoPrice.Value + 50;
-                        superunleaded.AutoPrice = (superunleaded.AutoPrice/10)*10 + 9;
-                        superunleaded.TodayPrice = unleaded.TodayPrice.Value + 50;
-                        superunleaded.TodayPrice = (superunleaded.TodayPrice/10)*10 + 9;
-                    }
-                }
-            }
         }
 
         private FileUpload GetLastFileUploadForDateAndUploadType(DateTime forDate, FileUploadTypes uploadType)

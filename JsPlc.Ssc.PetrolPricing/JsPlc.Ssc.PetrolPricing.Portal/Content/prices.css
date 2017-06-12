@@ -26,6 +26,7 @@
 }
 .actualdata.collapsed {
     max-height: 500px;
+    padding-bottom: 2em;
 }
 
 table.competitorTable td, th {

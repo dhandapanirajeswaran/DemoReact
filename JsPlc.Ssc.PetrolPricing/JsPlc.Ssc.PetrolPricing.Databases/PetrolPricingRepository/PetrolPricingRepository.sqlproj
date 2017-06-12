@@ -172,6 +172,7 @@
     <Build Include="dbo\Stored Procedures\spGetSanityCheckSummary.sql" />
     <Build Include="dbo\Functions\Scalar Functions\fn_RoundTomorrowPriceByPriceChangeVariance.sql" />
     <Build Include="dbo\Tables\EmailTemplate.sql" />
+    <Build Include="dbo\Stored Procedures\spGetAllFuelPriceSettings.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Scripts\PostDeployment\Script.PostDeployment.sql" />

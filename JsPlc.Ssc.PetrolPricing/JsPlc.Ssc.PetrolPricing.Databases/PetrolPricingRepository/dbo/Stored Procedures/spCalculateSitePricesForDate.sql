@@ -17,7 +17,7 @@ DECLARE @StartOfToday date = @forDate
 DECLARE @StartOfTomorrow DATE = DATEADD(Day, 1, @StartOfToday)
 DECLARE @StartOfYesterday DATE = DATEADD(DAY, -1, @StartOfToday)
 
-DECLARE @Markup_For_Super_Unleaded INT = 50
+DECLARE @Markup_For_Super_Unleaded INT = (SELECT TOP 1 SuperUnleadedMarkupPrice FROM dbo.SystemSettings)
 
 DECLARE @FuelType_SUPER_UNLEADED INT  = 1
 DECLARE @FuelType_UNLEADED INT  = 2

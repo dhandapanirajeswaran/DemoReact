@@ -338,5 +338,12 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             var parameters = new { };
             return DapperHelper.QueryFirst<DataSanityCheckSummaryViewModel>(this, sprocName, parameters, true);
         }
+
+        internal IEnumerable<FuelPriceSetting> GetAllFuelPriceSettings()
+        {
+            const string sprocName = "spGetAllFuelPriceSettings";
+            var parameters = new { };
+            return DapperHelper.QueryList<FuelPriceSetting>(this, sprocName, parameters);
+        }
     }
 }
