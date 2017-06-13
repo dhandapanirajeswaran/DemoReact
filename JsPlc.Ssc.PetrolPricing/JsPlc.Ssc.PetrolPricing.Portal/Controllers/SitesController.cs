@@ -957,8 +957,14 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             });
             site.Emails = nonBlankVals;
 
+            bool isRecalcRequired = DoesSiteEditRequireRecalculation(model, site);
+
             var editSite = _serviceFacade.EditSite(site);
-            _serviceFacade.CalcDailyPrices(site.Id);
+
+            if (isRecalcRequired)
+            {
+                _serviceFacade.CalcDailyPrices(site.Id);
+            }
             if (editSite.ViewModel != null)
             {
                 if (site.CalledFromSection == SiteSectionType.SitePricing)
@@ -971,6 +977,25 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 
            
 			return View(site);
+        }
+
+        /// <summary>
+        /// Determine if an edit to a Site would trigger a recalculation of prices
+        /// </summary>
+        /// <param name="model"></param>
+        /// <param name="site"></param>
+        /// <returns></returns>
+        private bool DoesSiteEditRequireRecalculation(SiteViewModel model, SiteViewModel site)
+        {
+            var excludeCompetitorsAreDifferent = String.Join(",", model.ExcludeCompetitors ?? new List<int>()) != String.Join(",", site.ExcludeCompetitors ?? new List<int>());
+            var excludeBrandsAreDifferent = String.Join(",", model.ExcludeBrands ?? new List<string>()) != String.Join(",", site.ExcludeBrands ?? new List<string>());
+
+            return model.IsActive != site.IsActive
+                || model.IsSainsburysSite != site.IsSainsburysSite
+                || model.PriceMatchType != site.PriceMatchType
+                || excludeCompetitorsAreDifferent
+                || excludeBrandsAreDifferent
+                || model.TrailPriceCompetitorId != site.TrailPriceCompetitorId;
         }
 
         [System.Web.Mvc.HttpGet]
