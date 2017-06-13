@@ -94,7 +94,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                 @SiteIds = siteIds
             };
 
-            const int commandTimeoutInSeconds = 60;
+            const int commandTimeoutInSeconds = 60 * 3;
 
             return DapperHelper.QueryList<FuelPriceViewModel>(this, sproc, parameters, false, commandTimeoutInSeconds);
         }
