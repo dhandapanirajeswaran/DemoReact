@@ -78,7 +78,7 @@
                 <td class="column-1">
                     @if (item.FileExists)
                     {
-                        <a class="text-success" href="@(Url.Action("Download", "File"))/@item.Id" data-infotip="Download the file [b]@(item.OriginalFileName)[/b]"><i class="fa fa-file"></i></a>
+                        <a class="text-success" data-download="Downloading file..." href="@(Url.Action("Download", "File"))/@item.Id" data-infotip="Download the file [b]@(item.OriginalFileName)[/b]"><i class="fa fa-file"></i></a>
                         }
                 </td>
                 <td class="column-2">

@@ -31,8 +31,24 @@
     @Html.Partial("_FileUploadsList", Model)
 </div>
 <script>
-    require(["jquery", "UploadCountdown", "infotips"],
-        function ($, uploadCountdown, infotips) {
-            $(uploadCountdown.start);
+    require(["jquery", "UploadCountdown", "infotips", "busyloader"],
+        function ($, uploadCountdown, infotips, busyloader) {
+
+            function docReady() {
+                uploadCountdown.start();
+                $('#FileUploadContainer').on('click', '[data-download]', downloadClick);
+            };
+
+            function downloadClick() {
+                var link = $(this),
+                    message = link.data('download') || 'Downloading file. Please wait...';
+                busyloader.show({
+                    message: message,
+                    showtime: 2000,
+                    dull: true
+                });
+            };
+
+            $(docReady);
         });
 </script>

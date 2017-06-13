@@ -232,7 +232,9 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
         public async Task<ActionResult> Download(int id)
         {
             var model = await _serviceFacade.DownloadFile(id);
-            return File(model.FileBytes, System.Net.Mime.MediaTypeNames.Application.Octet, model.FileName);
+            if (model.FileBytes != null)
+                return File(model.FileBytes, System.Net.Mime.MediaTypeNames.Application.Octet, model.TimeStampedFileName);
+            return new RedirectResult("~/File/?msg=Unable to find file");
         }
 
         #region private methods

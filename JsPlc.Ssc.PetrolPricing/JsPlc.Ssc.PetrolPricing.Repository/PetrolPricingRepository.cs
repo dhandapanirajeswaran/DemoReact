@@ -3456,15 +3456,31 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
 
             var fileUpload = _context.FileUploads.FirstOrDefault(x => x.Id == fileUploadId);
             if (fileUpload == null)
-                throw new Exception("File does not exist");
+                throw new Exception("File Upload Record does not exist");
 
             var fullPath = System.IO.Path.Combine(fileUploadPath, fileUpload.StoredFileName);
+            if (!File.Exists(fullPath))
+            {
+                fileUpload.FileExists = false;
+                _context.SaveChanges();
+                throw new Exception("Physical File does not exist");
+            }
+
             var fileBytes = System.IO.File.ReadAllBytes(fullPath);
+
+            var timeStampedFilename = String.Format("{0}-{1}{2}",
+                fileUpload.UploadDateTime.ToString("yyyyMMdd_HHmm"),
+                (FileUploadTypes)fileUpload.UploadTypeId,
+                Path.GetExtension(fileUpload.StoredFileName)
+                );
 
             return new FileDownloadViewModel()
             {
+                TimeStampedFileName = timeStampedFilename,
                 FileName = fileUpload.OriginalFileName,
-                FileBytes = fileBytes
+                FileBytes = fileBytes,
+                UploadDateTime = fileUpload.UploadDateTime,
+                FileUploadTypeId = fileUpload.UploadTypeId
             };
         }
 

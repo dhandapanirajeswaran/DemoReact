@@ -3,10 +3,10 @@
         "use strict";
 
         var uploadTypeDefs = {
-            '1': { message: 'Daily Price Data', accept: ".csv, .txt", prompt: 'Please select a CSV or TXT file', templateId: null},
-            '2': { message: 'Quarterly Site Data', accept: ".xls, .xlsx", prompt: 'Please select an Excel file', templateId: 'DownloadQuarterlyTemplateButton'},
-            '3': { message: 'Latest JS Price Data', accept: ".xls, .xlsx", prompt: 'Please select an Excel file', templateId: 'DownloadLatestPriceTemplateButton'},
-            '4': { message: 'Latest Competitors Price Data', accept: ".xls, .xlsx", prompt: 'Please select an Excel file', templateId: 'DownloadLatestCompPriceTemplateButton'}
+            '1': { message: 'Daily Price Data', accept: ".csv, .txt", prompt: 'Please select a CSV or TXT file', templateId: null, filenameRegex: /^2\d{7}_\d{4}-DailyPriceData[\. ]/i },
+            '2': { message: 'Quarterly Site Data', accept: ".xls, .xlsx", prompt: 'Please select an Excel file', templateId: 'DownloadQuarterlyTemplateButton', filenameRegex: /^2\d{7}_\d{4}-QuarterlySiteData[\. ]/i },
+            '3': { message: 'Latest JS Price Data', accept: ".xls, .xlsx", prompt: 'Please select an Excel file', templateId: 'DownloadLatestPriceTemplateButton', filenameRegex: /^2\d{7}_\d{4}-LatestJsPriceData[\. ]/i },
+            '4': { message: 'Latest Competitors Price Data', accept: ".xls, .xlsx", prompt: 'Please select an Excel file', templateId: 'DownloadLatestCompPriceTemplateButton', filenameRegex: /^2\d{7}_\d{4}-LatestCompPriceData[\. ]/i }
         };
 
         var fileTypes = {
@@ -109,16 +109,32 @@
             this.value = null;
         };
 
+        function extractDateFromFilename(filename) {
+            if (/^2\d{7}[\._]/.test(filename))
+                return filename.substring(6, 8) + '/' + filename.substring(4, 6) + '/' + filename.substring(0, 4);
+            else
+                return null;
+        };
+
+        function extractFileTypeFromFilename(filename) {
+            var key;
+            for (key in uploadTypeDefs) {
+                if (uploadTypeDefs[key].filenameRegex.test(filename))
+                    return key;
+            }
+            return null;
+        };
+
         function inputTypeFileChange() {
             showSteps(3);
             var uploadtype = $('#UploadTypeName').val(),
                 filename = this.files[0].name.toLowerCase(),
-                isDateFilename = /^2\d{7}\./.test(filename),
                 ext = '.' + this.files[0].name.split(".").pop().toLowerCase(),
                 typeDef = uploadTypeDefs[uploadtype],
                 isValid = typeDef && typeDef.accept.split(/\s*,\s*/).indexOf(ext) != -1,
                 fileType = fileTypes[ext.replace('.', '')],
-                tempDate,
+                filenameDate = extractDateFromFilename(filename),
+                filenameType = extractFileTypeFromFilename(filename),
                 datePicker = $(selectors.chosenDate);
 
             if (isValid) {
@@ -127,11 +143,17 @@
                 $(selectors.uploadButton).show();
                 $("#fileimage").attr("src", common.reportRootFolder() + fileType.image).attr('title', fileType.title);
 
-                if (uploadtype == 1 && isDateFilename) {
-                    tempDate = filename.substring(6, 8) + '/' + filename.substring(4, 6) + '/' + filename.substring(0, 4);
-                    datePicker.val(tempDate);
+                if (filenameType) {
+                    $('#UploadTypeName').val(filenameType);
+                    redrawStepLabels();
+                }
+
+                if (filenameDate) {
+                    if (!$('#chkShowDatePicker').is(':checked'))
+                        $('#chkShowDatePicker').trigger('click');
+                    datePicker.val(filenameDate);
                     datePicker.trigger('change');
-                    notify.info('Date changed ' + tempDate + ' to match upload filename');
+                    notify.info('Date changed ' + filenameDate + ' to match upload filename');
                 }
             } else {
                 $(selectors.errorPanel).show().text("Please Select valid file...").delay(3000).fadeOut();
