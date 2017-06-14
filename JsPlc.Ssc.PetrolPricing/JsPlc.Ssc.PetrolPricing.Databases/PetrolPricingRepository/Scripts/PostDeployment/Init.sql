@@ -144,6 +144,26 @@ MERGE
 			@Default_SystemSettingsUserPermissions);
 
 --
+-- Setup normal users Settings access
+--
+UPDATE 
+	dbo.PPUserPermissions
+SET 
+	SystemSettingsUserPermissions = 3
+WHERE 
+	PPUserId IN (
+	SELECT usr.Id
+	FROM
+		dbo.PPUser usr
+	WHERE
+		usr.Email IN (
+			'Shilpa.Lathika@sainsburys.co.uk',
+			'Izzy.Hexter@sainsburys.co.uk',
+			'Olivia.Darroch@sainsburys.co.uk'
+		)
+	);
+
+	--
 -- Setup the Admins
 --
 UPDATE 
