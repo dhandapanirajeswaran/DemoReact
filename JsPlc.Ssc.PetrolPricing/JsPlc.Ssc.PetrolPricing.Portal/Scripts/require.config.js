@@ -40,12 +40,15 @@
             "bootbox": "App/bootbox.min",
             "sitePricingSettings": "App/sitePricingSettings",
             "buildDetector": "App/buildDetector",
+            "validation": "App/validation",
 
             //"ko-binding-handlers": "App/ko-binding-handlers",
 
             //"RegisterKoComponents": "App/kocomponents/RegisterKoComponents",
 
-            "EditInPlace" : "App/EditInPlace/edit-in-place",
+            "EditInPlace": "App/EditInPlace/edit-in-place",
+
+            "driveTimeMarkup": "App/driveTimeMarkup",
 
             // popups
             "SiteEmailPopup" : "App/Popups/SiteEmailPopup",
@@ -53,6 +56,7 @@
             //Services
             "PetrolPricingService": "App/Services/PetrolPricingService",
             "EmailTemplateService": "App/Services/EmailTemplateService",
+            "DriveTimeMarkupService": "App/Services/DriveTimeMarkupService",
 
             //View scripts
             "SitePricing": "App/ViewScripts/SitePricing",
@@ -61,7 +65,8 @@
             "UploadCountdown": "App/ViewScripts/UploadCountdown",
             "FileUpload": "App/ViewScripts/FileUpload",
             "Diagnostics": "App/ViewScripts/Diagnostics",
-            "SiteMaintenance": "App/ViewScripts/SiteMaintenance"
+            "SiteMaintenance": "App/ViewScripts/SiteMaintenance",
+            "DriveTime": "App/ViewScripts/DriveTime"
         },
         shim: {
             "bootstrap-datepicker": { deps: ["jquery", "bootstrap"] },

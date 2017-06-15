@@ -3762,6 +3762,35 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
             return true;
         }
 
+        public IEnumerable<DriveTimeMarkup> GetAllDriveTimeMarkups()
+        {
+            return _context.Set<DriveTimeMarkup>().ToList();
+        }
+
+        public StatusViewModel UpdateDriveTimeMarkup(IEnumerable<DriveTimeMarkup> driveTimeMarkups)
+        {
+            var error = "";
+
+            // validation
+            if (!driveTimeMarkups.Any())
+                error = "No Drive Time markup data. Please add one or more for each fuel";
+            else if (!driveTimeMarkups.Any(x => x.FuelTypeId == (int)FuelTypeItem.Unleaded))
+                error = "No Drive Time markup defined for Unleaded";
+            else if (!driveTimeMarkups.Any(x => x.FuelTypeId == (int)FuelTypeItem.Diesel))
+                error = "No Drive Time markup defined for Diesel";
+            else if (!driveTimeMarkups.Any(x => x.FuelTypeId == (int)FuelTypeItem.Super_Unleaded))
+                error = "No Drive Time markup defined for Super-Unleaded";
+
+            if (error == "")
+                error = _context.UpdateDriveTimeMarkups(driveTimeMarkups);
+
+            return new StatusViewModel()
+            {
+                ErrorMessage = error != "" ? error : "",
+                SuccessMessage = error == "" ? "Drive Time Markup data saved" : ""
+            };
+        }
+
         #endregion
 
         #region private methods
@@ -3903,7 +3932,6 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
             }
             return distinctBrands;
         }
-
 
         #endregion private methods
     }

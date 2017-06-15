@@ -1,0 +1,174 @@
+﻿@model JsPlc.Ssc.PetrolPricing.Models.ViewModels.SystemSettings.DriveTimeFuelSettingsViewModel
+@using JsPlc.Ssc.PetrolPricing.Models.Enums
+@using JsPlc.Ssc.PetrolPricing.Models.ViewModels.SystemSettings
+@using JsPlc.Ssc.PetrolPricing.Portal.Helper.Extensions
+@{
+    ViewBag.Title = "DriveTime";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var unleadedModel = new DriveTimeMarkupFuelViewModel()
+    {
+        PanelId = String.Format("DriveTimeMarkup_{0}", (int)FuelTypeItem.Unleaded),
+        FuelTypeId = (int)FuelTypeItem.Unleaded,
+        DriveTimeMarkups = Model.Unleaded
+    };
+
+    var dieselModel = new DriveTimeMarkupFuelViewModel()
+    {
+        PanelId = String.Format("DriveTimeMarkup_{0}", (int)FuelTypeItem.Diesel),
+        FuelTypeId = (int)FuelTypeItem.Diesel,
+        DriveTimeMarkups = Model.Diesel
+    };
+
+    var superUnleadedModel = new DriveTimeMarkupFuelViewModel()
+    {
+        PanelId = String.Format("DriveTimeMarkup_{0}", (int)FuelTypeItem.Super_Unleaded),
+        FuelTypeId = (int)FuelTypeItem.Super_Unleaded,
+        DriveTimeMarkups = Model.SuperUnleaded
+    };
+}
+
+
+<style>
+    tr.highlight,
+    tr.highlight:hover {
+        background-color: #cfc;
+    }
+
+    .hoverable:hover {
+        background-color: #ffc;
+    }
+
+    .ping-background {
+        -webkit-animation: fadeIt 4s ease-in-out;
+        animation: fadeIt 4s ease-in-out;
+    }
+
+    @@-webkit-keyframes fadeIt {
+        0% {
+            background-color: #cfc;
+        }
+
+        100% {
+            background-color: #fff;
+        }
+    }
+
+    @@keyframes ping-background {
+        0% {
+            background-color: #cfc;
+        }
+
+        100% {
+            background-color: #fff;
+        }
+    }
+</style>
+
+<h1>
+    <i class="fa fa-cogs"> System Settings</i>
+</h1>
+
+<ul class="nav nav-tabs nav-condensed">
+    <li><a href="@Url.Action("Index", "Settings")"><i class="fa fa-cogs"></i> Common Settings</a></li>
+    <li class="active"><a href="@Url.Action("DriveTime", "Settings")"><i class="fa fa-clock-o"></i> Drive Time</a></li>
+</ul>
+<div class="container">
+
+    <div class="row newline">
+        <div id="divUnsavedChanges" class="alert alert-warning" style="display:none;">
+            <i class="fa fa-warning"></i> <strong>Warning:</strong> You have unsaved changes.
+       
+            <button type="button" id="btnSaveDriveTimeMarkups" class="btn btn-primary btn-sm pull-right" data-infotip="Save the Drive Time Markup values"><i class="fa fa-check"></i> Save</button>
+            <div class="clearfix"></div>
+        </div>
+    </div>
+
+    <div class="row">
+
+        <div class="col-md-4">
+            @Html.Partial("~/Views/Settings/_DriveTimeMarkupFuelPanel.cshtml", unleadedModel)
+        </div>
+
+        <div class="col-md-4">
+            @Html.Partial("~/Views/Settings/_DriveTimeMarkupFuelPanel.cshtml", dieselModel)
+        </div>
+
+        <div class="col-md-4">
+            @Html.Partial("~/Views/Settings/_DriveTimeMarkupFuelPanel.cshtml", superUnleadedModel)
+        </div>
+    </div>
+</div>
+<hr />
+
+<script>
+    require(["DriveTime", "driveTimeMarkup"],
+        function (driveTime, driveTimeMarkup) {
+
+            "use strict";
+
+            var records = {
+                unleaded: JSON.parse('@Html.ToJson(Model.Unleaded)'),
+                diesel: JSON.parse('@Html.ToJson(Model.Diesel)'),
+                superUnleaded: JSON.parse('@Html.ToJson(Model.SuperUnleaded)')
+            };
+
+            function setupUI() {
+                var fuels = {
+                    unleaded: null,
+                    diesel: null,
+                    superUnleaded: null
+                };
+
+                fuels.unleaded = driveTimeMarkup.create({
+                    panelId: '@(unleadedModel.PanelId)',
+                    warningPanelId: 'Warning_@(unleadedModel.PanelId)',
+                    fuelTypeId: @((int)FuelTypeItem.Unleaded),
+                    friendlyFuelName: 'Unleaded',
+                    callback: eventHandler
+                });
+
+                fuels.diesel = driveTimeMarkup.create({
+                    panelId: '@(dieselModel.PanelId)',
+                    warningPanelId: 'Warning_@(dieselModel.PanelId)',
+                    fuelTypeId: @((int)FuelTypeItem.Diesel),
+                    friendlyFuelName: 'Diesel',
+                    callback: eventHandler
+                });
+
+                fuels.superUnleaded = driveTimeMarkup.create({
+                    panelId: '@(superUnleadedModel.PanelId)',
+                    warningPanelId: 'Warning_@(superUnleadedModel.PanelId)',
+                    fuelTypeId: @((int)FuelTypeItem.Super_Unleaded),
+                    friendlyFuelName: 'Super Unleaded',
+                    callback: eventHandler
+                });
+
+                // populate with data
+                fuels.unleaded.populate(records.unleaded);
+                fuels.diesel.populate(records.diesel);
+                fuels.superUnleaded.populate(records.superUnleaded);
+
+                driveTime.init(fuels, eventHandler);
+            };
+
+            function eventHandler(eventType) {
+                var unsaved = $('#divUnsavedChanges');
+                switch (eventType) {
+                    case 'data-changed':
+                        unsaved.delay(1000).fadeIn(1000);
+                        break;
+                    case 'data-saved':
+                        unsaved.delay(1000).fadeOut(3000);
+                        break;
+                }
+            };
+
+            function docReady() {
+                setupUI();
+            };
+
+            $(docReady);
+        }
+    );
+</script>

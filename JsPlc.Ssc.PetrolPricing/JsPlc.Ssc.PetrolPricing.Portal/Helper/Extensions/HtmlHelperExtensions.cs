@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using JsPlc.Ssc.PetrolPricing.Core.StringFormatters;
+using Newtonsoft.Json;
 
 namespace JsPlc.Ssc.PetrolPricing.Portal.Helper.Extensions
 {
@@ -30,6 +31,12 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Helper.Extensions
         public static string FormatFriendlyTimeAgo(this HtmlHelper helper, TimeSpan timeAgo)
         {
             return DateAndTimeFormatter.FormatFriendlyTimeAgo(timeAgo);
+        }
+
+        public static IHtmlString ToJson(this HtmlHelper helper, object data)
+        {
+            var json = Newtonsoft.Json.JsonConvert.SerializeObject(data, Formatting.None);
+            return MvcHtmlString.Create(json);
         }
     }
 }

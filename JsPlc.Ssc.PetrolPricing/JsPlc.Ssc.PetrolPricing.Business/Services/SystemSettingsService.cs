@@ -1,4 +1,5 @@
 ﻿using JsPlc.Ssc.PetrolPricing.Models;
+using JsPlc.Ssc.PetrolPricing.Models.ViewModels;
 using JsPlc.Ssc.PetrolPricing.Repository;
 using System;
 using System.Collections.Generic;
@@ -31,6 +32,16 @@ namespace JsPlc.Ssc.PetrolPricing.Business.Services
         public SitePricingSettings GetSitePricingSettings()
         {
             return _repository.GetSitePricingSettings();
+        }
+
+        public IEnumerable<DriveTimeMarkup> GetAllDriveTimeMarkups()
+        {
+            return _repository.GetAllDriveTimeMarkups();
+        }
+
+        public StatusViewModel UpdateDriveTimeMarkups(IEnumerable<DriveTimeMarkup> driveTimeMarkups)
+        {
+            return _repository.UpdateDriveTimeMarkup(driveTimeMarkups);
         }
     }
 }

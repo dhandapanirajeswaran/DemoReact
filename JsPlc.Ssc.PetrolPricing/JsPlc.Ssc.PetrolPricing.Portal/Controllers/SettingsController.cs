@@ -8,14 +8,15 @@ using JsPlc.Ssc.PetrolPricing.Portal.Facade;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
+using System.Web.Http;
 using System.Web.Mvc;
 
 namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 {
     public class SettingsController : BaseController
     {
-
         private readonly ServiceFacade _serviceFacade;
         private readonly ILogger _logger;
 
@@ -26,7 +27,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
         }
 
         // GET: Settings
-        [HttpGet]
+        [System.Web.Mvc.HttpGet]
         [AuthoriseSystemSettings(Permissions = SystemSettingsUserPermissions.View | SystemSettingsUserPermissions.Edit)]
         public ActionResult Index()
         {
@@ -34,7 +35,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             return View(model);
         }
 
-        [HttpPost]
+        [System.Web.Mvc.HttpPost]
         [AuthoriseSystemSettings(Permissions = SystemSettingsUserPermissions.Edit)]
         public ActionResult Index(SystemSettingsViewModel model)
         {
@@ -43,6 +44,29 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
                 model = _serviceFacade.UpdateSystemSettings(model);
             }
             return View(model);
+        }
+
+        [System.Web.Mvc.HttpGet]
+        [AuthoriseSystemSettings(Permissions = SystemSettingsUserPermissions.View | SystemSettingsUserPermissions.Edit)]
+        public ActionResult DriveTime()
+        {
+            var model = _serviceFacade.GetAllDriveTimeMarkups();
+            return View(model);
+        }
+
+        [ValidateInput(false)]
+        [System.Web.Mvc.HttpPost]
+        //[AuthoriseSystemSettings(Permissions = SystemSettingsUserPermissions.View | SystemSettingsUserPermissions.Edit)]
+        public ActionResult UpdateDriveTimeMarkups(List<DriveTimeMarkupViewModel> model)
+        {
+            var result = _serviceFacade.UpdateDriveTimeMarkups(model);
+
+            var jsonResult = new JsonResult
+            {
+                JsonRequestBehavior = JsonRequestBehavior.DenyGet,
+                Data = result
+            };
+            return jsonResult;
         }
     }
 }

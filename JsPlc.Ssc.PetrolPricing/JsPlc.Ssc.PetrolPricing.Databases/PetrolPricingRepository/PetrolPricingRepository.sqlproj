@@ -173,6 +173,9 @@
     <Build Include="dbo\Functions\Scalar Functions\fn_RoundTomorrowPriceByPriceChangeVariance.sql" />
     <Build Include="dbo\Tables\EmailTemplate.sql" />
     <Build Include="dbo\Stored Procedures\spGetAllFuelPriceSettings.sql" />
+    <Build Include="dbo\Tables\DriveTimeMarkup.sql" />
+    <Build Include="dbo\Functions\Scalar Functions\fn_GetMarkupForDriveTime.sql" />
+    <Build Include="dbo\Stored Procedures\spUpsertDriveTimeMarkups.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Scripts\PostDeployment\Script.PostDeployment.sql" />

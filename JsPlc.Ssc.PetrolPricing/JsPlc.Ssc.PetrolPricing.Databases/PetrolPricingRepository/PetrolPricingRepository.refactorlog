@@ -35,4 +35,25 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="MaxGrocerDriveTimeMinutes" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="40db2dea-56d1-44f0-8773-402b6087d920" ChangeDateTime="06/13/2017 12:46:58">
+    <Property Name="ElementName" Value="[dbo].[DriveTimeMarkup].[Markup]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[DriveTimeMarkup]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="DriveTimeMinutes" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="fe0045d8-a6ad-4fcc-aea1-226d269607c1" ChangeDateTime="06/13/2017 12:47:01">
+    <Property Name="ElementName" Value="[dbo].[DriveTimeMarkup].[DriveTimeMinutes]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[DriveTimeMarkup]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="FuelTypeId" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="06ee39a5-e58f-48a6-b3e8-7196f75885da" ChangeDateTime="06/13/2017 14:47:40">
+    <Property Name="ElementName" Value="[dbo].[DriveTimeMarkup].[DriveTimeMinutes]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[DriveTimeMarkup]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="DriveTime" />
+  </Operation>
 </Operations>

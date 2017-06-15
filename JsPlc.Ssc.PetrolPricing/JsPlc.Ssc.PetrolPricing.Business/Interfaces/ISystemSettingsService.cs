@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using JsPlc.Ssc.PetrolPricing.Models;
+using JsPlc.Ssc.PetrolPricing.Models.ViewModels;
 
 namespace JsPlc.Ssc.PetrolPricing.Business
 {
@@ -13,5 +14,9 @@ namespace JsPlc.Ssc.PetrolPricing.Business
         SystemSettings UpdateSystemSettings(SystemSettings model);
 
         SitePricingSettings GetSitePricingSettings();
+
+        IEnumerable<DriveTimeMarkup> GetAllDriveTimeMarkups();
+
+        StatusViewModel UpdateDriveTimeMarkups(IEnumerable<DriveTimeMarkup> driveTimeMarkups);
     }
 }

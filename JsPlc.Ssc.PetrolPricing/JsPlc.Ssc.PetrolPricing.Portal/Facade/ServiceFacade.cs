@@ -1237,6 +1237,40 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             return CallAndCatchAsyncGet<bool>("DeleteEmailTemplate", apiUrl);
         }
 
+        public DriveTimeFuelSettingsViewModel GetAllDriveTimeMarkups()
+        {
+            try
+            {
+                var apiUrl = String.Format("api/GetAllDriveTimeMarkups");
+                var allDriveTimeMarkups = CallAndCatchAsyncGet<IEnumerable<DriveTimeMarkupViewModel>>("GetAllDriveTimeMarkups", apiUrl);
+
+                var model = new DriveTimeFuelSettingsViewModel()
+                {
+                    Unleaded = allDriveTimeMarkups.Where(x => x.FuelTypeId == (int)FuelTypeItem.Unleaded).OrderBy(x => x.DriveTime).ToList(),
+                    Diesel = allDriveTimeMarkups.Where(x => x.FuelTypeId == (int)FuelTypeItem.Diesel).OrderBy(x => x.DriveTime).ToList(),
+                    SuperUnleaded = allDriveTimeMarkups.Where(x => x.FuelTypeId == (int)FuelTypeItem.Super_Unleaded).OrderBy(x => x.DriveTime).ToList(),
+                };
+
+                return model;
+            }
+            catch (Exception ex)
+            {
+                return new DriveTimeFuelSettingsViewModel()
+                {
+                    Status = new StatusViewModel()
+                    {
+                        ErrorMessage = "Unable to fetch Drive Time Markups"
+                    }
+                };
+            }
+        }
+
+        public async Task<StatusViewModel> UpdateDriveTimeMarkups(IEnumerable<DriveTimeMarkupViewModel> model)
+        {
+            var apiUrl = String.Format("api/UpdateDriveTimeMarkups");
+            return CallAndCatchAsyncPost<StatusViewModel, IEnumerable<DriveTimeMarkupViewModel>>("UpdateDriveTimeMarkups", apiUrl, model);
+        }
+
         #region private methods
 
         private T CallAndCatchAsyncGet<T>(string methodName, string apiUrl)

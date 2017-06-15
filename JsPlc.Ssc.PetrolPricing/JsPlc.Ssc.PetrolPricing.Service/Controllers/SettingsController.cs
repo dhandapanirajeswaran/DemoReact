@@ -95,5 +95,37 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
                 return new ExceptionResult(ex, this);
             }
         }
+
+        [Route("api/GetAllDriveTimeMarkups")]
+        public async Task<IHttpActionResult> GetAllDriveTimeMarkups()
+        {
+            try
+            {
+                var result = _systemSettingsService.GetAllDriveTimeMarkups();
+                var model = Mapper.Map<IEnumerable<DriveTimeMarkup>, IEnumerable<DriveTimeMarkupViewModel>>(result);
+                return Ok(model);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex);
+                return new ExceptionResult(ex, this);
+            }
+        }
+
+        [Route("api/UpdateDriveTimeMarkups")]
+        public async Task<IHttpActionResult> UpdateDriveTimeMarkups(IEnumerable<DriveTimeMarkupViewModel> model)
+        {
+            try
+            {
+                var entities = Mapper.Map<IEnumerable<DriveTimeMarkupViewModel>, IEnumerable<DriveTimeMarkup>>(model);
+                var result = _systemSettingsService.UpdateDriveTimeMarkups(entities);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex);
+                return new ExceptionResult(ex, this);
+            }
+        }
 	}
 }

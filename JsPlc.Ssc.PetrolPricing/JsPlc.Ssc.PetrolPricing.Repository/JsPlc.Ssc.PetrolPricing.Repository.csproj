@@ -123,6 +123,7 @@
     <Compile Include="Dapper\DapperHelper.cs" />
     <Compile Include="Debugging\DebugCompareCompetitorPrices.cs" />
     <Compile Include="Debugging\DebugFileLogger.cs" />
+    <Compile Include="Helpers\SqlHelper.cs" />
     <Compile Include="IPetrolPricingRepository.cs" />
     <Compile Include="RepositoryMemoryCache.cs" />
     <Compile Include="PetrolPricingRepository.cs" />

@@ -96,6 +96,7 @@
     <Compile Include="Common\Functions.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="ContactDetail.cs" />
+    <Compile Include="DriveTimeMarkup.cs" />
     <Compile Include="DTOs\EmailToSet.cs" />
     <Compile Include="EmailSendLog.cs" />
     <Compile Include="EmailTemplate.cs" />
@@ -181,6 +182,9 @@
     <Compile Include="ViewModels\CompetitorPriceViewModel.cs" />
     <Compile Include="ViewModels\SitePriceViewModel.cs" />
     <Compile Include="ViewModels\StatusViewModel.cs" />
+    <Compile Include="ViewModels\SystemSettings\DriveTimeFuelSettingsViewModel.cs" />
+    <Compile Include="ViewModels\SystemSettings\DriveTimeMarkupFuelViewModel.cs" />
+    <Compile Include="ViewModels\SystemSettings\DriveTimeMarkupViewModel.cs" />
     <Compile Include="ViewModels\SystemSettings\SystemSettingsViewModel.cs" />
     <Compile Include="ViewModels\UploadViewModel.cs" />
     <Compile Include="ViewModels\UserPermissions\UserPermissionsOptionViewModel.cs" />

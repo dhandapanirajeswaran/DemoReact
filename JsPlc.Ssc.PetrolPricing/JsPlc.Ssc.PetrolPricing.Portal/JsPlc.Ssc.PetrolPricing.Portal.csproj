@@ -322,6 +322,7 @@
     <Content Include="Scripts\App\cookie.js" />
     <Content Include="Scripts\App\cookieSettings.js" />
     <Content Include="Scripts\App\downloader.js" />
+    <Content Include="Scripts\App\driveTimeMarkup.js" />
     <Content Include="Scripts\App\EditInPlace\edit-in-place.css" />
     <Content Include="Scripts\App\EditInPlace\edit-in-place.html" />
     <Content Include="Scripts\App\EditInPlace\edit-in-place.js" />
@@ -331,12 +332,15 @@
     <Content Include="Scripts\App\Popups\SiteEmailPopup.js" />
     <Content Include="Scripts\App\prices.js" />
     <Content Include="Scripts\App\scrollToTop.js" />
+    <Content Include="Scripts\App\Services\DriveTimeMarkupService.js" />
     <Content Include="Scripts\App\Services\EmailTemplateService.js" />
     <Content Include="Scripts\App\Popups\SiteEmailHelp.html" />
     <Content Include="Scripts\App\sitePricingSettings.js" />
+    <Content Include="Scripts\App\validation.js" />
     <Content Include="Scripts\App\ViewScripts\CompetitorPriceNotePopup.js" />
     <Content Include="Scripts\App\ViewScripts\CompetitorPricePopup.js" />
     <Content Include="Scripts\App\ViewScripts\Diagnostics.js" />
+    <Content Include="Scripts\App\ViewScripts\DriveTime.js" />
     <Content Include="Scripts\App\ViewScripts\FileUpload.js" />
     <Content Include="Scripts\App\ViewScripts\SiteMaintenance.js" />
     <Content Include="Scripts\App\ViewScripts\UploadCountdown.js" />
@@ -531,9 +535,12 @@
     <Content Include="Views\Sites\_PriceMatchPanel.cshtml" />
     <Content Include="Views\Shared\Layout\_DataSanityCheckSummary.cshtml" />
     <Content Include="Views\Settings\Index.cshtml" />
+    <Content Include="Views\Settings\DriveTime.cshtml" />
+    <Content Include="Views\Settings\_DriveTimeMarkupFuelPanel.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\uploads\" />
+    <Folder Include="Views\DriveTimeMarkup\" />
     <Folder Include="Views\EmailTemplate\" />
     <Folder Include="Views\Layout\" />
   </ItemGroup>

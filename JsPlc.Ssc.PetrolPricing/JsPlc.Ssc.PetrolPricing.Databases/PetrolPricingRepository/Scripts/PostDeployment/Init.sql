@@ -267,6 +267,48 @@ UPDATE dbo.EmailTemplate
 SET EmailBody = REPLACE(EmailBody, '{StartDateMonthYear}', '{DayMonthYear}'),
 	SubjectLine = REPLACE(SubjectLine, '{StartDateMonthYear}', '{DayMonthYear}');
 
+--
+-- Seed [dbo].[DriveTimeMarkup]
+--
+DECLARE @DefaultDriveTimeMarkupsTV TABLE (DriveTime INT, Markup INT)
+INSERT INTO 
+	@DefaultDriveTimeMarkupsTV
+VALUES 
+	(0, 0),		--  0 to  4 minutes +0p
+	(5, 1),		--  5 to  9 minutes +1p
+	(10, 2),	-- 10 to 14 minutes +2p
+	(15, 3),	-- 15 to 19 minutes +3p
+	(20, 4),	-- 20 to 24 minutes +4p
+	(25, 5)		-- 25 to 30 minutes +5p
+
+IF NOT EXISTS(SELECT TOP 1 NULL FROM dbo.DriveTimeMarkup)
+BEGIN
+	INSERT INTO dbo.DriveTimeMarkup
+	-- UNLEADED
+	SELECT
+		2, 
+		ddtm.DriveTime, 
+		ddtm.Markup
+	FROM 
+		@DefaultDriveTimeMarkupsTV ddtm
+	-- DIESEL
+	UNION ALL
+	SELECT
+		6,
+		ddtm.DriveTime,
+		ddtm.Markup
+	FROM 
+		@DefaultDriveTimeMarkupsTV ddtm
+	-- SUPER-UNLEADED
+	UNION ALL
+	SELECT
+		1,
+		ddtm.DriveTime,
+		ddtm.Markup
+	FROM 
+		@DefaultDriveTimeMarkupsTV ddtm		
+END
+
 
 --
 -- Determine PriceMatchType for existing sites

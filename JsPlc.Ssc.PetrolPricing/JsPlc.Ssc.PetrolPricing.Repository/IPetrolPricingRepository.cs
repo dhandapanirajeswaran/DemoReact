@@ -323,5 +323,9 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         EmailTemplate GetEmailTemplate(int emailTemplateId);
         EmailTemplate UpdateEmailTemplate(EmailTemplate template);
         bool DeleteEmailTemplate(int ppUserId, int emailTemplateId);
+
+        IEnumerable<DriveTimeMarkup> GetAllDriveTimeMarkups();
+
+        StatusViewModel UpdateDriveTimeMarkup(IEnumerable<DriveTimeMarkup> driveTimeMarkups);
     }
 }

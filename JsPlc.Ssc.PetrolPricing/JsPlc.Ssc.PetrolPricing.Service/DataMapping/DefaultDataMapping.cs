@@ -2,6 +2,7 @@
 using JsPlc.Ssc.PetrolPricing.Core;
 using JsPlc.Ssc.PetrolPricing.Core.ExtensionMethods;
 using JsPlc.Ssc.PetrolPricing.Models;
+using JsPlc.Ssc.PetrolPricing.Models.Enums;
 using JsPlc.Ssc.PetrolPricing.Models.ViewModels;
 using JsPlc.Ssc.PetrolPricing.Models.ViewModels.SystemSettings;
 using System;
@@ -161,6 +162,24 @@ namespace JsPlc.Ssc.PetrolPricing.Service.DataMapping
                 .ForMember(dst => dst.TemplateName, src => src.MapFrom(p => p.TemplateName))
                 .ForMember(dst => dst.IsDefault, src => src.MapFrom(p => p.IsDefault))
                 .ForMember(dst => dst.SubjectLine, src => src.MapFrom(p => p.SubjectLine));
+
+            //
+            // DriveTimeMarkup -> DriveTimeMarkupViewModel
+            //
+            Mapper.CreateMap<DriveTimeMarkup, DriveTimeMarkupViewModel>()
+                .ForMember(dst => dst.Id, src => src.MapFrom(p => p.Id))
+                .ForMember(dst => dst.FuelTypeId, src => src.MapFrom(p =>p.FuelTypeId))
+                .ForMember(dst => dst.DriveTime, src => src.MapFrom(p => p.DriveTime))
+                .ForMember(dst => dst.Markup, src => src.MapFrom(p => p.Markup));
+
+            //
+            // DriveTimeMarkupViewModel -> DriveTimeMarkup
+            //
+            Mapper.CreateMap<DriveTimeMarkupViewModel, DriveTimeMarkup>()
+                .ForMember(dst => dst.Id, src => src.MapFrom(p => p.Id))
+                .ForMember(dst => dst.FuelTypeId, src => src.MapFrom(p => p.FuelTypeId))
+                .ForMember(dst => dst.DriveTime, src => src.MapFrom(p => p.DriveTime))
+                .ForMember(dst => dst.Markup, src => src.MapFrom(p => p.Markup));
         }
     }
 }
