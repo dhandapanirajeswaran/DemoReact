@@ -23,11 +23,18 @@
                     if (!serverData || !serverData.Result)
                         failure();
 
-                    var status = serverData.Result;
+                    var status = serverData.Result,
+                        data;
 
                     if (status.SuccessMessage) {
                         notify.success(status.SuccessMessage);
-                        callback(events.dataSaved);
+
+                        data = {
+                            Unleaded: panels.unleaded.serialise(),
+                            Diesel: panels.diesel.serialise(),
+                            SuperUnleaded: panels.superUnleaded.serialise()
+                        };
+                        callback(events.dataSaved, data);
                     }
                     else if (status.ErrorMessage)
                         notify.error(status.ErrorMessage);

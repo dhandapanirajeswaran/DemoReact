@@ -90,6 +90,16 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers.BaseClasses
                 .ToJsonResult(payload, null, "ApiSuccess");
         }
 
+        protected JsonResult JsonGetResult(object payload)
+        {
+            var jsonResult = new JsonResult()
+            {
+                JsonRequestBehavior = JsonRequestBehavior.AllowGet,
+                Data = payload
+            };
+            return jsonResult;
+        }
+
         #region private methods
 
         private string GetCurrentUserName()

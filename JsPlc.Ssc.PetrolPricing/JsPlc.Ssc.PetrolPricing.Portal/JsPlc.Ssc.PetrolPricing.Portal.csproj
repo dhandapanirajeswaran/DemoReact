@@ -322,7 +322,10 @@
     <Content Include="Scripts\App\cookie.js" />
     <Content Include="Scripts\App\cookieSettings.js" />
     <Content Include="Scripts\App\downloader.js" />
+    <Content Include="Scripts\App\DriveTimeChart.html" />
+    <Content Include="Scripts\App\DriveTimeChart.js" />
     <Content Include="Scripts\App\driveTimeMarkup.js" />
+    <Content Include="Scripts\App\EasyTemplate.js" />
     <Content Include="Scripts\App\EditInPlace\edit-in-place.css" />
     <Content Include="Scripts\App\EditInPlace\edit-in-place.html" />
     <Content Include="Scripts\App\EditInPlace\edit-in-place.js" />

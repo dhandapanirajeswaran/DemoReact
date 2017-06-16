@@ -61,12 +61,23 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
         {
             var result = _serviceFacade.UpdateDriveTimeMarkups(model);
 
-            var jsonResult = new JsonResult
-            {
-                JsonRequestBehavior = JsonRequestBehavior.DenyGet,
-                Data = result
-            };
-            return jsonResult;
+            //var jsonResult = new JsonResult
+            //{
+            //    JsonRequestBehavior = JsonRequestBehavior.DenyGet,
+            //    Data = result
+            //};
+            //return jsonResult;
+
+            return base.JsonGetResult(result);
+        }
+
+
+        [System.Web.Mvc.HttpGet]
+        public JsonResult GetDriveTimeMarkupsJson()
+        {
+            var result = _serviceFacade.GetAllDriveTimeMarkups();
+
+            return base.JsonGetResult(result);
         }
     }
 }

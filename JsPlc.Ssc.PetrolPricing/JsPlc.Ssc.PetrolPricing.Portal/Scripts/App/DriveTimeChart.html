@@ -1,0 +1,32 @@
+﻿<div class="panel panel-info">
+    <div class="panel-heading text-center">
+        <div class="clearfix">
+            <strong>Drive Time Chart</strong>
+
+            <div class="btn-group pull-right" role="group">
+                <button type="button" class="btn btn-sm" id="btnDriveTimeChartShow" data-expand="#divDriveTimeChart" data-infotip="Show the [b]Drive Time Chart[/b]"><i class="fa fa-toggle-down"></i> Show</button>
+                <button type="button" class="btn btn-sm btn-primary" id="btnDriveTimeChartHide" data-collapse="#divDriveTimeChart" data-infotip="Hide the [b]Drive Time Chart[/b]"><i class="fa fa-toggle-up"></i> Hide</button>
+            </div>
+        </div>
+    </div>
+    <div class="panel-body hide" id="divDriveTimeChart">
+        <table class="table table-striped table-condensed">
+            <thead>
+                <tr>
+                    <th>Drive Time</th>
+                    <th><span class="fuel-sign fuel-sign-unleaded"></span></th>
+                    <th><span class="fuel-sign fuel-sign-diesel"></span></th>
+                    <th><span class="fuel-sign fuel-sign-super-unleaded"></span></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr data-template="row">
+                    <td class="text-center">{DriveTime} Mins</td>
+                    <td class="text-center {UnleadedBoundaryCss}">{UnleadedMarkup}</td>
+                    <td class="text-center {DieselBoundaryCss}">{DieselMarkup}</td>
+                    <td class="text-center {SuperUnleadedBoundaryCss}">{SuperUnleadedMarkup}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

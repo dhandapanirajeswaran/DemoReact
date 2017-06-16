@@ -102,15 +102,27 @@ span.jsdiff {
 .competitorTable td {
     overflow: hidden;
 }
-.competitorTable .competitor-row  {
+table.competitorTable > tbody > .competitor-row  {
     border-top: 1px solid #eee;
+    background-color: #ddd;
 }
-.competitorTable .competitor-row.drive-time-boundary {
+.competitorTable .competitor-row .drive-time-boundary {
     border-top: 2px solid #666;
 }
 
 .competitorTable tbody tr.highlight td {
     background-color: orange;
+}
+
+.competitorTable .competitor-row:hover {
+    background-color: #ffc;
+}
+
+.competitorTable .competitor-row .drive-time-miles {
+    background-color: #fff;
+    border-radius: 4px;
+    padding: 0 3px;
+    letter-spacing: 1px;
 }
 
 #competitorPricesPopup .footer-actions {

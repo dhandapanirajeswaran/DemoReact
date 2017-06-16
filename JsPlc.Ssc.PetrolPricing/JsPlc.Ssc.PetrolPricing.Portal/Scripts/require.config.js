@@ -41,6 +41,7 @@
             "sitePricingSettings": "App/sitePricingSettings",
             "buildDetector": "App/buildDetector",
             "validation": "App/validation",
+            "EasyTemplate": "App/EasyTemplate",
 
             //"ko-binding-handlers": "App/ko-binding-handlers",
 
@@ -49,6 +50,7 @@
             "EditInPlace": "App/EditInPlace/edit-in-place",
 
             "driveTimeMarkup": "App/driveTimeMarkup",
+            "DriveTimeChart": "App/DriveTimeChart",
 
             // popups
             "SiteEmailPopup" : "App/Popups/SiteEmailPopup",

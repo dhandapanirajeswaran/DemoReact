@@ -709,3 +709,8 @@ input[type=text].mono-font {
         background: #fff;
         box-shadow: 1px 1px 2px #000;
     }
+
+
+.table-fixed-header > tbody {
+    overflow: auto;
+}

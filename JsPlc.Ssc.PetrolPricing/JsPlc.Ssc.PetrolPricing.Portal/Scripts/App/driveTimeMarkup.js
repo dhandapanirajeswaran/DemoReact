@@ -27,8 +27,8 @@
                 };
 
                 var limits = {
-                    drivetime: { min: 0, max: 60 },
-                    markup: {min: 0, max: 50}
+                    drivetime: { min: 0, max: 99 },
+                    markup: {min: 0, max: 99}
                 };
 
                 var controls = {

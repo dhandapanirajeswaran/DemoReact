@@ -48,7 +48,7 @@
                         <th class="num2"><span>Notes</span></th>
                         <th class="num3"><span>Marker</span></th>
                         <th class="num4"><span>Drive-Time</span></th>
-                        <th class="num5"><span data-infotip="Markup price based on Drive Time">+P</span></th>
+                        <th class="num5"></th>
                         <th class="num6"><span>Cat No.</span></th>
 
                         <th colspan="3" class="tblHighlight text-center dividerLeft">
@@ -98,25 +98,26 @@
                     <!-- /ko -->
                     <!-- ko if: hasCompetitors() -->
                     <!-- ko foreach: competitors -->
-                    <tr class="competitor-row hoverable" data-bind="css: (isDriveTimeBoundary ? 'drive-time-boundary' : ''), attr:{id:'CompetitorSiteRow_' + SiteId},style: {background :'lightgray'}">
+                    <tr class="competitor-row hoverable" data-bind="attr:{id:'CompetitorSiteRow_' + SiteId}">
                         <td class="num1"><span data-bind="text: Brand"></span></td>
                         <td class="num2">
                             <button type="button" class="btn btn-default btn-xs triggerEditSiteNote" data-bind="attr:{id: 'EditSiteNoteButton_' + SiteId}" data-infotip="Create or edit note"><i class="fa fa-pencil"></i></button>
                             <button type="button" class="btn btn-default btn-xs triggerToggleNote" data-bind="attr:{id: 'ToggleSiteNoteButton_' + SiteId}" data-infotip="Show Note"><i class="fa fa-sort-up"></i></button>
                         </td>
                         <td class="num3"><span data-bind="text: StoreName"></span></td>
-                        <td class="num4"><b><span data-bind="text: DriveTime, attr: {'data-infotip': 'Drive Time of [b]' + DriveTime + '[/b] Minutes'}"></span></b></td>
-                        <td class="num5"><span data-bind="text: (Math.floor(DriveTime/5))"></span></td>
+                        <td class="num4"><b class="drive-time-miles"><span data-bind="text: DriveTime, attr: {'data-infotip': 'Drive Time of [b]' + DriveTime + '[/b] Minutes [br /] [q]Unleaded:[/q] [b]+' + DrivePenceForUnleaded + 'p[/b] &mdash; [q]Diesel:[/q] [b]+' + DrivePenceForDiesel + 'p[/b] &mdash; [q]Super-Unleaded:[/q] [b]+' + DrivePenceForSuperUnleaded + 'p[/b]'}"></span></b></td>
+                        <td class="num5"></td>
                         <td class="num6"><span data-bind="text: CatNo, attr: {'data-infotip': 'Catalist Number: [b]' + CatNo + '[/b]'}"></span></td>
 
                         <!-- ko foreach: FuelPricesToDisplay -->
                         <!-- ko if: siteSupportsFuel -->
-                        <td style="border-left: 2px solid #666" class="text-center">
+                        <td style="border-left: 2px solid #666" class="text-center" data-bind="css: (isDriveTimeBoundary() ? 'drive-time-boundary' : '')" >
+
 
                             <span data-bind="html: FuelPrice.ForecourtYestPriceHtml(), attr: {'data-infotip': FuelPrice.YestPriceInfotip()}"></span>
 
                         </td>
-                        <td style="border-left: 1px solid #ccc;" data-bind="css: '' + $parents[1].FuelPricesToDisplay[0].FuelPrice.CompetitorName == $parents[0].Brand + '/' + $parents[0].StoreName  && $parents[1].FuelPricesToDisplay[0].FuelPrice.AutoPrice >0 && FuelPrice.FuelTypeId==2 ?  'competitor-fuel-unleaded' : $parents[1].FuelPricesToDisplay[1].FuelPrice.CompetitorName == $parents[0].Brand + '/' + $parents[0].StoreName  && $parents[1].FuelPricesToDisplay[1].FuelPrice.AutoPrice >0 && FuelPrice.FuelTypeId==6? 'competitor-fuel-diesel': $parents[1].FuelPricesToDisplay[2].FuelPrice.CompetitorName == $parents[0].Brand + '/' + $parents[0].StoreName  && $parents[1].FuelPricesToDisplay[2].FuelPrice.AutoPrice >0 && FuelPrice.FuelTypeId==1? 'competitor-fuel-super-unleaded ' : ''">
+                        <td style="border-left: 1px solid #ccc;" data-bind="css: (isDriveTimeBoundary() ? 'drive-time-boundary' : '') + ($parents[1].FuelPricesToDisplay[0].FuelPrice.CompetitorName == $parents[0].Brand + '/' + $parents[0].StoreName  && $parents[1].FuelPricesToDisplay[0].FuelPrice.AutoPrice >0 && FuelPrice.FuelTypeId==2 ?  'competitor-fuel-unleaded' : $parents[1].FuelPricesToDisplay[1].FuelPrice.CompetitorName == $parents[0].Brand + '/' + $parents[0].StoreName  && $parents[1].FuelPricesToDisplay[1].FuelPrice.AutoPrice >0 && FuelPrice.FuelTypeId==6? 'competitor-fuel-diesel': $parents[1].FuelPricesToDisplay[2].FuelPrice.CompetitorName == $parents[0].Brand + '/' + $parents[0].StoreName  && $parents[1].FuelPricesToDisplay[2].FuelPrice.AutoPrice >0 && FuelPrice.FuelTypeId==1? 'competitor-fuel-super-unleaded ' : '')">
                             <div >
                                 <span data-bind="html: FuelPrice.ForecourtTodayPriceHtml(), attr: {'data-infotip': FuelPrice.CompTodayPriceInfotip()}"></span>
 
@@ -125,8 +126,7 @@
                             </div>
 
                         </td>
-                        <td style="border-left: 1px solid #ccc;" class="text-center" data-bind="class: (FuelPrice.FuelTypeId==2 ? 'diesel-fuel' : '')">
-
+                        <td style="border-left: 1px solid #ccc;" class="text-center" data-bind="class: (FuelPrice.FuelTypeId==2 ? 'diesel-fuel' : ''), css: (isDriveTimeBoundary() ? 'drive-time-boundary' : '')">
 
                             <div data-bind="if: FuelPrice.FuelTypeId==2">
                                 <div data-bind="if: ($parents[1].FuelPricesToDisplay[0].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1)  != 'NaN' ">
@@ -161,7 +161,7 @@
                         </td>
                         <!-- /ko -->
                         <!-- ko if: !siteSupportsFuel -->
-                        <td style="border-left: 2px solid #666" colspan="3">n/a</td>
+                        <td style="border-left: 2px solid #666" colspan="3" data-bind="css: (isDriveTimeBoundary() ? 'drive-time-boundary' : '')">n/a</td>
                         <!-- /ko -->
                         <!-- /ko -->
                     </tr>

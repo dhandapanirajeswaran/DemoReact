@@ -193,26 +193,52 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 			{
 				List<KeyValuePair<CheapestCompetitor, int>> allCompetitors = new List<KeyValuePair<CheapestCompetitor, int>>();
 
-				// APPLY PRICING RULES: based on drivetime (see Market Comparison sheet) as per meeting 02Dec2015 @ 13:00
-				// 0-4.99 min
-				// 5-9.99 mins away – add 1p to minimum competitor 
-				// 10-14.99 mins away – add 2p to minimum competitor 
-				// 15-19.99 mins away – add 3p to minimum competitor 
-				// 20-24.99 mins away – add 4p to minimum competitor 
-				// 25-29.99 mins away – add 5p to minimum competitor 
-               
-				for (float f = 0; f < 6; f++)
-				{
-					float nextMin = f * 5;
-					var currentCompetitor = getCheapestPriceUsingParams(db, site, nextMin, nextMin + 4.99f, fuelId,
-					usingPricesforDate, (int)f);
-                    
-                    
-					if (currentCompetitor.HasValue)
-						allCompetitors.Add(currentCompetitor.Value);
-				}
-				
-				foreach (var currentCompetitor in allCompetitors)
+                const int DriveTimeMinutesBeyondLastRecord = 30;
+
+                //
+                // Get all DriveTimeMarkups from database
+                //
+                var driveTimeMarkups = _db.GetAllDriveTimeMarkups();
+
+                // narrow down by FuelTypeId
+                var driveTimeMarkupsForFuel = driveTimeMarkups.Where(x => x.FuelTypeId == fuelId).OrderBy(x => x.DriveTime).ToArray();
+
+                for(var i=0; i< driveTimeMarkupsForFuel.Length; i++)
+                {
+                    var isLastItem = (i + 1) == driveTimeMarkupsForFuel.Length;
+
+                    var driveTimeMarkup = driveTimeMarkupsForFuel[i];
+
+                    float minDriveTime = driveTimeMarkup.DriveTime;
+                    float nextDriveTime = (isLastItem ? minDriveTime + DriveTimeMinutesBeyondLastRecord : driveTimeMarkupsForFuel[i + 1].DriveTime);
+                    float maxDriveTime = nextDriveTime - 0.1f;
+
+                    var currentCompetitor = getCheapestPriceUsingParams(db, site, minDriveTime, maxDriveTime, fuelId, usingPricesforDate, driveTimeMarkup.Markup);
+
+                    if (currentCompetitor.HasValue)
+                        allCompetitors.Add(currentCompetitor.Value);
+                }
+
+                //// APPLY PRICING RULES: based on drivetime (see Market Comparison sheet) as per meeting 02Dec2015 @ 13:00
+                //// 0-4.99 min
+                //// 5-9.99 mins away – add 1p to minimum competitor 
+                //// 10-14.99 mins away – add 2p to minimum competitor 
+                //// 15-19.99 mins away – add 3p to minimum competitor 
+                //// 20-24.99 mins away – add 4p to minimum competitor 
+                //// 25-29.99 mins away – add 5p to minimum competitor 
+
+                //for (float f = 0; f < 6; f++)
+                //{
+                //	float nextMin = f * 5;
+                //	var currentCompetitor = getCheapestPriceUsingParams(db, site, nextMin, nextMin + 4.99f, fuelId,
+                //	usingPricesforDate, (int)f);
+
+
+                //	if (currentCompetitor.HasValue)
+                //		allCompetitors.Add(currentCompetitor.Value);
+                //}
+
+                foreach (var currentCompetitor in allCompetitors)
 				{
                     var priceWithMarkup = 0;
                     if (currentCompetitor.Key.DailyPrice != null)
@@ -223,7 +249,6 @@ namespace JsPlc.Ssc.PetrolPricing.Business
                     {
                         priceWithMarkup = currentCompetitor.Key.LatestCompPrice.ModalPrice + currentCompetitor.Value * 10;
                     }
-
 					
 					if (minPriceFound > priceWithMarkup)
 					{
@@ -232,8 +257,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 					}
 				}
 			}
-
-			
+		
 
 
 		    if (cheapestPrice.IsTrailPrice)
