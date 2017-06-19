@@ -87,7 +87,7 @@
         }
 
         function hide() {
-            overlay.hide();
+            overlay.fadeOut(1000);
             hideLightbox();
             showing = false;
         };

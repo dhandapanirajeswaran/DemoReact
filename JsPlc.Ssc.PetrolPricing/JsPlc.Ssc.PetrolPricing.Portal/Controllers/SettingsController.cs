@@ -60,17 +60,8 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
         public ActionResult UpdateDriveTimeMarkups(List<DriveTimeMarkupViewModel> model)
         {
             var result = _serviceFacade.UpdateDriveTimeMarkups(model);
-
-            //var jsonResult = new JsonResult
-            //{
-            //    JsonRequestBehavior = JsonRequestBehavior.DenyGet,
-            //    Data = result
-            //};
-            //return jsonResult;
-
             return base.JsonGetResult(result);
         }
-
 
         [System.Web.Mvc.HttpGet]
         public JsonResult GetDriveTimeMarkupsJson()

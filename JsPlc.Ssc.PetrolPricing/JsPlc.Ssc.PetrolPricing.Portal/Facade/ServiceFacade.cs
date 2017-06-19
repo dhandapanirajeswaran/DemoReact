@@ -1271,6 +1271,12 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             return CallAndCatchAsyncPost<StatusViewModel, IEnumerable<DriveTimeMarkupViewModel>>("UpdateDriveTimeMarkups", apiUrl, model);
         }
 
+        public async Task<StatusViewModel> RecalculateDailyPrices(DateTime when)
+        {
+            var apiUrl = String.Format("api/RecalculateDailyPrices/{0}", when);
+            return CallAndCatchAsyncGet<StatusViewModel>("RecalculateDailyPrices", apiUrl);
+        }
+
         #region private methods
 
         private T CallAndCatchAsyncGet<T>(string methodName, string apiUrl)

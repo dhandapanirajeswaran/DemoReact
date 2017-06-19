@@ -9,22 +9,19 @@
     var unleadedModel = new DriveTimeMarkupFuelViewModel()
     {
         PanelId = String.Format("DriveTimeMarkup_{0}", (int)FuelTypeItem.Unleaded),
-        FuelTypeId = (int)FuelTypeItem.Unleaded,
-        DriveTimeMarkups = Model.Unleaded
+        FuelTypeId = (int)FuelTypeItem.Unleaded
     };
 
     var dieselModel = new DriveTimeMarkupFuelViewModel()
     {
         PanelId = String.Format("DriveTimeMarkup_{0}", (int)FuelTypeItem.Diesel),
-        FuelTypeId = (int)FuelTypeItem.Diesel,
-        DriveTimeMarkups = Model.Diesel
+        FuelTypeId = (int)FuelTypeItem.Diesel
     };
 
     var superUnleadedModel = new DriveTimeMarkupFuelViewModel()
     {
         PanelId = String.Format("DriveTimeMarkup_{0}", (int)FuelTypeItem.Super_Unleaded),
-        FuelTypeId = (int)FuelTypeItem.Super_Unleaded,
-        DriveTimeMarkups = Model.SuperUnleaded
+        FuelTypeId = (int)FuelTypeItem.Super_Unleaded
     };
 }
 
@@ -90,15 +87,6 @@
 
 <div class="container">
     <div class="row">
-        <div id="divUnsavedChanges" class="alert alert-warning" style="display:none;">
-            <i class="fa fa-warning"></i> <strong>Warning:</strong> You have unsaved changes.
-       
-            <button type="button" id="btnSaveDriveTimeMarkups" class="btn btn-primary btn-sm pull-right" data-infotip="Save the Drive Time Markup values"><i class="fa fa-check"></i> Save</button>
-            <div class="clearfix"></div>
-        </div>
-    </div>
-
-    <div class="row">
 
         <div class="col-md-4">
             @Html.Partial("~/Views/Settings/_DriveTimeMarkupFuelPanel.cshtml", unleadedModel)
@@ -112,12 +100,23 @@
             @Html.Partial("~/Views/Settings/_DriveTimeMarkupFuelPanel.cshtml", superUnleadedModel)
         </div>
     </div>
+
+    <div class="row">
+        <div id="divUnsavedChanges" class="alert alert-warning" style="display:none;">
+            <span class="font125pc"><i class="fa fa-warning pulse-size"></i> <strong>Warning:</strong> You have unsaved changes.
+            &mdash; <strong>Note:</strong> Saving this changes will perform a recalculation.
+            </span>
+
+            <button type="button" id="btnSaveDriveTimeMarkups" class="btn btn-primary btn-sm pull-right" data-infotip="Save the Drive Time Markup values"><i class="fa fa-check"></i> Save</button>
+            <div class="clearfix"></div>
+        </div>
+    </div>
 </div>
 <hr />
 
 <script>
-    require(["DriveTime", "driveTimeMarkup", "DriveTimeChart", "DriveTimeMarkupService", "notify"],
-        function (driveTime, driveTimeMarkup, driveTimeChart, driveTimeMarkupService, notify) {
+    require(["DriveTime", "driveTimeMarkup", "DriveTimeChart", "DriveTimeMarkupService", "notify", "PetrolPricingService", "busyloader"],
+        function (driveTime, driveTimeMarkup, driveTimeChart, driveTimeMarkupService, notify, petrolPricingService, busyloader) {
 
             "use strict";
 
@@ -211,16 +210,37 @@
             };
 
             function eventHandler(eventType, data) {
-                var unsaved = $('#divUnsavedChanges');
+                var unsaved = $('#divUnsavedChanges'),
+                    recalc = function () {
+                        busyloader.show({
+                            message: 'Recalculating Daily Prices. Please wait...',
+                            dull: true 
+                        });
+
+                        petrolPricingService.recalculateDailyPrices(successRecalculateDailyPrices, failureRecalculateDailyPrices)                    
+                    };
+
                 switch (eventType) {
                     case 'data-changed':
                         unsaved.delay(300).fadeIn(1000);
                         break;
                     case 'data-saved':
                         driveTimeChart.render(data);
-                        unsaved.delay(200).fadeOut(2000);
+                        unsaved.delay(200).fadeOut(300);
+
+                        setTimeout(recalc, 1000);
                         break;
                 }
+            };
+
+            function successRecalculateDailyPrices() {
+                busyloader.hide();
+                notify.success('Daily Prices Recalculated');
+            };
+
+            function failureRecalculateDailyPrices() {
+                busyloader.hide();
+                notify.error('Unable to Recalculate Daily Prices');
             };
 
             loadData();

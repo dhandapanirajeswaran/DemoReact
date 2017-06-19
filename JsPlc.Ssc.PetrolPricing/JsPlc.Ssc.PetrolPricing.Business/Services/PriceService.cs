@@ -299,15 +299,35 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 			return await _db.SaveOverridePricesAsync(pricesToSave);
 		}
 
-		#region Private Methods
-		/// <summary>
-		/// Demo 22/12/15 new requirement: Create SitePrices for SuperUnleaded with Markup
-		/// Creates rows in SitePrice for SuperUnleaded using Unleaded Prices with a markup to SuggestedPrice (OverridePrice for new rows = 0)
-		/// </summary>
-		/// <param name="forDate"></param>
-		/// <param name="markup"></param>
-		/// <param name="siteId"></param>
-		private void createMissingSuperUnleadedFromUnleaded(DateTime forDate, int? markup = null, int siteId = 0)
+        public async Task<StatusViewModel> RecalculateDailyPrices(DateTime when)
+        {
+            try
+            {
+                DoCalcDailyPrices(when);
+                return new StatusViewModel()
+                {
+                    SuccessMessage = "Recalculated Daily Prices"
+                };
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex);
+                return new StatusViewModel()
+                {
+                    SuccessMessage = "Unable to Recalculate Daily Prices"
+                };
+            }
+        }
+
+        #region Private Methods
+        /// <summary>
+        /// Demo 22/12/15 new requirement: Create SitePrices for SuperUnleaded with Markup
+        /// Creates rows in SitePrice for SuperUnleaded using Unleaded Prices with a markup to SuggestedPrice (OverridePrice for new rows = 0)
+        /// </summary>
+        /// <param name="forDate"></param>
+        /// <param name="markup"></param>
+        /// <param name="siteId"></param>
+        private void createMissingSuperUnleadedFromUnleaded(DateTime forDate, int? markup = null, int siteId = 0)
 		{
 			if (!markup.HasValue)
 			{

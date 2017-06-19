@@ -1040,6 +1040,14 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
         }
 
         [System.Web.Mvc.HttpGet]
+        public ActionResult RecalculateDailyPrices()
+        {
+            var when = DateTime.Now.Date;
+            var result = _serviceFacade.RecalculateDailyPrices(when);
+            return base.JsonGetResult(result);
+        }
+
+        [System.Web.Mvc.HttpGet]
         public ActionResult SitePricingSettings()
         {
             var result = _serviceFacade.GetSitePricingSettings();

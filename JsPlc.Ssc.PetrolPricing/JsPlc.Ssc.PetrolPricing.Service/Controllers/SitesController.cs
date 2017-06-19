@@ -577,5 +577,21 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
                 return new ExceptionResult(ex, this);
             }
         }
+
+        [System.Web.Http.HttpGet]
+        [System.Web.Http.Route("api/RecalculateDailyPrices")]
+        public IHttpActionResult RecalculateDailyPrices([FromUri] DateTime when)
+        {
+            try
+            {
+                var result = _priceService.RecalculateDailyPrices(when);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex);
+                return new ExceptionResult(ex, this);
+            }
+        }
     }
 }

@@ -3764,7 +3764,41 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
 
         public IEnumerable<DriveTimeMarkup> GetAllDriveTimeMarkups()
         {
-            return _context.Set<DriveTimeMarkup>().ToList();
+            const int driveTimeMinutesPastLastItem = 5;
+
+            // get items sorted by DriveTime
+            var items = _context.Set<DriveTimeMarkup>().OrderBy(x => x.DriveTime).ToList();
+
+            // fill calculated properties
+            if (items.Any())
+            {
+                var fuels = new List<FuelTypeItem>()
+                {
+                    FuelTypeItem.Unleaded,
+                    FuelTypeItem.Diesel,
+                    FuelTypeItem.Super_Unleaded
+                };
+
+                foreach (var fuel in fuels)
+                {
+                    var fuelItems = items.Where(x => x.FuelTypeId == (int)fuel).ToList();
+
+                    for (var i = 0; i < fuelItems.Count(); i++)
+                    {
+                        var isLast = (i + 1) == fuelItems.Count();
+                        var item = fuelItems[i];
+                        int maxDriveTime = isLast
+                            ? item.DriveTime + driveTimeMinutesPastLastItem
+                            : fuelItems[i + 1].DriveTime - 1;
+
+                        item.IsFirst = i == 0;
+                        item.IsLast = isLast;
+                        item.MaxDriveTime = maxDriveTime;
+                    }
+                }
+            }
+
+            return items;
         }
 
         public StatusViewModel UpdateDriveTimeMarkup(IEnumerable<DriveTimeMarkup> driveTimeMarkups)

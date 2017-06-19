@@ -91,7 +91,10 @@
                         isBoundary = true;
                     }
                 }
-                sequence[driveTime] = { markup: markup, isBoundary: isBoundary };
+                sequence[driveTime] = {
+                    markup: markup,
+                    isBoundary: isBoundary
+                };
                 isBoundary = false;
             }
             return sequence;

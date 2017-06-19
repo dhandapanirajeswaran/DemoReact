@@ -168,9 +168,12 @@ namespace JsPlc.Ssc.PetrolPricing.Service.DataMapping
             //
             Mapper.CreateMap<DriveTimeMarkup, DriveTimeMarkupViewModel>()
                 .ForMember(dst => dst.Id, src => src.MapFrom(p => p.Id))
-                .ForMember(dst => dst.FuelTypeId, src => src.MapFrom(p =>p.FuelTypeId))
+                .ForMember(dst => dst.FuelTypeId, src => src.MapFrom(p => p.FuelTypeId))
                 .ForMember(dst => dst.DriveTime, src => src.MapFrom(p => p.DriveTime))
-                .ForMember(dst => dst.Markup, src => src.MapFrom(p => p.Markup));
+                .ForMember(dst => dst.Markup, src => src.MapFrom(p => p.Markup))
+                .ForMember(dst => dst.MaxDriveTime, src => src.MapFrom(p => p.MaxDriveTime))
+                .ForMember(dst => dst.IsFirst, src => src.MapFrom(p => p.IsFirst))
+                .ForMember(dst => dst.IsLast, src => src.MapFrom(p => p.IsLast));
 
             //
             // DriveTimeMarkupViewModel -> DriveTimeMarkup
@@ -179,7 +182,12 @@ namespace JsPlc.Ssc.PetrolPricing.Service.DataMapping
                 .ForMember(dst => dst.Id, src => src.MapFrom(p => p.Id))
                 .ForMember(dst => dst.FuelTypeId, src => src.MapFrom(p => p.FuelTypeId))
                 .ForMember(dst => dst.DriveTime, src => src.MapFrom(p => p.DriveTime))
-                .ForMember(dst => dst.Markup, src => src.MapFrom(p => p.Markup));
+                .ForMember(dst => dst.Markup, src => src.MapFrom(p => p.Markup))
+
+                // ignore calculated properties
+                .ForMember(dst => dst.MaxDriveTime, src => src.Ignore())
+                .ForMember(dst => dst.IsFirst, src => src.Ignore())
+                .ForMember(dst => dst.IsLast, src => src.Ignore());
         }
     }
 }

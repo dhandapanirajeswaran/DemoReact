@@ -11,12 +11,5 @@ namespace JsPlc.Ssc.PetrolPricing.Models.ViewModels.SystemSettings
         public int FuelTypeId { get; set; }
 
         public string PanelId { get; set; }
-
-        public IEnumerable<DriveTimeMarkupViewModel> DriveTimeMarkups { get; set; }
-
-        public DriveTimeMarkupFuelViewModel()
-        {
-            this.DriveTimeMarkups = new List<DriveTimeMarkupViewModel>();
-        }
     }
 }
