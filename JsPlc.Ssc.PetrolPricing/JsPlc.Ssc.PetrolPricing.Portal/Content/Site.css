@@ -715,6 +715,8 @@ input[type=text].mono-font {
     overflow: auto;
 }
 
+.font50pc {font-size: 50%;}
+.font66pc {font-size: 66%;}
 .font75pc {font-size: 75%;}
 .font100pc {font-size: 100%;}
 .font125pc {font-size: 125%}
@@ -736,3 +738,5 @@ input[type=text].mono-font {
         -webkit-transform: scale(1);
     }   
 }
+
+.text-bold {font-weight: bold;}

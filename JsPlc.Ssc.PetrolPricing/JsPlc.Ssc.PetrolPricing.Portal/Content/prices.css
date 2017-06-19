@@ -350,7 +350,7 @@ table.competitorTable > tbody > .competitor-row  {
 .pricing-grid > tbody .col-pfs-no {width: 48px;}
 .pricing-grid > thead > tr:nth-child(1) .col-header-unleaded,
 .pricing-grid > thead > tr:nth-child(1) .col-header-diesel,
-.pricing-grid > thead > tr:nth-child(1) .col-header-super-unleaded {width: 236px;}
+.pricing-grid > thead > tr:nth-child(1) .col-header-super-unleaded {width: 234px;}
 
 
 .pricing-grid > thead > tr:nth-child(2) .col-header-yesterday-unleaded,
@@ -501,18 +501,20 @@ table.competitorTable > tbody > .competitor-row  {
     background: #ffc;
     border-radius: 4px;
     border: 1px solid #910048;
-    margin-top: 12px;
+    margin-top: 16px;
+    position: absolute;
+    box-shadow: 1px 1px 4px #000;
+    width: 13em;
 }
 .override-exceeded-bubble::before {
     border-style: solid;
-    border-width: 8px;
+    border-width: 12px;
     content: "";
-    left: 50%;
-    margin-left: -10px;
     position: absolute;
     z-index: 3000;
     border-color: transparent transparent #910048 transparent;
-    margin-top: -1.25em;
+    margin-top: -24px;
+    margin-left: 4em;
 }
 
 .col-header-tomorrow-unleaded,
@@ -666,4 +668,18 @@ table.competitorTable > tbody > .competitor-row  {
 
 .bootbox.modal {
     z-index: 5000;
+}
+
+
+.override-header {
+    background-color: #f0f0f0;
+    padding: 4px 2px;
+}
+
+.historical-banner {
+    background-color:#f2dede;
+    color: #a94442;
+    margin: 0.5em;
+    padding: 0.25em 1em;
+    border-radius: 8px;
 }
