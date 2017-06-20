@@ -207,9 +207,9 @@
                         </div>
                         &nbsp;
                         <div class="btn-group">
-                            <button type="button" class="btn btn-sm" data-bind="click: toggleHighlightNoNearbyGrocerPrices, css: {'btn-primary': $root.highlightNoNearbyGrocerPrices() }" data-infotip="Toggle highlighting for Site Fuels[br /] with [b]No Nearby Grocers[/b]"><i class="fa fa-times"></i> No Grocers <span class="badge" data-bind="text: $root.NoGrocerPricesCount"></span></button>
-                            <button type="button" class="btn btn-sm" data-bind="click: toggleHighlightHasNearbyGrocerWithOutPrices, css: {'btn-primary': $root.highlightHasNearbyGrocerWithOutPrices() }" data-infotip="Toggle highlighting for Site Fuels[br /][b]with Nearby Grocers[/b] but [em]no[/em] Prices"><i class="fa fa-question"></i> No Prices <span class="badge" data-bind="text: $root.HasGrocerWithOutPricesCount"></span></button>
-                            <button type="button" class="btn btn-sm" data-bind="click: toggleHighlightHasNearbyGrocerPrices, css: {'btn-primary': $root.highlightHasNearbyGrocerPrices() }" data-infotip="Toggle highlighting for Site Fuels[br /][b]with Nearby Grocers[/b] and [b]with Prices[/b]"><i class="fa fa-gbp"></i> With Prices <span class="badge" data-bind="text: $root.HasGrocerPricesCount"></span></button>
+                            <button type="button" class="btn btn-sm" data-bind="click: toggleHighlightNoNearbyGrocerPrices, css: {'btn-primary': $root.highlightNoNearbyGrocerPrices() }" data-infotip="Toggle highlighting for Site Fuels[br /] with [b]No Nearby Grocers[/b]"><i class="fa fa-times"></i> No Grocers <span class="badge" data-bind="text: $root.NoNearbyGrocersCount"></span></button>
+                            <button type="button" class="btn btn-sm" data-bind="click: toggleHighlightHasNearbyGrocerWithOutPrices, css: {'btn-primary': $root.highlightHasNearbyGrocerWithOutPrices() }" data-infotip="Toggle highlighting for Site Fuels[br /][b]with Nearby Grocers[/b] but [em]no[/em] Prices"><i class="fa fa-question"></i> No Prices <span class="badge" data-bind="text: $root.NearbyGrocersWithoutPricesCount"></span></button>
+                            <button type="button" class="btn btn-sm" data-bind="click: toggleHighlightHasNearbyGrocerPrices, css: {'btn-primary': $root.highlightHasNearbyGrocerPrices() }" data-infotip="Toggle highlighting for Site Fuels[br /][b]with Nearby Grocers[/b] and [b]with Prices[/b]"><i class="fa fa-gbp"></i> With Prices <span class="badge" data-bind="text: $root.NearbyGrocersAndPricesCount"></span></button>
                         </div>
                         <button type="button" class="btn btn-sm btn-warning" data-bind="visible: $root.shouldShouldHighlightReset(), click: resetPriceHighlighting" data-infotip="Hide all the Highlighting"><i class="fa fa-eraser "></i></button>
                     </div>
@@ -417,9 +417,7 @@
                                 <!-- ko if: siteSupportsFuel -->
                                 <td data-bind="css: ('col-yesterday' + (isEditingFuel() ? ' col-editing' : '') + (hasValidValue() ? ' col-valid' : ' col-invalid'))">
                                     <span data-bind="css: ('fuel-price-change-' + UpDownSignCss()), html: FuelPrice.ForecourtTodayPriceHtml, attr: {'data-infotip': FuelPrice.CurrentPriceInfoTip()}"></span>
-                                    <span data-bind="visible: !hasNearbyCompetitorPrice() && !hasNearbyCompetitorWithOutPrice()" class="no-nearby-grocer-price" data-infotip="There are [b]No Grocers[/b] within [b]5 Minutes[/b] Drive Time"><i class="fa fa-times"></i></span>
-                                    <span data-bind="visible: hasNearbyCompetitorPrice()" class="has-nearby-grocer-price" data-infotip="[b]Grocer[/b] and Price are [b]Available[/b] within 5 Minutes for Date"><i class="fa fa-gbp"></i></span>
-                                    <span data-bind="visible: hasNearbyCompetitorWithOutPrice()" class="has-nearby-grocer-with-out-price" data-infotip="[b]Grocer[/b] found but [b]No Price[/b] Available within 5 Minutes for Date"><i class="fa fa-question"></i></span>
+                                    <b data-bind="html: nearbyGrocersHtml()"></b>
                                 </td>
                                 <td data-bind="css: ('col-today' + (isEditingFuel() ? ' col-editing' : '') + (hasValidValue() ? ' col-valid' : ' col-invalid'))">
                                     <div data-bind="css: ('fuel-price-change-' + UpDownSignCss())">

@@ -98,8 +98,21 @@
                     <!-- /ko -->
                     <!-- ko if: hasCompetitors() -->
                     <!-- ko foreach: competitors -->
-                    <tr class="competitor-row hoverable" data-bind="attr:{id:'CompetitorSiteRow_' + SiteId}">
-                        <td class="num1"><span data-bind="text: Brand"></span></td>
+                    <tr class="competitor-row hoverable" data-bind="attr:{id:'CompetitorSiteRow_' + SiteId}, css: ((IsGrocer ? 'competitor-grocer' : 'competitor-non-grocer') + (DriveTime < $root.maxGrocerDriveTimeMinutes() ? ' inside-drive-time' : ' outside-drive-time'))">
+                        <td class="num1">
+                            <!-- ko if: IsGrocer -->
+                            <div class="grocer-brand" data-infotip="Grocer">
+                                <i class="fa fa-shopping-cart"></i>
+                                <span data-bind="text: Brand"></span>
+                            </div>
+                            <!-- /ko -->
+                            <!-- ko if: !IsGrocer-->
+                            <div class="non-grocer-brand">
+                                <i class="fa fa-minus-circle"></i>
+                                <span data-bind="text: Brand"></span>
+                            </div>
+                            <!-- /ko -->
+                        </td>
                         <td class="num2">
                             <button type="button" class="btn btn-default btn-xs triggerEditSiteNote" data-bind="attr:{id: 'EditSiteNoteButton_' + SiteId}" data-infotip="Create or edit note"><i class="fa fa-pencil"></i></button>
                             <button type="button" class="btn btn-default btn-xs triggerToggleNote" data-bind="attr:{id: 'ToggleSiteNoteButton_' + SiteId}" data-infotip="Show Note"><i class="fa fa-sort-up"></i></button>

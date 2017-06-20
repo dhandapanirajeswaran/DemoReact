@@ -43,12 +43,17 @@ namespace JsPlc.Ssc.PetrolPricing.Models.ViewModels
         }
         public string Notes { get; set; }
 
-        public bool HasNearbyCompetitorDieselPrice { get; set; }
-        public bool HasNearbyCompetitorUnleadedPrice { get; set; }
-        public bool HasNearbyCompetitorSuperUnleadedPrice { get; set; }
-        public bool HasNearbyCompetitorDieselWithOutPrice { get; set; }
-        public bool HasNearbyCompetitorUnleadedWithOutPrice { get; set; }
-        public bool HasNearbyCompetitorSuperUnleadedWithOutPrice { get; set; }
+
+        public bool HasNearbyUnleadedGrocers { get; set; }
+        public bool HasNearbyUnleadedGrocersPriceData { get; set; }
+
+        public bool HasNearbyDieselGrocers { get; set; }
+        public bool HasNearbyDieselGrocersPriceData { get; set; }
+
+        public bool HasNearbySuperUnleadedGrocers { get; set; }
+        public bool HasNearbySuperUnleadedGrocersPriceData { get; set; }
+
+        public bool IsGrocer { get; set; }
     }
 
     // each fuel's price

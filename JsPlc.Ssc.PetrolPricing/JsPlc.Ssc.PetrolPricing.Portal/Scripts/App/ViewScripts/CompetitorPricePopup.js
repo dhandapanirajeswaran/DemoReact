@@ -2,7 +2,11 @@
 function ($, ko, common, compNotePopup, notify) {
     "use strict";
     var state = {
-        showNotes: false
+        showNotes: false,
+        showGrocers: true,
+        showNonGrocers: true,
+        insideDriveTime: true,
+        outsideDriveTime: true
     };
 
     var viewingSiteId = 0;
@@ -22,7 +26,11 @@ function ($, ko, common, compNotePopup, notify) {
             highlightRow: 'highlight',
             expandedNote: 'fa-sort-up',
             collapsedNote: 'fa-sort-down',
-            viewingSiteCompetitors: 'viewing-site-competitors'
+            viewingSiteCompetitors: 'viewing-site-competitors',
+            competitorGrocerRow: 'competitor-grocer',
+            competitorNonGrocerRow: 'competitor-non-grocer',
+            insideDriveTime: 'inside-drive-time',
+            outsideDriveTime: 'outside-drive-time'
         },
         selectors: {
             popup: '#competitorPricesPopup',
@@ -44,7 +52,13 @@ function ($, ko, common, compNotePopup, notify) {
             competitorRow: '.competitor-row',
             modalBackground: '.modal-backdrop',
             minimiseModalButton: '#btnMinimiseModal',
-            maximiseModalButton: '#btnMaximiseModel'
+            maximiseModalButton: '#btnMaximiseModal',
+            toggleGrocersButton: '#competitorPricesToggleGrocersButton',
+            toggleNonGrocersButton: '#competitorPricesToggleNonGrocersButton',
+            resetFiltersButton: '#competitorPricesResetFilters',
+            insideFilterButton: '#competitorPricesToggleInsideButton',
+            outsideFilterButton: '#competitorPricesToggleOutsideButton',
+            resetDriveTimeFiltersButton: '#competitorPricesResetDriveTimeFilters'
         },
         naming: {
             editButton: '#EditSiteNoteButton_',
@@ -55,7 +69,8 @@ function ($, ko, common, compNotePopup, notify) {
     };
 
     function extractSiteId(ele) {
-        return $(ele).attr('id').split('_')[1];
+        var id = $(ele).attr('id');
+        return id.split('_')[1];
     };
 
     function getPopup() {
@@ -63,7 +78,15 @@ function ($, ko, common, compNotePopup, notify) {
     };
 
     function bindPopup() {
+        resetState();
         bindEvents();
+    };
+
+    function resetState() {
+        state.showGrocers = true;
+        state.showNonGrocers = true;
+        state.insideDriveTime = true;
+        state.outsideDriveTime = true;
     };
 
     function showLoading() {
@@ -90,6 +113,12 @@ function ($, ko, common, compNotePopup, notify) {
 
         $(config.selectors.showAllNotesButton).hide();
         $(config.selectors.hideAllNotesButton).hide();
+        $(config.selectors.toggleGrocersButton).hide();
+        $(config.selectors.toggleNonGrocersButton).hide();
+        $(config.selectors.resetFiltersButton).hide();
+        $(config.selectors.insideFilterButton).hide();
+        $(config.selectors.outsideFilterButton).hide();
+        $(config.selectors.resetDriveTimeFiltersButton).hide();
 
         $('.compitatorData .storeName').text(siteItem.StoreName);
 
@@ -140,6 +169,9 @@ function ($, ko, common, compNotePopup, notify) {
 
         redrawAllNoteIcons();
         redrawAllNoteToggles();
+        redrawFilterButtons();
+        redrawDriveTimeButtons();
+        applyFilters();
 
         dstHeader.hide().html(srcThead.clone(false));
 
@@ -178,15 +210,21 @@ function ($, ko, common, compNotePopup, notify) {
     function afterDrawnPopup() {
         resizeCompetitorPricePopup();
         bindNoteEvents();
-        $(config.selectors.showAllNotesButton).fadeIn(2000);
-        $(config.selectors.hideAllNotesButton).fadeIn(2000);
+        $(config.selectors.showAllNotesButton).fadeIn(1000);
+        $(config.selectors.hideAllNotesButton).fadeIn(1500);
+        $(config.selectors.toggleGrocersButton).fadeIn(2000);
+        $(config.selectors.toggleNonGrocersButton).fadeIn(2500);
+        $(config.selectors.resetFiltersButton).fadeIn(3000);
+        $(config.selectors.insideFilterButton).fadeIn(3400);
+        $(config.selectors.outsideFilterButton).fadeIn(4000);
+        $(config.selectors.resetDriveTimeFiltersButton).fadeIn(4500);
+
         showOrHideNotePanels(state.showNotes, null);
         redrawAllNoteIcons();
         redrawAllNoteToggles();
         bindOutsideModalEvents();
 
         populateReadOnlyPopupPrices(viewingSiteId);
-
     };
 
     function setHeaderWidths() {
@@ -347,18 +385,26 @@ function ($, ko, common, compNotePopup, notify) {
     function bindEvents() {
         $(window).on('resize', windowResized);
 
-        $(config.selectors.showAllNotesButton).off().on('click', showAllNotesClick).hide();
-        $(config.selectors.hideAllNotesButton).off().on('click', hideAllNotesClick).hide();
+        $(config.selectors.showAllNotesButton).off().click(showAllNotesClick).hide();
+        $(config.selectors.hideAllNotesButton).off().click(hideAllNotesClick).hide();
 
-        $(config.selectors.closeButton).off().on('click', closePopup);
-        $(config.selectors.popup).find('.modal-header .close').off().on('click', closePopup);
+        $(config.selectors.toggleGrocersButton).off().click(toggleGrocersClick).hide();
+        $(config.selectors.toggleNonGrocersButton).off().click(toggleNonGrocersClick).hide();
+        $(config.selectors.resetFiltersButton).off().click(resetFiltersClick).hide();
 
-        $(config.selectors.maximiseModalButton).off().on('click', maximiseModal);
-        $(config.selectors.minimiseModalButton).off().on('click', minimiseModal);
+        $(config.selectors.insideFilterButton).off().click(insideFilterClick).hide();
+        $(config.selectors.outsideFilterButton).off().click(outsideFilterClick).hide();
+        $(config.selectors.resetDriveTimeFiltersButton).off().click(resetDriveTimeClick).hide();
+
+        $(config.selectors.closeButton).off().click(closePopup);
+        $(config.selectors.popup).find('.modal-header .close').off().click(closePopup);
+
+        $(config.selectors.maximiseModalButton).off().click(maximiseModal);
+        $(config.selectors.minimiseModalButton).off().click(minimiseModal);
     };
 
     function bindOutsideModalEvents() {
-        $(config.selectors.modalBackground).off().on('click', closePopup)
+        $(config.selectors.modalBackground).off().click(closePopup)
             .css('cursor', 'pointer')
             .attr('title', 'Close popup');
     };
@@ -377,14 +423,68 @@ function ($, ko, common, compNotePopup, notify) {
         hideAllNotes();
     };
 
+    function commonToggleFilterState(opts) {
+        var newstate = !state[opts.name],
+            message = newstate ? opts.showing : opts.hiding;
+        state[opts.name] = newstate;
+        applyFilters();
+        redrawFilterButtons();
+        redrawDriveTimeButtons();
+        notify.info(message);
+    };
+
+    function toggleGrocersClick() {
+        commonToggleFilterState({
+            name: 'showGrocers',
+            showing: 'Showing Grocers',
+            hiding: 'Hiding Grocers'
+        });
+    };
+
+    function toggleNonGrocersClick() {
+        commonToggleFilterState({
+            name: 'showNonGrocers',
+            showing: 'Showing Non-Grocers',
+            hiding: 'Hiding Non-Grocers'
+        });
+    };
+
+    function resetFiltersClick() {
+        state.showGrocers = true;
+        state.showNonGrocers = true;
+        applyFilters();
+        redrawFilterButtons();
+        notify.info('Filters have been reset &mdash; Showing all items');
+    };
+
+    function insideFilterClick() {
+        commonToggleFilterState({
+            name: 'insideDriveTime',
+            showing: 'Showing Grocers inside the Drive Time limit',
+            hiding: 'Hiding Grocers inside the Drive Time limit'
+        });
+    };
+
+    function outsideFilterClick() {
+        commonToggleFilterState({
+            name: 'outsideDriveTime',
+            showing: 'Showing Grocers outside the Drive Time limit',
+            hiding: 'Hiding Grocers outside the Drive Time limit'
+        });
+    };
+
+    function resetDriveTimeClick() {
+        state.insideDriveTime = true;
+        state.outsideDriveTime = true;
+        redrawDriveTimeButtons();
+        applyFilters();
+        notify.info('Reset Drive Time Filters (showing all Drive Times)')
+    };
+
     function bindNoteEvents() {
-        var that = this,
-            handler = function () {
-                notePanelClick.call(this);
-            };
-        $(config.selectors.popup).off().on('click', config.selectors.notePanel, handler);
-        $(config.selectors.triggerEditNote).off().on('click', triggerEditNote);
-        $(config.selectors.triggerToggleNote).off().on('click', triggerToggleNote);
+        $(config.selectors.popup).off().on('click', config.selectors.notePanel, notePanelClick);
+        $(config.selectors.triggerEditNote).off().click(triggerEditNote);
+        $(config.selectors.triggerToggleNote).off().click(triggerToggleNote);
         $(config.selectors.competitorRow).off().on('dblclick', triggerEditNote);
     };
 
@@ -507,6 +607,43 @@ function ($, ko, common, compNotePopup, notify) {
     function afterNoteHide() {
         highlightSiteRow();
         bindOutsideModalEvents();
+    };
+
+    function redrawFilterButtons() {
+        setButtonActiveState(config.selectors.toggleGrocersButton, state.showGrocers);
+        setButtonActiveState(config.selectors.toggleNonGrocersButton, state.showNonGrocers);
+    };
+
+    function redrawDriveTimeButtons() {
+        setButtonActiveState(config.selectors.insideFilterButton, state.insideDriveTime);
+        setButtonActiveState(config.selectors.outsideFilterButton, state.outsideDriveTime);
+    };
+    
+    function applyFilters() {
+        var grid = $(config.selectors.pricesGrid),
+            rows = grid.find(config.selectors.competitorRow);
+
+        rows.each(function () {
+            var row = $(this),
+                isGrocer = row.hasClass(config.classes.competitorGrocerRow),
+                isNonGrocer = row.hasClass(config.classes.competitorNonGrocerRow),
+                isInside = row.hasClass(config.classes.insideDriveTime),
+                isOutside = row.hasClass(config.classes.outsideDriveTime),
+                visibleGrocer = (isGrocer && state.showGrocers) || (isNonGrocer && state.showNonGrocers),
+                visibleDriveTime = (isInside && state.insideDriveTime) || (isOutside && state.outsideDriveTime);
+
+            if (visibleGrocer && visibleDriveTime)
+                row.show();
+            else
+                row.hide();
+        });
+    };
+
+    function setButtonActiveState(selector, isActive) {
+        var button = $(selector);
+        isActive
+        ? button.removeClass(config.classes.inactiveToggleButton).addClass(config.classes.activeToggleButton)
+        : button.removeClass(config.classes.activeToggleButton).addClass(config.classes.inactiveToggleButton);
     };
 
     function isNotWhitespace(note) {

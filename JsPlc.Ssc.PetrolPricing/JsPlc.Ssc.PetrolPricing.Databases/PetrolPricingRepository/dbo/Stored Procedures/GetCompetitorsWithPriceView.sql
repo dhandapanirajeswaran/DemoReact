@@ -34,7 +34,11 @@ SET NOCOUNT ON
 		compsite.Address [Address],
 		stc.DriveTime [DriveTime],
 		stc.Distance [Distance],
-		compsite.Notes [Notes]
+		compsite.Notes [Notes],
+		CASE 
+			WHEN EXISTS(SELECT TOP 1 NULL FROM dbo.Grocers WHERE BrandName = compsite.Brand) THEN 1 
+			ELSE 0 
+		END [IsGrocer]
 	FROM
 		dbo.SiteToCompetitor stc
 		INNER JOIN dbo.Site compsite ON compsite.Id = stc.CompetitorId AND compsite.IsActive = 1
@@ -280,4 +284,4 @@ SET NOCOUNT ON
 	FROM 
 		CompetitorsFuelsAndPrices cfp
 END
-RETURN 0
+--RETURN 0

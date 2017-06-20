@@ -70,22 +70,22 @@ namespace JsPlc.Ssc.PetrolPricing.Models
         public string Notes { get; set; }
 
         [NotMapped]
-        public bool HasNearbyCompetitorDieselPrice { get; set; }
+        public bool HasNearbyUnleadedGrocers { get; set; }
 
         [NotMapped]
-        public bool HasNearbyCompetitorUnleadedPrice { get; set; }
+        public bool HasNearbyUnleadedGrocersPriceData { get; set; }
 
         [NotMapped]
-        public bool HasNearbyCompetitorSuperUnleadedPrice { get; set; }
+        public bool HasNearbyDieselGrocers { get; set; }
 
         [NotMapped]
-        public bool HasNearbyCompetitorDieselWithOutPrice { get; set; }
+        public bool HasNearbyDieselGrocersPriceData { get; set; }
 
         [NotMapped]
-        public bool HasNearbyCompetitorUnleadedWithOutPrice { get; set; }
+        public bool HasNearbySuperUnleadedGrocers { get; set; }
 
         [NotMapped]
-        public bool HasNearbyCompetitorSuperUnleadedWithOutPrice { get; set; }
+        public bool HasNearbySuperUnleadedGrocersPriceData { get; set; }
     }
 
     public class SiteEmail

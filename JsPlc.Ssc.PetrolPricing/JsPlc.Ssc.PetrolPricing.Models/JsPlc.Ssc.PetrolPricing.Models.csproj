@@ -102,6 +102,7 @@
     <Compile Include="EmailTemplate.cs" />
     <Compile Include="EmailTemplateName.cs" />
     <Compile Include="Enums\FuelTypeEnum.cs" />
+    <Compile Include="Enums\NearbyGrocerStatus.cs" />
     <Compile Include="Enums\PriceMatchType.cs" />
     <Compile Include="Enums\SiteSectionType.cs" />
     <Compile Include="Enums\UserPermissionEnums.cs" />

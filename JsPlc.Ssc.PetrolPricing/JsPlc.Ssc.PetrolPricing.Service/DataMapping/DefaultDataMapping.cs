@@ -58,12 +58,12 @@ namespace JsPlc.Ssc.PetrolPricing.Service.DataMapping
                 .ForMember(co => co.CompetitorPriceOffset, i => i.MapFrom(p => p.CompetitorPriceOffset))
                 .ForMember(co => co.hasNotes, mo => mo.Ignore())
                 .ForMember(co => co.Notes, i => i.MapFrom(p => p.Notes))
-                .ForMember(co => co.HasNearbyCompetitorDieselPrice, i=> i.MapFrom(p => p.HasNearbyCompetitorDieselPrice))
-                .ForMember(co => co.HasNearbyCompetitorSuperUnleadedPrice, i=> i.MapFrom(p => p.HasNearbyCompetitorSuperUnleadedPrice))
-                .ForMember(co => co.HasNearbyCompetitorUnleadedPrice, i=> i.MapFrom(p => p.HasNearbyCompetitorUnleadedPrice))
-                .ForMember(co => co.HasNearbyCompetitorDieselWithOutPrice, i => i.MapFrom(p => p.HasNearbyCompetitorDieselWithOutPrice))
-                .ForMember(co => co.HasNearbyCompetitorSuperUnleadedWithOutPrice, i => i.MapFrom(p => p.HasNearbyCompetitorSuperUnleadedWithOutPrice))
-                .ForMember(co => co.HasNearbyCompetitorUnleadedWithOutPrice, i => i.MapFrom(p => p.HasNearbyCompetitorUnleadedWithOutPrice));
+                .ForMember(co => co.HasNearbyUnleadedGrocers, i=> i.MapFrom(p => p.HasNearbyUnleadedGrocers))
+                .ForMember(co => co.HasNearbyUnleadedGrocersPriceData, i=> i.MapFrom(p => p.HasNearbyUnleadedGrocersPriceData))
+                .ForMember(co => co.HasNearbyDieselGrocers, i=> i.MapFrom(p => p.HasNearbyDieselGrocers))
+                .ForMember(co => co.HasNearbyDieselGrocersPriceData, i => i.MapFrom(p => p.HasNearbyDieselGrocersPriceData))
+                .ForMember(co => co.HasNearbySuperUnleadedGrocers, i => i.MapFrom(p => p.HasNearbySuperUnleadedGrocers))
+                .ForMember(co => co.HasNearbySuperUnleadedGrocersPriceData, i => i.MapFrom(p => p.HasNearbySuperUnleadedGrocersPriceData));
 
             Mapper.CreateMap<FileUpload, FileUploadViewModel>()
                 .ForMember(fu => fu.Id, mo => mo.MapFrom(p => p.Id))

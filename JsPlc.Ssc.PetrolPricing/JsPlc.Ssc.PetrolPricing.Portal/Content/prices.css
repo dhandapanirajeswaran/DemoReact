@@ -683,3 +683,14 @@ table.competitorTable > tbody > .competitor-row  {
     padding: 0.25em 1em;
     border-radius: 8px;
 }
+
+.grocer-brand {
+    background: #fff;
+    color: #135a97;
+    font-weight: bold;
+    padding: 1px 2px;
+}
+.non-grocer-brand {
+    color: #333;
+    padding: 1px 2px;
+}

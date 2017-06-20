@@ -13,7 +13,7 @@
 
             <div class="btn-group" style="position: absolute; right: 2em;">
                 <button id="btnMinimiseModal" type="button" class="btn btn-default" data-infotip="Hide the Competitor Prices"><i class="fa fa-compress"></i> Hide</button>
-                <button id="btnMaximiseModel" type="button" class="btn btn-primary" data-infotip="Show the Competitor Prices"><i class="fa fa-expand"></i> Show</button>
+                <button id="btnMaximiseModal" type="button" class="btn btn-primary" data-infotip="Show the Competitor Prices"><i class="fa fa-expand"></i> Show</button>
             </div>
 
             <table id="competitorPricesPopupSiteInfo">
@@ -56,9 +56,24 @@
         <div class="modal-footer">
             <div class="footer-actions">
                 <div class="btn-group" data-toggle="buttons-radio">
-                    <button id="competitorPricesShowAllNotesButton" class="btn btn-sm btn-default" href="#" data-infotip="Show all notes"><i class="fa fa-pencil-square-o"></i> Show notes</button>
+                    <button id="competitorPricesShowAllNotesButton" class="btn btn-sm btn-default" data-infotip="Show all notes"><i class="fa fa-pencil-square-o"></i> Show notes</button>
                     <button id="competitorPricesHideAllNotesButton" class="btn btn-sm btn-default" data-infotip="Hide all notes"><i class="fa fa-pencil-square-o"></i> Hide notes</button>
                 </div>
+
+                <label style="margin-left: 3em;">Show:</label>
+                <div class="btn-group" data-total="buttons-radio">
+                    <button type="button" id="competitorPricesToggleGrocersButton" class="btn btn-sm btn-default" data-infotip="Toggle highlight for [b]Grocers[/b]"><i class="fa fa-shopping-cart"></i> Grocers</button>
+                    <button type="button" id="competitorPricesToggleNonGrocersButton" class="btn btn-sm btn-default" data-infotip="Toggle highlight for [b]Non-Grocers[/b]"><i class="fa fa-minus-circle"></i> Non-Grocers</button>
+                    <button type="button" id="competitorPricesResetFilters" class="btn btn-sm btn-warning" data-infotip="Reset the Filters (show all)"><i class="fa fa-power-off"></i></button>
+                </div>
+
+                <label style="margin-left: 3em;">Drive-Time:</label>
+                <div class="btn-group" data-toggle="buttons-radio">
+                    <button type="button" id="competitorPricesToggleInsideButton" class="btn btn-sm btn-primary" data-bind="attr: {'data-infotip': ('Show or Hide Grocers [b]Inside[/b] a Drive Time of [b]' + $root.maxGrocerDriveTimeMinutes() + ' minutes[/b]')}"><i class="fa fa-rss-square"></i> Inside</button>
+                    <button type="button" id="competitorPricesToggleOutsideButton" class="btn btn-sm btn-default" data-bind="attr: {'data-infotip': ('Show or Hide Grocers [b]Outside[/b] a Drive Time of [b]' + $root.maxGrocerDriveTimeMinutes() + ' minutes[/b]')}"><i class="fa fa-square-o"></i> Outside</button>
+                    <button type="button" id="competitorPricesResetDriveTimeFilters" class="btn btn-sm btn-warning" data-infotip="Reset the Drive-Time Filters"><i class="fa fa-power-off"></i></button>
+                </div>
+
             </div>
 
             <button type="button" id="competitorPricePopupCloseButton" class="btn btn-primary" data-dismiss="modal"><i class="fa fa-close"></i> Close</button>

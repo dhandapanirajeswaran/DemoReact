@@ -606,12 +606,15 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             {
                 var site = sites.First(x => x.SiteId == status.SiteId);
 
-                site.HasNearbyCompetitorDieselPrice = status.HasNearbyCompetitorDieselPrice;
-                site.HasNearbyCompetitorSuperUnleadedPrice = status.HasNearbyCompetitorSuperUnleadedPrice;
-                site.HasNearbyCompetitorUnleadedPrice = status.HasNearbyCompetitorUnleadedPrice;
-                site.HasNearbyCompetitorDieselWithOutPrice = status.HasNearbyCompetitorDieselWithOutPrice;
-                site.HasNearbyCompetitorSuperUnleadedWithOutPrice = status.HasNearbyCompetitorSuperUnleadedWithOutPrice;
-                site.HasNearbyCompetitorUnleadedWithOutPrice = status.HasNearbyCompetitorUnleadedWithOutPrice;
+                // unleaded
+                site.HasNearbyUnleadedGrocers = status.Unleaded.HasFlag(NearbyGrocerStatuses.HasNearbyGrocers);
+                site.HasNearbyUnleadedGrocersPriceData = status.Unleaded.HasFlag(NearbyGrocerStatuses.AllGrocersHavePriceData);
+                // diesel
+                site.HasNearbyDieselGrocers = status.Diesel.HasFlag(NearbyGrocerStatuses.HasNearbyGrocers);
+                site.HasNearbyDieselGrocersPriceData = status.Diesel.HasFlag(NearbyGrocerStatuses.AllGrocersHavePriceData);
+                // super-unleaded
+                site.HasNearbySuperUnleadedGrocers = status.SuperUnleaded.HasFlag(NearbyGrocerStatuses.HasNearbyGrocers);
+                site.HasNearbySuperUnleadedGrocersPriceData = status.SuperUnleaded.HasFlag(NearbyGrocerStatuses.AllGrocersHavePriceData);
             }
         }
 
@@ -735,12 +738,14 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                 var unleaded = fuelPricesForSite.First(x => x.FuelTypeId == (int)FuelTypeItem.Unleaded);
                 var diesel = fuelPricesForSite.First(x => x.FuelTypeId == (int)FuelTypeItem.Diesel);
 
-                superUnleaded.HasNearbyCompetitorPrice = site.HasNearbyCompetitorUnleadedPrice;
-                unleaded.HasNearbyCompetitorPrice = site.HasNearbyCompetitorUnleadedPrice;
-                diesel.HasNearbyCompetitorPrice = site.HasNearbyCompetitorDieselPrice;
-                superUnleaded.HasNearbyCompetitorWithOutPrice = site.HasNearbyCompetitorUnleadedWithOutPrice;
-                unleaded.HasNearbyCompetitorWithOutPrice = site.HasNearbyCompetitorUnleadedPrice;
-                diesel.HasNearbyCompetitorWithOutPrice = site.HasNearbyCompetitorDieselPrice;
+                unleaded.HasNearbyCompetitorPrice = site.HasNearbyUnleadedGrocersPriceData;
+                unleaded.HasNearbyCompetitorWithOutPrice = site.HasNearbyUnleadedGrocersPriceData == false;
+
+                superUnleaded.HasNearbyCompetitorPrice = site.HasNearbySuperUnleadedGrocersPriceData;
+                superUnleaded.HasNearbyCompetitorWithOutPrice = site.HasNearbySuperUnleadedGrocersPriceData == false;
+
+                diesel.HasNearbyCompetitorPrice = site.HasNearbyDieselGrocersPriceData;
+                diesel.HasNearbyCompetitorWithOutPrice = site.HasNearbyDieselGrocersPriceData == false;
 
                 site.FuelPrices.Add(superUnleaded);
                 site.FuelPrices.Add(unleaded);

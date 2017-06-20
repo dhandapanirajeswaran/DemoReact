@@ -197,8 +197,6 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         {
             const string sproc = "spNearbyGrocerPriceStatusForSites";
 
-            DiagnosticLog.StartDebug("sproc: " + sproc);
-
             var parameters = new
             {
                 @ForDate = forDate,
@@ -207,7 +205,6 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             };
             var model = DapperHelper.QueryList<NearbyGrocerPriceSiteStatus>(this, sproc, parameters);
 
-            DiagnosticLog.EndDebug("sproc: " + sproc);
             return model;
         }
 
