@@ -12,6 +12,11 @@
     font-size: 125%;
 }
 
+input.form-control.invalid {
+    border: 1px solid #a94442;
+    background-color: #f2dede;
+}
+
 .table-responsive {
     overflow-x: hidden;
     width: 100%;
@@ -299,6 +304,10 @@ table.competitorTable > tbody > .competitor-row  {
     font-weight: bold;
 }
 
+.pricing-grid .site-row .price-movement-filter-match {
+    background-color: #ffc;
+}
+
 .pricing-grid .no-nearby-grocer-price,
 .pricing-grid .has-nearby-grocer-price,
 .pricing-grid .has-nearby-grocer-with-out-price {
@@ -329,41 +338,43 @@ table.competitorTable > tbody > .competitor-row  {
 .pricing-grid > thead > tr > th {text-align: center; border-left: 1px solid #fff;}
 .pricing-grid > tbody > tr > td {min-height: 2em; padding: 6px 2px;}
 
-.pricing-grid > thead > tr:nth-child(1) {background-color: silver}
-.pricing-grid > thead > tr:nth-child(2) {background-color: #f8f8f8;}
+.pricing-grid > thead > tr:nth-child(2) {background-color: silver}
+.pricing-grid > thead > tr:nth-child(3) {background-color: #f8f8f8;}
 
 .pricing-grid > thead {border-bottom: 2px solid #ccc;}
 
-.pricing-grid > thead > tr:nth-child(1) .col-header-competitor,
+.pricing-grid > thead > tr:nth-child(2) .col-header-competitor,
 .pricing-grid > tbody .col-competitor {width: 24px;}
-.pricing-grid > thead > tr:nth-child(1) .col-header-store-no,
+.pricing-grid > thead > tr:nth-child(2) .col-header-store-no,
 .pricing-grid > tbody .col-store-no {width: 64px;}
-.pricing-grid > thead > tr:nth-child(1) .col-header-email,
+.pricing-grid > thead > tr:nth-child(2) .col-header-email,
 .pricing-grid > tbody .col-email {width: 24px;}
-.pricing-grid > thead > tr:nth-child(1) .col-header-store-name,
+.pricing-grid > thead > tr:nth-child(2) .col-header-store-name,
 .pricing-grid > tbody .col-store-name {width: 210px;}
-.pricing-grid > thead > tr:nth-child(1) .col-header-store-town,
+.pricing-grid > thead > tr:nth-child(2) .col-header-store-town,
 .pricing-grid > tbody .col-store-town {width: 140px;}
-.pricing-grid > thead > tr:nth-child(1) .col-header-cat-no,
+.pricing-grid > thead > tr:nth-child(2) .col-header-cat-no,
 .pricing-grid > tbody .col-cat-no {width: 48px;}
-.pricing-grid > thead > tr:nth-child(1) .col-header-pfs-no,
+.pricing-grid > thead > tr:nth-child(2) .col-header-pfs-no,
 .pricing-grid > tbody .col-pfs-no {width: 48px;}
 .pricing-grid > thead > tr:nth-child(1) .col-header-unleaded,
 .pricing-grid > thead > tr:nth-child(1) .col-header-diesel,
-.pricing-grid > thead > tr:nth-child(1) .col-header-super-unleaded {width: 234px;}
+.pricing-grid > thead > tr:nth-child(1) .col-header-super-unleaded {width: 234px; border-left: 1px solid #999;}
 
+.pricing-grid > thead > tr:nth-child(3) .col-header-tomorrow-unleaded,
+.pricing-grid > thead > tr:nth-child(3) .col-header-tomorrow-diesel {width: 150px;}
 
-.pricing-grid > thead > tr:nth-child(2) .col-header-yesterday-unleaded,
-.pricing-grid > thead > tr:nth-child(2) .col-header-yesterday-diesel,
-.pricing-grid > thead > tr:nth-child(2) .col-header-yesterday-super-unleaded {width: 83px; border-left: 1px solid #ddd;}
+.pricing-grid > thead > tr:nth-child(3) .col-header-yesterday-unleaded,
+.pricing-grid > thead > tr:nth-child(3) .col-header-yesterday-diesel,
+.pricing-grid > thead > tr:nth-child(3) .col-header-yesterday-super-unleaded {width: 83px; border-left: 1px solid #aaa;}
 
-.pricing-grid > thead > tr:nth-child(1) .col-header-diesel,
-.pricing-grid > thead > tr:nth-child(2) .col-header-yesterday-diesel,
-.pricing-grid > thead > tr:nth-child(2) .col-header-tomorrow-diesel {background-color: #ddd;}
+.pricing-grid > thead > tr:nth-child(2) .col-header-diesel,
+.pricing-grid > thead > tr:nth-child(3) .col-header-yesterday-diesel,
+.pricing-grid > thead > tr:nth-child(3) .col-header-tomorrow-diesel {background-color: #ddd;}
 
-.pricing-grid > thead > tr:nth-child(2) .col-header-tomorrow-diesel {border-left: none;}
+.pricing-grid > thead > tr:nth-child(3) .col-header-tomorrow-diesel {border-left: none;}
 
-.pricing-grid > thead > tr:nth-child(2) .col-header-today,
+.pricing-grid > thead > tr:nth-child(3) .col-header-today,
 .pricing-grid > tbody .col-yesterday {width: 76px;}
 
 .pricing-grid > tbody .col-today {width: 160px;}

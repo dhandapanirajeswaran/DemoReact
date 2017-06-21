@@ -228,16 +228,18 @@
                 <!-- start grid header -->
                 <table class="pricing-grid">
                     <thead>
-                        <!-- second row -->
+
                         <tr>
-                            <th class="col-header-competitor">#</th>
-                            <th class="col-header-store-no">Store No.</th>
-                            <th class="col-header-email">@@</th>
-                            <th class="col-header-store-name">Store Name</th>
-                            <th class="col-header-store-town">Store Town</th>
-                            <th class="col-header-cat-no">Cat No.</th>
-                            <th class="col-header-pfs-no">PFS No.</th>
-                            <th class="col-header-unleaded" colspan="2">
+                            <th colspan="7" class="form-group form-inline" style="width: 482px; background-color: #f8f8f8;">
+                                <div class="form-group">
+                                    <label><i class="fa fa-filter"></i> Price Movement:</label>
+                                    <input type="number" data-bind="value: $root.priceMovementMinFilter, attr: {'min': $root.priceMovementMin}, 'css': $root.priceMovementMinFilterCss()" class="form-control input-sm" style="width: 7em;" maxlength="4" data-infotip="Enter the [b]Min[/b] Price Movement" value="" placeholder="Min" />
+                                    <input type="number" data-bind="value: $root.priceMovementMaxFilter, attr: {'max': $root.priceMovementMax}, 'css': $root.priceMovementMaxFilterCss()" class="form-control input-sm" style="width: 7em;" maxlength="4" data-infotip="Enter the [b]Max[/b] Price Movement" value="" placeholder="Max" />
+                                    <button type="button" class="btn btn-success btn-sm" data-bind="click: applyPriceMovementFilter" data-infotip="Apply the [b]Price Movement[/b] Filters"><i class="fa fa-filter"></i></button>
+                                    <button type="button" class="btn btn-warning btn-sm" data-bind="click: resetPriceMovementFilters" data-infotip="Clear the [b]Price Movement[/b] filters"><i class="fa fa-eraser"></i></button>
+                                </div>
+                            </th>
+                            <th rowspan="2" class="col-header-unleaded" colspan="2">
 
                                 <button type="button" class="btn btn-danger btn-xs" data-bind="visible: !$root.ViewingHistorical(), click: removeAllOverrideUnleaded" data-infotip="Remove all [b]Price Overrides[/b] for [b]Unleaded[/b]"><i class="fa fa-power-off"></i></button>
                                 <span class="fuel-sign fuel-sign-unleaded"></span>
@@ -256,7 +258,7 @@
                                 </div>
                                 <!-- /ko -->
                             </th>
-                            <th class="col-header-diesel" colspan="2">
+                            <th rowspan="2" class="col-header-diesel" colspan="2">
                                 <button type="button" class="btn btn-danger btn-xs" data-bind="visible: !$root.ViewingHistorical(), click: removeAllOverrideDiesel" data-infotip="Remove all [b]Price Overrides[/b] for [b]Diesel[/b]"><i class="fa fa-power-off"></i></button>
                                 <span class="fuel-sign fuel-sign-diesel"></span>
 
@@ -274,7 +276,7 @@
 
                                 <!-- /ko -->
                             </th>
-                            <th class="col-header-super-unleaded" colspan="2">
+                            <th rowspan="2" class="col-header-super-unleaded" colspan="2">
                                 <button type="button" class="btn btn-danger btn-xs" data-bind="visible: !$root.ViewingHistorical(), click: removeAllOverrideSuperUnleaded" data-infotip="Remove all [b]Price Overrides[/b] for [b]Super Unleaded[/b]"><i class="fa fa-power-off"></i></button>
                                 <span class="fuel-sign fuel-sign-super-unleaded"></span>
 
@@ -291,6 +293,18 @@
                                 </div>
                                 <!-- /ko -->
                             </th>
+
+                        </tr>
+
+                        <!-- second row -->
+                        <tr>
+                            <th class="col-header-competitor">#</th>
+                            <th class="col-header-store-no">Store No.</th>
+                            <th class="col-header-email">@@</th>
+                            <th class="col-header-store-name">Store Name</th>
+                            <th class="col-header-store-town">Store Town</th>
+                            <th class="col-header-cat-no">Cat</th>
+                            <th class="col-header-pfs-no">PFS</th>
                         </tr>
 
                         <!-- third row -->
@@ -377,7 +391,7 @@
                         <tbody>
                             <!-- JS Store DataRows -->
                             <!-- ko foreach: sites -->
-                            <tr class="row site-row" role="tab" data-bind="id:('Heading' + SiteId), attr: {id: 'SiteHeading' + SiteId, 'data-price-change-signs': (priceChangeSigns())}, css: (siteRowCss())">
+                            <tr class="row site-row" role="tab" data-bind="id:('Heading' + SiteId), attr: {id: 'SiteHeading' + SiteId, 'data-price-change-signs': (priceChangeSigns())}, css: (siteRowCss() + (hiddenByPriceMovementFilter() ? ' hide' : ''))">
                                 <td class="col-competitor">
                                     <a role="button" data-toggle="modal" data-bind="attr:{id: SiteId}, click: getCompetitorPopupDataClick"
                                        data-target="#competitorPricesPopup" data-infotip="View competitor's prices">
@@ -419,7 +433,7 @@
                                     <span data-bind="css: ('fuel-price-change-' + UpDownSignCss()), html: FuelPrice.ForecourtTodayPriceHtml, attr: {'data-infotip': FuelPrice.CurrentPriceInfoTip()}"></span>
                                     <b data-bind="html: nearbyGrocersHtml()"></b>
                                 </td>
-                                <td data-bind="css: ('col-today' + (isEditingFuel() ? ' col-editing' : '') + (hasValidValue() ? ' col-valid' : ' col-invalid'))">
+                                <td data-bind="css: ('col-today' + (isEditingFuel() ? ' col-editing' : '') + (hasValidValue() ? ' col-valid' : ' col-invalid') + (isMatchedByPriceMovementFilter() ? ' price-movement-filter-match' : ''))">
                                     <div data-bind="css: ('fuel-price-change-' + UpDownSignCss())">
 
                                         <!-- ko if:  $parent.PriceMatchType == 1 -->
