@@ -408,6 +408,10 @@
                                     <div class="site-name-overlay">
                                         <span class="site-name" data-bind="text: StoreName"></span>
                                         <div class="hide-hover">
+                                            <a role="button" href="#" class="btn btn-default btn-xs competitor-site-link" data-toggle="modal" data-bind="attr:{id: SiteId}, click: getCompetitorPopupDataClick"
+                                               data-target="#competitorPricesPopup" data-infotip="View competitor's prices">
+                                                <i class="fa fa-credit-card"></i> Competitor Prices
+                                            </a>
                                             <a class="btn btn-success btn-xs edit-site-link" data-bind="attr: {'href': ('@Url.Action("Edit", "Sites")/?id=' + SiteId + '&calledFromSection=@(SiteSectionType.SitePricing)' ), 'data-infotip-dock': 'below', 'data-infotip': 'Edit Site [b]' + StoreName + '[/b]'}"><i class="fa fa-edit"></i> Edit...</a>
                                             <!-- ko: if !$root.ViewingHistorical() -->
                                             <a tabindex="-1" class="btn btn-default btn-xs" data-bind="visible:HasEmails, click: bindEmailTemplate" data-toggle="modal" data-target="#emailSite" data-infotip-dock="below" data-infotip="Open Email Popup" ><i class="fa fa-at"></i> Email</a>

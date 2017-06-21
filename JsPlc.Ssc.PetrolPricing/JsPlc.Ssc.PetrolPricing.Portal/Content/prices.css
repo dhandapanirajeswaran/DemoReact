@@ -539,7 +539,7 @@ table.competitorTable > tbody > .competitor-row  {
     left: 0;
     top: 0;
     padding: 4px 8px 8px 8px;
-    width: 100%;
+    width: 150%;
 }
 .site-name-overlay .hide-hover {display: none; clear: both;}
 
@@ -567,6 +567,10 @@ table.competitorTable > tbody > .competitor-row  {
 .site-name-overlay .edit-site-link {
     position: absolute;
     right: 1em;
+}
+.site-name-overlay .competitor-site-link {
+    position: absolute;
+    right: 8em;
 }
 
 .competitor-fuel-unleaded {
