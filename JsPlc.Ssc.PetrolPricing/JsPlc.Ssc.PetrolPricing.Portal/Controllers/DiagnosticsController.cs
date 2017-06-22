@@ -22,6 +22,8 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
         private readonly ServiceFacade _serviceFacade;
         private readonly ILogger _logger;
 
+        private const string appLogFilePath = @"C:\Websites\pplog";
+
         public DiagnosticsController()
         {
             _logger = new PetrolPricingLogger();
@@ -34,7 +36,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
         public ActionResult Index(string message = "")
         {
             var daysAgo = 7;
-            var model = _serviceFacade.GetDiagnostics(daysAgo, _appSettings.LogFilePath);
+            var model = _serviceFacade.GetDiagnostics(daysAgo, appLogFilePath);
             model.ActionMessage = message;
             return View(model);
         }
@@ -70,7 +72,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
         [AuthoriseDiagnostics(Permissions = DiagnosticsUserPermissions.View | DiagnosticsUserPermissions.Edit)]
         public async Task<ActionResult> DownloadErrorLogFile(string filename)
         {
-            var file = await _serviceFacade.GetDiagnosticsErrorLogFile(_appSettings.LogFilePath, filename);
+            var file = await _serviceFacade.GetDiagnosticsErrorLogFile(appLogFilePath, filename);
             if (file.FileBytes != null)
                 return File(file.FileBytes, System.Net.Mime.MediaTypeNames.Application.Octet, file.FileName);
             return new RedirectResult("?msg=Unable to find file");
