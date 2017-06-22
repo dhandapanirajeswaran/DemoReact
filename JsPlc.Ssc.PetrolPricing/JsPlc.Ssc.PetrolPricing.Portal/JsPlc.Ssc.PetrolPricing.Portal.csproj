@@ -552,6 +552,10 @@
     <Content Include="Readme.html" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\JsPlc.Ssc.PetrolPricing.Business\JsPlc.Ssc.PetrolPricing.Business.csproj">
+      <Project>{479C4815-23D6-4710-8E67-989EEAD6A920}</Project>
+      <Name>JsPlc.Ssc.PetrolPricing.Business</Name>
+    </ProjectReference>
     <ProjectReference Include="..\JsPlc.Ssc.PetrolPricing.Core\JsPlc.Ssc.PetrolPricing.Core.csproj">
       <Project>{a63fb2ae-7013-41ba-bb14-082ac91a26b7}</Project>
       <Name>JsPlc.Ssc.PetrolPricing.Core</Name>

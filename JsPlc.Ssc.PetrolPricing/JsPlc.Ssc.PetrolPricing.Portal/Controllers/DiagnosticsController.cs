@@ -12,11 +12,13 @@ using System.Web.Mvc;
 using JsPlc.Ssc.PetrolPricing.Portal.ActionFilters;
 using JsPlc.Ssc.PetrolPricing.Models.Enums;
 using System.Threading.Tasks;
+using JsPlc.Ssc.PetrolPricing.Business;
 
 namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 {
     public class DiagnosticsController : BaseController
     {
+        private readonly IAppSettings _appSettings;
         private readonly ServiceFacade _serviceFacade;
         private readonly ILogger _logger;
 
@@ -24,6 +26,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
         {
             _logger = new PetrolPricingLogger();
             _serviceFacade = new ServiceFacade(_logger);
+            _appSettings = new AppSettings();
         }
 
         [HttpGet]
@@ -31,7 +34,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
         public ActionResult Index(string message = "")
         {
             var daysAgo = 7;
-            var model = _serviceFacade.GetDiagnostics(daysAgo);
+            var model = _serviceFacade.GetDiagnostics(daysAgo, _appSettings.LogFilePath);
             model.ActionMessage = message;
             return View(model);
         }
@@ -67,10 +70,10 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
         [AuthoriseDiagnostics(Permissions = DiagnosticsUserPermissions.View | DiagnosticsUserPermissions.Edit)]
         public async Task<ActionResult> DownloadErrorLogFile(string filename)
         {
-            var file = await _serviceFacade.GetDiagnosticsErrorLogFile(filename);
+            var file = await _serviceFacade.GetDiagnosticsErrorLogFile(_appSettings.LogFilePath, filename);
             if (file.FileBytes != null)
                 return File(file.FileBytes, System.Net.Mime.MediaTypeNames.Application.Octet, file.FileName);
-            return new RedirectResult("~/File/?msg=Unable to find file");
+            return new RedirectResult("?msg=Unable to find file");
         }
     }
 }

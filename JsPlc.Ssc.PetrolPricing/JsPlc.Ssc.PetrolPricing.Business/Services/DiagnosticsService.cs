@@ -37,9 +37,8 @@ namespace JsPlc.Ssc.PetrolPricing.Business.Services
 
         #region implementation of IDiagnosticsService
 
-        public DiagnosticsViewModel GetDiagnostics(int daysAgo)
+        public DiagnosticsViewModel GetDiagnostics(int daysAgo, string logFilePath)
         {
-
             var systemSettings = _db.GetSystemSettings();
             var dataSanityCheck = _db.GetDataSanityCheckSummary();
 
@@ -89,7 +88,8 @@ namespace JsPlc.Ssc.PetrolPricing.Business.Services
                 {"appSetting.EmailFrom", _appSettings.EmailFrom },
                 {"appSetting.FixedEmailTo", _appSettings.FixedEmailTo },
                 {"appSetting.SuperUnleadedMarkup", _appSettings.SuperUnleadedMarkup },
-                {"appSetting.UploadPath", _appSettings.UploadPath }
+                {"appSetting.UploadPath", _appSettings.UploadPath },
+                {"appSetting.LogFilePath", _appSettings.LogFilePath }
             };
 
             var coreSettings = new Dictionary<string, object>()
@@ -123,12 +123,12 @@ namespace JsPlc.Ssc.PetrolPricing.Business.Services
 
             model.DatabaseRecordCounts = GetDatabaseRecordCounts().ToList();
 
-            model.ErrorLogFiles = GetErrorLogFiles(30).OrderByDescending(x => x.DateModified).ToList();
+            model.ErrorLogFiles = GetErrorLogFiles(30, logFilePath).OrderByDescending(x => x.DateModified).ToList();
 
             return model;
         }
 
-        private IEnumerable<DiagnosticsErrorLogFileInfoViewModel> GetErrorLogFiles(int maxDaysAgo)
+        private IEnumerable<DiagnosticsErrorLogFileInfoViewModel> GetErrorLogFiles(int maxDaysAgo, string logFilePath)
         {
             var errorLogFiles = new List<DiagnosticsErrorLogFileInfoViewModel>();
 
@@ -136,7 +136,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business.Services
 
             try
             {
-                var logDirectory = new DirectoryInfo(_appSettings.LogFilePath);
+                var logDirectory = new DirectoryInfo(logFilePath);
                 foreach(var fileInfo in logDirectory.EnumerateFiles("*.xml"))
                 {
                     if (fileInfo.LastWriteTime >= minDate)
@@ -159,13 +159,13 @@ namespace JsPlc.Ssc.PetrolPricing.Business.Services
             return errorLogFiles;
         }
 
-        public DiagnosticsErrorLogFileViewModel GetErrorLogFile(string filename)
+        public DiagnosticsErrorLogFileViewModel GetErrorLogFile(string logFilePath, string filename)
         {
             var errorLogFile = new DiagnosticsErrorLogFileViewModel();
 
             try
             {
-                var fullname = Path.Combine(_appSettings.LogFilePath, filename);
+                var fullname = Path.Combine(logFilePath, filename);
                 var fileInfo = new FileInfo(fullname);
 
                 return new DiagnosticsErrorLogFileViewModel()

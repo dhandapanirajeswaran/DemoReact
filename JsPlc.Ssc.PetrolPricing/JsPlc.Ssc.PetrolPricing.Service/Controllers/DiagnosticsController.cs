@@ -22,11 +22,11 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
 
         [System.Web.Http.HttpGet]
         [System.Web.Http.Route("api/GetDiagnostics/")]
-        public IHttpActionResult GetDiagnostics([FromUri] int daysAgo)
+        public IHttpActionResult GetDiagnostics([FromUri] int daysAgo, [FromUri] string logFilePath)
         {
             try
             {
-                var result = _diagnosticService.GetDiagnostics(daysAgo);
+                var result = _diagnosticService.GetDiagnostics(daysAgo, logFilePath);
                 return Ok(result);
             }
             catch (Exception ex)
@@ -102,11 +102,11 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
 
         [System.Web.Http.HttpGet]
         [System.Web.Http.Route("api/GetErrorLogFile")]
-        public IHttpActionResult GetErrorLogFile([FromUri] string filename)
+        public IHttpActionResult GetErrorLogFile([FromUri] string logFilePath, [FromUri] string filename)
         {
             try
             {
-                var result = _diagnosticService.GetErrorLogFile(filename);
+                var result = _diagnosticService.GetErrorLogFile(logFilePath, filename);
                 return Ok(result);
             }
             catch (Exception ex)

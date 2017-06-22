@@ -1,4 +1,5 @@
-﻿using JsPlc.Ssc.PetrolPricing.Core.Diagnostics;
+﻿using JsPlc.Ssc.PetrolPricing.Business;
+using JsPlc.Ssc.PetrolPricing.Core.Diagnostics;
 using JsPlc.Ssc.PetrolPricing.Core.Interfaces;
 using JsPlc.Ssc.PetrolPricing.Models;
 using JsPlc.Ssc.PetrolPricing.Models.Enums;
@@ -910,11 +911,11 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             }
         }
 
-        public DiagnosticsViewModel GetDiagnostics(int daysAgo)
+        public DiagnosticsViewModel GetDiagnostics(int daysAgo, string logFilePath)
         {
             try
             {
-                var apiUrl = String.Format("api/GetDiagnostics?daysAgo={0}", daysAgo);
+                var apiUrl = String.Format("api/GetDiagnostics?daysAgo={0}&logFilePath={1}", daysAgo, logFilePath);
                 var response = _client.Value.GetAsync(apiUrl).Result;
                 if (response.IsSuccessStatusCode)
                 {
@@ -966,11 +967,11 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             }
         }
 
-        public async Task<DiagnosticsErrorLogFileViewModel> GetDiagnosticsErrorLogFile(string filename)
+        public async Task<DiagnosticsErrorLogFileViewModel> GetDiagnosticsErrorLogFile(string logFilePath, string filename)
         {
             try
             {
-                var apiUrl = String.Format("api/GetErrorLogFile?filename={0}", filename);
+                var apiUrl = String.Format("api/GetErrorLogFile?logFilePath={0}&filename={1}", logFilePath, filename);
                 var response = await _client.Value.GetAsync(apiUrl);
                 var result = response.Content.ReadAsAsync<DiagnosticsErrorLogFileViewModel>().Result;
                 return (response.IsSuccessStatusCode) ? result : null;
