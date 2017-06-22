@@ -120,5 +120,13 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 		{
 			return ConfigurationManager.AppSettings[key];
 		}
-	}
+
+        public string LogFilePath
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings["LogFilePath"];
+            }
+        }
+    }
 }

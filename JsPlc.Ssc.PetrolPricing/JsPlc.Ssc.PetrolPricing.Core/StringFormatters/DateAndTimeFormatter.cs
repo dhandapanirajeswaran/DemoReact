@@ -43,7 +43,7 @@ namespace JsPlc.Ssc.PetrolPricing.Core.StringFormatters
                 return String.Format("{0} hours ago", (int)timeAgo.TotalHours );
             if (wholeYearsAgo < 1)
                 return String.Format("{0} days ago", (int)timeAgo.TotalDays);
-            return String.Format("{0} years and {1} days ago", wholeYearsAgo, timeAgo.TotalDays % 365);
+            return String.Format("{0} years and {1} days ago", wholeYearsAgo, ((int)timeAgo.TotalDays) % 365);
         }
     }
 }

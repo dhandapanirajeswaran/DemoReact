@@ -1,78 +1,35 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace JsPlc.Ssc.PetrolPricing.Business
+﻿namespace JsPlc.Ssc.PetrolPricing.Business
 {
-	public interface IAppSettings
-	{
-		string UploadPath
-		{
-			get;
-		}
+    public interface IAppSettings
+    {
+        string UploadPath { get; }
 
-		string ExcelFileSheetName
-		{
-			get;
-		}
+        string ExcelFileSheetName { get; }
 
-		string EmailSubject
-		{
-			get;
-		}
+        string EmailSubject { get; }
 
-		string EmailFrom
-		{
-			get;
-		}
+        string EmailFrom { get; }
 
-		string FixedEmailTo
-		{
-			get;
-		}
+        string FixedEmailTo { get; }
 
-		string MailHostSelector
-		{
-			get;
-		}
+        string MailHostSelector { get; }
 
-		int SuperUnleadedMarkup
-		{
-			get;
-		}
+        int SuperUnleadedMarkup { get; }
 
-		string PetrolDbConnectionString
-		{
-			get;
-		}
+        string PetrolDbConnectionString { get; }
 
-		string SmtpServer
-		{
-			get;
-		}
+        string SmtpServer { get; }
 
-		string SmtpUserName
-		{
-			get;
-		}
+        string SmtpUserName { get; }
 
-		string SmtpPassword
-		{
-			get;
-		}
+        string SmtpPassword { get; }
 
-		int SmtpPort
-		{
-			get;
-		}
+        int SmtpPort { get; }
 
-		bool SmtpEnableSsl
-		{
-			get;
-		}
+        bool SmtpEnableSsl { get; }
 
-		string GetSetting(string key);
-	}
+        string GetSetting(string key);
+
+        string LogFilePath { get; }
+    }
 }

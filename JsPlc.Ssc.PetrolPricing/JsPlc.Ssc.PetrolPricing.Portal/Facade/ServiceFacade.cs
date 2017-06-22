@@ -966,6 +966,22 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             }
         }
 
+        public async Task<DiagnosticsErrorLogFileViewModel> GetDiagnosticsErrorLogFile(string filename)
+        {
+            try
+            {
+                var apiUrl = String.Format("api/GetErrorLogFile?filename={0}", filename);
+                var response = await _client.Value.GetAsync(apiUrl);
+                var result = response.Content.ReadAsAsync<DiagnosticsErrorLogFileViewModel>().Result;
+                return (response.IsSuccessStatusCode) ? result : null;
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex);
+                throw new Exception("Exception in GetDiagnosticsErrorLogFile" + System.Environment.NewLine + ex.Message, ex);
+            }
+        }
+
         public UserAccessViewModel GetUserAccessModel(string userName)
         {
             if (String.IsNullOrWhiteSpace(userName))

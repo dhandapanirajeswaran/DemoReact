@@ -11,6 +11,7 @@ using System.Web;
 using System.Web.Mvc;
 using JsPlc.Ssc.PetrolPricing.Portal.ActionFilters;
 using JsPlc.Ssc.PetrolPricing.Models.Enums;
+using System.Threading.Tasks;
 
 namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 {
@@ -60,6 +61,16 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
                 return RedirectToAction("Index", new { message = "All Database Data Deleted" });
             else
                 return RedirectToAction("Index", new { message = "Error - Unable to delete data!" });
+        }
+
+        [HttpGet]
+        [AuthoriseDiagnostics(Permissions = DiagnosticsUserPermissions.View | DiagnosticsUserPermissions.Edit)]
+        public async Task<ActionResult> DownloadErrorLogFile(string filename)
+        {
+            var file = await _serviceFacade.GetDiagnosticsErrorLogFile(filename);
+            if (file.FileBytes != null)
+                return File(file.FileBytes, System.Net.Mime.MediaTypeNames.Application.Octet, file.FileName);
+            return new RedirectResult("~/File/?msg=Unable to find file");
         }
     }
 }

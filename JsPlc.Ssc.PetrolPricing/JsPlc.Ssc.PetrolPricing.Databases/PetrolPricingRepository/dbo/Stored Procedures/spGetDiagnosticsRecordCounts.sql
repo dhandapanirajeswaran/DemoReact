@@ -5,7 +5,9 @@ AS
 	SELECT 'ContactDetails' [TableName], (SELECT COUNT(1) FROM dbo.ContactDetails) [RecordCount]
 	UNION ALL SELECT 'DailyPrice', (SELECT COUNT(1) FROM dbo.DailyPrice)
 	UNION ALL SELECT 'DailyUploadStaging', (SELECT COUNT(1) FROM dbo.DailyUploadStaging)
+	UNION ALL SELECT 'DriveTimeMarkup', (SELECT COUNT(1) FROM dbo.DriveTimeMarkup)
 	UNION ALL SELECT 'EmailSendLog', (SELECT COUNT(1) FROM dbo.EmailSendLog)
+	UNION ALL SELECT 'EmailTemplate', (SELECT COUNT(1) FROM dbo.EmailTemplate)
 	UNION ALL SELECT 'ExcludeBrands', (SELECT COUNT(1) FROM dbo.ExcludeBrands)
 	UNION ALL SELECT 'FileUpload', (SELECT COUNT(1) FROM dbo.FileUpload)
 	UNION ALL SELECT 'FuelType', (SELECT COUNT(1) FROM dbo.FuelType)

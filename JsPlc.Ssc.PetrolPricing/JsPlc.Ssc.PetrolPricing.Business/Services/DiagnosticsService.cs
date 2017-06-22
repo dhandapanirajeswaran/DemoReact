@@ -123,7 +123,62 @@ namespace JsPlc.Ssc.PetrolPricing.Business.Services
 
             model.DatabaseRecordCounts = GetDatabaseRecordCounts().ToList();
 
+            model.ErrorLogFiles = GetErrorLogFiles(30).OrderByDescending(x => x.DateModified).ToList();
+
             return model;
+        }
+
+        private IEnumerable<DiagnosticsErrorLogFileInfoViewModel> GetErrorLogFiles(int maxDaysAgo)
+        {
+            var errorLogFiles = new List<DiagnosticsErrorLogFileInfoViewModel>();
+
+            var minDate = DateTime.Now.Date.AddDays(-maxDaysAgo);
+
+            try
+            {
+                var logDirectory = new DirectoryInfo(_appSettings.LogFilePath);
+                foreach(var fileInfo in logDirectory.EnumerateFiles("*.xml"))
+                {
+                    if (fileInfo.LastWriteTime >= minDate)
+                    {
+                        var logFile = new DiagnosticsErrorLogFileInfoViewModel()
+                        {
+                            FileName = fileInfo.Name,
+                            DateModified = fileInfo.LastWriteTime,
+                            FileSize = fileInfo.Length
+                        };
+
+                        errorLogFiles.Add(logFile);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+
+            return errorLogFiles;
+        }
+
+        public DiagnosticsErrorLogFileViewModel GetErrorLogFile(string filename)
+        {
+            var errorLogFile = new DiagnosticsErrorLogFileViewModel();
+
+            try
+            {
+                var fullname = Path.Combine(_appSettings.LogFilePath, filename);
+                var fileInfo = new FileInfo(fullname);
+
+                return new DiagnosticsErrorLogFileViewModel()
+                {
+                    FileName = fileInfo.Name,
+                    DateModified = fileInfo.LastWriteTime,
+                    FileBytes = File.ReadAllBytes(fullname),
+                    FileLength = fileInfo.Length
+                };
+            }
+            catch (Exception ex) { }
+
+            return errorLogFile;
         }
 
         public bool UpdateDiagnosticsSettings(DiagnosticsSettingsViewModel settings)

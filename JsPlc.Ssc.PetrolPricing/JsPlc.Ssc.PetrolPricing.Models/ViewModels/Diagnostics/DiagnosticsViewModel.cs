@@ -30,6 +30,8 @@ namespace JsPlc.Ssc.PetrolPricing.Models.ViewModels.Diagnostics
 
         public List<DiagnosticsRecordCountViewModel> DatabaseRecordCounts;
 
+        public List<DiagnosticsErrorLogFileInfoViewModel> ErrorLogFiles;
+
         public DiagnosticsViewModel()
         {
             this.ActionMessage = "";
@@ -45,6 +47,7 @@ namespace JsPlc.Ssc.PetrolPricing.Models.ViewModels.Diagnostics
             this.DatabaseObjectSummary = new DiagnosticsDatabaseObjectSummary();
             this.FileUploadSummary = new DiagnosticsFileUploadSummaryViewModel();
             this.DatabaseRecordCounts = new List<DiagnosticsRecordCountViewModel>();
+            this.ErrorLogFiles = new List<DiagnosticsErrorLogFileInfoViewModel>();
         }
     }
 }

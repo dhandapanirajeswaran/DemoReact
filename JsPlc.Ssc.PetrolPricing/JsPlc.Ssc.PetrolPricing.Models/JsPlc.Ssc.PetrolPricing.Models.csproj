@@ -124,6 +124,8 @@
     <Compile Include="ViewModels\ContactDetailViewModel.cs" />
     <Compile Include="ViewModels\Diagnostics\DiagnosticsCoreSettingsViewModel.cs" />
     <Compile Include="ViewModels\Diagnostics\DiagnosticsDatabaseObjectSummary.cs" />
+    <Compile Include="ViewModels\Diagnostics\DiagnosticsErrorLogFileInfoViewModel.cs" />
+    <Compile Include="ViewModels\Diagnostics\DiagnosticsErrorLogFileViewModel.cs" />
     <Compile Include="ViewModels\Diagnostics\DiagnosticsFileUploadSummaryViewModel.cs" />
     <Compile Include="ViewModels\Diagnostics\DiagnosticsLogEntryViewModel.cs" />
     <Compile Include="ViewModels\Diagnostics\DiagnosticsDatabaseObject.cs" />

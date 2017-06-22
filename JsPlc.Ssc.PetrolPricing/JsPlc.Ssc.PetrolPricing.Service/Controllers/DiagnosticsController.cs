@@ -99,5 +99,21 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
                 return new ExceptionResult(ex, this);
             }
         }
+
+        [System.Web.Http.HttpGet]
+        [System.Web.Http.Route("api/GetErrorLogFile")]
+        public IHttpActionResult GetErrorLogFile([FromUri] string filename)
+        {
+            try
+            {
+                var result = _diagnosticService.GetErrorLogFile(filename);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex);
+                return new ExceptionResult(ex, this);
+            }
+        }
     }
 }

@@ -20,5 +20,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business.Interfaces
         IEnumerable<DiagnosticsRecordCountViewModel> GetDatabaseRecordCounts();
 
         DataSanityCheckSummaryViewModel GetDataSanityCheckSummary();
+
+        DiagnosticsErrorLogFileViewModel GetErrorLogFile(string filename);
     }
 }
