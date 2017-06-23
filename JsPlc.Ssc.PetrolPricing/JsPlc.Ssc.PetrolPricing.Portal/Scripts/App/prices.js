@@ -138,17 +138,6 @@ require(["SitePricing", "notify", "busyloader", "downloader", "infotips", "cooki
             redrawExpandModes(selector, mode);
     };
 
-    $('#PriceDifferencePanel').on('expand-mode-change', function (ev, mode) {
-        cookieSettings.write('pricing.showBarChart', mode);
-    });
-
-    $('#PriceDifferencePanel').on('data-loaded', function (ev) {
-        var selector = '#PriceDifferencePanel',
-            mode = cookieSettings.read('pricing.showBarChart', '');
-        if (mode)
-            redrawExpandModes(selector, mode);
-    });
-
     function applyUserSettings() {
         applyPricingPanelScrollerMode();
     };

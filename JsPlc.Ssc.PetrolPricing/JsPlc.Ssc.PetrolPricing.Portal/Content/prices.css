@@ -435,11 +435,12 @@ table.competitorTable > tbody > .competitor-row  {
 
 #PriceDifferenceBarChart {
     border: 1px solid #999;
-    border-radius: 12px;
+    border-radius: 12px 0 12px 12px;
     padding: 8px;
     width: 100%;
     height: 200px;
     color: #666;
+    background-color: #f8f8f8;
 }
 
 .price-diff-bar-chart th {width: 3em; text-align: center;}
@@ -709,3 +710,171 @@ table.competitorTable > tbody > .competitor-row  {
     color: #333;
     padding: 1px 2px;
 }
+
+
+.stat-row {
+    padding: 4px;
+}
+
+.stat-group {
+    border: 2px solid #aaa;
+    border-radius: 12px;
+    padding: 2px 8px;
+    margin: 2px;
+    text-align: center;
+    background-color: #fff;
+}
+
+.stat {
+    position: relative;
+    display: inline-block;
+    float: left;
+    background: #eee;
+    color: #000;
+    text-align: center;
+    padding: 2px;
+    font-size: 110%;
+    line-height: 1em;
+    min-width: 4.2em;
+    border-right: 2px solid #fff;
+}
+
+.stat-price {
+    padding-left: 1em;
+}
+
+.stat-price::before {
+    content: '£';
+    font-size: 150%;
+    color: #000;
+    position: absolute;
+    top: 6px;
+    left: 4px;
+    color: #999;
+}
+
+
+.stat-group-inline {
+    display: inline-block;
+}
+
+.stat-value {
+    letter-spacing: 1px;
+}
+
+.stat-label {
+    font-variant: small-caps;
+    text-transform: lowercase;
+    color: #999;
+}
+
+.stat-group-combined::before,
+.stat-group-unleaded::before,
+.stat-group-diesel::before,
+.stat-group-super-unleaded::before {
+    width: calc(100% + 8px);
+    display: block;
+    border-radius: 10px 10px 0 0;
+    font-size: 125%;
+    font-weight: bold;
+    letter-spacing: 2px;
+    line-height: 2em;
+    position: relative;
+    font-style: italic;
+    left: -4px;
+    top: 2px;
+}
+
+.stat-group-combined::before {
+    content: 'Combined';
+    background-color: #f0ad4e;
+    color: #fff;
+}
+
+.stat-group-unleaded::before {
+    content: 'Unleaded';
+    background-color: #5cb85c;
+    color: #fff;
+}
+
+.stat-group-diesel::before {
+    content: 'Diesel';
+    background-color: #000;
+    color: #fff;
+}
+
+.stat-group-super-unleaded::before {
+    content: 'Super-Unleaded';
+    background-color: #fff;
+    color: #000;
+    border: 1px solid #000;
+}
+
+.stat-group-title {
+    text-align: center;
+    font-weight: bold;
+    color: #666;
+    font-style: italic;
+    line-height: 2.5em;
+    padding: 1px 8px;
+}
+
+.stat-section {
+    margin: 8px 4px;
+    padding: 2px;
+    position: relative;
+}
+.stat-section.stat-section-tomorrow,
+.stat-section.stat-section-today {
+    margin-left: 2em;
+}
+
+.stat-section-tomorrow::before,
+.stat-section-today::before {
+    position: absolute;
+    font-weight: bold;
+    font-size: 125%;
+    font-variant: small-caps;
+    text-transform: lowercase;
+    line-height: 1.75em;
+    top: 0;
+    left: 0;
+    -webkit-transform-origin: 0 0;
+    -webkit-transform: rotate(90deg) scale(-1, -1) translate(-100%, -1.75em);
+}
+
+.stat-section-tomorrow::before {
+    content: "Tomorrow";
+    background: #e0ffe0;
+    color: #5cb85c;
+    width: 75%;
+}
+
+.stat-section-today::before {
+    content: "Today";
+    background: #eee;
+    color: #999;
+    width: 40%;
+}
+
+.stat-section-tomorrow .stat {
+    background: #e0ffe0;
+}
+
+
+.stat-section-divider {
+    border-top: 2px dashed #999;
+    height: 2px;
+    width: 100%;
+    display: block;
+    margin: 4px;
+}
+
+.summary-tab {
+    border: 1px solid #999;
+    border-radius: 12px 0 12px 12px;
+    background-color: #f8f8f8;
+    padding: 8px;
+    margin-bottom: 1em;
+}
+

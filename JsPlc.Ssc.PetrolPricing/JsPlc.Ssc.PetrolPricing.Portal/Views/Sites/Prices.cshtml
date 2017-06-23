@@ -88,7 +88,7 @@
                 <!-- ExportToExcel button -->
                 <div class="col-md-3 text-right last-col">
                     <label>&nbsp;</label>
-                        <label class="button"></label>
+                    <label class="button"></label>
                     <div>
                         <button type="button" style="margin-left:0px " class="btn btn-primary" id="btnExportAll" data-infotip="Export [b]All[/b] Sites"><i class="fa fa-download"></i> Export ALL</button>
                         <button type="button" style="margin-left:0px" class="btn btn-primary" id="btnExportSites" data-infotip="Export [b]Sainsbury's'[/b] Sites Only"><i class="fa fa-download"></i> Export JS Sites</button>
@@ -117,19 +117,335 @@
             </div>
             <br />
 
-            <div class="row" style="margin-bottom: 4px; padding-bottom: 4px;">
-                <div class="col-md-3 col-md-offset-9">
-                    <strong>Competitor Price Differences:</strong>
-                    <div class="btn-group pull-right" role="group">
-                        <button type="button" class="btn btn-sm btn-primary" data-click="setExpandMode" data-mode="expanded" data-states="expanded,collapsed" data-target="#PriceDifferencePanel" data-message="Showing Bar Chart" data-infotip="Show the [b]Competitor Price Differences[/b] Bar Chart"><i class="fa fa-toggle-down"></i> Show</button>
-                        <button type="button" class="btn btn-sm" data-click="setExpandMode" data-mode="collapsed" data-states="expanded,collapsed" data-target="#PriceDifferencePanel" data-message="Hiding Bar Chart" data-infotip="Hide the [b]Competitor Price Differences[/b] Bar Chart"><i class="fa fa-toggle-up"></i> Hide</button>
+            <div class="row">
+                <div class="btn-group pull-right">
+                    <button type="button" class="btn btn-default" data-bind="click: showPriceSummaryTab, css: {'btn-primary': $root.showingPriceSummaryTab()}" data-infotip="Show the [b]Prices/Price Change[/b] summary tab"><i class="fa fa-area-chart"></i> Price/Price Change Summary</button>
+                    <button type="button" class="btn btn-default" data-bind="click: showCompetitorDifferencesTab, css: {'btn-primary': $root.showingCompetitorDifferencesTab()}" data-infotip="Show the [b]Competitor Price Differences[/b] tab"><i class="fa fa-clone"></i> Competitor Price Differences</button>
+                    <button type="button" class="btn btn-default" data-bind="click: showEmptySummaryTab, css: {'btn-primary': $root.showingEmptyTab()}" data-infotip="Hide [b]All[/b] tabs"><i class="fa fa-times"></i> Hide</button>
+                </div>
+            </div>
+
+            <div class="row summary-tab" data-bind="visible: $root.showingPriceSummaryTab()">
+                <div>
+                    <div class="sainsburys-site-stats hide-first-load" data-bind="visible: !$root.busyLoadingData()">
+
+                        <div class="stat-group stat-group-inline">
+                            <div class="stat-group-title"><span class="badge badge-lg" data-bind="text: $root.stats_Sites_Count()" data-infotip="Number of [b]Sainsburys[/b] Sites"></span> Sainsburys sites</div>
+
+                            <div class="stat" data-infotip-dock="below" data-infotip="Number of [b]Active[/b] Sainsburys sites">
+                                <div class="stat-value" data-bind="text: $root.stats_Sites_Active()">-</div>
+                                <div class="stat-label">Active</div>
+                            </div>
+
+                            <div class="stat" data-infotip-dock="below" data-infotip="Number of [q]Sainsbury's[/q] sites [br /]with 1 or more [b]Email addresses[/b]">
+                                <div class="stat-value" data-bind="text: $root.stats_Sites_WithEmails()">-</div>
+                                <div class="stat-label">Emails</div>
+                            </div>
+
+                            <div class="stat" data-infotip-dock="below" data-infotip="Total number of [q]Sainsbury's[/q] sites [br /]with [i]No[/i] Email addresses">
+                                <div class="stat-value" data-bind="text: $root.stats_Sites_WithNoEmails()">-</div>
+                                <div class="stat-label">No Emails</div>
+                            </div>
+                            <div class="clearfix"></div>
+                        </div>
+
+
+                        <div class="stat-group stat-group-inline stat-group-combined">
+
+                            <section class="stat-section stat-section-tomorrow">
+                                <div class="stat-group-title"><span class="badge badge-lg" data-bind="text: $root.stats_Combined_Tomorrow_Prices_Count()" data-infotip="Total number of [i]All[/i] Fuels"></span> Tomorrow Price</div>
+
+                                <div class="stat-row">
+                                    <div class="stat stat-price" data-infotip-dock="below" data-infotip="[b]Minimum[/b] Price for [b]All[/b] Fuels">
+                                        <div class="stat-value" data-bind="text: $root.stats_Combined_Tomorrow_Prices_Min()">-</div>
+                                        <div class="stat-label">Min</div>
+                                    </div>
+
+                                    <div class="stat stat-price" data-infotip-dock="below" data-infotip="[b]Average[/b] Price for [b]All[/b] Fuels">
+                                        <div class="stat-value" data-bind="text: $root.stats_Combined_Tomorrow_Prices_Average()">-</div>
+                                        <div class="stat-label">Avg</div>
+                                    </div>
+
+                                    <div class="stat stat-price" data-infotip-dock="below" data-infotip="[b]Maximum[/b] Price for [b]All[/b] Fuels">
+                                        <div class="stat-value" data-bind="text: $root.stats_Combined_Tomorrow_Prices_Max()">-</div>
+                                        <div class="stat-label">Max</div>
+                                    </div>
+                                </div>
+
+                                <div class="stat-group-title"><span class="badge badge-lg" data-bind="text: $root.stats_Combined_Tomorrow_PriceChanges_Count()" data-infotip="Total number of [b]Price Changes[/b]"></span> Tomorrow <big class="font150pc">+/-</big> </div>
+
+                                <div class="stat-row">
+                                    <div class="stat" data-infotip-dock="below" data-infotip="[b]Minimum[/b] Price Change for [b]All[/b] Fuels">
+                                        <div class="stat-value" data-bind="text: $root.stats_Combined_Tomorrow_PriceChanges_Min()">-</div>
+                                        <div class="stat-label">Min</div>
+                                    </div>
+
+                                    <div class="stat" data-infotip-dock="below" data-infotip="[b]Average[/b] Price Change for [b]All[/b] Fuels">
+                                        <div class="stat-value" data-bind="text: $root.stats_Combined_Tomorrow_PriceChanges_Average()">-</div>
+                                        <div class="stat-label">Avg</div>
+                                    </div>
+
+                                    <div class="stat" data-infotip-dock="below" data-infotip="[b]Maximum[/b] Price Change for [b]All[/b] Fuels">
+                                        <div class="stat-value" data-bind="text: $root.stats_Combined_Tomorrow_PriceChanges_Max()">-</div>
+                                        <div class="stat-label">Max</div>
+                                    </div>
+                                </div>
+                                <div class="clearfix"></div>
+                            </section>
+
+                            <hr class="stat-section-divider" />
+
+                            <section class="stat-section stat-section-today">
+                                <div class="stat-group-title"><span class="badge badge-lg" data-bind="text: $root.stats_Combined_Today_Prices_Count()" data-infotip="Total number of [i]All[/i] Fuels"></span> Today Prices</div>
+
+                                <div class="stat-row">
+                                    <div class="stat stat-price" data-infotip-dock="below" data-infotip="[b]Minimum[/b] Price [u]Today[/u] for [b]All[/b] Fuels">
+                                        <div class="stat-value" data-bind="text: $root.stats_Combined_Today_Prices_Min()">-</div>
+                                        <div class="stat-label">Min</div>
+                                    </div>
+
+                                    <div class="stat stat-price" data-infotip-dock="below" data-infotip="[b]Average[/b] Price [u]Today[/u] for [b]All[/b] Fuels">
+                                        <div class="stat-value" data-bind="text: $root.stats_Combined_Today_Prices_Average()">-</div>
+                                        <div class="stat-label">Avg</div>
+                                    </div>
+
+                                    <div class="stat stat-price" data-infotip-dock="below" data-infotip="[b]Maximum[/b] Price [u]Today[/u] for [b]All[/b] Fuels">
+                                        <div class="stat-value" data-bind="text: $root.stats_Combined_Today_Prices_Max()">-</div>
+                                        <div class="stat-label">Max</div>
+                                    </div>
+                                </div>
+
+                                <div class="clearfix"></div>
+                            </section>
+
+                            <div class="clearfix"></div>
+                        </div>
+
+
+                        <div class="stat-group stat-group-inline stat-group-unleaded">
+
+                            <section class="stat-section stat-section-tomorrow">
+                                <div class="stat-group-title"><span class="badge badge-lg" data-bind="text: $root.stats_Unleaded_Tomorrow_Price_Count()" data-infotip="[b]Number[/b] of [q]Unleaded[/q] Prices"></span> Tomorrow Prices</div>
+
+                                <div class="stat-row">
+                                    <div class="stat stat-price" data-infotip-dock="above" data-infotip="[b]Minimum[/b] Price of [q]Unleaded[/q]">
+                                        <div class="stat-value" data-bind="text: $root.stats_Unleaded_Tomorrow_Price_Min()">-</div>
+                                        <div class="stat-label">Min</div>
+                                    </div>
+
+                                    <div class="stat stat-price" data-infotip-dock="above" data-infotip="[b]Average[/b] Price of [q]Unleaded[/q]">
+                                        <div class="stat-value" data-bind="text: $root.stats_Unleaded_Tomorrow_Price_Average()">-</div>
+                                        <div class="stat-label">Avg</div>
+                                    </div>
+
+                                    <div class="stat stat-price" data-infotip-dock="above" data-infotip="[b]Maximum[/b] Price of [q]Unleaded[/q]">
+                                        <div class="stat-value" data-bind="text: $root.stats_Unleaded_Tomorrow_Price_Max()">-</div>
+                                        <div class="stat-label">Max</div>
+                                    </div>
+                                </div>
+
+                                <div class="stat-group-title"><span class="badge badge-lg" data-bind="text: $root.stats_Unleaded_Tomorrow_PriceChanges_Count()" data-infotip="[b]Number[/b] of [q]Unleaded[/q] Price Changes"></span> Tomorrow <big class="font150pc">+/-</big></div>
+
+                                <div class="stat-row">
+                                    <div class="stat" data-infotip-dock="below" data-infotip="[b]Minimum[/b] Price of Change [q]Unleaded[/q]">
+                                        <div class="stat-value" data-bind="text: $root.stats_Unleaded_Tomorrow_PriceChanges_Min()">-</div>
+                                        <div class="stat-label">Min</div>
+                                    </div>
+
+                                    <div class="stat" data-infotip-dock="below" data-infotip="[b]Average[/b] Price Change of [q]Unleaded[/q]">
+                                        <div class="stat-value" data-bind="text: $root.stats_Unleaded_Tomorrow_PriceChanges_Average()">-</div>
+                                        <div class="stat-label">Avg</div>
+                                    </div>
+
+                                    <div class="stat" data-infotip-dock="below" data-infotip="[b]Maximum[/b] Price Change of [q]Unleaded[/q]">
+                                        <div class="stat-value" data-bind="text: $root.stats_Unleaded_Tomorrow_PriceChanges_Max()">-</div>
+                                        <div class="stat-label">Max</div>
+                                    </div>
+                                </div>
+                                <div class="clearfix"></div>
+                            </section>
+
+                            <hr class="stat-section-divider" />
+
+                            <section class="stat-section stat-section-today">
+                                <div class="stat-group-title"><span class="badge badge-lg" data-bind="text: $root.stats_Unleaded_Today_Price_Count()" data-infotip="[b]Number[/b] of [u]Yesterday[/u] [q]Unleaded[/q] Prices"></span> Today Prices</div>
+
+                                <div class="stat-row">
+                                    <div class="stat stat-price" data-infotip-dock="above" data-infotip="[b]Minimum[/b] [u]Yesterday[/u] Price of [q]Unleaded[/q]">
+                                        <div class="stat-value" data-bind="text: $root.stats_Unleaded_Today_Price_Min()">-</div>
+                                        <div class="stat-label">Min</div>
+                                    </div>
+
+                                    <div class="stat stat-price" data-infotip-dock="above" data-infotip="[b]Average[/b] [u]Yesterday[/u] Price of [q]Unleaded[/q]">
+                                        <div class="stat-value" data-bind="text: $root.stats_Unleaded_Today_Price_Average()">-</div>
+                                        <div class="stat-label">Avg</div>
+                                    </div>
+
+                                    <div class="stat stat-price" data-infotip-dock="above" data-infotip="[b]Maximum[/b] [u]Yesterday[/u] Price of [q]Unleaded[/q]">
+                                        <div class="stat-value" data-bind="text: $root.stats_Unleaded_Today_Price_Max()">-</div>
+                                        <div class="stat-label">Max</div>
+                                    </div>
+                                </div>
+
+                                <div class="clearfix"></div>
+                            </section>
+
+                            <div class="clearfix"></div>
+                        </div>
+
+                        <div class="stat-group stat-group-inline stat-group-diesel">
+
+                            <section class="stat-section stat-section-tomorrow">
+
+                                <div class="stat-group-title"><span class="badge badge-lg" data-bind="text: $root.stats_Diesel_Tomorrow_Price_Count()" data-infotip="[b]Number[/b] of [q]Diesel[/q] Prices"></span> Tomorrow Prices</div>
+
+                                <div class="stat-row">
+                                    <div class="stat stat-price" data-infotip-dock="above" data-infotip="[b]Minimum[/b] Price of [q]Diesel[/q]">
+                                        <div class="stat-value" data-bind="text: $root.stats_Diesel_Tomorrow_Price_Min()">-</div>
+                                        <div class="stat-label">Min</div>
+                                    </div>
+
+                                    <div class="stat stat-price" data-infotip-dock="above" data-infotip="[b]Average[/b] Price of [q]Diesel[/q]">
+                                        <div class="stat-value" data-bind="text: $root.stats_Diesel_Tomorrow_Price_Average()">-</div>
+                                        <div class="stat-label">Avg</div>
+                                    </div>
+
+                                    <div class="stat stat-price" data-infotip-dock="above" data-infotip="[b]Maximum[/b] Price of [q]Diesel[/q]">
+                                        <div class="stat-value" data-bind="text: $root.stats_Diesel_Tomorrow_Price_Max()">-</div>
+                                        <div class="stat-label">Max</div>
+                                    </div>
+                                </div>
+
+                                <div class="stat-group-title"><span class="badge badge-lg" data-bind="text: $root.stats_Diesel_Tomorrow_PriceChanges_Count()" data-infotip="[b]Number[/b] of [q]Diesel[/q] Prices Changes"></span> Tomorrow <big class="font150pc">+/-</big></div>
+
+                                <div class="stat-row">
+                                    <div class="stat" data-infotip-dock="below" data-infotip="[b]Minimum[/b] Price Change of [q]Diesel[/q]">
+                                        <div class="stat-value" data-bind="text: $root.stats_Diesel_Tomorrow_PriceChanges_Min()">-</div>
+                                        <div class="stat-label">Min</div>
+                                    </div>
+
+                                    <div class="stat" data-infotip-dock="below" data-infotip="[b]Average[/b] Price Change of [q]Diesel[/q]">
+                                        <div class="stat-value" data-bind="text: $root.stats_Diesel_Tomorrow_PriceChanges_Average()">-</div>
+                                        <div class="stat-label">Avg</div>
+                                    </div>
+                                    <div class="stat" data-infotip-dock="below" data-infotip="[b]Maximum[/b] Price Change of [q]Diesel[/q]">
+                                        <div class="stat-value" data-bind="text: $root.stats_Diesel_Tomorrow_PriceChanges_Max()">-</div>
+                                        <div class="stat-label">Max</div>
+                                    </div>
+                                </div>
+                                <div class="clearfix"></div>
+                            </section>
+
+                            <hr class="stat-section-divider" />
+
+                            <section class="stat-section stat-section-today">
+
+                                <div class="stat-group-title"><span class="badge badge-lg" data-bind="text: $root.stats_Diesel_Today_Price_Count()" data-infotip="[b]Number[/b] of [u]Yesterday[/u] [q]Diesel[/q] Prices"></span> Today Prices</div>
+
+                                <div class="stat-row">
+                                    <div class="stat stat-price" data-infotip-dock="above" data-infotip="[b]Minimum[/b] [u]Yesterday[/u] Price of [q]Diesel[/q]">
+                                        <div class="stat-value" data-bind="text: $root.stats_Diesel_Today_Price_Min()">-</div>
+                                        <div class="stat-label">Min</div>
+                                    </div>
+
+                                    <div class="stat stat-price" data-infotip-dock="above" data-infotip="[b]Average[/b] [u]Yesterday[/u] Price of [q]Diesel[/q]">
+                                        <div class="stat-value" data-bind="text: $root.stats_Diesel_Today_Price_Average()">-</div>
+                                        <div class="stat-label">Avg</div>
+                                    </div>
+
+                                    <div class="stat stat-price" data-infotip-dock="above" data-infotip="[b]Maximum[/b] [u]Yesterday[/u] Price of [q]Diesel[/q]">
+                                        <div class="stat-value" data-bind="text: $root.stats_Diesel_Today_Price_Max()">-</div>
+                                        <div class="stat-label">Max</div>
+                                    </div>
+                                </div>
+
+                                <div class="clearfix"></div>
+                            </section>
+
+                            <div class="clearfix"></div>
+                        </div>
+
+                        <div class="stat-group stat-group-inline stat-group-super-unleaded">
+
+                            <section class="stat-section stat-section-tomorrow">
+
+                                <div class="stat-group-title"><span class="badge badge-lg" data-bind="text: $root.stats_SuperUnleaded_Tomorrow_Price_Count()" data-infotip="[b]Number[/b] of [q]Super-Unleaded[/q] Prices"></span> Tomorrow Prices</div>
+
+                                <div class="stat-row">
+                                    <div class="stat stat-price" data-infotip-dock="above" data-infotip="[b]Minimum[/b] Price of [q]Super Unleaded[/q]">
+                                        <div class="stat-value" data-bind="text: $root.stats_SuperUnleaded_Tomorrow_Price_Min()">-</div>
+                                        <div class="stat-label">Min</div>
+                                    </div>
+
+                                    <div class="stat stat-price" data-infotip-dock="above" data-infotip="[b]Average[/b] Price of [q]Super Unleaded[/q]">
+                                        <div class="stat-value" data-bind="text: $root.stats_SuperUnleaded_Tomorrow_Price_Average()">-</div>
+                                        <div class="stat-label">Avg</div>
+                                    </div>
+
+                                    <div class="stat stat-price" data-infotip-dock="above" data-infotip="[b]Maximum[/b] Price of [q]Super Unleaded[/q]">
+                                        <div class="stat-value" data-bind="text: $root.stats_SuperUnleaded_Tomorrow_Price_Max()">-</div>
+                                        <div class="stat-label">Max</div>
+                                    </div>
+                                </div>
+
+                                <div class="stat-group-title"><span class="badge badge-lg" data-bind="text: $root.stats_SuperUnleaded_Tomorrow_PriceChanges_Count()" data-infotip="[b]Number[/b] of [q]Super-Unleaded[/q] Price Changes"></span> Tomorrow <big class="font150pc">+/-</big></div>
+
+                                <div class="stat-row">
+                                    <div class="stat" data-infotip-dock="below" data-infotip="[b]Minimum[/b] Price Change of [q]Super-Unleaded[/q]">
+                                        <div class="stat-value" data-bind="text: $root.stats_SuperUnleaded_Tomorrow_PriceChanges_Min()">-</div>
+                                        <div class="stat-label">Min</div>
+                                    </div>
+
+                                    <div class="stat" data-infotip-dock="below" data-infotip="[b]Average[/b] Price Change of [q]Super-Unleaded[/q]">
+                                        <div class="stat-value" data-bind="text: $root.stats_SuperUnleaded_Tomorrow_PriceChanges_Average()">-</div>
+                                        <div class="stat-label">Avg</div>
+                                    </div>
+
+                                    <div class="stat" data-infotip-dock="below" data-infotip="[b]Maximum[/b] Price Change of [q]Super-Unleaded[/q]">
+                                        <div class="stat-value" data-bind="text: $root.stats_SuperUnleaded_Tomorrow_PriceChanges_Max()">-</div>
+                                        <div class="stat-label">Max</div>
+                                    </div>
+                                </div>
+                                <div class="clearfix"></div>
+                            </section>
+
+                            <hr class="stat-section-divider" />
+
+                            <section class="stat-section stat-section-today">
+                                <div class="stat-group-title"><span class="badge badge-lg" data-bind="text: $root.stats_SuperUnleaded_Today_Price_Count()" data-infotip="[b]Number[/b] of [u]Yesterday[/u] [q]Super-Unleaded[/q] Prices"></span> Today Prices</div>
+
+                                <div class="stat-row">
+                                    <div class="stat stat-price" data-infotip-dock="above" data-infotip="[b]Minimum[/b] [u]Yesterday[/u] Price of [q]Super Unleaded[/q]">
+                                        <div class="stat-value" data-bind="text: $root.stats_SuperUnleaded_Today_Price_Min()">-</div>
+                                        <div class="stat-label">Min</div>
+                                    </div>
+
+                                    <div class="stat stat-price" data-infotip-dock="above" data-infotip="[b]Average[/b] [u]Yesterday[/u] Price of [q]Super Unleaded[/q]">
+                                        <div class="stat-value" data-bind="text: $root.stats_SuperUnleaded_Today_Price_Average()">-</div>
+                                        <div class="stat-label">Avg</div>
+                                    </div>
+
+                                    <div class="stat stat-price" data-infotip-dock="above" data-infotip="[b]Maximum[/b] [u]Yesterday[/u] Price of [q]Super Unleaded[/q]">
+                                        <div class="stat-value" data-bind="text: $root.stats_SuperUnleaded_Today_Price_Max()">-</div>
+                                        <div class="stat-label">Max</div>
+                                    </div>
+                                </div>
+
+                                <div class="clearfix"></div>
+                            </section>
+
+                            <div class="clearfix"></div>
+                        </div>
+
                     </div>
                 </div>
             </div>
 
-            <div id="PriceDifferencePanel" class="row font125pc">
-                <div class="col-md-12" data-bind="with: dataModel, visible: !$root.dataLoading()" style="display: none;">
-                    <div id="PriceDifferenceBarChart" data-bind="css: ('col-md-10 ' + $root.priceDiffBarChartFiltersCss() )"></div>
+            <div class="tab-pane" data-bind="visible: $root.showingCompetitorDifferencesTab()">
+                <div id="PriceDifferencePanel" class="row font125pc">
+                    <div data-bind="with: dataModel, visible: !$root.dataLoading()" style="display: none;">
+                        <div id="PriceDifferenceBarChart" data-bind="css: ('col-md-10 ' + $root.priceDiffBarChartFiltersCss() )"></div>
+                    </div>
                 </div>
             </div>
 
@@ -313,7 +629,7 @@
                                 <!-- EMAIL all Button, only loads popup -->
                                 <div>
                                     <button style="margin-left:0px " type="button" class="btn btn-success btn-sm" data-bind="disable:!$root.isAnySiteChecked() || $root.sendingEmails(), visible: !$root.ViewingHistorical() && $root.dataAvailable() == true,click: $root.sendEmailSelectedSites">
-                                        <i class="fa fa-envelope-o"></i> Email <span class="badge" data-bind="text: $root.checkedEmailCount()" >0</span>
+                                        <i class="fa fa-envelope-o"></i> Email <span class="badge" data-bind="text: $root.checkedEmailCount()">0</span>
                                     </button>
                                     &nbsp;
                                     <div class="btn-group">
@@ -414,7 +730,7 @@
                                             </a>
                                             <a class="btn btn-success btn-xs edit-site-link" data-bind="attr: {'href': ('@Url.Action("Edit", "Sites")/?id=' + SiteId + '&calledFromSection=@(SiteSectionType.SitePricing)' ), 'data-infotip-dock': 'below', 'data-infotip': 'Edit Site [b]' + StoreName + '[/b]'}"><i class="fa fa-edit"></i> Edit...</a>
                                             <!-- ko: if !$root.ViewingHistorical() -->
-                                            <a tabindex="-1" class="btn btn-default btn-xs" data-bind="visible:HasEmails, click: bindEmailTemplate" data-toggle="modal" data-target="#emailSite" data-infotip-dock="below" data-infotip="Open Email Popup" ><i class="fa fa-at"></i> Email</a>
+                                            <a tabindex="-1" class="btn btn-default btn-xs" data-bind="visible:HasEmails, click: bindEmailTemplate" data-toggle="modal" data-target="#emailSite" data-infotip-dock="below" data-infotip="Open Email Popup"><i class="fa fa-at"></i> Email</a>
                                             <a tagindex="-1" class="btn btn-danger btn-xs" data-bind="visible:!HasEmails" data-infotip-dock="below" data-infotip="Site has [em]No[/em] emails"><i class="fa fa-times"></i> No Emails</a>
                                             <!-- ko if: hasEmailSendLogEntry() -->
                                             <!-- ko with: EmailSendLogEntry -->
@@ -443,11 +759,9 @@
                                         <!-- ko if:  $parent.PriceMatchType == 1 -->
                                         <span class="padded-price-right solo-price" data-bind="attr: {'data-infotip': FuelPrice.SoloPriceInfoTip()}, html: FuelPrice.ForecourtAutoPriceHtml()"></span>
                                         <!-- /ko -->
-
                                         <!-- ko if:  $parent.PriceMatchType == 2 -->
                                         <span class="padded-price-right trial-price" data-bind="attr: {'data-infotip': FuelPrice.TrialPriceInfoTip()}, html: FuelPrice.ForecourtAutoPriceHtml()"></span>
                                         <!-- /ko -->
-
                                         <!-- ko if:  $parent.PriceMatchType == 3 -->
                                         <span class="padded-price-right match-competitor-price" data-bind="attr: {'data-infotip': FuelPrice.MatchCompetitorInfoTip()}, html: FuelPrice.ForecourtAutoPriceHtml()"></span>
                                         <!-- /ko -->

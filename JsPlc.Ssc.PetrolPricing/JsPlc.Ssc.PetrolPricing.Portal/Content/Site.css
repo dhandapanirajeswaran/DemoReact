@@ -508,6 +508,9 @@ table.fixed-header>tbody {
 }
 
 .hide {display: none;}
+.hide-first-load {
+    display: none;
+}
 
 #TopNav>li {
     text-align: center; 
@@ -740,3 +743,8 @@ input[type=text].mono-font {
 }
 
 .text-bold {font-weight: bold;}
+
+.badge-lg {font-size: 125%;}
+.badge-md {font-size: 110%;}
+.badge-sm {font-size: 80%;}
+.badge-xs {font-size: 70%;}
