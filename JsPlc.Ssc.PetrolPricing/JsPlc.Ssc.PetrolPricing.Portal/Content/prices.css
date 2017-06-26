@@ -431,7 +431,7 @@ table.competitorTable > tbody > .competitor-row  {
 
 .price-pence {font-size: 115%; letter-spacing: 0px;}
 .price-fraction {letter-spacing: 2px;}
-.price-na {font-size: 110%; letter-spacing: 1px; color: #999; font-style: italic;}
+.price-na {font-size: 110%; letter-spacing: 1px; color: #ccc; font-style: italic;}
 
 .pricing-grid.hide-fuel-price-change-up .col-valid .fuel-price-change-up,
 .pricing-grid.hide-fuel-price-change-down .col-valid .fuel-price-change-down,
