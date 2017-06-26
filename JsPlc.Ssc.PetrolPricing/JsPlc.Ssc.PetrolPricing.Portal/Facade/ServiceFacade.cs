@@ -28,7 +28,10 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
     public class ServiceFacade : IDisposable
     {
         private Lazy<HttpClient> _client;
+        private Lazy<HttpClient> _clientLongTimeout;
         private ILogger _logger;
+
+        private const int LongTimeoutInSeconds = 180;
 
         public ServiceFacade(ILogger logger)
         {
@@ -37,6 +40,15 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
 
             _client.Value.DefaultRequestHeaders.Accept.Clear();
             _client.Value.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+            // create second client with long timeout
+
+            _clientLongTimeout = new Lazy<HttpClient>();
+            _clientLongTimeout.Value.BaseAddress = new Uri(ConfigurationManager.AppSettings["ServicesBaseUrl"] + "");
+            _clientLongTimeout.Value.DefaultRequestHeaders.Accept.Clear();
+            _clientLongTimeout.Value.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            _clientLongTimeout.Value.Timeout = TimeSpan.FromSeconds(LongTimeoutInSeconds);
+
             _logger = logger;
         }
 
@@ -217,7 +229,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             DiagnosticLog.StartDebug("GetSitePrices");
 
             var apiUrl = String.IsNullOrEmpty(filters) ? String.Format("api/{0}/", apiName) : String.Format("api/{0}/?{1}", apiName, filters);
-            var response = _client.Value.GetAsync(apiUrl).Result;
+            var response = _clientLongTimeout.Value.GetAsync(apiUrl).Result;
 
             // TODO if response.Content.Headers.ToString().Contains("Content-Type: application/json") do ReadAsync
             if (response.IsSuccessStatusCode)
