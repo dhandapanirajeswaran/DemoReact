@@ -35,7 +35,7 @@ input.form-control.invalid {
 }
 
 table.competitorTable td, th {
-    padding: 3px 4px;
+    padding: 3px 2px;
 }
 
 #competitorPricesPopup {
@@ -333,42 +333,123 @@ table.competitorTable > tbody > .competitor-row  {
 
 .pricing-grid {
     table-layout: fixed;
+    width: 1260px;
+    overflow: hidden;
 }
 
-.pricing-grid > thead > tr > th {text-align: center; border-left: 1px solid #fff;}
-.pricing-grid > tbody > tr > td {min-height: 2em; padding: 6px 2px;}
+.pricing-grid tbody td {padding-top: 4px; padding-bottom: 4px;}
+
+.pricing-grid-header {border-bottom: 4px solid #999;}
+
+.pricing-grid .header-widths {height: 0; line-height: 0;}
+
+/* column widths (header and body) */
+.pricing-grid .header-widths th:nth-child(1),
+.pricing-grid tbody td:nth-child(1) {width: 64px;} /* store no*/
+
+.pricing-grid .header-widths th:nth-child(2),
+.pricing-grid tbody td:nth-child(2) {width: 32px;} /* email */
+
+.pricing-grid .header-widths th:nth-child(3),
+.pricing-grid tbody td:nth-child(3) {width: 224px;} /* store name*/
+
+.pricing-grid .header-widths th:nth-child(4),
+.pricing-grid tbody td:nth-child(4) {width: 148px;} /* store town */
+
+.pricing-grid .header-widths th:nth-child(5),
+.pricing-grid tbody td:nth-child(5) {width: 52px;} /* cat no */
+
+.pricing-grid .header-widths th:nth-child(6),
+.pricing-grid tbody td:nth-child(6) {width: 64px;} /* pfs no */
+
+.pricing-grid .header-widths th:nth-child(7),
+.pricing-grid tbody td:nth-child(7) {width: 64px; text-align: center;} /* unleaded today price */
+
+.pricing-grid .header-widths th:nth-child(8),
+.pricing-grid tbody td:nth-child(8) {width: 100px;} /* unleaded tomorrow price */
+
+.pricing-grid .header-widths th:nth-child(9),
+.pricing-grid tbody td:nth-child(9) {width: 64px;} /* unleaded tomorrow +/- */
+
+.pricing-grid .header-widths th:nth-child(10),
+.pricing-grid tbody td:nth-child(10) {width: 64px; text-align: center; background: #eee;} /* diesel today price */
+
+.pricing-grid .header-widths th:nth-child(11),
+.pricing-grid tbody td:nth-child(11) {width: 100px; background: #eee;} /* diesel tomorrow price */
+
+.pricing-grid .header-widths th:nth-child(12),
+.pricing-grid tbody td:nth-child(12) {width: 64px; background: #eee;} /* diesel tomorrow +/- */
+
+.pricing-grid .header-widths th:nth-child(13),
+.pricing-grid tbody td:nth-child(13) {width: 64px; text-align: center;} /* super-unleaded today price*/
+
+.pricing-grid .header-widths th:nth-child(14),
+.pricing-grid tbody td:nth-child(14) {width: 100px;} /* super-unleaded tomorrow price */
+
+.pricing-grid .header-widths th:nth-child(15),
+.pricing-grid tbody td:nth-child(15) {width: 64px;} /* super-unleaded tomorrow +/- */
+
+
+.pricing-grid .col-scrollbar {width: auto;}
+
+.pricing-grid thead .col-header-store-no,
+.pricing-grid thead .col-header-email,
+.pricing-grid thead .col-header-store-name,
+.pricing-grid thead .col-header-store-town,
+.pricing-grid thead .col-header-cat-no,
+.pricing-grid thead .col-header-pfs-no {background: #ccc; text-align: center; border-right: 1px solid #eee;}
+.pricing-grid thead .col-header-unleaded {text-align: center;}
+.pricing-grid thead .col-header-diesel {text-align: center; background: #eee;}
+.pricing-grid thead .col-header-super-unleaded {text-align: center;}
+.pricing-grid thead .col-header-today-price.col-diesel,
+.pricing-grid thead .col-header-tomorrow-price.col-diesel,
+.pricing-grid thead .col-header-tomorrow-price-change.col-diesel {background: #eee;}
+
+.pricing-grid thead .col-header-today-price,
+.pricing-grid thead .col-header-tomorrow-price,
+.pricing-grid thead .col-header-tomorrow-price-change {text-align: center;}
+
+#today1,
+#today2,
+#today3 {font-size: 90%; color: #999;}
+
+/* ================= old styles ======================== */
+
+
+/*.pricing-grid > thead > tr > th {text-align: center; border-left: 1px solid #fff;}
+.pricing-grid > tbody > tr > td {min-height: 2em; padding: 6px 0;}
 
 .pricing-grid > thead > tr:nth-child(2) {background-color: silver}
 .pricing-grid > thead > tr:nth-child(3) {background-color: #f8f8f8;}
 
 .pricing-grid > thead {border-bottom: 2px solid #ccc;}
 
-.pricing-grid > thead > tr:nth-child(2) .col-header-competitor,
-.pricing-grid > tbody .col-competitor {width: 24px;}
 .pricing-grid > thead > tr:nth-child(2) .col-header-store-no,
-.pricing-grid > tbody .col-store-no {width: 64px;}
+.pricing-grid > tbody .col-store-no {width: 50px;}
 .pricing-grid > thead > tr:nth-child(2) .col-header-email,
 .pricing-grid > tbody .col-email {width: 24px;}
 .pricing-grid > thead > tr:nth-child(2) .col-header-store-name,
-.pricing-grid > tbody .col-store-name {width: 210px;}
+.pricing-grid > tbody .col-store-name {width: 224px;}
 .pricing-grid > thead > tr:nth-child(2) .col-header-store-town,
 .pricing-grid > tbody .col-store-town {width: 140px;}
 .pricing-grid > thead > tr:nth-child(2) .col-header-cat-no,
 .pricing-grid > tbody .col-cat-no {width: 48px;}
 .pricing-grid > thead > tr:nth-child(2) .col-header-pfs-no,
-.pricing-grid > tbody .col-pfs-no {width: 48px;}
+.pricing-grid > tbody .col-pfs-no {width: 54px;}
 .pricing-grid > thead > tr:nth-child(1) .col-header-unleaded,
 .pricing-grid > thead > tr:nth-child(1) .col-header-diesel,
 .pricing-grid > thead > tr:nth-child(1) .col-header-super-unleaded {width: 234px; border-left: 1px solid #999;}
 
 .pricing-grid > thead > tr:nth-child(3) .col-header-tomorrow-unleaded,
-.pricing-grid > thead > tr:nth-child(3) .col-header-tomorrow-diesel {width: 150px;}
+.pricing-grid > thead > tr:nth-child(3) .col-header-tomorrow-diesel {width: 108px; background: cyan;}
 
 .pricing-grid > thead > tr:nth-child(3) .col-header-yesterday-unleaded,
 .pricing-grid > thead > tr:nth-child(3) .col-header-yesterday-diesel,
-.pricing-grid > thead > tr:nth-child(3) .col-header-yesterday-super-unleaded {width: 83px; border-left: 1px solid #aaa;}
+.pricing-grid > thead > tr:nth-child(3) .col-header-yesterday-super-unleaded {width: 72px; border-left: 1px solid #aaa; color: #999;}
 
-.pricing-grid > thead > tr:nth-child(2) .col-header-diesel,
+.pricing-grid > thead > tr:nth-child(3) .col-header-tomorrow-price-change {width: 72px; }
+
+.pricing-grid > thead > tr:nth-child(3) .col-header-diesel,
 .pricing-grid > thead > tr:nth-child(3) .col-header-yesterday-diesel,
 .pricing-grid > thead > tr:nth-child(3) .col-header-tomorrow-diesel {background-color: #ddd;}
 
@@ -377,28 +458,31 @@ table.competitorTable > tbody > .competitor-row  {
 .pricing-grid > thead > tr:nth-child(3) .col-header-today,
 .pricing-grid > tbody .col-yesterday {width: 76px;}
 
-.pricing-grid > tbody .col-today {width: 160px;}
+.pricing-grid > tbody .col-today {width: 110px; overflow: hidden; background: #ccf}
+    .pricing-grid > tbody .col-tomorrow-price-change {
+        width: 60px;
+        overflow: hidden;
+    }
 
-.pricing-grid > tbody .col-yesterday {width: 72px; text-align: center; border-left: 1px solid #999;}
+.pricing-grid > tbody .col-yesterday {width: 68px; text-align: center; border-left: 1px solid #999;}
 
-.pricing-grid > tbody > tr > td:nth-child(10),
-.pricing-grid > tbody > tr > td:nth-child(11) {background-color: #eee;}
+.pricing-grid > tbody > tr > td:nth-child(9),
+.pricing-grid > tbody > tr > td:nth-child(10) {background-color: #eee;}
 
-    .pricing-grid > tbody > tr.row-errors > td:nth-child(10),
-    .pricing-grid > tbody > tr.row-errors > td:nth-child(11) {
+    .pricing-grid > tbody > tr.row-errors > td:nth-child(9),
+    .pricing-grid > tbody > tr.row-errors > td:nth-child(10) {
         background-color: #edd;
     }
 
-    .pricing-grid > tbody > tr.row-override-increase-exceeds > td:nth-child(10),
-    .pricing-grid > tbody > tr.row-override-increase-exceeds > td:nth-child(11) {
+    .pricing-grid > tbody > tr.row-override-increase-exceeds > td:nth-child(9),
+    .pricing-grid > tbody > tr.row-override-increase-exceeds > td:nth-child(10) {
         background-color: #dcd8c3;
     }
 
-
-    .pricing-grid > tbody > tr.has-checked-email > td:nth-child(10),
-    .pricing-grid > tbody > tr.has-checked-email > td:nth-child(11) {
+    .pricing-grid > tbody > tr.has-checked-email > td:nth-child(9),
+    .pricing-grid > tbody > tr.has-checked-email > td:nth-child(10) {
         background-color: #ada;
-    }
+    }*/
 
 .price-diff-up {color: #5cb85c}
 .price-diff-none {color: #999;}
@@ -449,11 +533,6 @@ table.competitorTable > tbody > .competitor-row  {
 .price-diff-bar-chart .bar.higher-price {border-bottom-color: #449D44;}
 .price-diff-bar-chart .bar.same-price {border-bottom-color: #F2A83E;}
 .price-diff-bar-chart .bar.na-price {border-bottom-color: #000;}
-
-/*.price-diff-bar-chart .lower-price:hover,
-.price-diff-bar-chart .higher-price:hover,
-.price-diff-bar-chart .same-price:hover {background-color: #ffc; box-shadow: 2px 4px 4px #000; cursor: pointer;}*/
-
 .price-diff-bar-chart .lower-price {color:#610018; letter-spacing: 1px;}
 .price-diff-bar-chart .higher-price {color: #449D44; letter-spacing: 1px;}
 .price-diff-bar-chart .same-price {color: #F2A83E; letter-spacing: 1px}
@@ -540,7 +619,7 @@ table.competitorTable > tbody > .competitor-row  {
     left: 0;
     top: 0;
     padding: 4px 8px 8px 8px;
-    width: 150%;
+    width: 140%;
 }
 .site-name-overlay .hide-hover {display: none; clear: both;}
 

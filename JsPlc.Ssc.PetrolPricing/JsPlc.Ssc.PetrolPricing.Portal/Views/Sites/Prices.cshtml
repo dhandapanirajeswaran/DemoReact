@@ -542,11 +542,30 @@
                 </div>
 
                 <!-- start grid header -->
-                <table class="pricing-grid">
+                <table class="pricing-grid pricing-grid-header">
                     <thead>
+                        <!-- row: #1 -->
+                        <tr class="header-widths">
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                        </tr>
 
+                        <!-- row: #2 -->
                         <tr>
-                            <th colspan="7" class="form-group form-inline" style="width: 482px; background-color: #f8f8f8;">
+                            <th colspan="6" class="form-group form-inline text-center" style="background-color: #f8f8f8;">
                                 <div class="form-group">
                                     <label><i class="fa fa-filter"></i> Price Movement:</label>
                                     <input type="number" data-bind="value: $root.priceMovementMinFilter, attr: {'min': $root.priceMovementMin}, 'css': $root.priceMovementMinFilterCss()" class="form-control input-sm" style="width: 7em;" maxlength="4" data-infotip="Enter the [b]Min[/b] Price Movement" value="" placeholder="Min" />
@@ -555,11 +574,9 @@
                                     <button type="button" class="btn btn-warning btn-sm" data-bind="click: resetPriceMovementFilters" data-infotip="Clear the [b]Price Movement[/b] filters"><i class="fa fa-eraser"></i></button>
                                 </div>
                             </th>
-                            <th rowspan="2" class="col-header-unleaded" colspan="2">
-
+                            <th rowspan="2" colspan="3" class="col-header-unleaded">
                                 <button type="button" class="btn btn-danger btn-xs" data-bind="visible: !$root.ViewingHistorical(), click: removeAllOverrideUnleaded" data-infotip="Remove all [b]Price Overrides[/b] for [b]Unleaded[/b]"><i class="fa fa-power-off"></i></button>
                                 <span class="fuel-sign fuel-sign-unleaded"></span>
-
 
                                 <!-- ko if: !$root.ViewingHistorical() -->
                                 <div style="width: 80%; margin: 4px auto;">
@@ -574,7 +591,7 @@
                                 </div>
                                 <!-- /ko -->
                             </th>
-                            <th rowspan="2" class="col-header-diesel" colspan="2">
+                            <th rowspan="2" colspan="3" class="col-header-diesel">
                                 <button type="button" class="btn btn-danger btn-xs" data-bind="visible: !$root.ViewingHistorical(), click: removeAllOverrideDiesel" data-infotip="Remove all [b]Price Overrides[/b] for [b]Diesel[/b]"><i class="fa fa-power-off"></i></button>
                                 <span class="fuel-sign fuel-sign-diesel"></span>
 
@@ -589,10 +606,9 @@
                                     </div>
                                     <div style="display: none;" data-bind="visible: $root.hasDieselOverrideExceededLimits()" class="text-danger text-center override-exceeded-bubble"><i class="fa fa-warning"></i> <span data-bind="text: $root.dieselExceedMessage()"></span></div>
                                 </div>
-
                                 <!-- /ko -->
                             </th>
-                            <th rowspan="2" class="col-header-super-unleaded" colspan="2">
+                            <th rowspan="2" colspan="3" class="col-header-super-unleaded">
                                 <button type="button" class="btn btn-danger btn-xs" data-bind="visible: !$root.ViewingHistorical(), click: removeAllOverrideSuperUnleaded" data-infotip="Remove all [b]Price Overrides[/b] for [b]Super Unleaded[/b]"><i class="fa fa-power-off"></i></button>
                                 <span class="fuel-sign fuel-sign-super-unleaded"></span>
 
@@ -609,13 +625,12 @@
                                 </div>
                                 <!-- /ko -->
                             </th>
-
+                            <th rowspan="3" class="col-scrollbar">&nbsp;</th>
                         </tr>
 
-                        <!-- second row -->
+                        <!-- row: #3 -->
                         <tr>
-                            <th class="col-header-competitor">#</th>
-                            <th class="col-header-store-no">Store No.</th>
+                            <th class="col-header-store-no">Store</th>
                             <th class="col-header-email">@@</th>
                             <th class="col-header-store-name">Store Name</th>
                             <th class="col-header-store-town">Store Town</th>
@@ -623,9 +638,9 @@
                             <th class="col-header-pfs-no">PFS</th>
                         </tr>
 
-                        <!-- third row -->
+                        <!-- row: #4 -->
                         <tr>
-                            <th colspan="7">
+                            <th colspan="6">
                                 <!-- EMAIL all Button, only loads popup -->
                                 <div>
                                     <button style="margin-left:0px " type="button" class="btn btn-success btn-sm" data-bind="disable:!$root.isAnySiteChecked() || $root.sendingEmails(), visible: !$root.ViewingHistorical() && $root.dataAvailable() == true,click: $root.sendEmailSelectedSites">
@@ -659,25 +674,37 @@
                                 </div>
                             </th>
 
-                            <th class="col-header-yesterday-unleaded">
+                            <th class="col-header-today-price col-unleaded">
                                 <span id="today1">-</span>
                             </th>
-                            <th class="col-header-tomorrow-unleaded">
+                            <th class="col-header-tomorrow-price col-unleaded">
                                 <span id="tomorrow1">-</span>
                             </th>
-                            <th class="col-header-yesterday-diesel">
+                            <th class="col-header-tomorrow-price-change col-unleaded">
+                                +/-
+                            </th>
+
+                            <th class="col-header-today-price col-diesel">
                                 <span id="today2">-</span>
                             </th>
-                            <th class="col-header-tomorrow-diesel">
+                            <th class="col-header-tomorrow-price col-diesel">
                                 <span id="tomorrow2">-</span>
                             </th>
-                            <th class="col-header-yesterday-super-unleaded">
+                            <th class="col-header-tomorrow-price-change col-diesel">
+                                +/-
+                            </th>
+
+                            <th class="col-header-today-price col-super-unleaded ">
                                 <span id="today3">-</span>
                             </th>
-                            <th class="col-header-tomorrow-super-unleaded">
+                            <th class="col-header-tomorrow-price col-super-unleaded">
                                 <span id="tomorrow3">-</span>
                             </th>
+                            <th class="col-header-tomorrow-price-change col-super-unleaded">
+                                +/-
+                            </th>
                         </tr>
+                         
                     </thead>
                 </table>
                 <!-- end of grid header -->
@@ -708,12 +735,6 @@
                             <!-- JS Store DataRows -->
                             <!-- ko foreach: sites -->
                             <tr class="row site-row" role="tab" data-bind="id:('Heading' + SiteId), attr: {id: 'SiteHeading' + SiteId, 'data-price-change-signs': (priceChangeSigns())}, css: (siteRowCss() + (hiddenByPriceMovementFilter() ? ' hide' : ''))">
-                                <td class="col-competitor">
-                                    <a role="button" data-toggle="modal" data-bind="attr:{id: SiteId}, click: getCompetitorPopupDataClick"
-                                       data-target="#competitorPricesPopup" data-infotip="View competitor's prices">
-                                        <i class="fa fa-credit-card"></i>
-                                    </a>
-                                </td>
                                 <td class="col-store-no text-center" data-bind="text: StoreNo"></td>
                                 <!-- Email envelope... -->
                                 <td class="col-email">
@@ -770,12 +791,14 @@
 
                                         <input type="text" data-bind="value: FuelPrice.OverridePrice, visible: !$root.ViewingHistorical(),
                                 id: ('OverridePrice_' + $parent.SiteId + '_' + FuelPrice.FuelTypeId), event:{keyup: changeProp, blur: blurred, focus: focused}, css: ('txtPrice ' + OverrideInputCss()), attr: {'data-infotip': FuelPrice.PriceOverrideInfoTip()}" maxlength="8" />
-
-                                        <!-- note: override prices can be extracted using $('#SiteId-FueldTypeId-overridePrice') -->
-                                        <i data-bind="attr: {class: (UpDownIconCss()), 'data-infotip': FuelPrice.UpDownInfoTip()}"></i>
-                                        &nbsp;<span class="price-diff" data-bind="text: (UpDownText()), attr: {'data-infotip': FuelPrice.UpDownInfoTip()}"></span>
                                     </div>
                                 </td>
+
+                                <td class="col-tomorrow-price-change">
+                                    <i data-bind="attr: {class: (UpDownIconCss()), 'data-infotip': FuelPrice.UpDownInfoTip()}"></i>
+                                    &nbsp;<span class="price-diff" data-bind="text: (UpDownText()), attr: {'data-infotip': FuelPrice.UpDownInfoTip()}"></span>
+                                </td>
+
                                 <!-- /ko -->
                                 <!-- ko if: !siteSupportsFuel -->
                                 <td class="dividerLeft" data-infotip="Site does not support fuel">n/a</td>

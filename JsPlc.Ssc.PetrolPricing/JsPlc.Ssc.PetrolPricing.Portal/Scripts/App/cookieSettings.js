@@ -23,7 +23,8 @@
                 'sites.highlightSoloPrices',
                 'sites.showHasEmails',
                 'sites.showNoEmails',
-                'build.date'
+                'build.date',
+                'pricing.priceSummaryTabIndex'
             ],
             values = readSettingsCookie();
 
@@ -57,6 +58,13 @@
             return value == '1' || value == 'true';
         };
 
+        function readInteger(name, defaultValue) {
+            var value = read(name, defaultValue)
+            return value == '' || isNaN(value)
+                ? defaultValue
+                : Number(value);
+        };
+
         function write(name, value) {
             if (name in values) {
                 values[name] = value;
@@ -68,6 +76,10 @@
 
         function writeBoolean(name, value) {
             write(name, value ? '1' : '0');
+        };
+
+        function writeInteger(name, value) {
+            write(name, value);
         };
 
         function updateObject(map, obj) {
@@ -90,8 +102,10 @@
         return {
             read: read,
             readBoolean: readBoolean,
+            readInteger: readInteger,
             write: write,
             writeBoolean: writeBoolean,
+            writeInteger: writeInteger,
             restore: restoreObject,
             update: updateObject
         };
