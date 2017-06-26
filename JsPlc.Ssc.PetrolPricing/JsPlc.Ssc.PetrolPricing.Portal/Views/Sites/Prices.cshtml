@@ -590,7 +590,7 @@
 
                         <!-- row: #2 -->
                         <tr>
-                            <th colspan="6" class="form-group form-inline text-center" style="background-color: #f8f8f8;">
+                            <th colspan="6" class="form-group form-inline text-center" style="background-color: #f8f8f8; border-right: 1px solid #999;">
                                 <div class="form-group">
                                     <label><i class="fa fa-filter"></i> Price Movement:</label>
                                     <input type="number" data-bind="value: $root.priceMovementMinFilter, attr: {'min': $root.priceMovementMin}, 'css': $root.priceMovementMinFilterCss()" class="form-control input-sm" style="width: 7em;" maxlength="4" data-infotip="Enter the [b]Min[/b] Price Movement" value="" placeholder="Min" />
@@ -665,7 +665,7 @@
 
                         <!-- row: #4 -->
                         <tr>
-                            <th colspan="6">
+                            <th colspan="6" style="border-right: 1px solid #999;">
                                 <!-- EMAIL all Button, only loads popup -->
                                 <div>
                                     <button style="margin-left:0px " type="button" class="btn btn-success btn-sm" data-bind="disable:!$root.isAnySiteChecked() || $root.sendingEmails(), visible: !$root.ViewingHistorical() && $root.dataAvailable() == true,click: $root.sendEmailSelectedSites">
@@ -764,7 +764,7 @@
                                 <!-- Email envelope... -->
                                 <td class="col-email">
                                     <input type="checkbox" data-bind="visible:HasEmails && !$root.ViewingHistorical(), checked: checkedEmail, click: clickCheckedEmail">
-                                    <i class="fa fa-warning text-danger" style="opacity: 0.5" data-bind="visible: !HasEmails" data-infotip="Site has [b]No[/b] Email addresses"></i>
+                                    <i class="fa fa-times text-danger" data-bind="visible: !HasEmails" data-infotip="Site has [b]No[/b] Email addresses"></i>
                                 </td>
                                 <td class="col-store-name" style="position: relative;">
                                     <div class="site-name-overlay">
@@ -819,7 +819,7 @@
                                     </div>
                                 </td>
 
-                                <td class="col-tomorrow-price-change">
+                                <td class="col-tomorrow-price-change" data-bind="css: ('col-today' + (isEditingFuel() ? ' col-editing' : '') + (hasValidValue() ? ' col-valid' : ' col-invalid') + (isMatchedByPriceMovementFilter() ? ' price-movement-filter-match' : ''))">
                                     <i data-bind="attr: {class: (UpDownIconCss()), 'data-infotip': FuelPrice.UpDownInfoTip()}"></i>
                                     &nbsp;<span class="price-diff" data-bind="text: (UpDownText()), attr: {'data-infotip': FuelPrice.UpDownInfoTip()}"></span>
                                 </td>
