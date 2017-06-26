@@ -1,18 +1,29 @@
 ﻿@using JsPlc.Ssc.PetrolPricing.Models
 @using JsPlc.Ssc.PetrolPricing.Models.Enums
+@using JsPlc.Ssc.PetrolPricing.Portal.Helper.Extensions
 @model JsPlc.Ssc.PetrolPricing.Models.SiteViewModel
 
 @{
     ViewBag.Title = "Site Prices";
+
+    var hasDailyPriceDataFile = false;
+    var hasDailyPriceDataFileForToday = false;
+
+    var lastDailyPriceDataUpload = Model.RecentFileUploads.Files.FirstOrDefault(x => x.UploadTypeId == 1 && x.ImportStatusId == 10);
+    if (lastDailyPriceDataUpload != null)
+    {
+        hasDailyPriceDataFile = true;
+        hasDailyPriceDataFileForToday = lastDailyPriceDataUpload.UploadDateTime.Date == DateTime.Now.Date;
+    }
 }
 
 <link href="~/Content/prices.css" rel="stylesheet" />
 <link href="~/Scripts/App/EditInPlace/edit-in-place.css" rel="stylesheet" />
 
- @using (Html.BeginForm())
- {
+@using (Html.BeginForm())
+{
 
-<!-- knockout binds here -->
+    <!-- knockout binds here -->
     <div id="petrolpricingpage" onclick="IsSitePriceFormClicked=1;" style="width: 1280px;">
 
         <h1>
@@ -23,24 +34,38 @@
             </span>
         </h1>
 
+        <section data-bind="visible: !$root.ViewingHistorical()">
+            @if (hasDailyPriceDataFile)
+            {
+                if (!hasDailyPriceDataFileForToday)
+                {
+                    <div class="banner banner-warning">
+                        <i class="fa fa-calendar"></i> <strong>Daily Price File is outdated</strong>, it was  uploaded by: <strong>@(lastDailyPriceDataUpload.UploadedBy)</strong> @Html.FormatFriendlyDateTime(lastDailyPriceDataUpload.UploadDateTime)  &mdash; (@Html.FormatFriendlyTimeAgo(lastDailyPriceDataUpload.UploadDateTime)) <a class="btn btn-success btn-sm pull-right" href="@Url.Action("Upload","File")?UploadType=DailyPriceData" data-infotip="Upload a new [b]Daily Price Data[/b] file"><i class="fa fa-upload"></i> Upload</a>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="banner banner-danger">
+                    <i class="fa fa-file"></i> There is no <strong>Daily Price Data</strong> file. Please <a class="btn btn-primary btn-sm pull-right" href="@Url.Action("Upload","File")?UploadType=DailyPriceData" data-infotip="Upload a new [b]Daily Price Data[/b] file"><i class="fa fa-upload"></i> Upload</a> a file.
+                </div>
+            }
+        </section>
+
         <hr />
 
         <!-- competitor notes popup -->
         @Html.Partial("~/Views/Sites/Pricing/_CompetitorNotePopup.cshtml", Model)
         <!-- end competitor notes popup within knockout -->
-
         <!-- Competitor Prices Popup -->
         @Html.Partial("~/Views/Sites/Pricing/_CompetitorPriceGridPopup.cshtml", Model)
         <!-- END Competitor Prices Popup -->
-
         <!-- Email ALL popup within knockout -->
         @Html.Partial("~/Views/Sites/Pricing/_EmailAllSitesPopup.cshtml", Model)
         <!-- END Email ALL popup within knockout -->
-
         <!-- Email popup within knockout -->
         @Html.Partial("~/Views/Sites/Pricing/_EmailSitePopup.cshtml", Model)
         <!-- End Email popup within knockout -->
-
         <!-- Submit disabled, all work done thru ajax calls -->
         <form id="myform" method="post" data-bind="submit: savePetrolPricingForm" xclass="input-group-sm" action="sites/PostPrices" onsubmit="return false;" onclick="IsSitePriceFormClicked=1;" style="width: 1280px;">
             <div class="row pricing-filters-row" onclick="IsSitePriceFormClicked=1;" style="width:1280px;">
@@ -704,7 +729,7 @@
                                 +/-
                             </th>
                         </tr>
-                         
+
                     </thead>
                 </table>
                 <!-- end of grid header -->
@@ -827,6 +852,6 @@
             </div>
         </form>
     </div>
-<br />
+    <br />
 }
 <script src="~/Scripts/App/prices.js"></script>

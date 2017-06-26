@@ -1,4 +1,5 @@
 ﻿using JsPlc.Ssc.PetrolPricing.Models.Enums;
+using JsPlc.Ssc.PetrolPricing.Models.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -13,6 +14,8 @@ namespace JsPlc.Ssc.PetrolPricing.Models
     public class SiteViewModel
     {
         public SiteSectionType CalledFromSection { get; set; }
+
+        public RecentFileUploadSummary RecentFileUploads { get; set; }
 
         public int Id { get; set; }
 
@@ -101,9 +104,10 @@ namespace JsPlc.Ssc.PetrolPricing.Models
 
         public SiteViewModel()
         {
-            CalledFromSection = SiteSectionType.None;
-            Competitors = new List<SiteViewModel>();
-            ExcludeCompetitors = new List<int>();
+            this.CalledFromSection = SiteSectionType.None;
+            this.Competitors = new List<SiteViewModel>();
+            this.ExcludeCompetitors = new List<int>();
+            this.RecentFileUploads = new RecentFileUploadSummary();
         }
     }
     public class SiteEmailViewModel

@@ -263,6 +263,8 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 
             SiteViewModel model = new SiteViewModel();
 
+            model.RecentFileUploads = _serviceFacade.GetRecentFileUploadSummary();
+
             // model.ExcludeBrands = _serviceFacade.GetBrands().ToList();
 
             var allBrands = _serviceFacade.GetBrands();
@@ -270,7 +272,6 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             var excludebrands = _serviceFacade.GetExcludeBrands();
             model.ExcludeBrands = excludebrands != null ? excludebrands.ToList() : null;
             model.ExcludeBrandsOrg = model.ExcludeBrands;
-
 
             return View("Prices", model); // Razor based view
         }
