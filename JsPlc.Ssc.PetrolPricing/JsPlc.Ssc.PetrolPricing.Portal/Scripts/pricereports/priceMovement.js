@@ -21,6 +21,22 @@
                 todayHighlight: true
             });
 
+            var state = {
+                showZeros: true
+            };
+
+            var selectors = {
+                grid: '#tableDiv',
+                zeros: '.zero',
+                showButton: '#btnShowZeroValues',
+                hideButton: '#btnHideZeroValues'
+            }
+
+            var controls = {
+                showButton: $(selectors.showButton),
+                hideButton: $(selectors.hideButton)
+            };
+
             $("#btnViewReport").click(function () {
                 $('#errorMsgs').html("");
                 $('#msgs').html("");
@@ -76,6 +92,35 @@
                     showtime: 3000
                 })
                 window.location.href = rootFolder + '/PriceReports/PriceMovement';
+            });
+
+            function redrawShowHideButtons() {
+                var activeButton = state.showZeros ? controls.showButton : controls.hideButton
+                inactiveButton = state.showZeros ? controls.hideButton : controls.showButton;
+
+                activeButton.removeClass('btn-default').addClass('btn-primary');
+                inactiveButton.removeClass('btn-primary').addClass('btn-default');
+            };
+
+            function redrawZeros() {
+                var grid = $(selectors.grid),
+                    zeros = grid.find(selectors.zeros);
+
+                state.showZeros ? zeros.show() : zeros.hide();
+            };
+
+            controls.showButton.off().click(function () {
+                state.showZeros = true;
+                redrawShowHideButtons();
+                redrawZeros();
+                notify.info('Showing 0 values in report');
+            });
+
+            controls.hideButton.off().click(function () {
+                state.showZeros = false;
+                redrawShowHideButtons();
+                redrawZeros();
+                notify.info('Hiding 0 values in report');
             });
 
         });

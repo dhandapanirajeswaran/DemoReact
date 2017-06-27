@@ -3,7 +3,7 @@
 @{
     ViewBag.Title = "Report - Price Movement within selected dates";
 
-    if (Model !=null && !Model.FromDate.HasValue)
+    if (Model != null && !Model.FromDate.HasValue)
     {
         Model.FromDate = DateTime.Now;
     }
@@ -12,11 +12,11 @@
         Model.ToDate = DateTime.Now;
     }
 
-    var requestedFromDate = Model != null ? @Model.FromDate.Value.Date.ToString("dd-MMM-yyyy"): null;
-    var requestedToDate = Model != null ? @Model.ToDate.Value.Date.ToString("dd-MMM-yyyy"): null;
+    var requestedFromDate = Model != null ? @Model.FromDate.Value.Date.ToString("dd-MMM-yyyy") : null;
+    var requestedToDate = Model != null ? @Model.ToDate.Value.Date.ToString("dd-MMM-yyyy") : null;
 
 
-    var reportWidth = Model != null ? Model.ReportWidth + "px" : "auto";
+    var reportWidth = Model != null ? (Model.ReportWidth * 0.7) + "px" : "auto";
 
     var reportInformationViewModel = new JsPlc.Ssc.PetrolPricing.Models.ViewModels.ReportInformationViewModel();
     reportInformationViewModel.Introduction = "Tracks retail prices of individual sites over a specified period.";
@@ -47,40 +47,44 @@
                format: 'dd/mm/yyyy',
                orientation: 'auto top',
                autoclose: true,
-               todayHighlight: true,               
+               todayHighlight: true,
                endDate: '1d'
-           }).on('changeDate', function(e) {
+           }).on('changeDate', function (e) {
                $("#btnViewReport").click();
            });
 
 </script>
 
 <style>
-.actualdata {
-    height: 500px;
-    overflow-y: auto;
-    overflow-x: hidden; 
-}
+    .actualdata {
+        max-height: 500px;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
 
-.divtable {
-    overflow-y: hidden;
-    overflow-x: auto; 
-}
+    .divtable {
+        overflow-y: hidden;
+        overflow-x: auto;
+    }
 
-.fixed-col-1 
-{
-    width:220px;
-}
+    .fixed-col-1 {
+        width: 220px;
+    }
+    .value-col {
+        width: 100px;
+        text-align: center;
+    }
 
-.alternativerow:nth-child(2n+1){
-    background:#F5F5F5;
-}
+    .alternativerow:nth-child(2n+1) {
+        background: #F5F5F5;
+    }
 
-.alternativerow
-{
-    border-bottom:1px solid #b9b2b2
-}
-
+    .alternativerow {
+        border-bottom: 1px solid #b9b2b2;
+    }
+    .zero {
+        color: #999;
+    }
 </style>
 
 <div class="row">
@@ -103,8 +107,8 @@
 <hr />
 
 <div class="report">
-    @if (Model!=null)
-    { 
+    @if (Model != null)
+    {
         <div id="errorMsgs" style="color: red"></div>
         <div id="msgs"></div>
         using (Html.BeginForm("PriceMovement", "PriceReports", FormMethod.Get, new { onkeydown = "return event.keyCode!=13", onsubmit = "return false" }))
@@ -145,59 +149,78 @@
         }
     }
 
-    @if (Model!=null && Model.FuelTypeId > 0)
+    @if (Model != null && Model.FuelTypeId > 0)
     {
         <hr />
         <h4>
             @Model.Brand price movement of @Model.FuelTypeName
             From: @Model.FromDate.Value.ToString("dd-MMM-yyyy") - To: @Model.ToDate.Value.ToString("dd-MMM-yyyy")
+
+            <div class="pull-right">
+                Zero values: 
+                <button id="btnShowZeroValues" class="btn btn-primary btn-sm"><i class="fa fa-check-square-o"></i> Show</button>
+                <button id="btnHideZeroValues" class="btn btn-default btn-sm"><i class="fa fa-square-o"></i> Hide</button>
+            </div>
+
         </h4>
+        <br />
 
         if (Model.PriceMovementReport != null)
-        { 
+        {
             <!-- Report Data -->
-    <div  class="divtable" >
-        <div id="tableDiv" style="width: @(reportWidth)">
-            <div class="row" style="font-weight:bold">
-                <div class="col-md-1 fixed-col-1" style="width:250px">Sites</div>
+            <div class="divtable">
+                <div id="tableDiv" style="width: @(reportWidth)">
+                    <div class="row" style="font-weight:bold">
+                        <div class="col-md-1 fixed-col-1" style="width:250px">Sites</div>
 
-                @if (Model.PriceMovementReport.ReportRows.Count == 0 || !Model.PriceMovementReport.ReportRows.First().DataItems.Any())
-                {
-                    <div class="col-md-1 fixed-col-1">Status</div>
-                }
-                else
-                {
-                    foreach (var date in Model.PriceMovementReport.ReportRows.First().DataItems.Select(x => x.PriceDate))
-                    {
-                        <div class="col-md-1 fixed-col-1" style="width:150px">@(date.ToString("dd-MMM-yy"))</div>
-                    }
-                }
-            </div>
-            <div class="actualdata">
-                @foreach (var siteRow in Model.PriceMovementReport.ReportRows)
-                {
-                    <div class="alternativerow">
-
-                        <div class="row">
-                            <div class="col-md-1 fixed-col-1" style="width:250px">
-                                @siteRow.SiteName
-                            </div>
-                            @if (!siteRow.DataItems.Any())
+                        @if (Model.PriceMovementReport.ReportRows.Count == 0 || !Model.PriceMovementReport.ReportRows.First().DataItems.Any())
+                        {
+                            <div class="col-md-1 fixed-col-1">Status</div>
+                        }
+                        else
+                        {
+                            foreach (var date in Model.PriceMovementReport.ReportRows.First().DataItems.Select(x => x.PriceDate))
                             {
-                                <div class="col-md-1 fixed-col-1" style="width:1100px">There is no data available</div>
+                                <div class="col-md-1 value-col">@(date.DayOfWeek.ToString())<br />@(date.ToString("dd-MMM-yy"))</div>
                             }
-                            @foreach (var dataItem in siteRow.DataItems)
-                            {
-                                <div class="col-md-1 fixed-col-1" style="width:150px">@(  (dataItem.PriceValue / 10.0).ToString("###0.0"))</div>
-                            }
-                        </div>
+                        }
                     </div>
-                }
+                    <div class="actualdata">
+                        @foreach (var siteRow in Model.PriceMovementReport.ReportRows)
+                        {
+                            <div class="alternativerow">
+
+                                <div class="row">
+                                    <div class="col-md-1 fixed-col-1" style="width:250px">
+                                        @siteRow.SiteName
+                                    </div>
+                                    @if (!siteRow.DataItems.Any())
+                                    {
+                                        <div class="col-md-1 fixed-col-1" style="width:1100px">There is no data available</div>
+                                    }
+                                    @foreach (var dataItem in siteRow.DataItems)
+                                    {
+                                        var value = (dataItem.PriceValue / 10.0).ToString("###0.0");
+                                        <div class="col-md-1 value-col">
+                                            @if (value == "0.0")
+                                            {
+                                            <span class="zero">0.0</span>
+                                            }
+                                            else
+                                            {
+                                                <span>@(value)</span>
+                                            }
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
             </div>
-        </div>
-    </div>
         }
-    } else
+    }
+    else
     {
         <div class="row">
             <div class="col-md-12 text-center"><strong>Sorry, There is no data available</strong></div>
