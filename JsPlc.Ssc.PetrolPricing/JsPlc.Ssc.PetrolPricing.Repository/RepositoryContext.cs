@@ -373,8 +373,8 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
             var parameters = new
             {
-                @Grocers = model.Grocers,
-                @ExcludedBrands = model.ExcludedBrands
+                @Grocers = model.Grocers ?? "",
+                @ExcludedBrands = model.ExcludedBrands ?? ""
             };
             var result = DapperHelper.QueryScalar(this, sprocName, parameters);
             return result == 0;

@@ -322,7 +322,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
         public ActionResult SaveExcludeBrands(string excludbrands)
         {
             SiteViewModel site = new SiteViewModel();
-            site.ExcludeBrands = excludbrands.Split(',').ToList();
+            site.ExcludeBrands = excludbrands == "null" ? new List<String>() : excludbrands.Split(',').ToList();
             _serviceFacade.UpdateExcludeBrands(site);
             return Json("Saved", JsonRequestBehavior.AllowGet);
         }

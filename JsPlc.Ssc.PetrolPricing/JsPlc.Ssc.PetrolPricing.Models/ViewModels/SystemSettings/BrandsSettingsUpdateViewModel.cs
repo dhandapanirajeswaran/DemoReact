@@ -10,5 +10,11 @@ namespace JsPlc.Ssc.PetrolPricing.Models.ViewModels.SystemSettings
     {
         public string Grocers { get; set; }
         public string ExcludedBrands { get; set; }
+
+        public BrandsSettingsUpdateViewModel()
+        {
+            this.Grocers = "";
+            this.ExcludedBrands = "";
+        }
     }
 }
