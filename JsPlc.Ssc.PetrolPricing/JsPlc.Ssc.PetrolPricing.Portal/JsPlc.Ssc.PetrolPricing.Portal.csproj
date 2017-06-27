@@ -334,6 +334,7 @@
     <Content Include="Scripts\App\Popups\SiteEmailPopup.html" />
     <Content Include="Scripts\App\Popups\SiteEmailPopup.js" />
     <Content Include="Scripts\App\prices.js" />
+    <Content Include="Scripts\App\pricestats.js" />
     <Content Include="Scripts\App\scrollToTop.js" />
     <Content Include="Scripts\App\Services\DriveTimeMarkupService.js" />
     <Content Include="Scripts\App\Services\EmailTemplateService.js" />
@@ -541,6 +542,7 @@
     <Content Include="Views\Settings\DriveTime.cshtml" />
     <Content Include="Views\Settings\_DriveTimeMarkupFuelPanel.cshtml" />
     <Content Include="Views\Settings\Brands.cshtml" />
+    <Content Include="Views\Sites\Pricing\_PriceStats.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\uploads\" />

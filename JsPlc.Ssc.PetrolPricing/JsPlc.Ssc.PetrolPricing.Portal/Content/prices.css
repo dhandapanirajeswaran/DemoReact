@@ -758,7 +758,7 @@ table.competitorTable > tbody > .competitor-row  {
     font-size: 110%;
     line-height: 1em;
     min-width: 4.2em;
-    border-right: 4px solid #fff;
+    border-left: 4px solid #fff;
 }
 
 .stat-price {
@@ -774,7 +774,6 @@ table.competitorTable > tbody > .competitor-row  {
     left: 4px;
     color: #999;
 }
-
 
 .stat-group-inline {
     display: inline-block;
@@ -881,8 +880,8 @@ table.competitorTable > tbody > .competitor-row  {
 
 .stat-section-tomorrow .stat {
     background: #e0ffe0;
+    color: #666;
 }
-
 
 .stat-section-divider {
     border-top: 2px dashed #999;

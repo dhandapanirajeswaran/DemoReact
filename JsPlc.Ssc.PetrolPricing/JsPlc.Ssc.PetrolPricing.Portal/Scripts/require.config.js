@@ -42,6 +42,7 @@
             "buildDetector": "App/buildDetector",
             "validation": "App/validation",
             "EasyTemplate": "App/EasyTemplate",
+            "PriceStats": "App/pricestats",
 
             //"ko-binding-handlers": "App/ko-binding-handlers",
 
