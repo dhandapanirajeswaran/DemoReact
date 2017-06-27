@@ -540,6 +540,7 @@
     <Content Include="Views\Settings\Index.cshtml" />
     <Content Include="Views\Settings\DriveTime.cshtml" />
     <Content Include="Views\Settings\_DriveTimeMarkupFuelPanel.cshtml" />
+    <Content Include="Views\Settings\Brands.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\uploads\" />

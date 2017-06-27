@@ -1294,16 +1294,34 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             }
         }
 
-        public async Task<StatusViewModel> UpdateDriveTimeMarkups(IEnumerable<DriveTimeMarkupViewModel> model)
+        public async Task<StatusViewModel> UpdateDriveTimeMarkups(List<DriveTimeMarkupViewModel> model)
         {
             var apiUrl = String.Format("api/UpdateDriveTimeMarkups");
-            return CallAndCatchAsyncPost<StatusViewModel, IEnumerable<DriveTimeMarkupViewModel>>("UpdateDriveTimeMarkups", apiUrl, model);
+            return CallAndCatchAsyncPost<StatusViewModel, List<DriveTimeMarkupViewModel>>("UpdateDriveTimeMarkups", apiUrl, model);
         }
 
         public async Task<StatusViewModel> RecalculateDailyPrices(DateTime when)
         {
             var apiUrl = String.Format("api/RecalculateDailyPrices/{0}", when);
             return CallAndCatchAsyncGet<StatusViewModel>("RecalculateDailyPrices", apiUrl);
+        }
+
+        public BrandsCollectionSummaryViewModel GetBrandSettingsSummary()
+        {
+            var apiUrl = String.Format("api/GetBrandSettingsSummary");
+            return CallAndCatchAsyncGet<BrandsCollectionSummaryViewModel>("GetBrandSettingsSummary", apiUrl);
+        }
+
+        public BrandsCollectionSettingsViewModel GetBrandSettings()
+        {
+            var apiUrl = String.Format("api/GetBrandSettings");
+            return CallAndCatchAsyncGet<BrandsCollectionSettingsViewModel>("GetBrandSettings", apiUrl);
+        }
+
+        public StatusViewModel UpdateBrandSettings(BrandsSettingsUpdateViewModel model)
+        {
+            var apiUrl = String.Format("api/UpdateBrandSettings");
+            return CallAndCatchAsyncPost<StatusViewModel, BrandsSettingsUpdateViewModel>("UpdateBrandSettings", apiUrl, model);
         }
 
         #region private methods

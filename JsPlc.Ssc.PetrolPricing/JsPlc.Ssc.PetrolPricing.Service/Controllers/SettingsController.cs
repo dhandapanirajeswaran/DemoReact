@@ -17,37 +17,37 @@ using AutoMapper;
 
 namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
 {
-	public class SettingsController : ApiController
-	{
-		IAppSettings _appSettings;
-        ISystemSettingsService _systemSettingsService;
-	    private ILogger _logger;
+    public class SettingsController : ApiController
+    {
+        private IAppSettings _appSettings;
+        private ISystemSettingsService _systemSettingsService;
+        private ILogger _logger;
 
         public SettingsController(IAppSettings appSettings, ISystemSettingsService systemSettingsService)
-		{
-			_appSettings = appSettings;
+        {
+            _appSettings = appSettings;
             _systemSettingsService = systemSettingsService;
-		    _logger = new PetrolPricingLogger();
-		}
+            _logger = new PetrolPricingLogger();
+        }
 
-		[Route("api/settings/{key}")]
-		public async Task<IHttpActionResult> Get(string key)
-		{
-			if (String.IsNullOrEmpty(key))
-			{
-				return BadRequest("Invalid passed data: setting key");
-			}
-			try
-			{
-				var val = _appSettings.GetSetting(key);
-				return Ok(val);
-			}
-			catch (Exception ex)
-			{
+        [Route("api/settings/{key}")]
+        public async Task<IHttpActionResult> Get(string key)
+        {
+            if (String.IsNullOrEmpty(key))
+            {
+                return BadRequest("Invalid passed data: setting key");
+            }
+            try
+            {
+                var val = _appSettings.GetSetting(key);
+                return Ok(val);
+            }
+            catch (Exception ex)
+            {
                 _logger.Error(ex);
-				return new ExceptionResult(ex, this);
-			}
-		}
+                return new ExceptionResult(ex, this);
+            }
+        }
 
         [Route("api/GetSystemSettings")]
         public async Task<IHttpActionResult> GetSystemSettings()
@@ -66,7 +66,7 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
         }
 
         [Route("api/UpdateSystemSettings")]
-        public async Task<IHttpActionResult>UpdateSystemSettings(SystemSettingsViewModel model)
+        public async Task<IHttpActionResult> UpdateSystemSettings(SystemSettingsViewModel model)
         {
             try
             {
@@ -127,5 +127,50 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
                 return new ExceptionResult(ex, this);
             }
         }
-	}
+
+        [Route("api/GetBrandSettingsSummary")]
+        public async Task<IHttpActionResult> GetBrandSettingsSummary()
+        {
+            try
+            {
+                var result = _systemSettingsService.GetBrandCollectionSummary();
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex);
+                return new ExceptionResult(ex, this);
+            }
+        }
+
+        [Route("api/GetBrandSettings")]
+        public async Task<IHttpActionResult> GetBrandSettings()
+        {
+            try
+            {
+                var result = _systemSettingsService.GetBrandCollectionSettings();
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex);
+                return new ExceptionResult(ex, this);
+            }
+        }
+
+        [Route("api/UpdateBrandSettings")]
+        public async Task<IHttpActionResult> UpdateBrandSettings(BrandsSettingsUpdateViewModel model)
+        {
+            try
+            {
+                var result = _systemSettingsService.UpdateBrandCollectionSettings(model);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex);
+                return new ExceptionResult(ex, this);
+            }
+        }
+    }
 }

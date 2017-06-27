@@ -70,5 +70,22 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 
             return base.JsonGetResult(result);
         }
+
+        [System.Web.Mvc.HttpGet]
+        [AuthoriseSystemSettings(Permissions = SystemSettingsUserPermissions.View | SystemSettingsUserPermissions.Edit)]
+        public ActionResult Brands()
+        {
+            var model = _serviceFacade.GetBrandSettings();
+            return View(model);
+        }
+
+        [ValidateInput(false)]
+        [System.Web.Mvc.HttpPost]
+        //[AuthoriseSystemSettings(Permissions = SystemSettingsUserPermissions.View | SystemSettingsUserPermissions.Edit)]
+        public ActionResult UpdateBrandSettings(BrandsSettingsUpdateViewModel model)
+        {
+            var result = _serviceFacade.UpdateBrandSettings(model);
+            return base.JsonGetResult(result);
+        }
     }
 }

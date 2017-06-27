@@ -1,0 +1,273 @@
+﻿@model JsPlc.Ssc.PetrolPricing.Models.ViewModels.SystemSettings.BrandsCollectionSettingsViewModel
+@using JsPlc.Ssc.PetrolPricing.Portal.Helper.Extensions
+@{
+    ViewBag.Title = "Edit Brands Settings";
+
+    var allBrands = Model.BrandSettings.Select(x => x.BrandName);
+    var excludedBrands = Model.BrandSettings.Where(x => x.IsExcluded).Select(x => x.BrandName);
+    var grocerBrands = Model.BrandSettings.Where(x => x.IsGrocer).Select(x => x.BrandName);
+}
+
+<style>
+    .grocers-panel .label,
+    .excluded-brands-panel .label {
+        display: inline-block;
+        margin: 4px;
+        font-size: 110%;
+        cursor: pointer;
+    }
+</style>
+
+<h1>
+    <i class="fa fa-cogs"> Brands Settings</i>
+</h1>
+
+<ul class="nav nav-tabs nav-condensed">
+    <li><a href="@Url.Action("Index", "Settings")"><i class="fa fa-cogs"></i> Common Settings</a></li>
+    <li><a href="@Url.Action("DriveTime", "Settings")"><i class="fa fa-clock-o"></i> Drive Time</a></li>
+    <li class="active"><a href="@Url.Action("Brands", "Settings")"><i class="fa fa-apple"></i> Brands</a></li>
+</ul>
+
+<br />
+
+<div class="container">
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="col-md-6">
+            <div class="panel panel-danger excluded-brands-panel">
+                <div class="panel-heading font150pc">
+                    Excluded Brands <span class="badge" id="spnExcludedBrandsCount">@(excludedBrands.Count())</span>
+                </div>
+                <div class="panel-body" id="divExcludedBrandsList">
+                </div>
+                <div class="panel-footer">
+                    <div class="row">
+                        <div class="col-md-10">
+                            <select id="mnuExcludeBrands" data-placeholder="Choose a Brand" class="chosen-select" tabindex="-1" style="width: 100%;">
+                                @foreach (var brand in allBrands)
+                                {
+                                    <option>@(brand)</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <button type="button" id="btnExcludeBrand" class="btn btn-primary" data-infotip="Add a brand to exclude"><i class="fa fa-plus"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="panel panel-success grocers-panel">
+                <div class="panel-heading font150pc">
+                    Grocers <span class="badge" id="spnGrocerCount">@(grocerBrands.Count())</span>
+                </div>
+                <div class="panel-body" id="divGrocersList">
+                </div>
+                <div class="panel-footer">
+                    <div class="row">
+                        <div class="col-md-10">
+                            <select id="mnuGrocers" data-placeholder="Choose a Brand" class="chosen-select" tabindex="-1" style="width: 100%;">
+                                @foreach (var brand in allBrands)
+                                {
+                                    <option>@(brand)</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <button type="button" id="btnAddGrocer" class="btn btn-success" data-infotip="Add a [b]Grocer[/b]"><i class="fa fa-plus"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <button type="button" id="btnUpdateBrandSettings" class="btn btn-primary pull-right" data-infotip="Update the [b]Excluded Brands[/b] and [b]Grocers[/b]"><i class="fa fa-check"> Update</i></button>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<script type="text/javascript">
+    require(["common", "infotips", "notify", "EasyTemplate", "busyloader"],
+        function (common, infotips, notify, easytemplate, busyloader) {
+
+            "use strict";
+
+            var data = {
+                excluded: JSON.parse('@(Html.ToJson(excludedBrands))'),
+                grocers: JSON.parse('@(Html.ToJson(grocerBrands))')
+            };
+
+            var selectors = {
+                grocersCount: '#spnGrocerCount',
+                grocersMenu: '#mnuGrocers',
+                grocersPanel: '.grocers-panel',
+                grocersAddButton: '#btnAddGrocer',
+                grocersList: '#divGrocersList',
+                excludedCount: '#spnExcludedBrandsCount',
+                excludedBrandsMenu: '#mnuExcludeBrands',
+                excludedBrandsPanel: '.excluded-brands-panel',
+                excludedBrandsAddButton: '#btnExcludeBrand',
+                excludedBrandsList: '#divExcludedBrandsList',
+                updateBrandsButton: '#btnUpdateBrandSettings'
+            };
+
+            var templates = {
+                excludedBrands: '<span class="label label-danger {CSS}" data-infotip="Click to Remove {BRAND}">{BRAND} <i class="fa fa-close"></i></span>',
+                grocers: '<span class="label label-success {CSS}" data-infotip="Click to Remove {BRAND}">{BRAND} <i class="fa fa-close"></i></span>',
+                menuOption: '<option value="{VALUE}">{TEXT}</option>'
+            };
+
+            function redrawCounts() {
+                $(selectors.excludedCount).text(data.excluded.length);
+                $(selectors.grocersCount).text(data.grocers.length);
+            };
+
+            function redrawList(selector, items, template, added) {
+                var container = $(selector),
+                    html = [],
+                    i,
+                    tokens,
+                    brand;
+                for (i = 0; i < items.length; i++) {
+                    brand = items[i];
+                    tokens = {
+                        '{BRAND}': brand,
+                        '{CSS}': brand == added ? ' item-added hide' : ''
+                    };
+                    html.push(easytemplate.replaceTokens(template, tokens))
+                }
+                container.html(html.join(''));
+                if (added)
+                    container.find('.item-added').each(function () {
+                        var ele = $(this);
+                        ele.removeClass('hide', 'item-added').hide().delay(500).fadeIn(1000);
+                    });
+            };
+
+            function redrawExcludedBrandsList(added) {
+                redrawList(selectors.excludedBrandsList, data.excluded, templates.excludedBrands, added);
+            };
+
+            function redrawGrocersList(added) {
+                redrawList(selectors.grocersList, data.grocers, templates.grocers, added);
+            };
+
+            function grocerRemoveClick() {
+                var ele = $(this),
+                    brand = trim(ele.text());
+                removeFromArray(brand, data.grocers);
+                redrawCounts();
+                ele.fadeOut(1000, function () {
+                    ele.remove();
+                });
+                notify.info('Removed Grocer ' + brand);
+            };
+
+            function excludedBrandRemoveClick() {
+                var ele = $(this),
+                    brand = trim(ele.text());
+                removeFromArray(brand, data.excluded);
+                redrawCounts();
+                ele.fadeOut(1000, function () {
+                    ele.remove();
+                });
+                notify.info('Removed ' + brand + ' from Excluded list');
+            };
+
+            function arrayIndex(value, items) {
+                for (var i = 0; i < items.length; i++) {
+                    if (items[i] == value)
+                        return i;
+                }
+                return -1;
+            };
+
+            function removeFromArray(value, items) {
+                var index = arrayIndex(value, items);
+                if (index == -1)
+                    return false;
+                items.splice(index, 1);
+                return true;
+            };
+
+            function isInArray(value, items) {
+                return arrayIndex(value, items) != -1;
+            };
+
+            function trim(value) {
+                return ('' + value).replace(/^\s+|\s+$/, '');
+            };
+
+            function grocerAddClick() {
+                var brand = $(selectors.grocersMenu).val();
+                if (isInArray(brand, data.grocers))
+                    return;
+                data.grocers.push(brand);
+                data.grocers.sort();
+                redrawGrocersList(brand);
+                redrawCounts();
+                notify.info('Added ' + brand + ' to Grocers');
+            };
+
+            function excludedBrandsClick() {
+                var brand = $(selectors.excludedBrandsMenu).val();
+                if (isInArray(brand, data.excluded))
+                    return;
+                data.excluded.push(brand);
+                data.excluded.sort();
+                redrawExcludedBrandsList(brand);
+                redrawCounts();
+                notify.info('Added ' + brand + ' to Excluded Brands');
+            };
+
+            function updateBrandSettingsClick() {
+                var url = "Settings/UpdateBrandSettings",
+                    payload = {
+                        Grocers: data.grocers.join(','),
+                        ExcludedBrands: data.excluded.join(',')
+                    },
+                    promise = common.callService("post", url, payload);
+
+                promise.done(function () {
+                    busyloader.hide()
+                    notify.success('Updated Brand Settings');
+                });
+                promise.fail(function () {
+                    busyloader.hide();
+                    notify.error('Unable to Update Brand Settings');
+                });
+
+                busyloader.show({
+                    message: 'Updating Brand Settings. Please wait...',
+                    dull: true
+                });
+            };
+
+            function bindEvents() {
+                $(selectors.grocersPanel).on('click', '.label', grocerRemoveClick);
+                $(selectors.excludedBrandsPanel).on('click', '.label', excludedBrandRemoveClick);
+                $(selectors.grocersAddButton).off().click(grocerAddClick);
+                $(selectors.excludedBrandsAddButton).off().click(excludedBrandsClick);
+                $(selectors.updateBrandsButton).off().click(updateBrandSettingsClick);
+            };
+
+            function docReady() {
+                redrawCounts();
+                redrawExcludedBrandsList();
+                redrawGrocersList();
+                bindEvents();
+            };
+
+            $(docReady);
+        }
+    );
+</script>

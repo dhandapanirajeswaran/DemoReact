@@ -16,6 +16,7 @@ using JsPlc.Ssc.PetrolPricing.Models.ViewModels.Diagnostics;
 using JsPlc.Ssc.PetrolPricing.Models.Enums;
 using JsPlc.Ssc.PetrolPricing.Models.ViewModels.SelfTest;
 using JsPlc.Ssc.PetrolPricing.Repository.Helpers;
+using JsPlc.Ssc.PetrolPricing.Models.ViewModels.SystemSettings;
 
 namespace JsPlc.Ssc.PetrolPricing.Repository
 {
@@ -357,6 +358,37 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             return result == 0
                 ? ""
                 : "Unable to save Drive Time markup";
+        }
+
+        public BrandsCollectionSummaryViewModel GetBrandCollectionSummary()
+        {
+            const string sprocName = "spGetBrandSettingsSummary";
+            var parameters = new { };
+            return DapperHelper.QueryFirst<BrandsCollectionSummaryViewModel>(this, sprocName, parameters);
+        }
+
+        public bool UpdateBrandCollectionSettings(BrandsSettingsUpdateViewModel model)
+        {
+            const string sprocName = "spUpdateBrandSettings";
+
+            var parameters = new
+            {
+                @Grocers = model.Grocers,
+                @ExcludedBrands = model.ExcludedBrands
+            };
+            var result = DapperHelper.QueryScalar(this, sprocName, parameters);
+            return result == 0;
+        }
+
+        public BrandsCollectionSettingsViewModel GetBrandCollectionSettings()
+        {
+            const string sprocName = "spGetBrandSettings";
+            var parameters = new { };
+            var model = new BrandsCollectionSettingsViewModel()
+            {
+                BrandSettings = DapperHelper.QueryList<BrandItemSettingsViewModel>(this, sprocName, parameters)
+            };
+            return model;
         }
     }
 }

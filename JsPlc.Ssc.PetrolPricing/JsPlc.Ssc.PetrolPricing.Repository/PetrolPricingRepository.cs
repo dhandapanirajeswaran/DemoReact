@@ -28,6 +28,7 @@ using JsPlc.Ssc.PetrolPricing.Models.ViewModels.UserPermissions;
 using JsPlc.Ssc.PetrolPricing.Models.ViewModels.Diagnostics;
 using System.IO;
 using JsPlc.Ssc.PetrolPricing.Models.ViewModels.SelfTest;
+using JsPlc.Ssc.PetrolPricing.Models.ViewModels.SystemSettings;
 
 namespace JsPlc.Ssc.PetrolPricing.Repository
 {
@@ -3830,6 +3831,22 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
             };
         }
 
+        public BrandsCollectionSettingsViewModel GetBrandCollectionSettings()
+        {
+            var model = _context.GetBrandCollectionSettings();
+            return model;
+        }
+
+        public bool UpdateBrandCollectionSettings(BrandsSettingsUpdateViewModel brandsCollectionSettings)
+        {
+            return _context.UpdateBrandCollectionSettings(brandsCollectionSettings);
+        }
+
+        public BrandsCollectionSummaryViewModel GetBrandCollectionSummary()
+        {
+            return _context.GetBrandCollectionSummary();
+        }
+
         #endregion
 
         #region private methods
@@ -3971,6 +3988,8 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
             }
             return distinctBrands;
         }
+
+
 
         #endregion private methods
     }

@@ -1,5 +1,6 @@
 ﻿using JsPlc.Ssc.PetrolPricing.Models;
 using JsPlc.Ssc.PetrolPricing.Models.ViewModels;
+using JsPlc.Ssc.PetrolPricing.Models.ViewModels.SystemSettings;
 using JsPlc.Ssc.PetrolPricing.Repository;
 using System;
 using System.Collections.Generic;
@@ -42,6 +43,31 @@ namespace JsPlc.Ssc.PetrolPricing.Business.Services
         public StatusViewModel UpdateDriveTimeMarkups(IEnumerable<DriveTimeMarkup> driveTimeMarkups)
         {
             return _repository.UpdateDriveTimeMarkup(driveTimeMarkups);
+        }
+
+        public BrandsCollectionSettingsViewModel GetBrandCollectionSettings()
+        {
+            return _repository.GetBrandCollectionSettings();
+        }
+        public StatusViewModel UpdateBrandCollectionSettings(BrandsSettingsUpdateViewModel brandsCollectionSettings)
+        {
+            var result = _repository.UpdateBrandCollectionSettings(brandsCollectionSettings);
+            if (result)
+                return new StatusViewModel()
+                {
+                    SuccessMessage = "Updated Brands Settings",
+                    ErrorMessage = ""
+                };
+            else
+                return new StatusViewModel()
+                {
+                    SuccessMessage = "",
+                    ErrorMessage = "Update to save Brands Settings"
+                };
+        }
+        public BrandsCollectionSummaryViewModel GetBrandCollectionSummary()
+        {
+            return _repository.GetBrandCollectionSummary();
         }
     }
 }

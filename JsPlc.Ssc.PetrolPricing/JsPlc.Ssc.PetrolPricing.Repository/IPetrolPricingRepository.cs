@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using JsPlc.Ssc.PetrolPricing.Models.ViewModels.SystemSettings;
 
 namespace JsPlc.Ssc.PetrolPricing.Repository
 {
@@ -49,14 +50,14 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 		bool NewQuarterlyRecords(List<CatalistQuarterly> siteCatalistData, FileUpload fileDetails,
 			int startingLineNumber);
 
-
         bool NewLatestPriceRecords(List<LatestPriceDataModel> siteCatalistData, FileUpload fileDetails,
             int startingLineNumber);
-
+        BrandsCollectionSettingsViewModel GetBrandCollectionSettings();
         bool NewLatestCompPriceRecords(List<LatestCompPriceDataModel> siteCatalistData, FileUpload fileDetails,
            int startingLineNumber);
-
-		IEnumerable<QuarterlyUploadStaging> GetQuarterlyRecords();
+        bool UpdateBrandCollectionSettings(BrandsSettingsUpdateViewModel brandsCollectionSettings);
+        BrandsCollectionSummaryViewModel GetBrandCollectionSummary();
+        IEnumerable<QuarterlyUploadStaging> GetQuarterlyRecords();
 
 		/// <summary>
 		/// Useful for SiteMaint screen

@@ -177,6 +177,10 @@
     <Build Include="dbo\Functions\Scalar Functions\fn_GetMarkupForDriveTime.sql" />
     <Build Include="dbo\Stored Procedures\spUpsertDriveTimeMarkups.sql" />
     <Build Include="dbo\Functions\Scalar Functions\fn_NearbyGrocerStatusForSiteFuel.sql" />
+    <Build Include="dbo\Stored Procedures\spGetBrandSettingsSummary.sql" />
+    <Build Include="dbo\Stored Procedures\spGetBrandSettings.sql" />
+    <Build Include="dbo\Functions\Table Functions\tf_SplitStringOnComma.sql" />
+    <Build Include="dbo\Stored Procedures\spUpdateBrandSettings.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Scripts\PostDeployment\Script.PostDeployment.sql" />

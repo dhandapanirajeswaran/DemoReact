@@ -185,6 +185,10 @@
     <Compile Include="ViewModels\CompetitorPriceViewModel.cs" />
     <Compile Include="ViewModels\SitePriceViewModel.cs" />
     <Compile Include="ViewModels\StatusViewModel.cs" />
+    <Compile Include="ViewModels\SystemSettings\BrandItemSettingsViewModel.cs" />
+    <Compile Include="ViewModels\SystemSettings\BrandsCollectionSummaryViewModel.cs" />
+    <Compile Include="ViewModels\SystemSettings\BrandsCollectionSettingsViewModel.cs" />
+    <Compile Include="ViewModels\SystemSettings\BrandsSettingsUpdateViewModel.cs" />
     <Compile Include="ViewModels\SystemSettings\DriveTimeFuelSettingsViewModel.cs" />
     <Compile Include="ViewModels\SystemSettings\DriveTimeMarkupFuelViewModel.cs" />
     <Compile Include="ViewModels\SystemSettings\DriveTimeMarkupViewModel.cs" />
