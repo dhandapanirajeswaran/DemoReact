@@ -103,6 +103,10 @@ span.jsdiff {
     padding: 1px 12px;
 }
 
+.competitorTable  .price-na {
+    color: #666;
+}
+
 .competitorTable th,
 .competitorTable td {
     overflow: hidden;

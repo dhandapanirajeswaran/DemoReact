@@ -131,15 +131,17 @@ function ($, ko, common, compNotePopup, notify) {
         var row = $('#SiteHeading' + siteId),
             cells = row.find('>td');
 
-        cloneAsReadonlyHtml('.readonlyUnleadedYesterday', cells.get(7));
-        cloneAsReadonlyHtml('.readonlyUnleadedToday', cells.get(8));
+        cloneAsReadonlyHtml('.readonlyUnleadedYesterday', cells.get(6));
+        cloneAsReadonlyHtml('.readonlyUnleadedToday', cells.get(7));
+        cloneAsReadonlyHtml('.readonlyUnleadedTodayPriceChange', cells.get(8));
+
         cloneAsReadonlyHtml('.readonlyDieselYesterday', cells.get(9));
         cloneAsReadonlyHtml('.readonlyDieselToday', cells.get(10));
-        cloneAsReadonlyHtml('.readonlySuperUnleadedYesterday', cells.get(11));
-        cloneAsReadonlyHtml('.readonlySuperUnleadedToday', cells.get(12));
+        cloneAsReadonlyHtml('.readonlyDieselTodayPriceChange', cells.get(11));
 
-        $(config.selectors.popup).find('#readonlyUnleadedYesterday').text('testing');
-
+        cloneAsReadonlyHtml('.readonlySuperUnleadedYesterday', cells.get(12));
+        cloneAsReadonlyHtml('.readonlySuperUnleadedToday', cells.get(13));
+        cloneAsReadonlyHtml('.readonlySuperUnleadedTodayPriceChange', cells.get(14));
     };
     function cloneAsReadonlyHtml(selector, ele) {
         var popup = $(config.selectors.popup),
