@@ -750,9 +750,9 @@ input[type=text].mono-font {
 .badge-xs {font-size: 70%;}
 
 .banner {
-    padding: 8px 8px;
+    padding: 16px 8px;
     border-radius: 0;
-    margin: 4px 0;
+    margin: 16px 0;
     border: 2px solid #999;
     font-size: 125%;
     box-shadow: 0 4px 4px #000;

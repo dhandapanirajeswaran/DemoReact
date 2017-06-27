@@ -30,7 +30,7 @@
             <i class="fa fa-gbp"></i> Market comparison and planner
 
             <span class="historical-banner font75pc" data-bind="visible: $root.ViewingHistorical">
-                <i class="fa fa-clock-o"></i> <strong>Note:</strong> Viewing Historical Data
+                <i class="fa fa-clock-o"></i> <strong>Note:</strong> You are viewing Historical Data.
             </span>
         </h1>
 
@@ -39,8 +39,9 @@
             {
                 if (!hasDailyPriceDataFileForToday)
                 {
-                    <div class="banner banner-warning">
-                        <i class="fa fa-calendar"></i> <strong>Daily Price File is outdated</strong>, it was  uploaded by: <strong>@(lastDailyPriceDataUpload.UploadedBy)</strong> on @Html.FormatFriendlyDateTime(lastDailyPriceDataUpload.UploadDateTime) &mdash; (@Html.FormatFriendlyTimeAgo(lastDailyPriceDataUpload.UploadDateTime)) <a class="btn btn-success btn-sm pull-right" href="@Url.Action("Upload","File")?UploadType=DailyPriceData" data-infotip="Upload a new [b]Daily Price Data[/b] file"><i class="fa fa-upload"></i> Upload</a>
+                    <div class="banner banner-danger">
+                        <i class="fa fa-calendar"></i> <strong>Daily Price File is outdated</strong>, it was  uploaded by: <strong>@(lastDailyPriceDataUpload.UploadedBy)</strong> on @Html.FormatFriendlyDateTime(lastDailyPriceDataUpload.UploadDateTime) &mdash; (@Html.FormatFriendlyTimeAgo(lastDailyPriceDataUpload.UploadDateTime)) <a class="btn btn-primary btn-sm pull-right" href="@Url.Action("Upload","File")?UploadType=DailyPriceData" data-infotip="Upload a new [b]Daily Price Data[/b] file"><i class="fa fa-upload"></i> Upload</a>
+                        <input type="hidden" id="hdnDailyPriceFileMissingForToday" value="1" />
                     </div>
                 }
             }
@@ -48,12 +49,13 @@
             {
                 <div class="banner banner-danger">
                     <i class="fa fa-file"></i> There is no <strong>Daily Price Data</strong> file. Please <a class="btn btn-primary btn-sm pull-right" href="@Url.Action("Upload","File")?UploadType=DailyPriceData" data-infotip="Upload a new [b]Daily Price Data[/b] file"><i class="fa fa-upload"></i> Upload</a> a file.
+                    <input type="hidden" id="hdnDailyPriceFileMissingForToday" value="1" />
                 </div>
             }
         </section>
 
         <hr />
-
+ 
         <!-- competitor notes popup -->
         @Html.Partial("~/Views/Sites/Pricing/_CompetitorNotePopup.cshtml", Model)
         <!-- end competitor notes popup within knockout -->
@@ -295,7 +297,7 @@
                                 <button type="button" class="btn btn-danger btn-xs" data-bind="visible: !$root.ViewingHistorical(), click: removeAllOverrideUnleaded" data-infotip="Remove all [b]Price Overrides[/b] for [b]Unleaded[/b]"><i class="fa fa-power-off"></i></button>
                                 <span class="fuel-sign fuel-sign-unleaded"></span>
 
-                                <!-- ko if: !$root.ViewingHistorical() -->
+                                <!-- ko if: (!$root.ViewingHistorical() && $root.hasDailyPriceFile())-->
                                 <div style="width: 80%; margin: 4px auto;">
                                     <div class="input-group">
                                         <span class="input-group-addon clickable text-bold" data-bind="text: changeType, click: toggleChangeType" data-infotip="Toggle between [b]+/-[/b] and [b]Override all[/b]"></span>
@@ -312,7 +314,7 @@
                                 <button type="button" class="btn btn-danger btn-xs" data-bind="visible: !$root.ViewingHistorical(), click: removeAllOverrideDiesel" data-infotip="Remove all [b]Price Overrides[/b] for [b]Diesel[/b]"><i class="fa fa-power-off"></i></button>
                                 <span class="fuel-sign fuel-sign-diesel"></span>
 
-                                <!-- ko if: !$root.ViewingHistorical()-->
+                                <!-- ko if: (!$root.ViewingHistorical() && $root.hasDailyPriceFile())-->
                                 <div style="width: 80%; margin: 4px auto;">
                                     <div class="input-group">
                                         <span class="input-group-addon clickable text-bold" data-bind="text: changeType, click: toggleChangeType" data-infotip="Toggle between [b]+/-[/b] and [b]Override all[/b]"></span>
@@ -329,7 +331,7 @@
                                 <button type="button" class="btn btn-danger btn-xs" data-bind="visible: !$root.ViewingHistorical(), click: removeAllOverrideSuperUnleaded" data-infotip="Remove all [b]Price Overrides[/b] for [b]Super Unleaded[/b]"><i class="fa fa-power-off"></i></button>
                                 <span class="fuel-sign fuel-sign-super-unleaded"></span>
 
-                                <!-- ko if: !$root.ViewingHistorical()-->
+                                <!-- ko if: (!$root.ViewingHistorical() && $root.hasDailyPriceFile())-->
                                 <div style="width: 80%; margin: 4px auto;">
                                     <div class="input-group">
                                         <span class="input-group-addon clickable text-bold" data-bind="text: changeType, click: toggleChangeType" data-infotip="Toggle between [b]+/-[/b] and [b]Override all[/b]"></span>
@@ -506,8 +508,11 @@
 
                                         <span class="past-override-text" data-bind="visible: $root.ViewingHistorical()"><em data-bind="text: (FuelPrice.OverridePrice || 'Past'), attr: {'data-infotip' : '[i class=&quot;fa fa-clock&quot;][/i] Historical [b]Override Price[/b] of [em]' + FuelPrice.OverridePrice() + '[/em]'}"></em></span>
 
-                                        <input type="text" data-bind="value: FuelPrice.OverridePrice, visible: !$root.ViewingHistorical(),
+                                        <input type="text" data-bind="value: FuelPrice.OverridePrice, visible: (!$root.ViewingHistorical() && $root.hasDailyPriceFile()),
                                 id: ('OverridePrice_' + $parent.SiteId + '_' + FuelPrice.FuelTypeId), event:{keyup: changeProp, blur: blurred, focus: focused}, css: ('txtPrice ' + OverrideInputCss()), attr: {'data-infotip': FuelPrice.PriceOverrideInfoTip()}" maxlength="8" />
+
+                                        <span class="text-warning" data-bind="visible: (!$root.ViewingHistorical() && !$root.hasDailyPriceFile())" data-infotip="No [i]Daily Price File[/i] for Today">&nbsp;<i class="fa fa-file"></i></span>
+
                                     </div>
                                 </td>
 
@@ -535,8 +540,8 @@
                 <div class="row" style="margin-top: 4px; padding-top: 4px; border-top: 1px solid #ccc;">
                     <div class="col-md-3 col-md-offset-9">
                         <div class="btn-group pull-right" role="group">
-                            <button type="button" class="btn btn-xs btn-primary" data-click="setExpandMode" data-mode="collapsed" data-states="expanded,collapsed" data-target="#PricingPanelScroller" data-message="Price grid collapsed" data-infotip="Collapse the Pricing Grid"><i class="fa fa-toggle-up"></i> Collapse</button>
-                            <button type="button" class="btn btn-xs" data-click="setExpandMode" data-mode="expanded" data-states="expanded,collapsed" data-target="#PricingPanelScroller" data-message="Price grid expanded" data-infotip="Expand the Pricing Grid"><i class="fa fa-toggle-down"></i> Expand</button>
+                            <button type="button" class="btn btn-sm btn-primary" data-click="setExpandMode" data-mode="collapsed" data-states="expanded,collapsed" data-target="#PricingPanelScroller" data-message="Price grid collapsed" data-infotip="Collapse the Pricing Grid"><i class="fa fa-toggle-up"></i> Collapse</button>
+                            <button type="button" class="btn btn-sm" data-click="setExpandMode" data-mode="expanded" data-states="expanded,collapsed" data-target="#PricingPanelScroller" data-message="Price grid expanded" data-infotip="Expand the Pricing Grid"><i class="fa fa-toggle-down"></i> Expand</button>
                         </div>
                     </div>
                 </div>
