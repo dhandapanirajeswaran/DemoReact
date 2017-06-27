@@ -154,7 +154,7 @@
                 <div>
                     <div class="sainsburys-site-stats hide-first-load" data-bind="visible: !$root.busyLoadingData()">
 
-                        <div class="stat-group stat-group-inline">
+                        <div class="stat-group stat-group-inline" style="position: relative; top: -7em;">
                             <div class="stat-group-title"><span class="badge badge-lg" data-bind="text: $root.stats_Sites_Count()" data-infotip="Number of [b]Sainsburys[/b] Sites"></span> Sainsburys sites</div>
 
                             <div class="stat" data-infotip-dock="below" data-infotip="Number of [b]Active[/b] Sainsburys sites">
@@ -178,7 +178,7 @@
                         <div class="stat-group stat-group-inline stat-group-combined">
 
                             <section class="stat-section stat-section-tomorrow">
-                                <div class="stat-group-title"><span class="badge badge-lg" data-bind="text: $root.stats_Combined_Tomorrow_Prices_Count()" data-infotip="Total number of [i]All[/i] Fuels"></span> Tomorrow Price</div>
+                                <div class="stat-group-title text-tomorrow"><span class="badge badge-md" data-bind="text: $root.stats_Combined_Tomorrow_Prices_Count()" data-infotip="Total number of [i]All[/i] Fuels"></span> Tomorrow Prices</div>
 
                                 <div class="stat-row">
                                     <div class="stat stat-price" data-infotip-dock="below" data-infotip="[b]Minimum[/b] Price for [b]All[/b] Fuels">
@@ -197,7 +197,7 @@
                                     </div>
                                 </div>
 
-                                <div class="stat-group-title"><span class="badge badge-lg" data-bind="text: $root.stats_Combined_Tomorrow_PriceChanges_Count()" data-infotip="Total number of [b]Price Changes[/b]"></span> Tomorrow <big class="font150pc">+/-</big> </div>
+                                <div class="stat-group-title text-tomorrow"><span class="badge badge-md" data-bind="text: $root.stats_Combined_Tomorrow_PriceChanges_Count()" data-infotip="Total number of [b]Price Changes[/b]"></span> Tomorrow <big class="font150pc">+/-</big> </div>
 
                                 <div class="stat-row">
                                     <div class="stat" data-infotip-dock="below" data-infotip="[b]Minimum[/b] Price Change for [b]All[/b] Fuels">
@@ -221,7 +221,7 @@
                             <hr class="stat-section-divider" />
 
                             <section class="stat-section stat-section-today">
-                                <div class="stat-group-title"><span class="badge badge-lg" data-bind="text: $root.stats_Combined_Today_Prices_Count()" data-infotip="Total number of [i]All[/i] Fuels"></span> Today Prices</div>
+                                <div class="stat-group-title text-today"><span class="badge badge-md" data-bind="text: $root.stats_Combined_Today_Prices_Count()" data-infotip="Total number of [i]All[/i] Fuels"></span> Today Prices</div>
 
                                 <div class="stat-row">
                                     <div class="stat stat-price" data-infotip-dock="below" data-infotip="[b]Minimum[/b] Price [u]Today[/u] for [b]All[/b] Fuels">

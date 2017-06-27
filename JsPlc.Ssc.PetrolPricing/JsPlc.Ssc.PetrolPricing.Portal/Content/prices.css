@@ -735,14 +735,14 @@ table.competitorTable > tbody > .competitor-row  {
 
 
 .stat-row {
-    padding: 4px;
+    padding: 4px 0 4px 4px;
 }
 
 .stat-group {
     border: 2px solid #aaa;
     border-radius: 12px;
     padding: 2px 8px;
-    margin: 2px;
+    margin: 2px 4px;
     text-align: center;
     background-color: #fff;
 }
@@ -758,7 +758,7 @@ table.competitorTable > tbody > .competitor-row  {
     font-size: 110%;
     line-height: 1em;
     min-width: 4.2em;
-    border-right: 2px solid #fff;
+    border-right: 4px solid #fff;
 }
 
 .stat-price {
@@ -835,8 +835,8 @@ table.competitorTable > tbody > .competitor-row  {
 .stat-group-title {
     text-align: center;
     font-weight: bold;
-    color: #666;
     font-style: italic;
+    font-size: 110%;
     line-height: 2.5em;
     padding: 1px 8px;
 }
@@ -900,3 +900,5 @@ table.competitorTable > tbody > .competitor-row  {
     margin-bottom: 1em;
 }
 
+.text-tomorrow {color: #000;}
+.text-today {color: #999;}
