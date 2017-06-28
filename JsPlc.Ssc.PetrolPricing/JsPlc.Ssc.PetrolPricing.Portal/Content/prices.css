@@ -186,10 +186,12 @@ table.competitorTable > tbody > .competitor-row  {
 .past-override-text {
     display: inline-block;
     width: 3.1em;
-    color: #999;
+    background: #ccc;
+    color: #000;
     font-style: italic;
-    padding: 1px 1px;
+    padding: 0;
     text-align: center;
+    border-radius: 4px;
 }
 
 #txtOverrideUnleaded,
