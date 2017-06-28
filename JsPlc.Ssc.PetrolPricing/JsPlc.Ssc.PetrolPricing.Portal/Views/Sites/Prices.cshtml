@@ -511,7 +511,7 @@
                                         <input type="text" data-bind="value: FuelPrice.OverridePrice, visible: (!$root.ViewingHistorical() && $root.hasDailyPriceFile()),
                                 id: ('OverridePrice_' + $parent.SiteId + '_' + FuelPrice.FuelTypeId), event:{keyup: changeProp, blur: blurred, focus: focused}, css: ('txtPrice ' + OverrideInputCss()), attr: {'data-infotip': FuelPrice.PriceOverrideInfoTip()}" maxlength="8" />
 
-                                        <span class="text-warning" data-bind="visible: (!$root.ViewingHistorical() && !$root.hasDailyPriceFile())" data-infotip="No [i]Daily Price File[/i] for Today">&nbsp;<i class="fa fa-file"></i></span>
+                                        <span class="text-warning no-daily-price-file-icon" data-bind="visible: (!$root.ViewingHistorical() && !$root.hasDailyPriceFile())" data-infotip="No [i]Daily Price File[/i] for Today"><i class="fa fa-file"></i></span>
 
                                     </div>
                                 </td>
