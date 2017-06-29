@@ -181,6 +181,7 @@
     <Build Include="dbo\Stored Procedures\spGetBrandSettings.sql" />
     <Build Include="dbo\Functions\Table Functions\tf_SplitStringOnComma.sql" />
     <Build Include="dbo\Stored Procedures\spUpdateBrandSettings.sql" />
+    <Build Include="dbo\Tables\PriceMatchType.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Scripts\PostDeployment\Script.PostDeployment.sql" />

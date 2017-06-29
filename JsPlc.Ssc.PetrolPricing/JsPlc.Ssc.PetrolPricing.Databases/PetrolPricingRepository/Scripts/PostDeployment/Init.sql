@@ -190,25 +190,27 @@ WHERE
 -- Set up the Grocers
 --
 
-
-MERGE dbo.Grocers AS target
-USING (
-	SELECT 'SAINSBURYS' [BrandName], 1 [IsSainsburys]
-	UNION ALL
-	SELECT 'ASDA', 0
-	UNION ALL
-	SELECT 'TESCO', 0
-	UNION ALL
-	SELECT 'MORRISONS', 0
-) AS source
-ON (source.BrandName = target.BrandName)
-WHEN NOT MATCHED
-THEN INSERT (BrandName, IsSainsburys)
-	VALUES (source.BrandName, source.IsSainsburys)
-WHEN MATCHED
-THEN UPDATE SET
-	BrandName = source.BrandName, 
-	IsSainsburys = source.IsSainsburys;
+IF NOT EXISTS(SELECT TOP 1 NULL FROM dbo.Grocers)
+BEGIN
+	MERGE dbo.Grocers AS target
+	USING (
+		SELECT 'SAINSBURYS' [BrandName], 1 [IsSainsburys]
+		UNION ALL
+		SELECT 'ASDA', 0
+		UNION ALL
+		SELECT 'TESCO', 0
+		UNION ALL
+		SELECT 'MORRISONS', 0
+	) AS source
+	ON (source.BrandName = target.BrandName)
+	WHEN NOT MATCHED
+	THEN INSERT (BrandName, IsSainsburys)
+		VALUES (source.BrandName, source.IsSainsburys)
+	WHEN MATCHED
+	THEN UPDATE SET
+		BrandName = source.BrandName, 
+		IsSainsburys = source.IsSainsburys;
+END
 
 --
 -- Set up init SystemSettings (NOTE: other values have default constraints on the table itself)
@@ -309,6 +311,37 @@ BEGIN
 		@DefaultDriveTimeMarkupsTV ddtm		
 END
 
+--
+-- seed [dbo].[PriceMatchType] table
+--
+
+SET IDENTITY_INSERT dbo.PriceMatchType ON;
+
+MERGE
+	dbo.PriceMatchType AS Target
+	USING (
+		SELECT '1', 'Latest'
+		UNION ALL
+		SELECT '2', 'Suggested Price'
+		UNION ALL
+		SELECT '3', 'Override Price'
+
+	) AS Source (PriceMatchTypeId, PriceMatchTypeName)
+	ON (source.PriceMatchTypeId = target.PriceMatchTypeId)
+	WHEN NOT MATCHED THEN
+		INSERT (
+			[PriceMatchTypeId], 
+			[PriceMatchTypeName]
+		)
+		VALUES (
+			source.PriceMatchTypeId,
+			source.PriceMatchTypeName
+			)
+	WHEN MATCHED THEN
+		UPDATE SET
+			PriceMatchTypeName = source.PriceMatchTypeName;
+
+SET IDENTITY_INSERT dbo.PriceMatchType OFF;
 
 --
 -- Determine PriceMatchType for existing sites
