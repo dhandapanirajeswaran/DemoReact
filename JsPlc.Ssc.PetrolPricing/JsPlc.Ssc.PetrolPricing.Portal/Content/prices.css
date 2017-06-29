@@ -988,3 +988,10 @@ table.competitorTable > tbody > .competitor-row  {
 
 .no-daily-price-file-icon {margin-left: 1.5em;}
 
+.latest-js-price-file-icon {
+    margin-left: 4px; 
+    border: 1px dashed #999;
+    display: inline-block;
+    width: 3em;
+    text-align: center;
+}

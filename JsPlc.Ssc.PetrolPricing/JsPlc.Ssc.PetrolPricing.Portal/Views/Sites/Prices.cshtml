@@ -9,12 +9,16 @@
     var hasDailyPriceDataFile = false;
     var hasDailyPriceDataFileForToday = false;
 
+
     var lastDailyPriceDataUpload = Model.RecentFileUploads.Files.FirstOrDefault(x => x.UploadTypeId == 1 && x.ImportStatusId == 10);
     if (lastDailyPriceDataUpload != null)
     {
         hasDailyPriceDataFile = true;
         hasDailyPriceDataFileForToday = lastDailyPriceDataUpload.UploadDateTime.Date == DateTime.Now.Date;
     }
+
+    var latestJsPriceDataUpload = Model.RecentFileUploads.Files.FirstOrDefault(x => x.UploadTypeId == 3 && x.ImportStatusId == 10 && x.UploadDateTime.Date == DateTime.Now.Date);
+    var hasLatestJsPriceDataToday = latestJsPriceDataUpload != null;
 }
 
 <link href="~/Content/prices.css" rel="stylesheet" />
@@ -48,11 +52,20 @@
             else
             {
                 <div class="banner banner-danger">
-                    <i class="fa fa-file"></i> There is no <strong>Daily Price Data</strong> file. Please <a class="btn btn-primary btn-sm pull-right" href="@Url.Action("Upload","File")?UploadType=DailyPriceData" data-infotip="Upload a new [b]Daily Price Data[/b] file"><i class="fa fa-upload"></i> Upload</a> a file.
+                    <i class="fa fa-file"></i> There is no <strong>Daily Price Data</strong> file. Please <a class="btn btn-warning btn-sm pull-right" href="@Url.Action("Upload","File")?UploadType=DailyPriceData" data-infotip="Upload a new [b]Daily Price Data[/b] file"><i class="fa fa-upload"></i> Upload</a> a file.
                     <input type="hidden" id="hdnDailyPriceFileMissingForToday" value="1" />
                 </div>
             }
         </section>
+
+
+        @if (hasLatestJsPriceDataToday)
+        {
+            <input type="hidden" id="hdnHasLatestJsPriceDataToday" value="1" />
+        <div class="banner banner-warning" data-bind="visible: ($root.hasLatestJsPriceDataForToday() && !$root.ViewingHistorical())" style="display: none;">
+            <i class="fa fa-info-circle"></i> Disabled <strong>Override Prices</strong> because a <a class="btn btn-warning" href="@Url.Action("Details", "File")/@(latestJsPriceDataUpload.FileUploadId)"><i class="fa fa-file"></i> Latest Js Price Data</a> file  has been uploaded for today by <strong>@(latestJsPriceDataUpload.UploadedBy)</strong> &mdash; (@Html.FormatFriendlyTimeAgo(latestJsPriceDataUpload.UploadDateTime))
+        </div>
+        }
 
         <hr />
  
@@ -152,7 +165,7 @@
                 </div>
             </div>
 
-            <div class="row summary-tab" data-bind="visible: $root.showingPriceSummaryTab()">
+            <div class="row summary-tab" data-bind="visible: $root.showingPriceSummaryTab()" style="display: none;">
                 <div>
                     <div class="sainsburys-site-stats hide-first-load" data-bind="visible: !$root.busyLoadingData()">
                         @Html.Partial("~/Views/Sites/Pricing/_PriceStats.cshtml")
@@ -297,7 +310,7 @@
                                 <button type="button" class="btn btn-danger btn-xs" data-bind="visible: !$root.ViewingHistorical(), click: removeAllOverrideUnleaded" data-infotip="Remove all [b]Price Overrides[/b] for [b]Unleaded[/b]"><i class="fa fa-power-off"></i></button>
                                 <span class="fuel-sign fuel-sign-unleaded"></span>
 
-                                <!-- ko if: (!$root.ViewingHistorical() && $root.hasDailyPriceFile())-->
+                                <!-- ko if: (!$root.ViewingHistorical() && $root.hasDailyPriceFile() && !$root.hasLatestJsPriceDataForToday())-->
                                 <div style="width: 80%; margin: 4px auto;">
                                     <div class="input-group">
                                         <span class="input-group-addon clickable text-bold" data-bind="text: changeType, click: toggleChangeType" data-infotip="Toggle between [b]+/-[/b] and [b]Override all[/b]"></span>
@@ -314,7 +327,7 @@
                                 <button type="button" class="btn btn-danger btn-xs" data-bind="visible: !$root.ViewingHistorical(), click: removeAllOverrideDiesel" data-infotip="Remove all [b]Price Overrides[/b] for [b]Diesel[/b]"><i class="fa fa-power-off"></i></button>
                                 <span class="fuel-sign fuel-sign-diesel"></span>
 
-                                <!-- ko if: (!$root.ViewingHistorical() && $root.hasDailyPriceFile())-->
+                                <!-- ko if: (!$root.ViewingHistorical() && $root.hasDailyPriceFile() && !$root.hasLatestJsPriceDataForToday())-->
                                 <div style="width: 80%; margin: 4px auto;">
                                     <div class="input-group">
                                         <span class="input-group-addon clickable text-bold" data-bind="text: changeType, click: toggleChangeType" data-infotip="Toggle between [b]+/-[/b] and [b]Override all[/b]"></span>
@@ -331,7 +344,7 @@
                                 <button type="button" class="btn btn-danger btn-xs" data-bind="visible: !$root.ViewingHistorical(), click: removeAllOverrideSuperUnleaded" data-infotip="Remove all [b]Price Overrides[/b] for [b]Super Unleaded[/b]"><i class="fa fa-power-off"></i></button>
                                 <span class="fuel-sign fuel-sign-super-unleaded"></span>
 
-                                <!-- ko if: (!$root.ViewingHistorical() && $root.hasDailyPriceFile())-->
+                                <!-- ko if: (!$root.ViewingHistorical() && $root.hasDailyPriceFile() && !$root.hasLatestJsPriceDataForToday())-->
                                 <div style="width: 80%; margin: 4px auto;">
                                     <div class="input-group">
                                         <span class="input-group-addon clickable text-bold" data-bind="text: changeType, click: toggleChangeType" data-infotip="Toggle between [b]+/-[/b] and [b]Override all[/b]"></span>
@@ -527,11 +540,14 @@
 
                                         <span class="past-override-text" data-bind="visible: $root.ViewingHistorical()"><em data-bind="text: (FuelPrice.OverridePrice || 'Past'), attr: {'data-infotip' : '[i class=&quot;fa fa-clock&quot;][/i] Historical [b]Override Price[/b] of [em]' + FuelPrice.OverridePrice() + '[/em]'}"></em></span>
 
-                                        <input type="text" data-bind="value: FuelPrice.OverridePrice, visible: (!$root.ViewingHistorical() && $root.hasDailyPriceFile()),
+                                        <input type="text" data-bind="value: FuelPrice.OverridePrice, visible: (!$root.ViewingHistorical() && $root.hasDailyPriceFile() && !$root.hasLatestJsPriceDataForToday()),
                                 id: ('OverridePrice_' + $parent.SiteId + '_' + FuelPrice.FuelTypeId), event:{keyup: changeProp, blur: blurred, focus: focused}, css: ('txtPrice ' + OverrideInputCss()), attr: {'data-infotip': FuelPrice.PriceOverrideInfoTip()}" maxlength="8" />
 
                                         <span class="text-danger no-daily-price-file-icon" data-bind="visible: (!$root.ViewingHistorical() && !$root.hasDailyPriceFile())" data-infotip="No [i]Daily Price File[/i] for Today"><i class="fa fa-times"></i><i class="fa fa-file-o"></i></span>
 
+                                        <span class="text-danger latest-js-price-file-icon" data-bind="visible: (!$root.ViewingHistorical() && $root.hasDailyPriceFile() && $root.hasLatestJsPriceDataForToday())" data-infotip="Disabled Overrides" >
+                                            <i class="fa fa-times"></i>
+                                        </span>
                                     </div>
                                 </td>
 
