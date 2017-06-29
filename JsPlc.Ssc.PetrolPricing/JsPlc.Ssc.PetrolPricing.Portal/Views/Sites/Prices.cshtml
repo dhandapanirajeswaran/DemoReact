@@ -494,6 +494,11 @@
                                 </td>
                                 <td class="col-store-name" style="position: relative;">
                                     <div class="site-name-overlay">
+
+                                        <i class="fa fa-dot-circle-o" data-bind="visible: (PriceMatchType == 1)" data-infotip="[b]Solo Price[/b]"></i>
+                                        <i class="fa fa-flask" data-bind="visible: (PriceMatchType == 2)" data-infotip="[b]Trial Price[/b]"></i>
+                                        <i class="fa fa-clone" data-bind="visible: (PriceMatchType == 3)" data-infotip="[b]Match Competitor[/b]"></i>
+
                                         <span class="site-name" data-bind="text: StoreName"></span>
                                         <div class="hide-hover">
                                             <a role="button" href="#" class="btn btn-default btn-xs competitor-site-link" data-toggle="modal" data-bind="attr:{id: SiteId}, click: getCompetitorPopupDataClick"
