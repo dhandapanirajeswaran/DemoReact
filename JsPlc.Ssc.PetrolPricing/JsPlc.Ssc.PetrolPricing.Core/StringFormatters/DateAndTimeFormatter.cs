@@ -26,24 +26,32 @@ namespace JsPlc.Ssc.PetrolPricing.Core.StringFormatters
 
             if (totalSeconds < 5)
                 return "a few seconds";
-            if (totalSeconds < 60)
-                return "less than 1 minute";
-            if (totalSeconds == 60)
+            if (totalSeconds <= 60)
                 return "1 minute ago";
 
             if (timeAgo.TotalHours < 1)
             {
                 if (totalSeconds % 60 == 0)
-                    return String.Format("{0} minutes ago", (int)timeAgo.TotalMinutes);
+                    return FormatPlural("{0} minute{1} ago", (int)timeAgo.TotalMinutes);
                 else
-                    return String.Format("{0} minutes {1} seconds ago", (int)timeAgo.TotalMinutes, timeAgo.Seconds);
+                    return FormatPlural("{0} minute{1}", (int)timeAgo.TotalMinutes)
+                        + FormatPlural(" {0} second{1} ago", timeAgo.Seconds);
             }
 
             if (timeAgo.TotalHours < 24)
-                return String.Format("{0} hours ago", (int)timeAgo.TotalHours );
+                return FormatPlural("{0} hour{1} ago", (int)timeAgo.TotalHours);
             if (wholeYearsAgo < 1)
-                return String.Format("{0} days ago", (int)timeAgo.TotalDays);
-            return String.Format("{0} years and {1} days ago", wholeYearsAgo, ((int)timeAgo.TotalDays) % 365);
+                return FormatPlural("{0} day{1} ago", (int)timeAgo.TotalDays);
+            return FormatPlural("{0} year{1}", wholeYearsAgo)
+                + FormatPlural(" and {0} day{1} ago", ((int)timeAgo.TotalDays) % 365);
+        }
+
+        private static string FormatPlural(string format, int value)
+        {
+            if (value == 1)
+                return String.Format(format, value, "");
+            else
+                return String.Format(format, value, "s");
         }
     }
 }
