@@ -135,15 +135,17 @@
         ];
 
         function sortCompareNumbers(number1, number2) {
-            return pricingSorting.desc
-                ? Number(number1) < Number(number2)
-                : Number(number1) > Number(number2);
+            var value1 = toNumberOrZero(number1),
+                value2 = toNumberOrZero(number2),
+                sign = (value1 > value2) - (value1 < value2);
+            return pricingSorting.desc ? 0 - sign : sign;
         };
 
         function sortCompareStrings(string1, string2) {
-            return pricingSorting.desc
-                ? string1.toUpperCase() < string2.toUpperCase()
-                : string1.toUpperCase() > string2.toUpperCase();
+            var value1 = string1.toUpperCase(),
+                value2 = string2.toUpperCase(),
+                sign = (value1 > value2) - (value1 < value2);
+            return pricingSorting.desc ? 0 - sign : sign;
         };
 
         function sortCompareTodayPrices(todayPrice1, todayPrice2) {
