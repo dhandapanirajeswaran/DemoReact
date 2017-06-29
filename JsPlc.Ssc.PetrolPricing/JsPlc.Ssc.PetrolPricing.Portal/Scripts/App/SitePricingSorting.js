@@ -3,7 +3,7 @@
         "use strict";
 
         var pricingSorting = {
-            index: 0,
+            index: 2,
             desc: false,
             paused: false
         };
