@@ -298,6 +298,11 @@ table.competitorTable > tbody > .competitor-row  {
 .site-row.row-override-increase-exceeds {
     background: #fcf8e3;
 }
+.site-row.row-override-increase-exceeds td:nth-child(10),
+.site-row.row-override-increase-exceeds td:nth-child(11),
+.site-row.row-override-increase-exceeds td:nth-child(12) {
+    background: #dcd8c3;
+}
 
 .site-row.has-checked-email {
     background-color: #dfd;
@@ -308,6 +313,83 @@ table.competitorTable > tbody > .competitor-row  {
 .site-row .col-editing {
     border-bottom: 3px solid #000;
     font-weight: bold;
+}
+
+.pricing-sort-row th {
+    text-align: center;
+    background-color: #fff;
+    color: #eee;
+    border-right: 1px solid #eee;
+    line-height: 1.25em;
+    padding: 0;
+    border-top: 1px solid #eee;
+}
+.pricing-sort-row th:after {
+    content: ".";
+    color: transparent;
+}
+
+.pricing-sort-row:hover th {
+    background-color: #eee;
+    border-right-color: #666;
+    border-top-color: #666;
+    color: #666;
+}
+
+.pricing-sort-row th:hover {
+    background-color: #337ab7;
+    color: #fff;
+    cursor: pointer;
+}
+
+.pricing-sort-row .sort-asc,
+.pricing-sort-row .sort-desc {
+    background-color: #ccc;
+    color: #666;
+    border-right: 1px solid #666;
+}
+
+.pricing-sort-row .sort-paused {
+    background-color: #910048;
+    color: #fff;
+    border-right: 1px solid #666;
+}
+
+.pricing-sort-row .sort-paused::before {
+    content: "Paused";
+    color: #fff;
+    position: absolute;
+    margin-left: -1.5em;
+}
+
+
+.pricing-sort-row .unsorted:hover::before,
+.pricing-sort-row .sort-asc::before {
+    content: "";
+    border: 8px solid #000;
+    border-color: transparent transparent #000 transparent;
+    position: absolute;
+    margin-top: -4px;
+    margin-left: -8px;
+}
+
+.pricing-sort-row .sort-desc::before {
+    content: "";
+    border: 8px solid #000;
+    border-color: #000 transparent transparent transparent;
+    position: absolute;
+    margin-top: 4px;
+    margin-left: -8px;
+}
+
+.sorting-pause-message {
+    background: #b12068;
+    color: #fff;
+    padding: 4px 1em;
+    border-radius: 4px;
+    margin: 4px 1em;
+    text-align: center;
+    font-size: 110%;
 }
 
 .pricing-grid .site-row .price-movement-filter-match {
@@ -905,3 +987,4 @@ table.competitorTable > tbody > .competitor-row  {
 .text-today {color: #999;}
 
 .no-daily-price-file-icon {margin-left: 1.5em;}
+

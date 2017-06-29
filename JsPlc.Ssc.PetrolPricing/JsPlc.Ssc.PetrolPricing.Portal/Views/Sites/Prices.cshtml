@@ -30,7 +30,7 @@
             <i class="fa fa-gbp"></i> Market comparison and planner
 
             <span class="historical-banner font75pc" data-bind="visible: $root.ViewingHistorical">
-                <i class="fa fa-clock-o"></i> <strong>Note:</strong> You are viewing Historical Data.
+                <i class="fa fa-clock-o"></i> <strong>Note:</strong> You are viewing Historical Data &mdash; You cannot change any Override prices.
             </span>
         </h1>
 
@@ -424,6 +424,25 @@
                             </th>
                         </tr>
 
+                        <!-- row: #5 -->
+                        <tr class="pricing-sort-row">
+                            <th class="sortable" data-infotip-dock="below" data-infotip="Click to sort by [br /][b]Store No[/b]" data-bind="click: $root.sortByColumn0"></th>
+                            <th class="sortable" data-infotip-dock="below" data-infotip="Click to sort by [br /][b]Has Email[/b]" data-bind="click: $root.sortByColumn1"></th>
+                            <th class="sortable sort-asc" data-infotip-dock="below" data-infotip="Click to sort by [br /][b]Store Name[/b]" data-bind="click: $root.sortByColumn2"></th>
+                            <th class="sortable" data-infotip-dock="below" data-infotip="Click to sort by [br /][b]Store Town[/b]" data-bind="click: $root.sortByColumn3"></th>
+                            <th class="sortable" data-infotip-dock="below" data-infotip="Click to sort by [br /][b]Cat No[/b]" data-bind="click: $root.sortByColumn4"></th>
+                            <th class="sortable" data-infotip-dock="below" data-infotip="Click to sort by [br /][b]PFS No[/b]" data-bind="click: $root.sortByColumn5"></th>
+                            <th class="sortable" data-infotip-dock="below" data-infotip="Click to sort by [br /][b]Unleaded Today Price[/b]" data-bind="click: $root.sortByColumn6"></th>
+                            <th class="sortable" data-infotip-dock="below" data-infotip="Click to sort by [br /][b]Unleaded Tomorrow Price[/b]" data-bind="click: $root.sortByColumn7"></th>
+                            <th class="sortable" data-infotip-dock="below" data-infotip="Click to sort by [br /][b]Unleaded Price Change[/b]" data-bind="click: $root.sortByColumn8"></th>
+                            <th class="sortable" data-infotip-dock="below" data-infotip="Click to sort by [br /][b]Diesel Today Price[/b]" data-bind="click: $root.sortByColumn9"></th>
+                            <th class="sortable" data-infotip-dock="below" data-infotip="Click to sort by [br /][b]Diesel Tomorrow Price[/b]" data-bind="click: $root.sortByColumn10"></th>
+                            <th class="sortable" data-infotip-dock="below" data-infotip="Click to sort by [br /][b]Diesel Price Change[/b]" data-bind="click: $root.sortByColumn11"></th>
+                            <th class="sortable" data-infotip-dock="below" data-infotip="Click to sort by [br /][b]Super-Unleaded Today Price[/b]" data-bind="click: $root.sortByColumn12"></th>
+                            <th class="sortable" data-infotip-dock="below" data-infotip="Click to sort by [br /][b]Super-Unleaded Tomorrow Price[/b]" data-bind="click: $root.sortByColumn13"></th>
+                            <th class="sortable" data-infotip-dock="below" data-infotip="Click to sort by [br /][b]Super-Unleaded Price Change[/b]" data-bind="click: $root.sortByColumn14"></th>
+                        </tr>
+
                     </thead>
                 </table>
                 <!-- end of grid header -->
@@ -452,7 +471,7 @@
                     <table class="pricing-grid">
                         <tbody>
                             <!-- JS Store DataRows -->
-                            <!-- ko foreach: sites -->
+                            <!-- ko foreach: sites.sort($root.pricingColumnSorter) -->
                             <tr class="row site-row" role="tab" data-bind="id:('Heading' + SiteId), attr: {id: 'SiteHeading' + SiteId, 'data-price-change-signs': (priceChangeSigns())}, css: (siteRowCss() + (hiddenByPriceMovementFilter() ? ' hide' : ''))">
                                 <td class="col-store-no text-center" data-bind="text: StoreNo"></td>
                                 <!-- Email envelope... -->
@@ -538,7 +557,14 @@
                 </div>
 
                 <div class="row" style="margin-top: 4px; padding-top: 4px; border-top: 1px solid #ccc;">
-                    <div class="col-md-3 col-md-offset-9">
+                    <div class="col-md-9 text-danger">
+                        <div class="sorting-pause-message" data-bind="visible: $root.sortHasBeenPaused()" style="display: none;">
+                            <i class="fa fa-warning"></i>
+                            <strong>Note:</strong> Sorting has been paused because an <strong>Override Price</strong> has been edited.
+                            <button type="button" class="btn btn-sm btn-danger" data-bind="click: $root.resumeSorting"><i class="fa fa-sort"></i> Resume</button>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
                         <div class="btn-group pull-right" role="group">
                             <button type="button" class="btn btn-sm btn-primary" data-click="setExpandMode" data-mode="collapsed" data-states="expanded,collapsed" data-target="#PricingPanelScroller" data-message="Price grid collapsed" data-infotip="Collapse the Pricing Grid"><i class="fa fa-toggle-up"></i> Collapse</button>
                             <button type="button" class="btn btn-sm" data-click="setExpandMode" data-mode="expanded" data-states="expanded,collapsed" data-target="#PricingPanelScroller" data-message="Price grid expanded" data-infotip="Expand the Pricing Grid"><i class="fa fa-toggle-down"></i> Expand</button>

@@ -43,15 +43,10 @@
             "validation": "App/validation",
             "EasyTemplate": "App/EasyTemplate",
             "PriceStats": "App/pricestats",
-
-            //"ko-binding-handlers": "App/ko-binding-handlers",
-
-            //"RegisterKoComponents": "App/kocomponents/RegisterKoComponents",
-
             "EditInPlace": "App/EditInPlace/edit-in-place",
-
             "driveTimeMarkup": "App/driveTimeMarkup",
             "DriveTimeChart": "App/DriveTimeChart",
+            "SitePricingSorting": "App/SitePricingSorting",
 
             // popups
             "SiteEmailPopup" : "App/Popups/SiteEmailPopup",
