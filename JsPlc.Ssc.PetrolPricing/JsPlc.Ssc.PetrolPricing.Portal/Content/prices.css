@@ -995,3 +995,55 @@ table.competitorTable > tbody > .competitor-row  {
     width: 3em;
     text-align: center;
 }
+
+/* excluded brands */
+.excluded-brands-status {
+    margin-left: 1em;
+    padding: 1px 1em;
+    text-align: left;
+    position: relative;
+    display: inline-block;
+}
+
+.excluded-brands-status.status-saved::before,
+.excluded-brands-status.status-saving::before,
+.excluded-brands-status.status-unsaved::before,
+.excluded-brands-status.status-error::before {
+    content: "";
+    position: absolute;
+    border-width: 0.75em;
+    border-style: solid;
+    margin-left: -2.5em;
+}
+
+.status-saved::before {
+    border-right-color: #5cb85c;
+}
+.excluded-brands-status.status-saved {
+    background-color: #5cb85c;
+    color: #fff;
+}
+
+.status-unsaved::before {
+    border-right-color: #f0ad4e;
+}
+.excluded-brands-status.status-unsaved {
+    background-color: #f0ad4e;
+    color: #fff;
+}
+
+.status-saving::before {
+    border-right-color: #5bc0de;
+}
+.excluded-brands-status.status-saving {
+    background-color: #5bc0de;
+    color: #fff;
+}
+
+.status-error::before {
+    border-right-color:  #d9534f;
+}
+.excluded-brands-status.status-error {
+    background-color: #d9534f;
+    color: #fff;
+}
