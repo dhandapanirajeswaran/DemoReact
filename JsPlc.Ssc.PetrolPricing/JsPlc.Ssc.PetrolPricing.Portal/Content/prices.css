@@ -1013,7 +1013,7 @@ table.competitorTable > tbody > .competitor-row  {
     position: absolute;
     border-width: 0.75em;
     border-style: solid;
-    margin-left: -2.5em;
+    margin-left: -2.45em;
 }
 
 .status-saved::before {
