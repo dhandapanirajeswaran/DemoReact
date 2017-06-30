@@ -305,7 +305,10 @@ AllFuelPrices AS (
 			ELSE cal.AutoPrice + @Markup_For_Super_Unleaded
 		END,
 		COALESCE(super.OverridePrice, 0),
-		cal.TodayPrice + @Markup_For_Super_Unleaded, -- markup Super Unleaded
+		CASE WHEN cal.TodayPrice = 0
+			THEN 0
+			ELSE cal.TodayPrice + @Markup_For_Super_Unleaded
+		END, -- markup Super Unleaded
 		super.Markup,
 		super.CompetitorName,
 		super.IsTrailPrice,
