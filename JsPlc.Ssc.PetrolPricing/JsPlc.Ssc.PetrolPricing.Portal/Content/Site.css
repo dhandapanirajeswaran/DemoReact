@@ -742,6 +742,24 @@ input[type=text].mono-font {
     }   
 }
 
+
+.pulse-opacity {
+    -webkit-animation: pulse-opacity 3s infinite ease-in-out;
+}
+
+@-webkit-keyframes pulse-opacity {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0;
+    }   
+    100% {
+        opacity: 1;
+    }   
+}
+
+
 .text-bold {font-weight: bold;}
 
 .badge-lg {font-size: 125%;}
