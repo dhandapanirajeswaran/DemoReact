@@ -611,6 +611,27 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
             }
         }
 
+        [System.Web.Http.HttpGet]
+        [System.Web.Http.Route("api/TriggerDailyPriceRecalculation")]
+        public async Task<IHttpActionResult> TriggerDailyPriceRecalculation([FromUri] long day)
+        {
+            try
+            {
+                var when = new DateTime(day);
+                _priceService.TriggerDailyPriceRecalculation(when);
+                var result = new StatusViewModel()
+                {
+                    SuccessMessage = "Triggered Daily Price Recalculation"
+                };
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex);
+                return new ExceptionResult(ex, this);
+            }
+        }
+
         #region private methods
         private DateTime ParseDateTime(string datetime)
         {

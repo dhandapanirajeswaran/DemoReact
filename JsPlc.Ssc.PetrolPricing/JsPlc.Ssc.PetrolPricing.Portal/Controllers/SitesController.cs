@@ -1066,6 +1066,13 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             return jsonResult;
         }
 
+        [System.Web.Mvc.HttpGet]
+        public ActionResult TriggerDailyPriceRecalculation()
+        {
+            var result = _serviceFacade.TriggerDailyPriceRecalculation(DateTime.Now.Date);
+            return base.StandardJsonResultMessage(result);
+        }
+
         private void PopulatePageData(SiteViewModel model)
         {
             var pagedata = model.PageData;

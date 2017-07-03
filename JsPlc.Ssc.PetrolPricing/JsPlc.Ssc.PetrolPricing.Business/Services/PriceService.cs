@@ -332,6 +332,11 @@ namespace JsPlc.Ssc.PetrolPricing.Business
             return _db.GetPriceSnapshotForDay(day);
         }
 
+        public void TriggerDailyPriceRecalculation(DateTime day)
+        {
+            _db.MarkPriceCacheOutdatedForDay(day);
+        }
+
         #region Private Methods
         /// <summary>
         /// Demo 22/12/15 new requirement: Create SitePrices for SuperUnleaded with Markup

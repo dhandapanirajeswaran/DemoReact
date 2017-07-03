@@ -24,5 +24,6 @@ namespace JsPlc.Ssc.PetrolPricing.Business
         void ResumePriceCacheForDay(DateTime day);
         void SuspendPriceCacheForDay(DateTime day);
         PriceSnapshotViewModel GetPriceSnapshotForDay(DateTime day);
+        void TriggerDailyPriceRecalculation(DateTime day);
     }
 }

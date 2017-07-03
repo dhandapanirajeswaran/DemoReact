@@ -4,8 +4,8 @@
     }
 });
 
-define(["SitePricing", "notify", "busyloader", "downloader", "infotips", "cookieSettings"],
-    function (sitepricing, notify, busyloader, downloader, infotips, cookieSettings) {
+define(["SitePricing", "notify", "busyloader", "downloader", "infotips", "cookieSettings", "bootbox", "PetrolPricingService"],
+    function (sitepricing, notify, busyloader, downloader, infotips, cookieSettings, bootbox, petrolPricingService) {
 
         $('.datepicker')
             .datepicker({
@@ -145,6 +145,49 @@ define(["SitePricing", "notify", "busyloader", "downloader", "infotips", "cookie
         };
 
         $("#viewingStoreNo, #viewingStoreName, #viewingStoreNo, #viewingStoreTown").change(disableExportButtons);
+
+
+        $('#btnRecalculateDailyPrices').off().click(function () {
+            bootbox.confirm({
+                title: '<i class="fa fa-question"></i> Reset Confirmation ',
+                message: 'Are you sure you wish to recalculate the <strong>Daily Prices</strong> ?<br />'
+                    + '<br />'
+                    + '<strong>Note:</strong> This can take a <strong>1 - 2 minutes</strong> to perform the recalculation.',
+                buttons: {
+                    confirm: {
+                        label: '<i class="fa fa-check"></i> Yes',
+                        className: 'btn btn-danger'
+                    },
+                    cancel: {
+                        label: '<i class="fa fa-times"></i> No',
+                        className: 'btn btn-default'
+                    }
+                },
+                callback: function (result) {
+                    if (result) {
+                        triggerRecalculation();
+                    }
+                }
+            });
+        });
+
+        function triggerRecalculation() {
+
+            function failure() {
+                notify.error('Unable to trigger Daily Price recalculation');
+            };
+
+            function success() {
+                setTimeout(function () {
+                    $("#btnGO").click();
+                }, 1000);
+
+                notify.info('Daily Price recalculation started...');
+            };
+
+            petrolPricingService.triggerDailyPriceRecalculation(success, failure);
+        };
+
 
         function docReady() {
             applyUserSettings();

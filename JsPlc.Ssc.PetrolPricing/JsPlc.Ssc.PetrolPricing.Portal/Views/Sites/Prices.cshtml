@@ -38,6 +38,8 @@
             <span class="historical-banner font75pc" data-bind="visible: $root.ViewingHistorical">
                 <i class="fa fa-clock-o"></i> <strong>Note:</strong> You are viewing Historical Data &mdash; You cannot change any Override prices.
             </span>
+
+            <button id="btnRecalculateDailyPrices" type="button" class="btn btn-danger pull-right" data-bind="visible: !$root.ViewingHistorical()" data-infotip="Recalculate the [b]Daily Prices[/b]"><i class="fa fa-power-off"></i> Recalculate Daily Prices</button>
         </h1>
 
         <section data-bind="visible: !$root.ViewingHistorical()">

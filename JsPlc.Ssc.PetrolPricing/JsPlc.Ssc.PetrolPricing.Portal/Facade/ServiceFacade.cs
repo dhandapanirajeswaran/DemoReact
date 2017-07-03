@@ -1331,6 +1331,12 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             return CallAndCatchAsyncGet<PriceSnapshotViewModel>("GetPriceSnapshotForDay", apiUrl);
         }
 
+        public StatusViewModel TriggerDailyPriceRecalculation(DateTime day)
+        {
+            var apiUrl = String.Format("api/TriggerDailyPriceRecalculation/?day={0}", day.Ticks);
+            return CallAndCatchAsyncGet<StatusViewModel>("TriggerDailyPriceRecalculation", apiUrl);
+        }
+
         #region private methods
 
         private T CallAndCatchAsyncGet<T>(string methodName, string apiUrl)
