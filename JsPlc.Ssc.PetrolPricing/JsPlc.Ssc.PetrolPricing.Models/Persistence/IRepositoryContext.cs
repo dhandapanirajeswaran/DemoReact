@@ -1,6 +1,8 @@
 ﻿using System.Data.Entity;
 using JsPlc.Ssc.PetrolPricing.Models;
 using System.Collections.Generic;
+using JsPlc.Ssc.PetrolPricing.Models.ViewModels;
+using System;
 
 namespace JsPlc.Ssc.PetrolPricing.Models.Persistence
 {
@@ -25,5 +27,9 @@ namespace JsPlc.Ssc.PetrolPricing.Models.Persistence
 
         IDbSet<DailyPrice> DailyPrices { get; set; }
         IEnumerable<ContactDetail> GetContactDetails();
+
+        void ResumePriceCacheForDay(DateTime day);
+        void SuspendPriceCacheForDay(DateTime day);
+        PriceSnapshotViewModel GetPriceSnapshotForDay(DateTime day);
     }
 }

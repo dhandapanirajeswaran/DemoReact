@@ -18,6 +18,8 @@ AS
 	UNION ALL SELECT 'LatestPrice', (SELECT COUNT(1) FROM dbo.LatestPrice)
 	UNION ALL SELECT 'PPUser', (SELECT COUNT(1) FROM dbo.PPUser)
 	UNION ALL SELECT 'PPUserPermissions', (SELECT COUNT(1) FROM dbo.PPUserPermissions)
+	UNION ALL SELECT 'PriceSnapshot', (SELECT COUNT(1) FROM dbo.PriceSnapshot)
+	UNION ALL SELECT 'PriceSnapshotRow', (SELECT COUNT(1) FROM dbo.PriceSnapshotRow)
 	UNION ALL SELECT 'QuarterlyFileUpload', (SELECT COUNT(1) FROM dbo.QuarterlyFileUpload)
 	UNION ALL SELECT 'QuarterlyUploadArchive', (SELECT COUNT(1) FROM dbo.QuarterlyUploadArchive)
 	UNION ALL SELECT 'QuarterlyUploadStaging', (SELECT COUNT(1) FROM dbo.QuarterlyUploadStaging)

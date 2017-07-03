@@ -90,7 +90,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
         public List<FuelPriceViewModel> CalculateFuelPricesForSitesAndDate(DateTime forDate, string siteIds)
         {
-            const string sproc = "spCalculateSitePricesForDate";
+            const string sproc = "spGetCachedCalculatedPricesForDate";
 
             var parameters = new
             {
@@ -389,6 +389,55 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                 BrandSettings = DapperHelper.QueryList<BrandItemSettingsViewModel>(this, sprocName, parameters)
             };
             return model;
+        }
+
+        public void ResumePriceCacheForDay(DateTime day)
+        {
+            const string sprocName = "spResumePriceCacheForDay";
+            var parameters = new
+            {
+                @ForDate = day.Date
+            };
+            DapperHelper.Execute(this, sprocName, parameters);
+        }
+        public void SuspendPriceCacheForDay(DateTime day)
+        {
+            const string sprocName = "spSuspendPriceCacheForDay";
+            var parameters = new
+            {
+                @ForDate = day.Date
+            };
+            DapperHelper.Execute(this, sprocName, parameters);
+        }
+
+        public PriceSnapshotViewModel GetPriceSnapshotForDay(DateTime day)
+        {
+            const string sprocName = "spGetPriceSnapshotForDay";
+            var parameters = new
+            {
+                @ForDate = day.Date
+            };
+            return DapperHelper.QueryFirstOrDefault<PriceSnapshotViewModel>(this, sprocName, parameters);
+        }
+
+        public void MarkPriceCacheOutdatedForDay(DateTime day)
+        {
+            const string sprocName = "spMarkPriceCacheOutdatedForDay";
+            var parameters = new
+            {
+                @ForDate = day.Date
+            };
+            DapperHelper.Execute(this, sprocName, parameters);
+        }
+
+        public void PurgePriceSnapshots(int daysAgo)
+        {
+            const string sprocName = "spDataCleansePriceSnapshots";
+            var parameters = new
+            {
+                @DaysAgo = daysAgo
+            };
+            DapperHelper.Execute(this, sprocName, parameters);
         }
     }
 }

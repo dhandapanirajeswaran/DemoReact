@@ -56,6 +56,7 @@
             "EmailTemplateService": "App/Services/EmailTemplateService",
             "DriveTimeMarkupService": "App/Services/DriveTimeMarkupService",
 
+
             //View scripts
             "SitePricing": "App/ViewScripts/SitePricing",
             "competitorPricePopup": "App/ViewScripts/CompetitorPricePopup",
@@ -64,7 +65,10 @@
             "FileUpload": "App/ViewScripts/FileUpload",
             "Diagnostics": "App/ViewScripts/Diagnostics",
             "SiteMaintenance": "App/ViewScripts/SiteMaintenance",
-            "DriveTime": "App/ViewScripts/DriveTime"
+            "DriveTime": "App/ViewScripts/DriveTime",
+
+            // Page scripts
+            "Prices": "App/Prices"
         },
         shim: {
             "bootstrap-datepicker": { deps: ["jquery", "bootstrap"] },

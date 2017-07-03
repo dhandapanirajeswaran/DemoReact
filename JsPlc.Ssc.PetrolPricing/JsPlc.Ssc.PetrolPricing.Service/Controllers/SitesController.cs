@@ -25,6 +25,7 @@ using AutoMapper;
 using JsPlc.Ssc.PetrolPricing.Core;
 using JsPlc.Ssc.PetrolPricing.Core.Interfaces;
 using JsPlc.Ssc.PetrolPricing.Business.Interfaces;
+using System.Globalization;
 
 namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
 {
@@ -593,5 +594,29 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
                 return new ExceptionResult(ex, this);
             }
         }
+
+        [System.Web.Http.HttpGet]
+        [System.Web.Http.Route("api/GetPriceSnapshotForDay/")]
+        public async Task<IHttpActionResult> GetPriceSnapshotForDay([FromUri] long day)
+        {
+            try
+            {
+                var result = _priceService.GetPriceSnapshotForDay(new DateTime(day));
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex);
+                return new ExceptionResult(ex, this);
+            }
+        }
+
+        #region private methods
+        private DateTime ParseDateTime(string datetime)
+        {
+            return DateTime.ParseExact(datetime, "yyyyMMddThhmmZ", CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal);
+        }
+        #endregion
+
     }
 }

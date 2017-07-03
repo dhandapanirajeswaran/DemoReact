@@ -319,6 +319,19 @@ namespace JsPlc.Ssc.PetrolPricing.Business
             }
         }
 
+        public void ResumePriceCacheForDay(DateTime day)
+        {
+            _db.ResumePriceCacheForDay(day);
+        }
+        public void SuspendPriceCacheForDay(DateTime day)
+        {
+            _db.SuspendPriceCacheForDay(day);
+        }
+        public PriceSnapshotViewModel GetPriceSnapshotForDay(DateTime day)
+        {
+            return _db.GetPriceSnapshotForDay(day);
+        }
+
         #region Private Methods
         /// <summary>
         /// Demo 22/12/15 new requirement: Create SitePrices for SuperUnleaded with Markup

@@ -22,6 +22,7 @@ using System.Net.Mail;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
+using JsPlc.Ssc.PetrolPricing.Core.ExtensionMethods;
 
 namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
 {
@@ -1322,6 +1323,12 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
         {
             var apiUrl = String.Format("api/UpdateBrandSettings");
             return CallAndCatchAsyncPost<StatusViewModel, BrandsSettingsUpdateViewModel>("UpdateBrandSettings", apiUrl, model);
+        }
+
+        public PriceSnapshotViewModel GetPriceSnapshotForDay(DateTime day)
+        {
+            var apiUrl = String.Format("api/GetPriceSnapshotForDay/?day={0}", day.Ticks);
+            return CallAndCatchAsyncGet<PriceSnapshotViewModel>("GetPriceSnapshotForDay", apiUrl);
         }
 
         #region private methods

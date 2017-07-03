@@ -1,6 +1,7 @@
 ﻿@using JsPlc.Ssc.PetrolPricing.Models
 @using JsPlc.Ssc.PetrolPricing.Models.Enums
 @using JsPlc.Ssc.PetrolPricing.Portal.Helper.Extensions
+@using JsPlc.Ssc.PetrolPricing.Models.ViewModels
 @model JsPlc.Ssc.PetrolPricing.Models.SiteViewModel
 
 @{
@@ -8,7 +9,6 @@
 
     var hasDailyPriceDataFile = false;
     var hasDailyPriceDataFileForToday = false;
-
 
     var lastDailyPriceDataUpload = Model.RecentFileUploads.Files.FirstOrDefault(x => x.UploadTypeId == 1 && x.ImportStatusId == 10);
     if (lastDailyPriceDataUpload != null)
@@ -19,10 +19,12 @@
 
     var latestJsPriceDataUpload = Model.RecentFileUploads.Files.FirstOrDefault(x => x.UploadTypeId == 3 && x.ImportStatusId == 10 && x.UploadDateTime.Date == DateTime.Now.Date);
     var hasLatestJsPriceDataToday = latestJsPriceDataUpload != null;
+
 }
 
 <link href="~/Content/prices.css" rel="stylesheet" />
 <link href="~/Scripts/App/EditInPlace/edit-in-place.css" rel="stylesheet" />
+
 
 @using (Html.BeginForm())
 {
@@ -67,8 +69,6 @@
         </div>
         }
 
-        <hr />
- 
         <!-- competitor notes popup -->
         @Html.Partial("~/Views/Sites/Pricing/_CompetitorNotePopup.cshtml", Model)
         <!-- end competitor notes popup within knockout -->
@@ -232,12 +232,18 @@
                 <div class="clearfix"></div>
             </div>
 
-            <div style="display:block;" class="alert alert-warning busy-loader" data-bind="visible: $root.busyLoadingData()">
-                <div class="col-md-1 text-center"><i class="fa fa-clock-o fa-2x spinner"></i></div>
-                <div class="col-md-10 text-center">
-                    <strong>Loading Sales Pricing information. Please wait...</strong>
+            <div style="display:block;" class="" data-bind="visible: $root.busyLoadingData()">
+
+                <div class="fullscreen-dull"></div>
+
+                <div class="loading-indicator">
+                    <div class="col-md-1 text-center"><i class="fa fa-clock-o fa-4x spinner"></i></div>
+                    <div class="col-md-10 text-center font125pc">
+                        <p><strong>Loading Sales Pricing information. </strong></p>
+                        <p class="pulse-size">Please wait..</p>
+                        <div class="font150pc text-info" data-bind="html: $root.loadingETAMessage"></div>
+                    </div>
                 </div>
-                <div class="clearfix"></div>
             </div>
 
             <div class="table-responsive" onclick="IsSitePriceFormClicked=1;" style="width: 1280px;">
@@ -546,7 +552,7 @@
                                         <span class="past-override-text" data-bind="visible: $root.ViewingHistorical()"><em data-bind="text: (FuelPrice.OverridePrice || 'Past'), attr: {'data-infotip' : '[i class=&quot;fa fa-clock&quot;][/i] Historical [b]Override Price[/b] of [em]' + FuelPrice.OverridePrice() + '[/em]'}"></em></span>
 
                                         <input type="text" data-bind="value: FuelPrice.OverridePrice, visible: (!$root.ViewingHistorical() && $root.hasDailyPriceFile() && !$root.hasLatestJsPriceDataForToday()),
-                                id: ('OverridePrice_' + $parent.SiteId + '_' + FuelPrice.FuelTypeId), event:{keyup: changeProp, blur: blurred, focus: focused}, css: ('txtPrice ' + OverrideInputCss()), attr: {'data-infotip': FuelPrice.PriceOverrideInfoTip()}" maxlength="8" />
+        id: ('OverridePrice_' + $parent.SiteId + '_' + FuelPrice.FuelTypeId), event:{keyup: changeProp, blur: blurred, focus: focused}, css: ('txtPrice ' + OverrideInputCss()), attr: {'data-infotip': FuelPrice.PriceOverrideInfoTip()}" maxlength="8" />
 
                                         <span class="text-danger no-daily-price-file-icon" data-bind="visible: (!$root.ViewingHistorical() && !$root.hasDailyPriceFile())" data-infotip="No [i]Daily Price File[/i] for Today"><i class="fa fa-times"></i><i class="fa fa-file-o"></i></span>
 
@@ -573,7 +579,7 @@
                     </table>
 
                     <!-- Competitor Sites price grid -->
-                    @Html.Partial("~/Views/Sites/Pricing/_CompetitorSitePriceGridTable.cshtml", Model)
+                                @Html.Partial("~/Views/Sites/Pricing/_CompetitorSitePriceGridTable.cshtml", Model)
                     <!-- end Competitor Sites price grid -->
                 </div>
 
@@ -597,5 +603,12 @@
         </form>
     </div>
     <br />
-}
-<script src="~/Scripts/App/prices.js"></script>
+                            }
+<script>
+    require(["Prices"],
+        function(prices) {
+            var pagedataJSON = '@Html.ToJson(Model.PageData)';
+            prices.init(pagedataJSON);
+        }
+    );
+</script>

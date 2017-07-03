@@ -254,7 +254,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
         /// </summary>
         /// <param name="msg"></param>
         /// <returns></returns>
-        public ActionResult Prices(int x = 0, string msg = "")
+        public ActionResult Prices(int x = 0, string msg = "", string date = "")
         {
             // Display list of existing sites along with their status
             ViewBag.Message = msg;
@@ -263,7 +263,10 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 
             SiteViewModel model = new SiteViewModel();
 
+            var requestDate = String.IsNullOrEmpty(date) ? DateTime.Now.Date : DateTime.Parse(date);
+
             model.RecentFileUploads = _serviceFacade.GetRecentFileUploadSummary();
+            model.PriceSnapshot = _serviceFacade.GetPriceSnapshotForDay(requestDate) ?? new PriceSnapshotViewModel();
 
             // model.ExcludeBrands = _serviceFacade.GetBrands().ToList();
 
@@ -272,6 +275,8 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             var excludebrands = _serviceFacade.GetExcludeBrands();
             model.ExcludeBrands = excludebrands != null ? excludebrands.ToList() : null;
             model.ExcludeBrandsOrg = model.ExcludeBrands;
+
+            PopulatePageData(model);
 
             return View("Prices", model); // Razor based view
         }
@@ -1059,6 +1064,30 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
                 Data = result
             };
             return jsonResult;
+        }
+
+        private void PopulatePageData(SiteViewModel model)
+        {
+            var pagedata = model.PageData;
+
+            var lastDailyPriceDataUpload = model.RecentFileUploads.Files.FirstOrDefault(x => x.UploadTypeId == 1 && x.ImportStatusId == 10);
+            if (lastDailyPriceDataUpload != null)
+            {
+                pagedata.DailyPriceData.IsMissing = false;
+                pagedata.DailyPriceData.IsOutdated = lastDailyPriceDataUpload.UploadDateTime.Date != DateTime.Now.Date;
+            }
+
+            var latestJsPriceDataUpload = model.RecentFileUploads.Files.FirstOrDefault(x => x.UploadTypeId == 3 && x.ImportStatusId == 10 && x.UploadDateTime.Date == DateTime.Now.Date);
+            if (latestJsPriceDataUpload != null)
+            {
+                pagedata.LatestPriceData.IsMissing = false;
+            }
+
+            if (model.PriceSnapshot != null)
+            {
+                pagedata.PriceSnapshot.IsActive = model.PriceSnapshot.IsActive;
+                pagedata.PriceSnapshot.IsOutdated = model.PriceSnapshot.IsOutdated;
+            }
         }
     }
 }

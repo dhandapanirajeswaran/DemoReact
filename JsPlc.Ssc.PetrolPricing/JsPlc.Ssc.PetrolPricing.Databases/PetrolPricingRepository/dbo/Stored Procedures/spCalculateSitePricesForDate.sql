@@ -1,6 +1,7 @@
 ﻿CREATE PROCEDURE [dbo].[spCalculateSitePricesForDate] (
 	@forDate DATE,
-	@SiteIds VARCHAR(MAX)
+	@SiteIds VARCHAR(MAX),
+	@PriceSnapshotId INT = NULL
 )
 AS
 BEGIN
@@ -157,7 +158,7 @@ OverridePrices AS (
 		sp.SiteId,
 		CONVERT(DATETIME, @StartOfToday) [DateOfCalc],
 		sp.IsTrailPrice,
-		'OverrideOrSuggested' [PriceSource],
+		'Override' [PriceSource],
 		sp.DateOfCalc [PriceSourceDateTime]
 	FROM
 		SiteFuels st
@@ -326,6 +327,7 @@ AllFuelPrices AS (
 		cal.PriceSource != 'Latest' 
 )
 SELECT
+	@PriceSnapshotId [PriceSnapshotId],
 	afp.SiteId [SiteId],
 	afp.FuelTypeId [FuelTypeId],
 	dbo.fn_RoundTomorrowPriceByPriceChangeVariance(@PriceChangeVarianceThreshold, afp.TodayPrice, afp.AutoPrice) [AutoPrice], -- used for Tomorrow

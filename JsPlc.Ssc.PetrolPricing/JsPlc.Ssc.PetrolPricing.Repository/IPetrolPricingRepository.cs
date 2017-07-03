@@ -295,6 +295,8 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
         bool DataCleanseFileUploads(int daysAgo, string uploadPath);
 
+        void PurgePriceSnapshots(int daysAgo);
+
         SystemSettings GetSystemSettings();
 
         void UpdateSystemSettings(SystemSettings systemSettings);
@@ -328,5 +330,10 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         IEnumerable<DriveTimeMarkup> GetAllDriveTimeMarkups();
 
         StatusViewModel UpdateDriveTimeMarkup(IEnumerable<DriveTimeMarkup> driveTimeMarkups);
+
+        void ResumePriceCacheForDay(DateTime day);
+        void SuspendPriceCacheForDay(DateTime day);
+        PriceSnapshotViewModel GetPriceSnapshotForDay(DateTime day);
+        void MarkPriceCacheOutdatedForDay(DateTime day);
     }
 }

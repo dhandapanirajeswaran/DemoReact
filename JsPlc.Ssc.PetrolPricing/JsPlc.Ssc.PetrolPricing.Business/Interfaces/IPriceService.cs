@@ -20,5 +20,9 @@ namespace JsPlc.Ssc.PetrolPricing.Business
         Task<int> SaveOverridePricesAsync(List<SitePrice> pricesToSave);
 
         Task<StatusViewModel> RecalculateDailyPrices(DateTime when);
+
+        void ResumePriceCacheForDay(DateTime day);
+        void SuspendPriceCacheForDay(DateTime day);
+        PriceSnapshotViewModel GetPriceSnapshotForDay(DateTime day);
     }
 }

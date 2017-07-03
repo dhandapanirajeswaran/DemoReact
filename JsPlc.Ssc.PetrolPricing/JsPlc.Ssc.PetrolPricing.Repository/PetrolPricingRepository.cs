@@ -2134,6 +2134,9 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
         public async Task<int> SaveOverridePricesAsync(List<SitePrice> prices, DateTime? forDate = null)
         {
             if (!forDate.HasValue) forDate = DateTime.Now;
+
+            _context.MarkPriceCacheOutdatedForDay(forDate.Value.Date);
+
             using (var db = new RepositoryContext())
             {
                 foreach (SitePrice p in prices)
@@ -3553,6 +3556,11 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
             return true;
         }
 
+        public void PurgePriceSnapshots(int daysAgo)
+        {
+            _context.PurgePriceSnapshots(daysAgo);
+        }
+
         public SystemSettings GetSystemSettings()
         {
             return _context.SystemSettings.FirstOrDefault();
@@ -3845,6 +3853,24 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
         public BrandsCollectionSummaryViewModel GetBrandCollectionSummary()
         {
             return _context.GetBrandCollectionSummary();
+        }
+
+
+        public void ResumePriceCacheForDay(DateTime day)
+        {
+            _context.ResumePriceCacheForDay(day);
+        }
+        public void SuspendPriceCacheForDay(DateTime day)
+        {
+            _context.SuspendPriceCacheForDay(day);
+        }
+        public PriceSnapshotViewModel GetPriceSnapshotForDay(DateTime day)
+        {
+            return _context.GetPriceSnapshotForDay(day);
+        }
+        public void MarkPriceCacheOutdatedForDay(DateTime day)
+        {
+            _context.MarkPriceCacheOutdatedForDay(day);
         }
 
         #endregion

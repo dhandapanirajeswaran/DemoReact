@@ -16,6 +16,7 @@ namespace JsPlc.Ssc.PetrolPricing.Models
         public SiteSectionType CalledFromSection { get; set; }
 
         public RecentFileUploadSummary RecentFileUploads { get; set; }
+        public PriceSnapshotViewModel PriceSnapshot { get; set; }
 
         public int Id { get; set; }
 
@@ -98,6 +99,8 @@ namespace JsPlc.Ssc.PetrolPricing.Models
         public bool HasNearbySuperUnleadedGrocers { get; set; }
         public bool HasNearbySuperUnleadedGrocersPriceData { get; set; }
 
+        public PricesPageDataJsonViewModel PageData { get; set; }
+
         [Required]
         [Display(Name ="Price Match Type")]
         public PriceMatchType PriceMatchType { get; set; }
@@ -108,6 +111,8 @@ namespace JsPlc.Ssc.PetrolPricing.Models
             this.Competitors = new List<SiteViewModel>();
             this.ExcludeCompetitors = new List<int>();
             this.RecentFileUploads = new RecentFileUploadSummary();
+            this.PriceSnapshot = new PriceSnapshotViewModel();
+            this.PageData = new PricesPageDataJsonViewModel();
         }
     }
     public class SiteEmailViewModel

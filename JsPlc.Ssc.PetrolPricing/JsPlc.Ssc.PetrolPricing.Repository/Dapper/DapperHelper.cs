@@ -64,6 +64,31 @@ namespace JsPlc.Ssc.PetrolPricing.Repository.Dapper
         }
 
         /// <summary>
+        /// Query a single object from a Stored Procecure using Dapper - This returns a new() object if no results returned.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="context"></param>
+        /// <param name="sprocName"></param>
+        /// <param name="parameters"></param>
+        /// <param name="disableDapperLog"></param>
+        /// <param name="commandTimeoutInSeconds"></param>
+        /// <returns></returns>
+        public static T QueryFirstOrDefault<T>(this DbContext context, string sprocName, object parameters, bool disableDapperLog = false, int commandTimeoutInSeconds = 30) where T : class
+        {
+            if (!disableDapperLog)
+                LogDapperCall(sprocName, parameters);
+
+            if (String.IsNullOrWhiteSpace(sprocName))
+                throw new ArgumentException("Stored procedure name cannot be empty");
+
+            var conn = CreateConnection();
+            using (conn)
+            {
+                return conn.QueryFirstOrDefault<T>(sprocName, parameters, null, null, CommandType.StoredProcedure);
+            }
+        }
+
+        /// <summary>
         /// Query a single value (Scalar) from a Stored Procedure using Dapper
         /// </summary>
         /// <param name="context"></param>

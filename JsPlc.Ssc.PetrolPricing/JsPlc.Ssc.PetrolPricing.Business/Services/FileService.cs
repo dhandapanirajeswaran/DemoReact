@@ -896,6 +896,8 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 
         public bool DataCleanseFileUploads(int daysAgo)
         {
+            _db.PurgePriceSnapshots(daysAgo);
+
             return _db.DataCleanseFileUploads(daysAgo, _appSettings.UploadPath);
         }
 

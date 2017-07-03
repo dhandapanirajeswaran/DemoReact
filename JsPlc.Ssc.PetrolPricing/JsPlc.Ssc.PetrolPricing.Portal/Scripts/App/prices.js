@@ -1,160 +1,166 @@
-﻿
-$("#viewingDate,#viewingStoreNo,#viewingStoreName,#viewingStoreTown,#viewingCatNo").keyup(function (event) {
+﻿$("#viewingDate,#viewingStoreNo,#viewingStoreName,#viewingStoreTown,#viewingCatNo").keyup(function (event) {
     if (event.keyCode == 13) {
         $("#btnGO").click();
     }
 });
 
-require(["SitePricing", "notify", "busyloader", "downloader", "infotips", "cookieSettings"],
-    function (prices, notify, busyloader, downloader, infotips, cookieSettings) {
+define(["SitePricing", "notify", "busyloader", "downloader", "infotips", "cookieSettings"],
+    function (sitepricing, notify, busyloader, downloader, infotips, cookieSettings) {
 
-        prices.go();
+        $('.datepicker')
+            .datepicker({
+                language: "en-GB",
+                format: 'dd/mm/yyyy',
+                orientation: 'auto top',
+                autoclose: true,
+                todayHighlight: true,
+                endDate: '1d'
+            }).on('changeDate', function (e) {
+                $("#btnExportAll").prop("disabled", true);
+                $("#btnExportSites").prop("disabled", true);
 
-    $('.datepicker')
-        .datepicker({
-            language: "en-GB",
-            format: 'dd/mm/yyyy',
-            orientation: 'auto top',
-            autoclose: true,
-            todayHighlight: true,
-            endDate: '1d'
-        }).on('changeDate', function (e) {
+                $("#viewingDate").focus();
+            });
+
+        $(window).on('exporting-all-click', function (ev, download) {
+            busyloader.show({
+                message: 'Exporting All - Please wait (ETA: 3 minutes)',
+                showtime: 8000
+            });
+
+            downloader.start({
+                id: download.id,
+                element: '#btnExportAll',
+                complete: function (download) {
+                    notify.success('Export completed - took ' + download.friendlyTimeTaken);
+                }
+            });
+        });
+
+        $("#btnExportAll").click(function () {
+            var downloadId = downloader.generateId(),
+                url = "Sites/ExportPrices"
+                + "?downloadId=" + downloadId
+                + "&date=" + $('#viewingDate').val()
+                + "&storeName=" + $('#viewingStoreName').val()
+                + "&catNo=" + $('#viewingCatNo').val()
+                + "&storeNo=" + $('#viewingStoreNo').val()
+                + "&storeTown=" + $('#viewingStoreTown').val();
+
+            busyloader.show({
+                message: 'Exporting All - Please wait (ETA 3 minutes)',
+                showtime: 4000,
+                dull: true
+            });
+
+            downloader.start({
+                id: downloadId,
+                element: '#btnExportAll',
+                complete: function (download) {
+                    notify.success('Export All completed - took ' + download.friendlyTimeTaken);
+                }
+            });
+
+            window.location.href = getRootSiteFolder() + url;
+        });
+
+        $("#btnExportSites").click(function () {
+            var downloadId = downloader.generateId(),
+                url = "Sites/ExportSiteswithPrices"
+                + "?downloadId=" + downloadId
+                + "&date=" + $('#viewingDate').val()
+                + "&storeName=" + $('#viewingStoreName').val()
+                + "&catNo=" + $('#viewingCatNo').val()
+                + "&storeNo=" + $('#viewingStoreNo').val()
+                + "&storeTown=" + $('#viewingStoreTown').val();
+
+            busyloader.show({
+                message: 'Exporting JS Sites - Please wait. (ETA 10 seconds)',
+                showtime: 2000,
+                dull: true
+            });
+            downloader.start({
+                id: downloadId,
+                element: '#btnExportSites',
+                complete: function (download) {
+                    notify.success('Export JS completed - took ' + download.friendlyTimeTaken);
+                }
+            });
+
+            window.location.href = getRootSiteFolder() + url;
+        });
+
+        $('[data-click="setExpandMode"').off().click(function () {
+            var button = $(this),
+                mode = button.data('mode'),
+                selector = button.data('target'),
+                message = button.data('message');
+
+            redrawExpandModes(selector, mode);
+
+            $(selector).trigger('expand-mode-change', [mode]);
+
+            notify.info(message);
+        });
+
+        function redrawExpandModes(selector, mode) {
+            var panel = $(selector),
+                clones = $('[data-click="setExpandMode"][data-target="' + selector + '"]'),
+                states = clones.first().data('states').split(',');
+
+            clones.each(function () {
+                var item = $(this);
+                if (item.data('mode') == mode)
+                    item.addClass('btn-primary');
+                else
+                    item.removeClass('btn-primary');
+            });
+
+            $.each(states, function (i, value) {
+                if (value == mode)
+                    panel.addClass(value);
+                else
+                    panel.removeClass(value);
+            });
+        };
+
+        $('#PricingPanelScroller').on('expand-mode-change', function (ev, mode) {
+            cookieSettings.write('pricing.expandGrid', mode);
+        });
+
+        function applyPricingPanelScrollerMode() {
+            var selector = '#PricingPanelScroller',
+                mode = cookieSettings.read('pricing.expandGrid', '');
+            if (mode)
+                redrawExpandModes(selector, mode);
+        };
+
+        function applyUserSettings() {
+            applyPricingPanelScrollerMode();
+        };
+
+        function disableExportButtons() {
             $("#btnExportAll").prop("disabled", true);
             $("#btnExportSites").prop("disabled", true);
+        };
 
-            $("#viewingDate").focus();
-        });
+        $("#viewingStoreNo, #viewingStoreName, #viewingStoreNo, #viewingStoreTown").change(disableExportButtons);
 
-    $(window).on('exporting-all-click', function (ev, download) {
-        busyloader.show({
-            message: 'Exporting All - Please wait (ETA: 3 minutes)',
-            showtime: 8000
-        });
+        function docReady() {
+            applyUserSettings();
+        };
 
-        downloader.start({
-            id: download.id,
-            element: '#btnExportAll',
-            complete: function (download) {
-                notify.success('Export completed - took ' + download.friendlyTimeTaken);
-            }
-        });
+        $(docReady);
+
+        function init(pagedata) {
+            sitepricing.init(pagedata);
+        };
+
+        // API
+        return {
+            init: init
+        };
     });
-
-    $("#btnExportAll").click(function () {
-        var downloadId = downloader.generateId(),
-            url = "Sites/ExportPrices"
-            + "?downloadId=" + downloadId
-            + "&date=" + $('#viewingDate').val()
-            + "&storeName=" + $('#viewingStoreName').val()
-            + "&catNo=" + $('#viewingCatNo').val()
-            + "&storeNo=" + $('#viewingStoreNo').val()
-            + "&storeTown=" + $('#viewingStoreTown').val();
-
-        busyloader.show({
-            message: 'Exporting All - Please wait (ETA 3 minutes)',
-            showtime: 4000,
-            dull: true
-        });
-
-        downloader.start({
-            id: downloadId,
-            element: '#btnExportAll',
-            complete: function (download) {
-                notify.success('Export All completed - took ' + download.friendlyTimeTaken);
-            }
-        });
-
-        window.location.href = getRootSiteFolder() + url;
-    });
-
-    $("#btnExportSites").click(function () {
-        var downloadId = downloader.generateId(),
-            url = "Sites/ExportSiteswithPrices"
-            + "?downloadId=" + downloadId
-            + "&date=" + $('#viewingDate').val()
-            + "&storeName=" + $('#viewingStoreName').val()
-            + "&catNo=" + $('#viewingCatNo').val()
-            + "&storeNo=" + $('#viewingStoreNo').val()
-            + "&storeTown=" + $('#viewingStoreTown').val();
-
-        busyloader.show({
-            message: 'Exporting JS Sites - Please wait. (ETA 10 seconds)',
-            showtime: 2000,
-            dull: true
-        });
-        downloader.start({
-            id: downloadId,
-            element: '#btnExportSites',
-            complete: function (download) {
-                notify.success('Export JS completed - took ' + download.friendlyTimeTaken);
-            }
-        });
-
-        window.location.href = getRootSiteFolder() + url;
-    });
-
-    $('[data-click="setExpandMode"').off().click(function () {
-        var button = $(this),
-            mode = button.data('mode'),
-            selector = button.data('target'),
-            message = button.data('message');
-
-        redrawExpandModes(selector, mode);
-
-        $(selector).trigger('expand-mode-change', [mode]);
-
-        notify.info(message);
-    });
-
-    function redrawExpandModes(selector, mode) {
-        var panel = $(selector),
-            clones = $('[data-click="setExpandMode"][data-target="' + selector + '"]'),
-            states = clones.first().data('states').split(',');
-
-        clones.each(function () {
-            var item = $(this);
-            if (item.data('mode') == mode)
-                item.addClass('btn-primary');
-            else
-                item.removeClass('btn-primary');
-        });
-
-        $.each(states, function (i, value) {
-            if (value == mode)
-                panel.addClass(value);
-            else
-                panel.removeClass(value);
-        });
-    };
-
-    $('#PricingPanelScroller').on('expand-mode-change', function (ev, mode) {
-        cookieSettings.write('pricing.expandGrid', mode);
-    });
-
-    function applyPricingPanelScrollerMode() {
-        var selector = '#PricingPanelScroller',
-            mode = cookieSettings.read('pricing.expandGrid', '');
-        if (mode)
-            redrawExpandModes(selector, mode);
-    };
-
-    function applyUserSettings() {
-        applyPricingPanelScrollerMode();
-    };
-
-    function disableExportButtons() {
-        $("#btnExportAll").prop("disabled", true);
-        $("#btnExportSites").prop("disabled", true);
-    };
-
-    $("#viewingStoreNo, #viewingStoreName, #viewingStoreNo, #viewingStoreTown").change(disableExportButtons);
-
-    function docReady() {
-        applyUserSettings();
-    };
-
-    $(docReady);
-});
 
 function getRootSiteFolder() {
     var rootFolder = /\/petrolpricing\//i.test(window.location.href) ? "/petrolpricing/" : "/";
@@ -170,21 +176,21 @@ function dateAdd(unit, delta, datetime) {
         month = datetime.getMonth() + 1,
         year = datetime.getFullYear();
 
-    switch(unit.toLowerCase()) {
+    switch (unit.toLowerCase()) {
         case 'd':
         case 'dd':
         case 'day':
-            day+=delta;
+            day += delta;
             break;
         case 'm':
         case 'mm':
         case 'month':
-            month+=delta;
+            month += delta;
             break;
         case 'y':
         case 'yy':
         case 'year':
-            year+=delta;
+            year += delta;
             break;
         default:
             throw new Error('dateAdd - unsupported unit type: ' + unit);
@@ -220,7 +226,7 @@ function formatUKDate() {
         datetime = new Date(year, month - 1, day);
     }
 
-    if (datetime == undefined) 
+    if (datetime == undefined)
         throw new Error('formatUKDate - unsupported argument signature');
 
     day = datetime.getDate(),
@@ -240,19 +246,19 @@ function getDaysAgo(datetime) {
 function buildRelativeDayHtml(datetime) {
     var diffDays = getDaysAgo(datetime);
 
-        switch (diffDays) {
-            case -1:
-                return '<b class="yesterday-date">Yesterday</b>';
-            case 0:
-                return '<b class="today-date">Today</b>';
-            case 1:
-                return '<b class="tomorrow-date">Tomorrow</b>';
-            default:
-                if (diffDays < 0)
-                    return '<b class="past-date">' + diffDays + ' Days</b>';
-                else
-                    return '<b class="future-date">' + diffDays + ' Days</b>';
-        }
+    switch (diffDays) {
+        case -1:
+            return '<b class="yesterday-date">Yesterday</b>';
+        case 0:
+            return '<b class="today-date">Today</b>';
+        case 1:
+            return '<b class="tomorrow-date">Tomorrow</b>';
+        default:
+            if (diffDays < 0)
+                return '<b class="past-date">' + diffDays + ' Days</b>';
+            else
+                return '<b class="future-date">' + diffDays + ' Days</b>';
+    }
 };
 
 function buildDateHeadingAndMarkup(datetime) {
@@ -302,7 +308,3 @@ function refreshDates(selectedDate) {
     $(".compyday").html(minus2Day.formatted).attr('data-infotip', minus2InfoTip);
     $(".comptoday").html(previousDay.formatted).attr('data-infotip', minus1Infotip);
 }
-
-
-
-

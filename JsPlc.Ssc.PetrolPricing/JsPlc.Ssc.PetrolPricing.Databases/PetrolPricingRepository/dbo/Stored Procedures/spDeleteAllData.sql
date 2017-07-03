@@ -1,4 +1,5 @@
 ﻿CREATE PROCEDURE [dbo].[spDeleteAllData]
+
 AS
 	SET NOCOUNT ON
 
@@ -26,6 +27,9 @@ AS
 			TRUNCATE TABLE dbo.SitePrice
 			TRUNCATE TABLE dbo.SiteToCompetitor
 
+			TRUNCATE TABLE dbo.PriceSnapshot
+			TRUNCATE TABLE dbo.PriceSnapshotRow
+
 			-- NOTE: TRUNCATE TABLE dbo.Site will not work 
 			DELETE FROM dbo.Site
 
@@ -48,6 +52,8 @@ AS
 			DBCC CHECKIDENT ('SiteToCompetitor', RESEED, 1)
 			DBCC CHECKIDENT ('Site', RESEED, 1)
 			DBCC CHECKIDENT ('FileUpload', RESEED, 1)
+			DBCC CHECKIDENT ('PriceSnapshot', RESEED, 1)
+			DBCC CHECKIDENT ('PriceSnapshotRow', RESEED, 1)
 		COMMIT TRAN
 	END TRY
 	BEGIN CATCH
