@@ -188,6 +188,8 @@
     <Build Include="dbo\Stored Procedures\spGetPriceSnapshotForDay.sql" />
     <Build Include="dbo\Stored Procedures\spMarkPriceCacheOutdatedForDay.sql" />
     <Build Include="dbo\Stored Procedures\spDataCleansePriceSnapshots.sql" />
+    <Build Include="dbo\Tables\PriceSnapshot.sql" />
+    <Build Include="dbo\Tables\PriceSnapshotRow.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Scripts\PostDeployment\Script.PostDeployment.sql" />
