@@ -560,7 +560,7 @@ table.competitorTable > tbody > .competitor-row  {
 .price-diff {font-family: monospace; font-size: 90%;}
 
 .price-pence {font-size: 115%; letter-spacing: 0px;}
-.price-fraction {letter-spacing: 2px; padding-top: 3px; opacity: 0.75;}
+.price-fraction {letter-spacing: 2px; padding-top: 1px; opacity: 0.75;}
 .price-na {font-size: 110%; letter-spacing: 1px; color: #ccc; font-style: italic;}
 
 .pricing-grid.hide-fuel-price-change-up .col-valid .fuel-price-change-up,
@@ -1091,7 +1091,7 @@ table.competitorTable > tbody > .competitor-row  {
 }
 
 .fullscreen-dull {
-    position: absolute; 
+    position: fixed; 
     top: 0; 
     bottom: 0; 
     left: 0; 
@@ -1101,7 +1101,7 @@ table.competitorTable > tbody > .competitor-row  {
 }
 
 .loading-indicator {
-    position: absolute; 
+    position: fixed; 
     top: 50%; 
     left: 50%; 
     margin-top: -6em; 

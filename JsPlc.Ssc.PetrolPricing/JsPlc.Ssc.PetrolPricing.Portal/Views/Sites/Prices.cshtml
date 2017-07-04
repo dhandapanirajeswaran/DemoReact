@@ -407,7 +407,7 @@
                                     </div>
 
                                     <div class="btn-group pull-right">
-                                        <select class="btn btn-default" style="width: 9em; margin-left: 1em;" data-bind="value: $root.siteEmailFilter, event: {change: $root.siteEmailFilterChange}" data-infotip="Filter the Sites by Emails/Selection">
+                                        <select class="btn btn-default" style="width: 12em; margin-left: 1em;" data-bind="value: $root.siteEmailFilter, event: {change: $root.siteEmailFilterChange}" data-infotip="Filter the [b]Sites[/b] [br /]by Emails/Selection or Status">
                                             <option>All Sites</option>
                                             <option>No Emails</option>
                                             <option>With Emails</option>
@@ -417,6 +417,8 @@
                                             <option data-bind="visible: !$root.ViewingHistorical()">Not Selected</option>
                                             <option data-bind="visible: !$root.ViewingHistorical()">Exceeds</option>
                                             <option data-bind="visible: !$root.ViewingHistorical()">Errors</option>
+                                            <option data-bind="visible: !$root.ViewingHistorical()">Inside Variance</option>
+                                            <option data-bind="visible: !$root.ViewingHistorical()">Outside Variance</option>
                                         </select>
                                         <button type="button" class="btn btn-warning btn-sm" style="padding-bottom: 9px;" data-bind="click: $root.resetSiteEmailFilter" data-infotip="Clear the Site Email Filter"><i class="fa fa-eraser"></i></button>
                                     </div>
