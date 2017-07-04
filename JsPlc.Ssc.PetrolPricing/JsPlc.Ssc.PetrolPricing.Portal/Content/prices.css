@@ -841,10 +841,10 @@ table.competitorTable > tbody > .competitor-row  {
 }
 
 .historical-banner {
-    background-color:#f2dede;
-    color: #a94442;
+    background-color:#f0ad4e;
+    color: #fff;
     margin: 0.5em;
-    padding: 0.25em 1em;
+    padding: 0.25em 3em;
     border-radius: 8px;
 }
 
