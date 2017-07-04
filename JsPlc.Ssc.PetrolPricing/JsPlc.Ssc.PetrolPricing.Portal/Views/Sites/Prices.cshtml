@@ -415,6 +415,8 @@
                                             <option>No Overrides</option>
                                             <option data-bind="visible: !$root.ViewingHistorical()">Selected</option>
                                             <option data-bind="visible: !$root.ViewingHistorical()">Not Selected</option>
+                                            <option data-bind="visible: !$root.ViewingHistorical()">Exceeds</option>
+                                            <option data-bind="visible: !$root.ViewingHistorical()">Errors</option>
                                         </select>
                                         <button type="button" class="btn btn-warning btn-sm" style="padding-bottom: 9px;" data-bind="click: $root.resetSiteEmailFilter" data-infotip="Clear the Site Email Filter"><i class="fa fa-eraser"></i></button>
                                     </div>
@@ -496,7 +498,7 @@
                 <!-- /ko -->
 
                 <div id="PricingPanelScroller" class="actualdata collapsed" style="padding:0px;margin:0px; display: none;" data-bind="with: dataModel, visible: !busyLoadingData()">
-                    <table class="pricing-grid">
+                    <table class="pricing-grid" data-bind="attr: {'class': 'pricing-grid ' + $root.tableGridCss()}">
                         <tbody>
                             <!-- JS Store DataRows -->
                             <!-- ko foreach: sites.sort($root.pricingColumnSorter) -->
@@ -548,13 +550,13 @@
                                 <td data-bind="css: ('col-today' + (isEditingFuel() ? ' col-editing' : '') + (hasValidValue() ? ' col-valid' : ' col-invalid') + (isMatchedByPriceMovementFilter() ? ' price-movement-filter-match' : '') + (!$parent.isEditing() && FuelPrice.isOverrideHidden() ? ' hide-empty-override' : ''))">
                                     <div data-bind="css: ('fuel-price-change-' + UpDownSignCss())">
                                         <!-- ko if:  $parent.PriceMatchType == 1 -->
-                                        <span class="padded-price-right solo-price" data-bind="click: showToEditOverride, attr: {'data-infotip': FuelPrice.SoloPriceInfoTip()}, html: FuelPrice.ForecourtAutoPriceHtml()"></span>
+                                        <span class="padded-price-right solo-price click-edits-override" data-bind="click: showToEditOverride, attr: {'data-infotip': FuelPrice.SoloPriceInfoTip()}, html: FuelPrice.ForecourtAutoPriceHtml()"></span>
                                         <!-- /ko -->
                                         <!-- ko if:  $parent.PriceMatchType == 2 -->
-                                        <span class="padded-price-right trial-price" data-bind="click: showToEditOverride, attr: {'data-infotip': FuelPrice.TrialPriceInfoTip()}, html: FuelPrice.ForecourtAutoPriceHtml()"></span>
+                                        <span class="padded-price-right trial-price click-edits-override" data-bind="click: showToEditOverride, attr: {'data-infotip': FuelPrice.TrialPriceInfoTip()}, html: FuelPrice.ForecourtAutoPriceHtml()"></span>
                                         <!-- /ko -->
                                         <!-- ko if:  $parent.PriceMatchType == 3 -->
-                                        <span class="padded-price-right match-competitor-price" data-bind="click: showToEditOverride, attr: {'data-infotip': FuelPrice.MatchCompetitorInfoTip()}, html: FuelPrice.ForecourtAutoPriceHtml()"></span>
+                                        <span class="padded-price-right match-competitor-price click-edits-override" data-bind="click: showToEditOverride, attr: {'data-infotip': FuelPrice.MatchCompetitorInfoTip()}, html: FuelPrice.ForecourtAutoPriceHtml()"></span>
                                         <!-- /ko -->
 
                                         <span class="past-override-text" data-bind="visible: $root.ViewingHistorical()"><em data-bind="text: (FuelPrice.OverridePrice || 'Past'), attr: {'data-infotip' : '[i class=&quot;fa fa-clock&quot;][/i] Historical [b]Override Price[/b] of [em]' + FuelPrice.OverridePrice() + '[/em]'}"></em></span>
