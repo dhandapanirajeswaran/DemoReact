@@ -735,23 +735,52 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             {
                 var fuelPricesForSite = calculatedPrices.Where(x => x.SiteId == site.SiteId);
 
-                var superUnleaded = fuelPricesForSite.First(x => x.FuelTypeId == (int)FuelTypeItem.Super_Unleaded);
-                var unleaded = fuelPricesForSite.First(x => x.FuelTypeId == (int)FuelTypeItem.Unleaded);
-                var diesel = fuelPricesForSite.First(x => x.FuelTypeId == (int)FuelTypeItem.Diesel);
+                var superUnleaded = fuelPricesForSite.FirstOrDefault(x => x.FuelTypeId == (int)FuelTypeItem.Super_Unleaded);
+                var unleaded = fuelPricesForSite.FirstOrDefault(x => x.FuelTypeId == (int)FuelTypeItem.Unleaded);
+                var diesel = fuelPricesForSite.FirstOrDefault(x => x.FuelTypeId == (int)FuelTypeItem.Diesel);
 
-                unleaded.HasNearbyCompetitorPrice = site.HasNearbyUnleadedGrocersPriceData;
-                unleaded.HasNearbyCompetitorWithOutPrice = site.HasNearbyUnleadedGrocersPriceData == false;
+                if (unleaded != null)
+                {
+                    unleaded.HasNearbyCompetitorPrice = site.HasNearbyUnleadedGrocersPriceData;
+                    unleaded.HasNearbyCompetitorWithOutPrice = site.HasNearbyUnleadedGrocersPriceData == false;
+                } else
+                {
+                    unleaded = new FuelPriceViewModel()
+                    {
+                        FuelTypeId = (int)FuelTypeItem.Unleaded,
+                        SiteId = site.SiteId
+                    };
+                }
 
-                superUnleaded.HasNearbyCompetitorPrice = site.HasNearbySuperUnleadedGrocersPriceData;
-                superUnleaded.HasNearbyCompetitorWithOutPrice = site.HasNearbySuperUnleadedGrocersPriceData == false;
+                if (superUnleaded != null)
+                {
+                    superUnleaded.HasNearbyCompetitorPrice = site.HasNearbySuperUnleadedGrocersPriceData;
+                    superUnleaded.HasNearbyCompetitorWithOutPrice = site.HasNearbySuperUnleadedGrocersPriceData == false;
+                } else
+                {
+                    superUnleaded = new FuelPriceViewModel()
+                    {
+                        FuelTypeId = (int)FuelTypeItem.Super_Unleaded,
+                        SiteId = site.SiteId
+                    };
+                }
 
-                diesel.HasNearbyCompetitorPrice = site.HasNearbyDieselGrocersPriceData;
-                diesel.HasNearbyCompetitorWithOutPrice = site.HasNearbyDieselGrocersPriceData == false;
+                if (diesel != null)
+                {
+                    diesel.HasNearbyCompetitorPrice = site.HasNearbyDieselGrocersPriceData;
+                    diesel.HasNearbyCompetitorWithOutPrice = site.HasNearbyDieselGrocersPriceData == false;
+                } else
+                {
+                    diesel = new FuelPriceViewModel()
+                    {
+                        FuelTypeId = (int)FuelTypeItem.Diesel,
+                        SiteId = site.SiteId
+                    };
+                }
 
                 site.FuelPrices.Add(superUnleaded);
                 site.FuelPrices.Add(unleaded);
                 site.FuelPrices.Add(diesel);
-
             }
         }
 

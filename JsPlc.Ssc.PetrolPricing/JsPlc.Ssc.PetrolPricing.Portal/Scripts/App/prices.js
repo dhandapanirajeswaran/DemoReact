@@ -196,7 +196,7 @@ define(["SitePricing", "notify", "busyloader", "downloader", "infotips", "cookie
         $(docReady);
 
         function init(pagedata) {
-            sitepricing.init(pagedata);
+            sitepricing.initPricingPage(pagedata);
         };
 
         // API
