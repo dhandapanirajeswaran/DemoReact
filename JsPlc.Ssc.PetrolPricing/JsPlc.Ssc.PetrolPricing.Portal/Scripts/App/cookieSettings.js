@@ -24,7 +24,8 @@
                 'sites.showHasEmails',
                 'sites.showNoEmails',
                 'build.date',
-                'pricing.priceSummaryTabIndex'
+                'pricing.priceSummaryTabIndex',
+                'pricing.autoHideOverrides'
             ],
             values = readSettingsCookie();
 

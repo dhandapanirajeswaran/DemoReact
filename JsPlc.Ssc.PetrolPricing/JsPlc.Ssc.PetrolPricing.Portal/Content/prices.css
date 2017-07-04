@@ -287,6 +287,9 @@ table.competitorTable > tbody > .competitor-row  {
     background-color: #ffc580;
 }
 
+.site-row:hover .price-na,
+.site-row.focused .price-na {color: #666;}
+
 .site-row.viewing-site-competitors {
     border-top: 2px solid orange;
     border-bottom: 2px solid orange;
@@ -313,6 +316,23 @@ table.competitorTable > tbody > .competitor-row  {
 .site-row .col-editing {
     border-bottom: 3px solid #000;
     font-weight: bold;
+}
+
+/*.site-row .hide-empty-override .padded-price-right::before {
+    content: "auto ⇒ ";
+    font-size: 90%;
+    color: #ccc;
+    margin-left: -3em;
+}*/
+
+.site-row .hide-empty-override .padded-price-right {
+    margin-left: 3em;
+    color: #339;
+}
+
+.site-row .hide-empty-override input[type='text']{
+    visibility: hidden;
+    position: absolute;
 }
 
 .pricing-sort-row th {

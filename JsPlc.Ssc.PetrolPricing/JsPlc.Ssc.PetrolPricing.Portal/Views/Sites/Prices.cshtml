@@ -251,11 +251,9 @@
             <div class="table-responsive" onclick="IsSitePriceFormClicked=1;" style="width: 1280px;">
                 <!-- highlighers -->
                 <div class="row" style="margin-bottom: 4px; padding-bottom: 4px; border-bottom: 1px solid #ccc;">
-                    <div class="col-md-2">
-                        <strong>Price Highlighting:</strong>
-                    </div>
 
                     <div class="col-md-8" data-bind="visible: !$root.busyLoadingData()" style="display: none;">
+                        <strong>Price Highlight:</strong><br />
                         <div class="btn-group">
                             <button type="button" class="btn btn-sm" data-bind="click: toggleHighlightTrialPrices, css: {'btn-primary': $root.highlightTrialPrices()}" data-infotip="Toggle the [b]Trial Prices[/b] Highlighting"><i class="fa fa-flask "></i> Trial <span class="badge" data-bind="text: $root.TrialPricesCount"></span></button>
                             <button type="button" class="btn btn-sm" data-bind="click: toggleHighlightMatchCompetitors, css: {'btn-primary': $root.highlightMatchCompetitors()}" data-infotip="Toggle the [b]Match Competitors[/b] Highlighting"><i class="fa fa-clone"></i> Match Competitors <span class="badge" data-bind="text: $root.MatchCompetitorsCount"></span></button>
@@ -273,8 +271,17 @@
                         Loading prices...
                     </div>
 
+                    <div class="col-md-2">
+                        <!-- ko if: (!$root.ViewingHistorical())-->
+                            <strong>Auto Hide Overrides:</strong><br />
+                            <button type="button" class="btn" data-bind="css: ($root.isAutoHideShowOverrides() ? 'btn-primary' : 'btn-default'), click: $root.enableAutoHideOverrides" data-infotip="Auto-hide of empty [b]Overrides[/b]"><i class="fa fa-check-square-o"></i> On</button>
+                            <button type="button" class="btn" data-bind="css: ($root.isAutoHideShowOverrides() ? 'btn-default' : 'btn-primary'), click: $root.disableAutoHideOverrides" data-infotip="[u]Always[/u] show the [b]Overrides[/b][br /]Even empty ones"><i class="fa fa-square-o"></i> Off</button>
+                        <!-- /ko -->
+                    </div>
+
                     <div class="col-md-2 col">
-                        <div class="btn-group pull-right" role="group">
+                        <strong>Scrolling:</strong>
+                        <div class="btn-group" role="group">
                             <button type="button" class="btn btn-sm btn-primary" data-click="setExpandMode" data-mode="collapsed" data-states="expanded,collapsed" data-target="#PricingPanelScroller" data-message="Price grid collapsed" data-infotip-dock="below" data-infotip="Collapse the Pricing Grid"><i class="fa fa-toggle-up"></i> Collapse</button>
                             <button type="button" class="btn btn-sm" data-click="setExpandMode" data-mode="expanded" data-states="expanded,collapsed" data-target="#PricingPanelScroller" data-message="Price grid expanded" data-infotip-dock="below" data-infotip="Expand the Pricing Grid"><i class="fa fa-toggle-down"></i> Expand</button>
                         </div>
@@ -538,23 +545,22 @@
                                     <span data-bind="css: ('fuel-price-change-' + UpDownSignCss()), html: FuelPrice.ForecourtTodayPriceHtml, attr: {'data-infotip': FuelPrice.CurrentPriceInfoTip()}"></span>
                                     <b data-bind="html: nearbyGrocersHtml()"></b>
                                 </td>
-                                <td data-bind="css: ('col-today' + (isEditingFuel() ? ' col-editing' : '') + (hasValidValue() ? ' col-valid' : ' col-invalid') + (isMatchedByPriceMovementFilter() ? ' price-movement-filter-match' : ''))">
+                                <td data-bind="css: ('col-today' + (isEditingFuel() ? ' col-editing' : '') + (hasValidValue() ? ' col-valid' : ' col-invalid') + (isMatchedByPriceMovementFilter() ? ' price-movement-filter-match' : '') + (!$parent.isEditing() && FuelPrice.isOverrideHidden() ? ' hide-empty-override' : ''))">
                                     <div data-bind="css: ('fuel-price-change-' + UpDownSignCss())">
-
                                         <!-- ko if:  $parent.PriceMatchType == 1 -->
-                                        <span class="padded-price-right solo-price" data-bind="attr: {'data-infotip': FuelPrice.SoloPriceInfoTip()}, html: FuelPrice.ForecourtAutoPriceHtml()"></span>
+                                        <span class="padded-price-right solo-price" data-bind="click: showToEditOverride, attr: {'data-infotip': FuelPrice.SoloPriceInfoTip()}, html: FuelPrice.ForecourtAutoPriceHtml()"></span>
                                         <!-- /ko -->
                                         <!-- ko if:  $parent.PriceMatchType == 2 -->
-                                        <span class="padded-price-right trial-price" data-bind="attr: {'data-infotip': FuelPrice.TrialPriceInfoTip()}, html: FuelPrice.ForecourtAutoPriceHtml()"></span>
+                                        <span class="padded-price-right trial-price" data-bind="click: showToEditOverride, attr: {'data-infotip': FuelPrice.TrialPriceInfoTip()}, html: FuelPrice.ForecourtAutoPriceHtml()"></span>
                                         <!-- /ko -->
                                         <!-- ko if:  $parent.PriceMatchType == 3 -->
-                                        <span class="padded-price-right match-competitor-price" data-bind="attr: {'data-infotip': FuelPrice.MatchCompetitorInfoTip()}, html: FuelPrice.ForecourtAutoPriceHtml()"></span>
+                                        <span class="padded-price-right match-competitor-price" data-bind="click: showToEditOverride, attr: {'data-infotip': FuelPrice.MatchCompetitorInfoTip()}, html: FuelPrice.ForecourtAutoPriceHtml()"></span>
                                         <!-- /ko -->
 
                                         <span class="past-override-text" data-bind="visible: $root.ViewingHistorical()"><em data-bind="text: (FuelPrice.OverridePrice || 'Past'), attr: {'data-infotip' : '[i class=&quot;fa fa-clock&quot;][/i] Historical [b]Override Price[/b] of [em]' + FuelPrice.OverridePrice() + '[/em]'}"></em></span>
 
-                                        <input type="text" data-bind="value: FuelPrice.OverridePrice, visible: (!$root.ViewingHistorical() && $root.hasDailyPriceFile() && !$root.hasLatestJsPriceDataForToday()),
-        id: ('OverridePrice_' + $parent.SiteId + '_' + FuelPrice.FuelTypeId), event:{keyup: changeProp, blur: blurred, focus: focused}, css: ('txtPrice ' + OverrideInputCss()), attr: {'data-infotip': FuelPrice.PriceOverrideInfoTip()}" maxlength="8" />
+                                        <input type="text" data-bind="value: FuelPrice.OverridePrice, visible: (!$root.ViewingHistorical() && $root.hasDailyPriceFile() && !$root.hasLatestJsPriceDataForToday())
+        , event:{keyup: changeProp, blur: blurred, focus: focused}, css: ('txtPrice ' + OverrideInputCss()), attr: {id: ('OverridePrice_' + $parent.SiteId + '_' + FuelPrice.FuelTypeId), 'data-infotip': FuelPrice.PriceOverrideInfoTip()}" maxlength="8" />
 
                                         <span class="text-danger no-daily-price-file-icon" data-bind="visible: (!$root.ViewingHistorical() && !$root.hasDailyPriceFile())" data-infotip="No [i]Daily Price File[/i] for Today"><i class="fa fa-times"></i><i class="fa fa-file-o"></i></span>
 
