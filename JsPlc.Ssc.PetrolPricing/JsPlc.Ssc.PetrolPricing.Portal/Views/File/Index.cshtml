@@ -31,12 +31,25 @@
     @Html.Partial("_FileUploadsList", Model)
 </div>
 <script>
-    require(["jquery", "UploadCountdown", "infotips", "busyloader"],
-        function ($, uploadCountdown, infotips, busyloader) {
+    require(["jquery", "UploadCountdown", "infotips", "busyloader", "scrollToElement"],
+        function ($, uploadCountdown, infotips, busyloader, scrollToElement) {
+
+
+            function bindEvents() {
+                $('#FileUploadContainer').on('click', '[data-download]', downloadClick);
+                $(document.body).on('click', '[data-scroll-to-element]', function(ev) {
+                    var trigger = $(this),
+                        selector = trigger.data("scroll-to-element") || '';
+                    if (selector)
+                        scrollToElement.scrollTo(selector);
+
+                    ev.preventDefault();
+                });
+            };
 
             function docReady() {
                 uploadCountdown.start();
-                $('#FileUploadContainer').on('click', '[data-download]', downloadClick);
+                bindEvents();
             };
 
             function downloadClick() {

@@ -1,5 +1,7 @@
 ﻿@using System.Globalization
 @using JsPlc.Ssc.PetrolPricing.Portal.Helper.Extensions
+@using JsPlc.Ssc.PetrolPricing.Core
+@using JsPlc.Ssc.PetrolPricing.Models.ViewModels
 @model IEnumerable<JsPlc.Ssc.PetrolPricing.Models.ViewModels.FileUploadViewModel>
 
 @{
@@ -21,6 +23,62 @@
 
 @if (Model != null && Model.Any())
 {
+    var firstDailyPriceUpload = Model.FirstOrDefault(x => x.UploadTypeId == (int)FileUploadTypes.DailyPriceData);
+    var firstQuarterlyUpload = Model.FirstOrDefault(x => x.UploadTypeId == (int)FileUploadTypes.QuarterlySiteData);
+    var firstLatestJSPriceUpload = Model.FirstOrDefault(x => x.UploadTypeId == (int)FileUploadTypes.LatestJsPriceData);
+    var firstLatestCompUpload = Model.FirstOrDefault(x => x.UploadTypeId == (int)FileUploadTypes.LatestCompPriceData);
+
+    <br />
+    <div class="row">
+        <div class="col-md-2 col-md-offset-1">
+        <strong>Jump to the Latest file: </strong>
+        </div>
+        <div class="col-md-9 jump-list">
+            @if (firstDailyPriceUpload != null)
+            {
+                <span class="jump-link" data-scroll-to-element="#MostRecent_1" data-infotip="Jump to latest [b]Daily Price Data[/b] Upload"><i class="fa fa-level-down"></i> Daily Price Data</span>
+            }
+            else
+            {
+                <span class="text-info" data-infotip-dock="below" data-infotip="There is [i]No[/i] Daily Price Data"><i class="fa fa-times"></i><i class="fa fa-file-o"></i> Daily Price Data</span>
+            }
+
+            <span class="jump-divider">|</span>
+
+            @if (firstQuarterlyUpload != null)
+            {
+                <span class="jump-link" data-scroll-to-element="#MostRecent_2" data-infotip="Jump to latest [b]Quarterly Site Data[/b] Upload"><i class="fa fa-level-down"></i> Quarterly Site Data</span>
+            }
+            else
+            {
+                <span class="text-danger" data-infotip-dock="below" data-infotip="There is [i]No[/i] Quarterly Site Data"><i class="fa fa-times"></i><i class="fa fa-file-o"></i> Quarterly Site Data</span>
+            }
+
+            <span class="jump-divider">|</span>
+
+            @if (firstLatestJSPriceUpload != null)
+            {
+                <span class="jump-link" data-scroll-to-element="#MostRecent_3" data-infotip="Jump to latest [b]Quarterly Site Data[/b] Upload"><i class="fa fa-level-down"></i> Latest Js Price Data</span>
+            }
+            else
+            {
+                <span class="text-danger" data-infotip-dock="below" data-infotip="There is [i]No[/i] Latest Js Price Data file"><i class="fa fa-times"></i><i class="fa fa-file-o"></i> Latest Js Price Data</span>
+            }
+
+            <span class="jump-divider">|</span>
+
+            @if (firstLatestCompUpload != null)
+            {
+                <span class="jump-link" data-scroll-to-element="#MostRecent_4" data-infotip="Jump to latest [b]Quarterly Site Data[/b] Upload"><i class="fa fa-level-down"></i> Latest Competitors Price Data</span>
+            }
+            else
+            {
+                <span class="text-danger" data-infotip-dock="below" data-infotip="There is [i]No [/i] Latest Competitors Price Data file"><i class="fa fa-times"></i><i class="fa fa-file-o"></i> Latest Competitors Price Data</span>
+            }
+        </div>
+
+    </div>
+
     <br />
     <table class="table table-striped file-uploader-grid" style="margin-bottom: 0; width: 100%;">
         <thead>
@@ -56,25 +114,29 @@
         <div class="file-upload-scroller">
             <table class="table table-striped file-uploader-grid">
                 @foreach (var item in Model)
-                        {
-                            var daysAgo = (int)DateTime.Now.Date.Subtract(item.UploadDateTime.Date).TotalDays;
-                            var wasToday = daysAgo < 1;
-                            var wasYesterday = daysAgo == 1;
-                            var friendlyDaysAgo = wasToday ? "Today" : wasYesterday ? "Yesterday" : daysAgo + " Days ago";
-                            var rowClass = (wasToday ? "uploaded-today" : wasYesterday ? "uploaded-yesterday" : "")
-                                + (item.FileExists ? " upload-file-exists" : " no-upload-file")
-                                + (item.IsMostRecentForDate ? " most-recent-for-date" : " older-file");
+                {
+                    var daysAgo = (int)DateTime.Now.Date.Subtract(item.UploadDateTime.Date).TotalDays;
+                    var wasToday = daysAgo < 1;
+                    var wasYesterday = daysAgo == 1;
+                    var friendlyDaysAgo = wasToday ? "Today" : wasYesterday ? "Yesterday" : daysAgo + " Days ago";
+                    var rowClass = (wasToday ? "uploaded-today" : wasYesterday ? "uploaded-yesterday" : "")
+                        + (item.FileExists ? " upload-file-exists" : " no-upload-file")
+                        + (item.IsMostRecentForDate ? " most-recent-for-date" : " older-file");
 
-                            var dateHeaderCss = "date-header" + (wasToday ? " date-today" : wasYesterday ? " date-yesterday" : "");
+                    var jumpIdAttr = item.IsMostRecentForDate 
+                        ? String.Format(" id='MostRecent_{0}'", item.UploadTypeId) 
+                        : "";
 
-                            if (item.IsForDifferentDay)
-                            {
+                    var dateHeaderCss = "date-header" + (wasToday ? " date-today" : wasYesterday ? " date-yesterday" : "");
+
+                    if (item.IsForDifferentDay)
+                    {
             <tr class="date-row dashed-divider">
                 <td colspan="8"><h4 class="@(dateHeaderCss)"><i class="fa fa-calendar"></i> &nbsp;&nbsp; @(item.UploadDateTime.Date.ToString("dd-MMM-yyy")) &mdash; @(friendlyDaysAgo)</h4></td>
             </tr>
                 }
 
-            <tr class="@rowClass.Trim()">
+            <tr class="@rowClass.Trim()" @Html.Raw(jumpIdAttr)>
                 <td class="column-1">
                     @if (item.FileExists)
                     {

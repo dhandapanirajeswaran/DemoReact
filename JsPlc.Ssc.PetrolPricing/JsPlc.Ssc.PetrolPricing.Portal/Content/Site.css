@@ -793,3 +793,40 @@ input[type=text].mono-font {
     .banner .btn {
         box-shadow: 1px 1px 4px #000;
     }
+
+
+.jump-link {
+    text-decoration: underline;
+    font-weight: bold;
+    line-height: 1.75em;
+    padding: 2px 0.5em;
+    border: 1px solid transparent;
+    color: #337ab7;
+}
+.jump-link:hover {
+    border: 1px dashed #999;
+}
+
+.jump-list .jump-divider {
+    margin: 2px 0.25em;
+    color: #999;
+}
+
+.ping-yellow {
+    -webkit-animation: ping-yellow 3s normal linear;
+}
+
+@-webkit-keyframes ping-yellow {
+    0% {
+        background-color: #fff;
+        box-shadow: 0 0 4px #000;
+    }
+    50% {
+        background-color: #ffab00;
+        box-shadow: 0 0 4px #000;
+    }
+    100% {
+        background-color: #ffffff;
+        box-shadow: 0 0 0px #fff;
+    }   
+}

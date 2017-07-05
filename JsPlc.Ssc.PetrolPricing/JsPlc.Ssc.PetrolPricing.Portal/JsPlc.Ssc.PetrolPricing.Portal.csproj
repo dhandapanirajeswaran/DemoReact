@@ -335,6 +335,7 @@
     <Content Include="Scripts\App\Popups\SiteEmailPopup.js" />
     <Content Include="Scripts\App\prices.js" />
     <Content Include="Scripts\App\pricestats.js" />
+    <Content Include="Scripts\App\scrollToElement.js" />
     <Content Include="Scripts\App\scrollToTop.js" />
     <Content Include="Scripts\App\Services\DriveTimeMarkupService.js" />
     <Content Include="Scripts\App\Services\EmailTemplateService.js" />

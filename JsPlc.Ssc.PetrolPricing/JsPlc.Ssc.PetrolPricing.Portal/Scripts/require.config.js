@@ -35,6 +35,7 @@
             "downloader": "App/downloader",
             "layout": "App/layout",
             "scrollToTop": "App/scrollToTop",
+            "scrollToElement": "App/scrollToElement",
             "infotips": "App/infotips",
             "cookieSettings": "App/cookieSettings",
             "bootbox": "App/bootbox.min",
