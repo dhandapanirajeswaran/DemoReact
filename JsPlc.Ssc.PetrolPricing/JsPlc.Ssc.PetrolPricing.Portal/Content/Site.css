@@ -768,30 +768,28 @@ input[type=text].mono-font {
 .badge-xs {font-size: 70%;}
 
 .banner {
-    padding: 16px 8px;
+    padding: 16px;
     border-radius: 0;
     margin: 16px 0;
-    border: 2px solid #999;
     font-size: 125%;
-    box-shadow: 0 4px 4px #000;
 }
     .banner.banner-success {
         color: #3c763d;
         background: #dff0d8;
-        border-color: #d6e9c6;
     }
     .banner.banner-info {
         color: #31708f;
         background-color: #d9edf7;
-        border-color: #bce8f1;
     }
     .banner.banner-warning {
         color: #8a6d3b;
         background-color: #fcf8e3;
-        border-color: #faebcc;
     }
     .banner.banner-danger {
-        color: #a94442;
-        background-color: #f2dede;
-        border-color: #ebccd1;
+        color: #76572f;
+        background-color: #ffd77f;
+    }
+
+    .banner .btn {
+        box-shadow: 1px 1px 4px #000;
     }
