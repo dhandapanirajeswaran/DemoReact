@@ -2,50 +2,7 @@
     function(common, $, _) {
         "use strict";
 
-        var stats = {
-            sites: {
-                count: 0,
-                active: 0,
-                withEmails: 0,
-                withNoEmails: 0
-            },
-            combined: {
-                tomorrow: {
-                    price: createStat(),
-                    priceChanges: createStat()
-                },
-                today: {
-                    price: createStat()
-                }
-            },
-            unleaded: {
-                tomorrow: {
-                    price: createStat(),
-                    priceChanges: createStat()
-                },
-                today: {
-                    price: createStat()
-                }
-            },
-            diesel: {
-                tomorrow: {
-                    price: createStat(),
-                    priceChanges: createStat()
-                },
-                today: {
-                    price: createStat()
-                }
-            },
-            superUnleaded: {
-                tomorrow: {
-                    price: createStat(),
-                    priceChanges: createStat()
-                },
-                today: {
-                    price: createStat()
-                }
-            }
-        };
+        var stats = zeroStats();
 
         function createStat() {
             return {
@@ -54,6 +11,53 @@
                 min: undefined,
                 max: undefined,
                 average: undefined
+            };
+        };
+
+        function zeroStats() {
+            return {
+                sites: {
+                    count: 0,
+                    active: 0,
+                    withEmails: 0,
+                    withNoEmails: 0
+                },
+                combined: {
+                    tomorrow: {
+                        price: createStat(),
+                        priceChanges: createStat()
+                    },
+                    today: {
+                        price: createStat()
+                    }
+                },
+                unleaded: {
+                    tomorrow: {
+                        price: createStat(),
+                        priceChanges: createStat()
+                    },
+                    today: {
+                        price: createStat()
+                    }
+                },
+                diesel: {
+                    tomorrow: {
+                        price: createStat(),
+                        priceChanges: createStat()
+                    },
+                    today: {
+                        price: createStat()
+                    }
+                },
+                superUnleaded: {
+                    tomorrow: {
+                        price: createStat(),
+                        priceChanges: createStat()
+                    },
+                    today: {
+                        price: createStat()
+                    }
+                }
             };
         };
 
@@ -138,6 +142,9 @@
         // loop through each site gathering count, total, min and max values for each fuel
         //
         function gatherStats(sites) {
+
+            stats = zeroStats();
+
             _.each(sites, function (siteItem) {
                 var unleaded = simplifyFuelPrice(siteItem.FuelPricesToDisplay[0]),
                     diesel = simplifyFuelPrice(siteItem.FuelPricesToDisplay[1]),
