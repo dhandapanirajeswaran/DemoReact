@@ -272,9 +272,9 @@
                     </div>
 
                     <div class="col-md-2">
-                        <!-- ko if: (!$root.ViewingHistorical())-->
+                        <!-- ko if: (!$root.ViewingHistorical() && !$root.isDailyPriceFileOutdated())-->
                             <strong>Auto Hide Overrides:</strong><br />
-                            <button type="button" class="btn" data-bind="css: ($root.isAutoHideShowOverrides() ? 'btn-primary' : 'btn-default'), click: $root.enableAutoHideOverrides" data-infotip="Auto-hide of empty [b]Overrides[/b]"><i class="fa fa-check-square-o"></i> On</button>
+                            <button type="button" class="btn" data-bind="css: ($root.isAutoHideShowOverrides() ? 'btn-primary' : 'btn-default'), click: $root.enableAutoHideOverrides" data-infotip="Auto-hide empty [b]Overrides[/b] fields"><i class="fa fa-check-square-o"></i> On</button>
                             <button type="button" class="btn" data-bind="css: ($root.isAutoHideShowOverrides() ? 'btn-default' : 'btn-primary'), click: $root.disableAutoHideOverrides" data-infotip="[u]Always[/u] show the [b]Overrides[/b][br /]Even empty ones"><i class="fa fa-square-o"></i> Off</button>
                         <!-- /ko -->
                     </div>
@@ -549,7 +549,7 @@
                                     <span data-bind="css: ('fuel-price-change-' + UpDownSignCss()), html: FuelPrice.ForecourtTodayPriceHtml, attr: {'data-infotip': FuelPrice.CurrentPriceInfoTip()}"></span>
                                     <b data-bind="html: nearbyGrocersHtml()"></b>
                                 </td>
-                                <td data-bind="css: ('col-today' + (isEditingFuel() ? ' col-editing' : '') + (hasValidValue() ? ' col-valid' : ' col-invalid') + (isMatchedByPriceMovementFilter() ? ' price-movement-filter-match' : '') + (!$parent.isEditing() && FuelPrice.isOverrideHidden() ? ' hide-empty-override' : ''))">
+                                <td data-bind="css: ('col-today' + (isEditingFuel() ? ' col-editing' : '') + (hasValidValue() ? ' col-valid' : ' col-invalid') + (isMatchedByPriceMovementFilter() ? ' price-movement-filter-match' : '') + (!$parent.isEditing() && FuelPrice.isOverrideHidden() && !$root.isDailyPriceFileOutdated() ? ' hide-empty-override' : ''))">
                                     <div data-bind="css: ('fuel-price-change-' + UpDownSignCss())">
                                         <!-- ko if:  $parent.PriceMatchType == 1 -->
                                         <span class="padded-price-right solo-price click-edits-override" data-bind="click: showToEditOverride, attr: {'data-infotip': FuelPrice.SoloPriceInfoTip()}, html: FuelPrice.ForecourtAutoPriceHtml()"></span>
@@ -563,10 +563,10 @@
 
                                         <span class="past-override-text" data-bind="visible: $root.ViewingHistorical()"><em data-bind="text: (FuelPrice.OverridePrice || 'Past'), attr: {'data-infotip' : '[i class=&quot;fa fa-clock&quot;][/i] Historical [b]Override Price[/b] of [em]' + FuelPrice.OverridePrice() + '[/em]'}"></em></span>
 
-                                        <input type="text" data-bind="value: FuelPrice.OverridePrice, visible: (!$root.ViewingHistorical() && $root.hasDailyPriceFile() && !$root.hasLatestJsPriceDataForToday())
+                                        <input type="text" data-bind="value: FuelPrice.OverridePrice, visible: (!$root.ViewingHistorical() && !$root.isDailyPriceFileOutdated() && !$root.hasLatestJsPriceDataForToday())
         , event:{keyup: changeProp, blur: blurred, focus: focused}, css: ('txtPrice ' + OverrideInputCss()), attr: {id: ('OverridePrice_' + $parent.SiteId + '_' + FuelPrice.FuelTypeId), 'data-infotip': FuelPrice.PriceOverrideInfoTip()}" maxlength="8" />
 
-                                        <span class="text-danger no-daily-price-file-icon" data-bind="visible: (!$root.ViewingHistorical() && !$root.hasDailyPriceFile())" data-infotip="No [i]Daily Price File[/i] for Today"><i class="fa fa-times"></i><i class="fa fa-file-o"></i></span>
+                                        <span class="text-danger no-daily-price-file-icon" data-bind="visible: (!$root.ViewingHistorical() && $root.isDailyPriceFileOutdated())" data-infotip="No [i]Daily Price File[/i] for Today[br /]Please upload a file"><i class="fa fa-times"></i><i class="fa fa-file-o"></i></span>
 
                                         <span class="text-danger latest-js-price-file-icon" data-bind="visible: (!$root.ViewingHistorical() && $root.hasDailyPriceFile() && $root.hasLatestJsPriceDataForToday())" data-infotip="Disabled Overrides" >
                                             <i class="fa fa-times"></i>

@@ -318,6 +318,11 @@ table.competitorTable > tbody > .competitor-row  {
     font-weight: bold;
 }
 
+
+.site-row .hide-empty-override .padded-price-right {
+    margin-left: 3.3em;
+}
+
 /*.site-row .hide-empty-override .padded-price-right::before {
     content: "auto ⇒ ";
     font-size: 90%;
@@ -326,7 +331,6 @@ table.competitorTable > tbody > .competitor-row  {
 }*/
 
 .site-row .hide-empty-override .padded-price-right {
-    margin-left: 3em;
     color: #339;
 }
 
@@ -335,19 +339,19 @@ table.competitorTable > tbody > .competitor-row  {
     position: absolute;
 }
 
-.site-row .click-edits-override:hover {
+.table-show-edit-overrides  .site-row .click-edits-override:hover {
     background-color: #ffc;
     box-shadow: 0 0 2px #000;
 }
 
-.table-show-edit-overides .site-row .click-edits-override:hover::after {
+.table-show-edit-overrides .site-row .click-edits-override:hover::after {
     content: "Click to Edit Override";
     position: absolute;
     border-radius: 4px;
     background-color: #333;
     color: #fff;
     padding: 2px 1em;
-    margin-top: 2em;
+    margin-top: 1.25em;
     margin-left: -6em;
     font-size: 125%;
 }
@@ -1028,7 +1032,11 @@ table.competitorTable > tbody > .competitor-row  {
 .text-tomorrow {color: #000;}
 .text-today {color: #999;}
 
-.no-daily-price-file-icon {margin-left: 1.5em;}
+.no-daily-price-file-icon {
+    border: 1px dashed #910048;
+    width: 3em;
+    text-align: center;
+}
 
 .latest-js-price-file-icon {
     margin-left: 4px; 
