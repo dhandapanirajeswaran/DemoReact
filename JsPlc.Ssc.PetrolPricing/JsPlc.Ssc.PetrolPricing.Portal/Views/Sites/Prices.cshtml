@@ -160,10 +160,19 @@
             <br />
 
             <div class="row">
-                <div class="btn-group pull-right">
-                    <button type="button" class="btn btn-default" data-bind="click: showPriceSummaryTab, css: {'btn-primary': $root.showingPriceSummaryTab()}" data-infotip="Show the [b]Prices/Price Change[/b] summary tab"><i class="fa fa-area-chart"></i> Price/Price Change Summary</button>
-                    <button type="button" class="btn btn-default" data-bind="click: showCompetitorDifferencesTab, css: {'btn-primary': $root.showingCompetitorDifferencesTab()}" data-infotip="Show the [b]Competitor Price Differences[/b] tab"><i class="fa fa-clone"></i> Competitor Price Differences</button>
-                    <button type="button" class="btn btn-default" data-bind="click: showEmptySummaryTab, css: {'btn-primary': $root.showingEmptyTab()}" data-infotip="Hide [b]All[/b] tabs"><i class="fa fa-times"></i> Hide</button>
+                <div class="col-md-5">
+                    <div class="btn-group">
+                        <label class="btn btn-default disabled font90pc">Price Variance <span class="badge" data-bind="text: ('+/- ' + $root.PriceChangeVariance() + ' p')"></span></label>
+                        <label class="btn btn-default disabled font90pc">Grocer Drive Time <span class="badge" data-bind="text: ('' + $root.MaxGrocerDriveTime() + ' mins')"></span></label>
+                        <label class="btn btn-default disabled font90pc">Super-Unleaded <span class="badge" data-bind="text: ('+' + $root.SuperUnleadedMarkup() + ' p')"></span></label>
+                    </div>
+                </div>
+                <div class="col-md-7">
+                    <div class="btn-group pull-right">
+                        <button type="button" class="btn btn-default" data-bind="click: showPriceSummaryTab, css: {'btn-primary': $root.showingPriceSummaryTab()}" data-infotip="Show the [b]Prices/Price Change[/b] summary tab"><i class="fa fa-area-chart"></i> Price/Price Change Summary</button>
+                        <button type="button" class="btn btn-default" data-bind="click: showCompetitorDifferencesTab, css: {'btn-primary': $root.showingCompetitorDifferencesTab()}" data-infotip="Show the [b]Competitor Price Differences[/b] tab"><i class="fa fa-clone"></i> Competitor Price Differences</button>
+                        <button type="button" class="btn btn-default" data-bind="click: showEmptySummaryTab, css: {'btn-primary': $root.showingEmptyTab()}" data-infotip="Hide [b]All[/b] tabs"><i class="fa fa-times"></i> Hide</button>
+                    </div>
                 </div>
             </div>
 
@@ -549,7 +558,7 @@
                                     <span data-bind="css: ('fuel-price-change-' + UpDownSignCss()), html: FuelPrice.ForecourtTodayPriceHtml, attr: {'data-infotip': FuelPrice.CurrentPriceInfoTip()}"></span>
                                     <b data-bind="html: nearbyGrocersHtml()"></b>
                                 </td>
-                                <td data-bind="css: ('col-today' + (isEditingFuel() ? ' col-editing' : '') + (hasValidValue() ? ' col-valid' : ' col-invalid') + (isMatchedByPriceMovementFilter() ? ' price-movement-filter-match' : '') + (!$parent.isEditing() && FuelPrice.isOverrideHidden() && !$root.isDailyPriceFileOutdated() ? ' hide-empty-override' : ''))">
+                                <td data-bind="css: (TomorrowPriceCellCss())">
                                     <div data-bind="css: ('fuel-price-change-' + UpDownSignCss())">
                                         <!-- ko if:  $parent.PriceMatchType == 1 -->
                                         <span class="padded-price-right solo-price click-edits-override" data-bind="click: showToEditOverride, attr: {'data-infotip': FuelPrice.SoloPriceInfoTip()}, html: FuelPrice.ForecourtAutoPriceHtml()"></span>
@@ -574,9 +583,9 @@
                                     </div>
                                 </td>
 
-                                <td class="col-tomorrow-price-change" data-bind="css: ('col-today' + (isEditingFuel() ? ' col-editing' : '') + (hasValidValue() ? ' col-valid' : ' col-invalid') + (isMatchedByPriceMovementFilter() ? ' price-movement-filter-match' : ''))">
+                                <td class="col-tomorrow-price-change" data-bind="css: (UpDownCellCss())">
                                     <i data-bind="attr: {class: (UpDownIconCss()), 'data-infotip': FuelPrice.UpDownInfoTip()}"></i>
-                                    &nbsp;<span class="price-diff" data-bind="text: (UpDownText()), attr: {'data-infotip': FuelPrice.UpDownInfoTip()}"></span>
+                                    &nbsp;<span class="price-diff" data-bind="text: (UpDownText()), css: UpDownTextCss(), attr: {'data-infotip': FuelPrice.UpDownInfoTip()}"></span>
                                 </td>
 
                                 <!-- /ko -->

@@ -351,7 +351,7 @@ table.competitorTable > tbody > .competitor-row  {
     background-color: #333;
     color: #fff;
     padding: 2px 1em;
-    margin-top: 1.25em;
+    margin-top: 1.5em;
     margin-left: -6em;
     font-size: 125%;
 }
@@ -440,6 +440,11 @@ table.competitorTable > tbody > .competitor-row  {
 
 .pricing-grid .site-row .price-movement-filter-match {
     background-color: #ffc;
+}
+
+.pricing-grid .site-row .inside-price-variance,
+.pricing-grid .site-row .outside-price-variance {
+    background-color: #ffd77f
 }
 
 .pricing-grid .no-nearby-grocer-price,
@@ -560,6 +565,8 @@ table.competitorTable > tbody > .competitor-row  {
 .price-diff-up {color: #5cb85c}
 .price-diff-none {color: #999;}
 .price-diff-down {color: #910048;}
+
+.price-diff-ignored {color: #999;}
 
 .price-diff {font-family: monospace; font-size: 90%;}
 
