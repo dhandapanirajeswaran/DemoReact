@@ -161,17 +161,26 @@
 
             <div class="row">
                 <div class="col-md-5">
-                    <div class="btn-group">
+                    <div class="btn-group" style="margin-top: -0.5em;">
                         <label class="btn btn-default disabled font90pc">Price Variance <span class="badge" data-bind="text: ('+/- ' + $root.PriceChangeVariance() + ' p')"></span></label>
                         <label class="btn btn-default disabled font90pc">Grocer Drive Time <span class="badge" data-bind="text: ('' + $root.MaxGrocerDriveTime() + ' mins')"></span></label>
                         <label class="btn btn-default disabled font90pc">Super-Unleaded <span class="badge" data-bind="text: ('+' + $root.SuperUnleadedMarkup() + ' p')"></span></label>
                     </div>
                 </div>
                 <div class="col-md-7">
-                    <div class="btn-group pull-right">
-                        <button type="button" class="btn btn-default" data-bind="click: showPriceSummaryTab, css: {'btn-primary': $root.showingPriceSummaryTab()}" data-infotip="Show the [b]Prices/Price Change[/b] summary tab"><i class="fa fa-area-chart"></i> Price/Price Change Summary</button>
+                    <div class="btn-group pull-right" style="margin-right: -1em;">
+                        @*<button type="button" class="btn btn-default" data-bind="click: showPriceChangesTab, css: { 'btn-primary' : $root.showingPriceChangesTab()}" data-infotip="Show the [b]Price Changes[/b] tab"><i class="fa fa-bar-chart"></i> Price Changes</button>*@
+                        <button type="button" class="btn btn-default" data-bind="click: showPriceSummaryTab, css: {'btn-primary': $root.showingPriceSummaryTab()}" data-infotip="Show the [b]Prices/Price Change[/b] summary tab"><i class="fa fa-area-chart"></i> Price Stats</button>
                         <button type="button" class="btn btn-default" data-bind="click: showCompetitorDifferencesTab, css: {'btn-primary': $root.showingCompetitorDifferencesTab()}" data-infotip="Show the [b]Competitor Price Differences[/b] tab"><i class="fa fa-clone"></i> Competitor Price Differences</button>
                         <button type="button" class="btn btn-default" data-bind="click: showEmptySummaryTab, css: {'btn-primary': $root.showingEmptyTab()}" data-infotip="Hide [b]All[/b] tabs"><i class="fa fa-times"></i> Hide</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row price-change-tab" data-bind="visible: $root.showingPriceChangesTab()" style="display: none;">
+                <div>
+                    <div class="sainsburys-site-stats hide-first-load" data-bind="visible: !$root.busyLoadingData()">
+                        @Html.Partial("~/Views/Sites/Pricing/TabPanels/_PriceChanges.cshtml")
                     </div>
                 </div>
             </div>
@@ -179,7 +188,7 @@
             <div class="row summary-tab" data-bind="visible: $root.showingPriceSummaryTab()" style="display: none;">
                 <div>
                     <div class="sainsburys-site-stats hide-first-load" data-bind="visible: !$root.busyLoadingData()">
-                        @Html.Partial("~/Views/Sites/Pricing/_PriceStats.cshtml")
+                        @Html.Partial("~/Views/Sites/Pricing/TabPanels/_PriceStats.cshtml")
                     </div>
                 </div>
             </div>

@@ -44,6 +44,7 @@
             "validation": "App/validation",
             "EasyTemplate": "App/EasyTemplate",
             "PriceStats": "App/pricestats",
+            "PriceChangesTab": "App/priceChangesTab",
             "EditInPlace": "App/EditInPlace/edit-in-place",
             "driveTimeMarkup": "App/driveTimeMarkup",
             "DriveTimeChart": "App/DriveTimeChart",

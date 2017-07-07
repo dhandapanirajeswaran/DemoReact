@@ -664,23 +664,62 @@ table.fixed-header>tbody {
     box-shadow: 0 2px 4px #666;
 }
 
+.fuel-sign.fuel-sign-sm::before {
+    width: 6em;
+    font-size: 80%;
+    line-height: 1.5em;
+    margin: 2px 2px;
+}
+
+.fuel-sign-combined::before,
+.fuel-label-combined::before {
+    content: 'Combined';
+    background-color:#f0ad4e;
+    color: #fff;
+}
+
+.fuel-label-unleaded::before,
 .fuel-sign-unleaded::before {
     content: 'Unleaded';
     background-color:#5cb85c;
     color: #fff;
 }
 
+.fuel-label-super-unleaded::before,
 .fuel-sign-super-unleaded::before {
     content: 'Super-Unleaded';
     background-color:#fff;
     color: #000;
 }
 
+.fuel-label-diesel::before,
 .fuel-sign-diesel::before {
     content: 'Diesel';
     background-color:#000;
     color: #fff;
 }
+
+.fuel-combined,
+.fuel-label-combined {
+    background-color:#f0ad4e;
+    color: #fff;
+}
+.fuel-unleaded,
+.fuel-label-unleaded {
+    background-color:#5cb85c;
+    color: #fff;
+}
+.fuel-diesel,
+.fuel-label-diesel {
+    background-color:#000;
+    color: #fff;
+}
+.fuel-super-unleaded,
+.fuel-label-super-unleaded {
+    background-color:#fff;
+    color: #000;
+}
+
 
 input[type=text].mono-font {
     font-family: monospace;

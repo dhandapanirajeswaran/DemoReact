@@ -1,0 +1,53 @@
+﻿@{
+    Layout = null;
+}
+
+<div>
+    <div class="row">
+
+        <div class="col-md-10">
+            <canvas id="canvasPriceChangesTab" width="1080" height="140"></canvas>
+        </div>
+
+        <div class="col-md-2">
+            <ul class="nav nav-pills nav-stacked nav-condensed">
+                <li>
+                    <div class="input-group">
+                        <span class="input-group-addon" data-bind="css: ($root.priceChangesTabShowCombined() ? ' fuel-combined' : '')">
+
+                            <input type="checkbox" id="chkTogglePriceChange_Combined" data-bind="checked: $root.priceChangesTabShowCombined" value="1" />
+                        </span>
+                        <label for="chkTogglePriceChange_Combined" class="form-control fuel-label fuel-label-combined"></label>
+                    </div>
+                </li>
+
+                <li>
+                    <div class="input-group">
+                        <span class="input-group-addon" data-bind="css: ($root.priceChangesTabShowUnleaded() ? ' fuel-unleaded' : '')">
+                            <input type="checkbox" id="chkTogglePriceChange_Unleaded" data-bind="checked: $root.priceChangesTabShowUnleaded" value="1" />
+                        </span>
+                        <label for="chkTogglePriceChange_Unleaded" class="form-control fuel-label fuel-label-unleaded"></label>
+                    </div>
+                </li>
+
+                <li>
+                    <div class="input-group">
+                        <span class="input-group-addon" data-bind="css: ($root.priceChangesTabShowDiesel() ? ' fuel-diesel' : '')">
+                            <input type="checkbox" id="chkTogglePriceChange_Diesel" data-bind="checked: $root.priceChangesTabShowDiesel" value="1" />
+                        </span>
+                        <label for="chkTogglePriceChange_Diesel" class="form-control fuel-label fuel-label-diesel"></label>
+                    </div>
+                </li>
+
+                <li>
+                    <div class="input-group">
+                        <span class="input-group-addon" data-bind="css: ($root.priceChangesTabShowSuperUnleaded() ? ' fuel-super-unleaded' : '')">
+                            <input type="checkbox" id="chkTogglePriceChange_SuperUnleaded" data-bind="checked: $root.priceChangesTabShowSuperUnleaded" value="1" />
+                        </span>
+                        <label for="chkTogglePriceChange_SuperUnleaded" class="form-control fuel-label fuel-label-super-unleaded"></label>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
