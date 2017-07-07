@@ -2354,6 +2354,8 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
                 _context.Database.ExecuteSqlCommand("Update FileUpload Set StatusId = " + statusId + " where Id = " +
                                                     fileUpload.Id);
             }
+
+            _context.MarkPriceCacheOutdatedForFileUpload(fileUpload.Id);
         }
 
         public SiteToCompetitor LookupSiteAndCompetitor(int siteCatNo, int competitorCatNo)

@@ -439,5 +439,15 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             };
             DapperHelper.Execute(this, sprocName, parameters);
         }
+
+        internal void MarkPriceCacheOutdatedForFileUpload(int fileUploadId)
+        {
+            const string sprocName = "spMarkPriceCacheOutdatedForFileUpload";
+            var parameters = new
+            {
+                @fileUploadId = fileUploadId
+            };
+            DapperHelper.Execute(this, sprocName, parameters);
+        }
     }
 }

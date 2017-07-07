@@ -30,6 +30,7 @@
             //App modules
             "common": "App/common",
             "busyloader": "App/busyloader",
+            "etaCountdown": "App/etaCountdown",
             "notify": "App/notify",
             "cookie": "App/cookie",
             "downloader": "App/downloader",
