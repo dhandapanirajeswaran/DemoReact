@@ -336,13 +336,13 @@
         };
 
         function debugdataset(dataset) {
-            console.log('-------------- dataset -----------------');
-            var i,
-                item;
-            for (i = 0; i < dataset.data.length; i++) {
-                item = dataset.data[i];
-                console.log(item.delta, item.count);
-            }
+            //console.log('-------------- dataset -----------------');
+            //var i,
+            //    item;
+            //for (i = 0; i < dataset.data.length; i++) {
+            //    item = dataset.data[i];
+            //    console.log(item.delta, item.count);
+            //}
         };
 
         function combineDatasets(datasets) {

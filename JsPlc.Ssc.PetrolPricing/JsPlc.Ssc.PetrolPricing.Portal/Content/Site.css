@@ -874,3 +874,16 @@ input[type=text].mono-font {
         box-shadow: 0 0 0px #fff;
     }   
 }
+
+
+.tag {
+    border-radius: 8px 0;
+    margin: 1px 2px;
+    padding: 4px 8px;
+    font-weight: normal;
+}
+
+.tag.tag-info {
+    background-color: #e8edff;
+}
+.tag.tag-info .badge {background: #666; color: #fff;}
