@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.40629.0
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Model", "Model", "{1CFC60A2-3574-44F4-A575-77F896423A46}"
 EndProject
@@ -40,6 +40,10 @@ EndProject
 Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "PetrolPricingLogins", "JsPlc.Ssc.PetrolPricing.Databases\PetrolPricingLogins\PetrolPricingLogins.sqlproj", "{F7D773C3-2274-499C-AED9-B2E2F6466A11}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JsPlc.Ssc.PetrolPricing.IntegrationTests", "JsPlc.Ssc.PetrolPricing.IntegrationTests\JsPlc.Ssc.PetrolPricing.IntegrationTests.csproj", "{5AB9C051-9D22-4DFB-8489-D1202974E572}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Exporting", "Exporting", "{ED306D20-2F44-4B87-8420-1B9ED6B8E721}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JsPlc.Ssc.PetrolPricing.Exporting", "JsPlc.Ssc.PetrolPricing.Exporting\JsPlc.Ssc.PetrolPricing.Exporting.csproj", "{B7CE1681-904E-45F5-AE65-B8473A56C7DF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -187,6 +191,18 @@ Global
 		{5AB9C051-9D22-4DFB-8489-D1202974E572}.Release|x64.ActiveCfg = Release|x64
 		{5AB9C051-9D22-4DFB-8489-D1202974E572}.Release|x64.Build.0 = Release|x64
 		{5AB9C051-9D22-4DFB-8489-D1202974E572}.Release|x86.ActiveCfg = Release|x86
+		{B7CE1681-904E-45F5-AE65-B8473A56C7DF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B7CE1681-904E-45F5-AE65-B8473A56C7DF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B7CE1681-904E-45F5-AE65-B8473A56C7DF}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{B7CE1681-904E-45F5-AE65-B8473A56C7DF}.Debug|x64.Build.0 = Debug|Any CPU
+		{B7CE1681-904E-45F5-AE65-B8473A56C7DF}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{B7CE1681-904E-45F5-AE65-B8473A56C7DF}.Debug|x86.Build.0 = Debug|Any CPU
+		{B7CE1681-904E-45F5-AE65-B8473A56C7DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B7CE1681-904E-45F5-AE65-B8473A56C7DF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B7CE1681-904E-45F5-AE65-B8473A56C7DF}.Release|x64.ActiveCfg = Release|Any CPU
+		{B7CE1681-904E-45F5-AE65-B8473A56C7DF}.Release|x64.Build.0 = Release|Any CPU
+		{B7CE1681-904E-45F5-AE65-B8473A56C7DF}.Release|x86.ActiveCfg = Release|Any CPU
+		{B7CE1681-904E-45F5-AE65-B8473A56C7DF}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -203,5 +219,6 @@ Global
 		{F5C62B8B-858D-4175-9870-60A25E3A462C} = {3E4AEEA7-4504-41B4-AB58-F904C8E5AA9A}
 		{F7D773C3-2274-499C-AED9-B2E2F6466A11} = {3E4AEEA7-4504-41B4-AB58-F904C8E5AA9A}
 		{5AB9C051-9D22-4DFB-8489-D1202974E572} = {11BB7463-CA64-40A6-8351-D4F589FBE717}
+		{B7CE1681-904E-45F5-AE65-B8473A56C7DF} = {ED306D20-2F44-4B87-8420-1B9ED6B8E721}
 	EndGlobalSection
 EndGlobal

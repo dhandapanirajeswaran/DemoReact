@@ -22,10 +22,26 @@ using System.Net.Mail;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
-using JsPlc.Ssc.PetrolPricing.Core.ExtensionMethods;
+using JsPlc.Ssc.PetrolPricing.Exporting.Interfaces;
 
 namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
 {
+
+    public class GetCompetitorsWithPricesService : IGetCompetitorsWithPrices
+    {
+        private ServiceFacade _serviceFacade;
+
+        public GetCompetitorsWithPricesService(ServiceFacade serviceFacade)
+        {
+            _serviceFacade = serviceFacade;
+        }
+
+        public IEnumerable<SitePriceViewModel> GetCompetitorsWithPrices(DateTime? forDate = default(DateTime?), int siteId = 0, int pageNo = 1, int pageSize = 2000)
+        {
+            return _serviceFacade.GetCompetitorsWithPrices(forDate, siteId, pageNo, pageSize);
+        }
+    }
+
     public class ServiceFacade : IDisposable
     {
         private Lazy<HttpClient> _client;

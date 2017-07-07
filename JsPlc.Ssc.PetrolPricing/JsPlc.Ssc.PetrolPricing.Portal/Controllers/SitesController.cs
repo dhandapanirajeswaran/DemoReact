@@ -25,6 +25,7 @@ using JsPlc.Ssc.PetrolPricing.Portal.DataExporters;
 using JsPlc.Ssc.PetrolPricing.Portal.Controllers.BaseClasses;
 using JsPlc.Ssc.PetrolPricing.Core.Diagnostics;
 using JsPlc.Ssc.PetrolPricing.Models.Enums;
+using JsPlc.Ssc.PetrolPricing.Exporting.Exporters;
 
 namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 {
@@ -349,20 +350,11 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             }
             // forDate = forDate.AddDays(-1);
             IEnumerable<SitePriceViewModel> sitesViewModelsWithPrices = _serviceFacade.GetSitePrices(forDate, storeName, catNo, storeNo, storeTown, siteId, 1, 2000);
-            var dt = SitesWithPricesToDataTable(forDate, sitesViewModelsWithPrices);
-            string filenameSuffix = String.Format("[{0}]", forDate.ToString("dd-MMM-yyyy"));
-            return ExcelDocumentStream(new List<DataTable> { dt }, "SiteWithPrices", filenameSuffix, null, downloadId, ExportExcelFileType.ExportJSSites);
-        }
 
-        public DataTable SitesWithPricesToDataTable(DateTime forDate,
-            IEnumerable<SitePriceViewModel> sitesViewModelsWithPrices)
-        {
             var pfsList = GetJsSitesByPfsNum();
-
-            var exporter = new SiteswithPricesDataTableExporter();
-            var dt = exporter.ExportDataTable(forDate, sitesViewModelsWithPrices, pfsList);
-
-            return dt;
+            var workbook = new JsSitesWithPricesExporter().ToExcelWorkbook(forDate, sitesViewModelsWithPrices, pfsList);
+            var excelFilename = String.Format("SiteWithPrices[{0}].xlsx", forDate.ToString("dd-MMM-yyyy"));
+            return base.SendExcelFile(excelFilename, workbook, downloadId);
         }
 
         private void ValidateSiteEditOrCreate(SiteViewModel site)
@@ -723,215 +715,15 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             }
             // forDate = forDate.AddDays(-1);
             IEnumerable<SitePriceViewModel> sitesViewModelsWithPrices = _serviceFacade.GetSitePrices(forDate, storeName, catNo, storeNo, storeTown, siteId, 1, 2000);
-            Dictionary<int, int> dicgroupRows = new Dictionary<int, int>();
-            var dt = SitePricesToDataTable(forDate, sitesViewModelsWithPrices, ref dicgroupRows);
-            string filenameSuffix = String.Format("[{0}]", forDate.ToString("dd-MMM-yyyy"));
-            return ExcelDocumentStream(new List<DataTable> { dt }, "SitePricesWithCompetitors", filenameSuffix, dicgroupRows, downloadId, ExportExcelFileType.ExportAllSites);
-        }
-        public DataTable SitePricesToDataTable(DateTime forDate,
-            IEnumerable<SitePriceViewModel> sitesViewModelsWithPrices, ref Dictionary<int, int> dicgroupRows)
-        {
-            var dt = new DataTable("Site Pricing");
-            dt.Columns.Add("StoreNo.");
-            dt.Columns.Add("Store Name");
-            dt.Columns.Add("Store Town");
-            dt.Columns.Add("Cat No.");
-            dt.Columns.Add("PFS No.");
-            dt.Columns.Add("UnLeaded ");
-            dt.Columns.Add("UnLeaded");
-            dt.Columns.Add("Diff");
-            dt.Columns.Add("Diesel ");
-            dt.Columns.Add("Diesel");
-            dt.Columns.Add("Diff ");
-            dt.Columns.Add("Super Unleaded ");
-            dt.Columns.Add("Super Unleaded");
-            dt.Columns.Add("Diff  ");
-            DataRow dr = dt.NewRow();
-            DateTime tomorrow = forDate.AddDays(1);
-            DateTime yday = forDate.AddDays(-1);
-            DateTime daybyday = yday.AddDays(-1);
-            dr[5] = yday.ToString("dd/MM/yyyy");
-            dr[6] = tomorrow.ToString("dd/MM/yyyy");
-            dr[8] = yday.ToString("dd/MM/yyyy");
-            dr[9] = tomorrow.ToString("dd/MM/yyyy");
-            dr[11] = yday.ToString("dd/MM/yyyy");
-            dr[12] = tomorrow.ToString("dd/MM/yyyy");
-            dt.Rows.Add(dr);
-            int nRow = 2;
-            Dictionary<int, int> dicColtoFType = new Dictionary<int, int>();
-            dicColtoFType.Add(2, 5);
-            dicColtoFType.Add(6, 8);
-            dicColtoFType.Add(1, 11);
-
-            foreach (var siteVM in sitesViewModelsWithPrices)
-            {
-                dr = dt.NewRow();
-                dr[0] = siteVM.StoreNo;
-                dr[1] = siteVM.StoreName;
-                dr[2] = siteVM.Town;
-                dr[3] = siteVM.CatNo;
-                dr[4] = siteVM.PfsNo;
-
-                if (siteVM.FuelPrices != null)
-                {
-                    foreach (var fp in siteVM.FuelPrices)
-                    {
-                        if (dicColtoFType.ContainsKey(fp.FuelTypeId))
-                        {
-                            if (System.DBNull.Value == dr[dicColtoFType[fp.FuelTypeId]]) dr[dicColtoFType[fp.FuelTypeId]] = (fp.TodayPrice / 10.0).ToString();
-                            if (System.DBNull.Value == dr[dicColtoFType[fp.FuelTypeId] + 1]) dr[dicColtoFType[fp.FuelTypeId] + 1] = (fp.AutoPrice / 10.0).ToString();
-                            if (System.DBNull.Value == dr[dicColtoFType[fp.FuelTypeId] + 2])
-                            {
-                                dr[dicColtoFType[fp.FuelTypeId] + 2] = fp.AutoPrice > 0 && fp.TodayPrice > 0 ? ((fp.AutoPrice - fp.TodayPrice) / 10.0).ToString() : "n/a";
-                            }
-                        }
-                    }
-                }
-                dt.Rows.Add(dr);
-                nRow = nRow + 1;
-
-                //Adding Competitors
-                if (siteVM.competitors == null) siteVM.competitors = _serviceFacade.GetCompetitorsWithPrices(forDate, siteVM.SiteId, 1, 2000).OrderBy(x => x.DriveTime).ToList();
-
-                if (siteVM.competitors != null)
-                {
-                    dr = dt.NewRow();
-                    dr[1] = "Brand";
-                    dr[2] = "Maker";
-                    dr[3] = "Drive-Time";
-                    dr[4] = "Cat No.";
-                    dr[5] = "UnLeaded";
-                    dr[6] = "UnLeaded ";
-                    dr[7] = "Diff";
-                    dr[8] = "Diesel";
-                    dr[9] = "Diesel ";
-                    dr[10] = "Diff ";
-                    dr[11] = "Super Unleaded";
-                    dr[12] = "Super Unleaded ";
-                    dr[13] = "Diff  ";
-                    dt.Rows.Add(dr);
-                    dr = dt.NewRow();
-                    dr[5] = daybyday.ToString("dd/MM/yyyy");
-                    dr[6] = yday.ToString("dd/MM/yyyy");
-                    dr[8] = daybyday.ToString("dd/MM/yyyy");
-                    dr[9] = yday.ToString("dd/MM/yyyy");
-                    dr[11] = daybyday.ToString("dd/MM/yyyy");
-                    dr[12] = yday.ToString("dd/MM/yyyy");
-                    dt.Rows.Add(dr);
-                    foreach (var compitetorVM in siteVM.competitors)
-                    {
-                        dr = dt.NewRow();
-                        dr[1] = compitetorVM.Brand;
-                        dr[2] = compitetorVM.StoreName;
-                        dr[3] = compitetorVM.DriveTime;
-                        dr[4] = compitetorVM.CatNo;
-                        if (compitetorVM.FuelPrices != null)
-                        {
-                            foreach (var fp in compitetorVM.FuelPrices)
-                            {
-                                if (dicColtoFType.ContainsKey(fp.FuelTypeId))
-                                {
-                                    if (System.DBNull.Value == dr[dicColtoFType[fp.FuelTypeId]]) dr[dicColtoFType[fp.FuelTypeId]] = (fp.YestPrice / 10.0).ToString();
-                                    if (System.DBNull.Value == dr[dicColtoFType[fp.FuelTypeId] + 1]) dr[dicColtoFType[fp.FuelTypeId] + 1] = (fp.TodayPrice / 10.0).ToString();
-                                    if (System.DBNull.Value == dr[dicColtoFType[fp.FuelTypeId] + 2])
-                                    {
-                                        dr[dicColtoFType[fp.FuelTypeId] + 2] = fp.TodayPrice > 0 && fp.YestPrice > 0 ? ((fp.TodayPrice - fp.YestPrice) / 10.0).ToString() : "n/a";
-                                    }
-                                }
-                            }
-                        }
-                        dt.Rows.Add(dr);
-
-                    }
-                    dr = dt.NewRow();
-                    dt.Rows.Add(dr);
-                    dicgroupRows.Add(nRow, siteVM.competitors.Count + 2);
-                }
 
 
-            }
-            return dt;
-        }
-        private ActionResult ExcelDocumentStream(List<DataTable> tables, string fileName, string fileNameSuffix, Dictionary<int, int> dicgroupRows, string downloadId, ExportExcelFileType exportType)
-        {
-            using (var wb = new ClosedXML.Excel.XLWorkbook())
-            {
-                foreach (var dt in tables)
-                {
-                    var ws = wb.Worksheets.Add(dt);
-                    //int TotalRows = ws.RowCount();
+            var getCompetitorsWithPricesService = new GetCompetitorsWithPricesService(_serviceFacade);
 
-                    int totalRows = dt.Rows.Count; // NOTE: do not use the Worksheet RowCount() it is always 1048576 !
-
-
-                    for (int i = 2; i < totalRows; i++)
-                    {
-                        ChangeCellColor(ws.Cell(i, 8));
-                        ChangeCellColor(ws.Cell(i, 11));
-                        ChangeCellColor(ws.Cell(i, 14));
-                    }
-                    if (dicgroupRows != null)
-                    {
-                        int nSiteRow = 3;
-                        int nRow = 3;
-                        while (dicgroupRows.ContainsKey(nRow))
-                        {
-
-
-                            int nCompitetors = dicgroupRows[nRow];
-
-                            var cellrange = string.Format("A{0}:N{1}", nSiteRow + 1, nSiteRow + nCompitetors);
-                            var cellrangesecondRow = "A2:N2";
-                            ws.Range(cellrangesecondRow)
-                                .Style.Fill.SetBackgroundColor(ClosedXML.Excel.XLColor.LightGray);
-                            ws.Range(cellrange).Style.Fill.SetBackgroundColor(ClosedXML.Excel.XLColor.LightGray);
-                            ws.Range(cellrange).Style.Border.OutsideBorder = ClosedXML.Excel.XLBorderStyleValues.Thick;
-                            ws.Range(cellrange).Style.Border.OutsideBorderColor = ClosedXML.Excel.XLColor.Gray;
-
-                            ws.Rows(nSiteRow + 1, nSiteRow + nCompitetors).Group();
-                            ws.Rows(nSiteRow + 1, nSiteRow + nCompitetors).Collapse();
-                            nSiteRow += nCompitetors + 2;
-                            nRow++;
-                        }
-                    }
-
-                    // Apply numeric/string and other formatting
-                    var excelStyler = new ExcelStyler();
-                    excelStyler.ApplySiteExport(ws, exportType, totalRows);
-
-                    // Autofit all columns
-                    ws.Columns().AdjustToContents();
-                }
-                wb.Style.Alignment.Horizontal = ClosedXML.Excel.XLAlignmentHorizontalValues.Center;
-                wb.Style.Font.Bold = true;
-
-                var excelFilename = String.Format("{1}{0}.xlsx", fileNameSuffix, fileName);
-
-                return base.SendExcelFile(excelFilename, wb, downloadId);
-            }
+            var workbook = new AllSitesPricesExporter().ToExcelWorkbook(sitesViewModelsWithPrices, forDate, getCompetitorsWithPricesService);
+            var excelFilename = String.Format("SitePricesWithCompetitors[{0}].xlsx", forDate.ToString("dd-MMM-yyyy"));
+            return base.SendExcelFile(excelFilename, workbook, downloadId);
         }
 
-        private void ChangeCellColor(IXLCell cell)
-        {
-            int iValue = 0;
-            bool bResult=Int32.TryParse(cell.Value.ToString(), out iValue);
-            if (Convert.ToString(cell.Value).Trim() == "n/a")
-            {
-                cell.Style.Font.FontColor = ClosedXML.Excel.XLColor.Gray;
-            }
-            else if (Convert.ToString(cell.Value).Trim() == "Diff")
-            {
-               // cell.Style.Font.FontColor = ClosedXML.Excel.XLColor.Gray;
-            }
-            else if (bResult && iValue > 0)
-            {
-                cell.Style.Font.FontColor = ClosedXML.Excel.XLColor.Green;
-            }
-            else if (bResult && iValue <0)
-            {
-                cell.Style.Font.FontColor = ClosedXML.Excel.XLColor.Red;
-            }
-        }
         [System.Web.Mvc.HttpPost]
         public ActionResult Edit(SiteViewModel site)
         {

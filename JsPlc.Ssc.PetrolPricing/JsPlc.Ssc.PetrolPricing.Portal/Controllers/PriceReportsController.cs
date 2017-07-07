@@ -18,6 +18,7 @@ using JsPlc.Ssc.PetrolPricing.Core;
 using JsPlc.Ssc.PetrolPricing.Core.Interfaces;
 using JsPlc.Ssc.PetrolPricing.Portal.Controllers.BaseClasses;
 using JsPlc.Ssc.PetrolPricing.Portal.DataExporters;
+using JsPlc.Ssc.PetrolPricing.Exporting.Styling;
 
 namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 {
