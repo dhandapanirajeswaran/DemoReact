@@ -28,7 +28,6 @@ AS
 			TRUNCATE TABLE dbo.SiteToCompetitor
 
 			TRUNCATE TABLE dbo.PriceSnapshot
-			TRUNCATE TABLE dbo.PriceSnapshotRow
 
 			-- NOTE: TRUNCATE TABLE dbo.Site will not work 
 			DELETE FROM dbo.Site
@@ -53,7 +52,6 @@ AS
 			DBCC CHECKIDENT ('Site', RESEED, 1)
 			DBCC CHECKIDENT ('FileUpload', RESEED, 1)
 			DBCC CHECKIDENT ('PriceSnapshot', RESEED, 1)
-			DBCC CHECKIDENT ('PriceSnapshotRow', RESEED, 1)
 		COMMIT TRAN
 	END TRY
 	BEGIN CATCH
