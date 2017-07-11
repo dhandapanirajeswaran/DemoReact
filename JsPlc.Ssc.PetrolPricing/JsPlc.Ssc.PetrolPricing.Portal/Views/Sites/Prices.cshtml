@@ -56,20 +56,20 @@
             else
             {
                 <div class="banner banner-danger">
-                    <i class="fa fa-file"></i> There is no <strong>Daily Price Data</strong> file. Please <a class="btn btn-warning btn-sm pull-right" href="@Url.Action("Upload","File")?UploadType=DailyPriceData" data-infotip="Upload a new [b]Daily Price Data[/b] file"><i class="fa fa-upload"></i> Upload</a> a file.
+                    <i class="fa fa-file"></i> There is no <strong>Daily Price Data</strong> file. Please <a class="btn btn-primary btn-sm" href="@Url.Action("Upload","File")?UploadType=DailyPriceData" data-infotip="Upload a new [b]Daily Price Data[/b] file"><i class="fa fa-upload"></i> Upload</a> a file.
                     <input type="hidden" id="hdnDailyPriceFileMissingForToday" value="1" />
                 </div>
             }
         </section>
 
 
-        @if (hasLatestJsPriceDataToday)
+        @*@if (hasLatestJsPriceDataToday)
         {
             <input type="hidden" id="hdnHasLatestJsPriceDataToday" value="1" />
         <div class="banner banner-warning" data-bind="visible: ($root.hasLatestJsPriceDataForToday() && !$root.ViewingHistorical())" style="display: none;">
             <i class="fa fa-info-circle"></i> Disabled <strong>Override Prices</strong> because a <a class="btn btn-warning" href="@Url.Action("Details", "File")/@(latestJsPriceDataUpload.FileUploadId)"><i class="fa fa-file"></i> Latest Js Price Data</a> file  has been uploaded for today by <strong>@(latestJsPriceDataUpload.UploadedBy)</strong> &mdash; (@Html.FormatFriendlyTimeAgo(latestJsPriceDataUpload.UploadDateTime))
         </div>
-        }
+        }*@
 
         <!-- competitor notes popup -->
         @Html.Partial("~/Views/Sites/Pricing/_CompetitorNotePopup.cshtml", Model)
