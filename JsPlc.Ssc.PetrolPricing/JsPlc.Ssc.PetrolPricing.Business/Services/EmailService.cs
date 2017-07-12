@@ -23,6 +23,8 @@ using System.IO;
 using JsPlc.Ssc.PetrolPricing.Core;
 using JsPlc.Ssc.PetrolPricing.Core.Interfaces;
 using JsPlc.Ssc.PetrolPricing.Models.ViewModels;
+using JsPlc.Ssc.PetrolPricing.Models.ViewModels.Schedule;
+using JsPlc.Ssc.PetrolPricing.Business.Services;
 
 namespace JsPlc.Ssc.PetrolPricing.Business
 {
@@ -99,7 +101,9 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 
                     var emailFrom = _appSettings.EmailFrom;
 
-					using (var smtpClient = createSmtpClient())
+                    var emailSettings = new EmailServiceSettings(_appSettings, _factory);
+
+					using (var smtpClient = emailSettings.CreateSmtpClient())
 					{
 						var message = new MailMessage();
 
@@ -207,8 +211,10 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 		{
 			string result;
 
+            var emailSettings = new EmailServiceSettings(_appSettings, _factory);
+
 			//Using an SMTP client with the specified host name and port.
-			using (var client = createSmtpClient())
+			using (var client = emailSettings.CreateSmtpClient())
 			{
 				string mailFrom = _appSettings.EmailFrom; // "akiaip5@gmail.com";
 
@@ -264,76 +270,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 			return retval;
 		}
 
-		#region Private Methods
-		/// <summary>
-		/// Creates an SMTP Client based on AppSettings Keys
-		/// </summary>
-		/// <returns></returns>
-		private ISmtpClient createSmtpClient()
-		{
-			// Localhost, Gmail, AWS
-			var mailHostSelector = _appSettings.MailHostSelector;
-
-			var client = _factory.Create<ISmtpClient>(CreationMethod.ServiceLocator, null);
-			
-			switch (mailHostSelector.ToUpper())
-			{
-				case "LOCALHOST":
-					{
-						// Mail Delivery working on a VM box: 
-						// Server localhost:25, (.eml) email appears in MailRoot/Drop
-						// Smtp Server Domains = Alias domain = gmail.com
-						// UseDefaultCredentials = true; EnableSsl = false; 
-						client.Host = "localhost";
-						client.Port = 25;
-						client.EnableSsl = false;
-						client.UseDefaultCredentials = true;
-					}
-					break;
-				case "GMAIL":
-					{
-						client.Host = "smtp.gmail.com";
-						client.Port = 587; // 25 or 465 (with SSL) and port 587 (with TLS)
-						client.EnableSsl = true;
-						client.Credentials = new NetworkCredential(
-							userName: "akiaip5@gmail.com",
-							password: "AmDoy02X");
-					}
-					break;
-				case "AWS":
-					{
-						client.Host = _appSettings.SmtpServer;
-						client.Port = _appSettings.SmtpPort;
-						client.EnableSsl = _appSettings.SmtpEnableSsl;
-						client.Credentials = new NetworkCredential(
-							userName: _appSettings.SmtpUserName,
-							password: _appSettings.SmtpPassword);
-					}
-					break;
-			}
-			return client;
-		}
-
-		//Below helper methods used by build email. 
-		//private static string emailGetLayout()
-		//{
-		//	var filePathAndName = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Templates/EmailTemplate.html");
-
-  //          if (!System.IO.File.Exists(filePathAndName))
-  //          {
-  //              filePathAndName = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "bin/Templates/EmailTemplate.html");
-  //          }
-
-        
-		//	StringBuilder sb = new StringBuilder();
-
-		//	using (StreamReader sr = new StreamReader(filePathAndName))
-		//	{
-		//		sb.Append(sr.ReadToEnd());
-		//	}
-
-		//	return sb.ToString();
-		//}
+        #region Private Methods
 
 		/// <summary>
 		/// Get SitePrice data for email, returns null if not found
@@ -502,9 +439,6 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 		}
 
 		#endregion
-
-
-      
     }
 }
 

@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Net.Mail;
 using System.Threading.Tasks;
 using JsPlc.Ssc.PetrolPricing.Models.ViewModels;
+using JsPlc.Ssc.PetrolPricing.Models.ViewModels.Schedule;
 
 namespace JsPlc.Ssc.PetrolPricing.Business
 {

@@ -14,6 +14,7 @@ using JsPlc.Ssc.PetrolPricing.Repository;
 using Newtonsoft.Json;
 using JsPlc.Ssc.PetrolPricing.Models.ViewModels.SystemSettings;
 using AutoMapper;
+using JsPlc.Ssc.PetrolPricing.Models.ViewModels.Schedule;
 
 namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
 {
@@ -164,6 +165,98 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
             try
             {
                 var result = _systemSettingsService.UpdateBrandCollectionSettings(model);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex);
+                return new ExceptionResult(ex, this);
+            }
+        }
+
+        [Route("api/GetWinServiceScheduledItems/")]
+        public async Task<IHttpActionResult> GetWinServiceScheduledItems()
+        {
+            try
+            {
+                var result = _systemSettingsService.GetWinServiceScheduledItems();
+                return Ok(result);
+            }
+            catch(Exception ex)
+            {
+                _logger.Error(ex);
+                return new ExceptionResult(ex, this);
+            }
+        }
+
+        [Route("api/GetWinServiceServiceEventLog/")]
+        public async Task<IHttpActionResult> GetWinServiceEventLog()
+        {
+            try
+            {
+                var result = _systemSettingsService.GetWinServiceEventLog();
+                return Ok(result);
+            }
+            catch(Exception ex)
+            {
+                _logger.Error(ex);
+                return new ExceptionResult(ex, this);
+            }
+        }
+
+        [Route("api/GetWinServiceScheduleItem/{id}")]
+        public async Task<IHttpActionResult> GetWinServiceScheduleItem(int id)
+        {
+            try
+            {
+                var result = _systemSettingsService.GetWinServiceScheduleItem(id);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex);
+                return new ExceptionResult(ex, this);
+            }
+        }
+
+        [Route("api/UpsertWinServiceScheduleItem/")]
+        public async Task<IHttpActionResult> UpsertWinServiceSchedule([FromBody] ScheduleItemViewModel model)
+        {
+            try
+            {
+                var result = _systemSettingsService.UpsertWinServiceSchedule(model);
+                return Ok(result);
+            }
+            catch(Exception ex)
+            {
+                _logger.Error(ex);
+                return new ExceptionResult(ex, this);
+            }
+        }
+
+        [HttpGet]
+        [Route("api/ExecuteWinServiceSchedule/")]
+        public async Task<IHttpActionResult> RunWinServiceSchedule()
+        {
+            try
+            {
+                var result = _systemSettingsService.RunWinServiceSchedule();
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex);
+                return new ExceptionResult(ex, this);
+            }
+        }
+
+        [HttpGet]
+        [Route("api/ClearWinServiceEventLog")]
+        public async Task<IHttpActionResult> ClearWinServiceEventLog()
+        {
+            try
+            {
+                var result = _systemSettingsService.ClearWinServiceEventLog();
                 return Ok(result);
             }
             catch (Exception ex)

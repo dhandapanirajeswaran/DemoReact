@@ -145,5 +145,10 @@ namespace JsPlc.Ssc.PetrolPricing.Business
         {
             return _db.GetContactDetails();
         }
+
+        public IEnumerable<int> GetJsSitesByPfsNum()
+        {
+            return _db.GetJsSitesByPfsNum();
+        }
     }
 }

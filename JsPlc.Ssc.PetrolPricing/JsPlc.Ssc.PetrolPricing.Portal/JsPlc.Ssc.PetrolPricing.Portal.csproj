@@ -340,6 +340,7 @@
     <Content Include="Scripts\App\scrollToElement.js" />
     <Content Include="Scripts\App\scrollToTop.js" />
     <Content Include="Scripts\App\Services\DriveTimeMarkupService.js" />
+    <Content Include="Scripts\App\Services\EmailScheduleService.js" />
     <Content Include="Scripts\App\Services\EmailTemplateService.js" />
     <Content Include="Scripts\App\Popups\SiteEmailHelp.html" />
     <Content Include="Scripts\App\sitePricingSettings.js" />
@@ -348,6 +349,7 @@
     <Content Include="Scripts\App\ViewScripts\CompetitorPricePopup.js" />
     <Content Include="Scripts\App\ViewScripts\Diagnostics.js" />
     <Content Include="Scripts\App\ViewScripts\DriveTime.js" />
+    <Content Include="Scripts\App\ViewScripts\EmailSchedule.js" />
     <Content Include="Scripts\App\ViewScripts\FileUpload.js" />
     <Content Include="Scripts\App\ViewScripts\SiteMaintenance.js" />
     <Content Include="Scripts\App\SitePricingSorting.js" />
@@ -548,6 +550,7 @@
     <Content Include="Views\Settings\Brands.cshtml" />
     <Content Include="Views\Sites\Pricing\TabPanels\_PriceStats.cshtml" />
     <Content Include="Views\Sites\Pricing\TabPanels\_PriceChanges.cshtml" />
+    <Content Include="Views\Settings\Schedule.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\uploads\" />

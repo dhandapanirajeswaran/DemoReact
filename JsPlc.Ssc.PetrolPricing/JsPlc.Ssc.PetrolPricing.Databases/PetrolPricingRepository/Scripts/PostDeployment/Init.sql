@@ -343,6 +343,101 @@ MERGE
 
 SET IDENTITY_INSERT dbo.PriceMatchType OFF;
 
+
+--
+-- Seed [dbo].[WinServiceEventType] table
+--
+SET IDENTITY_INSERT dbo.WinServiceEventType ON;
+MERGE
+	dbo.WinServiceEventType AS Target
+	USING (
+		SELECT '0', 'None'
+		UNION ALL
+		SELECT '1', 'DailyPriceEmail'
+
+	) AS Source (WinServiceEventTypeId, EventTypeName)
+	ON (Source.WinServiceEventTypeId = target.WinServiceEventTypeId)
+	WHEN NOT MATCHED THEN
+		INSERT (
+			WinServiceEventTypeId,
+			EventTypeName
+		)
+		VALUES (
+			source.WinServiceEventTypeId,
+			source.EventTypeName
+		)
+	WHEN MATCHED THEN
+		UPDATE SET
+			EventTypeName = source.EventTypeName;
+
+SET IDENTITY_INSERT dbo.WinServiceEventType OFF;
+
+--
+-- Seed [dbo].[WinServiceEventStatus] table
+--
+SET IDENTITY_INSERT dbo.WinServiceEventStatus ON;
+
+MERGE
+	dbo.WinServiceEventStatus AS target
+	USING (
+		SELECT '0', 'None'
+		UNION ALL
+		SELECT '1', 'Paused'
+		UNION ALL
+		SELECT '2', 'Sleeping'
+		UNION ALL
+		SELECT '3', 'Running'
+		UNION ALL
+		SELECT '4', 'Success'
+		UNION ALL
+		SELECT '5', 'Failed'
+	) AS Source(WinServiceEventStatusId,EventStatusName)
+	ON (Source.WinServiceEventStatusId = target.WinServiceEventStatusId)
+	WHEN NOT MATCHED THEN
+		INSERT (
+			WinServiceEventStatusId,
+			EventStatusName
+		)
+		VALUES (
+			source.WinServiceEventStatusId,
+			source.EventStatusName
+		)
+	WHEN MATCHED THEN
+		UPDATE SET
+			EventStatusName = source.EventStatusName;
+
+SET IDENTITY_INSERT dbo.WinServiceEventStatus OFF;
+
+
+--
+-- seed [dbo].[WinServiceSchedule] table
+--
+IF NOT EXISTS(SELECT TOP 1 NULL FROM dbo.WinServiceSchedule)
+BEGIN
+	INSERT INTO dbo.WinServiceSchedule
+		(
+			IsActive,
+			WinServiceEventTypeId,
+			ScheduledFor,
+			LastPolledOn,
+			LastStartedOn,
+			LastCompletedOn,
+			WinServiceEventStatusId,
+			EmailAddress
+		)
+		VALUES (
+			1,
+			1, -- DailyPriceEmail
+			DATEADD(HOUR, 18, CONVERT(DATETIME, CONVERT(DATE, GETDATE() + 1))), -- 18:00 hours next day
+			NULL,
+			NULL,
+			NULL,
+			2, -- Sleeping
+			''
+		);
+END
+
+
 --
 -- Determine PriceMatchType for existing sites
 --

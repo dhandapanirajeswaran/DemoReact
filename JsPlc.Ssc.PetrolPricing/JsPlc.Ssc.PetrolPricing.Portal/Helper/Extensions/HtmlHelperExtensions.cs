@@ -10,9 +10,16 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Helper.Extensions
 {
     public static class HtmlHelperExtensions
     {
-        public static string FormatFriendlyDateTime(this HtmlHelper helper,DateTime datetime)
+        public static string FormatFriendlyDateTime(this HtmlHelper helper, DateTime datetime)
         {
             return DateAndTimeFormatter.FormatFriendlyDateTime(datetime);
+        }
+
+        public static string FormatFriendlyDateTime(this HtmlHelper helper, DateTime? datetime)
+        {
+            return datetime.HasValue
+                ? DateAndTimeFormatter.FormatFriendlyDateTime(datetime.Value)
+                : "";
         }
 
         public static string FormatFriendlyTimeAgo(this HtmlHelper helper, DateTime? datetime)

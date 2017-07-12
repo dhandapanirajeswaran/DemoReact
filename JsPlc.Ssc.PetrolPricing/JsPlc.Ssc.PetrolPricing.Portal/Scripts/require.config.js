@@ -58,7 +58,7 @@
             "PetrolPricingService": "App/Services/PetrolPricingService",
             "EmailTemplateService": "App/Services/EmailTemplateService",
             "DriveTimeMarkupService": "App/Services/DriveTimeMarkupService",
-
+            "EmailScheduleService": "App/Services/EmailScheduleService",
 
             //View scripts
             "SitePricing": "App/ViewScripts/SitePricing",
@@ -69,6 +69,7 @@
             "Diagnostics": "App/ViewScripts/Diagnostics",
             "SiteMaintenance": "App/ViewScripts/SiteMaintenance",
             "DriveTime": "App/ViewScripts/DriveTime",
+            "EmailSchedule": "App/ViewScripts/EmailSchedule",
 
             // Page scripts
             "Prices": "App/Prices"

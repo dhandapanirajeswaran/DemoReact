@@ -23,6 +23,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 using JsPlc.Ssc.PetrolPricing.Exporting.Interfaces;
+using JsPlc.Ssc.PetrolPricing.Models.ViewModels.Schedule;
 
 namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
 {
@@ -1351,6 +1352,51 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
         {
             var apiUrl = String.Format("api/TriggerDailyPriceRecalculation/?day={0}", day.Ticks);
             return CallAndCatchAsyncGet<StatusViewModel>("TriggerDailyPriceRecalculation", apiUrl);
+        }
+
+        public IEnumerable<ScheduleItemViewModel> GetWinServiceScheduledItems()
+        {
+            var apiUrl = "api/GetWinServiceScheduledItems/";
+            var model = CallAndCatchAsyncGet<IEnumerable<ScheduleItemViewModel>>("GetWinServiceScheduledItems", apiUrl);
+            return model ?? new List<ScheduleItemViewModel>();
+        }
+
+        public IEnumerable<ScheduleEventLogViewModel> GetWinServiceEventLog()
+        {
+            var apiUrl = "api/GetWinServiceServiceEventLog/";
+            var model = CallAndCatchAsyncGet<IEnumerable<ScheduleEventLogViewModel>>("GetWinServiceEventLog", apiUrl);
+            return model ?? new List<ScheduleEventLogViewModel>();
+        }
+
+        public ScheduleItemViewModel UpsertWinServiceSchedule(ScheduleItemViewModel model)
+        {
+            var apiUrl = "api/UpsertWinServiceScheduleItem/";
+            model = CallAndCatchAsyncPost<ScheduleItemViewModel, ScheduleItemViewModel>("UpsertWinServiceSchedule", apiUrl, model);
+            return model ?? new ScheduleItemViewModel();
+        }
+
+        public ScheduleItemViewModel WinServiceGetScheduleItem(int winServiceScheduleId)
+        {
+            var apiUrl = String.Format("api/GetWinServiceScheduleItem/{0}", winServiceScheduleId);
+            return CallAndCatchAsyncGet<ScheduleItemViewModel>("LoadEmailScheduleItem", apiUrl);
+        }
+
+        public StatusViewModel ExecuteWinServiceSchedule()
+        {
+            var apiUrl = String.Format("api/ExecuteWinServiceSchedule/");
+            return CallAndCatchAsyncGet<StatusViewModel>("ExecuteWinServiceSchedule", apiUrl);
+        }
+
+        public StatusViewModel ClearWinServiceEventLog()
+        {
+            var apiUrl = String.Format("api/ClearWinServiceEventLog/");
+            return CallAndCatchAsyncGet<StatusViewModel>("ClearWinServiceEventLog", apiUrl);
+        }
+
+        public List<int> GetJsSitesByPfsNum()
+        {
+            var apiUrl = String.Format("api/GetJsSitesByPfsNum");
+            return CallAndCatchAsyncGet<List<int>>("GetJsSitesByPfsNum", apiUrl);
         }
 
         #region private methods

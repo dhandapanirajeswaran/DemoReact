@@ -54,5 +54,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
         RecentFileUploadSummary GetRecentFileUploadSummary();
 
         IEnumerable<ContactDetail> GetContactDetails();
+
+        IEnumerable<int> GetJsSitesByPfsNum();
     }
 }

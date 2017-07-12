@@ -887,3 +887,6 @@ input[type=text].mono-font {
     background-color: #e8edff;
 }
 .tag.tag-info .badge {background: #666; color: #fff;}
+
+.table > tbody > tr.row-inactive {background-color: #f2dede;}
+

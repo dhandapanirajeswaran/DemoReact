@@ -17,6 +17,8 @@ using JsPlc.Ssc.PetrolPricing.Models.Enums;
 using JsPlc.Ssc.PetrolPricing.Models.ViewModels.SelfTest;
 using JsPlc.Ssc.PetrolPricing.Repository.Helpers;
 using JsPlc.Ssc.PetrolPricing.Models.ViewModels.SystemSettings;
+using JsPlc.Ssc.PetrolPricing.Models.ViewModels.Schedule;
+using JsPlc.Ssc.PetrolPricing.Models.WindowsService;
 
 namespace JsPlc.Ssc.PetrolPricing.Repository
 {
@@ -440,6 +442,16 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             DapperHelper.Execute(this, sprocName, parameters);
         }
 
+        public void PurgeWinScheduleLogs(int daysAgo)
+        {
+            const string sprocName = "spWinServicePurgeEventLogs";
+            var parameters = new
+            {
+                @DaysAgo = daysAgo
+            };
+            DapperHelper.Execute(this, sprocName, parameters);
+        }
+
         internal void MarkPriceCacheOutdatedForFileUpload(int fileUploadId)
         {
             const string sprocName = "spMarkPriceCacheOutdatedForFileUpload";
@@ -447,6 +459,68 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             {
                 @fileUploadId = fileUploadId
             };
+            DapperHelper.Execute(this, sprocName, parameters);
+        }
+
+        internal IEnumerable<ScheduleItemViewModel> GetWinServiceScheduledItems()
+        {
+            const string sprocName = "spWinServiceGetSchedules";
+            var parameters = new { };
+            return DapperHelper.QueryList<ScheduleItemViewModel>(this, sprocName, parameters);
+        }
+
+        internal IEnumerable<ScheduleEventLogViewModel> GetWinServiceEventLog()
+        {
+            const string sprocName = "spWinServiceGetEventLogs";
+            var parameters = new { };
+            return DapperHelper.QueryList<ScheduleEventLogViewModel>(this, sprocName, parameters);
+        }
+
+        internal ScheduleItemViewModel GetWinServiceScheduleItem(int winServiceScheduleId)
+        {
+            const string sprocName = "spWinServiceGetScheduleItem";
+            var parameters = new
+            {
+                @WinServiceScheduleId = winServiceScheduleId
+            };
+            return DapperHelper.QueryFirstOrDefault<ScheduleItemViewModel>(this, sprocName, parameters);
+        }
+
+        internal ScheduleItemViewModel UpsertWinServiceSchedule(ScheduleItemViewModel model)
+        {
+            const string sprocName = "spWinServiceUpsertSchedule";
+            var parameters = new
+            {
+                @WinServiceScheduleId = model.WinServiceScheduleId,
+                @IsActive = model.IsActive,
+                @WinServiceEventTypeId = model.WinServiceEventTypeId,
+                @ScheduledFor = model.ScheduledFor,
+                @LastPolledOn = model.LastPolledOn,
+                @LastStartedOn = model.LastStartedOn,
+                @LastCompletedOn = model.LastCompletedOn,
+                @WinServiceEventStatusId = model.WinServiceEventStatusId,
+                @EmailAddress = model.EmailAddress
+            };
+            return DapperHelper.QueryFirstOrDefault<ScheduleItemViewModel>(this, sprocName, parameters);
+        }
+
+        internal void AddWinServiceEventLog(int winServiceScheduleId, WinServiceEventStatus eventStatus, string message, string exception)
+        {
+            const string sprocName = "spWinServiceAddEventLog";
+            var parameters = new
+            {
+                @WinServiceScheduleId =winServiceScheduleId,
+                @WinServiceEventStatusId = (int)eventStatus,
+                @Message = message,
+                @Exception = exception
+            };
+            DapperHelper.Execute(this, sprocName, parameters);
+        }
+
+        internal void ClearWinServiceEventLog()
+        {
+            const string sprocName = "spWinServiceClearEventLog";
+            var parameters = new { };
             DapperHelper.Execute(this, sprocName, parameters);
         }
     }

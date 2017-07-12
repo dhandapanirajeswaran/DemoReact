@@ -191,6 +191,17 @@
     <Build Include="dbo\Tables\PriceSnapshot.sql" />
     <Build Include="dbo\Tables\PriceSnapshotRow.sql" />
     <Build Include="dbo\Stored Procedures\spMarkPriceCacheOutdatedForFileUpload.sql" />
+    <Build Include="dbo\Stored Procedures\spWinServiceGetEventLogs.sql" />
+    <Build Include="dbo\Stored Procedures\spWinServiceGetScheduleItem.sql" />
+    <Build Include="dbo\Stored Procedures\spWinServiceGetSchedules.sql" />
+    <Build Include="dbo\Stored Procedures\spWinServiceUpsertSchedule.sql" />
+    <Build Include="dbo\Tables\WinServiceEventLog.sql" />
+    <Build Include="dbo\Tables\WinServiceEventStatus.sql" />
+    <Build Include="dbo\Tables\WinServiceEventType.sql" />
+    <Build Include="dbo\Tables\WinServiceSchedule.sql" />
+    <Build Include="dbo\Stored Procedures\spWinServiceAddEventLog.sql" />
+    <Build Include="dbo\Stored Procedures\spWinServicePurgeEventLogs.sql" />
+    <Build Include="dbo\Stored Procedures\spWinServiceClearEventLog.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Scripts\PostDeployment\Script.PostDeployment.sql" />

@@ -1,6 +1,8 @@
 ﻿using JsPlc.Ssc.PetrolPricing.Core;
 using JsPlc.Ssc.PetrolPricing.Core.Interfaces;
 using JsPlc.Ssc.PetrolPricing.Models.Enums;
+using JsPlc.Ssc.PetrolPricing.Models.ViewModels;
+using JsPlc.Ssc.PetrolPricing.Models.ViewModels.Schedule;
 using JsPlc.Ssc.PetrolPricing.Models.ViewModels.SystemSettings;
 using JsPlc.Ssc.PetrolPricing.Portal.ActionFilters;
 using JsPlc.Ssc.PetrolPricing.Portal.Controllers.BaseClasses;
@@ -85,6 +87,57 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
         public ActionResult UpdateBrandSettings(BrandsSettingsUpdateViewModel model)
         {
             var result = _serviceFacade.UpdateBrandSettings(model);
+            return base.JsonGetResult(result);
+        }
+
+
+        [System.Web.Mvc.HttpGet]
+        [AuthoriseSystemSettings(Permissions = SystemSettingsUserPermissions.View | SystemSettingsUserPermissions.Edit)]
+        public ActionResult Schedule(NotifyMessageType notify = NotifyMessageType.None)
+        {
+            var model = new ScheduleViewModel()
+            {
+                NotifyMessage = NotifyMessages.MessageFor(notify),
+                NotifyClass = NotifyMessages.ClassFor(notify, ""),
+                NotifyMessageType = notify,
+                ScheduledItems = _serviceFacade.GetWinServiceScheduledItems(),
+                EventLogItems = _serviceFacade.GetWinServiceEventLog()
+            };
+            return View(model);
+        }
+
+        [System.Web.Mvc.HttpGet]
+        [AuthoriseSystemSettings(Permissions = SystemSettingsUserPermissions.View | SystemSettingsUserPermissions.Edit)]
+        public ActionResult LoadEmailScheduleItem(int winScheduleId)
+        {
+            var result = _serviceFacade.WinServiceGetScheduleItem(winScheduleId);
+            return base.JsonGetResult(result);
+        }
+
+        [System.Web.Mvc.HttpPost]
+        [AuthoriseSystemSettings(Permissions = SystemSettingsUserPermissions.View | SystemSettingsUserPermissions.Edit)]
+        public ActionResult SaveEmailScheduleItem(ScheduleItemViewModel model)
+        {
+            var current = _serviceFacade.WinServiceGetScheduleItem(model.WinServiceScheduleId);
+            current.IsActive = model.IsActive;
+            current.EmailAddress = model.EmailAddress;
+            current.ScheduledFor = model.ScheduledFor;
+            var result = _serviceFacade.UpsertWinServiceSchedule(current);
+            return base.JsonGetResult(result);
+        }
+
+
+        [System.Web.Mvc.HttpGet]
+        public ActionResult ExecuteWinServiceSchedule()
+        {
+            var result = _serviceFacade.ExecuteWinServiceSchedule();
+            return base.JsonGetResult(result);
+        }
+
+        [System.Web.Mvc.HttpGet]
+        public ActionResult ClearWinServiceEventLog()
+        {
+            var result = _serviceFacade.ClearWinServiceEventLog();
             return base.JsonGetResult(result);
         }
     }

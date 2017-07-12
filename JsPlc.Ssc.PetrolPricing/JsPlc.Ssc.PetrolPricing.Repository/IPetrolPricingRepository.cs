@@ -9,6 +9,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using JsPlc.Ssc.PetrolPricing.Models.ViewModels.SystemSettings;
+using JsPlc.Ssc.PetrolPricing.Models.ViewModels.Schedule;
+using JsPlc.Ssc.PetrolPricing.Models.WindowsService;
 
 namespace JsPlc.Ssc.PetrolPricing.Repository
 {
@@ -297,6 +299,8 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
         void PurgePriceSnapshots(int daysAgo);
 
+        void PurgeWinScheduleLogs(int daysAgo);
+
         SystemSettings GetSystemSettings();
 
         void UpdateSystemSettings(SystemSettings systemSettings);
@@ -335,5 +339,15 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         void SuspendPriceCacheForDay(DateTime day);
         PriceSnapshotViewModel GetPriceSnapshotForDay(DateTime day);
         void MarkPriceCacheOutdatedForDay(DateTime day);
+
+        IEnumerable<ScheduleItemViewModel> GetWinServiceScheduledItems();
+        IEnumerable<ScheduleEventLogViewModel> GetWinServiceEventLog();
+        ScheduleItemViewModel GetWinServiceScheduleItem(int winServiceScheduleId);
+        ScheduleItemViewModel UpsertWinServiceSchedule(ScheduleItemViewModel model);
+        void AddWinServiceEventLog(int winServiceScheduleId, WinServiceEventStatus eventStatus, string message, string exception = "");
+
+        List<int> GetJsSitesByPfsNum();
+
+        void ClearWinServiceEventLog();
     }
 }

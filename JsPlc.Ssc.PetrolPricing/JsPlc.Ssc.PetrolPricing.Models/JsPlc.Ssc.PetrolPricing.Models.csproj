@@ -103,6 +103,7 @@
     <Compile Include="EmailTemplateName.cs" />
     <Compile Include="Enums\FuelTypeEnum.cs" />
     <Compile Include="Enums\NearbyGrocerStatus.cs" />
+    <Compile Include="Enums\NotifyMessageType.cs" />
     <Compile Include="Enums\PriceMatchType.cs" />
     <Compile Include="Enums\SiteSectionType.cs" />
     <Compile Include="Enums\UserPermissionEnums.cs" />
@@ -166,6 +167,9 @@
     <Compile Include="ViewModels\RecentFileUploadSummary.cs" />
     <Compile Include="ViewModels\RecentFileUploadSummaryItem.cs" />
     <Compile Include="ViewModels\ReportInformationViewModel.cs" />
+    <Compile Include="ViewModels\Schedule\ScheduleEventLogViewModel.cs" />
+    <Compile Include="ViewModels\Schedule\ScheduleItemViewModel.cs" />
+    <Compile Include="ViewModels\Schedule\ScheduleViewModel.cs" />
     <Compile Include="ViewModels\SelectItemViewModel.cs" />
     <Compile Include="ViewModels\SelfTest\DataSanityCheckSummaryViewModel.cs" />
     <Compile Include="ViewModels\SiteNoteUpdateViewModel.cs" />
@@ -200,6 +204,10 @@
     <Compile Include="ViewModels\UserPermissions\EditUserPermissionsViewModel.cs" />
     <Compile Include="ViewModels\UserPermissions\UserPermissionsOptionListViewModel.cs" />
     <Compile Include="ViewModels\UserPermissions\UserAccessViewModel.cs" />
+    <Compile Include="WindowsService\WinServiceEventStatus.cs" />
+    <Compile Include="WindowsService\WinServiceEventType.cs" />
+    <Compile Include="WindowsService\WinServiceSchedule.cs" />
+    <Compile Include="WindowsService\WinServiceSettings.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

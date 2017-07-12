@@ -632,6 +632,22 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
             }
         }
 
+        [System.Web.Http.HttpGet]
+        [System.Web.Http.Route("api/GetJsSitesByPfsNum")]
+        public async Task<IHttpActionResult> GetJsSitesByPfsNum()
+        {
+            try
+            {
+                var result = _siteService.GetJsSitesByPfsNum();
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex);
+                return new ExceptionResult(ex, this);
+            }
+        }
+
         #region private methods
         private DateTime ParseDateTime(string datetime)
         {

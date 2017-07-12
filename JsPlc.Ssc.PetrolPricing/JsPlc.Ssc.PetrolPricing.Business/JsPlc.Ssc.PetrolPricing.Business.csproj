@@ -69,6 +69,14 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="ClosedXML, Version=0.76.0.0, Culture=neutral, PublicKeyToken=fd1eb21b62ae805b, processorArchitecture=MSIL">
+      <HintPath>..\packages\ClosedXML.0.76.0\lib\net40-client\ClosedXML.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="DocumentFormat.OpenXml, Version=2.5.5631.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\DocumentFormat.OpenXml.2.5\lib\DocumentFormat.OpenXml.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Elmah">
       <HintPath>..\packages\elmah.corelibrary.1.2\lib\Elmah.dll</HintPath>
     </Reference>
@@ -135,6 +143,7 @@
     <Compile Include="Interfaces\IFileService.cs" />
     <Compile Include="Interfaces\IPriceService.cs" />
     <Compile Include="PetrolPricingCache.cs" />
+    <Compile Include="Services\EmailServiceSettings.cs" />
     <Compile Include="Services\EmailTemplateService.cs" />
     <Compile Include="Services\PPUserService.cs" />
     <Compile Include="Services\PriceService.cs" />
@@ -156,6 +165,10 @@
     <ProjectReference Include="..\JsPlc.Ssc.PetrolPricing.Core\JsPlc.Ssc.PetrolPricing.Core.csproj">
       <Project>{a63fb2ae-7013-41ba-bb14-082ac91a26b7}</Project>
       <Name>JsPlc.Ssc.PetrolPricing.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\JsPlc.Ssc.PetrolPricing.Exporting\JsPlc.Ssc.PetrolPricing.Exporting.csproj">
+      <Project>{b7ce1681-904e-45f5-ae65-b8473a56c7df}</Project>
+      <Name>JsPlc.Ssc.PetrolPricing.Exporting</Name>
     </ProjectReference>
     <ProjectReference Include="..\JsPlc.Ssc.PetrolPricing.Models\JsPlc.Ssc.PetrolPricing.Models.csproj">
       <Project>{b9b43a8b-6916-431d-bc1b-6595a1a0f029}</Project>

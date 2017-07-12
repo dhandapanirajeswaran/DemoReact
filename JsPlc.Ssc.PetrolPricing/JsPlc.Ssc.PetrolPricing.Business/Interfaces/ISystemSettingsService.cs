@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using JsPlc.Ssc.PetrolPricing.Models;
 using JsPlc.Ssc.PetrolPricing.Models.ViewModels;
 using JsPlc.Ssc.PetrolPricing.Models.ViewModels.SystemSettings;
+using JsPlc.Ssc.PetrolPricing.Models.ViewModels.Schedule;
 
 namespace JsPlc.Ssc.PetrolPricing.Business
 {
@@ -26,5 +27,17 @@ namespace JsPlc.Ssc.PetrolPricing.Business
         StatusViewModel UpdateBrandCollectionSettings(BrandsSettingsUpdateViewModel brandsCollectionSettings);
 
         BrandsCollectionSummaryViewModel GetBrandCollectionSummary();
+
+        IEnumerable<ScheduleItemViewModel> GetWinServiceScheduledItems();
+
+        IEnumerable<ScheduleEventLogViewModel> GetWinServiceEventLog();
+
+        ScheduleItemViewModel GetWinServiceScheduleItem(int winServiceScheduleId);
+
+        ScheduleItemViewModel UpsertWinServiceSchedule(ScheduleItemViewModel model);
+
+        StatusViewModel RunWinServiceSchedule();
+
+        StatusViewModel ClearWinServiceEventLog();
     }
 }

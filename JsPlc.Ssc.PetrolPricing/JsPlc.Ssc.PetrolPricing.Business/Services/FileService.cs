@@ -898,6 +898,8 @@ namespace JsPlc.Ssc.PetrolPricing.Business
         {
             _db.PurgePriceSnapshots(daysAgo);
 
+            _db.PurgeWinScheduleLogs(daysAgo);
+
             return _db.DataCleanseFileUploads(daysAgo, _appSettings.UploadPath);
         }
 
