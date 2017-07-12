@@ -607,6 +607,13 @@ table.competitorTable > tbody > .competitor-row  {
     background-color: #f8f8f8;
 }
 
+.price-diff-bar-chart-scroller {
+    width: 1290px;
+    height: 120px;
+    overflow-x: auto;
+    overflow-y: hidden;
+}
+
 .price-diff-bar-chart th {width: 3em; text-align: center;}
 .price-diff-bar-chart .bar {display: inline-block; width: 100%; position: absolute; bottom: 0; left: 0; right: 0; border-bottom: 1px solid #ccc;}
 .price-diff-bar-chart .bar.lower-price {border-bottom-color:#610018; }
@@ -1130,3 +1137,49 @@ table.competitorTable > tbody > .competitor-row  {
     z-index: 2050; 
     box-shadow: 0 0 10px #000;
 }
+
+/* price change bar chart */
+.price-change-bar-chart {}
+.price-change-bar-chart table td {text-align: center; width: 3.5em; padding: 1px 4px; position: relative; border-left: 1px solid #999;}
+.price-change-bar-chart .bar {border-bottom-style: solid; width: 2em; position: absolute; bottom: 0; left: 2px;}
+.price-change-bar-chart .bar.bar-up {border-bottom-color: green;}
+.price-change-bar-chart .bar.bar-none {border-bottom-color: #999;}
+.price-change-bar-chart .bar.bar-down {border-bottom-color: red;}
+
+.price-change-bar-chart .key {font-weight: bold;}
+.price-change-bar-chart .key.key-up,
+.price-change-bar-chart .title.title-up {color: green;}
+.price-change-bar-chart .key.key-none,
+.price-change-bar-chart .title.title-none {color: #999;}
+.price-change-bar-chart .key.key-down,
+.price-change-bar-chart .title.title-down {color: red;}
+
+.price-change-bar-chart-scroller {
+    width: 1080px;
+    height: 140px;
+    overflow: auto;
+}
+
+.price-change-bar-chart .title {
+    display: inline-block; 
+    font-weight: bold; 
+    font-size: 110%; 
+    margin-left: 8em; 
+}
+
+.price-change-bar-chart .bar-row {height: 96px;}
+
+.price-change-table table {border: 4px solid #999;}
+
+.price-change-table table > tbody > td {text-align: center;}
+.price-change-table table > tbody > tr:nth-child(odd) {background: #fff;}
+.price-change-table table > tbody > tr:nth-child(even) {background: #f8f8f8;}
+
+.price-change-tags .tag {display: inline-block; padding: 2px 4px; width: 6em; border: 1px solid #999; text-align: center;}
+    .price-change-table .price-change-down,
+    .price-change-tags .tag.tag-down {color: #910048;}
+    .price-change-table .price-change-none,
+    .price-change-tags .tag.tag-none {color: #999;}
+    .price-change-table .price-change-up,
+    .price-change-tags .tag.tag-up {color: #3c983c;}
+

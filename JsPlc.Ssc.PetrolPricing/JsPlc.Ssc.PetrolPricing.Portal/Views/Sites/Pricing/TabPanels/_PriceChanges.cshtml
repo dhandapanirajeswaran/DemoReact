@@ -6,12 +6,13 @@
     <div class="row">
 
         <div class="col-md-10">
-            <canvas id="canvasPriceChangesTab" width="1080" height="140"></canvas>
+            <p class="text-center font150pc">Our Price Changes for Tomorrow</p>
+            <div id="divPriceChangeBarChart"></div>
         </div>
-
+        
         <div class="col-md-2">
             <ul class="nav nav-pills nav-stacked nav-condensed">
-                <li>
+                @*<li>
                     <div class="input-group">
                         <span class="input-group-addon" data-bind="css: ($root.priceChangesTabShowCombined() ? ' fuel-combined' : '')">
 
@@ -19,7 +20,7 @@
                         </span>
                         <label for="chkTogglePriceChange_Combined" class="form-control fuel-label fuel-label-combined"></label>
                     </div>
-                </li>
+                </li>*@
 
                 <li>
                     <div class="input-group">
@@ -47,6 +48,16 @@
                         <label for="chkTogglePriceChange_SuperUnleaded" class="form-control fuel-label fuel-label-super-unleaded"></label>
                     </div>
                 </li>
+
+                <li class="newline">
+                    <strong>Display</strong>
+                </li>
+                <li>
+                    <button type="button" class="btn btn-sm" data-bind="css: ($root.priceChangeTabView() == 0 ? 'btn-primary' : 'btn-default' ), click: $root.showPriceChangesAsBarChart" data-infotip="Display as a [b]Bar char[/b]"><i class="fa fa-bar-chart"></i> Bar</button>
+                    <button type="button" class="btn btn-sm" data-bind="css: ($root.priceChangeTabView() == 1 ? 'btn-primary' : 'btn-default'), click: $root.showPriceChangesAsTable" data-infotip="Display as a [b]Table[/b]"><i class="fa fa-table"></i> Table</button>
+                    <button type="button" class="btn btn-sm" data-bind="css: ($root.priceChangeTabView() == 2 ? 'btn-primary' : 'btn-default'), click: $root.showPriceChangesAsTags" data-infotip="Display as [b]Tags[/b]"><i class="fa fa-tags"></i> Tags</button>
+                </li>
+
             </ul>
         </div>
     </div>
