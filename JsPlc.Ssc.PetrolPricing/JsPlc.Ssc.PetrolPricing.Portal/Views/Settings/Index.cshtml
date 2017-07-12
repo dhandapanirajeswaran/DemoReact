@@ -38,16 +38,22 @@
             <input type="hidden" name="Id" value="@(Model.Id)" />
 
             <fieldset>
+                <div class="row newline">
+                    <div class="col-md-4 col-md-offset-2 text-center font125pc" data-infotip="These are the [b]Absolute[/b] price limits[br /]Prices [i]cannot[/i] be saved if outside these limits"><i class="fa fa-info-circle"></i> <strong>Absolute Min/Max Prices</strong></div>
+                    <div class="col-md-4 col-md-offset-2 text-center font125pc" data-infotip="These are [b]Warning[/b] indicators only[br /] You can still save price changes outside these limits"><i class="fa fa-info-circle"></i> <strong>Warning Indicators</strong></div>
+                </div>
+
+
                 <div class="row alt-row">
-                    <div class="col-md-2 font125pc newline">
+                    <div class="col-md-2 font125pc">
                         <span class="fuel-sign fuel-sign-unleaded"></span>
                     </div>
 
                     <div class="col-md-2">
                         <label class="control-label">Min Price</label>
                         <div class="input-group">
-                            <div class="input-group-addon"><i class="fa fa-gbp"></i></div>
-                            @Html.EditorFor(model => model.MinUnleadedPrice, new { htmlAttributes = new { @class = "form-control col-md-4 mono-font", data_infotip = "The [b]Minimum[/b] Absolute Price for [b]Unleaded[/b] (e.g. 50.0)" } })
+                            @Html.EditorFor(model => model.MinUnleadedPrice, new { htmlAttributes = new { @class = "form-control col-md-4 mono-font text-right", data_infotip = "The [b]Minimum[/b] Absolute Price for [b]Unleaded[/b] (e.g. 50.0)" } })
+                            <div class="input-group-addon"><strong>P</strong></div>
                         </div>
                         @Html.ValidationMessageFor(model => model.MinUnleadedPrice, "", new { @class = "text-danger" })
                     </div>
@@ -55,8 +61,8 @@
                     <div class="col-md-2">
                         <label class="control-label">Max Price</label>
                         <div class="input-group">
-                            <div class="input-group-addon"><i class="fa fa-gbp"></i></div>
-                            @Html.EditorFor(model => model.MaxUnleadedPrice, new { htmlAttributes = new { @class = "form-control col-md-4 mono-font", data_infotip = "The [b]Maximum[/b] Absolute Price for [b]Unleaded[/b] (e.g. 400.0)" } })
+                            @Html.EditorFor(model => model.MaxUnleadedPrice, new { htmlAttributes = new { @class = "form-control col-md-4 mono-font text-right", data_infotip = "The [b]Maximum[/b] Absolute Price for [b]Unleaded[/b] (e.g. 400.0)" } })
+                            <div class="input-group-addon"><strong>P</strong></div>
                         </div>
                         @Html.ValidationMessageFor(model => model.MaxUnleadedPrice, "", new { @class = "text-danger" })
                     </div>
@@ -64,7 +70,7 @@
                     <div class="col-md-2 col-md-offset-2">
                         <label class="control-label">Min +/- Change</label>
                         <div class="input-group">
-                            @Html.EditorFor(model => model.MinUnleadedPriceChange, new { htmlAttributes = new { @class = "form-control mono-font", data_infotip = "The [b]Minimum[/b] Price Change for [b]Unleaded[/b] (e.g. -3.0)" } })
+                            @Html.EditorFor(model => model.MinUnleadedPriceChange, new { htmlAttributes = new { @class = "form-control mono-font text-right", data_infotip = "The [b]Minimum[/b] Price Change for [b]Unleaded[/b] (e.g. -3.0)" } })
                             <div class="input-group-addon"><strong>P</strong></div>
                         </div>
                         @Html.ValidationMessageFor(model => model.MinUnleadedPriceChange, "", new { @class = "text-danger" })
@@ -73,7 +79,7 @@
                     <div class="col-md-2">
                         <label class="control-label">Max +/- Change</label>
                         <div class="input-group">
-                            @Html.EditorFor(model => model.MaxUnleadedPriceChange, new { htmlAttributes = new { @class = "form-control mono-font", data_infotip = "The [b]Maximum[/b] Absolute Price for [b]Unleaded[/b] (e.g. 3.0)" } })
+                            @Html.EditorFor(model => model.MaxUnleadedPriceChange, new { htmlAttributes = new { @class = "form-control mono-font text-right", data_infotip = "The [b]Maximum[/b] Absolute Price for [b]Unleaded[/b] (e.g. 3.0)" } })
                             <div class="input-group-addon"><strong>P</strong></div>
                         </div>
                         @Html.ValidationMessageFor(model => model.MaxUnleadedPriceChange, "", new { @class = "text-danger" })
@@ -90,8 +96,8 @@
                     <div class="col-md-2">
                         <label class="control-label">Min Price</label>
                         <div class="input-group">
-                            <div class="input-group-addon"><i class="fa fa-gbp"></i></div>
-                            @Html.EditorFor(model => model.MinDieselPrice, new { htmlAttributes = new { @class = "form-control mono-font", data_infotip = "The [b]Minimum[/b] Absolute Price for [b]Diesel[/b] (e.g. 50.0)" } })
+                            @Html.EditorFor(model => model.MinDieselPrice, new { htmlAttributes = new { @class = "form-control mono-font text-right", data_infotip = "The [b]Minimum[/b] Absolute Price for [b]Diesel[/b] (e.g. 50.0)" } })
+                            <div class="input-group-addon"><strong>P</strong></div>
                         </div>
                         @Html.ValidationMessageFor(model => model.MinDieselPrice, "", new { @class = "text-danger" })
                     </div>
@@ -99,8 +105,8 @@
                     <div class="col-md-2">
                         <label class="control-label">Max Price</label>
                         <div class="input-group">
-                            <div class="input-group-addon"><i class="fa fa-gbp"></i></div>
-                            @Html.EditorFor(model => model.MaxDieselPrice, new { htmlAttributes = new { @class = "form-control mono-font", data_infotip = "The [b]Maximum[/b] Absolute Price for [b]Diesel[/b] (e.g. 400.0)" } })
+                            @Html.EditorFor(model => model.MaxDieselPrice, new { htmlAttributes = new { @class = "form-control mono-font text-right", data_infotip = "The [b]Maximum[/b] Absolute Price for [b]Diesel[/b] (e.g. 400.0)" } })
+                            <div class="input-group-addon"><strong>P</strong></div>
                         </div>
                         @Html.ValidationMessageFor(model => model.MaxDieselPrice, "", new { @class = "text-danger" })
                     </div>
@@ -108,7 +114,7 @@
                     <div class="col-md-2 col-md-offset-2">
                         <label class="control-label">Min +/- Change</label>
                         <div class="input-group">
-                            @Html.EditorFor(model => model.MinDieselPriceChange, new { htmlAttributes = new { @class = "form-control mono-font", data_infotip = "The [b]Minimum[/b] Price Change for [b]Diesel[/b] (e.g. -3.0)" } })
+                            @Html.EditorFor(model => model.MinDieselPriceChange, new { htmlAttributes = new { @class = "form-control mono-font text-right", data_infotip = "The [b]Minimum[/b] Price Change for [b]Diesel[/b] (e.g. -3.0)" } })
                             <div class="input-group-addon"><strong>P</strong></div>
                         </div>
                         @Html.ValidationMessageFor(model => model.MinDieselPriceChange, "", new { @class = "text-danger" })
@@ -117,7 +123,7 @@
                     <div class="col-md-2">
                         <label class="control-label">Max +/-  Change</label>
                         <div class="input-group">
-                            @Html.EditorFor(model => model.MaxDieselPriceChange, new { htmlAttributes = new { @class = "form-control mono-font", data_infotip = "The [b]Maximum[/b] Absolute Price for [b]Diesel[/b] (e.g. 3.0)" } })
+                            @Html.EditorFor(model => model.MaxDieselPriceChange, new { htmlAttributes = new { @class = "form-control mono-font text-right", data_infotip = "The [b]Maximum[/b] Absolute Price for [b]Diesel[/b] (e.g. 3.0)" } })
                             <div class="input-group-addon"><strong>P</strong></div>
                         </div>
                         @Html.ValidationMessageFor(model => model.MaxDieselPriceChange, "", new { @class = "text-danger" })
@@ -134,8 +140,8 @@
                     <div class="col-md-2">
                         <label class="control-label">Min Price</label>
                         <div class="input-group">
-                            <div class="input-group-addon"><i class="fa fa-gbp"></i></div>
-                            @Html.EditorFor(model => model.MinSuperUnleadedPrice, new { htmlAttributes = new { @class = "form-control mono-font", data_infotip = "The [b]Minimum[/b] Absolute Price for [b]Super-Unleaded[/b] (e.g. 50.0)" } })
+                            @Html.EditorFor(model => model.MinSuperUnleadedPrice, new { htmlAttributes = new { @class = "form-control mono-font text-right", data_infotip = "The [b]Minimum[/b] Absolute Price for [b]Super-Unleaded[/b] (e.g. 50.0)" } })
+                            <div class="input-group-addon"><strong>P</strong></div>
                         </div>
                         @Html.ValidationMessageFor(model => model.MinSuperUnleadedPrice, "", new { @class = "text-danger" })
                     </div>
@@ -143,8 +149,8 @@
                     <div class="col-md-2">
                         <label class="control-label">Max Price</label>
                         <div class="input-group">
-                            <div class="input-group-addon"><i class="fa fa-gbp"></i></div>
-                            @Html.EditorFor(model => model.MaxSuperUnleadedPrice, new { htmlAttributes = new { @class = "form-control mono-font", data_infotip = "The [b]Maximum[/b] Absolute Price for [b]Super-Unleaded[/b] (e.g. 400.0)" } })
+                            @Html.EditorFor(model => model.MaxSuperUnleadedPrice, new { htmlAttributes = new { @class = "form-control mono-font text-right", data_infotip = "The [b]Maximum[/b] Absolute Price for [b]Super-Unleaded[/b] (e.g. 400.0)" } })
+                            <div class="input-group-addon"><strong>P</strong></div>
                         </div>
                         @Html.ValidationMessageFor(model => model.MaxSuperUnleadedPrice, "", new { @class = "text-danger" })
                     </div>
@@ -152,7 +158,7 @@
                     <div class="col-md-2 col-md-offset-2">
                         <label class="control-label">Min +/- Change</label>
                         <div class="input-group">
-                            @Html.EditorFor(model => model.MinSuperUnleadedPriceChange, new { htmlAttributes = new { @class = "form-control mono-font", data_infotip = "The [b]Minimum[/b] Price Change for [b]Super-Unleaded[/b] (e.g. -3.0)" } })
+                            @Html.EditorFor(model => model.MinSuperUnleadedPriceChange, new { htmlAttributes = new { @class = "form-control mono-font text-right", data_infotip = "The [b]Minimum[/b] Price Change for [b]Super-Unleaded[/b] (e.g. -3.0)" } })
                             <div class="input-group-addon"><strong>P</strong></div>
                         </div>
                         @Html.ValidationMessageFor(model => model.MinSuperUnleadedPriceChange, "", new { @class = "text-danger" })
@@ -161,7 +167,7 @@
                     <div class="col-md-2">
                         <label class="control-label">Max +/- Change</label>
                         <div class="input-group">
-                            @Html.EditorFor(model => model.MaxSuperUnleadedPriceChange, new { htmlAttributes = new { @class = "form-control mono-font", data_infotip = "The [b]Maximum[/b] Change Price for [b]Super-Unleaded[/b] (e.g. 3.0)" } })
+                            @Html.EditorFor(model => model.MaxSuperUnleadedPriceChange, new { htmlAttributes = new { @class = "form-control mono-font text-right", data_infotip = "The [b]Maximum[/b] Change Price for [b]Super-Unleaded[/b] (e.g. 3.0)" } })
                             <div class="input-group-addon"><strong>P</strong></div>
                         </div>
                         @Html.ValidationMessageFor(model => model.MaxSuperUnleadedPriceChange, "", new { @class = "text-danger" })
@@ -174,7 +180,7 @@
                     <div class="col-md-2 col-md-offset-1">
                         <label class="control-label">Max Grocer Drive Time</label>
                         <div class="input-group">
-                            @Html.EditorFor(model => model.MaxGrocerDriveTimeMinutes, new { htmlAttributes = new { @class = "form-control mono-font", data_infotip = "The [b]Maximum[/b] Grocer Drive Time" } })
+                            @Html.EditorFor(model => model.MaxGrocerDriveTimeMinutes, new { htmlAttributes = new { @class = "form-control mono-font text-right", data_infotip = "The [b]Maximum[/b] Grocer Drive Time" } })
                             <div class="input-group-addon"><strong>Mins</strong></div>
                         </div>
                         @Html.ValidationMessageFor(model => model.MaxGrocerDriveTimeMinutes, "", new { @class = "text-danger" })
@@ -184,7 +190,7 @@
                         <label class="control-label">Price Change Variance Threshold</label>
                         <div class="input-group">
                             <div class="input-group-addon"><strong>+/-</strong></div>
-                            @Html.EditorFor(model => model.PriceChangeVarianceThreshold, new { htmlAttributes = new { @class = "form-control mono-font", data_infotip = "The Price Change Variance Threshold (e.g. 2.0)" } })
+                            @Html.EditorFor(model => model.PriceChangeVarianceThreshold, new { htmlAttributes = new { @class = "form-control mono-font text-right", data_infotip = "The [b]Price Change Variance[/b] Threshold (e.g. 2.0)[br /]Price changes [q]outside this +/- range[/q] will be [i]ignored[/i]" } })
                             <div class="input-group-addon"><strong>P</strong></div>
                         </div>
                         @Html.ValidationMessageFor(model => model.PriceChangeVarianceThreshold, "", new { @class = "text-danger" })
@@ -193,7 +199,7 @@
                     <div class="col-md-2 col-md-offset-1">
                         <label class="control-label">Super-Unleaded Markup</label>
                         <div class="input-group">
-                            @Html.EditorFor(model => model.SuperUnleadedMarkupPrice, new { htmlAttributes = new { @class = "form-control mono-font", data_infotip = "The [b]Markup[/b] amount for [b]Super-Unleaded[/b] (e.g. 5.0)" } })
+                            @Html.EditorFor(model => model.SuperUnleadedMarkupPrice, new { htmlAttributes = new { @class = "form-control mono-font text-right", data_infotip = "The [b]Markup[/b] amount for [b]Super-Unleaded[/b] (e.g. 5.0)[br /]This is the amount added to the [q]Unleaded[/q] price." } })
                             <div class="input-group-addon"><strong>P</strong></div>
                         </div>
                         @Html.ValidationMessageFor(model => model.SuperUnleadedMarkupPrice, "", new { @class = "text-danger" })

@@ -11,37 +11,37 @@ namespace JsPlc.Ssc.PetrolPricing.Models.ViewModels.SystemSettings
         [Required]
         [Range(0, 1000.0)]
         [Display(Name = "Minimum Unleaded Price")]
-        [DisplayFormat(DataFormatString = "{0:n0}")]
+        [DisplayFormat(DataFormatString = "{0:n0}", ApplyFormatInEditMode = true)]
         public double MinUnleadedPrice { get; set; }
 
         [Required]
         [Range(0, 1000.0)]
         [Display(Name = "Maximum Unleaded Price")]
-        [DisplayFormat(DataFormatString = "{0:n0}")]
+        [DisplayFormat(DataFormatString = "{0:n0}", ApplyFormatInEditMode = true)]
         public double MaxUnleadedPrice { get; set; }
 
         [Required]
         [Range(0, 1000.0)]
         [Display(Name = "Minimum Diesel Price")]
-        [DisplayFormat(DataFormatString = "{0:n0}")]
+        [DisplayFormat(DataFormatString = "{0:n0}", ApplyFormatInEditMode = true)]
         public double MinDieselPrice { get; set; }
 
         [Required]
         [Range(0, 1000.0)]
         [Display(Name = "Maximum Diesel Price")]
-        [DisplayFormat(DataFormatString = "{0:n0}")]
+        [DisplayFormat(DataFormatString = "{0:n0}", ApplyFormatInEditMode = true)]
         public double MaxDieselPrice { get; set; }
 
         [Required]
         [Range(0, 1000.0)]
         [Display(Name = "Minimum Super-Unleaded Price")]
-        [DisplayFormat(DataFormatString = "{0:n0}")]
+        [DisplayFormat(DataFormatString = "{0:n0}", ApplyFormatInEditMode = true)]
         public double MinSuperUnleadedPrice { get; set; }
 
         [Required]
         [Range(0, 1000.0)]
         [Display(Name = "Maximum Super-Unleaded Price")]
-        [DisplayFormat(DataFormatString = "{0:n0}")]
+        [DisplayFormat(DataFormatString = "{0:n0}", ApplyFormatInEditMode = true)]
         public double MaxSuperUnleadedPrice { get; set; }
 
         [Required]
