@@ -259,6 +259,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business.Services
 
                 var memoryStream = new MemoryStream();
                 workbook.SaveAs(memoryStream);
+                memoryStream.Position = 0;
 
                 message.Attachments.Add(new Attachment(memoryStream, excelFilename));
 
