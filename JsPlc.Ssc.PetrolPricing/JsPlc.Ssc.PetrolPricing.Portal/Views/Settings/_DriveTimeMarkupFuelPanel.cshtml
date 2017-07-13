@@ -24,9 +24,9 @@
                 </tr>
             </thead>
             <tbody>
-                <tr data-id="row-template" class="hide hoverable">
-                    <td class="text-center clickable">{driveTime}</td>
-                    <td class="text-center clickable">{markup} {warning}</td>
+                <tr data-id="row-template" class="hide hoverable {rowCss}">
+                    <td class="text-center clickable" data-infotip="Click to [u]edit[/u] Drive Time">{driveTime}</td>
+                    <td class="text-center clickable" data-infotip="Click to [u]edit[/u] Drive Time">{markup} {warning}</td>
                     <td><button type="button" class="btn btn-danger btn-xs pull-right" data-action="delete" data-id="{index}" data-infotip="Delete this [b]@(friendlyFuelName)[/b] item"><i class="fa fa-times"></i></button></td>
                 </tr>
                 <tr>
@@ -40,7 +40,7 @@
             <div class="col-md-5">
                 <label class="control-label">Drive Time</label>
                 <div class="input-group">
-                    <input type="text" class="form-control mono-font" value="" maxlength="2" data-input="drivetime" data-infotip-dock="below" data-infotip="Enter the [b]Drive Time[/b] in minutes (e.g. 15)" />
+                    <input type="text" class="form-control mono-font" value="" maxlength="2" data-action="enter-add" data-input="drivetime" data-infotip-dock="below" data-infotip="Enter the [b]Drive Time[/b] in minutes (e.g. 15)" />
                     <div class="input-group-addon">
                         <strong>Mins</strong>
                     </div>
@@ -50,7 +50,7 @@
             <div class="col-md-5">
                 <label class="control-label">Markup</label>
                 <div class="input-group">
-                    <input type="text" class="form-control mono-font" value="" maxlength="2" data-input="markup" data-infotip-dock="below" data-infotip="Enter the [b]Markup[/b] in PPL (e.g. 3.0)" />
+                    <input type="text" class="form-control mono-font" value="" maxlength="2" data-action="enter-add" data-input="markup" data-infotip-dock="below" data-infotip="Enter the [b]Markup[/b] in PPL (e.g. 3.0)" />
                     <div class="input-group-addon">
                         <strong>P</strong>
                     </div>

@@ -61,18 +61,28 @@
                 function render(pingIndex) {
                     var tbody = controls.tbody,
                         pingTr,
-                        lastMarkup = 0;
+                        lastMarkup = -1;
                     tbody.find('tr').remove();
                     $.each(driveTimeMarkups, function(index, item) {
                         var tr,
-                            isWarningRequired = item.markup < lastMarkup,
-                            tokens = {
-                                '{driveTime}': item.driveTime,
-                                '{markup}': item.markup,
-                                '{index}': index,
-                                '{warning}': isWarningRequired
-                                    ? '<i class="fa fa-warning text-danger" data-infotip="Markup value [b]' + item.markup + '[/b] is lower than the previous [b]' + lastMarkup + '[/b]"></i>'
-                                    : ''
+                            isUnordered = item.markup < lastMarkup,
+                            warnings = [],
+                            isDuplicate = item.markup == lastMarkup,
+                            tokens;
+
+                        if (isDuplicate) 
+                            warnings.push('Markup value [b]' + item.markup + '[/b] is duplicated');
+                        if (isUnordered)
+                            warnings.push('Markup value [b]' + item.markup + '[/b] is lower than the previous [b]' + lastMarkup + '[/b]');
+
+                        tokens = {
+                            '{driveTime}': item.driveTime,
+                            '{markup}': item.markup,
+                            '{index}': index,
+                            '{warning}': warnings.length 
+                                ? '<i class="fa fa-warning text-danger" data-infotip="' + warnings.join(' [br /]and[br /] ') + '[br/] Click to [u]edit[/u]"></i>'
+                                : '',
+                            '{rowCss}': warnings.length ? 'row-error' : ''
                             };
 
                         lastMarkup = item.markup;
@@ -97,6 +107,8 @@
                         messages.push('Drive Time list is empty');
                     if (errors.unordered)
                         messages.push('Markup values are incorrectly ordered');
+                    if (errors.duplicate)
+                        messages.push('Markup values are duplicated');
                     if (errors.input)
                         messages.push('Invalid Drive Time and/or Markup');
 
@@ -188,6 +200,11 @@
                         isValid: true,
                         error: ''
                     };
+                };
+
+                function enterKeyUp(ev) {
+                    if (ev.keyCode == 13)
+                        addClick();
                 };
 
                 function addClick() {
@@ -310,6 +327,7 @@
                 };
 
                 function bindEvents() {
+                    panel.on('keyup', '[data-action="enter-add"]', enterKeyUp);
                     panel.find('[data-action="add"]').off().click(addClick);
                     panel.on('click','[data-action="delete"]', deleteClick);
                     panel.on('click', '.clickable', tableCellClick);
@@ -351,15 +369,17 @@
 
                     errors.input = anyInput && (!driveTime.isValid || !markup.isValid);
                     errors.empty = driveTimeMarkups.length == 0;
-
+                    errors.duplicate = false;
                     errors.unordered = false;
                     $.each(driveTimeMarkups, function (i, item) {
                         if (item.markup < lastMarkup)
                             errors.unordered = true;
+                        if (item.markup == lastMarkup)
+                            errors.duplicate = true;
                         lastMarkup = item.markup;
                     });
 
-                    return !errors.empty && !errors.unordered && !errors.input;
+                    return !errors.empty && !errors.unordered && !errors.duplicate && !errors.input;
                 };
        
                 function populate(items) {
