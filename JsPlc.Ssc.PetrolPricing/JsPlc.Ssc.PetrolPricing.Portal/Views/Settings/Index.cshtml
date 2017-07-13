@@ -1,7 +1,22 @@
 ﻿@model JsPlc.Ssc.PetrolPricing.Models.ViewModels.SystemSettings.SystemSettingsViewModel
 
 @{
-    ViewBag.Title = "Edit System Settings";
+        ViewBag.Title = "Edit System Settings";
+
+
+        var decimalRoundingOptions = new List<SelectListItem>() {
+            new SelectListItem() { Text = "None", Value = "-1" },
+            new SelectListItem() { Text = ".0", Value = "0" },
+            new SelectListItem() { Text = ".1", Value = "1" },
+            new SelectListItem() { Text = ".2", Value = "2" },
+            new SelectListItem() { Text = ".3", Value = "3" },
+            new SelectListItem() { Text = ".4", Value = "4" },
+            new SelectListItem() { Text = ".5", Value = "5" },
+            new SelectListItem() { Text = ".6", Value = "6" },
+            new SelectListItem() { Text = ".7", Value = "7" },
+            new SelectListItem() { Text = ".8", Value = "8" },
+            new SelectListItem() { Text = ".9", Value = "9" }
+    };
 }
 
 <h1>
@@ -20,11 +35,16 @@
     .alt-row {
         background-color: #f0f0f0 ;
         border-top: 1px solid #ccc; 
-        margin-top: 1em; 
+        margin-top: 1em;
         border-bottom: 1px solid #ccc; 
         margin-bottom: 1em;
         padding-bottom: 1em;
     }
+
+    .mono-font > option {
+        font-family: monospace;
+    }
+
 </style>
 
 <div class="container">
@@ -38,9 +58,56 @@
             <input type="hidden" name="Id" value="@(Model.Id)" />
 
             <fieldset>
+
                 <div class="row newline">
-                    <div class="col-md-4 col-md-offset-2 text-center font125pc" data-infotip="These are the [b]Absolute[/b] price limits[br /]Prices [i]cannot[/i] be saved if outside these limits"><i class="fa fa-info-circle"></i> <strong>Absolute Min/Max Prices</strong></div>
-                    <div class="col-md-4 col-md-offset-2 text-center font125pc" data-infotip="These are [b]Warning[/b] indicators only[br /] You can still save price changes outside these limits"><i class="fa fa-info-circle"></i> <strong>Warning Indicators</strong></div>
+                    <div class="col-md-12 text-center font125pc" data-infotip="These are the [b]Common System Settings[/b]"><i class="fa fa-info-circle"></i> <strong>Common System Settings</strong></div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-2">
+                        <label class="control-label">Max Grocer Drive Time</label>
+                        <div class="input-group">
+                            @Html.EditorFor(model => model.MaxGrocerDriveTimeMinutes, new { htmlAttributes = new { @class = "form-control mono-font text-right", data_infotip = "The [b]Maximum[/b] Grocer Drive Time" } })
+                            <div class="input-group-addon"><strong>Mins</strong></div>
+                        </div>
+                        @Html.ValidationMessageFor(model => model.MaxGrocerDriveTimeMinutes, "", new { @class = "text-danger" })
+                    </div>
+
+                    <div class="col-md-2 col-md-offset-1">
+                        <label class="control-label">Price Change Variance</label>
+                        <div class="input-group">
+                            <div class="input-group-addon"><strong>+/-</strong></div>
+                            @Html.EditorFor(model => model.PriceChangeVarianceThreshold, new { htmlAttributes = new { @class = "form-control mono-font text-right", data_infotip = "The [b]Price Change Variance[/b] Threshold (e.g. 2.0)[br /]Price changes [q]less or equal to this +/- range[/q] will be [i]ignored[/i]" } })
+                            <div class="input-group-addon"><strong>P</strong></div>
+                        </div>
+                        @Html.ValidationMessageFor(model => model.PriceChangeVarianceThreshold, "", new { @class = "text-danger" })
+                    </div>
+
+                    <div class="col-md-2 col-md-offset-1">
+                        <label class="control-label">Decimal Rounding</label>
+                        <div class="input-group">
+                            <div class="input-group-addon">Price</div>
+                            @Html.DropDownListFor(model => model.DecimalRounding, decimalRoundingOptions,  new { @class = "form-control mono-font", data_infotip = "This is the [q]Decimal Rounding[/q] used [br /]for the number after the decimal place[br /]E.g. [b]7[/b] for price [i]100.2[/i] will become [u]100.7[/u]" } )
+                        </div>
+                    </div>
+
+                    <div class="col-md-2 col-md-offset-1">
+                        <label class="control-label">Super-Unleaded Markup</label>
+                        <div class="input-group">
+                            @Html.EditorFor(model => model.SuperUnleadedMarkupPrice, new { htmlAttributes = new { @class = "form-control mono-font text-right", data_infotip = "The [b]Markup[/b] amount for [b]Super-Unleaded[/b] (e.g. 5.0)[br /]This is the amount added to the [q]Unleaded[/q] price." } })
+                            <div class="input-group-addon"><strong>P</strong></div>
+                        </div>
+                        @Html.ValidationMessageFor(model => model.SuperUnleadedMarkupPrice, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </fieldset>
+
+            <hr />
+
+            <fieldset>
+                <div class="row newline">
+                    <div class="col-md-4 col-md-offset-2 text-center font125pc text-danger" data-infotip="These are the [b]Absolute[/b] price limits[br /]Prices [i]cannot[/i] be saved if outside these limits"><i class="fa fa-info-circle"></i> <strong>Absolute Min/Max Prices</strong></div>
+                    <div class="col-md-4 col-md-offset-2 text-center font125pc text-warning" data-infotip="These are [b]Warning[/b] indicators only[br /] You can still save price changes outside these limits"><i class="fa fa-info-circle"></i> <strong>Warning Indicators</strong></div>
                 </div>
 
 
@@ -175,38 +242,6 @@
                 </div>
             </fieldset>
 
-            <fieldset>
-                <div class="row">
-                    <div class="col-md-2 col-md-offset-1">
-                        <label class="control-label">Max Grocer Drive Time</label>
-                        <div class="input-group">
-                            @Html.EditorFor(model => model.MaxGrocerDriveTimeMinutes, new { htmlAttributes = new { @class = "form-control mono-font text-right", data_infotip = "The [b]Maximum[/b] Grocer Drive Time" } })
-                            <div class="input-group-addon"><strong>Mins</strong></div>
-                        </div>
-                        @Html.ValidationMessageFor(model => model.MaxGrocerDriveTimeMinutes, "", new { @class = "text-danger" })
-                    </div>
-
-                    <div class="col-md-3 col-md-offset-1">
-                        <label class="control-label">Price Change Variance Threshold</label>
-                        <div class="input-group">
-                            <div class="input-group-addon"><strong>+/-</strong></div>
-                            @Html.EditorFor(model => model.PriceChangeVarianceThreshold, new { htmlAttributes = new { @class = "form-control mono-font text-right", data_infotip = "The [b]Price Change Variance[/b] Threshold (e.g. 2.0)[br /]Price changes [q]outside this +/- range[/q] will be [i]ignored[/i]" } })
-                            <div class="input-group-addon"><strong>P</strong></div>
-                        </div>
-                        @Html.ValidationMessageFor(model => model.PriceChangeVarianceThreshold, "", new { @class = "text-danger" })
-                    </div>
-
-                    <div class="col-md-2 col-md-offset-1">
-                        <label class="control-label">Super-Unleaded Markup</label>
-                        <div class="input-group">
-                            @Html.EditorFor(model => model.SuperUnleadedMarkupPrice, new { htmlAttributes = new { @class = "form-control mono-font text-right", data_infotip = "The [b]Markup[/b] amount for [b]Super-Unleaded[/b] (e.g. 5.0)[br /]This is the amount added to the [q]Unleaded[/q] price." } })
-                            <div class="input-group-addon"><strong>P</strong></div>
-                        </div>
-                        @Html.ValidationMessageFor(model => model.SuperUnleadedMarkupPrice, "", new { @class = "text-danger" })
-                    </div>
-                </div>
-            </fieldset>
-
             <br />
 
             <div class="form-group">
@@ -224,8 +259,8 @@
 </div>
 
     <script type="text/javascript">
-        require(["infotips", "notify"],
-            function (infotips, notify) {
+        require(["infotips", "notify", "PetrolPricingService", "busyloader"],
+            function (infotips, notify, petrolPricingService, busyloader) {
 
                 function docReady() {
                     var error = "@(Model.Status.ErrorMessage)",
@@ -234,8 +269,13 @@
                     if (/\S/.test(error))
                         notify.error(error);
 
-                    if (/\S/.test(success))
+                    if (/\S/.test(success)) {
                         notify.success(success);
+
+                        // mark Price Snapshot outdate (we don't care about result)
+                        var slacker = function () { };
+                        petrolPricingService.triggerDailyPriceRecalculation(slacker, slacker);
+                    }
                 };
 
                 $(docReady);

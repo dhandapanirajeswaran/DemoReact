@@ -8,13 +8,13 @@
 CREATE FUNCTION dbo.fn_ReplaceLastPriceDigit
 (
 	@Price INT,
-	@Digit CHAR
+	@Digit INT
 )
 RETURNS INT
 AS
 BEGIN
 	DECLARE @Result INT = CASE 
-		WHEN @Price = 0 OR @Price IS NULL 
+		WHEN @Price = 0 OR @Price IS NULL OR @Digit = -1
 			THEN 0
 		ELSE (@Price/10) * 10 + @Digit
 	END

@@ -720,7 +720,7 @@ table.fixed-header>tbody {
     color: #000;
 }
 
-
+select.mono-font,
 input[type=text].mono-font {
     font-family: monospace;
 }

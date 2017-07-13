@@ -77,7 +77,8 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
                 MaxSuperUnleadedPriceChange = 5.0,
                 MaxGrocerDriveTimeMinutes = 5,
                 PriceChangeVarianceThreshold = 0.5,
-                SuperUnleadedMarkupPrice = 5.0
+                SuperUnleadedMarkupPrice = 5.0,
+                DecimalRounding = 9
             });
 		
             _siteVM = new SitePriceViewModel

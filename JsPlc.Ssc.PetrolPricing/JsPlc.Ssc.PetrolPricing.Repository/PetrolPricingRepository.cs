@@ -3630,6 +3630,7 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
             row.MaxGrocerDriveTimeMinutes = systemSettings.MaxGrocerDriveTimeMinutes;
             row.PriceChangeVarianceThreshold = systemSettings.PriceChangeVarianceThreshold;
             row.SuperUnleadedMarkupPrice = systemSettings.SuperUnleadedMarkupPrice;
+            row.DecimalRounding = systemSettings.DecimalRounding;
 
             _context.SaveChanges();
         }
@@ -3654,6 +3655,7 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
                 MaxGrocerDriveTimeMinutes = settings.MaxGrocerDriveTimeMinutes,
                 PriceChangeVarianceThreshold = settings.PriceChangeVarianceThreshold.ToActualPrice(),
                 SuperUnleadedMarkupPrice = settings.SuperUnleadedMarkupPrice.ToActualPrice(),
+                DecimalRounding = settings.DecimalRounding
             };
 
             return model;

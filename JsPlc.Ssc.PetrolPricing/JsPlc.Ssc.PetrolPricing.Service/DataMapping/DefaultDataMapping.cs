@@ -104,7 +104,8 @@ namespace JsPlc.Ssc.PetrolPricing.Service.DataMapping
                 .ForMember(dst => dst.MaxGrocerDriveTimeMinutes, src => src.MapFrom(p => p.MaxGrocerDriveTimeMinutes))
 
                 .ForMember(dst => dst.PriceChangeVarianceThreshold, src => src.MapFrom(p => p.PriceChangeVarianceThreshold.ToActualPrice()))
-                .ForMember(dst => dst.SuperUnleadedMarkupPrice, src => src.MapFrom(p => p.SuperUnleadedMarkupPrice.ToActualPrice()));
+                .ForMember(dst => dst.SuperUnleadedMarkupPrice, src => src.MapFrom(p => p.SuperUnleadedMarkupPrice.ToActualPrice()))
+                .ForMember(dst => dst.DecimalRounding, src => src.MapFrom(p => p.DecimalRounding));
 
             //
             // SystemSettingsViewModel >> SystemSettings
@@ -131,7 +132,8 @@ namespace JsPlc.Ssc.PetrolPricing.Service.DataMapping
                 .ForMember(dst => dst.MaxGrocerDriveTimeMinutes, src => src.MapFrom(p => p.MaxGrocerDriveTimeMinutes))
 
                 .ForMember(dst => dst.PriceChangeVarianceThreshold, src => src.MapFrom(p => p.PriceChangeVarianceThreshold.ToModalPrice()))
-                .ForMember(dst => dst.SuperUnleadedMarkupPrice, src => src.MapFrom(p => p.SuperUnleadedMarkupPrice.ToModalPrice()));
+                .ForMember(dst => dst.SuperUnleadedMarkupPrice, src => src.MapFrom(p => p.SuperUnleadedMarkupPrice.ToModalPrice()))
+                .ForMember(dst => dst.DecimalRounding, src => src.MapFrom(p => p.DecimalRounding));
 
 
             Mapper.CreateMap<EmailTemplate, EmailTemplateViewModel>()

@@ -97,6 +97,10 @@ namespace JsPlc.Ssc.PetrolPricing.Models.ViewModels.SystemSettings
         [DisplayFormat(DataFormatString = "{0:n0}")]
         public double SuperUnleadedMarkupPrice { get; set; }
 
+        [Required]
+        [Display(Name = "Decimal Rounding")]
+        public int DecimalRounding { get; set; }
+
         public SystemSettingsViewModel()
         {
             this.Status = new StatusViewModel();
