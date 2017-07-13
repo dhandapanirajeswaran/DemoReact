@@ -701,17 +701,27 @@ table.competitorTable > tbody > .competitor-row  {
     color: #5cb85c;
 }
 
+.col-store-town {
+    font-size: 80%;
+}
+
 .site-name-overlay {
     position: absolute;
     left: 0;
     top: 0;
     padding: 4px 8px 8px 8px;
-    width: 140%;
+    width: 100%;
 }
+.site-name-overlay .site-name {
+    color: #F58220;
+    font-weight: bold;
+}
+
 .site-name-overlay .hide-hover {display: none; clear: both;}
 
 .site-name-overlay:hover {
-    background-color: #337ab7;
+    width: 140%;
+    background-color: #000;
     color: #fff;
     box-shadow: 2px 4px 6px #999;
     border-radius: 0 0 12px 12px;
@@ -719,13 +729,17 @@ table.competitorTable > tbody > .competitor-row  {
 }
 .site-name-overlay:hover::before {
     content: '';
-    border-color: transparent#337ab7 transparent transparent;
+    border-color: transparent#000 transparent transparent;
     border-width: 8px;
     border-style: solid;
     position: absolute;
     margin-left: -8px;
     left: -8px;
     top: 10px;
+}
+
+.site-name-overlay:hover .site-name::before {
+    content: "SAINSBURYS";
 }
 
 .site-name-overlay:hover .hide-hover {

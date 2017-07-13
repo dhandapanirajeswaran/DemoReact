@@ -536,10 +536,10 @@
                                         <i class="fa fa-flask" data-bind="visible: (PriceMatchType == 2)" data-infotip="[b]Trial Price[/b]"></i>
                                         <i class="fa fa-clone" data-bind="visible: (PriceMatchType == 3)" data-infotip="[b]Match Competitor[/b]"></i>
 
-                                        <span class="site-name" data-bind="text: StoreName"></span>
+                                        <span class="site-name" data-bind="html: (StoreName.replace('SAINSBURYS', ''))"></span>
                                         <div class="hide-hover">
                                             <a role="button" href="#" class="btn btn-default btn-xs competitor-site-link" data-toggle="modal" data-bind="attr:{id: SiteId}, click: getCompetitorPopupDataClick"
-                                               data-target="#competitorPricesPopup" data-infotip="View competitor's prices">
+                                               data-target="#competitorPricesPopup" data-infotip-dock="below" data-infotip="View competitor's prices">
                                                 <i class="fa fa-credit-card"></i> Competitor Prices
                                             </a>
                                             <a class="btn btn-success btn-xs edit-site-link" data-bind="attr: {'href': ('@Url.Action("Edit", "Sites")/?id=' + SiteId + '&calledFromSection=@(SiteSectionType.SitePricing)' ), 'data-infotip-dock': 'below', 'data-infotip': 'Edit Site [b]' + StoreName + '[/b]'}"><i class="fa fa-edit"></i> Edit...</a>
