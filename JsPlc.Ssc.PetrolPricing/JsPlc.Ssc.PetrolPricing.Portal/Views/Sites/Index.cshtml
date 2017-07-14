@@ -7,7 +7,7 @@
     var totalSiteCount = 0;
     var trialPriceSiteCount = 0;
     var matchCompetitorSiteCount = 0;
-    var soloSiteCount = 0;
+    var standardSiteCount = 0;
     var hasEmailSiteCount = 0;
     var hasNoEmailSiteCount = 0;
 
@@ -34,7 +34,7 @@
             }
             else
             {
-                soloSiteCount++;
+                standardSiteCount++;
             }
 
             if (site.Emails != null && site.Emails.Count() > 0)
@@ -54,7 +54,7 @@
 <style>
     .match-competitor-price,
     .trial-price,
-    .solo-price {
+    .standard-price {
         color: #ccc;
     }
 
@@ -68,7 +68,7 @@
         color: #000;
     }
 
-    .highlight-solo-prices .solo-price {
+    .highlight-standard-prices .standard-price {
         background-color: #cfc;
         color: #000;
     }
@@ -128,7 +128,7 @@
         font-variant: small-caps;
     }
 
-    .table.site-grid .solo-price {
+    .table.site-grid .standard-price {
         display: block;
         font-variant: small-caps;
     }
@@ -245,7 +245,7 @@
             <div class="btn-group">
                 <button id="btnToggleHighlightTrialPriceSites" type="button" class="btn btn-sm btn-default" data-infotip="Toggle [b]Trial Price[/b] Sites Highlighting"><i class="fa fa-flask"></i> Trial Prices <span class="badge">@(trialPriceSiteCount)</span></button>
                 <button id="btnToggleHighlightMatchCompetitors" type="button" class="btn btn-sm btn-default" data-infotip="Toggle [b]Match Competitor[/b] Highlighting"><i class="fa fa-clone"></i> Match Competitors <span class="badge">@(matchCompetitorSiteCount)</span> </button>
-                <button id="btnToggleHighlightSoloPrices" type="button" class="btn btn-sm btn-default" data-infotip="Toggle [b]Solo Price[/b] Highlighting"><i class="fa fa-dot-circle-o"></i> Solo Prices <span class="badge">@(soloSiteCount)</span></button>
+                <button id="btnToggleHighlightStandardPrices" type="button" class="btn btn-sm btn-default" data-infotip="Toggle [b]Standard Price[/b] Highlighting"><i class="fa fa-dot-circle-o"></i> Standard Prices <span class="badge">@(standardSiteCount)</span></button>
             </div>
             <button id="btnResetHighlighting" type="button" style="display: none;" class="btn btn-sm btn-danger" data-infotip="Remove [b]All[/b] Highlighting"><i class="fa fa-eraser"></i> Clear</button>
         </div>
@@ -292,7 +292,7 @@
 <input type="hidden" id="hdnInactiveSitesCount" value="@(inactiveSiteCount)" />
 <input type="hidden" id="hdnTrialSitesCount" value="@(trialPriceSiteCount)" />
 <input type="hidden" id="hdnMatchCompetitorSitesCount" value="@(matchCompetitorSiteCount)" />
-<input type="hidden" id="hdnSoloPriceSitesCount" value="@(soloSiteCount)" />
+<input type="hidden" id="hdnStandardPriceSitesCount" value="@(standardSiteCount)" />
 <input type="hidden" id="hdnHasEmailsSiteCount" value="@(hasEmailSiteCount)" />
 <input type="hidden" id="hdnHasNoEmailsSiteCount" value="@(hasNoEmailSiteCount)" />
 

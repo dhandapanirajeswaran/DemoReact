@@ -276,7 +276,7 @@
                         <div class="btn-group">
                             <button type="button" class="btn btn-sm" data-bind="click: toggleHighlightTrialPrices, css: {'btn-primary': $root.highlightTrialPrices()}" data-infotip="Toggle the [b]Trial Prices[/b] Highlighting"><i class="fa fa-flask "></i> Trial <span class="badge" data-bind="text: $root.TrialPricesCount"></span></button>
                             <button type="button" class="btn btn-sm" data-bind="click: toggleHighlightMatchCompetitors, css: {'btn-primary': $root.highlightMatchCompetitors()}" data-infotip="Toggle the [b]Match Competitors[/b] Highlighting"><i class="fa fa-clone"></i> Match Competitors <span class="badge" data-bind="text: $root.MatchCompetitorsCount"></span></button>
-                            <button type="button" class="btn btn-sm" data-bind="click: toggleHighlightSoloPrices, css: {'btn-primary': $root.highlightSoloPrices()}" data-infotip="Toggle the [b]Solo Prices[/b] Highlighting"><i class="fa fa-dot-circle-o"></i> Solo <span class="badge" data-bind="text: $root.SoloPricesCount"></span></button>
+                            <button type="button" class="btn btn-sm" data-bind="click: toggleHighlightStandardPrices, css: {'btn-primary': $root.highlightStandardPrices()}" data-infotip="Toggle the [b]Standard Prices[/b] Highlighting"><i class="fa fa-dot-circle-o"></i> Standard <span class="badge" data-bind="text: $root.StandardPricesCount"></span></button>
                         </div>
                         &nbsp;
                         <div class="btn-group">
@@ -533,7 +533,7 @@
                                 <td class="col-store-name" style="position: relative;">
                                     <div class="site-name-overlay">
 
-                                        <i class="fa fa-dot-circle-o" data-bind="visible: (PriceMatchType == 1)" data-infotip="[b]Solo Price[/b]"></i>
+                                        <i class="fa fa-dot-circle-o" data-bind="visible: (PriceMatchType == 1)" data-infotip="[b]Standard Price[/b]"></i>
                                         <i class="fa fa-flask" data-bind="visible: (PriceMatchType == 2)" data-infotip="[b]Trial Price[/b]"></i>
                                         <i class="fa fa-clone" data-bind="visible: (PriceMatchType == 3)" data-infotip="[b]Match Competitor[/b]"></i>
 
@@ -571,7 +571,7 @@
                                 <td data-bind="css: (TomorrowPriceCellCss())">
                                     <div data-bind="css: ('fuel-price-change-' + UpDownSignCss())">
                                         <!-- ko if:  $parent.PriceMatchType == 1 -->
-                                        <span class="padded-price-right solo-price click-edits-override" data-bind="click: showToEditOverride, attr: {'data-infotip': FuelPrice.SoloPriceInfoTip()}, html: FuelPrice.ForecourtAutoPriceHtml()"></span>
+                                        <span class="padded-price-right standard-price click-edits-override" data-bind="click: showToEditOverride, attr: {'data-infotip': FuelPrice.StandardPriceInfoTip()}, html: FuelPrice.ForecourtAutoPriceHtml()"></span>
                                         <!-- /ko -->
                                         <!-- ko if:  $parent.PriceMatchType == 2 -->
                                         <span class="padded-price-right trial-price click-edits-override" data-bind="click: showToEditOverride, attr: {'data-infotip': FuelPrice.TrialPriceInfoTip()}, html: FuelPrice.ForecourtAutoPriceHtml()"></span>

@@ -108,13 +108,13 @@
                 var priceMatchType = item.PriceMatchType;
                 var isMatchCompetitor = priceMatchType == (int)PriceMatchType.MatchCompetitorPrice;
                 var isTrialPrice = priceMatchType == (int)PriceMatchType.TrailPrice;
-                var isSoloPrice = priceMatchType == (int)PriceMatchType.SoloPrice;
+                var isStandardPrice = priceMatchType == (int)PriceMatchType.StandardPrice;
                 var hasEmails = item.Emails != null && item.Emails.Any();
 
                 var rowClasses = (isActive ? "site-active" : "site-inactive")
                     + (isTrialPrice ? " site-trial-price" : "")
                     + (isMatchCompetitor ? " site-match-competitor" : "")
-                    + (isSoloPrice ? " site-solo-price" : "")
+                    + (isStandardPrice ? " site-standard-price" : "")
                     + (hasEmails ? " has-emails" : " no-email");
 
                 <tr class="@(rowClasses)">
@@ -127,9 +127,9 @@
                         {
                             <span class="trial-price" data-infotip="[b]Trial Price"><i class="fa fa-flask"></i> Trial</span>
                         }
-                        @if (isSoloPrice)
+                        @if (isStandardPrice)
                         {
-                            <span class="solo-price" data-infotip="[b]Solo[/b] Price (not Match Competitor or Trial Price)"><i class="fa fa-dot-circle-o"></i> Solo</span>
+                            <span class="standard-price" data-infotip="[b]Standard[/b] Price (not Match Competitor or Trial Price)"><i class="fa fa-dot-circle-o"></i> Standard</span>
                         }
                     </td>
 

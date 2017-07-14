@@ -8,7 +8,7 @@
     <label class="col-md-1">Strategy:</label>
     <div class="col-md-3">
         <select id="PriceMatchType" name="PriceMatchType" class="form-control">
-            <option value="@((int)PriceMatchType.SoloPrice)" @(Model.PriceMatchType == PriceMatchType.SoloPrice ? "selected='selected'" : "")>Solo Price</option>
+            <option value="@((int)PriceMatchType.StandardPrice)" @(Model.PriceMatchType == PriceMatchType.StandardPrice ? "selected='selected'" : "")>Standard Price</option>
             <option value="@((int)PriceMatchType.TrailPrice)" @(Model.PriceMatchType == PriceMatchType.TrailPrice ? "selected='selected'" : "")>Trial Price</option>
             <option value="@((int)PriceMatchType.MatchCompetitorPrice)" @(Model.PriceMatchType == PriceMatchType.MatchCompetitorPrice ? "selected='selected'" : "")>Match Competitor</option>
         </select>

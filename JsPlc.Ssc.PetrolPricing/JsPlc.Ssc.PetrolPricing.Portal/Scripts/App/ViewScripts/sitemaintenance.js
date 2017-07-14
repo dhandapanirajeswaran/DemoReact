@@ -7,7 +7,7 @@
             inactiveSites: $('#hdnInactiveSitesCount').val() || 0,
             trialSites: $('#hdnTrialSitesCount').val() || 0,
             matchCompetitorSites: $('#hdnMatchCompetitorSitesCount').val() || 0,
-            soloSites: $('#hdnSoloPriceSitesCount').val() || 0,
+            standardSites: $('#hdnStandardPriceSitesCount').val() || 0,
             hasEmails: $('#hdnHasEmailsSiteCount').val() || 0,
             hasNoEmails: $('#hdnHasNoEmailsSiteCount').val() || 0,
         };
@@ -19,7 +19,7 @@
             showInactiveSites: true,
             highlightTrialPrices: true,
             highlightMatchCompetitors: true,
-            highlightSoloPrices: true
+            highlightStandardPrices: true
         };
 
         var settingsMap = {
@@ -29,7 +29,7 @@
             showInactiveSites: 'sites.showInactiveSites',
             highlightTrialPrices: 'sites.highlightTrialPrices',
             highlightMatchCompetitors: 'sites.highlightMatchCompetitors',
-            highlightSoloPrices: 'sites.highlightSoloPrices'
+            highlightStandardPrices: 'sites.highlightStandardPrices'
         };
 
         function applyRowFilters() {
@@ -68,13 +68,13 @@
         function redrawHighlightingButtons() {
             var toggleTrialPriceButton = $('#btnToggleHighlightTrialPriceSites'),
                 toggleMatchCompetitorsButton = $('#btnToggleHighlightMatchCompetitors'),
-                toggleSoloPriceButton = $('#btnToggleHighlightSoloPrices'),
-                isResetVisible = siteFilters.highlightMatchCompetitors || siteFilters.highlightSoloPrices || siteFilters.highlightTrialPrices,
+                toggleStandardPriceButton = $('#btnToggleHighlightStandardPrices'),
+                isResetVisible = siteFilters.highlightMatchCompetitors || siteFilters.highlightStandardPrices || siteFilters.highlightTrialPrices,
                 resetButton = $('#btnResetHighlighting');
 
             setButtonClassState(toggleTrialPriceButton, siteFilters.highlightTrialPrices);
             setButtonClassState(toggleMatchCompetitorsButton, siteFilters.highlightMatchCompetitors);
-            setButtonClassState(toggleSoloPriceButton, siteFilters.highlightSoloPrices);
+            setButtonClassState(toggleStandardPriceButton, siteFilters.highlightStandardPrices);
             applyRowFilters();
 
             resetButton[isResetVisible ? 'show' : 'hide']();
@@ -117,9 +117,9 @@
                 ? table.addClass('highlight-trial-prices')
                 : table.removeClass('highlight-trial-prices');
 
-            siteFilters.highlightSoloPrices
-                ? table.addClass('highlight-solo-prices')
-                : table.removeClass('highlight-solo-prices');
+            siteFilters.highlightStandardPrices
+                ? table.addClass('highlight-standard-prices')
+                : table.removeClass('highlight-standard-prices');
         };
 
 
@@ -154,11 +154,11 @@
             commonToggleHighlights(opts);
         };
 
-        function toggleHighlightSoloPrices() {
-            var enabled = !siteFilters.highlightSoloPrices,
+        function toggleHighlightStandardPrices() {
+            var enabled = !siteFilters.highlightStandardPrices,
                 opts = {
-                    state: 'highlightSoloPrices',
-                    showing: 'Highlight ' + counts.soloSites + ' Solo Price Sites',
+                    state: 'highlightStandardPrices',
+                    showing: 'Highlight ' + counts.standardSites + ' Standard Price Sites',
                     hiding: ''
                 };
             commonToggleHighlights(opts);
@@ -166,7 +166,7 @@
 
         function resetHighlighting() {
             siteFilters.highlightMatchCompetitors = false;
-            siteFilters.highlightSoloPrices = false;
+            siteFilters.highlightStandardPrices = false;
             siteFilters.highlightTrialPrices = false;
             redrawHighlightingButtons();
             redrawHighlighting();
@@ -270,7 +270,7 @@
 
             $('#btnToggleHighlightTrialPriceSites').off().on('click', toggleHighlightShowTrialPrices);
             $('#btnToggleHighlightMatchCompetitors').off().on('click', toggleHighlightShowMatchCompetitors);
-            $('#btnToggleHighlightSoloPrices').off().on('click', toggleHighlightSoloPrices);
+            $('#btnToggleHighlightStandardPrices').off().on('click', toggleHighlightStandardPrices);
             $('#btnResetHighlighting').off().on('click', resetHighlighting);
 
             $('#btnShowWithEmails').off().on('click', toggleShowWithEmails);

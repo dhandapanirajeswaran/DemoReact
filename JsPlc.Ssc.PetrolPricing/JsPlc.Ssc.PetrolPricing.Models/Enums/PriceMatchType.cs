@@ -9,7 +9,7 @@ namespace JsPlc.Ssc.PetrolPricing.Models.Enums
     public enum PriceMatchType
     {
         None = 0,
-        SoloPrice = 1,
+        StandardPrice = 1,
         TrailPrice = 2,
         MatchCompetitorPrice = 3
     }

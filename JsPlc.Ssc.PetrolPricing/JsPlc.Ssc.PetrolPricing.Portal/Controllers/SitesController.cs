@@ -361,7 +361,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
         {
             switch (site.PriceMatchType)
             {
-                case PriceMatchType.SoloPrice:
+                case PriceMatchType.StandardPrice:
                     site.CompetitorPriceOffset = 0.0;
                     site.TrailPriceCompetitorId = null;
                     site.CompetitorPriceOffsetNew = 0;

@@ -583,7 +583,7 @@ table.competitorTable > tbody > .competitor-row  {
 
 .pricing-grid.highlight-trial-prices .trial-price {background-color: #ff8;}
 .pricing-grid.highlight-match-competitor-prices .match-competitor-price {background-color: #cff;}
-.pricing-grid.highlight-solo-prices .solo-price {background-color: #efa;}
+.pricing-grid.highlight-standard-prices .standard-price {background-color: #efa;}
 .pricing-grid.highlight-no-nearby-grocer-prices .no-nearby-grocer-price {visibility: visible; background-color: #ffdc9a; color: #000;}
 .pricing-grid.highlight-has-nearby-grocer-prices .has-nearby-grocer-price {visibility: visible; background-color: #cfffc8; color: #000;}
 .pricing-grid.highlight-has-nearby-grocer-with-out-prices .has-nearby-grocer-with-out-price {visibility: visible; background-color: #ee99ff; color: #000;}
