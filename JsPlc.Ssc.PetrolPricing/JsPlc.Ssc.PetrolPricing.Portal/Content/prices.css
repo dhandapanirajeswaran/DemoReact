@@ -732,12 +732,12 @@ table.competitorTable > tbody > .competitor-row  {
 .site-name-overlay:hover::before {
     content: '';
     border-color: transparent#000 transparent transparent;
-    border-width: 8px;
+    border-width: 12px;
     border-style: solid;
     position: absolute;
-    margin-left: -8px;
+    margin-left: -16px;
     left: -8px;
-    top: 10px;
+    top: 0;
 }
 
 .site-name-overlay:hover .site-name::before {
