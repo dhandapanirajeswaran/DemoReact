@@ -286,6 +286,7 @@ table.competitorTable > tbody > .competitor-row  {
 .site-row.focused:hover {
     background-color: #ffc580;
 }
+.site-row.focused .site-name {color: #000;}
 
 .site-row:hover .price-na,
 .site-row.focused .price-na {color: #666;}
@@ -712,15 +713,16 @@ table.competitorTable > tbody > .competitor-row  {
     padding: 4px 8px 8px 8px;
     width: 100%;
 }
+.site-row.focused .site-name-overlay .site-name,
 .site-name-overlay .site-name {
     color: #F58220;
     font-weight: bold;
 }
 
-.site-name-overlay .hide-hover {display: none; clear: both;}
+.site-name-overlay .hide-hover {display: none; clear: both; margin-top: 4px;}
 
 .site-name-overlay:hover {
-    width: 140%;
+    width: 160%;
     background-color: #000;
     color: #fff;
     box-shadow: 2px 4px 6px #999;
