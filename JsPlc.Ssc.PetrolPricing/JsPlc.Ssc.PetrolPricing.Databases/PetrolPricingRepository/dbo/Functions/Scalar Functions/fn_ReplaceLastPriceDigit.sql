@@ -1,11 +1,11 @@
 ﻿-- =============================================
 --      Author: Garry Leeder
 --     Created: 2017-03-06
---    Modified: 2017-04-26
--- Description:	Replaces the last digit (units) of the supplied integer
+--    Modified: 2017-07-14
+-- Description:	performs the 'Decimal Rounding' by replacing the last digit (if not -1)
 --       Notes: 0 or NULL returns 0
 -- =============================================
-CREATE FUNCTION dbo.fn_ReplaceLastPriceDigit
+CREATE FUNCTION [dbo].[fn_ReplaceLastPriceDigit]
 (
 	@Price INT,
 	@Digit INT
@@ -14,8 +14,8 @@ RETURNS INT
 AS
 BEGIN
 	DECLARE @Result INT = CASE 
-		WHEN @Price = 0 OR @Price IS NULL OR @Digit = -1
-			THEN 0
+		WHEN @Price = 0 OR @Price IS NULL THEN 0
+		WHEN @Digit = -1 THEN @Price
 		ELSE (@Price/10) * 10 + @Digit
 	END
 
