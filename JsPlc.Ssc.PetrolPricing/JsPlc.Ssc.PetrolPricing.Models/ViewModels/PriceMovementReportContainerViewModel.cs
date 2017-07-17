@@ -65,6 +65,17 @@ namespace JsPlc.Ssc.PetrolPricing.Models.ViewModels
     public class PriceMovementReportDataItems
     {
         public DateTime PriceDate { get; set; }
-        public int PriceValue { get; set; }
+        public List<PriceMovementFuelPriceItem> FuelPrices { get; set; }
+
+        public PriceMovementReportDataItems()
+        {
+            this.FuelPrices = new List<PriceMovementFuelPriceItem>();
+        }
+    }
+
+    public class PriceMovementFuelPriceItem
+    {
+        public int FuelTypeId { get; set; }
+        public int PriceValue { get; set; } 
     }
 }

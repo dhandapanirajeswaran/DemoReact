@@ -208,7 +208,7 @@ namespace JsPlc.Ssc.PetrolPricing.Exporting.Styling
 
         private void FormatReportPriceMovementReport(IXLWorksheet worksheet, int totalColumns, int totalRows)
         {
-            var firstDataRow = 2;
+            var firstDataRow = 3;
             var lastDataRow = 2 + totalRows - 1;
 
             new ExcelColumnStyler(worksheet, firstDataRow, lastDataRow)

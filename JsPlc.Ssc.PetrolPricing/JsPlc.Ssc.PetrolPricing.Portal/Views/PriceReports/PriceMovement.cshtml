@@ -85,6 +85,19 @@
     .zero {
         color: #999;
     }
+    .fuel-price-1,
+    .fuel-price-2,
+    .fuel-price-6 {display: none;}
+
+    .show-fuel-1 .fuel-price-1,
+    .show-fuel-2 .fuel-price-2,
+    .show-fuel-6 .fuel-price-6 {display: inline;}
+
+    .show-fuel-1.hide-zeros .zero,
+    .show-fuel-2.hide-zeros .zero,
+    .show-fuel-6.hide-zeros .zero {display: none;}
+
+
 </style>
 
 <div class="row">
@@ -133,11 +146,7 @@
                     <input type="text" class="form-control" id="SiteName" name="SiteName" onkeypress="return runScript(event)" value='@Model.SiteName'>
 
                 </div>
-                <div class="col-md-2">
-                    <label for="FuelTypeId">Fuel:</label>
-                    @Html.DropDownListFor(d => d.FuelTypeId, Model.FuelTypes.Select(b => new SelectListItem { Value = b.Key.ToString(), Text = b.Value, Selected = b.Key == Model.FuelTypeId }), null, new { @class = "form-control" })
-                </div>
-                <div class="col-md-1">
+                <div class="col-md-1 col-md-offset-2">
                     <label>&nbsp;</label>
                     <button type="button" class="btn btn-success btn-block" id="btnViewReport"><i class="fa fa-search"></i> View</button>
                 </div>
@@ -152,24 +161,31 @@
     @if (Model != null && Model.FuelTypeId > 0)
     {
         <hr />
-        <h4>
-            @Model.Brand price movement of @Model.FuelTypeName
-            From: @Model.FromDate.Value.ToString("dd-MMM-yyyy") - To: @Model.ToDate.Value.ToString("dd-MMM-yyyy")
+        <div class="row form-horizontal">
+            <div class="col-md-7">
+                <h4><br />
+                    @Model.Brand price movement
+                    From: @Model.FromDate.Value.ToString("dd-MMM-yyyy") - To: @Model.ToDate.Value.ToString("dd-MMM-yyyy")
+                </h4>
+            </div>
+            <div class="col-md-3">
+                <label>Fuel Type:</label>
+                @Html.DropDownListFor(d => d.FuelTypeId, Model.FuelTypes.Select(b => new SelectListItem { Value = b.Key.ToString(), Text = b.Value, Selected = b.Key == Model.FuelTypeId }), null, new { @class = "form-control" })
+            </div>
 
-            <div class="pull-right">
-                Zero values: 
+            <div class="col-md-2">
+                <label>Zero values:</label><br />
                 <button id="btnShowZeroValues" class="btn btn-primary btn-sm"><i class="fa fa-check-square-o"></i> Show</button>
                 <button id="btnHideZeroValues" class="btn btn-default btn-sm"><i class="fa fa-square-o"></i> Hide</button>
             </div>
-
-        </h4>
+        </div>
         <br />
 
         if (Model.PriceMovementReport != null)
         {
             <!-- Report Data -->
             <div class="divtable">
-                <div id="tableDiv" style="width: @(reportWidth)">
+                <div id="tableDiv" style="width: @(reportWidth)" class="show-fuel-2">
                     <div class="row" style="font-weight:bold">
                         <div class="col-md-1 fixed-col-1" style="width:250px">Sites</div>
 
@@ -200,15 +216,13 @@
                                     }
                                     @foreach (var dataItem in siteRow.DataItems)
                                     {
-                                        var value = (dataItem.PriceValue / 10.0).ToString("###0.0");
                                         <div class="col-md-1 value-col">
-                                            @if (value == "0.0")
+                                            @foreach (var fuelPrice in dataItem.FuelPrices)
                                             {
-                                            <span class="zero">0.0</span>
-                                            }
-                                            else
-                                            {
-                                                <span>@(value)</span>
+                                                var price = fuelPrice.PriceValue;
+                                                var value = (price / 10.0).ToString("###0.0");
+                                                var css = "fuel-price-" + fuelPrice.FuelTypeId + (value == "0.0" ? " zero" : "");
+                                                <span class="@(css)">@(value)</span>
                                             }
                                         </div>
                                     }

@@ -5,6 +5,12 @@
 
             var rootFolder = common.reportRootFolder();
 
+            var fuelNames = {
+                '1': 'Super-Unleaded',
+                '2': 'Unleaded',
+                '6': 'Diesel'
+            };
+
             var forDp = $('#DateFrom').datepicker({
                 language: "en-GB",
                 autoClose: true,
@@ -94,6 +100,15 @@
                 window.location.href = rootFolder + '/PriceReports/PriceMovement';
             });
 
+            $('#FuelTypeId').off().on('change', function () {
+                var fuelTypeId = $(this).val(),
+                    grid = $(selectors.grid);
+
+                grid.removeClass('show-fuel-1 show-fuel-2 show-fuel-6').addClass('show-fuel-' + fuelTypeId);
+
+                notify.info('Showing ' + fuelNames[fuelTypeId] + ' fuel prices');
+            });
+
             function redrawShowHideButtons() {
                 var activeButton = state.showZeros ? controls.showButton : controls.hideButton
                 inactiveButton = state.showZeros ? controls.hideButton : controls.showButton;
@@ -106,7 +121,13 @@
                 var grid = $(selectors.grid),
                     zeros = grid.find(selectors.zeros);
 
-                state.showZeros ? zeros.show() : zeros.hide();
+                if (state.showZeros) {
+                    grid.removeClass('hide-zeros').addClass('show-zeros')
+                    notify.info('Showing 0.0 prices');
+                } else {
+                    grid.removeClass('show-zeros').addClass('hide-zeros');
+                    notify.info('Hiding 0.0 prices');
+                }
             };
 
             controls.showButton.off().click(function () {

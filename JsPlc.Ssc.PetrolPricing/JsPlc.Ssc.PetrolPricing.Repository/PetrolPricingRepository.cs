@@ -3134,7 +3134,7 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
                     dataItems.AddRange(dates.Select(d => new PriceMovementReportDataItems
                     {
                         PriceDate = d,
-                        PriceValue = GetSitePriceOnDate(s.Prices, d, fuelTypeId)
+                        FuelPrices = GetSiteFuelPricesOnDate(s.Prices, d)
                     }));
                 }
             });
@@ -4331,6 +4331,27 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
             return (price == null)
                 ? 0
                 : (price.OverriddenPrice == 0) ? price.SuggestedPrice : price.OverriddenPrice;
+        }
+
+        private static List<PriceMovementFuelPriceItem> GetSiteFuelPricesOnDate(IEnumerable<SitePrice> sitePrices, DateTime d)
+        {
+            var fuelPrices = new List<PriceMovementFuelPriceItem>();
+            fuelPrices.Add(new PriceMovementFuelPriceItem()
+            {
+                FuelTypeId = 2,
+                PriceValue = GetSitePriceOnDate(sitePrices, d, 2), // Unleaded
+            });
+            fuelPrices.Add(new PriceMovementFuelPriceItem()
+            {
+                FuelTypeId = 6,
+                PriceValue = GetSitePriceOnDate(sitePrices, d, 6) // Diesel
+            });
+            fuelPrices.Add(new PriceMovementFuelPriceItem()
+            {
+                FuelTypeId = 1,
+                PriceValue = GetSitePriceOnDate(sitePrices, d, 1), // Super-unleaded,
+            });
+            return fuelPrices;
         }
 
         private static int GetDailyPriceOnDate(IEnumerable<DailyPrice> dailyPrices, DateTime d, int fuelId)

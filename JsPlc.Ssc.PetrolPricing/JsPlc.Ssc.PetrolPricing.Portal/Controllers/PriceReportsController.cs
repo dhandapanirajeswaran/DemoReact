@@ -328,8 +328,15 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 
 			var dt = reportContainer.ToPriceMovementReportDataTable(model.Brand + " PriceMovementReport"); // default tableName = PriceMovementReport (also becomes sheet name in Xlsx)
 
-			string filenameSuffix = String.Format("[{0}] [{1} to {2}]",
-				reportContainer.FuelTypeName,
+            var blankRow = dt.NewRow();
+            for (var i=1; i< dt.Columns.Count; i++)
+            {
+                var fuelAndDateString = dt.Columns[i].ToString().Split('_');
+                blankRow[i] = fuelAndDateString[0];
+            }
+            dt.Rows.InsertAt(blankRow, 0);
+
+			string filenameSuffix = String.Format("[{0} to {1}]",
 					reportContainer.FromDate.Value.ToString("dd-MMM-yyyy"),
 					reportContainer.ToDate.Value.ToString("dd-MMM-yyyy"));
 
@@ -562,18 +569,24 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             return item;
         }
 
+        private string GetExcelColumnName(int columnNumber)
+        {
+            int dividend = columnNumber;
+            string columnName = String.Empty;
+            int modulo;
+
+            while (dividend > 0)
+            {
+                modulo = (dividend - 1) % 26;
+                columnName = Convert.ToChar(65 + modulo).ToString() + columnName;
+                dividend = (int)((dividend - modulo) / 26);
+            }
+
+            return columnName;
+        }
+
         private ActionResult ExcelDocumentStream(List<DataTable> tables, string fileName, string fileNameSuffix, string downloadId)
         {
-            //if (!tables.Any())
-            //{
-            //	return new ContentResult { Content = "No data to download..", ContentType = "text/plain" };
-            //}
-
-            //if (tables[0].Rows.Count <= 1) // Model != null && Model.NationalAverageReport != null && Model.NationalAverageReport.Fuels.Any()
-            //{
-            //	return new ContentResult { Content = "No data to download..", ContentType = "text/plain" };
-            //}
-
             if (!ReportFilenameToFileTypeMap.ContainsKey(fileName))
                 throw new ArgumentException("Unknown report type for filename: " + fileName);
 
@@ -605,6 +618,52 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
                         ws.Range(cellrange).Style.NumberFormat.SetFormat("@");
                         ws.Range(sitesCellRange).Style.NumberFormat.SetFormat("@");
                         ws.Range(Others_CellRange).Style.NumberFormat.SetFormat("0.00");
+
+                        for (var colIndex = 1; colIndex < dt.Columns.Count; colIndex += 3)
+                        {
+                            var firstRow = ws.Row(1);
+                            var fuelAndDateString = firstRow.Cell(colIndex + 1).Value.ToString().Split('_');
+
+                            firstRow.Cell(colIndex + 1).Style.Fill.BackgroundColor = XLColor.White;
+                            firstRow.Cell(colIndex + 1).Style.Font.FontColor = XLColor.White;
+                            firstRow.Cell(colIndex + 1).Value = "C" + colIndex + 1;
+
+                            var dateCell = firstRow.Cell(colIndex + 2);
+                            dateCell.Value = fuelAndDateString[1];
+                            dateCell.Style.Font.Bold = true;
+                            dateCell.Style.Fill.BackgroundColor = XLColor.Black;
+                            dateCell.Style.Font.FontColor = XLColor.White;
+                            dateCell.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+
+                            firstRow.Cell(colIndex + 3).Style.Fill.BackgroundColor = XLColor.White;
+                            firstRow.Cell(colIndex + 3).Style.Font.FontColor = XLColor.White;
+                            firstRow.Cell(colIndex + 3).Value = "C" + colIndex + 3;
+                        }
+
+                        var secondRow = ws.Row(2);
+                        for (var colIndex=2; colIndex <= dt.Columns.Count; colIndex+=3)
+                        {
+                            var unleaded = secondRow.Cell(colIndex);
+                            var diesel = secondRow.Cell(colIndex + 1);
+                            var superUnleaded = secondRow.Cell(colIndex + 2);
+
+                            unleaded.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+                            unleaded.Style.Fill.BackgroundColor = XLColor.DarkGreen;
+                            unleaded.Style.Font.FontColor = XLColor.White;
+                            unleaded.Value = "Unleaded";
+
+                            diesel.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+                            diesel.Style.Fill.BackgroundColor = XLColor.Black;
+                            diesel.Style.Font.FontColor = XLColor.White;
+                            diesel.Value = "Diesel";
+
+                            superUnleaded.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+                            superUnleaded.Style.Fill.BackgroundColor = XLColor.LightGray;
+                            superUnleaded.Style.Font.FontColor = XLColor.Black;
+                            superUnleaded.Value = "Super-Unleaded";
+                        }
+
+                        ws.Rows().AdjustToContents();
                     }
                     if (reportType == ReportExportFileType.CompetitorsPriceRange)
                     {

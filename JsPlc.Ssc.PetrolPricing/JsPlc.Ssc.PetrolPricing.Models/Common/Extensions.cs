@@ -219,7 +219,9 @@ namespace JsPlc.Ssc.PetrolPricing.Models.Common
             var datesAsString = reportContainer.PriceMovementReport.Dates.Select(x => x.ToString("dd-MMM-yyyy")).ToArray();
             foreach (var dateString in datesAsString)
             {
-                dt.Columns.Add(dateString);
+                dt.Columns.Add("U_"+ dateString);
+                dt.Columns.Add("D_" + dateString);
+                dt.Columns.Add("S_" + dateString);
             }
             foreach (var siteRow in reportContainer.PriceMovementReport.ReportRows)
             {
@@ -228,8 +230,12 @@ namespace JsPlc.Ssc.PetrolPricing.Models.Common
                 var i = 1;
                 foreach (var dataItem in siteRow.DataItems)
                 {
-                    dr[i] = (dataItem.PriceValue / 10.0).ToString("###0.0");
-                    i += 1;
+                    var item = dr[i];
+                    foreach(var fuelPrice in dataItem.FuelPrices)
+                    {
+                        dr[i] = (fuelPrice.PriceValue / 10.0).ToString("###0.0");
+                        i++;
+                    }
                 }
                 dt.Rows.Add(dr);
             }
