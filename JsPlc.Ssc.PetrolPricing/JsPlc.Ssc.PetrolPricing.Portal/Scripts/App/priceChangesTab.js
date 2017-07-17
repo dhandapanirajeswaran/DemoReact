@@ -181,7 +181,7 @@
                 rowIndex,
                 colIndex,
                 columns = 6,
-                rowsPerColumn = Math.floor(chart.data.length / columns),
+                rowsPerColumn = Math.ceil(chart.data.length / columns),
                 obj,
                 css;
 
@@ -189,39 +189,41 @@
 
             for (colIndex = 0; colIndex < columns; colIndex++) {
                 html.push('<div class="col-md-2">');
-                html.push('<table class="table table-striped table-condensed">');
-                html.push('<thead>');
-                html.push('<tr>');
-                html.push('<th>Sites</th>');
-                html.push('<th></th>');
-                html.push('<th>Change</th>');
-                html.push('</tr>');
-                html.push('</thead>');
+                if (i < chart.data.length) {
+                    html.push('<table class="table table-striped table-condensed">');
+                    html.push('<thead>');
+                    html.push('<tr>');
+                    html.push('<th>Sites</th>');
+                    html.push('<th></th>');
+                    html.push('<th>Change</th>');
+                    html.push('</tr>');
+                    html.push('</thead>');
 
-                html.push('<tbody>');
-                for (rowIndex = 0; rowIndex < rowsPerColumn; rowIndex++) {
-                    if (i < chart.data.length) {
-                        obj = chart.data[i++];
-                        html.push('</tr>');
-                        html.push('<td class="text-right">' + obj.count + '</td>');
-                        if (obj.delta < 0) {
-                            html.push('<td class="price-change-down"><i class="fa fa-arrow-down"></i></td>');
-                            css = 'price-change-down';
+                    html.push('<tbody>');
+                    for (rowIndex = 0; rowIndex < rowsPerColumn; rowIndex++) {
+                        if (i < chart.data.length) {
+                            obj = chart.data[i++];
+                            html.push('</tr>');
+                            html.push('<td class="text-right">' + obj.count + '</td>');
+                            if (obj.delta < 0) {
+                                html.push('<td class="price-change-down"><i class="fa fa-arrow-down"></i></td>');
+                                css = 'price-change-down';
+                            }
+                            else if (obj.delta == 0) {
+                                html.push('<td class="price-change-none"><i class="fa fa-arrow-right"></i></td>');
+                                css = 'price-change-none';
+                            }
+                            else {
+                                html.push('<td class="price-change-up"><i class="fa fa-arrow-up"></i></td>');
+                                css = 'price-change-up';
+                            }
+                            html.push('<td class="text-center ' + css + '">' + (obj.delta < 0 ? '-' : '+') + Math.abs(obj.delta).toFixed(1) + '</td>');
+                            html.push('</tr>');
                         }
-                        else if (obj.delta == 0) {
-                            html.push('<td class="price-change-none"><i class="fa fa-arrow-right"></i></td>');
-                            css = 'price-change-none';
-                        }
-                        else {
-                            html.push('<td class="price-change-up"><i class="fa fa-arrow-up"></i></td>');
-                            css = 'price-change-up';
-                        }
-                        html.push('<td class="text-center ' + css + '">' + (obj.delta < 0 ? '-' : '+') + Math.abs(obj.delta).toFixed(1) + '</td>');
-                        html.push('</tr>');
                     }
+                    html.push('</tbody>');
+                    html.push('</table>');
                 }
-                html.push('</tbody>');
-                html.push('</table>');
                 html.push('</div>');
             }
             html.push('</div>');
