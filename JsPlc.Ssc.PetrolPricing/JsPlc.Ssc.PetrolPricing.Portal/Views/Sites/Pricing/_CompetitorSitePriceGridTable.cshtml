@@ -133,7 +133,7 @@
                             <span data-bind="html: FuelPrice.ForecourtYestPriceHtml(), attr: {'data-infotip': FuelPrice.YestPriceInfotip()}"></span>
 
                         </td>
-                        <td style="border-left: 1px solid #ccc;" data-bind="css: (isDriveTimeBoundary() ? 'drive-time-boundary' : '') + ($parents[1].FuelPricesToDisplay[0].FuelPrice.CompetitorName == $parents[0].Brand + '/' + $parents[0].StoreName  && $parents[1].FuelPricesToDisplay[0].FuelPrice.AutoPrice >0 && FuelPrice.FuelTypeId==2 ?  'competitor-fuel-unleaded' : $parents[1].FuelPricesToDisplay[1].FuelPrice.CompetitorName == $parents[0].Brand + '/' + $parents[0].StoreName  && $parents[1].FuelPricesToDisplay[1].FuelPrice.AutoPrice >0 && FuelPrice.FuelTypeId==6? 'competitor-fuel-diesel': $parents[1].FuelPricesToDisplay[2].FuelPrice.CompetitorName == $parents[0].Brand + '/' + $parents[0].StoreName  && $parents[1].FuelPricesToDisplay[2].FuelPrice.AutoPrice >0 && FuelPrice.FuelTypeId==1? 'competitor-fuel-super-unleaded ' : '')">
+                        <td style="border-left: 1px solid #ccc;" data-bind="css: (isDriveTimeBoundary() ? 'drive-time-boundary' : '') + ($parents[1].FuelPricesToDisplay[0].FuelPrice.CompetitorName == $parents[0].Brand + '/' + $parents[0].StoreName  && $parents[1].FuelPricesToDisplay[0].FuelPrice.AutoPrice >0 && FuelPrice.FuelTypeId==2 ?  ' competitor-fuel-unleaded' : $parents[1].FuelPricesToDisplay[1].FuelPrice.CompetitorName == $parents[0].Brand + '/' + $parents[0].StoreName  && $parents[1].FuelPricesToDisplay[1].FuelPrice.AutoPrice >0 && FuelPrice.FuelTypeId==6? ' competitor-fuel-diesel': $parents[1].FuelPricesToDisplay[2].FuelPrice.CompetitorName == $parents[0].Brand + '/' + $parents[0].StoreName  && $parents[1].FuelPricesToDisplay[2].FuelPrice.AutoPrice >0 && FuelPrice.FuelTypeId==1? ' competitor-fuel-super-unleaded ' : '')">
                             <div >
                                 <span data-bind="html: FuelPrice.ForecourtTodayPriceHtml(), attr: {'data-infotip': FuelPrice.CompTodayPriceInfotip()}"></span>
 
@@ -142,7 +142,7 @@
                             </div>
 
                         </td>
-                        <td style="border-left: 1px solid #ccc;" class="text-center" data-bind="class: (FuelPrice.FuelTypeId==2 ? 'diesel-fuel' : ''), css: (isDriveTimeBoundary() ? 'drive-time-boundary' : '')">
+                        <td style="border-left: 1px solid #ccc;" class="text-center" data-bind="class: (FuelPrice.FuelTypeId==2 ? 'diesel-fuel' : ''), css: (isDriveTimeBoundary() ? ' drive-time-boundary' : '')">
 
                             <div data-bind="if: FuelPrice.FuelTypeId==2">
                                 <div data-bind="if: ($parents[1].FuelPricesToDisplay[0].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1)  != 'NaN' ">
