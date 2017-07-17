@@ -150,26 +150,28 @@
                 groups.up.push('<div class="text-center font125pc">There are 0 upward Price Changes</div>');
 
             html.push('<div class="price-change-tags">')
-            html.push('<div class="panel panel-danger">');
+
+            html.push('<div class="panel panel-success">');
             html.push('<div class="panel-heading text-center font125pc">');
-            html.push('<strong>Our Price Changes &mdash; moving down <i class="fa fa-arrow-down"></i></strong>');
+            html.push('<strong>Our Price Changes &mdash; moving up <i class="fa fa-arrow-up"></i> <span class="badge">' + groups.up.length + '</span></strong>');
             html.push('</div>');
-            html.push('<div class="panel-body">' + groups.down.join('') + '</div>');
+            html.push('<div class="panel-body">' + groups.up.join('') + '</div>');
             html.push('</div>');
 
             html.push('<div class="panel panel-warning">');
             html.push('<div class="panel-heading text-center font125pc">');
-            html.push('<strong>Our Price Changes &mdash; non-movers <i class="fa fa-arrow-right"></i></strong>');
+            html.push('<strong>Our Price Changes &mdash; non-movers <i class="fa fa-arrow-right"></i> <span class="badge">' + groups.none.length + '</span></strong>');
             html.push('</div>');
             html.push('<div class="panel-body">' + groups.none.join('') + '</div>');
             html.push('</div>');
 
-            html.push('<div class="panel panel-success">');
+            html.push('<div class="panel panel-danger">');
             html.push('<div class="panel-heading text-center font125pc">');
-            html.push('<strong>Our Price Changes &mdash; moving up <i class="fa fa-arrow-up"></i></strong>');
+            html.push('<strong>Our Price Changes &mdash; moving down <i class="fa fa-arrow-down"></i> <span class="badge">' + groups.down.length + '</span></strong>');
             html.push('</div>');
-            html.push('<div class="panel-body">' + groups.up.join('') + '</div>');
+            html.push('<div class="panel-body">' + groups.down.join('') + '</div>');
             html.push('</div>');
+
             html.push('</div>');
 
             $('#divPriceChangeBarChart').html(html.join(''));

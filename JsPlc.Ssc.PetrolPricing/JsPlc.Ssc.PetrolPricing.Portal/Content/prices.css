@@ -1195,9 +1195,10 @@ table.competitorTable > tbody > .competitor-row  {
 
 .price-change-tags .tag {display: inline-block; padding: 2px 4px; width: 6em; border: 1px solid #999; text-align: center;}
     .price-change-table .price-change-down,
-    .price-change-tags .tag.tag-down {color: #910048;}
+    .price-change-tags .tag.tag-down {color: #910048; background: #f2dede;}
     .price-change-table .price-change-none,
-    .price-change-tags .tag.tag-none {color: #999;}
+    .price-change-tags .tag.tag-none {color: #999; background: #eee;}
     .price-change-table .price-change-up,
-    .price-change-tags .tag.tag-up {color: #3c983c;}
+    .price-change-tags .tag.tag-up {color: #3c983c; background: #dff0d8;}
 
+/* end of file */
