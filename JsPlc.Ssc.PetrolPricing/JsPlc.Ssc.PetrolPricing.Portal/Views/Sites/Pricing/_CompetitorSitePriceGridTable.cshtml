@@ -128,52 +128,18 @@
                         <!-- ko foreach: FuelPricesToDisplay -->
                         <!-- ko if: siteSupportsFuel -->
                         <td style="border-left: 2px solid #666" class="text-center" data-bind="css: (isDriveTimeBoundary() ? 'drive-time-boundary' : '')" >
-
-
-                            <span data-bind="html: FuelPrice.ForecourtYestPriceHtml(), attr: {'data-infotip': FuelPrice.YestPriceInfotip()}"></span>
-
+                            <span class="comp-day1-price" data-bind="html: FuelPrice.ForecourtYestPriceHtml(), attr: {'data-infotip': FuelPrice.YestPriceInfotip()}"></span>
                         </td>
-                        <td style="border-left: 1px solid #ccc;" data-bind="css: (isDriveTimeBoundary() ? 'drive-time-boundary' : '') + ($parents[1].FuelPricesToDisplay[0].FuelPrice.CompetitorName == $parents[0].Brand + '/' + $parents[0].StoreName  && $parents[1].FuelPricesToDisplay[0].FuelPrice.AutoPrice >0 && FuelPrice.FuelTypeId==2 ?  ' competitor-fuel-unleaded' : $parents[1].FuelPricesToDisplay[1].FuelPrice.CompetitorName == $parents[0].Brand + '/' + $parents[0].StoreName  && $parents[1].FuelPricesToDisplay[1].FuelPrice.AutoPrice >0 && FuelPrice.FuelTypeId==6? ' competitor-fuel-diesel': $parents[1].FuelPricesToDisplay[2].FuelPrice.CompetitorName == $parents[0].Brand + '/' + $parents[0].StoreName  && $parents[1].FuelPricesToDisplay[2].FuelPrice.AutoPrice >0 && FuelPrice.FuelTypeId==1? ' competitor-fuel-super-unleaded ' : '')">
+                        <td style="border-left: 1px solid #ccc;" data-bind="css: (competitorDay1UnleadedCellCss())">
                             <div >
-                                <span data-bind="html: FuelPrice.ForecourtTodayPriceHtml(), attr: {'data-infotip': FuelPrice.CompTodayPriceInfotip()}"></span>
+                                <span class="comp-day2-price" data-bind="html: FuelPrice.ForecourtTodayPriceHtml(), attr: {'data-infotip': FuelPrice.CompTodayPriceInfotip()}"></span>
 
                                 <i data-bind="attr: {class: (FuelPrice.Difference ==0 || FuelPrice.Difference == '-' ) ? 'fa fa-arrow-right' : (FuelPrice.Difference <= 0.1) ? 'fa fa-arrow-down': 'fa fa-arrow-up', style: (FuelPrice.Difference == 0 || FuelPrice.Difference == '-') ? 'color: grey' : (FuelPrice.Difference <= 0.1) ? 'color: red': 'color: green', }"></i>
                                 &nbsp;<span data-bind="text: (FuelPrice.Difference == 0 || FuelPrice.Difference == '-') ? '-' : (FuelPrice.Difference/10)"></span>
                             </div>
-
                         </td>
                         <td style="border-left: 1px solid #ccc;" class="text-center" data-bind="class: (FuelPrice.FuelTypeId==2 ? 'diesel-fuel' : ''), css: (isDriveTimeBoundary() ? ' drive-time-boundary' : '')">
-
-                            <div data-bind="if: FuelPrice.FuelTypeId==2">
-                                <div data-bind="if: ($parents[1].FuelPricesToDisplay[0].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1)  != 'NaN' ">
-                                    <span class="comp-js-price-diff" data-bind="text: ($parents[1].FuelPricesToDisplay[0].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1) "></span>
-                                    <i data-bind="attr: { css: ( ($parents[1].FuelPricesToDisplay[0].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1) ==0 || ($parents[1].FuelPricesToDisplay[0].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1) =='NaN' ) ? '' : (($parents[1].FuelPricesToDisplay[0].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1)  <= 0.1) ? 'fa fa-minus': 'fa fa-plus', style: (($parents[1].FuelPricesToDisplay[0].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1)  == 0 || ($parents[1].FuelPricesToDisplay[0].FuelPrice.AutoPrice - FuelPrice.TodayPrice ).toFixed(1) == 'NaN') ? 'color: grey' : ( ($parents[1].FuelPricesToDisplay[0].FuelPrice.AutoPrice - FuelPrice.TodayPrice ).toFixed(1)  <= 0.1) ? 'color: red': 'color: green'}"></i>
-                                </div>
-                                <div class="comp-js-price-diff-na" data-bind="if: ($parents[1].FuelPricesToDisplay[0].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1) == 'NaN' ">
-                                    <span>n/a</span>
-                                </div>
-                            </div>
-
-
-                            <div data-bind="if: FuelPrice.FuelTypeId==6" class="text-center">
-                                <div data-bind="if: ($parents[1].FuelPricesToDisplay[1].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1)  != 'NaN' ">
-                                    <span class="comp-js-price-diff" data-bind="text: ($parents[1].FuelPricesToDisplay[1].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1) "></span>
-                                    <i data-bind="attr: { css: ( ($parents[1].FuelPricesToDisplay[1].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1) ==0 || ($parents[1].FuelPricesToDisplay[1].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1) =='NaN' ) ? '' : (($parents[1].FuelPricesToDisplay[1].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1) <= 0.1) ? 'fa fa-minus': 'fa fa-plus', style: (($parents[1].FuelPricesToDisplay[1].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1) == 0  || ($parents[1].FuelPricesToDisplay[1].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1) == 'NaN' ) ? 'color: grey' :( ($parents[1].FuelPricesToDisplay[1].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1) <= 0.1) ? 'color: red': 'color: green'}"></i>
-                                </div>
-                                <div class="comp-js-price-diff-na" data-bind="if: ($parents[1].FuelPricesToDisplay[1].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1) == 'NaN' ">
-                                    <span>n/a</span>
-                                </div>
-                            </div>
-
-                            <div data-bind="if: FuelPrice.FuelTypeId==1" class="text-center">
-                                <div data-bind="if: ($parents[1].FuelPricesToDisplay[2].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1)  != 'NaN' ">
-                                    <span class="comp-js-price-diff" data-bind="text: ($parents[1].FuelPricesToDisplay[2].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1) "></span>
-                                    <i data-bind="attr: { css: ( ($parents[1].FuelPricesToDisplay[2].FuelPrice.AutoPrice -FuelPrice.TodayPrice).toFixed(1) ==0 || ($parents[1].FuelPricesToDisplay[2].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1) =='NaN' ) ? '' : (($parents[1].FuelPricesToDisplay[2].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1) <= 0.1) ? 'fa fa-minus': 'fa fa-plus', style: (($parents[1].FuelPricesToDisplay[2].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1) == 0 || ($parents[1].FuelPricesToDisplay[2].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1) == 'NaN') ? 'color: grey' : ( ($parents[1].FuelPricesToDisplay[2].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1) <= 0.1) ? 'color: red': 'color: green'}"></i>
-                                </div>
-                                <div class="comp-js-price-diff-na" data-bind="if: ($parents[1].FuelPricesToDisplay[2].FuelPrice.AutoPrice - FuelPrice.TodayPrice).toFixed(1) == 'NaN' ">
-                                    <span>n/a</span>
-                                </div>
-                            </div>
+                            <div data-bind="html: competitorPriceDiffHtml()"></div>
                         </td>
                         <!-- /ko -->
                         <!-- ko if: !siteSupportsFuel -->

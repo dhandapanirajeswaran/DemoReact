@@ -82,6 +82,14 @@ table.competitorTable td, th {
     font-style: italic;
 }
 
+#competitorPricePopupPrices .comp-diff-down {color: red;}
+#competitorPricePopupPrices .comp-diff-none {color: #000;}
+#competitorPricePopupPrices .comp-diff-up {color: green;}
+#competitorPricePopupPrices .comp-diff-na {color: #999;}
+
+#competitorPricePopupPrices .comp-day1-price,
+#competitorPricePopupPrices .comp-day2-price {display: inline-block; width: 3em;}
+
 #competitorPricePopupPrices .sainsburys-row {
     border-top: 2px solid orange;
     border-bottom: 2px solid orange;
