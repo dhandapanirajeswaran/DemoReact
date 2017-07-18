@@ -10,12 +10,23 @@ AS
 BEGIN
 	DECLARE @NearbyGrocerStatus TINYINT
 
+----DEBUG:START
+--SET NOCOUNT ON;
+--DECLARE	@ForDate DATE = GETDATE()
+--DECLARE	@DriveTime INT = 5
+--DECLARE	@SiteId INT = 6164
+--DECLARE	@FuelTypeId INT = 2
+----DEBUG:END
+
 	-- constants
 	DECLARE @HasNearbyGrocer_Flag TINYINT = 0x01; -- site has 1 or more nearby Grocers
 	DECLARE @AllGrocersHavePriceData_Flag TINYINT = 0x02;
 
+	DECLARE @ImportProcessStatus_Success INT = 10
 
 	DECLARE @ForDateNextDay DATE = DATEADD(DAY, 1, @ForDate);
+	DECLARE @yesterday DATE = DATEADD(DAY, -1, @forDate)
+	DECLARE @yesterdayNextDay DATE = DATEADD(DAY, 1, @yesterday)
 
 	--
 	-- Find ALL competitor Grocers 
@@ -47,26 +58,38 @@ BEGIN
 	IF EXISTS(SELECT TOP 1 NULL FROM @NearbyGrocerSites)
 	BEGIN
 		SET @NearbyGrocerStatus = @HasNearbyGrocer_Flag;
-
 		--
 		-- Check if ALL nearby grocers have price data for the date
 		--
-		SET @NearbyGrocerStatus = CASE WHEN NOT EXISTS(
-			SELECT TOP 1 
-				NULL 
+
+		DECLARE @NearbyGrocerCount INT = (SELECT COUNT(1) FROM @NearbyGrocerSites);
+		DECLARE @NearbyGrocerPriceDataCount INT = (SELECT COUNT(1)
 			FROM 
-				@NearbyGrocerSites ngs 
-				INNER JOIN dbo.LatestCompPrice lcp ON ngs.CatNo = lcp.CatNo
+				@NearbyGrocerSites gro
+				INNER JOIN dbo.DailyPrice dp ON dp.CatNo = gro.CatNo AND dp.FuelTypeId = @FuelTypeId
 			WHERE
-				lcp.FuelTypeId = @FuelTypeId
+				dp.FuelTypeId = @FuelTypeId
 				AND
-				lcp.UploadId IN (SELECT Id FROM dbo.FileUpload WHERE StatusId = 10 AND UploadDateTime >= @ForDate AND UploadDateTime < @ForDateNextDay)
-		) THEN @NearbyGrocerStatus 
-		ELSE @NearbyGrocerStatus + @AllGrocersHavePriceData_Flag 
+				dp.DailyUploadId IN (
+					SELECT 
+						MAX(ID)
+					FROM 
+						dbo.FileUpload fu
+					WHERE
+						fu.StatusId = @ImportProcessStatus_Success
+						AND
+						fu.UploadDateTime >= @yesterday
+						AND
+						fu.UploadDateTime < @ForDateNextDay
+				)
+			)
+
+		IF @NearbyGrocerCount = @NearbyGrocerPriceDataCount
+		BEGIN
+			SET @NearbyGrocerStatus = @NearbyGrocerStatus + @AllGrocersHavePriceData_Flag;
 		END
 	END
 
 	-- result
 	RETURN COALESCE(@NearbyGrocerStatus, 0)
-
 END
