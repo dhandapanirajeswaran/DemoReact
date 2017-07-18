@@ -76,7 +76,6 @@
                     <div class="col-md-2 col-md-offset-1">
                         <label class="control-label">Price Change Variance</label>
                         <div class="input-group">
-                            <div class="input-group-addon"><strong>+/-</strong></div>
                             @Html.EditorFor(model => model.PriceChangeVarianceThreshold, new { htmlAttributes = new { @class = "form-control mono-font text-right", data_infotip = "The [b]Price Change Variance[/b] Threshold (e.g. 2.0)[br /]Price changes [q]less or equal to this +/- range[/q] will be [i]ignored[/i]" } })
                             <div class="input-group-addon"><strong>P</strong></div>
                         </div>
