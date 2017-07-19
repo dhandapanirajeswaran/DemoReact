@@ -134,11 +134,11 @@
             for (i = 0; i < chart.data.length; i++) {
                 obj = chart.data[i];
                 if (obj.delta < 0) {
-                    groups.down.push('<span class="tag tag-down">' + obj.count + ' sites <strong>-' + Math.abs(obj.delta).toFixed(1) + '</strong></span>');
+                    groups.down.push('<span class="tag tag-down">' + obj.count + ' fuels <strong>-' + Math.abs(obj.delta).toFixed(1) + '</strong></span>');
                 } else if (obj.delta == 0) {
-                    groups.none.push('<span class="tag tag-none">' + obj.count + ' sites <strong>0</strong></span>');
+                    groups.none.push('<span class="tag tag-none">' + obj.count + ' fuels <strong>0</strong></span>');
                 } else {
-                    groups.up.push('<span class="tag tag-up">' + obj.count + ' sites <strong>+' + Math.abs(obj.delta).toFixed(1) + '</strong></span>');
+                    groups.up.push('<span class="tag tag-up">' + obj.count + ' fuels <strong>+' + Math.abs(obj.delta).toFixed(1) + '</strong></span>');
                 }
             }
 
@@ -195,7 +195,7 @@
                     html.push('<table class="table table-striped table-condensed">');
                     html.push('<thead>');
                     html.push('<tr>');
-                    html.push('<th>Sites</th>');
+                    html.push('<th>Fuels</th>');
                     html.push('<th></th>');
                     html.push('<th>Change</th>');
                     html.push('</tr>');
@@ -243,7 +243,7 @@
                 obj,
                 css;
 
-            row1.push('<th><i class="fa fa-arrow-up"></i><br />Sites</th>');
+            row1.push('<th><i class="fa fa-arrow-up"></i><br />Fuels</th>');
             row2.push('<th>Change</th>');
 
             for (i = 0; i < chart.data.length; i++) {
@@ -271,9 +271,9 @@
             html.push('</table>');
             html.push('</div>');
 
-            html.push('<span class="title title-down">' + chart.stats.down + ' sites with <i class="fa fa-arrow-down"></i> price change</span>');
-            html.push('<span class="title title-none">' + chart.stats.none + ' sites with <i class="fa fa-arrow-right"></i> price change</span>');
-            html.push('<span class="title title-up">' + chart.stats.up + ' sites with <i class="fa fa-arrow-up"></i> price change</span>');
+            html.push('<span class="title title-down">' + chart.stats.down + ' fuels with <i class="fa fa-arrow-down"></i> price change</span>');
+            html.push('<span class="title title-none">' + chart.stats.none + ' fuels with <i class="fa fa-arrow-right"></i> price change</span>');
+            html.push('<span class="title title-up">' + chart.stats.up + ' fuels with <i class="fa fa-arrow-up"></i> price change</span>');
             html.push('</div>');
 
             $('#divPriceChangeBarChart').html(html.join(''));
