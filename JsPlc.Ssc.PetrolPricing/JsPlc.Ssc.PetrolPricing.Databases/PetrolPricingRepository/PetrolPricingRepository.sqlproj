@@ -203,6 +203,8 @@
     <Build Include="dbo\Stored Procedures\spWinServicePurgeEventLogs.sql" />
     <Build Include="dbo\Stored Procedures\spWinServiceClearEventLog.sql" />
     <Build Include="dbo\Functions\Scalar Functions\fn_GetDriveTimePence.sql" />
+    <Build Include="dbo\Functions\Table Functions\tf_NearbyCompetitorDataSummaryForSiteFuel.sql" />
+    <Build Include="dbo\Stored Procedures\spGetNearbyCompetitorPriceSummary.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Scripts\PostDeployment\Script.PostDeployment.sql" />

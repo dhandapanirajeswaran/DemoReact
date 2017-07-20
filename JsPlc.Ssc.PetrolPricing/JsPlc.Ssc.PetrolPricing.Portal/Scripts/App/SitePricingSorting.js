@@ -31,24 +31,12 @@
                 }
             },
             {
-                name: 'Store Town',
+                name: 'Unleaded Competitor Price Data %',
                 pause: false,
                 sorter: function (a, b) {
-                    return sortCompareStrings(a.Town, b.Town);
-                }
-            },
-            {
-                name: 'Cat No',
-                pause: false,
-                sorter: function (a, b) {
-                    return sortCompareNumbers(a.CatNo, b.CatNo);
-                }
-            },
-            {
-                name: 'Pfs No',
-                pause: false,
-                sorter: function (a, b) {
-                    return sortCompareNumbers(a.PfsNo, b.PfsNo);
+                    var value1 = Number(a.SiteCompetitorsInfo.PriceSummaries[0].CompetitorPricePercent),
+                        value2 = Number(b.SiteCompetitorsInfo.PriceSummaries[0].CompetitorPricePercent);
+                    return sortCompareNumbers(value1, value2);
                 }
             },
             {
@@ -66,7 +54,7 @@
                 sorter: function (a, b) {
                     var fuelPrice1 = a.FuelPricesToDisplay[0].FuelPrice,
                         fuelPrice2 = b.FuelPricesToDisplay[0].FuelPrice;
-                    return sortCompareTomorrowPrices(fuelPrice1, fuelPrice2);
+                    return sortCompareNumbers(fuelPrice1, fuelPrice2);
                 }
             },
             {
@@ -76,6 +64,15 @@
                     var upDownValueA = Number(a.FuelPricesToDisplay[0].UpDownValue()),
                         upDownValueB = Number(b.FuelPricesToDisplay[0].UpDownValue());
                     return sortCompareTomorrowPriceChanges(upDownValueA, upDownValueB);
+                }
+            },
+            {
+                name: 'Diesel Competitor Price Data %',
+                pause: false,
+                sorter: function (a, b) {
+                    var value1 = a.SiteCompetitorsInfo.PriceSummaries[1].CompetitorPricePercent,
+                        value2 = b.SiteCompetitorsInfo.PriceSummaries[1].CompetitorPricePercent;
+                    return sortCompareNumbers(value1, value2);
                 }
             },
             {
@@ -105,6 +102,15 @@
                     return sortCompareTomorrowPriceChanges(upDownValueA, upDownValueB);
                 }
             },
+             {
+                 name: 'Super-Unleaded Competitor Price Data %',
+                 pause: false,
+                 sorter: function (a, b) {
+                     var value1 = a.SiteCompetitorsInfo.PriceSummaries[2].CompetitorPricePercent,
+                         value2 = b.SiteCompetitorsInfo.PriceSummaries[2].CompetitorPricePercent;
+                     return sortCompareNumbers(value1, value2);
+                 }
+             },
             {
                 name: 'Super-Unleaded Today Price',
                 pause: false,

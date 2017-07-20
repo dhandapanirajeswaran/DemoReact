@@ -53,6 +53,8 @@ namespace JsPlc.Ssc.PetrolPricing.Models.ViewModels
         public bool HasNearbySuperUnleadedGrocers { get; set; }
         public bool HasNearbySuperUnleadedGrocersPriceData { get; set; }
 
+        public SiteCompetitorPriceSummaryViewModel SiteCompetitorsInfo { get; set; } = new SiteCompetitorPriceSummaryViewModel();
+
         public bool IsGrocer { get; set; }
     }
 

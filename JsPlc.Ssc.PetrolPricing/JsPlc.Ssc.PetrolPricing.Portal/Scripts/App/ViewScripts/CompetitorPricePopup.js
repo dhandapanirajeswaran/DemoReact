@@ -58,7 +58,9 @@ function ($, ko, common, compNotePopup, notify) {
             resetFiltersButton: '#competitorPricesResetFilters',
             insideFilterButton: '#competitorPricesToggleInsideButton',
             outsideFilterButton: '#competitorPricesToggleOutsideButton',
-            resetDriveTimeFiltersButton: '#competitorPricesResetDriveTimeFilters'
+            resetDriveTimeFiltersButton: '#competitorPricesResetDriveTimeFilters',
+            visibleCount: '#competitorPricePopupVisibleCount',
+            totalCount: '#competitorPricePopupTotalCount'
         },
         naming: {
             editButton: '#EditSiteNoteButton_',
@@ -131,13 +133,13 @@ function ($, ko, common, compNotePopup, notify) {
         var row = $('#SiteHeading' + siteId),
             cells = row.find('>td');
 
-        cloneAsReadonlyHtml('.readonlyUnleadedYesterday', cells.get(6));
-        cloneAsReadonlyHtml('.readonlyUnleadedToday', cells.get(7));
-        cloneAsReadonlyHtml('.readonlyUnleadedTodayPriceChange', cells.get(8));
+        cloneAsReadonlyHtml('.readonlyUnleadedYesterday', cells.get(4));
+        cloneAsReadonlyHtml('.readonlyUnleadedToday', cells.get(5));
+        cloneAsReadonlyHtml('.readonlyUnleadedTodayPriceChange', cells.get(6));
 
-        cloneAsReadonlyHtml('.readonlyDieselYesterday', cells.get(9));
-        cloneAsReadonlyHtml('.readonlyDieselToday', cells.get(10));
-        cloneAsReadonlyHtml('.readonlyDieselTodayPriceChange', cells.get(11));
+        cloneAsReadonlyHtml('.readonlyDieselYesterday', cells.get(8));
+        cloneAsReadonlyHtml('.readonlyDieselToday', cells.get(9));
+        cloneAsReadonlyHtml('.readonlyDieselTodayPriceChange', cells.get(10));
 
         cloneAsReadonlyHtml('.readonlySuperUnleadedYesterday', cells.get(12));
         cloneAsReadonlyHtml('.readonlySuperUnleadedToday', cells.get(13));
@@ -623,7 +625,9 @@ function ($, ko, common, compNotePopup, notify) {
     
     function applyFilters() {
         var grid = $(config.selectors.pricesGrid),
-            rows = grid.find(config.selectors.competitorRow);
+            rows = grid.find(config.selectors.competitorRow),
+            totalCount = 0,
+            visibleCount = 0;
 
         rows.each(function () {
             var row = $(this),
@@ -634,11 +638,17 @@ function ($, ko, common, compNotePopup, notify) {
                 visibleGrocer = (isGrocer && state.showGrocers) || (isNonGrocer && state.showNonGrocers),
                 visibleDriveTime = (isInside && state.insideDriveTime) || (isOutside && state.outsideDriveTime);
 
-            if (visibleGrocer && visibleDriveTime)
+            if (visibleGrocer && visibleDriveTime) {
                 row.show();
+                visibleCount++;
+            }
             else
                 row.hide();
+            totalCount++;
         });
+
+        $(config.selectors.visibleCount).text(visibleCount);
+        $(config.selectors.totalCount).text(totalCount);
     };
 
     function setButtonActiveState(selector, isActive) {

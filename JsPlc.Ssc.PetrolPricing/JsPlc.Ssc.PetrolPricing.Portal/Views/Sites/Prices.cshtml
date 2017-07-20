@@ -331,7 +331,7 @@
 
                         <!-- row: #2 -->
                         <tr>
-                            <th colspan="6" class="form-group form-inline text-center" style="background-color: #f8f8f8; border-right: 1px solid #999;">
+                            <th colspan="3" class="form-group form-inline text-center" style="background-color: #f8f8f8; border-right: 1px solid #999;">
                                 <div class="form-group">
                                     <label><i class="fa fa-filter"></i> Price Movement:</label>
                                     <input type="number" data-bind="value: $root.priceMovementMinFilter, attr: {'min': $root.priceMovementMin}, 'css': $root.priceMovementMinFilterCss()" class="form-control input-sm" style="width: 7em;" maxlength="4" data-infotip="Enter the [b]Min[/b] Price Movement" value="" placeholder="Min" />
@@ -340,7 +340,7 @@
                                     <button type="button" class="btn btn-warning btn-sm" data-bind="click: resetPriceMovementFilters" data-infotip="Clear the [b]Price Movement[/b] filters"><i class="fa fa-eraser"></i></button>
                                 </div>
                             </th>
-                            <th rowspan="2" colspan="3" class="col-header-unleaded">
+                            <th rowspan="2" colspan="4" class="col-header-unleaded">
                                 <button type="button" class="btn btn-danger btn-xs" data-bind="visible: !$root.ViewingHistorical(), click: removeAllOverrideUnleaded" data-infotip="Remove all [b]Price Overrides[/b] for [b]Unleaded[/b]"><i class="fa fa-power-off"></i></button>
                                 <span class="fuel-sign fuel-sign-unleaded"></span>
 
@@ -357,7 +357,7 @@
                                 </div>
                                 <!-- /ko -->
                             </th>
-                            <th rowspan="2" colspan="3" class="col-header-diesel">
+                            <th rowspan="2" colspan="4" class="col-header-diesel">
                                 <button type="button" class="btn btn-danger btn-xs" data-bind="visible: !$root.ViewingHistorical(), click: removeAllOverrideDiesel" data-infotip="Remove all [b]Price Overrides[/b] for [b]Diesel[/b]"><i class="fa fa-power-off"></i></button>
                                 <span class="fuel-sign fuel-sign-diesel"></span>
 
@@ -374,7 +374,7 @@
                                 </div>
                                 <!-- /ko -->
                             </th>
-                            <th rowspan="2" colspan="3" class="col-header-super-unleaded">
+                            <th rowspan="2" colspan="4" class="col-header-super-unleaded">
                                 <button type="button" class="btn btn-danger btn-xs" data-bind="visible: !$root.ViewingHistorical(), click: removeAllOverrideSuperUnleaded" data-infotip="Remove all [b]Price Overrides[/b] for [b]Super Unleaded[/b]"><i class="fa fa-power-off"></i></button>
                                 <span class="fuel-sign fuel-sign-super-unleaded"></span>
 
@@ -399,14 +399,11 @@
                             <th class="col-header-store-no">Store</th>
                             <th class="col-header-email">@@</th>
                             <th class="col-header-store-name">Store Name</th>
-                            <th class="col-header-store-town">Store Town</th>
-                            <th class="col-header-cat-no">Cat</th>
-                            <th class="col-header-pfs-no">PFS</th>
                         </tr>
 
                         <!-- row: #4 -->
                         <tr>
-                            <th colspan="6" style="border-right: 1px solid #999;">
+                            <th colspan="3" style="border-right: 1px solid #999;">
                                 <!-- EMAIL all Button, only loads popup -->
                                 <div>
                                     <button style="margin-left:0px " type="button" class="btn btn-success btn-sm" data-bind="disable:!$root.isAnySiteChecked() || $root.sendingEmails(), visible: !$root.ViewingHistorical() && $root.dataAvailable() == true,click: $root.sendEmailSelectedSites" data-infotip="Email the [b]Selected[/b] Sites">
@@ -444,6 +441,7 @@
                                 </div>
                             </th>
 
+                            <th class="col-header-grocer-percent">Data<br />%</th>
                             <th class="col-header-today-price col-unleaded">
                                 <span id="today1">-</span>
                             </th>
@@ -454,6 +452,7 @@
                                 +/-
                             </th>
 
+                            <th class="col-header-grocer-percent col-header-diesel">Data<br />%</th>
                             <th class="col-header-today-price col-diesel">
                                 <span id="today2">-</span>
                             </th>
@@ -464,6 +463,7 @@
                                 +/-
                             </th>
 
+                            <th class="col-header-grocer-percent">Data<br />%</th>
                             <th class="col-header-today-price col-super-unleaded ">
                                 <span id="today3">-</span>
                             </th>
@@ -480,15 +480,15 @@
                             <th class="sortable" data-infotip-dock="below" data-infotip="Click to sort by [br /][b]Store No[/b]" data-bind="click: $root.sortByColumn0"></th>
                             <th class="sortable" data-infotip-dock="below" data-infotip="Click to sort by [br /][b]Has Email[/b]" data-bind="click: $root.sortByColumn1"></th>
                             <th class="sortable sort-asc" data-infotip-dock="below" data-infotip="Click to sort by [br /][b]Store Name[/b]" data-bind="click: $root.sortByColumn2"></th>
-                            <th class="sortable" data-infotip-dock="below" data-infotip="Click to sort by [br /][b]Store Town[/b]" data-bind="click: $root.sortByColumn3"></th>
-                            <th class="sortable" data-infotip-dock="below" data-infotip="Click to sort by [br /][b]Cat No[/b]" data-bind="click: $root.sortByColumn4"></th>
-                            <th class="sortable" data-infotip-dock="below" data-infotip="Click to sort by [br /][b]PFS No[/b]" data-bind="click: $root.sortByColumn5"></th>
-                            <th class="sortable" data-infotip-dock="below" data-infotip="Click to sort by [br /][b]Unleaded Today Price[/b]" data-bind="click: $root.sortByColumn6"></th>
-                            <th class="sortable" data-infotip-dock="below" data-infotip="Click to sort by [br /][b]Unleaded Tomorrow Price[/b]" data-bind="click: $root.sortByColumn7"></th>
-                            <th class="sortable" data-infotip-dock="below" data-infotip="Click to sort by [br /][b]Unleaded Price Change[/b]" data-bind="click: $root.sortByColumn8"></th>
-                            <th class="sortable" data-infotip-dock="below" data-infotip="Click to sort by [br /][b]Diesel Today Price[/b]" data-bind="click: $root.sortByColumn9"></th>
-                            <th class="sortable" data-infotip-dock="below" data-infotip="Click to sort by [br /][b]Diesel Tomorrow Price[/b]" data-bind="click: $root.sortByColumn10"></th>
-                            <th class="sortable" data-infotip-dock="below" data-infotip="Click to sort by [br /][b]Diesel Price Change[/b]" data-bind="click: $root.sortByColumn11"></th>
+                            <th class="sortable" data-infotip-dock="below" data-infotip="Click to sort by [br /][b]Unleaded Competitor Data %[/b]" data-bind="click: $root.sortByColumn3"></th>
+                            <th class="sortable" data-infotip-dock="below" data-infotip="Click to sort by [br /][b]Unleaded Today Price[/b]" data-bind="click: $root.sortByColumn4"></th>
+                            <th class="sortable" data-infotip-dock="below" data-infotip="Click to sort by [br /][b]Unleaded Tomorrow Price[/b]" data-bind="click: $root.sortByColumn5"></th>
+                            <th class="sortable" data-infotip-dock="below" data-infotip="Click to sort by [br /][b]Unleaded Price Change[/b]" data-bind="click: $root.sortByColumn6"></th>
+                            <th class="sortable" data-infotip-dock="below" data-infotip="Click to sort by [br /][b]Diesel Competitor Data %[/b]" data-bind="click: $root.sortByColumn7"></th>
+                            <th class="sortable" data-infotip-dock="below" data-infotip="Click to sort by [br /][b]Diesel Today Price[/b]" data-bind="click: $root.sortByColumn8"></th>
+                            <th class="sortable" data-infotip-dock="below" data-infotip="Click to sort by [br /][b]Diesel Tomorrow Price[/b]" data-bind="click: $root.sortByColumn9"></th>
+                            <th class="sortable" data-infotip-dock="below" data-infotip="Click to sort by [br /][b]Diesel Price Change[/b]" data-bind="click: $root.sortByColumn10"></th>
+                            <th class="sortable" data-infotip-dock="below" data-infotip="Click to sort by [br /][b]Super-Unleaded Competitor Data %[/b]" data-bind="click: $root.sortByColumn11"></th>
                             <th class="sortable" data-infotip-dock="below" data-infotip="Click to sort by [br /][b]Super-Unleaded Today Price[/b]" data-bind="click: $root.sortByColumn12"></th>
                             <th class="sortable" data-infotip-dock="below" data-infotip="Click to sort by [br /][b]Super-Unleaded Tomorrow Price[/b]" data-bind="click: $root.sortByColumn13"></th>
                             <th class="sortable" data-infotip-dock="below" data-infotip="Click to sort by [br /][b]Super-Unleaded Price Change[/b]" data-bind="click: $root.sortByColumn14"></th>
@@ -538,9 +538,15 @@
                                         <i class="fa fa-clone" data-bind="visible: (PriceMatchType == 3)" data-infotip="[b]Match Competitor[/b]"></i>
 
                                         <span class="site-name" data-bind="html: (StoreName.replace('SAINSBURYS', ''))"></span>
+                                      
                                         <div class="hide-hover">
-                                            <span data-bind="text: Town"></span><br />
-                                            <a role="button" href="#" class="btn btn-default btn-xs competitor-site-link" data-toggle="modal" data-bind="attr:{id: SiteId}, click: getCompetitorPopupDataClick"
+                                            <div style="margin: 0 0 8px 0;">
+                                                <span class="site-town" data-bind="text: Town"></span>
+                                                <span class="site-id" data-bind="text: SiteId"></span>
+                                                <span class="site-pfsno" data-bind="text: PfsNo"></span>
+                                                <span class="site-catno" data-bind="text: CatNo"></span>
+                                            </div>
+                                                  <a role="button" href="#" class="btn btn-primary btn-xs competitor-site-link" data-toggle="modal" data-bind="attr:{id: SiteId}, click: getCompetitorPopupDataClick"
                                                data-target="#competitorPricesPopup" data-infotip-dock="below" data-infotip="View competitor's prices">
                                                 <i class="fa fa-credit-card"></i> Competitor Prices
                                             </a>
@@ -559,12 +565,10 @@
                                         </div>
                                     </div>
                                 </td>
-                                <td class="col-store-town"><span data-bind="text: Town"></span></td>
-                                <td class="col-cat-no text-center"><span data-bind="text: CatNo"></span></td>
-                                <td class="col-pfs-no text-center"><span data-bind="text: PfsNo"></span></td>
-
+                           
                                 <!-- ko foreach: FuelPricesToDisplay -->
                                 <!-- ko if: siteSupportsFuel -->
+                                <td data-bind="css: (isEditingFuel() ? 'col-editing': ''), html: (FuelPrice.CompetitorPricePercentHtml()), attr: {'data-infotip': (FuelPrice.CompetitorPricePercentInfoTip())}"></td>
                                 <td data-bind="css: ('col-yesterday' + (isEditingFuel() ? ' col-editing' : '') + (hasValidValue() ? ' col-valid' : ' col-invalid'))">
                                     <span data-bind="css: ('fuel-price-change-' + UpDownSignCss()), html: FuelPrice.ForecourtTodayPriceHtml, attr: {'data-infotip': FuelPrice.CurrentPriceInfoTip()}"></span>
                                     <b data-bind="html: nearbyGrocersHtml()"></b>
@@ -620,14 +624,14 @@
                 </div>
 
                 <div class="row" style="margin-top: 4px; padding-top: 4px; border-top: 1px solid #ccc;">
-                    <div class="col-md-9 text-danger">
+                    <div class="col-md-6 text-danger">
                         <div class="sorting-pause-message" data-bind="visible: $root.sortHasBeenPaused()" style="display: none;">
                             <i class="fa fa-warning"></i>
-                            <strong>Note:</strong> Sorting has been paused because an <strong>Override Price</strong> has been edited.
-                            <button type="button" class="btn btn-sm btn-danger" data-bind="click: $root.resumeSorting"><i class="fa fa-sort"></i> Resume</button>
+                            <strong>Note:</strong> Editing an <strong>Override Price</strong> has paused the sorting.
+                            <button type="button" class="btn btn-xs btn-default" data-bind="click: $root.resumeSorting"><i class="fa fa-sort"></i> Resume</button>
                         </div>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-2 col-md-offset-4">
                         <div class="btn-group pull-right" role="group">
                             <button type="button" class="btn btn-sm btn-primary" data-click="setExpandMode" data-mode="collapsed" data-states="expanded,collapsed" data-target="#PricingPanelScroller" data-message="Price grid collapsed" data-infotip="Collapse the Pricing Grid"><i class="fa fa-toggle-up"></i> Collapse</button>
                             <button type="button" class="btn btn-sm" data-click="setExpandMode" data-mode="expanded" data-states="expanded,collapsed" data-target="#PricingPanelScroller" data-message="Price grid expanded" data-infotip="Expand the Pricing Grid"><i class="fa fa-toggle-down"></i> Expand</button>

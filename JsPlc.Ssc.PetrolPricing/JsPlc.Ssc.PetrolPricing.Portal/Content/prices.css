@@ -310,9 +310,10 @@ table.competitorTable > tbody > .competitor-row  {
 .site-row.row-override-increase-exceeds {
     background: #fcf8e3;
 }
+.site-row.row-override-increase-exceeds td:nth-child(8),
+.site-row.row-override-increase-exceeds td:nth-child(9),
 .site-row.row-override-increase-exceeds td:nth-child(10),
-.site-row.row-override-increase-exceeds td:nth-child(11),
-.site-row.row-override-increase-exceeds td:nth-child(12) {
+.site-row.row-override-increase-exceeds td:nth-child(11) {
     background: #dcd8c3;
 }
 
@@ -327,17 +328,9 @@ table.competitorTable > tbody > .competitor-row  {
     font-weight: bold;
 }
 
-
 .site-row .hide-empty-override .padded-price-right {
     margin-left: 3.3em;
 }
-
-/*.site-row .hide-empty-override .padded-price-right::before {
-    content: "auto ⇒ ";
-    font-size: 90%;
-    color: #ccc;
-    margin-left: -3em;
-}*/
 
 .site-row .hide-empty-override .padded-price-right {
     color: #339;
@@ -468,25 +461,29 @@ table.competitorTable > tbody > .competitor-row  {
 .pricing-grid .no-nearby-grocer-price {
     text-align: center;
 }
+.pricing-grid > tbody > .site-row.focused > td:nth-child(8),
+.pricing-grid > tbody > .site-row.focused > td:nth-child(9),
 .pricing-grid > tbody > .site-row.focused > td:nth-child(10),
 .pricing-grid > tbody > .site-row.focused > td:nth-child(11),
-.pricing-grid > tbody > .site-row.focused > td:nth-child(12),
+.pricing-grid > tbody > .site-row.focused:hover > td:nth-child(8),
+.pricing-grid > tbody > .site-row.focused:hover > td:nth-child(9),
 .pricing-grid > tbody > .site-row.focused:hover > td:nth-child(10),
-.pricing-grid > tbody > .site-row.focused:hover > td:nth-child(11),
-.pricing-grid > tbody > .site-row.focused:hover > td:nth-child(12) {
+.pricing-grid > tbody > .site-row.focused:hover > td:nth-child(11) {
    background-color: #ffa560;
 }
 
 .site-row:hover,
+.pricing-grid > tbody > .site-row:hover > td:nth-child(8),
+.pricing-grid > tbody > .site-row:hover > td:nth-child(9),
 .pricing-grid > tbody > .site-row:hover > td:nth-child(10),
-.pricing-grid > tbody > .site-row:hover > td:nth-child(11),
-.pricing-grid > tbody > .site-row:hover > td:nth-child(12) {
+.pricing-grid > tbody > .site-row:hover > td:nth-child(11) {
     background-color: #ee9;
 }
 
+.pricing-grid > tbody > .site-row.row-errors > td:nth-child(8),
+.pricing-grid > tbody > .site-row.row-errors > td:nth-child(9),
 .pricing-grid > tbody > .site-row.row-errors > td:nth-child(10),
-.pricing-grid > tbody > .site-row.row-errors > td:nth-child(11),
-.pricing-grid > tbody > .site-row.row-errors > td:nth-child(12){
+.pricing-grid > tbody > .site-row.row-errors > td:nth-child(11){
     background-color: #fcc;
 }
 
@@ -510,41 +507,41 @@ table.competitorTable > tbody > .competitor-row  {
 .pricing-grid tbody td:nth-child(2) {width: 32px; text-align: center;} /* email */
 
 .pricing-grid .header-widths th:nth-child(3),
-.pricing-grid tbody td:nth-child(3) {width: 224px; word-wrap:break-word;} /* store name*/
-
+.pricing-grid tbody td:nth-child(3) {width: 326px; word-wrap:break-word;} /* store name*/
+                                                                                                                                                    
 .pricing-grid .header-widths th:nth-child(4),
-.pricing-grid tbody td:nth-child(4) {width: 148px;} /* store town */
+.pricing-grid tbody td:nth-child(4) {width: 48px; text-align: center; } /* unleaded grocer % */
+.pricing-grid tbody td:nth-child(4) {border-left: 1px solid #999;}
 
 .pricing-grid .header-widths th:nth-child(5),
-.pricing-grid tbody td:nth-child(5) {width: 52px; text-align: right; padding-right:1em;} /* cat no */
-
+.pricing-grid tbody td:nth-child(5) {width: 64px; text-align: center; color: #999;} /* unleaded today price */
+                                                     
 .pricing-grid .header-widths th:nth-child(6),
-.pricing-grid tbody td:nth-child(6) {width: 64px; text-align: right; padding-right:1em;} /* pfs no */
+.pricing-grid tbody td:nth-child(6) {width: 106px;} /* unleaded tomorrow price */
 
 .pricing-grid .header-widths th:nth-child(7),
-.pricing-grid tbody td:nth-child(7) {width: 64px; text-align: center; color: #999;} /* unleaded today price */
-.pricing-grid tbody td:nth-child(7) {border-left: 1px solid #999;}
+.pricing-grid tbody td:nth-child(7) {width: 64px;} /* unleaded tomorrow +/- */
 
 .pricing-grid .header-widths th:nth-child(8),
-.pricing-grid tbody td:nth-child(8) {width: 100px;} /* unleaded tomorrow price */
+.pricing-grid tbody td:nth-child(8) {width: 48px; text-align: center; background: #eee;} /* diesel grocer % */
 
 .pricing-grid .header-widths th:nth-child(9),
-.pricing-grid tbody td:nth-child(9) {width: 64px;} /* unleaded tomorrow +/- */
+.pricing-grid tbody td:nth-child(9) {width: 64px; text-align: center; color: #999; background: #eee;} /* diesel today price */
 
 .pricing-grid .header-widths th:nth-child(10),
-.pricing-grid tbody td:nth-child(10) {width: 64px; text-align: center; color: #999; background: #eee;} /* diesel today price */
+.pricing-grid tbody td:nth-child(10) {width: 106px; background: #eee;} /* diesel tomorrow price */
 
 .pricing-grid .header-widths th:nth-child(11),
-.pricing-grid tbody td:nth-child(11) {width: 100px; background: #eee;} /* diesel tomorrow price */
+.pricing-grid tbody td:nth-child(11) {width: 64px; background: #eee;} /* diesel tomorrow +/- */
 
 .pricing-grid .header-widths th:nth-child(12),
-.pricing-grid tbody td:nth-child(12) {width: 64px; background: #eee;} /* diesel tomorrow +/- */
+.pricing-grid tbody td:nth-child(12) {width: 48px; text-align: center;} /* super-unleaded grocer % */
 
 .pricing-grid .header-widths th:nth-child(13),
 .pricing-grid tbody td:nth-child(13) {width: 64px; text-align: center; color: #999;} /* super-unleaded today price*/
 
 .pricing-grid .header-widths th:nth-child(14),
-.pricing-grid tbody td:nth-child(14) {width: 100px;} /* super-unleaded tomorrow price */
+.pricing-grid tbody td:nth-child(14) {width: 106px;} /* super-unleaded tomorrow price */
 
 .pricing-grid .header-widths th:nth-child(15),
 .pricing-grid tbody td:nth-child(15) {width: 64px;} /* super-unleaded tomorrow +/- */
@@ -554,11 +551,8 @@ table.competitorTable > tbody > .competitor-row  {
 
 .pricing-grid thead .col-header-store-no,
 .pricing-grid thead .col-header-email,
-.pricing-grid thead .col-header-store-name,
-.pricing-grid thead .col-header-store-town,
-.pricing-grid thead .col-header-cat-no,
-.pricing-grid thead .col-header-pfs-no {background: #ccc; text-align: center; border-right: 1px solid #999;}
-.pricing-grid thead .col-header-unleaded {text-align: center; left-border: 1px solid #999;}
+.pricing-grid thead .col-header-store-name {background: #ccc; text-align: center; border-right: 1px solid #999;}
+.pricing-grid thead .col-header-unleaded {text-align: center; border-left: 1px solid #999;}
 .pricing-grid thead .col-header-diesel {text-align: center; background: #eee;}
 .pricing-grid thead .col-header-super-unleaded {text-align: center;}
 .pricing-grid thead .col-header-today-price.col-diesel,
@@ -568,6 +562,8 @@ table.competitorTable > tbody > .competitor-row  {
 .pricing-grid thead .col-header-today-price,
 .pricing-grid thead .col-header-tomorrow-price,
 .pricing-grid thead .col-header-tomorrow-price-change {text-align: center;}
+
+.pricing-grid thead .col-header-grocer-percent { text-align: center; color: #999; font-size: 90%;}
 
 #today1,
 #today2,
@@ -732,7 +728,7 @@ table.competitorTable > tbody > .competitor-row  {
 .site-name-overlay .hide-hover {display: none; clear: both; margin-top: 4px;}
 
 .site-name-overlay:hover {
-    width: 160%;
+    width: 120%;
     background-color: #000;
     color: #fff;
     box-shadow: 2px 4px 6px #999;
@@ -746,7 +742,7 @@ table.competitorTable > tbody > .competitor-row  {
     border-style: solid;
     position: absolute;
     margin-left: -16px;
-    left: -8px;
+    left: -7px;
     top: 0;
 }
 
@@ -763,8 +759,33 @@ table.competitorTable > tbody > .competitor-row  {
 }
 .site-name-overlay .competitor-site-link {
     position: absolute;
-    right: 8em;
+    right: 10em;
 }
+
+.site-name-overlay .site-town {font-weight: bold;}
+.site-name-overlay .site-catno,
+.site-name-overlay .site-pfsno,
+.site-name-overlay .site-id {font-weight: bold; float: right; margin-right: 1em;}
+
+.site-name-overlay .site-town::before{
+    content: "Town: ";
+    color: #aaa;
+}
+
+.site-name-overlay .site-catno::before {
+    content: "Cat: ";
+    color: #aaa;
+}
+.site-name-overlay .site-pfsno::before {
+    content: "Pfs: ";
+    color: #aaa;
+}
+
+.site-name-overlay .site-id::before {
+    content: 'Id: ';
+    color: #aaa;
+}
+
 
 .competitor-fuel-unleaded {
     background-color: #ffc;
@@ -1210,3 +1231,9 @@ table.competitorTable > tbody > .competitor-row  {
     .price-change-tags .tag.tag-up {color: #3c983c; background: #dff0d8;}
 
 /* end of file */
+
+
+.back-success {color: #3c763d; background-color: #dff0d8;}
+.back-info {color: #31708f; background-color: #d9edf7; }
+.back-warning {color: #8a6d3b; background-color: #fcf8e3;}
+.back-danger {color: #a94442; background-color: #f2dede;}

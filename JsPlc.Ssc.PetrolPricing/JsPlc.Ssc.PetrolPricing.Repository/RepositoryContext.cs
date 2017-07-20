@@ -523,5 +523,17 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             var parameters = new { };
             DapperHelper.Execute(this, sprocName, parameters);
         }
+
+        internal IEnumerable<SiteCompetitorPriceSummaryRowViewModel> GetCompetitorInfoForSites(DateTime forDate, string siteIds, int maxGrocerDriveTimeMinutes)
+        {
+            const string sprocName = "spGetNearbyCompetitorPriceSummary";
+            var parameters = new
+            {
+                @forDate = forDate,
+                @SiteIds = siteIds,
+                @DriveTime = maxGrocerDriveTimeMinutes
+            };
+            return DapperHelper.QueryList<SiteCompetitorPriceSummaryRowViewModel>(this, sprocName, parameters);
+        }
     }
 }

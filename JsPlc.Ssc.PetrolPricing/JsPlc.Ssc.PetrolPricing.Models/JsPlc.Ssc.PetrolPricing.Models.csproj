@@ -172,6 +172,7 @@
     <Compile Include="ViewModels\Schedule\ScheduleViewModel.cs" />
     <Compile Include="ViewModels\SelectItemViewModel.cs" />
     <Compile Include="ViewModels\SelfTest\DataSanityCheckSummaryViewModel.cs" />
+    <Compile Include="ViewModels\SiteCompetitorPriceSummaryViewModel.cs" />
     <Compile Include="ViewModels\SiteNoteUpdateViewModel.cs" />
     <Compile Include="ViewModels\SiteNoteViewModel.cs" />
     <Compile Include="ViewModels\SiteViewModel.cs" />

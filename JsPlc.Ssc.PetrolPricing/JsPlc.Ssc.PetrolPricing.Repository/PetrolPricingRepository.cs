@@ -530,19 +530,21 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                 var dbList = new List<SitePriceViewModel>();
                 foreach (Site site in filteredSainsburysSites)
                 {
-                    sitePriceRow = new SitePriceViewModel();
-                    sitePriceRow.SiteId = site.Id;
-                    sitePriceRow.CatNo = site.CatNo;
-                    sitePriceRow.StoreName = site.SiteName;
-                    sitePriceRow.Address = site.Address;
-                    sitePriceRow.Town = site.Town;
-                    sitePriceRow.PfsNo = site.PfsNo;
-                    sitePriceRow.StoreNo = site.StoreNo;
-                    sitePriceRow.FuelPrices = new List<FuelPriceViewModel>();
-                    sitePriceRow.Notes = site.Notes;
-                    sitePriceRow.HasEmails = site.Emails.Any();
-                    sitePriceRow.PriceMatchType = (PriceMatchType)site.PriceMatchType;
-                    sitePriceRow.Emails = site.Emails.Select(x=>x.EmailAddress).ToList();
+                    sitePriceRow = new SitePriceViewModel()
+                    {
+                        SiteId = site.Id,
+                        CatNo = site.CatNo,
+                        StoreName = site.SiteName,
+                        Address = site.Address,
+                        Town = site.Town,
+                        PfsNo = site.PfsNo,
+                        StoreNo = site.StoreNo,
+                        FuelPrices = new List<FuelPriceViewModel>(),
+                        Notes = site.Notes,
+                        HasEmails = site.Emails.Any(),
+                        PriceMatchType = (PriceMatchType)site.PriceMatchType,
+                        Emails = site.Emails.Select(x => x.EmailAddress).ToList()
+                    };
 
                     #region OLD CODE
                     if (useNewCode == false)
@@ -563,8 +565,13 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
                 //_logger.Debug("Started: GetNearbyGrocerPriceStatus");
 
-                const int driveTime = 5;
-                GetNearbyGrocerPriceStatus(forDate, dbList, driveTime);
+                var settings = _context.SystemSettings.FirstOrDefault();
+
+                GetNearbyGrocerPriceStatus(forDate, dbList, settings.MaxGrocerDriveTimeMinutes);
+
+                var maxCompetitorDriveTime = 25; // 25 mins for ALL competitors (not just Grocers)
+
+                SetSiteCompetitorPriceInformation(forDate, dbList, maxCompetitorDriveTime);
 
                 //_logger.Debug("Finished: GetNearbyGrocerPriceStatus");
 
@@ -594,6 +601,42 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                 _logger.Debug("Crashed: CallSitePriceSproc");
                 _logger.Error(ce);
                 return null;
+            }
+        }
+
+        private void SetSiteCompetitorPriceInformation(DateTime forDate, List<SitePriceViewModel> sites, int maxGrocerDriveTimeMinutes)
+        {
+            if (sites == null || !sites.Any())
+                return;
+
+            var siteIds = sites.Select(x => x.SiteId.ToString()).Aggregate((x, y) => x + "," + y);
+
+            IEnumerable<SiteCompetitorPriceSummaryRowViewModel> priceSummaries = _context.GetCompetitorInfoForSites(forDate, siteIds, maxGrocerDriveTimeMinutes);
+
+            // calculate percentages
+            foreach(var summary in priceSummaries)
+            {
+                summary.CompetitorPricePercent = summary.CompetitorCount == 0
+                    ? 0
+                    : summary.CompetitorPriceCount * 100 / summary.CompetitorCount;
+
+                summary.GrocerPricePercent = summary.GrocerCount == 0
+                    ? 0
+                    : summary.GrocerPriceCount * 100 / summary.GrocerCount;
+            }
+
+            // attach each Fuel Summary to each Site
+            foreach(var site in sites)
+            {
+                var fuelsForSite = priceSummaries.Where(x => x.SiteId == site.SiteId);
+                var unleaded = fuelsForSite.FirstOrDefault(x => x.FuelTypeId == FuelTypeItem.Unleaded);
+                var diesel = fuelsForSite.FirstOrDefault(x => x.FuelTypeId == FuelTypeItem.Diesel);
+                var superUnleaded = fuelsForSite.FirstOrDefault(x => x.FuelTypeId == FuelTypeItem.Super_Unleaded);
+
+                // add in set Order of Unleaded, Diesel, Super-unleaded
+                site.SiteCompetitorsInfo.PriceSummaries.Add(unleaded);
+                site.SiteCompetitorsInfo.PriceSummaries.Add(diesel);
+                site.SiteCompetitorsInfo.PriceSummaries.Add(superUnleaded);
             }
         }
 
