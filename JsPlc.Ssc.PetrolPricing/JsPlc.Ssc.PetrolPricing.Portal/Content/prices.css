@@ -1007,7 +1007,7 @@ table.competitorTable > tbody > .competitor-row  {
 }
 
 .stat-group-combined::before {
-    content: 'Combined';
+    content: 'All Fuel Grades';
     background-color: #f0ad4e;
     color: #fff;
 }
