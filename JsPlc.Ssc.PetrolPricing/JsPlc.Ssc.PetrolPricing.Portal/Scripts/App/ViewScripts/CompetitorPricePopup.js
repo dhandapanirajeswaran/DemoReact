@@ -113,15 +113,6 @@ function ($, ko, common, compNotePopup, notify) {
 
         $(config.selectors.storeName).text(siteItem.StoreName)
 
-        $(config.selectors.showAllNotesButton).hide();
-        $(config.selectors.hideAllNotesButton).hide();
-        $(config.selectors.toggleGrocersButton).hide();
-        $(config.selectors.toggleNonGrocersButton).hide();
-        $(config.selectors.resetFiltersButton).hide();
-        $(config.selectors.insideFilterButton).hide();
-        $(config.selectors.outsideFilterButton).hide();
-        $(config.selectors.resetDriveTimeFiltersButton).hide();
-
         $('.compitatorData .storeName').text(siteItem.StoreName);
 
         $('.chosen-date').text($('#viewingDate').val());
@@ -214,14 +205,6 @@ function ($, ko, common, compNotePopup, notify) {
     function afterDrawnPopup() {
         resizeCompetitorPricePopup();
         bindNoteEvents();
-        $(config.selectors.showAllNotesButton).fadeIn(1000);
-        $(config.selectors.hideAllNotesButton).fadeIn(1500);
-        $(config.selectors.toggleGrocersButton).fadeIn(2000);
-        $(config.selectors.toggleNonGrocersButton).fadeIn(2500);
-        $(config.selectors.resetFiltersButton).fadeIn(3000);
-        $(config.selectors.insideFilterButton).fadeIn(3400);
-        $(config.selectors.outsideFilterButton).fadeIn(4000);
-        $(config.selectors.resetDriveTimeFiltersButton).fadeIn(4500);
 
         showOrHideNotePanels(state.showNotes, null);
         redrawAllNoteIcons();
@@ -389,16 +372,16 @@ function ($, ko, common, compNotePopup, notify) {
     function bindEvents() {
         $(window).on('resize', windowResized);
 
-        $(config.selectors.showAllNotesButton).off().click(showAllNotesClick).hide();
-        $(config.selectors.hideAllNotesButton).off().click(hideAllNotesClick).hide();
+        $(config.selectors.showAllNotesButton).off().click(showAllNotesClick);
+        $(config.selectors.hideAllNotesButton).off().click(hideAllNotesClick);
 
-        $(config.selectors.toggleGrocersButton).off().click(toggleGrocersClick).hide();
-        $(config.selectors.toggleNonGrocersButton).off().click(toggleNonGrocersClick).hide();
-        $(config.selectors.resetFiltersButton).off().click(resetFiltersClick).hide();
+        $(config.selectors.toggleGrocersButton).off().click(toggleGrocersClick);
+        $(config.selectors.toggleNonGrocersButton).off().click(toggleNonGrocersClick);
+        $(config.selectors.resetFiltersButton).off().click(resetFiltersClick);
 
-        $(config.selectors.insideFilterButton).off().click(insideFilterClick).hide();
-        $(config.selectors.outsideFilterButton).off().click(outsideFilterClick).hide();
-        $(config.selectors.resetDriveTimeFiltersButton).off().click(resetDriveTimeClick).hide();
+        $(config.selectors.insideFilterButton).off().click(insideFilterClick);
+        $(config.selectors.outsideFilterButton).off().click(outsideFilterClick);
+        $(config.selectors.resetDriveTimeFiltersButton).off().click(resetDriveTimeClick);
 
         $(config.selectors.closeButton).off().click(closePopup);
         $(config.selectors.popup).find('.modal-header .close').off().click(closePopup);

@@ -145,6 +145,11 @@ table.competitorTable > tbody > .competitor-row  {
     background: #cceecc;
 }
 
+.competitorTable .competitor-row.inside-drive-time .drive-time-miles {
+    background: #000;
+    color: #fff;
+}
+
 #competitorPricesPopup .footer-actions {
     float: left;
 }
@@ -612,6 +617,9 @@ table.competitorTable > tbody > .competitor-row  {
 #competitorPricePopupPrices .no-nearby-grocer-price {display: inline-block; width: 1em; background-color: #ffdc9a; color: #000;}
 #competitorPricePopupPrices .has-nearby-grocer-price {display: inline-block; width: 1em; background-color: #cfffc8; color: #000;}
 #competitorPricePopupPrices .has-nearby-grocer-with-out-price {display: inline-block; width: 1em; background-color: #ee99ff; color: #000;}
+
+
+#competitorPricePopupPrices .hide-competitor-no-price-data .competitor-price-na {opacity: 0;}
 
 #PriceDifferenceBarChart {
     border: 1px solid #999;

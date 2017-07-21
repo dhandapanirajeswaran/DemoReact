@@ -67,11 +67,17 @@
                     <button type="button" id="competitorPricesResetFilters" class="btn btn-sm btn-warning" data-infotip="Reset the Filters (show all)"><i class="fa fa-power-off"></i></button>
                 </div>
 
-                <label style="margin-left: 3em;">Drive-Time <span class="badge" data-bind="text: $root.MaxGrocerDriveTime()"></span> mins:</label>
+                <label style="margin-left: 3em;"><span class="badge" data-bind="text: $root.MaxGrocerDriveTime()"></span> min Drive-Time:</label>
                 <div class="btn-group" data-toggle="buttons-radio">
                     <button type="button" id="competitorPricesToggleInsideButton" class="btn btn-sm btn-primary" data-bind="attr: {'data-infotip': ('Show or Hide Grocers [b]Inside[/b] a Drive Time of [b]' + $root.maxGrocerDriveTimeMinutes() + ' minutes[/b]')}"><i class="fa fa-rss-square"></i> Inside</button>
                     <button type="button" id="competitorPricesToggleOutsideButton" class="btn btn-sm btn-default" data-bind="attr: {'data-infotip': ('Show or Hide Grocers [b]Outside[/b] a Drive Time of [b]' + $root.maxGrocerDriveTimeMinutes() + ' minutes[/b]')}"><i class="fa fa-square-o"></i> Outside</button>
                     <button type="button" id="competitorPricesResetDriveTimeFilters" class="btn btn-sm btn-warning" data-infotip="Reset the Drive-Time Filters"><i class="fa fa-power-off"></i></button>
+                </div>
+
+                <label style="margin-left: 3em;">No Price Data:</label>
+                <div class="btn-group">
+                    <button type="button" class="btn btn-sm" data-bind="click: $root.showCompetitorNoPriceData, css: ($root.isShowingCompetitorNoPriceData() ? 'btn-primary' : 'btn-default')" data-infotip=""><i class="fa fa-eye"></i> Show</button>
+                    <button type="button" class="btn btn-sm" data-bind="click: $root.hideCompetitorNoPriceData, css: (!$root.isShowingCompetitorNoPriceData() ? 'btn-primary' : 'btn-default')" data-infotip=""><i class="fa fa-times"></i> Hide</button>
                 </div>
 
             </div>
