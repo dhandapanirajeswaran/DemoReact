@@ -417,7 +417,7 @@
                                     </button>
 
                                     <div class="btn-group pull-right">
-                                        <select class="btn btn-default" style="width: 13em; margin-left: 1em;" data-bind="value: $root.siteEmailFilter, event: {change: $root.siteEmailFilterChange}" data-infotip="Filter the [b]Sites[/b] [br /]by Emails/Selection or Status">
+                                        <select class="btn btn-default" style="width: 15em; margin-left: 1em;" data-bind="value: $root.siteEmailFilter, event: {change: $root.siteEmailFilterChange}" data-infotip="Filter the [b]Sites[/b] [br /]by Emails/Selection or Status">
                                             <option>All Sites</option>
                                             <option>With Emails</option>
                                             <option>No Emails</option>
@@ -425,7 +425,7 @@
                                             <option>No Overrides</option>
                                             <option data-bind="visible: !$root.ViewingHistorical()">Selected</option>
                                             <option data-bind="visible: !$root.ViewingHistorical()">Not Selected</option>
-                                            <option data-bind="visible: !$root.ViewingHistorical()">Exceeds Absolutes</option>
+                                            <option data-bind="visible: !$root.ViewingHistorical()">Exceeds Absolute Min/Max</option>
                                             <option data-bind="visible: !$root.ViewingHistorical()">Errors</option>
                                             <option data-bind="visible: !$root.ViewingHistorical()">Inside Variance</option>
                                             <option data-bind="visible: !$root.ViewingHistorical()">Outside Variance</option>

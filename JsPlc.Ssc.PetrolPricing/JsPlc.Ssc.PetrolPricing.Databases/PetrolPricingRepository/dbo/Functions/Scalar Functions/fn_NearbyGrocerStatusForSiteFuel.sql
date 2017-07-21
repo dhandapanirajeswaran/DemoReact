@@ -78,7 +78,7 @@ BEGIN
 					WHERE
 						fu.StatusId = @ImportProcessStatus_Success
 						AND
-						fu.UploadDateTime >= @yesterday
+						fu.UploadDateTime >= @ForDate
 						AND
 						fu.UploadDateTime < @ForDateNextDay
 				)
@@ -92,4 +92,8 @@ BEGIN
 
 	-- result
 	RETURN COALESCE(@NearbyGrocerStatus, 0)
+
+	----DEBUG:START
+	--SELECT @NearbyGrocerStatus [@NearbyGrocerStatus]
+	----DEBUG:END
 END

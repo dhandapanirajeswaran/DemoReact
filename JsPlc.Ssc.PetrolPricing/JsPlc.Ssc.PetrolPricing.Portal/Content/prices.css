@@ -141,6 +141,9 @@ table.competitorTable > tbody > .competitor-row  {
     padding: 0 3px;
     letter-spacing: 1px;
 }
+.competitorTable .competitor-row.inside-drive-time {
+    background: #cceecc;
+}
 
 #competitorPricesPopup .footer-actions {
     float: left;
