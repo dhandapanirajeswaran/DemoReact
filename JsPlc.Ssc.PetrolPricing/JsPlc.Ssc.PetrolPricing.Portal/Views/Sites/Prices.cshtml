@@ -166,7 +166,7 @@
 
             <div class="row">
                 <div class="col-md-6">
-                    <div class="btn-group hover-background-success clickable" style="margin-top: -0.5em; display: none;" data-bind="click: $root.confirmGotoSettings, visible: !$root.busyLoadingData()" data-infotip-dock="below" data-infotip="These can be changed in the [b]Settings[/b] page">
+                    <div class="btn-group hover-background-primary clickable" style="margin-top: -0.5em; display: none;" data-bind="click: $root.confirmGotoSettings, visible: !$root.busyLoadingData()" data-infotip-dock="below" data-infotip="These can be changed in the [b]Settings[/b] page">
                         <label class="tag tag-info">Price Variance <span class="badge" data-bind="text: ('+/- ' + $root.PriceChangeVariance() + ' p')"></span></label>
                         <label class="tag tag-info">Grocer Drive Time <span class="badge" data-bind="text: ('' + $root.MaxGrocerDriveTime() + ' mins')"></span></label>
                         <label class="tag tag-info">Rounding <span class="badge" data-bind="text: ($root.DecimalRounding() == -1 ? 'none': $root.DecimalRounding())"></span></label>

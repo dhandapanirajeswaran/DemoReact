@@ -349,5 +349,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         List<int> GetJsSitesByPfsNum();
 
         void ClearWinServiceEventLog();
+
+        IEnumerable<NearbyGrocerPriceSiteStatus> GetNearbyGrocerPriceStatusForSites(DateTime forDate, string siteIds, int driveTime);
     }
 }

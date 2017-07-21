@@ -15,5 +15,6 @@ namespace JsPlc.Ssc.PetrolPricing.Models.ViewModels
         public DateTime UpdatedOn { get; set; }
         public bool IsActive { get; set; }
         public bool IsOutdated { get; set; }
+        public bool IsRecalcRequired { get; set; }
     }
 }

@@ -250,6 +250,11 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
 			[FromUri]int siteId = 0, [FromUri]int pageNo = 1, [FromUri]int pageSize = Constants.PricePageSize)
 		{
 			if (!forDate.HasValue) forDate = DateTime.Now;
+
+            var priceSnapshot = _priceService.GetPriceSnapshotForDay(forDate.Value);
+            if (priceSnapshot != null && priceSnapshot.IsRecalcRequired)
+                _priceService.RecalculateDailyPrices(forDate.Value);
+
 			IEnumerable<SitePriceViewModel> siteWithPrices = _siteService.GetSitesWithPrices(forDate.Value, storeName, catNo, storeNo, storeTown, siteId, pageNo, pageSize);
 			return Ok(siteWithPrices.ToList());
 		}

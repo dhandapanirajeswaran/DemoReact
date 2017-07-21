@@ -614,10 +614,15 @@ table.competitorTable > tbody > .competitor-row  {
 .pricing-grid.show-unchecked-sites .no-checked-email {}
 .pricing-grid.hide-unchecked-sites .no-checked-email {display: none;}
 
+.pricing-grid .range-100 {color: #5cb85c}
+.pricing-grid .range-75-to-99,
+.pricing-grid .range-50-to-74,
+.pricing-grid .range-25-to-49,
+.pricing-grid .range-0-to-24 {color: #d9534f;}
+
 #competitorPricePopupPrices .no-nearby-grocer-price {display: inline-block; width: 1em; background-color: #ffdc9a; color: #000;}
 #competitorPricePopupPrices .has-nearby-grocer-price {display: inline-block; width: 1em; background-color: #cfffc8; color: #000;}
 #competitorPricePopupPrices .has-nearby-grocer-with-out-price {display: inline-block; width: 1em; background-color: #ee99ff; color: #000;}
-
 
 #competitorPricePopupPrices .hide-competitor-no-price-data .competitor-price-na {opacity: 0;}
 

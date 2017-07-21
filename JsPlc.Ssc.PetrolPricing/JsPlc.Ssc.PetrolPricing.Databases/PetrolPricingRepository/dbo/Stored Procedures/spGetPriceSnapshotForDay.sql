@@ -28,7 +28,7 @@ BEGIN
 		)
 		BEGIN
 			-- mark PriceSnapshot as outdated
-			UPDATE dbo.PriceSnapshot SET IsOutdated = 1 WHERE PriceSnapshotId = @PriceSnapshotId;
+			UPDATE dbo.PriceSnapshot SET IsOutdated = 1, IsRecalcRequired=1 WHERE PriceSnapshotId = @PriceSnapshotId;
 		END
 	END
 
@@ -40,7 +40,8 @@ BEGIN
 		ps.CreatedOn [CreatedOn],
 		ps.UpdatedOn [UpdatedOn],
 		ps.IsActive [IsActive],
-		ps.IsOutdated [IsOutdated]
+		ps.IsOutdated [IsOutdated],
+		ps.IsRecalcRequired [IsRecalcRequired]
 	FROM 
 		dbo.PriceSnapshot ps
 	WHERE

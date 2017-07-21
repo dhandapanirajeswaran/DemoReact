@@ -55,7 +55,7 @@ BEGIN
 		--
 		-- Mark the PriceSnapshot as being available for use and up-to-date
 		--
-		UPDATE dbo.PriceSnapshot SET UpdatedOn = GETDATE(), IsActive = 1, IsOutdated = 0 WHERE PriceSnapshotId = @PriceSnapshotId;
+		UPDATE dbo.PriceSnapshot SET UpdatedOn = GETDATE(), IsActive = 1, IsOutdated = 0, IsRecalcRequired=0 WHERE PriceSnapshotId = @PriceSnapshotId;
 
 		SET @PriceSnapshot_IsActive = 1;
 	END

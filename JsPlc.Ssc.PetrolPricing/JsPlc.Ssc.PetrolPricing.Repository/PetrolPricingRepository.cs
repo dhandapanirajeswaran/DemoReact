@@ -647,7 +647,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
             var siteIds = sites.Select(x => x.SiteId.ToString()).Aggregate((x, y) => x + "," + y);
 
-            var statuses = _context.GetNearbyGrocerPriceStatusForSites(forDate, siteIds, driveTime);
+            var statuses = GetNearbyGrocerPriceStatusForSites(forDate, siteIds, driveTime);
             foreach(var status in statuses)
             {
                 var site = sites.First(x => x.SiteId == status.SiteId);
@@ -662,6 +662,11 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                 site.HasNearbySuperUnleadedGrocers = status.SuperUnleaded.HasFlag(NearbyGrocerStatuses.HasNearbyGrocers);
                 site.HasNearbySuperUnleadedGrocersPriceData = status.SuperUnleaded.HasFlag(NearbyGrocerStatuses.AllGrocersHavePriceData);
             }
+        }
+
+        public IEnumerable<NearbyGrocerPriceSiteStatus> GetNearbyGrocerPriceStatusForSites(DateTime forDate, string siteIds, int driveTime)
+        {
+            return _context.GetNearbyGrocerPriceStatusForSites(forDate, siteIds, driveTime);
         }
 
         /// <summary>

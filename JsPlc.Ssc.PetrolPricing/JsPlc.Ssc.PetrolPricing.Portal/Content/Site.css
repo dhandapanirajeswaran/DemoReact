@@ -891,6 +891,7 @@ input[type=text].mono-font {
 .table > tbody > tr.row-inactive {background-color: #f2dede;}
 
 .hover-background-success:hover {background-color: #5cb85c; box-shadow: 0 0 4px #5cb85c;}
+.hover-background-primary:hover {background-color: #337ab7; box-shadow: 0 0 4px #337ab7;}
 
 
 /* button action list */

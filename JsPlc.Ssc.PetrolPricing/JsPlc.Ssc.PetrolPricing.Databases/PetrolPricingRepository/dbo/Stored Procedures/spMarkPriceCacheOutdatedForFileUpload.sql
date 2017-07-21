@@ -30,7 +30,8 @@ BEGIN
 		UPDATE 
 			dbo.PriceSnapshot
 		SET 
-			IsOutdated = 1
+			IsOutdated = 1,
+			IsRecalcRequired = 1
 		WHERE
 			@ForAllDates = 1
 			OR
