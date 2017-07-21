@@ -2479,6 +2479,9 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
         /// <returns></returns>
         public List<FileUpload> GetFileUploads(DateTime? date, int? uploadTypeId, int? statusId)
         {
+            // limit to the last N file uploads for performance
+            const int MaxNumberOfFileUploads = 50;
+
             IEnumerable<FileUpload> files = GetFileUploads();
 
             if (date.HasValue)
@@ -2494,7 +2497,7 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
                 files = files.Where(x => x.StatusId == statusId.Value);
             }
 
-            return files.OrderByDescending(x => x.UploadDateTime).ToList();
+            return files.OrderByDescending(x => x.UploadDateTime).Take(MaxNumberOfFileUploads).ToList();
         }
 
         public IEnumerable<FileUpload> GetFileUploads()
