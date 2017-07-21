@@ -891,3 +891,11 @@ input[type=text].mono-font {
 .table > tbody > tr.row-inactive {background-color: #f2dede;}
 
 .hover-background-success:hover {background-color: #5cb85c; box-shadow: 0 0 4px #5cb85c;}
+
+
+/* button action list */
+.action-button-list {margin: 1em;}
+
+.action-button-list dt {line-height: 2em;}
+.action-button-list .action-item {margin: 4px 1em;}
+.action-button-list .action-divider {height: 1em; border-bottom: 1px dashed #ccc;}

@@ -320,6 +320,12 @@ table.competitorTable > tbody > .competitor-row  {
 .site-row.has-checked-email {
     background-color: #dfd;
 }
+.site-row.has-checked-email td:nth-child(8),
+.site-row.has-checked-email td:nth-child(9),
+.site-row.has-checked-email td:nth-child(10),
+.site-row.has-checked-email td:nth-child(11) {
+    background-color: #cec;
+}
 .site-row.no-checked-email {
 }
 

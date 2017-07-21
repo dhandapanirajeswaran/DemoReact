@@ -1,0 +1,69 @@
+﻿@model JsPlc.Ssc.PetrolPricing.Models.SiteViewModel
+<div id="SiteEmailActionsModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button aria-hidden="true" class="bootbox-close-button close" data-dismiss="modal" type="button">×</button>
+                <h4 class="modal-title"><i class="fa fa-question"></i> Site Email Actions</h4>
+            </div>
+            <div class="modal-body">
+                <dl class="action-button-list" data-bind="visible: $root.dataAvailable()">
+                    <dt>Site Selection</dt>
+                    <dd class="action-item">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <button type="button" data-bind="click: $root.selectAll" class="btn btn-primary btn-sm btn-block" style="margin-left:0px" data-infotip="Select ALL Sites [b]with[/b] Emails">
+                                    <i class="fa fa-check-square-o"></i> Select all
+                                </button>
+                            </div>
+                            <div class="col-md-8">
+                                Select <strong>all</strong> the Sites which have email addresses.
+                            </div>
+                        </div>
+                    </dd>
+                    <dd class="action-item">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <button type="button" data-bind="click: $root.selectSitesByPriceChange" class="btn btn-primary btn-sm btn-block" style="margin-left:0px" data-infotip="Select Sites by [b]Price Change[/b]">
+                                    <i class="fa fa-area-chart"></i> By +/- Price Change
+                                </button>
+                            </div>
+                            <div class="col-md-8">
+                                Select the sites by <strong>+/- Price Change</strong> value.
+                            </div>
+                        </div>
+                    </dd>
+                    <dd class="action-item">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <button type="button" data-bind="click: $root.clearAll" class="btn btn-warning btn-sm btn-block" style="margin-left:0px" data-infotip="Deselect ALL sites">
+                                    <i class="fa fa-eraser"></i> Clear
+                                </button>
+                            </div>
+                            <div class="col-md-8">
+                                Clear the selection.
+                            </div>
+                        </div>
+                    </dd>
+                    <dd class="action-divider"></dd>
+                    <dt>Action</dt>
+                    <dd class="action-item">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <button style="margin-left:0px " type="button" class="btn btn-success btn-sm" data-bind="disable:!$root.isAnySiteChecked() || $root.sendingEmails(), visible: !$root.ViewingHistorical() && $root.dataAvailable() == true,click: $root.sendEmailSelectedSites" data-infotip="Email the [b]Selected[/b] Sites">
+                                    <i class="fa fa-envelope-o"></i> Email <span class="badge" data-bind="text: $root.checkedEmailCount()">0</span>
+                                </button>
+                            </div>
+                            <div class="col-md-8">
+                                Send an email to the <strong>selected</strong> sites.
+                            </div>
+                        </div>
+                    </dd>
+                </dl>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" data-dismiss="modal" type="button"><i class="fa fa-times"></i> Close</button>
+            </div>
+        </div>
+    </div>
+</div>

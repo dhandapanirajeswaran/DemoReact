@@ -551,6 +551,7 @@
     <Content Include="Views\Sites\Pricing\TabPanels\_PriceStats.cshtml" />
     <Content Include="Views\Sites\Pricing\TabPanels\_PriceChanges.cshtml" />
     <Content Include="Views\Settings\Schedule.cshtml" />
+    <Content Include="Views\Sites\Pricing\_SiteEmailActionsPopup.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\uploads\" />

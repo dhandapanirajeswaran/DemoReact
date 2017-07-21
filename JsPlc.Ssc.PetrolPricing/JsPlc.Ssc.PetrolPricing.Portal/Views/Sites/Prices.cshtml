@@ -83,6 +83,11 @@
         <!-- Email popup within knockout -->
         @Html.Partial("~/Views/Sites/Pricing/_EmailSitePopup.cshtml", Model)
         <!-- End Email popup within knockout -->
+
+        <!-- Site Email actions:Start -->
+        @Html.Partial("~/Views/Sites/Pricing/_SiteEmailActionsPopup.cshtml", Model)
+        <!-- Site Emails actions:End -->
+
         <!-- Submit disabled, all work done thru ajax calls -->
         <form id="myform" method="post" data-bind="submit: savePetrolPricingForm" xclass="input-group-sm" action="sites/PostPrices" onsubmit="return false;" onclick="IsSitePriceFormClicked=1;" style="width: 1280px;">
             <div class="row pricing-filters-row" onclick="IsSitePriceFormClicked=1;" style="width:1280px;">
@@ -406,32 +411,21 @@
                             <th colspan="3" style="border-right: 1px solid #999;">
                                 <!-- EMAIL all Button, only loads popup -->
                                 <div>
-                                    <button style="margin-left:0px " type="button" class="btn btn-success btn-sm" data-bind="disable:!$root.isAnySiteChecked() || $root.sendingEmails(), visible: !$root.ViewingHistorical() && $root.dataAvailable() == true,click: $root.sendEmailSelectedSites" data-infotip="Email the [b]Selected[/b] Sites">
-                                        <i class="fa fa-envelope-o"></i> Email <span class="badge" data-bind="text: $root.checkedEmailCount()">0</span>
+                                    <button class="btn btn-success" type="button" data-toggle="modal" data-target="#SiteEmailActionsModal" data-infotip="Open the [b]Site Email Actions[/b]">
+                                        <i class="fa fa-envelope-o"></i> Site Emails <span class="badge" data-bind="text: $root.checkedEmailCount()">0</span>
+                                        <span class="caret"></span>
                                     </button>
-                                    &nbsp;
-                                    <div class="btn-group">
-                                        <button type="button" data-bind="visible: !$root.ViewingHistorical() && $root.dataAvailable() == true,click: $root.selectAll" class="btn btn-primary btn-sm" style="margin-left:0px" data-infotip="Select ALL Sites [b]with[/b] Emails">
-                                            <i class="fa fa-check-square-o"></i> Select All
-                                        </button>
-                                        <button type="button" data-bind="visible: !$root.ViewingHistorical() && $root.dataAvailable() == true,click: $root.selectSitesByPriceChange" class="btn btn-primary btn-sm" style="margin-left:0px" data-infotip="Select Sites by [b]Price Change[/b]">
-                                            <i class="fa fa-area-chart"></i> By Change
-                                        </button>
-                                        <button type="button" data-bind="visible: !$root.ViewingHistorical() && $root.dataAvailable() == true,click: $root.clearAll" class="btn btn-warning btn-sm" style="margin-left:0px" data-infotip="Deselect ALL sites">
-                                            <i class="fa fa-eraser"></i>
-                                        </button>
-                                    </div>
 
                                     <div class="btn-group pull-right">
-                                        <select class="btn btn-default" style="width: 12em; margin-left: 1em;" data-bind="value: $root.siteEmailFilter, event: {change: $root.siteEmailFilterChange}" data-infotip="Filter the [b]Sites[/b] [br /]by Emails/Selection or Status">
+                                        <select class="btn btn-default" style="width: 13em; margin-left: 1em;" data-bind="value: $root.siteEmailFilter, event: {change: $root.siteEmailFilterChange}" data-infotip="Filter the [b]Sites[/b] [br /]by Emails/Selection or Status">
                                             <option>All Sites</option>
-                                            <option>No Emails</option>
                                             <option>With Emails</option>
+                                            <option>No Emails</option>
                                             <option>With Overrides</option>
                                             <option>No Overrides</option>
                                             <option data-bind="visible: !$root.ViewingHistorical()">Selected</option>
                                             <option data-bind="visible: !$root.ViewingHistorical()">Not Selected</option>
-                                            <option data-bind="visible: !$root.ViewingHistorical()">Exceeds</option>
+                                            <option data-bind="visible: !$root.ViewingHistorical()">Exceeds Absolutes</option>
                                             <option data-bind="visible: !$root.ViewingHistorical()">Errors</option>
                                             <option data-bind="visible: !$root.ViewingHistorical()">Inside Variance</option>
                                             <option data-bind="visible: !$root.ViewingHistorical()">Outside Variance</option>
