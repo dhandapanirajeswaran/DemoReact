@@ -294,90 +294,83 @@ namespace JsPlc.Ssc.PetrolPricing.Business
             var pricingSettings = _systemSettingsService.GetSitePricingSettings();
 
             //previous trade date prices
-            var priceDifferenceFound = findPriceDifference(site, pricingSettings);
-
-			//send email if we have got here
-			var atLeastOne = false;
+            var priceChanges = findPriceDifference(site, pricingSettings);
 
 			//if price difference found
 			//System will send an email if:
 			//- there is price change for any fuel from previous trading date
 			//- there is change in quantity of the fuels from previous trading date
 			//- prices for previous trading date not found
-			if (priceDifferenceFound)
+			if (priceChanges.Any())
 			{
                 foreach (var fuelPrice in site.FuelPrices)
 				{
-                    if (fuelPrice.FuelTypeId == 2) // unleaded
-					{
-                        var overridePrice = 0;
-                        if (fuelPrice.OverridePrice.HasValue)
-                        {
-                            overridePrice = fuelPrice.OverridePrice.Value;
-                        }
-                        emailForSite.PriceUnleaded = (overridePrice == 0) ? fuelPrice.AutoPrice.Value : overridePrice;
-						atLeastOne = true;
-					}
-                    if (fuelPrice.FuelTypeId == 1) // Super unl.
-					{
-					    var overridePrice = 0;
-                        if (fuelPrice.OverridePrice.HasValue)
-                        {
-                            overridePrice = fuelPrice.OverridePrice.Value;
-                        }
-                        emailForSite.PriceSuper = (overridePrice == 0) ? fuelPrice.AutoPrice.Value : overridePrice;
-						atLeastOne = true;
-					}
-                    if (fuelPrice.FuelTypeId == 6) // diesel
-					{
-						var overridePrice = 0;
-                        if (fuelPrice.OverridePrice.HasValue)
-                        {
-                            overridePrice = fuelPrice.OverridePrice.Value;
-                        }
-                        emailForSite.PriceDiesel = (overridePrice == 0) ? fuelPrice.AutoPrice.Value : overridePrice;
-						atLeastOne = true;
-					}
+                    var priceChange = priceChanges.FirstOrDefault(x => x.FuelType == (FuelTypeItem)fuelPrice.FuelTypeId);
 
+                    if (priceChange != null) {
+                        switch (fuelPrice.FuelTypeId)
+                        {
+                            case (int)FuelTypeItem.Unleaded:
+                                emailForSite.PriceUnleaded = priceChange.UpdatedPrice;
+                                break;
+                            case (int)FuelTypeItem.Diesel:
+                                emailForSite.PriceDiesel = priceChange.UpdatedPrice;
+                                break;
+                            case (int)FuelTypeItem.Super_Unleaded:
+                                emailForSite.PriceSuper = priceChange.UpdatedPrice;
+                                break;
+                        }
+                    }
 				}
-			}
-			emailForSite.AtLeastOnePriceAvailable = atLeastOne;
-			return emailForSite;
+                emailForSite.AtLeastOnePriceAvailable = true;
+            }
+            return emailForSite;
 		}
 
-        private static bool findPriceDifference(SitePriceViewModel site, SitePricingSettings pricingSettings)
+        private static IEnumerable<EmailSiteFuelPriceChange> findPriceDifference(SitePriceViewModel site, SitePricingSettings pricingSettings)
 		{
-			bool result = false;
+            var priceChanges = new List<EmailSiteFuelPriceChange>();
+
             foreach (var fuelprice in site.FuelPrices)
             {
+
+                var priceChange = new EmailSiteFuelPriceChange()
+                {
+                    FuelType = (FuelTypeItem)fuelprice.FuelTypeId,
+                    UpdatedPrice = 0
+                };
+
                 //previous trading date price
                 var previousTradingDatePrice = fuelprice.TodayPrice;
 
-                //current trading date price
-                var currentTradingDatePrice = fuelprice.OverridePrice == 0
-                ? fuelprice.AutoPrice
-                : fuelprice.OverridePrice;
-
-                if (previousTradingDatePrice > 0 && currentTradingDatePrice > 0)
+                var hasOverride = fuelprice.OverridePrice != 0;
+                if (hasOverride)
                 {
-                    var diff = previousTradingDatePrice - currentTradingDatePrice;
+                    // always send price if its an Override price
+                    priceChange.UpdatedPrice = fuelprice.OverridePrice.Value;
+                }
+                else
+                {
+                    var currentTradingDatePrice = fuelprice.AutoPrice;
 
-                    //compare prices
-                    if (diff.HasValue) {
-                        var changePerLitre = (double)diff.Value / 10;
-                        if (Math.Abs(changePerLitre) >= pricingSettings.PriceChangeVarianceThreshold)
+                    if (previousTradingDatePrice > 0 && currentTradingDatePrice > 0)
+                    {
+                        //compare prices
+                        var diff = previousTradingDatePrice - currentTradingDatePrice;
+                        if (diff.HasValue)
                         {
-                            result = true;
-                            break;
+                            var changePerLitre = (double)diff.Value / 10;
+                            if (Math.Abs(changePerLitre) > pricingSettings.PriceChangeVarianceThreshold)
+                                // only send if price change is bigger than Price Change Variance
+                                priceChange.UpdatedPrice = currentTradingDatePrice.Value;
                         }
                     }
                 }
 
-                //if at least one price differece found don't need to go further
-                if (result)
-                    break;
+                if (priceChange.UpdatedPrice != 0)
+                    priceChanges.Add(priceChange);
             }
-			return result;
+            return priceChanges;
 		}
 
         private static string ReplaceEmailSubjectLineTokens(EmailTemplate emailTemplate, SitePriceViewModel emailForSite, DateTime changeDate)
@@ -414,7 +407,9 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 
         private static string getPriceFormattedPriceForEmail(decimal price)
 		{
-			return (price == 0) ? Constants.EmailPriceReplacementStringForZero : (price / 10).ToString("####.0");
+            return (price == 0)
+                ? Constants.EmailPriceReplacementStringForZero
+                : (price / 10).ToString("####.0");
 		}
 
 		/// <summary>
