@@ -54,16 +54,21 @@
                             <span class="step-number">1</span>
                         </div>
 
-                        <div class="col-md-10">
+                        <div class="col-md-3">
                             <span class="btn btn-success btn-file" id="FileButton">
                                 <i class="fa fa-file"></i>
                                 Select file...
                                 <input type="file" name="file" id="file" class="inputfile" accept=".xls, .xlsx" />
                             </span>
                         </div>
+
+                        <div class="col-md-7">
+                            <strong id="divPleaseSelect" class="text-danger"><i class="fa fa-arrow-left"></i> Please select a file</strong>
+                            <strong id="divSelected" class="text-success" style="display:none;"><i class="fa fa-check"></i> <span id="spnSelectedFile" class="font125pc"></span></strong>
+                        </div>
                     </div>
                     <hr />
-                    <div class="row">
+                    <div class="row hide" id="divStep2" >
                         <div class="col-md-2">
                             <span class="step-number">2</span>
                         </div>
@@ -82,3 +87,49 @@
         <a class="btn btn-default" href="@Url.Action("SiteEmails", "Sites")"><i class="fa fa-backward"></i> Back to list</a>
     </div>
 </div>
+<script>
+    require(["jquery", "busyloader", "notify"],
+        function ($, busyloader, notify) {
+
+            function uploadButtonClick() {
+                busyloader.show({
+                    message: 'Importing Email Addresses. Please wait...',
+                    showtime: 2000,
+                    dull: true
+                });
+            };
+
+            function fileChanged() {
+                var path = $('#file').val(),
+                    step2 = $('#divStep2'),
+                    pleaseSelect = $('#divPleaseSelect'),
+                    selected = $('#divSelected'),
+                    spnSelectedFile = $('#spnSelectedFile'),
+                    alerts = $('.alert');
+
+                alerts.hide();
+
+                if (/\S/.test(path)) {
+                    step2.removeClass('hide');
+                    spnSelectedFile.html(path.split('\\').pop());
+                    pleaseSelect.hide();
+                    selected.show();
+                }
+                else {
+                    step2.addClass('hide');
+                    pleaseSelect.show();
+                    selected.hide();
+                    filename.removeClass('text-success').addClass('text-danger').html('')
+                }
+            };
+
+            function docReady() {
+                $('#UploadFileButton').click(uploadButtonClick);
+                $('#file').on('change', fileChanged);
+            };
+
+            $(docReady);
+
+
+        });
+</script>

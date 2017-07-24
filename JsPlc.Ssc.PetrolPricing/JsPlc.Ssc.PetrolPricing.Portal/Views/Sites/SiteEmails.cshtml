@@ -19,7 +19,8 @@
 
         .email-table .email-store-no {
             width: 15%;
-            text-align: center;
+            text-align: right;
+            padding-right: 2em;
         }
 
         .email-table .email-site-name {
@@ -29,12 +30,14 @@
 
         .email-table .email-cat-no {
             width: 12%;
-            text-align: center;
+            text-align: right;
+            padding-right: 2em;
         }
 
         .email-table .email-pfs-no {
             width: 12%;
-            text-align: center;
+            text-align: right;
+            padding-right: 2em;
         }
 
         .email-table .email-address {
@@ -53,9 +56,14 @@
     }
 
     .table > tbody > tr.row-site-inactive {
-        color: #999;
-        background-color: #f0f0f0;
+        color: #000;
+        background-color: #ccc;
     }
+
+        .table > tbody > tr.row-site-inactive .email-site-name a {
+            color: #000;
+        }
+
     .mono-font {font-family: monospace;}
 </style>
 
@@ -65,23 +73,63 @@
             <i class="fa fa-gear"></i> Site Email Addresses
         </h1>
     </div>
-    <div class="col-md-3 newline">
-        <span class="label label-default">Sites: <i class="badge">@(siteCount)</i></span> <span class="label label-default">Emails: <i class="badge">@(emailCount)</i></span>
+    <div class="col-md-3 newline font125pc">
+        <span class="label label-default">Sites: <i class="badge font125pc">@(siteCount)</i></span> <span class="label label-default">Emails: <i class="badge font125pc">@(emailCount)</i></span>
     </div>
 
-    <div class="col-md-3 newline">
-        <button type="button" class="btn btn-danger" data-click="clearEmailsClick" data-infotip="Clear [b]All[/b] the Site Email Addresses"><i class="fa fa-eraser"></i> Clear All</button>
-        <a class="btn btn-primary" href="@Url.Action("UploadSiteEmails", "Sites")" data-infotip="Import the Email Addresses"><i class="fa fa-upload"></i> Import Emails</a>
+    <div class="col-md-4 newline">
+        <button type="button" class="btn btn-danger" data-click="deleteAllEmails" data-infotip="Delete [b]All[/b] the Site Email Addresses"><i class="fa fa-eraser"></i> Delete All</button>
+        <a class="btn btn-primary" href="@Url.Action("UploadSiteEmails", "Sites")" data-infotip="Import the Email Addresses"><i class="fa fa-upload"></i> Import Emails...</a>
     </div>
-    <div class="col-md-2 col-md-offset-1 newline">
-        <button type="button" class="btn btn-success pull-right" data-click="exportEmailsClick" data-infotip="Export the Email Addresses"><i class="fa fa-download"></i> Export Emails</button>
+    <div class="col-md-1 col-md-offset-1 newline">
+        <button type="button" class="btn btn-success pull-right" data-click="exportEmails" data-infotip="Export the Email Addresses"><i class="fa fa-download"></i> Export Emails</button>
     </div>
 </div>
+
+<div class="row newline">
+    <div class="col-md-3">
+        <label>Active Sites</label><br />
+        <div class="btn-group">
+            <button type="button" class="btn btn-primary" data-click="toggleActiveSites" data-infotip="Show [b]Active[/b] Sites"><i class="fa fa-check-square"></i> Active Sites</button>
+            <button type="button" class="btn btn-primary" data-click="toggleInactiveSites" data-infotip="Show [b]Inactive[/b] Sites"><i class="fa fa-square"></i> Inactive Sites</button>
+            <button type="button" class="btn btn-warning" data-click="clearActiveFilters" data-infotip="Clear the [b]Active/Inactive[/b] Site filters"><i class="fa fa-eraser"></i></button>
+        </div>
+    </div>
+    <div class="col-md-3">
+    <label>Emails</label>
+        <div class="btn-group">
+            <button type="button" class="btn btn-primary" data-click="toggleWithEmails" data-infotip="Show Sites [b]With[/b] Email addresss"><i class="fa fa-at"></i> With Emails</button>
+            <button type="button" class="btn btn-primary" data-click="toggleWithNoEmails" data-infotip="Show Sites with [b]No[/b] Email addresss"><i class="fa fa-square-o"></i> No Emails</button>
+            <button type="button" class="btn btn-warning" data-click="clearEmailFilters" data-infotip="Clear the [b]Email[/b] Site filters"><i class="fa fa-eraser"></i></button>
+        </div>
+    </div>
+
+    <div class="col-md-2 newline">
+        <button type="button" class="btn btn-warning" data-click="clearAllFilters" data-infotip="Clear [b]All[/b] the filters"><i class="fa fa-eraser"></i> Clear All</button>
+    </div>
+
+    <div class="col-md-4 newline font125pc">
+        <label>
+            Showing: <span id="spnShowingInfo"></span>
+        </label>
+    </div>
+
+</div>
+
 
 <div class="row">
     <div class="col-md-12 newline">
         <table class="table table-condensed table-striped email-table" style="margin-bottom: 0;">
             <thead>
+
+                <tr>
+                    <th class="email-store-no">Store No</th>
+                    <th class="email-site-name">Site Name</th>
+                    <th class="email-cat-no">CatNo</th>
+                    <th class="email-pfs-no">PfsNo</th>
+                    <th class="email-address">Email Addresses</th>
+                    <th class="email-is-active">Active</th>
+                </tr>
 
                 <tr>
                     <th>
@@ -115,17 +163,9 @@
                         </div>
                     </th>
                     <th>
-                        <button id="btnClearFilters" class="btn btn-warning btn-sm" data-infotip="Clear all the filters"><i class="fa fa-eraser"> </i></button>
                     </th>
                 </tr>
-                <tr>
-                    <th class="email-store-no">Store No</th>
-                    <th class="email-site-name">Site Name</th>
-                    <th class="email-cat-no">CatNo</th>
-                    <th class="email-pfs-no">PfsNo</th>
-                    <th class="email-address">Email Addresses</th>
-                    <th class="email-is-active">Active</th>
-                </tr>
+
             </thead>
         </table>
         <div class="email-table-scroller">
@@ -139,8 +179,10 @@
                     }
                     @foreach (var item in Model.SiteEmails)
                     {
+                        var isEmptyEmail = String.IsNullOrEmpty(item.EmailAddress);
                         var isNonSainsburysEmail = !item.EmailAddress.ToUpper().EndsWith("@SAINSBURYS.CO.UK");
-                        var rowCss = (item.IsSiteActive ? "row-site-active" : "row-site-inactive");
+                        var rowCss = (item.IsSiteActive ? "row-site-active" : "row-site-inactive")
+                            + (isEmptyEmail ? " row-has-no-email" : " row-has-email");
                         <tr class="@(rowCss)">
                             <td class="email-store-no">@(item.StoreNo)</td>
                             <td class="email-site-name">
@@ -150,7 +192,11 @@
                             <td class="email-cat-no">@(item.CatNo)</td>
                             <td class="email-pfs-no">@(item.PfsNo)</td>
                             <td class="email-address">
-                                @if (isNonSainsburysEmail)
+                                @if (isEmptyEmail)
+                                {
+                                    <span class="text-danger mono-font" data-infotip="There are [em]no[/em] Emails for this Site "><i class="fa fa-warning"></i> &mdash; No Email Address</span>
+                                }
+                                else if (isNonSainsburysEmail)
                                 {
                                     <span class="text-danger mono-font" data-infotip="Email is [b]Not[/b] a Sainsbury's email address."><i class="fa fa-warning"></i> @(item.EmailAddress)</span>
                                 }

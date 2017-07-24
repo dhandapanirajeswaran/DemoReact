@@ -5,12 +5,12 @@ BEGIN
 	SET NOCOUNT ON
 
 	;WITH ShreddedEmails AS (
-			SELECT
-				x.item.value('StoreNo[1]', 'INT') [StoreNo],
-				x.item.value('StoreName[1]', 'NVARCHAR(200)') [StoreName],
-				x.item.value('EmailAddress[1]', 'NVARCHAR(200)') [EmailAddress]
-			FROM
-				@EmailAddresses.nodes('/*/SiteEmailImportViewModel') as x(item)
+		SELECT
+			x.item.value('StoreNo[1]', 'INT') [StoreNo],
+			x.item.value('StoreName[1]', 'NVARCHAR(200)') [StoreName],
+			x.item.value('EmailAddress[1]', 'NVARCHAR(200)') [EmailAddress]
+		FROM
+			@EmailAddresses.nodes('/*/SiteEmailImportViewModel') as x(item)
 	)
 	MERGE
 		dbo.SiteEmail AS target
@@ -34,9 +34,6 @@ BEGIN
 		VALUES (
 			source.EmailAddress,
 			source.SiteId
-		)
-	WHEN NOT MATCHED BY source THEN
-		DELETE;
-
+		);
 END
 --RETURN 0
