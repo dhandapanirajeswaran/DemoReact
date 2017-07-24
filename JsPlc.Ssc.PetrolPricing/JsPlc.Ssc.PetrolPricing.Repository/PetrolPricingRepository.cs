@@ -3267,6 +3267,10 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
 
                 foreach (var site in sites)
                 {
+                    // skip InActive sites
+                    if (!site.IsActive)
+                        continue;
+
                     var dataRow = new ComplianceReportRow
                     {
                         SiteId = site.Id,
