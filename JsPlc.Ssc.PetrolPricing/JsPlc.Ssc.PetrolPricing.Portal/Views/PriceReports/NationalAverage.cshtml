@@ -84,10 +84,10 @@
     <!-- Report Data -->
 
 
-    <div class="divtable" style="width:790px;">
+    <div class="divtable" style="width:900px;">
         <div class="row" style="font-weight:bold">
 
-            <div class="col-md-1" style="width:150px">Brands</div>
+            <div class="col-md-1" style="width:250px">Brands</div>
             @foreach (var fuelType in Model.NationalAverageReport.Fuels)
             {
                 <div class="col-md-1" style="width:140px">@fuelType.FuelName Avg. (£)</div>
@@ -108,15 +108,15 @@
                     <div class="row">
                      @if (@brand.BrandName == null)
                         {
-                      <div class="col-md-1" style="width:790px;height:10px"> @brand.BrandName </div>
+                      <div class="col-md-1" style="width:890px;height:10px"> @brand.BrandName </div>
                         }
                         else if (@brand.BrandName == "All other independent brands")
                         {
-                            <div class="col-md-1" style="width:790px;"> @brand.BrandName </div>
+                            <div class="col-md-1" style="width:890px;"> @brand.BrandName</div>
                         }
                         else
                         {
-                            <div class="col-md-1" style="width:150px"> @brand.BrandName </div>
+                            <div class="col-md-1" style="width:250px"> @brand.BrandName </div>
                              foreach (var fuelType in Model.NationalAverageReport.Fuels)
                              {
                                 var brandfromFType = @fuelType.Brands.Where(x => x.BrandName == @brand.BrandName).FirstOrDefault();
@@ -134,15 +134,11 @@
                                    
                                     average+=diff;
                                     <div class="col-md-1" style="width:120px;color:@color">@((diff / 10.0).ToString("###0.0"))</div>
-
-
                               }
                               average = average / 2;
                               string averagecolor = 0 > average ? "red" : average > 0 ? "green" : "";
                                   
                                <div class="col-md-1" style="width:120px;color:@averagecolor">@((average / 10.0).ToString("###0.0"))</div>
-
-
                         }
 
                  </div>

@@ -75,7 +75,16 @@
                     {
                         foreach (var brand in Model.NationalAverageReport.Fuels.First().Brands)
                         {
-                            <th>@(brand.BrandName)(£)</th>
+                            <th>
+                            @if (brand.BrandName.StartsWith("TESCO"))
+                            {
+                                <div>TESCO(£) <br /><span class="font75pc">(inc EXPRESS and EXTRA)</span></div>
+                            }
+                            else
+                            {
+                                <span>@(brand.BrandName)(£)</span>
+                            }
+                            </th>
                         }
                     }
                 </tr>
@@ -92,7 +101,7 @@
                             <td>@((brand.Average / 10.0).ToString("###0.00"))</td>
                         }
                     </tr>
-                    <tr>
+                    <tr style="border-bottom: 2px solid #000;">
                         <td>Difference</td>
                         @foreach (var brand in fuelType.Brands)
                         {

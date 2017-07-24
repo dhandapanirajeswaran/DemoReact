@@ -103,8 +103,8 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                 Const.CALLOW,
                 Const.BWOC,
                 Const.BATA,
-                Const.TESCOEXPRESS,
-                Const.TESCOEXTRA,
+                //Const.TESCOEXPRESS,
+                //Const.TESCOEXTRA,
                 Const.COOKE,
                 Const.HELTOR,
                 Const.LOCALFUELS
@@ -2865,8 +2865,11 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
                 distinctBrands.Remove(Const.MORRISONS);
                 distinctBrands.Insert(3, Const.MORRISONS);
 
+                // TESCO EXPRESS and TESCO EXTRA will be combined with TESCO
+                distinctBrands.Remove(Const.TESCOEXPRESS);
+                distinctBrands.Remove(Const.TESCOEXTRA);
             }
-          
+         
 
             foreach (var fuelType in fuelTypeIds)
             {
@@ -2884,11 +2887,37 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
                 {
                     foreach (var brand in distinctBrands)
                     {
+                        var isAsda = brand == Const.ASDA;
+                        var isMorrisons = brand == Const.MORRISONS;
+                        var isSainsburys = brand == Const.SAINSBURYS;
+                        var isTesco = brand == Const.TESCO || brand == Const.TESCOEXPRESS || brand == Const.TESCOEXTRA;
+
+                        var isGrocer = isAsda || isMorrisons || isSainsburys || isTesco;
+
                         var brandAvg = new NationalAverageReportBrandViewModel();
                         fuelRow.Brands.Add(brandAvg);
                         brandAvg.BrandName = brand;
 
-                        var brandCatsNos = competitorSites.Where(x => x.Brand == brand).Where(x => x.CatNo.HasValue).Select(x => x.CatNo.Value).ToList();
+                        List<int> brandCatsNos;
+
+                        if (isTesco)
+                        {
+                            // combine ALL TESCO, TESCO EXPRESS and TESCO EXTRA
+                            brandAvg.BrandName = brand + " (inc EXPRESS and EXTRA)";
+
+                            brandCatsNos = competitorSites.Where(x => x.Brand == Const.TESCO || x.Brand == Const.TESCOEXPRESS || x.Brand == Const.TESCOEXTRA)
+                                .Where(x => x.CatNo.HasValue)
+                                .Select(x => x.CatNo.Value)
+                                .ToList();
+                        }
+                        else
+                        {
+                            brandCatsNos = competitorSites.Where(x => x.Brand == brand)
+                                .Where(x => x.CatNo.HasValue)
+                                .Select(x => x.CatNo.Value)
+                                .ToList();
+                        }
+
                         var pricesList = dailyPrices.Where(x => x.FuelTypeId == fuelType && brandCatsNos.Contains(x.CatNo)).ToList();
 
                         if (pricesList.Any())
@@ -2896,10 +2925,7 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
                             brandAvg.Min = (int)pricesList.Min(x => x.ModalPrice);
                             brandAvg.Average = (int)pricesList.Average(x => x.ModalPrice);
                             brandAvg.Max = (int)pricesList.Max(x => x.ModalPrice);
-                            if (!brand.Equals(Const.Sainsburys, StringComparison.InvariantCultureIgnoreCase)
-                                || !brand.Equals(Const.ASDA, StringComparison.InvariantCultureIgnoreCase)
-                                || !brand.Equals(Const.TESCO, StringComparison.InvariantCultureIgnoreCase)
-                                || !brand.Equals(Const.MORRISONS, StringComparison.InvariantCultureIgnoreCase))
+                            if (!isGrocer)
                             {
                                 nTotalIndependentsMin = nTotalIndependentsMin > brandAvg.Min ? brandAvg.Min : nTotalIndependentsMin;
                                 nTotalIndependentsMax = nTotalIndependentsMax < brandAvg.Max ? brandAvg.Max : nTotalIndependentsMax;
@@ -3061,11 +3087,31 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
 
                 foreach (var brand in distinctBrands)
                 {
+                    var isTesco = brand == Const.TESCO || brand == Const.TESCOEXPRESS || brand == Const.TESCOEXTRA;
+
                     var brandAvg = new NationalAverageReportBrandViewModel();
                     fuelRow.Brands.Add(brandAvg);
                     brandAvg.BrandName = brand;
 
-                    var brandCatsNos = competitorSites.Where(x => brand == Const.UK ? true : x.Brand == brand).Where(x => x.CatNo.HasValue).Select(x => x.CatNo.Value).ToList();
+                    List<int> brandCatsNos;
+
+                    if (isTesco)
+                    {
+                        brandAvg.BrandName = brand + " (inc EXPRESS and EXTRA)";
+
+                        brandCatsNos = competitorSites.Where(x => x.Brand == Const.TESCO || x.Brand == Const.TESCOEXPRESS || x.Brand == Const.TESCOEXTRA)
+                            .Where(x => x.CatNo.HasValue)
+                            .Select(x => x.CatNo.Value)
+                            .ToList();
+                    }
+                    else
+                    {
+                        brandCatsNos = competitorSites.Where(x => brand == Const.UK ? true : x.Brand == brand)
+                            .Where(x => x.CatNo.HasValue)
+                            .Select(x => x.CatNo.Value)
+                            .ToList();
+                    }
+
                     var pricesList = dailyPrices.Where(x => x.FuelTypeId == fuelType && brandCatsNos.Contains(x.CatNo)).ToList();
 
                     if (pricesList.Any())
