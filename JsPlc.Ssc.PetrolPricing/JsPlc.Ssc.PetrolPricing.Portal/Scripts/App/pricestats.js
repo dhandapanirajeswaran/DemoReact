@@ -218,33 +218,33 @@
                     stats.sites.withNoEmails++;
 
                 // tomorrow (aka suggested) price changes
-                if (unleaded.change != 0)
+                //if (unleaded.change != 0)
                     updateStatValues(stats.unleaded.tomorrow.priceChanges, unleaded.change, stats.unleaded.tomorrow.priceChangeDataset);
 
-                if (diesel.change != 0)
+                //if (diesel.change != 0)
                     updateStatValues(stats.diesel.tomorrow.priceChanges, diesel.change, stats.diesel.tomorrow.priceChangeDataset);
 
-                if (superUnleaded.change != 0)
+                //if (superUnleaded.change != 0)
                     updateStatValues(stats.superUnleaded.tomorrow.priceChanges, superUnleaded.change, stats.superUnleaded.tomorrow.priceChangeDataset);
 
                 // tomorrow (aka suggested) prices
-                if (unleaded.tomorrow != 0)
+                //if (unleaded.tomorrow != 0)
                     updateStatValues(stats.unleaded.tomorrow.price, unleaded.tomorrow, stats.unleaded.tomorrow.priceDataset);
 
-                if (diesel.tomorrow != 0)
+                //if (diesel.tomorrow != 0)
                     updateStatValues(stats.diesel.tomorrow.price, diesel.tomorrow, stats.diesel.tomorrow.priceDataset);
 
-                if (superUnleaded.tomorrow != 0)
+                //if (superUnleaded.tomorrow != 0)
                     updateStatValues(stats.superUnleaded.tomorrow.price, superUnleaded.tomorrow, stats.superUnleaded.tomorrow.priceDataset);
 
                 // today (aka current) prices
-                if (unleaded.today != 0)
+                //if (unleaded.today != 0)
                     updateStatValues(stats.unleaded.today.price, unleaded.today, stats.unleaded.today.priceDataset);
 
-                if (diesel.today != 0)
+                //if (diesel.today != 0)
                     updateStatValues(stats.diesel.today.price, diesel.today, stats.diesel.today.priceDataset);
 
-                if (superUnleaded.today != 0)
+                //if (superUnleaded.today != 0)
                     updateStatValues(stats.superUnleaded.today.price, superUnleaded.today, stats.superUnleaded.today.priceDataset);
             });
         };

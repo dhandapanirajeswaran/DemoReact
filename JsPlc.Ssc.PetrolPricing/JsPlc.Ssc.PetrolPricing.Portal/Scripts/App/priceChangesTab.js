@@ -18,7 +18,7 @@
 
                 if (delta in chart.keys) {
                     obj = chart.keys[delta];
-                    obj.count++;
+                    obj.count += item.count;
                 }
                 else {
                     obj = {
@@ -30,11 +30,11 @@
                 }
 
                 if (delta < 0)
-                    chart.stats.down++;
+                    chart.stats.down += item.count;
                 else if (delta == 0)
-                    chart.stats.none++;
+                    chart.stats.none += item.count;
                 else
-                    chart.stats.up++;
+                    chart.stats.up += item.count;
             }
         };
 
@@ -243,7 +243,7 @@
                 obj,
                 css;
 
-            row1.push('<th><i class="fa fa-arrow-up"></i><br />Fuels</th>');
+            row1.push('<th class="text-center"><i class="fa fa-arrow-up"></i><br />Fuels</th>');
             row2.push('<th>Change</th>');
 
             for (i = 0; i < chart.data.length; i++) {
@@ -256,7 +256,13 @@
                 else
                     css = 'up';
 
-                barHeight = Math.floor(obj.count * maxBarHeight / chart.counts.range);
+                if (chart.counts.range <= 1)
+                    barHeight = maxBarHeight
+                else {
+                    barHeight = Math.floor(obj.count * maxBarHeight / chart.counts.range);
+                }
+                if (barHeight == 0 && obj.count != 0)
+                    barHeight = 1;
 
                 row1.push('<td><div class="bar bar-' + css + '" style="border-bottom-width: ' + barHeight + 'px; padding-top: ' + (maxBarHeight - barHeight) + 'px">' + obj.count + '</div></td>');
                 row2.push('<td class="key key-' + css + '">' + (obj.delta < 0 ? '-' : '+') + Math.abs(obj.delta).toFixed(1) + '</td>');
