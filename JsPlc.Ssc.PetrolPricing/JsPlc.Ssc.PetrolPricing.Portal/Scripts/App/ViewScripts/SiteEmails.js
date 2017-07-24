@@ -123,11 +123,11 @@
         };
 
         function clearAllFiltersClick() {
-            $(selectors.storeNoFilter).val('');
-            $(selectors.siteNameFilter).val('');
-            $(selectors.catNoFilter).val('');
-            $(selectors.pfsNoFilter).val('');
-            $(selectors.emailFilter).val('');
+            controls.storeNoFilter.val('');
+            controls.siteNameFilter.val('');
+            controls.catNoFilter.val('');
+            controls.pfsNoFilter.val('');
+            controls.emailFilter.val('');
 
             state.activeSites = true;
             state.inactiveSites = true;
@@ -139,12 +139,16 @@
             notify.info('Cleared all the filters');
         };
 
+        function trim(str) {
+            return ('' + str).replace(/^\s+|\s+$/, '');
+        };
+
         function filterRows() {
             var storeNo = $(selectors.storeNoFilter).val().toUpperCase(),
                 siteName = $(selectors.siteNameFilter).val().toUpperCase(),
                 catNo = $(selectors.catNoFilter).val().toUpperCase(),
                 pfsNo = $(selectors.pfsNoFilter).val().toUpperCase(),
-                email = $(selectors.emailFilter).val(),
+                email = $(selectors.emailFilter).val().toUpperCase(),
                 rows = $('.table > tbody > tr'),
                 row,
                 i,
@@ -161,11 +165,11 @@
                 isActive = row.hasClass('row-site-active');
                 hasEmail = row.hasClass('row-has-email');
                 visible = (
-                    (storeNo == '' || cells.eq(0).text().indexOf(storeNo) ==0)
-                    && (siteName == '' || cells.eq(1).text().toUpperCase().indexOf(siteName) != -1)
-                    && (catNo == '' || cells.eq(2).text().indexOf(catNo) == 0)
-                    && (pfsNo == '' || cells.eq(3).text().indexOf(pfsNo) == 0)
-                    && (email == '' || cells.eq(4).text().indexOf(email) == 0)
+                    (storeNo == '' || trim(cells.eq(0).text()).indexOf(storeNo) ==0)
+                    && (siteName == '' || trim(cells.eq(1).text()).toUpperCase().indexOf(siteName) != -1)
+                    && (catNo == '' || trim(cells.eq(2).text()).indexOf(catNo) == 0)
+                    && (pfsNo == '' || trim(cells.eq(3).text()).indexOf(pfsNo) == 0)
+                    && (email == '' || trim(cells.eq(4).text()).toUpperCase().indexOf(email) == 0)
                     && (!isActive || (isActive && state.activeSites ))
                     && (isActive || (!isActive && state.inactiveSites))
                     && (!hasEmail || (hasEmail && state.withEmails))
