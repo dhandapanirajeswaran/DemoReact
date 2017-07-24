@@ -26,6 +26,7 @@ using JsPlc.Ssc.PetrolPricing.Portal.Controllers.BaseClasses;
 using JsPlc.Ssc.PetrolPricing.Core.Diagnostics;
 using JsPlc.Ssc.PetrolPricing.Models.Enums;
 using JsPlc.Ssc.PetrolPricing.Exporting.Exporters;
+using System.Web;
 
 namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 {
@@ -211,8 +212,6 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
                 return View();
             }
         }
-
-
 
         public ActionResult Create()
         {
@@ -451,6 +450,8 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             {
                 if (site.CalledFromSection == SiteSectionType.SitePricing)
                     return RedirectToAction("Prices", "Sites");
+                else if (site.CalledFromSection == SiteSectionType.SiteEmails)
+                    return RedirectToAction("SiteEmails", "Sites");
                 else
                     return RedirectToAction("Index", new { msg = "Site: " + editSite.ViewModel.SiteName + " updated successfully" });
             }
@@ -547,6 +548,68 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
         {
             var result = _serviceFacade.TriggerDailyPriceRecalculation(DateTime.Now.Date);
             return base.StandardJsonResultMessage(result);
+        }
+
+        [System.Web.Mvc.HttpGet]
+        public ActionResult RemoveAllSiteEmailAddresses()
+        {
+            var result = _serviceFacade.RemoveAllSiteEmailAddresses();
+            return base.StandardJsonResultMessage(result);
+        }
+
+        public ActionResult SiteEmails()
+        {
+            var model = new SiteEmailsPageViewModel()
+            {
+                SiteEmails = _serviceFacade.GetAllSiteEmailAddresses()
+            };
+
+            return View(model);
+        }
+
+        [System.Web.Mvc.HttpGet]
+        public ActionResult ExportSiteEmails(string downloadId)
+        {
+            if (String.IsNullOrWhiteSpace(downloadId))
+                throw new ArgumentException("DownloadId cannot be empty!");
+
+            var emailAddreses = _serviceFacade.GetAllSiteEmailAddresses().OrderBy(x => x.StoreName).ToList();
+            var workbook = new SiteEmailAddressesExporter().ToExcelWorkbook(emailAddreses);
+            var excelFilename = String.Format("SiteEmailAddresses[{0}].xlsx", DateTime.Now.ToString("dd-MMM-yyyy"));
+            return base.SendExcelFile(excelFilename, workbook, downloadId);
+        }
+
+        public ActionResult UploadSiteEmails()
+        {
+            var model = new StatusViewModel();
+            return View(model);
+        }
+
+        [System.Web.Mvc.HttpPost]
+        public async Task<ActionResult> UploadSiteEmails(HttpPostedFileBase file)
+        {
+            var model = new StatusViewModel();
+            try
+            {
+                if (file == null || file.ContentLength <= 0)
+                {
+                    _logger.Error(new ApplicationException("Uploaded Site Emails file is empty"));
+                    throw new ApplicationException("Uploaded Site Emails file is empty");
+                }
+
+                var errorMessage = _serviceFacade.ImportFileEmailFile(file);
+                if (String.IsNullOrEmpty(errorMessage))
+                    model.SuccessMessage = "Uploaded Site Emails file";
+                else
+                    model.ErrorMessage = errorMessage;
+            }
+            catch(Exception ex)
+            {
+                _logger.Error(ex);
+                model.ErrorMessage = "Unable to upload Site Emails file";
+                
+            }
+            return View(model);
         }
 
         private void PopulatePageData(SiteViewModel model)

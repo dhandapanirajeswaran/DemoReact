@@ -1,0 +1,84 @@
+﻿@model  JsPlc.Ssc.PetrolPricing.Models.ViewModels.StatusViewModel
+@{
+    ViewBag.Title = "Upload Site Emails";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .step-number {
+    font-size: 200%;
+    color: #999;
+    background-color: #eee;
+    border-radius: 2em;
+    display: inline-block;
+    width: 3em;
+    line-height: 1.5em;
+    text-align: center;
+    }
+
+    .step-number:before {
+        content: 'Step';
+        font-size: 50%;
+        position: relative;
+        top: -0.25em;
+        left: -0.25em;
+    }
+</style>
+
+<h1><i class="fa fa-at"></i> Upload Site Email Addresses</h1>
+
+
+@if(Model.ErrorMessage != "")
+{
+    <div class="alert alert-danger">
+        <i class="fa fa-warning"></i> Error: @(Model.ErrorMessage)
+    </div>
+}
+@if(Model.SuccessMessage != "")
+{
+    <div class="alert alert-success">
+        <i class="fa fa-check"></i> Success: @(Model.SuccessMessage)
+    </div>
+}
+
+<div class="row">
+    <div class="col-md-8 col-md-offset-2">
+        <div class="panel panel-success">
+            <div class="panel-heading">
+                <h4><i class="fa fa-upload"></i> Upload a Site Email File</h4>
+            </div>
+            <div class="panel-body">
+                <form action="" method="post" enctype="multipart/form-data">
+                    <div class="row">
+                        <div class="col-md-2">
+                            <span class="step-number">1</span>
+                        </div>
+
+                        <div class="col-md-10">
+                            <span class="btn btn-success btn-file" id="FileButton">
+                                <i class="fa fa-file"></i>
+                                Select file...
+                                <input type="file" name="file" id="file" class="inputfile" accept=".xls, .xlsx" />
+                            </span>
+                        </div>
+                    </div>
+                    <hr />
+                    <div class="row">
+                        <div class="col-md-2">
+                            <span class="step-number">2</span>
+                        </div>
+                        <div class="col-md-10">
+                            <button type="submit" id="UploadFileButton" class="btn btn-primary"><i class="fa fa-upload"></i> Upload file</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+       </div>
+
+</div>
+<div class="row newline">
+    <div class="col-md-1">
+        <a class="btn btn-default" href="@Url.Action("SiteEmails", "Sites")"><i class="fa fa-backward"></i> Back to list</a>
+    </div>
+</div>

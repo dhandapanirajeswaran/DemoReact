@@ -150,5 +150,20 @@ namespace JsPlc.Ssc.PetrolPricing.Business
         {
             return _db.GetJsSitesByPfsNum();
         }
+
+        public StatusViewModel RemoveAllSiteEmailAddresses()
+        {
+            return _db.RemoveAllSiteEmailAddresses();
+        }
+
+        public IEnumerable<SiteEmailAddressViewModel> GetAllSiteEmailAddresses(int siteId = 0)
+        {
+            return _db.GetSiteEmailAddresses(siteId);
+        }
+
+        public StatusViewModel UpsertSiteEmailAddresses(IEnumerable<SiteEmailImportViewModel> emailAddresses)
+        {
+            return _db.UpsertSiteEmailAddresses(emailAddresses);
+        }
     }
 }

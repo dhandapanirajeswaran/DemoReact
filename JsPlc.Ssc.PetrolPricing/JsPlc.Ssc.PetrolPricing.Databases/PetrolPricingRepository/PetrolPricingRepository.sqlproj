@@ -205,6 +205,9 @@
     <Build Include="dbo\Functions\Scalar Functions\fn_GetDriveTimePence.sql" />
     <Build Include="dbo\Functions\Table Functions\tf_NearbyCompetitorDataSummaryForSiteFuel.sql" />
     <Build Include="dbo\Stored Procedures\spGetNearbyCompetitorPriceSummary.sql" />
+    <Build Include="dbo\Stored Procedures\spRemoveAllSiteEmailAddresses.sql" />
+    <Build Include="dbo\Stored Procedures\spGetSiteEmailAddresses.sql" />
+    <Build Include="dbo\Stored Procedures\spUpsertSiteEmailAddreses.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Scripts\PostDeployment\Script.PostDeployment.sql" />

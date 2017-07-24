@@ -908,6 +908,36 @@ namespace JsPlc.Ssc.PetrolPricing.Business
             return _db.GetFileUploadInformation(fileUploadId);
         }
 
+        public void ImportSiteEmailFile(string excelFilePath)
+        {
+            var dataTable = _dataFileReader.GetSiteEmailAddressesData(excelFilePath);
+
+            var siteEmailAddresses = new List<SiteEmailImportViewModel>();
+            for(var i=0; i<dataTable.Rows.Count; i++)
+            {
+                var row = dataTable.Rows[i];
+                var storeName = row[1].ToString().Trim();
+                var emailAddress = row[2].ToString().Trim();
+
+                var storeNo = 0;
+                if (Int32.TryParse(row[0].ToString(), out storeNo)
+                    && !String.IsNullOrEmpty(storeName)
+                    && !String.IsNullOrEmpty(emailAddress)
+                    )
+                {
+                    var email = new SiteEmailImportViewModel()
+                    {
+                        StoreNo = storeNo,
+                        StoreName = storeName,
+                        EmailAddress = emailAddress
+                    };
+                    siteEmailAddresses.Add(email);
+                }
+            }
+
+            _db.UpsertSiteEmailAddresses(siteEmailAddresses);
+        }
+
         #endregion
     }
 }

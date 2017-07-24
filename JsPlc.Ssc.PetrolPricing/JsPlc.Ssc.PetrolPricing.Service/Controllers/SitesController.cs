@@ -638,6 +638,54 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
         }
 
         [System.Web.Http.HttpGet]
+        [System.Web.Http.Route("api/RemoveAllSiteEmailAddresses")]
+        public async Task<IHttpActionResult> RemoveAllSiteEmailAddresses()
+        {
+            try
+            {
+                var result = _siteService.RemoveAllSiteEmailAddresses();
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex);
+                return new ExceptionResult(ex, this);
+            }
+        }
+
+        [System.Web.Http.HttpGet]
+        [System.Web.Http.Route("api/GetAllSiteEmailAddresses")]
+        public async Task<IHttpActionResult> GetAllSiteEmailAddresses([FromUri] int siteId=0)
+        {
+            try
+            {
+                var result = _siteService.GetAllSiteEmailAddresses(siteId);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex);
+                return new ExceptionResult(ex, this);
+            }
+        }
+
+        [System.Web.Http.HttpPost]
+        [System.Web.Http.Route("api/UpsertSiteEmailAddresses")]
+        public async Task<IHttpActionResult> UpsertSiteEmailAddresses([FromBody] IEnumerable<SiteEmailImportViewModel> siteEmailAddresses)
+        {
+            try
+            {
+                var result = _siteService.UpsertSiteEmailAddresses(siteEmailAddresses);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex);
+                return new ExceptionResult(ex, this);
+            }
+        }
+
+        [System.Web.Http.HttpGet]
         [System.Web.Http.Route("api/GetJsSitesByPfsNum")]
         public async Task<IHttpActionResult> GetJsSitesByPfsNum()
         {

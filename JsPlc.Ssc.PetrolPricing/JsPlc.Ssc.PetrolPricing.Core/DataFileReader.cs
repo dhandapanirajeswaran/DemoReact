@@ -10,79 +10,79 @@ using JsPlc.Ssc.PetrolPricing.Core.Interfaces;
 
 namespace JsPlc.Ssc.PetrolPricing.Core
 {
-	public class DataFileReader : IDataFileReader
-	{
-	    private readonly ILogger _logger;
+    public class DataFileReader : IDataFileReader
+    {
+        private readonly ILogger _logger;
 
-	    public DataFileReader()
-	    {
-	        _logger = new PetrolPricingLogger();
-	    }
-		public DataTable GetQuarterlyData(string filePathAndName, string excelFileSheetName)
-		{
-         	var connectionString = string.Format("Provider=Microsoft.ACE.OLEDB.12.0;Data Source={0};Extended Properties='Excel 12.0 Xml;HDR=YES;IMEX=1'", filePathAndName);
+        public DataFileReader()
+        {
+            _logger = new PetrolPricingLogger();
+        }
+        public DataTable GetQuarterlyData(string filePathAndName, string excelFileSheetName)
+        {
+            var connectionString = string.Format("Provider=Microsoft.ACE.OLEDB.12.0;Data Source={0};Extended Properties='Excel 12.0 Xml;HDR=YES;IMEX=1'", filePathAndName);
 
-            
+
             if (!File.Exists(filePathAndName))
             {
-                throw new ExcelParseFileException("excel file:" + filePathAndName + ". cannot exist. Contact support team." + System.Environment.NewLine, null);			
+                throw new ExcelParseFileException("excel file:" + filePathAndName + ". cannot exist. Contact support team." + System.Environment.NewLine, null);
             }
 
             string[] sheetnames = GetExcelSheetNames(connectionString);
 
-		    if (!String.IsNullOrEmpty(excelFileSheetName))
-		    { 
-		       
-		        if (sheetnames == null)
-		        {
-		            throw new ExcelParseFileException("Unable to read excel file. Contact support team.", null);
-		        }
+            if (!String.IsNullOrEmpty(excelFileSheetName))
+            {
 
-		        List<string> FilteredSheetNames = sheetnames.Where(xx => xx.Contains(excelFileSheetName)).ToList();
+                if (sheetnames == null)
+                {
+                    throw new ExcelParseFileException("Unable to read excel file. Contact support team.", null);
+                }
 
-		        if (FilteredSheetNames.Count == 0)
-		        {
-		            var message =
-		                string.Format("Invalid Sheet name. Expected name start with: {0}. Fix the issue and try again.",
-		                    excelFileSheetName);
+                List<string> FilteredSheetNames = sheetnames.Where(xx => xx.Contains(excelFileSheetName)).ToList();
+
+                if (FilteredSheetNames.Count == 0)
+                {
+                    var message =
+                        string.Format("Invalid Sheet name. Expected name start with: {0}. Fix the issue and try again.",
+                            excelFileSheetName);
                     _logger.Error(new ExcelParseFileException(message, null));
-		            throw new ExcelParseFileException(message, null);
+                    throw new ExcelParseFileException(message, null);
 
-		        }
-		    }
-		    using (var adapter = new OleDbDataAdapter(String.Format("SELECT * FROM [{0}]",
+                }
+            }
+            using (var adapter = new OleDbDataAdapter(String.Format("SELECT * FROM [{0}]",
                 sheetnames[0]), connectionString))
-			{
-				using (var ds = new DataSet())
-				{
-					try
-					{
-						adapter.Fill(ds, "x");
-					}
-					catch (OleDbException ex)
-					{
+            {
+                using (var ds = new DataSet())
+                {
+                    try
+                    {
+                        adapter.Fill(ds, "x");
+                    }
+                    catch (OleDbException ex)
+                    {
                         _logger.Error(ex);
-						if (ex.Message.Contains("Make sure that it does not include invalid characters or punctuation and that it is not too long."))
-						{
+                        if (ex.Message.Contains("Make sure that it does not include invalid characters or punctuation and that it is not too long."))
+                        {
                             var message = string.Format("Invalid Sheet name. Expected name start with: {0}. Fix the issue and try again.", excelFileSheetName);
 
-							throw new ExcelParseFileException(message, ex);
-						}
-						else
-						{
-							throw;
-						}
-					}
-					catch (Exception ex)
-					{
+                            throw new ExcelParseFileException(message, ex);
+                        }
+                        else
+                        {
+                            throw;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
                         _logger.Error(ex);
                         throw new ExcelParseFileException("Unable to read excel file. Contact support team.", ex);
-					}
-					return ds.Tables[0].Copy();
-				}
-			}
+                    }
+                    return ds.Tables[0].Copy();
+                }
+            }
 
-		}
+        }
 
 
         private String[] GetExcelSheetNames(string connString)
@@ -92,7 +92,7 @@ namespace JsPlc.Ssc.PetrolPricing.Core
 
             try
             {
-                   
+
                 // Create connection object by using the preceding connection string.
                 objConn = new OleDbConnection(connString);
                 // Open connection with the database.
@@ -141,5 +141,30 @@ namespace JsPlc.Ssc.PetrolPricing.Core
                 }
             }
         }
-	}
+
+        public DataTable GetSiteEmailAddressesData(string filePathAndName)
+        {
+            var connectionString = string.Format("Provider=Microsoft.ACE.OLEDB.12.0;Data Source={0};Extended Properties='Excel 12.0 Xml;HDR=YES;IMEX=1'", filePathAndName);
+
+            if (!File.Exists(filePathAndName))
+            {
+                throw new ExcelParseFileException("excel file:" + filePathAndName + ". cannot exist. Contact support team." + System.Environment.NewLine, null);
+            }
+
+            string[] sheetnames = GetExcelSheetNames(connectionString);
+            if (!sheetnames.Any())
+            {
+                throw new ExcelParseFileException("excel file:" + filePathAndName + ". Does not contain any Worksheets. Contact support team." + System.Environment.NewLine, null);
+            }
+
+            using (var adapter = new OleDbDataAdapter(String.Format("SELECT * FROM [{0}]", sheetnames[0]), connectionString))
+            {
+                using (var ds = new DataSet())
+                {
+                    adapter.Fill(ds, "x");
+                    return ds.Tables[0].Copy();
+                }
+            }
+        }
+    }
 }

@@ -669,6 +669,32 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             return _context.GetNearbyGrocerPriceStatusForSites(forDate, siteIds, driveTime);
         }
 
+        public StatusViewModel RemoveAllSiteEmailAddresses()
+        {
+            var status = _context.RemoveAllSiteEmailAddresses();
+            return new StatusViewModel()
+            {
+                SuccessMessage = status == 0 ? "Removed all Sainsburys Site Email Addresses" : "",
+                ErrorMessage = status != 0 ? "Unable to remove Site Email Addresses" : ""
+            };
+        }
+
+        public IEnumerable<SiteEmailAddressViewModel> GetSiteEmailAddresses(int siteId=0)
+        {
+            var emailAddresses = _context.GetSiteEmailAddresses(siteId);
+            return emailAddresses;
+        }
+
+        public StatusViewModel UpsertSiteEmailAddresses(IEnumerable<SiteEmailImportViewModel> emailAddresses)
+        {
+            var status = _context.UpsertSiteEmailAddresses(emailAddresses);
+            return new StatusViewModel()
+            {
+                SuccessMessage = status == 0 ? "Updated Site Email Addresses" : "",
+                ErrorMessage = status != 0 ? "Unable to update Site Email Addresses" : ""
+            };
+        }
+
         /// <summary>
         /// DEBUG - dump original vs new code for Fuel Prices
         /// </summary>
@@ -4476,7 +4502,10 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
             return distinctBrands;
         }
 
-
+        IEnumerable<SiteEmailAddressViewModel> IPetrolPricingRepository.GetSiteEmailAddresses(int siteId)
+        {
+            return _context.GetSiteEmailAddresses(siteId);
+        }
 
         #endregion private methods
     }

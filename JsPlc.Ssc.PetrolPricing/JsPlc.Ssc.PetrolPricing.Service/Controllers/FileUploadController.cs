@@ -281,5 +281,32 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
             var result = _fileService.GetFileUploadInformation(fileUploadId);
             return Ok(result);
         }
+
+        [HttpPost]
+        [Route("api/ImportSiteEmailFile")]
+        public async Task<IHttpActionResult> ImportSiteEmailFile()
+        {
+            try
+            {
+                var uploadPath = _appSettings.UploadPath + "\\ImportSiteEmailAddresses.xlsx";
+
+                var result = Request.Content.ReadAsStringAsync().Result.Replace("\"", string.Empty);
+                byte[] bytearray = Convert.FromBase64String(result);
+
+                using (FileStream writeStream = new FileStream(uploadPath, FileMode.Create, FileAccess.Write))
+                {
+                    writeStream.Write(bytearray, 0, bytearray.Length);
+                    writeStream.Close();
+                }
+
+                _fileService.ImportSiteEmailFile(uploadPath);
+
+                return Ok("SUCCESS");
+            }
+            catch (Exception ex)
+            {
+                return new ExceptionResult(ex, this);
+            }
+        }
     }
 }

@@ -68,6 +68,7 @@
             "FileUpload": "App/ViewScripts/FileUpload",
             "Diagnostics": "App/ViewScripts/Diagnostics",
             "SiteMaintenance": "App/ViewScripts/SiteMaintenance",
+            "SiteEmails": "App/ViewScripts/SiteEmails",
             "DriveTime": "App/ViewScripts/DriveTime",
             "EmailSchedule": "App/ViewScripts/EmailSchedule",
 

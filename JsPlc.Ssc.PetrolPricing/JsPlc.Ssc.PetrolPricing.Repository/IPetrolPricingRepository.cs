@@ -351,5 +351,9 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         void ClearWinServiceEventLog();
 
         IEnumerable<NearbyGrocerPriceSiteStatus> GetNearbyGrocerPriceStatusForSites(DateTime forDate, string siteIds, int driveTime);
+
+        StatusViewModel RemoveAllSiteEmailAddresses();
+        IEnumerable<SiteEmailAddressViewModel> GetSiteEmailAddresses(int siteId = 0);
+        StatusViewModel UpsertSiteEmailAddresses(IEnumerable<SiteEmailImportViewModel> siteEmailAddresses);
     }
 }

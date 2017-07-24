@@ -31,5 +31,6 @@ namespace JsPlc.Ssc.PetrolPricing.Business
         bool DataCleanseFileUploads(int daysAgo);
 
         FileUpload GetFileUploadInformation(int fileUploadId);
+        void ImportSiteEmailFile(string uploadPath);
     }
 }

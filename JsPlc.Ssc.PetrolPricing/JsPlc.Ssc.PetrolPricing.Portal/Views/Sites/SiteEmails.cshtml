@@ -1,0 +1,192 @@
+﻿@model JsPlc.Ssc.PetrolPricing.Models.ViewModels.SiteEmailsPageViewModel
+
+@{
+    ViewBag.Title = "SiteEmails";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var siteCount = Model.SiteEmails.Select(x => x.SiteId).Distinct().Count();
+    var emailCount = Model.SiteEmails.Count(x => x.EmailAddress != "");
+}
+
+<style>
+    .email-table {
+        width: 100%;
+    }
+
+        .email-table .email-is-active {
+            width: 6%;
+        }
+
+        .email-table .email-store-no {
+            width: 15%;
+            text-align: center;
+        }
+
+        .email-table .email-site-name {
+            width: 25%;
+            text-align: left;
+        }
+
+        .email-table .email-cat-no {
+            width: 12%;
+            text-align: center;
+        }
+
+        .email-table .email-pfs-no {
+            width: 12%;
+            text-align: center;
+        }
+
+        .email-table .email-address {
+            width: 25%;
+            text-align: left;
+        }
+
+        .email-site-name a {
+            color: orange;
+            font-weight: bold;
+        }
+
+    .email-table-scroller {
+        max-height: 500px;
+        overflow: auto;
+    }
+
+    .table > tbody > tr.row-site-inactive {
+        color: #999;
+        background-color: #f0f0f0;
+    }
+    .mono-font {font-family: monospace;}
+</style>
+
+<div class="row">
+    <div class="col-md-3">
+        <h1>
+            <i class="fa fa-gear"></i> Site Email Addresses
+        </h1>
+    </div>
+    <div class="col-md-3 newline">
+        <span class="label label-default">Sites: <i class="badge">@(siteCount)</i></span> <span class="label label-default">Emails: <i class="badge">@(emailCount)</i></span>
+    </div>
+
+    <div class="col-md-3 newline">
+        <button type="button" class="btn btn-danger" data-click="clearEmailsClick" data-infotip="Clear [b]All[/b] the Site Email Addresses"><i class="fa fa-eraser"></i> Clear All</button>
+        <a class="btn btn-primary" href="@Url.Action("UploadSiteEmails", "Sites")" data-infotip="Import the Email Addresses"><i class="fa fa-upload"></i> Import Emails</a>
+    </div>
+    <div class="col-md-2 col-md-offset-1 newline">
+        <button type="button" class="btn btn-success pull-right" data-click="exportEmailsClick" data-infotip="Export the Email Addresses"><i class="fa fa-download"></i> Export Emails</button>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12 newline">
+        <table class="table table-condensed table-striped email-table" style="margin-bottom: 0;">
+            <thead>
+
+                <tr>
+                    <th>
+                        <div class="input-group">
+                            <span class="input-group-addon">=</span>
+                            <input type="text" id="txtSearchStoreNo" class="form-control input-xs" />
+                        </div>
+                    </th>
+                    <th>
+                        <div class="input-group">
+                            <span class="input-group-addon">Contains</span>
+                            <input type="text" id="txtSearchSiteName" class="form-control input-xs" />
+                        </div>
+                    </th>
+                    <th>
+                        <div class="input-group">
+                            <span class="input-group-addon">=</span>
+                            <input type="text" id="txtSearchCatNo" class="form-control input-xs" />
+                        </div>
+                    </th>
+                    <th>
+                        <div class="input-group">
+                            <span class="input-group-addon">=</span>
+                            <input type="text" id="txtSearchPfsNo" class="form-control input-xs" />
+                        </div>
+                    </th>
+                    <th>
+                        <div class="input-group">
+                            <span class="input-group-addon">Starts</span>
+                            <input type="text" id="txtSearchEmail" class="form-control input-xs" />
+                        </div>
+                    </th>
+                    <th>
+                        <button id="btnClearFilters" class="btn btn-warning btn-sm" data-infotip="Clear all the filters"><i class="fa fa-eraser"> </i></button>
+                    </th>
+                </tr>
+                <tr>
+                    <th class="email-store-no">Store No</th>
+                    <th class="email-site-name">Site Name</th>
+                    <th class="email-cat-no">CatNo</th>
+                    <th class="email-pfs-no">PfsNo</th>
+                    <th class="email-address">Email Addresses</th>
+                    <th class="email-is-active">Active</th>
+                </tr>
+            </thead>
+        </table>
+        <div class="email-table-scroller">
+            <table class="table table-condensed table-striped email-table">
+                <tbody>
+                    @if (!Model.SiteEmails.Any())
+                    {
+                        <tr>
+                            <td colspan="2" class="text-center font125pc">There are no Site Email Addresses.</td>
+                        </tr>
+                    }
+                    @foreach (var item in Model.SiteEmails)
+                    {
+                        var isNonSainsburysEmail = !item.EmailAddress.ToUpper().EndsWith("@SAINSBURYS.CO.UK");
+                        var rowCss = (item.IsSiteActive ? "row-site-active" : "row-site-inactive");
+                        <tr class="@(rowCss)">
+                            <td class="email-store-no">@(item.StoreNo)</td>
+                            <td class="email-site-name">
+                                <a href="@Url.Action("Edit","Sites")/?id=@(item.SiteId)&amp;calledFromSection=SiteEmails" data-infotip="Edit the Site">
+                                    @(item.StoreName.Replace("SAINSBURYS", ""))
+                                </a></td>
+                            <td class="email-cat-no">@(item.CatNo)</td>
+                            <td class="email-pfs-no">@(item.PfsNo)</td>
+                            <td class="email-address">
+                                @if (isNonSainsburysEmail)
+                                {
+                                    <span class="text-danger mono-font" data-infotip="Email is [b]Not[/b] a Sainsbury's email address."><i class="fa fa-warning"></i> @(item.EmailAddress)</span>
+                                }
+                                else
+                                {
+                                    <span class="text-success mono-font" data-infotip="Email is a Sainsbury's email address.">@(item.EmailAddress)</span>
+                                }
+                            </td>
+                            <td class="email-is-active">
+                                @if (item.IsSiteActive)
+                                {
+                                    <span class="text-success" data-infotip="Site is Active"><i class="fa fa-check"></i></span>
+                                }
+                                else
+                                {
+                                    <span class="text-danger" data-infotip="Site is [b]Not[/b] Active"><i class="fa fa-times"></i></span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="row newline">
+    <div class="col-md-1">
+        <a class="btn btn-default" href="@Url.Action("Index", "Sites")"><i class="fa fa-backward"></i> Back to Site Maintenance</a>
+    </div>
+</div>
+
+<script type="text/javascript">
+    require(["SiteEmails", "infotips"],
+        function (siteEmails, infotips) {
+            // todo..
+        }
+    );
+</script>

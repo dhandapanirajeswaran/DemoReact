@@ -16,6 +16,7 @@ namespace JsPlc.Ssc.PetrolPricing.Models.Enums
         Reports = 5,
         UserManagement = 6,
         Contact = 7,
-        Diagnostics = 8
+        Diagnostics = 8,
+        SiteEmails = 10
     }
 }

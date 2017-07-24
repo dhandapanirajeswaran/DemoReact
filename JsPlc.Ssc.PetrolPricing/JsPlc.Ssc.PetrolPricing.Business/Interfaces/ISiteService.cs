@@ -56,5 +56,10 @@ namespace JsPlc.Ssc.PetrolPricing.Business
         IEnumerable<ContactDetail> GetContactDetails();
 
         IEnumerable<int> GetJsSitesByPfsNum();
+
+        StatusViewModel RemoveAllSiteEmailAddresses();
+
+        IEnumerable<SiteEmailAddressViewModel> GetAllSiteEmailAddresses(int siteId = 0);
+        StatusViewModel UpsertSiteEmailAddresses(IEnumerable<SiteEmailImportViewModel> emailAddresses);
     }
 }

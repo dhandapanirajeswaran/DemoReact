@@ -535,5 +535,31 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             };
             return DapperHelper.QueryList<SiteCompetitorPriceSummaryRowViewModel>(this, sprocName, parameters);
         }
+
+        public int RemoveAllSiteEmailAddresses()
+        {
+            const string sprocName = "spRemoveAllSiteEmailAddresses";
+            var parameters = new { };
+            return DapperHelper.QueryScalar(this, sprocName, parameters);
+        }
+        public IEnumerable<SiteEmailAddressViewModel> GetSiteEmailAddresses(int siteId = 0)
+        {
+            const string sprocName = "spGetSiteEmailAddresses";
+            var parameters = new
+            {
+                @SiteId = siteId
+            };
+            return DapperHelper.QueryList<SiteEmailAddressViewModel>(this, sprocName, parameters);
+        }
+
+        internal int UpsertSiteEmailAddresses(IEnumerable<SiteEmailImportViewModel> emailAddresses)
+        {
+            const string sprocName = "spUpsertSiteEmailAddreses";
+            var parameters = new
+            {
+                @EmailAddresses = SqlHelper.ToSqlXml(emailAddresses.ToList())
+            };
+            return DapperHelper.QueryScalar(this, sprocName, parameters);
+        }
     }
 }

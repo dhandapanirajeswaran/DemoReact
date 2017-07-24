@@ -360,6 +360,20 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             }
         }
 
+        public string ImportFileEmailFile(HttpPostedFileBase file)
+        {
+            var apiUrl = String.Format("api/ImportSiteEmailFile");
+
+            MemoryStream target = new MemoryStream();
+            file.InputStream.CopyTo(target);
+            byte[] data = target.ToArray();
+
+            var response = _client.Value.PostAsync(apiUrl, data, new JsonMediaTypeFormatter()).Result;
+            return response.IsSuccessStatusCode
+                ? ""
+                : "Unable to Import Site Emails";
+        }
+
         public async Task<IEnumerable<FileUpload>> ExistingDailyUploads(DateTime uploadDatetime)
         {
             string apiUrl = "api/ExistingDailyUploads/" + uploadDatetime.ToString("yyyy-MM-dd");
@@ -1352,6 +1366,24 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
         {
             var apiUrl = String.Format("api/TriggerDailyPriceRecalculation/?day={0}", day.Ticks);
             return CallAndCatchAsyncGet<StatusViewModel>("TriggerDailyPriceRecalculation", apiUrl);
+        }
+
+        public StatusViewModel RemoveAllSiteEmailAddresses()
+        {
+            var apiUrl = String.Format("api/RemoveAllSiteEmailAddresses");
+            return CallAndCatchAsyncGet<StatusViewModel>("RemoveAllSiteEmailAddresses", apiUrl);
+        }
+
+        public IEnumerable<SiteEmailAddressViewModel> GetAllSiteEmailAddresses(int siteId=0)
+        {
+            var apiUrl = String.Format("api/GetAllSiteEmailAddresses/?siteId={0}", siteId);
+            return CallAndCatchAsyncGet<IEnumerable<SiteEmailAddressViewModel>>("GetAllSiteEmailAddresses", apiUrl);
+        }
+
+        public StatusViewModel UpsertSiteEmailAddresses(IEnumerable<SiteEmailAddressViewModel> siteEmailAddresses)
+        {
+            var apiUrl = String.Format("api/UpsertSiteEmailAddresses");
+            return CallAndCatchAsyncPost<StatusViewModel, IEnumerable<SiteEmailAddressViewModel>>("UpsertSiteEmailAddresses", apiUrl, siteEmailAddresses);
         }
 
         public IEnumerable<ScheduleItemViewModel> GetWinServiceScheduledItems()

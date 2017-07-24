@@ -93,6 +93,10 @@ namespace JsPlc.Ssc.PetrolPricing.Exporting.Styling
                 case ExportExcelFileType.None:
                     break;
 
+                case ExportExcelFileType.SiteEmailAddreses:
+                    FormatSiteEmailAddresses(worksheet, totalRows);
+                    break;
+
                 default:
                     throw new ArgumentException("Unsupport Export Type: " + exportType);
             }
@@ -277,6 +281,17 @@ namespace JsPlc.Ssc.PetrolPricing.Exporting.Styling
                 .FormatColumn("G", ExcelStyleFormatters.GeneralTextRightAlignedFormatter)
                 .FormatColumn("H", ExcelStyleFormatters.GeneralPriceFormatter)
                 .FormatColumn("I", ExcelStyleFormatters.GeneralTextRightAlignedFormatter);
+        }
+                    
+        private void FormatSiteEmailAddresses(IXLWorksheet worksheet, int totalRows)
+        {
+            var firstDataRow = 2;
+            var lastDatarow = 2 + totalRows - 1;
+
+            new ExcelColumnStyler(worksheet, firstDataRow, lastDatarow)
+                .FormatColumn("A", ExcelStyleFormatters.GeneralIntegerFormatter)
+                .FormatColumn("B", ExcelStyleFormatters.GeneralTextLeftAlignedFormatter)
+                .FormatColumn("C", ExcelStyleFormatters.GeneralTextLeftAlignedFormatter);
         }
 
         #endregion private methods

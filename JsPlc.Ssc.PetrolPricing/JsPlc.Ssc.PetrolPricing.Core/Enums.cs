@@ -33,7 +33,8 @@ namespace JsPlc.Ssc.PetrolPricing.Core
     {
         None = 0,
         ExportJSSites = 1,
-        ExportAllSites = 2
+        ExportAllSites = 2,
+        SiteEmailAddreses = 3
     }
 
     public enum ReportExportFileType
