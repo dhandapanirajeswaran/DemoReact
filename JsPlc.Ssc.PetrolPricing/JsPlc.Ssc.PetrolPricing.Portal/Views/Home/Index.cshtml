@@ -92,7 +92,7 @@
                             : "";
 
                         var clickHandler = row.FileUploadId == 0
-                            ? ""
+                            ? "window.location='" + Url.Action("Upload", "File") + "?UploadType=" + (FileUploadTypes)row.UploadTypeId + "'"
                             : "window.location='" + Url.Action("Details", "File") + "/" + row.FileUploadId + "'";
 
                             <tr class="@rowClass" style="cursor: pointer;" onclick="@(clickHandler)">
