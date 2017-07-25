@@ -228,7 +228,7 @@ MERGE dbo.EmailTemplate AS target
 USING (
 	SELECT 
 		N'** Default Email Template' [TemplateName],
-		N'{SiteName} - (Not sent to site)FAO Store/duty manager - URGENT FUEL PRICE CHANGE' [SubjectLine],
+		N'{SiteName} - FAO Store/duty manager - URGENT FUEL PRICE CHANGE' [SubjectLine],
 		N'<h1>FAO Store/duty manager - URGENT FUEL PRICE CHANGE</h1>
 <p>Queries to the Trading Hotline using Option 1 Trading, Option 2 Grocery and Option 8 Petrol and Kiosk </p>
 <h2>{SiteName}</h2>
@@ -267,7 +267,7 @@ THEN UPDATE SET
 --
 UPDATE dbo.EmailTemplate 
 SET EmailBody = REPLACE(EmailBody, '{StartDateMonthYear}', '{DayMonthYear}'),
-	SubjectLine = REPLACE(SubjectLine, '{StartDateMonthYear}', '{DayMonthYear}');
+	SubjectLine = REPLACE(REPLACE(SubjectLine, '{StartDateMonthYear}', '{DayMonthYear}'), '(Not sent to site)', '');
 
 --
 -- Seed [dbo].[DriveTimeMarkup]
