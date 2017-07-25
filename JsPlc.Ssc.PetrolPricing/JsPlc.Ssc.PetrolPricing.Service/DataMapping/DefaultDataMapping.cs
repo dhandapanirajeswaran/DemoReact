@@ -86,7 +86,7 @@ namespace JsPlc.Ssc.PetrolPricing.Service.DataMapping
             Mapper.CreateMap<SystemSettings, SystemSettingsViewModel>()
                 .ForMember(dst => dst.Id, src => src.MapFrom(p => p.Id))
 
-                .ForMember(dst => dst.Status, src =>src.Ignore()) 
+                .ForMember(dst => dst.Status, src => src.Ignore())
 
                 .ForMember(dst => dst.MinUnleadedPrice, src => src.MapFrom(p => p.MinUnleadedPrice.ToActualPrice()))
                 .ForMember(dst => dst.MaxUnleadedPrice, src => src.MapFrom(p => p.MaxUnleadedPrice.ToActualPrice()))
@@ -105,7 +105,9 @@ namespace JsPlc.Ssc.PetrolPricing.Service.DataMapping
 
                 .ForMember(dst => dst.PriceChangeVarianceThreshold, src => src.MapFrom(p => p.PriceChangeVarianceThreshold.ToActualPrice()))
                 .ForMember(dst => dst.SuperUnleadedMarkupPrice, src => src.MapFrom(p => p.SuperUnleadedMarkupPrice.ToActualPrice()))
-                .ForMember(dst => dst.DecimalRounding, src => src.MapFrom(p => p.DecimalRounding));
+                .ForMember(dst => dst.DecimalRounding, src => src.MapFrom(p => p.DecimalRounding))
+                .ForMember(dst => dst.EnableSiteEmails, src => src.MapFrom(p => p.EnableSiteEmails))
+                .ForMember(dst => dst.SiteEmailTestAddresses, src => src.MapFrom(p => p.SiteEmailTestAddresses));
 
             //
             // SystemSettingsViewModel >> SystemSettings
@@ -133,7 +135,9 @@ namespace JsPlc.Ssc.PetrolPricing.Service.DataMapping
 
                 .ForMember(dst => dst.PriceChangeVarianceThreshold, src => src.MapFrom(p => p.PriceChangeVarianceThreshold.ToModalPrice()))
                 .ForMember(dst => dst.SuperUnleadedMarkupPrice, src => src.MapFrom(p => p.SuperUnleadedMarkupPrice.ToModalPrice()))
-                .ForMember(dst => dst.DecimalRounding, src => src.MapFrom(p => p.DecimalRounding));
+                .ForMember(dst => dst.DecimalRounding, src => src.MapFrom(p => p.DecimalRounding))
+                .ForMember(dst => dst.EnableSiteEmails, src => src.MapFrom(p => p.EnableSiteEmails))
+                .ForMember(dst => dst.SiteEmailTestAddresses, src => src.MapFrom(p => p.SiteEmailTestAddresses));
 
 
             Mapper.CreateMap<EmailTemplate, EmailTemplateViewModel>()

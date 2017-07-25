@@ -900,3 +900,7 @@ input[type=text].mono-font {
 .action-button-list dt {line-height: 2em;}
 .action-button-list .action-item {margin: 4px 1em;}
 .action-button-list .action-divider {height: 1em; border-bottom: 1px dashed #ccc;}
+
+
+.no-margin {margin: 0;}
+.no-padding {padding: 0;}

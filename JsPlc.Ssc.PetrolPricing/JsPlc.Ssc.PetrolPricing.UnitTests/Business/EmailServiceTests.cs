@@ -32,7 +32,8 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
         EmailTemplate _emailTemplate;
 
         Mock<ISmtpClient> _mockSmtpClient;
-
+        SystemSettings _systemSettings;
+        SitePricingSettings _sitePricingSettings;
 	
         SitePriceViewModel _siteVM;
 
@@ -45,9 +46,53 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 
 			_mockRepository = new Mock<IPetrolPricingRepository>();
 
-			#endregion
 
-			_mockAppSettings = new Mock<IAppSettings>();
+            #endregion
+
+            _systemSettings = new Models.SystemSettings()
+            {
+                DataCleanseFilesAfterDays = 60,
+                MinUnleadedPrice = 500,
+                MaxUnleadedPrice = 5000,
+                MinDieselPrice = 500,
+                MaxDieselPrice = 5000,
+                MinSuperUnleadedPrice = 500,
+                MaxSuperUnleadedPrice = 5000,
+                MinUnleadedPriceChange = -50,
+                MaxUnleadedPriceChange = 50,
+                MinDieselPriceChange = -50,
+                MaxDieselPriceChange = 50,
+                MinSuperUnleadedPriceChange = -50,
+                MaxSuperUnleadedPriceChange = 50,
+                MaxGrocerDriveTimeMinutes = 5,
+                SuperUnleadedMarkupPrice = 50,
+                DecimalRounding = 0,
+                EnableSiteEmails = true,
+                SiteEmailTestAddresses = "test@sainsburys.co.uk"
+            };
+
+            _sitePricingSettings = new SitePricingSettings()
+            {
+                MinUnleadedPrice = _systemSettings.MinUnleadedPrice,
+                MaxUnleadedPrice = _systemSettings.MaxUnleadedPrice,
+                MinDieselPrice = _systemSettings.MinDieselPrice,
+                MaxDieselPrice = _systemSettings.MaxDieselPrice,
+                MinSuperUnleadedPrice = _systemSettings.MinSuperUnleadedPrice,
+                MaxSuperUnleadedPrice = _systemSettings.MaxSuperUnleadedPrice,
+                MinUnleadedPriceChange = _systemSettings.MinUnleadedPriceChange,
+                MaxUnleadedPriceChange = _systemSettings.MaxUnleadedPriceChange,
+                MinDieselPriceChange = _systemSettings.MinDieselPriceChange,
+                MaxDieselPriceChange = _systemSettings.MaxDieselPriceChange,
+                MinSuperUnleadedPriceChange = _systemSettings.MinSuperUnleadedPriceChange,
+                MaxSuperUnleadedPriceChange = _systemSettings.MaxSuperUnleadedPriceChange,
+                MaxGrocerDriveTimeMinutes = _systemSettings.MaxGrocerDriveTimeMinutes,
+                SuperUnleadedMarkupPrice = _systemSettings.SuperUnleadedMarkupPrice,
+                DecimalRounding = _systemSettings.DecimalRounding,
+                EnableSiteEmails = _systemSettings.EnableSiteEmails,
+                SiteEmailTestAddresses = _systemSettings.SiteEmailTestAddresses
+            };
+
+            _mockAppSettings = new Mock<IAppSettings>();
 			_mockAppSettings.Setup(ss => ss.EmailSubject).Returns("Test Email Subject");
 			_mockAppSettings.Setup(ss => ss.EmailFrom).Returns(_expectedEmailAddress);
 			_mockAppSettings.Setup(ss => ss.FixedEmailTo).Returns(_expectedEmailAddress);
@@ -61,26 +106,11 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
 				.Returns(_mockSmtpClient.Object);
 
             _mockSystemSettings = new Mock<ISystemSettingsService>();
-            _mockSystemSettings.Setup(ss => ss.GetSitePricingSettings()).Returns(new Models.SitePricingSettings()
-            {
-                MinUnleadedPrice = 50.0,
-                MaxUnleadedPrice = 400.0,
-                MinDieselPrice = 50.0,
-                MaxDieselPrice = 400.0,
-                MinSuperUnleadedPrice = 50.0,
-                MaxSuperUnleadedPrice = 400.0,
-                MinUnleadedPriceChange = 50.0,
-                MaxUnleadedPriceChange = 400.0,
-                MinDieselPriceChange = -5.0,
-                MaxDieselPriceChange = 5.0,
-                MinSuperUnleadedPriceChange = -5.0,
-                MaxSuperUnleadedPriceChange = 5.0,
-                MaxGrocerDriveTimeMinutes = 5,
-                PriceChangeVarianceThreshold = 0.5,
-                SuperUnleadedMarkupPrice = 5.0,
-                DecimalRounding = 9
-            });
-		
+            _mockSystemSettings.Setup(ss => ss.GetSitePricingSettings()).Returns(_sitePricingSettings);
+            _mockSystemSettings.Setup(ss => ss.GetSystemSettings()).Returns(_systemSettings);
+
+            _mockRepository.Setup(ss => ss.GetSystemSettings()).Returns(_systemSettings);
+
             _siteVM = new SitePriceViewModel
             {
                 CatNo = 1,                                 

@@ -18,5 +18,7 @@
     [MaxGrocerDriveTimeMinutes] INT NOT NULL DEFAULT (5), 
     [PriceChangeVarianceThreshold] INT NOT NULL DEFAULT (3), 
     [SuperUnleadedMarkupPrice] INT NOT NULL DEFAULT (50), 
-    [DecimalRounding] INT NOT NULL DEFAULT (-1)
+    [DecimalRounding] INT NOT NULL DEFAULT (-1), 
+    [EnableSiteEmails] BIT NOT NULL DEFAULT (0), 
+    [SiteEmailTestAddresses] VARCHAR(MAX) NOT NULL DEFAULT ('')
 )

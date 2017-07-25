@@ -24,12 +24,17 @@
             return /^\d{1,3}$/.test(value);
         };
 
+        function isSainsburysEmail(email) {
+            return email && /@sainsburys\.co\.uk$/i.test(email);
+        };
+
         // API
         return {
             isNumber: isNumber,
             isNumberInRange: isNumberInRange,
             isDriveTime: isDriveTime,
-            isMarkup: isMarkup
+            isMarkup: isMarkup,
+            isSainsburysEmail: isSainsburysEmail
         };
     }
 );

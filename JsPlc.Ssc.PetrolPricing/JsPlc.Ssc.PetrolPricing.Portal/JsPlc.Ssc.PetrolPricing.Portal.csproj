@@ -354,6 +354,7 @@
     <Content Include="Scripts\App\ViewScripts\SiteEmails.js" />
     <Content Include="Scripts\App\ViewScripts\SiteMaintenance.js" />
     <Content Include="Scripts\App\SitePricingSorting.js" />
+    <Content Include="Scripts\App\ViewScripts\SystemSettings.js" />
     <Content Include="Scripts\App\ViewScripts\UploadCountdown.js" />
     <Content Include="Scripts\App\ViewScripts\SitePricing.js" />
     <Content Include="Scripts\App\Services\PetrolPricingService.js" />

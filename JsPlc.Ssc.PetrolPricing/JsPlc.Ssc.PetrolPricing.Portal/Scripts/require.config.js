@@ -71,6 +71,7 @@
             "SiteEmails": "App/ViewScripts/SiteEmails",
             "DriveTime": "App/ViewScripts/DriveTime",
             "EmailSchedule": "App/ViewScripts/EmailSchedule",
+            "SystemSettings": "App/ViewScripts/SystemSettings",
 
             // Page scripts
             "Prices": "App/Prices"

@@ -101,6 +101,14 @@ namespace JsPlc.Ssc.PetrolPricing.Models.ViewModels.SystemSettings
         [Display(Name = "Decimal Rounding")]
         public int DecimalRounding { get; set; }
 
+        [Required]
+        [Display(Name = "Enable Site Emails")]
+        public bool EnableSiteEmails { get; set; }
+
+        [Required]
+        [Display(Name = "Site Email Test Addresses")]
+        public string SiteEmailTestAddresses { get; set; }
+
         public SystemSettingsViewModel()
         {
             this.Status = new StatusViewModel();

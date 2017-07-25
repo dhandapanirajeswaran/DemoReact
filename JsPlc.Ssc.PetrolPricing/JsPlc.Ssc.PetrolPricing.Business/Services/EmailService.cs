@@ -419,6 +419,9 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 		/// <returns></returns>
         private Task<EmailToSet> getEmailToAddresses(SitePriceViewModel site)
 		{
+            var systemSettings = _db.GetSystemSettings();
+
+
 			EmailToSet emailToSet = new EmailToSet();
 
 			var testEmailTo = _appSettings.FixedEmailTo;
@@ -427,7 +430,16 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 
 			emailToSet.ListOfEmailTo = new List<string>();
 
-            emailToSet.ListOfEmailTo = site.Emails;
+            // using the live Site Emails ?
+            if (systemSettings.EnableSiteEmails)
+            {
+                emailToSet.ListOfEmailTo = site.Emails;
+            }
+            else
+            {
+                emailToSet.ListOfEmailTo = systemSettings.SiteEmailTestAddresses.Split(';').ToList();
+            }
+
 			emailToSet.CommaSeprListOfEmailTo = String.Join(",", emailToSet.ListOfEmailTo);
 			
 			return Task.FromResult(emailToSet);

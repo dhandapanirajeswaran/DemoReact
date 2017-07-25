@@ -24,5 +24,7 @@ namespace JsPlc.Ssc.PetrolPricing.Models
         public double PriceChangeVarianceThreshold { get; set; }
         public double SuperUnleadedMarkupPrice { get; set; }
         public int DecimalRounding { get; set; }
+        public bool EnableSiteEmails { get; set; }
+        public string SiteEmailTestAddresses { get; set; }
     }
 }

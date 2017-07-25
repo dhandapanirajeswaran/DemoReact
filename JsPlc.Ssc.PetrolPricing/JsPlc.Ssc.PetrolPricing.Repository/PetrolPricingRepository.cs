@@ -563,8 +563,6 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                     dbList.Add(sitePriceRow);
                 }
 
-                //_logger.Debug("Started: GetNearbyGrocerPriceStatus");
-
                 var settings = _context.SystemSettings.FirstOrDefault();
 
                 GetNearbyGrocerPriceStatus(forDate, dbList, settings.MaxGrocerDriveTimeMinutes);
@@ -572,8 +570,6 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                 var maxCompetitorDriveTime = 25; // 25 mins for ALL competitors (not just Grocers)
 
                 SetSiteCompetitorPriceInformation(forDate, dbList, maxCompetitorDriveTime);
-
-                //_logger.Debug("Finished: GetNearbyGrocerPriceStatus");
 
                 if (useNewCode)
                 {
@@ -590,6 +586,19 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
                     DumpNewCodeFuelPrices(CoreSettings.RepositorySettings.SitePrices.CompareOutputFilename, forDate, dbList);
                     _logger.Debug("Finished: DumpNewCodeFuelPrices");
+                }
+
+                // using test (NON-LIVE) email addresses ?
+                var systemSettings = _context.SystemSettings.FirstOrDefault();
+                if (systemSettings.EnableSiteEmails == false)
+                {
+                    var testEmailAddresses = systemSettings.SiteEmailTestAddresses.Split(';').ToList();
+
+                    foreach(var site in dbList)
+                    {
+                        site.HasEmails = testEmailAddresses.Any();
+                        site.Emails = testEmailAddresses;
+                    }
                 }
 
                 _logger.Debug("Finished CallSitePriceSproc");
@@ -3758,6 +3767,8 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
             row.PriceChangeVarianceThreshold = systemSettings.PriceChangeVarianceThreshold;
             row.SuperUnleadedMarkupPrice = systemSettings.SuperUnleadedMarkupPrice;
             row.DecimalRounding = systemSettings.DecimalRounding;
+            row.EnableSiteEmails = systemSettings.EnableSiteEmails;
+            row.SiteEmailTestAddresses = systemSettings.SiteEmailTestAddresses;
 
             _context.SaveChanges();
         }
@@ -3782,7 +3793,9 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
                 MaxGrocerDriveTimeMinutes = settings.MaxGrocerDriveTimeMinutes,
                 PriceChangeVarianceThreshold = settings.PriceChangeVarianceThreshold.ToActualPrice(),
                 SuperUnleadedMarkupPrice = settings.SuperUnleadedMarkupPrice.ToActualPrice(),
-                DecimalRounding = settings.DecimalRounding
+                DecimalRounding = settings.DecimalRounding,
+                EnableSiteEmails = settings.EnableSiteEmails,
+                SiteEmailTestAddresses = settings.SiteEmailTestAddresses
             };
 
             return model;

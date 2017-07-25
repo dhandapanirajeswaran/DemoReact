@@ -32,7 +32,8 @@ namespace JsPlc.Ssc.PetrolPricing.Models
         public int MaxGrocerDriveTimeMinutes { get; set; }
         public int PriceChangeVarianceThreshold { get; set; }
         public int SuperUnleadedMarkupPrice { get; set; }
-
         public int DecimalRounding { get; set; }
+        public bool EnableSiteEmails { get; set; }
+        public string SiteEmailTestAddresses { get; set; }
     }
 }

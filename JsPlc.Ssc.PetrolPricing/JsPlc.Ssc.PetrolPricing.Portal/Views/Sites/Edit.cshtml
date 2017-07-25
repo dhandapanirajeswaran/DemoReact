@@ -6,6 +6,11 @@
     ViewBag.Title = "Edit site";
 }
 
+<style>
+    .radio-label {border: 1px solid #fff; border-radius: 4px; margin-right: 2em; padding: 2px 4px; min-width: 10em;}
+    .radio-label:hover {border: 1px solid #999; background-color: #eee;}
+</style>
+
 <h1><i class="fa fa-gear"></i> Edit site</h1>
 <div class="alert alert-danger @(string.IsNullOrWhiteSpace(ViewBag.ErrorMessage) ? "hidden" : "")">@ViewBag.ErrorMessage</div>
 <hr />
@@ -88,6 +93,26 @@
                         </div>
                     </div>
 
+                    <div class="form-group">
+                        <label class="control-label col-md-2" for="IsSainsburysSite">Sainsburys</label>
+                        <div class="col-md-10">
+                            <div class="">
+                                <label class="radio-label"><input type="radio" name="IsSainsburysSite" id="IsSainsburysSite_0" value="false" @(!Model.IsSainsburysSite ? " checked='checked'" : "") />No</label>
+                                <label class="radio-label"><input type="radio" name="IsSainsburysSite" id="IsSainsburysSite_1" value="true" @(Model.IsSainsburysSite ? " checked='checked'" : "") /> Yes, Sainsbury's site</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label col-md-2" for="IsActive">Active</label>
+                        <div class="col-md-10">
+                            <div class="">
+                                <label class="radio-label"><input type="radio" name="IsActive" id="IsActive_0" value="false" @(!Model.IsActive ? " checked='checked'" : "") /> Not Active</label>
+                                <label class="radio-label"><input type="radio" name="IsActive" id="IsActive_1" value="true" @(Model.IsActive ? " checked='checked'" : "") /> Active</label>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
                 <!-- end of first column -->
 
@@ -137,7 +162,7 @@
                             new SiteEmailViewModel {EmailAddress = "", Id = 0}
                         } : Model.Emails;
 
-    while (emails.Count < 3)
+    while (emails.Count < 6)
     {
         emails.Add(new SiteEmailViewModel { EmailAddress = "", Id = 0 });
     }
@@ -154,26 +179,6 @@
                             <br />
     }
                             }
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        @Html.LabelFor(model => model.IsSainsburysSite, htmlAttributes: new { @class = "control-label col-md-3" })
-                        <div class="col-md-4">
-                            <div class="checkbox">
-                                @Html.EditorFor(model => model.IsSainsburysSite)
-                                @Html.ValidationMessageFor(model => model.IsSainsburysSite, "", new { @class = "text-danger" })
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        @Html.LabelFor(model => model.IsActive, htmlAttributes: new { @class = "control-label col-md-3" })
-                        <div class="col-md-4">
-                            <div class="checkbox">
-                                @Html.EditorFor(model => model.IsActive)
-                                @Html.ValidationMessageFor(model => model.IsActive, "", new { @class = "text-danger" })
-                            </div>
                         </div>
                     </div>
                 </div>

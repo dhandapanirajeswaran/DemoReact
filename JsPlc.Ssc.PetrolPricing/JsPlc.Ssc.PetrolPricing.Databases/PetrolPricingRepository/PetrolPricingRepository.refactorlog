@@ -56,4 +56,11 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="DriveTime" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="679736ac-3c4d-4e9c-9b6c-8ad0cff7131e" ChangeDateTime="07/25/2017 08:52:01">
+    <Property Name="ElementName" Value="[dbo].[SystemSettings].[EnableLiveEmails]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[SystemSettings]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="EnableSiteEmails" />
+  </Operation>
 </Operations>
