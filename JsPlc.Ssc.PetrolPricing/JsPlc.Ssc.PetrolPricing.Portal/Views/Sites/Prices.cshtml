@@ -512,7 +512,8 @@
                                 <td class="col-store-no text-center" data-bind="text: StoreNo"></td>
                                 <!-- Email envelope... -->
                                 <td class="col-email">
-                                    <input type="checkbox" data-bind="visible:HasEmails && !$root.ViewingHistorical(), checked: checkedEmail, click: clickCheckedEmail">
+                                    <input type="checkbox" data-bind="visible:HasEmails && !$root.ViewingHistorical() && canSendEmail(), checked: checkedEmail, click: clickCheckedEmail">
+                                    <i class="fa fa-minus text-info" data-bind="visible: HasEmails && !$root.ViewingHistorical() && !canSendEmail()" data-infotip="Site [u]has[/u] Emails address[br /]but has [em]No[/em] price changes."></i>
                                     <i class="fa fa-times text-danger" data-bind="visible: !HasEmails" data-infotip="Site has [b]No[/b] Email addresses"></i>
                                 </td>
                                 <td class="col-store-name" style="position: relative;">
@@ -527,7 +528,6 @@
                                         <div class="hide-hover">
                                             <div style="margin: 0 0 8px 0;">
                                                 <span class="site-town" data-bind="text: Town"></span>
-                                                <span class="site-id" data-bind="text: SiteId"></span>
                                                 <span class="site-pfsno" data-bind="text: PfsNo"></span>
                                                 <span class="site-catno" data-bind="text: CatNo"></span>
                                             </div>

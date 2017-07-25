@@ -408,7 +408,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
         private static string getPriceFormattedPriceForEmail(decimal price)
 		{
             return (price == 0)
-                ? Constants.EmailPriceReplacementStringForZero
+                ? Constants.EmailPriceForNoPriceMovement
                 : (price / 10).ToString("####.0");
 		}
 

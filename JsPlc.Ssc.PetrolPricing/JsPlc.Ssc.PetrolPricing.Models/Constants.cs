@@ -22,6 +22,8 @@ namespace JsPlc.Ssc.PetrolPricing.Models
 		
 		public const int DailyFileRowsBatchSize = 1000; 
         
-		public const string EmailPriceReplacementStringForZero = "N/a";
+		public const string EmailPriceReplacementStringForZero = "N/A";
+
+        public const string EmailPriceForNoPriceMovement = "----";
     }
 }
