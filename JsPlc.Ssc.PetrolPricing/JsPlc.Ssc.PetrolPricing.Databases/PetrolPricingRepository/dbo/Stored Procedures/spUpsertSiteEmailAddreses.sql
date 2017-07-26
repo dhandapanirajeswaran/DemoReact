@@ -4,6 +4,10 @@ AS
 BEGIN
 	SET NOCOUNT ON
 
+	-- Safety - disable LIVE emails, user must re-enable in settings page
+	UPDATE dbo.SystemSettings SET EnableSiteEmails = 0;
+
+
 	;WITH ShreddedEmails AS (
 		SELECT
 			x.item.value('StoreNo[1]', 'INT') [StoreNo],

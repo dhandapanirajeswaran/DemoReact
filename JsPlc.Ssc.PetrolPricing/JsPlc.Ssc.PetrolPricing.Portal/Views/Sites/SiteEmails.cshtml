@@ -10,39 +10,40 @@
 
 <style>
     .email-table {
-        width: 100%;
+        table-layout: fixed;
+        width: 1124px;
     }
-
-        .email-table .email-is-active {
-            width: 6%;
-        }
-
         .email-table .email-store-no {
-            width: 15%;
+            width: 70px;
             text-align: right;
             padding-right: 2em;
         }
 
         .email-table .email-site-name {
-            width: 25%;
+            width: 240px;
             text-align: left;
+            overflow: hidden;
         }
 
         .email-table .email-cat-no {
-            width: 12%;
+            width: 70px;
             text-align: right;
             padding-right: 2em;
         }
 
         .email-table .email-pfs-no {
-            width: 12%;
+            width: 70px;
             text-align: right;
             padding-right: 2em;
         }
 
         .email-table .email-address {
-            width: 25%;
+            width: 200px;
             text-align: left;
+        }
+
+        .email-table .email-is-active {
+            width: 24px;
         }
 
         .email-site-name a {
@@ -87,6 +88,26 @@
 </div>
 
 <div class="row newline">
+    <div class="col-md-10 col-md-offset-1 text-center">
+        @if (Model.SystemSettings.EnableSiteEmails)
+        {
+            <div class="alert alert-danger">
+                <i class="fa fa-warning"></i> <strong>Note:</strong> the <strong>LIVE</strong> Site Email Addresses below will be used when sending emails to sites. &mdash;
+                (See <a class="page-link" href="@Url.Action("Index", "Settings")" data-infotip="Open the [b]Settings page[/b]">Settings page</a> to change this.)
+            </div>
+        }
+
+        @if (!Model.SystemSettings.EnableSiteEmails)
+        {
+            <div class="alert alert-info">
+                <strong class="info-link" data-infotip-dock="below" data-infotip="@(Model.SystemSettings.SiteEmailTestAddresses.Replace(";", "<br />"))"><i class="fa fa-info-circle"></i> These Testing Email Addresses</strong> will be used to send emails and <strong>NOT</strong> the <strong>LIVE</strong> ones shown below &mdash;
+                (See <a class="page-link" href="@Url.Action("Index", "Settings")" data-infotip="Open the [b]Settings page[/b]">Settings page</a> to change this.)
+            </div>
+        }
+    </div>
+</div>
+
+<div class="row">
     <div class="col-md-3">
         <label>Active Sites</label><br />
         <div class="btn-group">
@@ -232,7 +253,6 @@
 <script type="text/javascript">
     require(["SiteEmails", "infotips"],
         function (siteEmails, infotips) {
-            // todo..
         }
     );
 </script>

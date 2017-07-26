@@ -434,6 +434,10 @@ textarea {
     margin-top: 10px;
 }
 
+.alert-condensed {
+    padding: 8px;
+}
+
 .report .panel {
     text-align: center;
 }
@@ -898,9 +902,14 @@ input[type=text].mono-font {
 .action-button-list {margin: 1em;}
 
 .action-button-list dt {line-height: 2em;}
+.action-button-list dd {margin: 0.5em 2em;}
 .action-button-list .action-item {margin: 4px 1em;}
 .action-button-list .action-divider {height: 1em; border-bottom: 1px dashed #ccc;}
+.action-button-list .action-spacer {height: 1em;}
 
 
 .no-margin {margin: 0;}
 .no-padding {padding: 0;}
+
+.page-link,
+.info-link {text-decoration: underline; font-weight: bold;}

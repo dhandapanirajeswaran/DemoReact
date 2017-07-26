@@ -42,6 +42,16 @@
 }
 
 <div class="row">
+    <div class="col-md-10 col-md-offset-1">
+        <div class="alert alert-warning">
+            <i class="fa fa-info-circle"></i> <strong>Note:</strong> Uploading a file automatically turns <strong>OFF</strong> the use of <strong>LIVE</strong> email addresses and the <strong>Test Email Addresses</strong> will be used instead.<br />
+            After uploading the email addresses you should review them and re-enable them via the <a class="page-link" href="@Url.Action("Index","Settings")" data-infotip="View the [b]Settings page [/b]">Settings page</a>.
+        </div>
+    </div>
+</div>
+
+
+<div class="row">
     <div class="col-md-8 col-md-offset-2">
         <div class="panel panel-success">
             <div class="panel-heading">
@@ -88,8 +98,8 @@
     </div>
 </div>
 <script>
-    require(["jquery", "busyloader", "notify"],
-        function ($, busyloader, notify) {
+    require(["jquery", "busyloader", "notify", "infotips"],
+        function ($, busyloader, notify, infotips) {
 
             function uploadButtonClick() {
                 busyloader.show({

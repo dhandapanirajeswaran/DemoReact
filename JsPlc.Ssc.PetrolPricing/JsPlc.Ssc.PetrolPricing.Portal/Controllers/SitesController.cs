@@ -561,7 +561,8 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
         {
             var model = new SiteEmailsPageViewModel()
             {
-                SiteEmails = _serviceFacade.GetAllSiteEmailAddresses()
+                SiteEmails = _serviceFacade.GetAllSiteEmailAddresses(),
+                SystemSettings = _serviceFacade.GetSystemSettings()
             };
 
             return View(model);

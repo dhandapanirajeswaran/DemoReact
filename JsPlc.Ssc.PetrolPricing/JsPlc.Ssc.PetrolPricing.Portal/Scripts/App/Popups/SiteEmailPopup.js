@@ -22,7 +22,9 @@
             },
             isViewingHistorical: false,
             hasUnsavedChanges: false,
-            save: function () { }
+            save: function () { },
+            enableSiteEmails: false,
+            settingsPageUrl: ''
         };
 
         var states = {
@@ -34,7 +36,11 @@
             IsEditingSubjectLine: false,
             IsEditingEmailBody: false,
             IsCopyDisabled: renderCopyDisabled,
-            IsDeleteDisabled: renderDeleteDisabled
+            IsDeleteDisabled: renderDeleteDisabled,
+            EnableSiteEmails: false,
+            SiteEmailTestAddresses: '',
+            SettingsPageUrl: '',
+            SiteEmailTestsInfotip: ''
         };
 
         var templateOptions = [];
@@ -154,6 +160,11 @@
             redrawEditableZones();
             refresh();
             states.IsLoading = true;
+            states.EnableSiteEmails = params.enableSiteEmails;
+            states.SiteEmailTestAddresses = params.siteEmailTestAddresses.replace(/;/g, '<br />');
+            states.SettingsPageUrl = params.settingsPageUrl;
+            states.SiteTestEmailsInfotip = '[u]' + params.siteEmailTestAddresses.replace(/;/g, '[br /]') + '[/u]';
+
             var opts = {
                 show: true,
                 keyboard: true,
@@ -225,6 +236,12 @@
             },
             'data-checked': function (cond, ele) {
                 ele.attr('checked', cond);
+            },
+            'data-link': function (url, ele) {
+                ele.attr('href', url);
+            },
+            'data-set-infotip': function (text, ele) {
+                ele.attr('data-infotip', text);
             }
         };
 

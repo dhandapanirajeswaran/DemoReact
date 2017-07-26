@@ -7,17 +7,29 @@
                 <h4 class="modal-title"><i class="fa fa-question"></i> Site Email Actions</h4>
             </div>
             <div class="modal-body">
+
+                <div class="alert alert-danger" data-bind="visible: $root.EnableSiteEmails()">
+                    <i class="fa fa-warning"></i> <strong>NOTE:</strong> This will send to the <strong>LIVE</strong> Site Email Addresses &mdash;
+                    (See <a class="page-link" href="@Url.Action("Index", "Settings")" data-infotip="Open the [b]Settings page[/b]">Settings page</a>)
+                </div>
+
+                <div class="alert alert-info" data-bind="visible: !$root.EnableSiteEmails()">
+                    <i class="fa fa-info-circle"></i> This will use the following <strong>Testing Email Addresses</strong> &mdash;
+                    (See <a class="page-link" href="@Url.Action("Index", "Settings")" data-infotip="Open the [b]Settings page[/b]">Settings page</a>)<br /><br />
+                    <p style="text-align: center; color: #000;" data-bind="html: ($root.SiteEmailTestAddresses().replace(/;/g, '&lt;br /&gt;'))"></p>
+                </div>
+
                 <dl class="action-button-list" data-bind="visible: $root.dataAvailable()">
                     <dt>Site Selection</dt>
                     <dd class="action-item">
                         <div class="row">
                             <div class="col-md-4">
-                                <button type="button" data-bind="click: $root.selectAll" class="btn btn-primary btn-sm btn-block" style="margin-left:0px" data-infotip="Select ALL Sites [b]with[/b] Emails">
+                                <button type="button" data-bind="click: $root.selectAll" class="btn btn-primary btn-sm btn-block" style="margin-left:0px" data-infotip="Select ALL Sites [b]with[/b] Emails and Price Changes">
                                     <i class="fa fa-check-square-o"></i> Select all
                                 </button>
                             </div>
                             <div class="col-md-8">
-                                Select <strong>all</strong> the Sites which have email addresses<br />and have 1 or more Price Changes.
+                                Select <strong>all</strong> the Sites with email addresses &amp; Price Changes.
                             </div>
                         </div>
                     </dd>
@@ -33,6 +45,8 @@
                             </div>
                         </div>
                     </dd>
+                    <dd class="action-spacer"></dd>
+
                     <dd class="action-item">
                         <div class="row">
                             <div class="col-md-4">
@@ -50,7 +64,7 @@
                     <dd class="action-item">
                         <div class="row">
                             <div class="col-md-4">
-                                <button style="margin-left:0px " type="button" class="btn btn-success btn-sm" data-bind="disable:!$root.isAnySiteChecked() || $root.sendingEmails(), visible: !$root.ViewingHistorical() && $root.dataAvailable() == true,click: $root.sendEmailSelectedSites" data-infotip="Email the [b]Selected[/b] Sites">
+                                <button style="margin-left:0px " type="button" class="btn btn-success btn-sm btn-block" data-bind="disable:!$root.isAnySiteChecked() || $root.sendingEmails(), visible: !$root.ViewingHistorical() && $root.dataAvailable() == true,click: $root.sendEmailSelectedSites" data-infotip="Email the [b]Selected[/b] Sites">
                                     <i class="fa fa-envelope-o"></i> Email <span class="badge" data-bind="text: $root.checkedEmailCount()">0</span>
                                 </button>
                             </div>
