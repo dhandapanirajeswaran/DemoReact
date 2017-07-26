@@ -65,7 +65,7 @@
 {
     <div class="row">
         <div class="col-md-2">
-            <label for="For">When:</label>;
+            <label for="For">Date of file upload:</label>;
             <input type="text" class="datepicker form-control" id="For" name="For" value='@requestedDate'>
         </div>
         <div class="col-md-1">
@@ -75,6 +75,12 @@
         <div class="col-md-1">
             <label>&nbsp;</label>
             <button type="button" class="btn btn-danger btn-block" id="btnResetReport"><i class="fa fa-power-off"></i> Reset</button>
+        </div>
+
+        <div class="col-md-8">
+            <div class="alert alert-info">
+                <i class="fa fa-info-circle"></i> When selecting the date, please select the <strong>date of the file upload</strong> (i.e. 24th shows the 23rd's data)
+            </div>
         </div>
     </div>
 }
