@@ -509,7 +509,9 @@
                             <!-- JS Store DataRows -->
                             <!-- ko foreach: sites.sort($root.pricingColumnSorter) -->
                             <tr class="row site-row" role="tab" data-bind="id:('Heading' + SiteId), attr: {id: 'SiteHeading' + SiteId, 'data-price-change-signs': (priceChangeSigns())}, css: (siteRowCss() + (hiddenByPriceMovementFilter() ? ' hide' : ''))">
-                                <td class="col-store-no text-center" data-bind="text: StoreNo"></td>
+                                <td class="col-store-no text-center">
+                                    <i class="fa fa-warning row-indicator"></i><span data-bind="text: StoreNo"></span>
+                                </td>
                                 <!-- Email envelope... -->
                                 <td class="col-email">
                                     <input type="checkbox" data-bind="visible:HasEmails && !$root.ViewingHistorical() && canSendEmail(), checked: checkedEmail, click: clickCheckedEmail">
@@ -523,7 +525,7 @@
                                         <i class="fa fa-flask" data-bind="visible: (PriceMatchType == 2)" data-infotip="[b]Trial Price[/b]"></i>
                                         <i class="fa fa-clone" data-bind="visible: (PriceMatchType == 3)" data-infotip="[b]Match Competitor[/b]"></i>
 
-                                        <a role="button" href="#" class="site-name" data-bind="attr:{id: SiteId}, click: getCompetitorPopupDataClick, html: (StoreName.replace('SAINSBURYS', ''))" data-toggle="modal" data-target="#competitorPricesPopup" data-infotip="View competitor's prices'"></a>
+                                        <a role="button" href="#" class="site-name" data-bind="attr:{id: SiteId}, click: getCompetitorPopupDataClick, html: (StoreName.replace('SAINSBURYS', ''))" data-toggle="modal" data-target="#competitorPricesPopup" data-infotip="View competitor's prices"></a>
                                       
                                         <div class="hide-hover">
                                             <div style="margin: 0 0 8px 0;">
@@ -573,7 +575,7 @@
                                         <span class="past-override-text" data-bind="visible: $root.ViewingHistorical()"><em data-bind="text: (FuelPrice.OverridePrice || 'Past'), attr: {'data-infotip' : '[i class=&quot;fa fa-clock&quot;][/i] Historical [b]Override Price[/b] of [em]' + FuelPrice.OverridePrice() + '[/em]'}"></em></span>
 
                                         <input type="text" data-bind="value: FuelPrice.OverridePrice, visible: (!$root.ViewingHistorical() && !$root.isDailyPriceFileOutdated() && !$root.hasLatestJsPriceDataForToday())
-        , event:{keyup: changeProp, blur: blurred, focus: focused}, css: ('txtPrice ' + OverrideInputCss()), attr: {id: ('OverridePrice_' + $parent.SiteId + '_' + FuelPrice.FuelTypeId), 'data-infotip': FuelPrice.PriceOverrideInfoTip()}" maxlength="8" />
+        , event:{keyup: changeProp, blur: blurred, focus: focused}, css: ('txtPrice ' + OverrideInputCss()), attr: {id: ('OverridePrice_' + $parent.SiteId + '_' + FuelPrice.FuelTypeId), 'data-infotip': FuelPrice.PriceOverrideInfoTip()}" maxlength="5" />
 
                                         <span class="text-danger no-daily-price-file-icon" data-bind="visible: (!$root.ViewingHistorical() && $root.isDailyPriceFileOutdated())" data-infotip="No [i]Daily Price File[/i] for Today[br /]Please upload a file"><i class="fa fa-times"></i><i class="fa fa-file-o"></i></span>
 

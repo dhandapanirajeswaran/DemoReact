@@ -247,9 +247,9 @@ table.competitorTable > tbody > .competitor-row  {
     color: #000;
 }
 .txtPrice.override-invalid {
-    border-color: #910048;
-    background-color: #ebccd1;
-    color: #910048
+    border-color: #d43f3a;
+    background-color:#d9534f;
+    color: #fff;
 }
 
 .txtPrice.override-increment-exceeds {
@@ -298,8 +298,25 @@ table.competitorTable > tbody > .competitor-row  {
     padding-right: 4px;
 }
 
-.site-row.focused,
-.site-row.focused:hover {
+.pricing-grid .site-row .col-store-no .row-indicator {
+    visibility: hidden;
+    float: left;
+    margin-top: 4px;
+    margin-left: 2px;
+}
+
+.pricing-grid .site-row.row-errors .col-store-no .row-indicator {
+    visibility: visible;
+    color: red;
+}
+
+.pricing-grid .site-row.row-override-increase-exceeds .col-store-no .row-indicator {
+    visibility: visible;
+    color: #910048;
+}
+
+.pricing-grid .site-row.focused,
+.pricing-grid .site-row.focused:hover {
     background-color: #ffc580;
 }
 .site-row.focused .site-name {color: #000;}
@@ -337,6 +354,10 @@ table.competitorTable > tbody > .competitor-row  {
 .site-row.no-checked-email {
 }
 
+.site-row td {
+    border-bottom: 3px solid transparent;
+}
+
 .site-row .col-editing {
     border-bottom: 3px solid #000;
     font-weight: bold;
@@ -355,12 +376,12 @@ table.competitorTable > tbody > .competitor-row  {
     position: absolute;
 }
 
-.table-show-edit-overrides  .site-row .click-edits-override:hover {
+.table-show-edit-overrides  .site-row .col-has-no-override .click-edits-override:hover {
     background-color: #ffc;
     box-shadow: 0 0 2px #000;
 }
 
-.table-show-edit-overrides .site-row .click-edits-override:hover::after {
+.table-show-edit-overrides .site-row .col-has-no-override .click-edits-override:hover::after {
     content: "Click to Edit Override";
     position: absolute;
     border-radius: 4px;
@@ -475,13 +496,13 @@ table.competitorTable > tbody > .competitor-row  {
 .pricing-grid .no-nearby-grocer-price {
     text-align: center;
 }
-.pricing-grid > tbody > .site-row.focused > td:nth-child(8),
-.pricing-grid > tbody > .site-row.focused > td:nth-child(9),
-.pricing-grid > tbody > .site-row.focused > td:nth-child(10),
+table.pricing-grid > tbody > tr.site-row.focused > td:nth-child(8),
+table.pricing-grid > tbody > tr.site-row.focused > td:nth-child(9),
+table.pricing-grid > tbody > tr.site-row.focused > td:nth-child(10),
 .pricing-grid > tbody > .site-row.focused > td:nth-child(11),
-.pricing-grid > tbody > .site-row.focused:hover > td:nth-child(8),
-.pricing-grid > tbody > .site-row.focused:hover > td:nth-child(9),
-.pricing-grid > tbody > .site-row.focused:hover > td:nth-child(10),
+table.pricing-grid > tbody > tr.site-row.focused:hover > td:nth-child(8),
+table.pricing-grid > tbody > tr.site-row.focused:hover > td:nth-child(9),
+table.pricing-grid > tbody > tr.site-row.focused:hover > td:nth-child(10),
 .pricing-grid > tbody > .site-row.focused:hover > td:nth-child(11) {
    background-color: #ffa560;
 }
@@ -515,7 +536,7 @@ table.competitorTable > tbody > .competitor-row  {
 
 /* column widths (header and body) */
 .pricing-grid .header-widths th:nth-child(1),
-.pricing-grid tbody td:nth-child(1) {width: 64px; text-align: right; padding-right:1em;} /* store no*/
+.pricing-grid tbody td:nth-child(1) {width: 64px; text-align: right;} /* store no*/
 
 .pricing-grid .header-widths th:nth-child(2),
 .pricing-grid tbody td:nth-child(2) {width: 32px; text-align: center;} /* email */
@@ -594,6 +615,16 @@ table.competitorTable > tbody > .competitor-row  {
 .price-pence {font-size: 115%; letter-spacing: 0px;}
 .price-fraction {letter-spacing: 2px; padding-top: 1px;}
 .price-na {font-size: 110%; letter-spacing: 1px; color: #ccc; font-style: italic;}
+
+table.pricing-grid > tbody > tr.site-row.row-override-increase-exceeds.focused > td.outside-prices-warning-limits:nth-child(11),
+.pricing-grid > tbody > .site-row.row-override-increase-exceeds:hover >td.outside-prices-warning-limits:nth-child(11),
+.pricing-grid > tbody > .site-row.row-override-increase-exceeds.focused > td.outside-prices-warning-limits:nth-child(11),
+.pricing-grid > tbody > .site-row.row-override-increase-exceeds.focused:hover > td.outside-prices-warning-limits:nth-child(11),
+tr.site-row.row-override-increase-exceeds td.outside-prices-warning-limits,
+.site-row .outside-prices-warning-limits {
+    background-color: #910048;
+    color: #fff;
+}
 
 .pricing-grid.hide-fuel-price-change-up .col-valid .fuel-price-change-up,
 .pricing-grid.hide-fuel-price-change-down .col-valid .fuel-price-change-down,
