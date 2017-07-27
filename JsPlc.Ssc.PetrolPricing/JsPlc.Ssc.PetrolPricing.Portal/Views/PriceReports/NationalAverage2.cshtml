@@ -70,6 +70,13 @@
 <hr />
 @if (Model != null && Model.NationalAverageReport != null && Model.NationalAverageReport.Fuels.First().Brands.Any())
 {
+    <div class="row">
+        <div class="text-info text-center col-md-12">
+            <h4>Showing data for <big class="text-black text-bold">@(Model.ForDate.Value.AddDays(-1).ToString("dd-MMM-yyyy"))</big> which was uploaded on @(Model.ForDate.Value.ToString("dd-MMM-yyyy"))</h4>
+        </div>
+    </div>
+
+
     <!-- Report Data -->
     <div class="horz-auto-scroll">
 

@@ -809,6 +809,8 @@ input[type=text].mono-font {
 
 
 .text-bold {font-weight: bold;}
+.text-black {color: #000;}
+.text-highlight {background-color: #ffc;}
 
 .badge-lg {font-size: 125%;}
 .badge-md {font-size: 110%;}

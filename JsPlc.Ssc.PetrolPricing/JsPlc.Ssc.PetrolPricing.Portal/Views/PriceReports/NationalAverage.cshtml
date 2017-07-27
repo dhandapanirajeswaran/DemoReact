@@ -89,6 +89,12 @@
 {
     <!-- Report Data -->
 
+    <div class="row">
+        <div class="text-info text-center col-md-9">
+            <h4>Showing data for <big class="text-black text-bold">@(Model.ForDate.Value.AddDays(-1).ToString("dd-MMM-yyyy"))</big> which was uploaded on @(Model.ForDate.Value.ToString("dd-MMM-yyyy"))</h4>
+        </div>
+    </div>
+
 
     <div class="divtable" style="width:900px;">
         <div class="row" style="font-weight:bold">
