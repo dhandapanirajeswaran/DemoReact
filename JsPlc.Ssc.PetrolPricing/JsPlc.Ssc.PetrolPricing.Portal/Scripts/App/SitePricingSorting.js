@@ -20,7 +20,10 @@
                 name: 'Email',
                 pause: false,
                 sorter: function (a, b) {
-                    return sortCompareNumbers(a.HasEmails, b.HasEmails);
+                    if (a.HasEmails && b.HasEmails) {
+                        return sortCompareNumbers(a.hasEmailPricesChanges(), b.hasEmailPricesChanges());
+                    } else
+                        return sortCompareNumbers(a.HasEmails, b.HasEmails);
                 }
             },
             {
