@@ -279,13 +279,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
             db.AddOrUpdateSitePriceRecord(cheapestPrice);
         }
 
-        /// <summary>
-        /// Apply the Suggested price logic (Override, Grocers, Rounding and Price Variance)
-        /// </summary>
-        /// <param name="site"></param>
-        /// <param name="sitePrice"></param>
-        /// <param name="currentPrices"></param>
-        /// <param name="fuelTypeId"></param>
+
         private void ApplyGrocerRoundingAndPriceVarianceRules(SitePrice sitePrice, SystemSettings systemSettings, DateTime forDate, Site site, SitePriceViewModel currentSitePrices, int fuelTypeId)
         {
             if (currentSitePrices == null)
@@ -299,52 +293,57 @@ namespace JsPlc.Ssc.PetrolPricing.Business
                 return;
 
             // get Grocer Statuses
-            var grocerStatuses = _db.GetNearbyGrocerPriceStatusForSites(forDate, site.Id.ToString(), systemSettings.MaxGrocerDriveTimeMinutes);
-            if (grocerStatuses == null || !grocerStatuses.Any())
+            var allGrocerStatuses = _db.GetNearbyGrocerPriceStatusForSites(forDate, site.Id.ToString(), systemSettings.MaxGrocerDriveTimeMinutes);
+            if (allGrocerStatuses == null || !allGrocerStatuses.Any())
                 return;
+
+            var firstGrocerStatus = allGrocerStatuses.First();
 
             NearbyGrocerStatuses grocerStatus = NearbyGrocerStatuses.None;
             switch (fuelTypeId)
             {
                 case (int)FuelTypeItem.Unleaded:
-                    grocerStatus = grocerStatuses.First().Unleaded;
+                    grocerStatus = firstGrocerStatus.Unleaded;
                     break;
                 case (int)FuelTypeItem.Diesel:
-                    grocerStatus = grocerStatuses.First().Diesel;
+                    grocerStatus = firstGrocerStatus.Diesel;
                     break;
                 case (int)FuelTypeItem.Super_Unleaded:
-                    grocerStatus = grocerStatuses.First().SuperUnleaded;
+                    grocerStatus = firstGrocerStatus.SuperUnleaded;
                     break;
             }
 
-            // get the 'today' price (Override or AutoPrice)
+            // get the 'today' price (Override or AutoPrice) from Yesterday
             var todayprice = siteFuelPrice.OverridePrice.HasValue
                 ? siteFuelPrice.OverridePrice.Value
                 : siteFuelPrice.TodayPrice.Value;
 
-            // has nearby Grocers but incomplete Grocer data ?
-            if (grocerStatus == NearbyGrocerStatuses.HasNearbyGrocers)
+
+            // Nearby Grocers, but Incomplete grocer data ?
+            if (grocerStatus.HasFlag(NearbyGrocerStatuses.HasNearbyGrocers) && !grocerStatus.HasFlag(NearbyGrocerStatuses.AllGrocersHavePriceData))
             {
-                // use today's price
-                sitePrice.SuggestedPrice = todayprice;
-                return;
+                // are we higher than cheapest price ?
+                if (sitePrice.SuggestedPrice > todayprice)
+                {
+                    // use today's price
+                    sitePrice.SuggestedPrice = todayprice;
+                }
             }
 
-            var tomorrowPrice = sitePrice.SuggestedPrice;
-
+            // apply decimal rounding (if any)
             if (systemSettings.DecimalRounding != -1)
             {
-                // apply Decimal Rounding
-                tomorrowPrice = ((int)(tomorrowPrice / 10) * 10) + systemSettings.DecimalRounding;
+                if (sitePrice.SuggestedPrice > 0)
+                    sitePrice.SuggestedPrice = ((sitePrice.SuggestedPrice / 10) * 10) + systemSettings.DecimalRounding;
             }
 
+            // is within Price Variance (less or equal to)
             var diff = sitePrice.SuggestedPrice - todayprice;
             if (Math.Abs(diff) <= systemSettings.PriceChangeVarianceThreshold)
             {
-                // within Price Change Variance -> use today's price
-                tomorrowPrice = todayprice;
-            } 
-            sitePrice.SuggestedPrice = tomorrowPrice;
+                // Use today's price
+                sitePrice.SuggestedPrice = todayprice;
+            }
         }
 
 		public async Task<int> SaveOverridePricesAsync(List<SitePrice> pricesToSave)
