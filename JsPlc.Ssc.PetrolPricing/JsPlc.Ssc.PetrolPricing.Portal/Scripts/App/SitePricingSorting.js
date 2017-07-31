@@ -5,7 +5,8 @@
         var pricingSorting = {
             index: 2,
             desc: false,
-            paused: false
+            paused: false,
+            dataPercentMode: 'all'
         };
 
         var sortableColumns = [
@@ -37,9 +38,7 @@
                 name: 'Unleaded Competitor Price Data %',
                 pause: false,
                 sorter: function (a, b) {
-                    var value1 = Number(a.SiteCompetitorsInfo.PriceSummaries[0].CompetitorPricePercent),
-                        value2 = Number(b.SiteCompetitorsInfo.PriceSummaries[0].CompetitorPricePercent);
-                    return sortCompareNumbers(value1, value2);
+                    return sortCompareDataPercent(a, b, 0);
                 }
             },
             {
@@ -73,9 +72,7 @@
                 name: 'Diesel Competitor Price Data %',
                 pause: false,
                 sorter: function (a, b) {
-                    var value1 = a.SiteCompetitorsInfo.PriceSummaries[1].CompetitorPricePercent,
-                        value2 = b.SiteCompetitorsInfo.PriceSummaries[1].CompetitorPricePercent;
-                    return sortCompareNumbers(value1, value2);
+                    return sortCompareDataPercent(a, b, 1);
                 }
             },
             {
@@ -109,9 +106,7 @@
                  name: 'Super-Unleaded Competitor Price Data %',
                  pause: false,
                  sorter: function (a, b) {
-                     var value1 = a.SiteCompetitorsInfo.PriceSummaries[2].CompetitorPricePercent,
-                         value2 = b.SiteCompetitorsInfo.PriceSummaries[2].CompetitorPricePercent;
-                     return sortCompareNumbers(value1, value2);
+                     return sortCompareDataPercent(a, b, 2);
                  }
              },
             {
@@ -142,6 +137,23 @@
                 }
             },
         ];
+
+        function sortCompareDataPercent(a, b, index) {
+            var value1, value2;
+            switch (pricingSorting.dataPercentMode) {
+                case 'all':
+                    value1 = Number(a.SiteCompetitorsInfo.PriceSummaries[index].CompetitorPricePercent);
+                    value2 = Number(b.SiteCompetitorsInfo.PriceSummaries[index].CompetitorPricePercent);
+                    break;
+                case 'grocer':
+                    value1 = Number(a.SiteCompetitorsInfo.PriceSummaries[index].GrocerPricePercent);
+                    value2 = Number(b.SiteCompetitorsInfo.PriceSummaries[index].GrocerPricePercent);
+                    break;
+                default:
+                    console.log('Unsupported sort DataPercent name: ' + pricingSorting.dataPercent);
+            }
+            return sortCompareNumbers(value1, value2);
+        };
 
         function sortCompareNumbers(number1, number2) {
             var value1 = toNumberOrZero(number1),
@@ -258,6 +270,10 @@
             redrawAscDesc();
         };
 
+        function setDataPercentMode(mode) {
+            pricingSorting.dataPercentMode = mode;
+        };
+
         // API
         return {
             sort: sort,
@@ -265,7 +281,8 @@
             getSortMessage: getSortMessage,
             getSortIndex: getSortIndex,
             pauseForColumns: pauseForColumns,
-            resume: resume
+            resume: resume,
+            setDataPercentMode: setDataPercentMode
         };
     }
 );

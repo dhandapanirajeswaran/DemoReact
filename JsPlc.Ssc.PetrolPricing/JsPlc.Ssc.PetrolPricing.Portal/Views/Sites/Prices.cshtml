@@ -268,7 +268,7 @@
                 <!-- highlighers -->
                 <div class="row" style="margin-bottom: 4px; padding-bottom: 4px; border-bottom: 1px solid #ccc;">
 
-                    <div class="col-md-8" data-bind="visible: !$root.busyLoadingData()" style="display: none;">
+                    <div class="col-md-7" data-bind="visible: !$root.busyLoadingData()" style="display: none;">
                         <strong>Price Highlight:</strong><br />
                         <div class="btn-group">
                             <button type="button" class="btn btn-sm" data-bind="click: toggleHighlightTrialPrices, css: {'btn-primary': $root.highlightTrialPrices()}" data-infotip="Toggle the [b]Trial Prices[/b] Highlighting"><i class="fa fa-flask "></i> Trial <span class="badge" data-bind="text: $root.TrialPricesCount"></span></button>
@@ -283,23 +283,34 @@
                         </div>
                         <button type="button" class="btn btn-sm btn-warning" data-bind="visible: $root.shouldShouldHighlightReset(), click: resetPriceHighlighting" data-infotip="Hide all the Highlighting"><i class="fa fa-eraser "></i></button>
                     </div>
-                    <div class="col-md-8 text-center" data-bind="visible: $root.busyLoadingData()">
+                    <div class="col-md-7 text-center" data-bind="visible: $root.busyLoadingData()">
                         Loading prices...
                     </div>
 
-                    <div class="col-md-2">
-                        <!-- ko if: (!$root.ViewingHistorical() && !$root.isDailyPriceFileOutdated())-->
-                            <strong>Auto Hide Overrides:</strong><br />
-                            <button type="button" class="btn" data-bind="css: ($root.isAutoHideShowOverrides() ? 'btn-primary' : 'btn-default'), click: $root.enableAutoHideOverrides" data-infotip="Auto-hide empty [b]Overrides[/b] fields"><i class="fa fa-check-square-o"></i> On</button>
-                            <button type="button" class="btn" data-bind="css: ($root.isAutoHideShowOverrides() ? 'btn-default' : 'btn-primary'), click: $root.disableAutoHideOverrides" data-infotip="[u]Always[/u] show the [b]Overrides[/b][br /]Even empty ones"><i class="fa fa-square-o"></i> Off</button>
-                        <!-- /ko -->
-                    </div>
+                    <div class="col-md-5">
+                        <div class="col-md-4 no-margin no-padding">
+                            <label>Data %</label><br />
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-sm" data-bind="click: $root.showDataPercentAll, css: ($root.ShowingDataPercent() == 'all' ? 'btn-primary' : 'btn-default')" data-infotip=""><i class="fa fa-credit-card"></i> All</button>
+                                <button type="button" class="btn btn-sm" data-bind="click: $root.showDataPercentGrocer, css: ($root.ShowingDataPercent() == 'grocer' ? 'btn-primary' : 'btn-default')" data-infotip=""><i class="fa fa-shopping-cart"></i> Grocers</button>
+                            </div>
+                        </div>
 
-                    <div class="col-md-2 col">
-                        <strong>Scrolling:</strong>
-                        <div class="btn-group" role="group">
-                            <button type="button" class="btn btn-sm btn-primary" data-click="setExpandMode" data-mode="collapsed" data-states="expanded,collapsed" data-target="#PricingPanelScroller" data-message="Price grid collapsed" data-infotip-dock="below" data-infotip="Collapse the Pricing Grid"><i class="fa fa-toggle-up"></i> Collapse</button>
-                            <button type="button" class="btn btn-sm" data-click="setExpandMode" data-mode="expanded" data-states="expanded,collapsed" data-target="#PricingPanelScroller" data-message="Price grid expanded" data-infotip-dock="below" data-infotip="Expand the Pricing Grid"><i class="fa fa-toggle-down"></i> Expand</button>
+                        <div class="col-md-4 no-margin no-padding">
+                            <!-- ko if: (!$root.ViewingHistorical() && !$root.isDailyPriceFileOutdated())-->
+                            <label>Auto Hide Overrides:</label><br />
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-sm" data-bind="css: ($root.isAutoHideShowOverrides() ? 'btn-primary' : 'btn-default'), click: $root.enableAutoHideOverrides" data-infotip="Auto-hide empty [b]Overrides[/b] fields"><i class="fa fa-check-square-o"></i> On</button>
+                                <button type="button" class="btn btn-sm" data-bind="css: ($root.isAutoHideShowOverrides() ? 'btn-default' : 'btn-primary'), click: $root.disableAutoHideOverrides" data-infotip="[u]Always[/u] show the [b]Overrides[/b][br /]Even empty ones"><i class="fa fa-square-o"></i> Off</button>
+                            </div>
+                            <!-- /ko -->
+                        </div>
+                        <div class="col-md-4 no-margin no-padding">
+                            <label>Scrolling:</label><br />
+                            <div class="btn-group" role="group">
+                                <button type="button" class="btn btn-sm btn-primary" data-click="setExpandMode" data-mode="collapsed" data-states="expanded,collapsed" data-target="#PricingPanelScroller" data-message="Price grid collapsed" data-infotip-dock="below" data-infotip="Collapse the Pricing Grid"><i class="fa fa-toggle-up"></i> Collapse</button>
+                                <button type="button" class="btn btn-sm" data-click="setExpandMode" data-mode="expanded" data-states="expanded,collapsed" data-target="#PricingPanelScroller" data-message="Price grid expanded" data-infotip-dock="below" data-infotip="Expand the Pricing Grid"><i class="fa fa-toggle-down"></i> Expand</button>
+                            </div>
                         </div>
                     </div>
                 </div>

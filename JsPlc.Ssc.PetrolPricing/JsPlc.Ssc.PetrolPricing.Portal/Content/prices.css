@@ -783,7 +783,7 @@ tr.site-row.row-override-exceeds-warning-limits td.outside-prices-warning-limits
 .site-name-overlay .hide-hover {display: none; clear: both; margin-top: 4px;}
 
 .site-name-overlay:hover {
-    width: 120%;
+    width: 96%;
     background-color: #000;
     color: #fff;
     box-shadow: 2px 4px 6px #999;
