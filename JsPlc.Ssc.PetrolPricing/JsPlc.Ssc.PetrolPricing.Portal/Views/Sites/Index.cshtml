@@ -225,34 +225,30 @@
                name="viewingStoreTown" data-bind="value: $root.StoreTown" />
     </div>
 
-    <div class="col-md-1">
-        <button id="btnGo" style="margin-top: 24px" type="button" id="btnGO" class="btn btn-success" data-bind="click: searchSainsburysStores">Go</button>
+    <div class="col-md-1 newline">
+        <button id="btnGo" type="button" class="btn btn-success" data-bind="click: searchSainsburysStores" data-infotip="Search the [b]Sites[/b]">Go</button>
     </div>
 
-    <div class="col-md-3">
-        <button style="margin-top: 24px" type="button" class="btn btn-default" data-bind="click: function() { reloadSearchPage('Sites') }">Show all</button>
-        <a href="@Url.Action("Index", "Sites")" style="margin-top: 24px;" class="btn btn-success pull-right" data-infotip="Clear the Search Criteria"><i class="fa fa-eraser"></i> Reset</a>
+    <div class="col-md-3 newline">
+        <button type="button" class="btn btn-warning" data-infotip="Clear the [b]Site[/b] filters" data-bind="click: function() { reloadSearchPage('Sites') }"><i class="fa fa-eraser"></i></button>
     </div>
 </div>
 <hr />
 @if (Model != null)
 {
     <div class="row">
-        <div class="col-md-1">
-            <strong>Highlighting:</strong>
-        </div>
-        <div class="col-md-5">
+        <div class="col-md-6">
+            <label>Highlight:</label><br />
             <div class="btn-group">
                 <button id="btnToggleHighlightTrialPriceSites" type="button" class="btn btn-sm btn-default" data-infotip="Toggle [b]Trial Price[/b] Sites Highlighting"><i class="fa fa-flask"></i> Trial Prices <span class="badge">@(trialPriceSiteCount)</span></button>
                 <button id="btnToggleHighlightMatchCompetitors" type="button" class="btn btn-sm btn-default" data-infotip="Toggle [b]Match Competitor[/b] Highlighting"><i class="fa fa-clone"></i> Match Competitors <span class="badge">@(matchCompetitorSiteCount)</span> </button>
                 <button id="btnToggleHighlightStandardPrices" type="button" class="btn btn-sm btn-default" data-infotip="Toggle [b]Standard Price[/b] Highlighting"><i class="fa fa-dot-circle-o"></i> Standard Prices <span class="badge">@(standardSiteCount)</span></button>
             </div>
-            <button id="btnResetHighlighting" type="button" style="display: none;" class="btn btn-sm btn-danger" data-infotip="Remove [b]All[/b] Highlighting"><i class="fa fa-eraser"></i> Clear</button>
+            <button id="btnResetHighlighting" type="button" style="display: none;" class="btn btn-sm btn-warning" data-infotip="Remove [b]All[/b] Highlighting"><i class="fa fa-eraser"></i></button>
         </div>
 
-        <div class="col-md-6 text-right">
-            <strong>Show:</strong>
-            <button id="btnResetActiveSites" type="button" style="display: none;" class="btn btn-sm btn-danger" data-infotip="Show [b]All[/b] the Sites"><i class="fa fa-eraser "></i> Clear</button>
+        <div class="col-md-6">
+            <label>Show:</label><br />
             <div class="btn-group">
                 <button id="btnShowWithEmails" type="button" class="btn btn-sm btn-default" data-infotip="Show or Hide the Sites [b]with[/b] Emails"><i class="fa fa-at"></i> With Emails <span class="badge">@(hasEmailSiteCount)</span></button>
                 <button id="btnShowNoEmails" type="button" class="btn btn-sm btn-default" data-infotip="Show or Hide the Sites with [em]NO[/em] Emails"><i class="fa fa-times"></i> No Emails <span class="badge">@(hasNoEmailSiteCount)</span> </button>
@@ -261,6 +257,7 @@
                 <button id="btnShowActiveSites" type="button" class="btn btn-sm btn-default" data-infotip="Show or Hide the [b]Active[/b] Sites"><i class="fa fa-square"></i> Active <span class="badge">@(activeSiteCount)</span></button>
                 <button id="btnShowInActiveSites" type="button" class="btn btn-sm btn-default" data-infotip="Show or Hide the [b]In-active[/b] Sites"><i class="fa fa-square-o"></i> Inactive <span class="badge">@(inactiveSiteCount)</span></button>
             </div>
+            <button id="btnResetActiveSites" type="button" style="display: none;" class="btn btn-sm btn-warning" data-infotip="Show [b]All[/b] the Sites"><i class="fa fa-eraser "></i></button>
         </div>
     </div>
     <hr />
