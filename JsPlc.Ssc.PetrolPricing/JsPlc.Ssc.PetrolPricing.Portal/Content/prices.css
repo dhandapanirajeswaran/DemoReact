@@ -310,7 +310,7 @@ table.competitorTable > tbody > .competitor-row  {
     color: red;
 }
 
-.pricing-grid .site-row.row-override-increase-exceeds .col-store-no .row-indicator {
+.pricing-grid .site-row.row-override-exceeds-warning-limits .col-store-no .row-indicator {
     visibility: visible;
     color: #910048;
 }
@@ -329,16 +329,17 @@ table.competitorTable > tbody > .competitor-row  {
     border-bottom: 2px solid orange;
 }
 
-.site-row.row-errors {
-    background-color: #fee;
+.row.site.row.row-exceeds-absolutes,
+.row.site-row.row-errors {
+    background-color: #fcc;
 }
-.site-row.row-override-increase-exceeds {
+.site-row.row-override-exceeds-warning-limits {
     background: #fcf8e3;
 }
-.site-row.row-override-increase-exceeds td:nth-child(8),
-.site-row.row-override-increase-exceeds td:nth-child(9),
-.site-row.row-override-increase-exceeds td:nth-child(10),
-.site-row.row-override-increase-exceeds td:nth-child(11) {
+.site-row.row-override-exceeds-warning-limits td:nth-child(8),
+.site-row.row-override-exceeds-warning-limits td:nth-child(9),
+.site-row.row-override-exceeds-warning-limits td:nth-child(10),
+.site-row.row-override-exceeds-warning-limits td:nth-child(11) {
     background: #dcd8c3;
 }
 
@@ -519,7 +520,7 @@ table.pricing-grid > tbody > tr.site-row.focused:hover > td:nth-child(10),
 .pricing-grid > tbody > .site-row.row-errors > td:nth-child(9),
 .pricing-grid > tbody > .site-row.row-errors > td:nth-child(10),
 .pricing-grid > tbody > .site-row.row-errors > td:nth-child(11){
-    background-color: #fcc;
+    background-color: #faa;
 }
 
 .pricing-grid {
@@ -616,11 +617,11 @@ table.pricing-grid > tbody > tr.site-row.focused:hover > td:nth-child(10),
 .price-fraction {letter-spacing: 2px; padding-top: 1px;}
 .price-na {font-size: 110%; letter-spacing: 1px; color: #ccc; font-style: italic;}
 
-table.pricing-grid > tbody > tr.site-row.row-override-increase-exceeds.focused > td.outside-prices-warning-limits:nth-child(11),
-.pricing-grid > tbody > .site-row.row-override-increase-exceeds:hover >td.outside-prices-warning-limits:nth-child(11),
-.pricing-grid > tbody > .site-row.row-override-increase-exceeds.focused > td.outside-prices-warning-limits:nth-child(11),
-.pricing-grid > tbody > .site-row.row-override-increase-exceeds.focused:hover > td.outside-prices-warning-limits:nth-child(11),
-tr.site-row.row-override-increase-exceeds td.outside-prices-warning-limits,
+table.pricing-grid > tbody > tr.site-row.row-override-exceeds-warning-limits.focused > td.outside-prices-warning-limits:nth-child(11),
+.pricing-grid > tbody > .site-row.row-override-exceeds-warning-limits:hover >td.outside-prices-warning-limits:nth-child(11),
+.pricing-grid > tbody > .site-row.row-override-exceeds-warning-limits.focused > td.outside-prices-warning-limits:nth-child(11),
+.pricing-grid > tbody > .site-row.row-override-exceeds-warning-limits.focused:hover > td.outside-prices-warning-limits:nth-child(11),
+tr.site-row.row-override-exceeds-warning-limits td.outside-prices-warning-limits,
 .site-row .outside-prices-warning-limits {
     background-color: #910048;
     color: #fff;

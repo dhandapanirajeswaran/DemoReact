@@ -201,18 +201,19 @@
             <hr style="width:1280px;" />
             <div style="display: none" class="alert alert-danger" data-bind="visible: $root.HasValidationErrors() || $root.HasErrorMessage()">
                 <div class="col-md-1 text-center"><i class="fa fa-exclamation-triangle fa-2x"></i></div>
-                <div class="col-md-8" style="padding-top: 2px"><strong><span id="msgError"></span></strong></div>
+                <div class="col-md-8" style="padding-top: 2px"><strong><span id="msgError" class="font125pc"></span></strong></div>
                 <div class="clearfix"></div>
             </div>
             <div style="display: none" class="alert alert-warning" data-bind="visible: !$root.hasAnyFieldErrors() && !$root.HasValidationErrors() && $root.HasUnsavedChanges() && !$root.ViewingHistorical() && !$root.hasBadPriceChangeValue()">
                 <div class="col-md-1 text-center"><i class="fa fa-question-circle fa-2x pulse-size"></i></div>
                 <div class="col-md-10">
-                    <strong>
+                    <strong class="font125pc" data-bind="visible: !$root.isEditing()">
                         You have unsaved changes. Would you like to save them?
                     </strong>
+                    <strong class="font125pc" data-bind="visible: $root.isEditing()">You are currently editing an Override- please click outside a row to finish editing</strong>
                 </div>
                 <div class="col-md-1">
-                    <button type="button" class="btn btn-success btn-block" data-bind="click: savePetrolPricingForm" data-infotip="Save the changes">
+                    <button type="button" class="btn btn-success btn-block" data-bind="visible: !$root.isEditing(), click: savePetrolPricingForm" data-infotip="Save the changes">
                         <i class="fa fa-check"></i> Yes
                     </button>
                 </div>
@@ -417,6 +418,7 @@
                                             <option data-bind="visible: !$root.ViewingHistorical()">Selected</option>
                                             <option data-bind="visible: !$root.ViewingHistorical()">Not Selected</option>
                                             <option data-bind="visible: !$root.ViewingHistorical()">Exceeds Absolute Min/Max</option>
+                                            <option data-bind="visible: !$root.ViewingHistorical()">Exceeds +/- Warnings</option>
                                             <option data-bind="visible: !$root.ViewingHistorical()">Errors</option>
                                             <option data-bind="visible: !$root.ViewingHistorical()">Inside Variance</option>
                                             <option data-bind="visible: !$root.ViewingHistorical()">Outside Variance</option>
