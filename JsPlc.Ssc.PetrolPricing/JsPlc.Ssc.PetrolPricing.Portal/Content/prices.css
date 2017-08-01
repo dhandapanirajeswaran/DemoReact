@@ -226,6 +226,7 @@ table.competitorTable > tbody > .competitor-row  {
     border: 1px solid #ccc;
     border-radius: 4px;
     margin-right: 2px;
+    background-color: #ffe;
 }
 
 .txtPrice:hover,
@@ -770,7 +771,7 @@ tr.site-row.row-override-exceeds-warning-limits td.outside-prices-warning-limits
     position: absolute;
     left: 0;
     top: 0;
-    padding: 4px 8px 8px 8px;
+    padding: 4px 6px 8px 6px;
     width: 100%;
     margin-left: 1em;
 }
@@ -817,30 +818,30 @@ tr.site-row.row-override-exceeds-warning-limits td.outside-prices-warning-limits
     right: 8em;
 }
 
-.site-name-overlay .site-town {font-weight: bold;}
+.site-name-overlay .site-town {font-weight: bold; display: inline-block; width: 12em;}
 .site-name-overlay .site-catno,
 .site-name-overlay .site-pfsno,
-.site-name-overlay .site-id {font-weight: bold; float: right; margin-right: 1em;}
+.site-name-overlay .site-id {font-weight: bold;  display: inline-block; width: 4.5em;}
 
 .site-name-overlay .site-town::before{
-    content: "Town: ";
+    content: "TOWN: ";
     color: #aaa;
+    font-variant: small-caps;
+    font-weight: normal;
 }
 
 .site-name-overlay .site-catno::before {
-    content: "Cat: ";
+    content: "CAT: ";
     color: #aaa;
+    font-variant: small-caps;
+    font-weight: normal;
 }
 .site-name-overlay .site-pfsno::before {
-    content: "Pfs: ";
+    content: "PFS: ";
     color: #aaa;
+    font-variant: small-caps;
+    font-weight: normal;
 }
-
-.site-name-overlay .site-id::before {
-    content: 'Id: ';
-    color: #aaa;
-}
-
 
 .competitor-fuel-unleaded {
     background-color: #ffc;
