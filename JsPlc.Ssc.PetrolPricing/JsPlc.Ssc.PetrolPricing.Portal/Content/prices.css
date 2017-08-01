@@ -814,7 +814,7 @@ tr.site-row.row-override-exceeds-warning-limits td.outside-prices-warning-limits
 }
 .site-name-overlay .competitor-site-link {
     position: absolute;
-    right: 10em;
+    right: 8em;
 }
 
 .site-name-overlay .site-town {font-weight: bold;}
