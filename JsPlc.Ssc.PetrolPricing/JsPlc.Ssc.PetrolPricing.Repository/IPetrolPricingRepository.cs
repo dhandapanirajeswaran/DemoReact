@@ -355,5 +355,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         StatusViewModel RemoveAllSiteEmailAddresses();
         IEnumerable<SiteEmailAddressViewModel> GetSiteEmailAddresses(int siteId = 0);
         StatusViewModel UpsertSiteEmailAddresses(IEnumerable<SiteEmailImportViewModel> siteEmailAddresses);
+
+        void FixZeroSuggestedSitePricesForDay(DateTime forDate);
     }
 }

@@ -348,6 +348,9 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 
 		public async Task<int> SaveOverridePricesAsync(List<SitePrice> pricesToSave)
 		{
+            // fix any SuggestedPrice = 0 records... otherwise the Override will be ignored by UI
+            _db.FixZeroSuggestedSitePricesForDay(DateTime.Now.Date);
+
 			return await _db.SaveOverridePricesAsync(pricesToSave);
 		}
 

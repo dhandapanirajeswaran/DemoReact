@@ -208,6 +208,7 @@
     <Build Include="dbo\Stored Procedures\spRemoveAllSiteEmailAddresses.sql" />
     <Build Include="dbo\Stored Procedures\spGetSiteEmailAddresses.sql" />
     <Build Include="dbo\Stored Procedures\spUpsertSiteEmailAddreses.sql" />
+    <Build Include="dbo\Stored Procedures\spFixZeroSuggestedSitePricesForDay.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Scripts\PostDeployment\Script.PostDeployment.sql" />

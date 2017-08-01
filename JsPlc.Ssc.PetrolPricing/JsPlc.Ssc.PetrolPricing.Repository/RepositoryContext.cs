@@ -561,5 +561,15 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             };
             return DapperHelper.QueryScalar(this, sprocName, parameters);
         }
+
+        public void FixZeroSuggestedSitePricesForDay(DateTime forDate)
+        {
+            const string sprocName = "spFixZeroSuggestedSitePricesForDay";
+            var parameters = new
+            {
+                @ForDate = forDate
+            };
+            DapperHelper.Execute(this, sprocName, parameters);
+        }
     }
 }

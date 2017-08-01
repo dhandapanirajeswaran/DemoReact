@@ -565,7 +565,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
                 var settings = _context.SystemSettings.FirstOrDefault();
 
-                GetNearbyGrocerPriceStatus(forDate, dbList, settings.MaxGrocerDriveTimeMinutes);
+                var nearbyGrocerStatuses = GetNearbyGrocerPriceStatus(forDate, dbList, settings.MaxGrocerDriveTimeMinutes);
 
                 var maxCompetitorDriveTime = 25; // 25 mins for ALL competitors (not just Grocers)
 
@@ -578,6 +578,11 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                     _logger.Debug("Finished: AddFuelPricesRowsForSites");
                 }
 
+                var systemSettings = _context.SystemSettings.FirstOrDefault();
+
+                // Apply the Grocer, Decimal Rounding and Price Variance rules
+                ApplyGrocerRoundingAndPriceVarianceRules(forDate, dbList, nearbyGrocerStatuses, systemSettings);
+
                 // Apply5PMarkupForSuperUnleadedForNonCompetitorSites(dbList);
 
                 if (shouldCompareOldvsNew)
@@ -589,7 +594,6 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                 }
 
                 // using test (NON-LIVE) email addresses ?
-                var systemSettings = _context.SystemSettings.FirstOrDefault();
                 if (systemSettings.EnableSiteEmails == false)
                 {
                     var testEmailAddresses = systemSettings.SiteEmailTestAddresses.Split(';').ToList();
@@ -610,6 +614,69 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                 _logger.Debug("Crashed: CallSitePriceSproc");
                 _logger.Error(ce);
                 return null;
+            }
+        }
+
+        private void ApplyGrocerRoundingAndPriceVarianceRules(DateTime forDate,
+            List<SitePriceViewModel> dbList,
+            IEnumerable<NearbyGrocerPriceSiteStatus> nearbyGrocerStatuses,
+            SystemSettings systemSettings
+            )
+        {
+            // historical data ?
+            if (forDate.Date != DateTime.Now.Date)
+                return;
+
+            foreach (var site in dbList)
+            {
+                var siteGrocer = nearbyGrocerStatuses.FirstOrDefault(x => x.SiteId == site.SiteId);
+
+                foreach (var siteFuel in site.FuelPrices)
+                {
+                    var grocerStatus = NearbyGrocerStatuses.None;
+                    if (siteGrocer != null) {
+                        if (siteFuel.FuelTypeId == (int)FuelTypeItem.Unleaded)
+                            grocerStatus = siteGrocer.Unleaded;
+                        else if (siteFuel.FuelTypeId == (int)FuelTypeItem.Diesel)
+                            grocerStatus = siteGrocer.Diesel;
+                        else if (siteFuel.FuelTypeId == (int)FuelTypeItem.Super_Unleaded)
+                            grocerStatus = siteGrocer.SuperUnleaded;
+                    }
+
+                    var todayPrice = siteFuel.TodayPrice.HasValue ? siteFuel.TodayPrice.Value : 0;
+                    var autoPrice = siteFuel.AutoPrice.HasValue ? siteFuel.AutoPrice.Value : 0;
+
+                    if (todayPrice == 0 || autoPrice == 0)
+                        continue;
+
+                    // Grocers but incomplete data ?
+                    if (grocerStatus.HasFlag(NearbyGrocerStatuses.HasNearbyGrocers) && !grocerStatus.HasFlag(NearbyGrocerStatuses.AllGrocersHavePriceData))
+                    {
+                        // are we higher than cheapest competitor ?
+                        if (autoPrice > todayPrice)
+                        {
+                            // use today's price
+                            autoPrice = todayPrice;
+                        }
+                    }
+
+                    // apply decimal rounding (if any)
+                    if (systemSettings.DecimalRounding != -1)
+                    {
+                        autoPrice = (int)(autoPrice / 10) * 10 + systemSettings.DecimalRounding;
+                    }
+
+                    var diff = autoPrice - todayPrice;
+                    if (Math.Abs(diff) <= systemSettings.PriceChangeVarianceThreshold)
+                    {
+                        // within Price Variance, so use today's price
+                        autoPrice = todayPrice;
+                    }
+
+                    // store auto price and recalculate difference
+                    siteFuel.AutoPrice = (int?)autoPrice;
+                    siteFuel.Difference = (int?)(autoPrice - todayPrice);
+                }
             }
         }
 
@@ -649,15 +716,15 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             }
         }
 
-        private void GetNearbyGrocerPriceStatus(DateTime forDate, IEnumerable<SitePriceViewModel> sites, int driveTime)
+        private IEnumerable<NearbyGrocerPriceSiteStatus> GetNearbyGrocerPriceStatus(DateTime forDate, IEnumerable<SitePriceViewModel> sites, int driveTime)
         {
             if (sites == null || !sites.Any())
-                return;
+                return new List<NearbyGrocerPriceSiteStatus>();
 
             var siteIds = sites.Select(x => x.SiteId.ToString()).Aggregate((x, y) => x + "," + y);
 
-            var statuses = GetNearbyGrocerPriceStatusForSites(forDate, siteIds, driveTime);
-            foreach(var status in statuses)
+            var allGrocerFuelStatuses = GetNearbyGrocerPriceStatusForSites(forDate, siteIds, driveTime);
+            foreach(var status in allGrocerFuelStatuses)
             {
                 var site = sites.First(x => x.SiteId == status.SiteId);
 
@@ -671,6 +738,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                 site.HasNearbySuperUnleadedGrocers = status.SuperUnleaded.HasFlag(NearbyGrocerStatuses.HasNearbyGrocers);
                 site.HasNearbySuperUnleadedGrocersPriceData = status.SuperUnleaded.HasFlag(NearbyGrocerStatuses.AllGrocersHavePriceData);
             }
+            return allGrocerFuelStatuses;
         }
 
         public IEnumerable<NearbyGrocerPriceSiteStatus> GetNearbyGrocerPriceStatusForSites(DateTime forDate, string siteIds, int driveTime)
@@ -702,6 +770,11 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                 SuccessMessage = status == 0 ? "Updated Site Email Addresses" : "",
                 ErrorMessage = status != 0 ? "Unable to update Site Email Addresses" : ""
             };
+        }
+
+        public void FixZeroSuggestedSitePricesForDay(DateTime forDate)
+        {
+            _context.FixZeroSuggestedSitePricesForDay(forDate);
         }
 
         /// <summary>

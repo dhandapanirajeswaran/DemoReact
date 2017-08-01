@@ -872,6 +872,9 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 
 			if (dpFile != null)
 			{
+                // fix SuggestedPrice = 0 records
+                _db.FixZeroSuggestedSitePricesForDay(fileProcessed.UploadDateTime.Date);
+
 				_priceService.DoCalcDailyPrices(fileProcessed.UploadDateTime);
 			}
 		}
