@@ -254,7 +254,12 @@
             }
 
             $(selectors.uploadButton).removeClass('btn-primary').addClass('btn-danger');
-            $(selectors.fileUploadingDialog).show();
+            //$(selectors.fileUploadingDialog).show();
+
+            busyloader.show({
+                message: 'Uploading File. Please wait...',
+                dull: true
+            });
 
             setTimeout(delayed, 100);
         };
