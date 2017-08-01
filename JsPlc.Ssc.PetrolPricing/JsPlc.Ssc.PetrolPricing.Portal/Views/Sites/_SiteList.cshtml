@@ -44,6 +44,16 @@
         font-style: italic;
     }
 
+    .table > tbody > tr.has-missing-data:nth-last-of-type(odd) {
+        color: #a94442;
+        background-color: #f2dede;
+        border-bottom: 1px solid #fff;
+    }
+    .has-missing-data {
+        color: #a94442;
+        background-color: #f2dede;
+        border-bottom: 1px solid #fff;
+    }
 </style>
 
 <table class="table table-striped header-fixed site-grid" style="margin-bottom: 0;">
@@ -110,12 +120,15 @@
                 var isTrialPrice = priceMatchType == (int)PriceMatchType.TrailPrice;
                 var isStandardPrice = priceMatchType == (int)PriceMatchType.StandardPrice;
                 var hasEmails = item.Emails != null && item.Emails.Any();
+                var hasMissingCatNo = !item.CatNo.HasValue || item.CatNo == 0;
+                var hasMissingStoreNo = !item.StoreNo.HasValue || item.StoreNo == 0;
 
                 var rowClasses = (isActive ? "site-active" : "site-inactive")
                     + (isTrialPrice ? " site-trial-price" : "")
                     + (isMatchCompetitor ? " site-match-competitor" : "")
                     + (isStandardPrice ? " site-standard-price" : "")
-                    + (hasEmails ? " has-emails" : " no-email");
+                    + (hasEmails ? " has-emails" : " no-email")
+                    + (hasMissingCatNo || hasMissingStoreNo ? " has-missing-data" : " has-complete-data");
 
                 <tr class="@(rowClasses)">
                     <td class="text-center">
@@ -134,10 +147,24 @@
                     </td>
 
                     <td class="filterable-cell text-center">
-                        @Html.DisplayFor(modelItem => item.CatNo)
+                        @if (hasMissingCatNo)
+                        {
+                            <span class="text-danger" data-infotip="Missing [b]CatNo[/b][br /]This prevents pricing"><i class="fa fa-warning"></i></span>
+                        }
+                        else
+                        {
+                            @Html.DisplayFor(modelItem => item.CatNo)
+                        }
                     </td>
                     <td class="filterable-cell text-center">
-                        @Html.DisplayFor(modelItem => item.StoreNo)
+                        @if (hasMissingStoreNo)
+                        {
+                            <span class="text-danger" data-infotip="Missing [b]StoreNo[/b][br /]This prevents pricing"><i class="fa fa-warning"></i></span>
+                        }
+                        else
+                        {
+                            @Html.DisplayFor(modelItem => item.StoreNo)
+                        }
                     </td>
                     <td class="filterable-cell text-center">
                         @Html.DisplayFor(modelItem => item.PfsNo)

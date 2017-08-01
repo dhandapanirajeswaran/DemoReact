@@ -10,6 +10,8 @@
             standardSites: $('#hdnStandardPriceSitesCount').val() || 0,
             hasEmails: $('#hdnHasEmailsSiteCount').val() || 0,
             hasNoEmails: $('#hdnHasNoEmailsSiteCount').val() || 0,
+            withDataSites: $('#hdnHasDataSitesCount').val() || 0,
+            missingDataSites: $('#hdnMissingDataSitesCount').val() || 0
         };
 
         var siteFilters = {
@@ -19,7 +21,9 @@
             showInactiveSites: true,
             highlightTrialPrices: true,
             highlightMatchCompetitors: true,
-            highlightStandardPrices: true
+            highlightStandardPrices: true,
+            withData: true,
+            missingData: true
         };
 
         var settingsMap = {
@@ -46,6 +50,10 @@
                             && (
                                 (row.hasClass('has-emails') && siteFilters.showHasEmails)
                                 || (row.hasClass('no-email') && siteFilters.showNoEmails)
+                            )
+                            && (
+                                (row.hasClass('has-missing-data') && siteFilters.missingData)
+                                || (row.hasClass('has-complete-data') && siteFilters.withData)
                             )
                         );
 
@@ -181,9 +189,11 @@
                 withNoEmailsButton = $('#btnShowNoEmails'),
                 resetButton = $('#btnResetActiveSites'),
                 activeRows = $('tr.site-active'),
-                inactiveRows = $('tr.site-inactive');
+                inactiveRows = $('tr.site-inactive'),
+                withDataButton = $('#btnShowWithData'),
+                missingDataButton = $('#btnShowMissingData');
 
-            if (siteFilters.showActiveSites && siteFilters.showInactiveSites && siteFilters.showHasEmails && siteFilters.showNoEmails)
+            if (siteFilters.showActiveSites && siteFilters.showInactiveSites && siteFilters.showHasEmails && siteFilters.showNoEmails && siteFilters.withData && siteFilters.missingData)
                 resetButton.hide();
             else
                 resetButton.show();
@@ -192,6 +202,8 @@
             setButtonClassState(inactiveButton, siteFilters.showInactiveSites);
             setButtonClassState(withEmailsButton, siteFilters.showHasEmails);
             setButtonClassState(withNoEmailsButton, siteFilters.showNoEmails);
+            setButtonClassState(withDataButton, siteFilters.withData);
+            setButtonClassState(missingDataButton, siteFilters.missingData);
             applyRowFilters();
         };
 
@@ -231,6 +243,24 @@
             commonToggleButtonFilter(opts);
         };
 
+        function toggleWithData() {
+            var opts = {
+                state: 'withData',
+                showing: 'Showing ' + counts.withDataSites + ' Sites with Data',
+                hiding: 'Hiding ' + counts.withDataSites + ' Sites with Data'
+            };
+            commonToggleButtonFilter(opts);
+        };
+
+        function toggleMissingData() {
+            var opts = {
+                state: 'missingData',
+                showing: 'Showing ' + counts.missingDataSites + ' Sites with Missing Data',
+                hiding: 'Hiding ' + counts.missingDataSites + ' Sites with Missing Data'
+            };
+            commonToggleButtonFilter(opts);
+        };
+
         function resetActiveSites() {
             siteFilters.showHasEmails = true;
             siteFilters.showNoEmails = true;
@@ -251,6 +281,8 @@
             siteFilters.showInactiveSites = true;
             siteFilters.showHasEmails = true;
             siteFilters.showNoEmails = true;
+            siteFilters.withData = true;
+            siteFilters.missingData = true;
             redrawSiteFilterButtons();
             applyRowFilters();
             notify.info('Reset the Active/Inactive filters');
@@ -272,6 +304,8 @@
             $('#btnToggleHighlightMatchCompetitors').off().on('click', toggleHighlightShowMatchCompetitors);
             $('#btnToggleHighlightStandardPrices').off().on('click', toggleHighlightStandardPrices);
             $('#btnResetHighlighting').off().on('click', resetHighlighting);
+            $('#btnShowWithData').off().click(toggleWithData);
+            $('#btnShowMissingData').off().click(toggleMissingData);
 
             $('#btnShowWithEmails').off().on('click', toggleShowWithEmails);
             $('#btnShowNoEmails').off().on('click', toggleShowWithNoEmails);
