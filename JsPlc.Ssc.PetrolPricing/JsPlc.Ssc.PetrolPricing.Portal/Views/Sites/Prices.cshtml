@@ -268,14 +268,17 @@
                 <!-- highlighers -->
                 <div class="row" style="margin-bottom: 4px; padding-bottom: 4px; border-bottom: 1px solid #ccc;">
 
-                    <div class="col-md-7" data-bind="visible: !$root.busyLoadingData()" style="display: none;">
+                    <div class="col-md-3" data-bind="visible: !$root.busyLoadingData()" style="display: none;">
                         <strong>Price Highlight:</strong><br />
                         <div class="btn-group">
                             <button type="button" class="btn btn-sm" data-bind="click: toggleHighlightTrialPrices, css: {'btn-primary': $root.highlightTrialPrices()}" data-infotip="Toggle the [b]Trial Prices[/b] Highlighting"><i class="fa fa-flask "></i> Trial <span class="badge" data-bind="text: $root.TrialPricesCount"></span></button>
-                            <button type="button" class="btn btn-sm" data-bind="click: toggleHighlightMatchCompetitors, css: {'btn-primary': $root.highlightMatchCompetitors()}" data-infotip="Toggle the [b]Match Competitors[/b] Highlighting"><i class="fa fa-clone"></i> Match Competitors <span class="badge" data-bind="text: $root.MatchCompetitorsCount"></span></button>
+                            <button type="button" class="btn btn-sm" data-bind="click: toggleHighlightMatchCompetitors, css: {'btn-primary': $root.highlightMatchCompetitors()}" data-infotip="Toggle the [b]Match Competitors[/b] Highlighting"><i class="fa fa-clone"></i> Match <span class="badge" data-bind="text: $root.MatchCompetitorsCount"></span></button>
                             <button type="button" class="btn btn-sm" data-bind="click: toggleHighlightStandardPrices, css: {'btn-primary': $root.highlightStandardPrices()}" data-infotip="Toggle the [b]Standard Prices[/b] Highlighting"><i class="fa fa-dot-circle-o"></i> Standard <span class="badge" data-bind="text: $root.StandardPricesCount"></span></button>
                         </div>
-                        &nbsp;
+
+                    </div>
+                    <div class="col-md-4" data-bind="visible: !$root.busyLoadingData()" style="display: none;">
+                        <strong>Grocers within <span data-bind="text: $root.MaxGrocerDriveTime()"></span> minutes:</strong><br />
                         <div class="btn-group">
                             <button type="button" class="btn btn-sm" data-bind="click: toggleHighlightNoNearbyGrocerPrices, css: {'btn-primary': $root.highlightNoNearbyGrocerPrices() }" data-infotip="Toggle highlighting for Site Fuels[br /] with [b]No Nearby Grocers[/b]"><i class="fa fa-times"></i> No Grocers <span class="badge" data-bind="text: $root.NoNearbyGrocersCount"></span></button>
                             <button type="button" class="btn btn-sm" data-bind="click: toggleHighlightHasNearbyGrocerWithOutPrices, css: {'btn-primary': $root.highlightHasNearbyGrocerWithOutPrices() }" data-infotip="Toggle highlighting for Site Fuels[br /][b]with Nearby Grocers[/b] but [em]Incomplete[/em] Prices"><i class="fa fa-question"></i> Incomplete <span class="badge" data-bind="text: $root.NearbyGrocersWithoutPricesCount"></span></button>
