@@ -23,12 +23,17 @@
                 }
             };
 
-            var animations = {
-                lightbox: {
-                    show: { 'opacity': 0.5 },
-                    hide: { 'opacity': 0.0 }
-                }
-            };
+        var timings = {
+            show: 1000,
+            hide: 500
+        };
+
+        var animations = {
+            lightbox: {
+                show: { 'opacity': 0.5 },
+                hide: { 'opacity': 0.0 }
+            }
+        };
 
         // init styles
             overlay.css({ 'zIndex': 2010 }).hide();
@@ -62,11 +67,11 @@
             overlay.find(messageSelector).text(message);
             overlay.css(positions.start)
                 .show()
-                .animate(positions.visible, 1000);
+                .animate(positions.visible, timings.show);
 
             if (showtime) {
                 overlay.delay(showtime)
-                    .animate(positions.hidden, 2000, onHide);
+                    .animate(positions.hidden, timings.hide, onHide);
             }
         };
 
@@ -77,17 +82,17 @@
         };
 
         function showLightbox() {
-            lightbox.show().animate(animations.lightbox.show, 1000);
+            lightbox.show().animate(animations.lightbox.show, timings.show);
         };
 
         function hideLightbox() {
-            lightbox.animate(animations.lightbox.hide, 2000, function () {
+            lightbox.animate(animations.lightbox.hide, timings.hide, function () {
                 lightbox.hide();
             });
         }
 
         function hide() {
-            overlay.fadeOut(1000);
+            overlay.fadeOut(timings.hide);
             hideLightbox();
             showing = false;
         };
