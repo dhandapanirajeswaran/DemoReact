@@ -1293,3 +1293,16 @@ tr.site-row.row-override-exceeds-warning-limits td.outside-prices-warning-limits
 .back-info {color: #31708f; background-color: #d9edf7; }
 .back-warning {color: #8a6d3b; background-color: #fcf8e3;}
 .back-danger {color: #a94442; background-color: #f2dede;}
+
+
+optgroup {
+    font-weight: bold;
+    color: #666;
+    background-color: #ccc;
+    border-radius: 8px;
+}
+
+optgroup > option {
+    color: black;
+    background-color: #fff;
+}

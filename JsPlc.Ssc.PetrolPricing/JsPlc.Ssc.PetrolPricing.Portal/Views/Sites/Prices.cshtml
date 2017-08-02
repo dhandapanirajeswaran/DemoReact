@@ -421,18 +421,33 @@
 
                                     <div class="btn-group pull-right">
                                         <select class="btn btn-default" style="width: 15em; margin-left: 1em;" data-bind="value: $root.siteEmailFilter, event: {change: $root.siteEmailFilterChange}" data-infotip="Filter the [b]Sites[/b] [br /]by Emails/Selection or Status">
-                                            <option>All Sites</option>
-                                            <option>With Emails</option>
-                                            <option>No Emails</option>
-                                            <option>With Overrides</option>
-                                            <option>No Overrides</option>
-                                            <option data-bind="visible: !$root.ViewingHistorical()">Selected</option>
-                                            <option data-bind="visible: !$root.ViewingHistorical()">Not Selected</option>
-                                            <option data-bind="visible: !$root.ViewingHistorical()">Exceeds Absolute Min/Max</option>
-                                            <option data-bind="visible: !$root.ViewingHistorical()">Exceeds +/- Warnings</option>
-                                            <option data-bind="visible: !$root.ViewingHistorical()">Errors</option>
-                                            <option data-bind="visible: !$root.ViewingHistorical()">Inside Variance</option>
-                                            <option data-bind="visible: !$root.ViewingHistorical()">Outside Variance</option>
+                                            <optgroup label="Clear Filters">
+                                                <option>All Sites</option>
+                                            </optgroup>
+                                            <optgroup label="Emails">
+                                                <option>With Emails</option>
+                                                <option>No Emails</option>
+                                                <option data-bind="visible: !$root.ViewingHistorical()">Selected Emails</option>
+                                                <option data-bind="visible: !$root.ViewingHistorical()">Not Selected Emails</option>
+                                            </optgroup>
+                                            <optgroup label="Overrides">
+                                                <option>With Overrides</option>
+                                                <option>No Overrides</option>
+                                            </optgroup>
+                                            <optgroup label="Exceeds and Errors">
+                                                <option data-bind="visible: !$root.ViewingHistorical()">Exceeds Absolute Min/Max</option>
+                                                <option data-bind="visible: !$root.ViewingHistorical()">Exceeds +/- Warnings</option>
+                                                <option data-bind="visible: !$root.ViewingHistorical()">Errors</option>
+                                            </optgroup>
+                                            <optgroup label="Price Variance">
+                                                <option data-bind="visible: !$root.ViewingHistorical()">Inside Variance</option>
+                                                <option data-bind="visible: !$root.ViewingHistorical()">Outside Variance</option>
+                                            </optgroup>
+                                            <optgroup label="Missing Data">
+                                                <option>Missing CatNo</option>
+                                                <option>Missing PfsNo</option>
+                                                <option>Missing StoreNo</option>
+                                            </optgroup>
                                         </select>
                                         <button type="button" class="btn btn-warning btn-sm" style="padding-bottom: 9px;" data-bind="click: $root.resetSiteEmailFilter" data-infotip="Clear the Site Email Filter"><i class="fa fa-eraser"></i></button>
                                     </div>
