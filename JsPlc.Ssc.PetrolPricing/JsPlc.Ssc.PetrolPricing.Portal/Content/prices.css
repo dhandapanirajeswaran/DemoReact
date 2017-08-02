@@ -153,6 +153,12 @@ table.competitorTable > tbody > .competitor-row  {
 #competitorPricesPopup .footer-actions {
     float: left;
 }
+
+.price-includes-drive-time {color: #337ab7; font-weight: bold;}
+
+#competitorPricesPopup .show-competitors-including-drive-time .price-excludes-drive-time,
+#competitorPricesPopup .show-competitors-excluding-drive-time .price-includes-drive-time {display: none;}
+
 .note-panel {
     background-color: #fff; 
     border-radius: 0 0 12px 12px;

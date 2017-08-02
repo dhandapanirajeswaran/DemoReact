@@ -8,30 +8,30 @@
         <div class="compitatorData">
             <table class="competitorTable table-striped table-hover full-width">
                 <colgroup>
-                    <col width="9%" />
+                    <col width="10%" />
                     <col width="5%" />
                     <col width="20%" />
                     <col width="4%" />
                     <col width="4%" />
+                    @*<col width="4%" />*@
+
+                    <col width="5%" />
+                    <col width="10%" />
                     <col width="4%" />
 
                     <col width="5%" />
-                    <col width="7%" />
-                    <col width="6%" />
+                    <col width="10%" />
+                    <col width="4%" />
 
                     <col width="5%" />
-                    <col width="7%" />
-                    <col width="6%" />
-
-                    <col width="5%" />
-                    <col width="7%" />
-                    <col width="6%" />
+                    <col width="10%" />
+                    <col width="4%" />
                 </colgroup>
 
                 <thead>
                     <tr class="sainsburys-row">
                         <th></th>
-                        <th colspan="5" class="text-right" style="color: #ED8B00;"><big class="storeName"></big>&nbsp;</th>
+                        <th colspan="4" class="text-right" style="color: #ED8B00;"><big class="storeName"></big>&nbsp;</th>
 
                         <th class="readonlyUnleadedYesterday tblHighlight text-center">-</th>
                         <th class="readonlyUnleadedToday tblHighlight text-center">-</th>
@@ -51,8 +51,7 @@
                         <th class="num2"><span>Notes</span></th>
                         <th class="num3"><span>Marker</span></th>
                         <th class="num4"><span>Drive-Time</span></th>
-                        <th class="num5"></th>
-                        <th class="num6"><span>Cat No.</span></th>
+                        <th class="num5"><span>Cat No.</span></th>
 
                         <th colspan="3" class="tblHighlight text-center dividerLeft">
                             <h4>
@@ -73,30 +72,30 @@
                         </th>
                     </tr>
                     <tr>
-                        <th colspan="6"></th>
-                        <th class="num7 tblHighlight text-center"><span class="compyday">Yesterday</span></th>
-                        <th class="num8 tblHighlight text-center"><span class="comptoday">Today</span></th>
-                        <th class="num9 tblHighlight text-center"><span class="jsdiff">JS_Diff</span></th>
+                        <th colspan="5"></th>
+                        <th class="num6 tblHighlight text-center"><span class="compyday">Yesterday</span></th>
+                        <th class="num7 tblHighlight text-center"><span class="comptoday">Today</span></th>
+                        <th class="num8 tblHighlight text-center"><span class="jsdiff">JS_Diff</span></th>
 
-                        <th class="num10 text-center"><span class="compyday">Yesterday</span></th>
-                        <th class="num11 text-center"><span class="comptoday">Today</span></th>
-                        <th class="num12 text-center"><span class="jsdiff">JS_Diff</span></th>
+                        <th class="num9 text-center"><span class="compyday">Yesterday</span></th>
+                        <th class="num10 text-center"><span class="comptoday">Today</span></th>
+                        <th class="num11 text-center"><span class="jsdiff">JS_Diff</span></th>
 
-                        <th class="num13 tblHighlight text-center"><span class="compyday">Yesterday</span></th>
-                        <th class="num14 tblHighlight text-center"><span class="comptoday">Today</span></th>
-                        <th class="num15 tblHighlight text-center"><span class="jsdiff">JS_Diff</span></th>
+                        <th class="num12 tblHighlight text-center"><span class="compyday">Yesterday</span></th>
+                        <th class="num13 tblHighlight text-center"><span class="comptoday">Today</span></th>
+                        <th class="num14 tblHighlight text-center"><span class="jsdiff">JS_Diff</span></th>
                     </tr>
                 </thead>
                 <tbody>
                     <!-- ko if: loadingCompetitors() -->
                     <tr>
-                        <td colspan="15" class="noSiteData text-center"><span class="please-wait"><i class="fa fa-clock-o spinner"></i> Loading... Please wait</span></td>
+                        <td colspan="14" class="noSiteData text-center"><span class="please-wait"><i class="fa fa-clock-o spinner"></i> Loading... Please wait</span></td>
                     </tr>
                     <!-- /ko -->
                     <!-- ko if: !loadingCompetitors() -->
                     <!-- ko if: !hasCompetitors() -->
                     <tr>
-                        <td colspan="15" class="noSiteData text-center"><span class="no-competitors"><i class="fa fa-info-circle"></i> Sorry, no competitors available</span></td>
+                        <td colspan="14" class="noSiteData text-center"><span class="no-competitors"><i class="fa fa-info-circle"></i> Sorry, no competitors available</span></td>
                     </tr>
                     <!-- /ko -->
                     <!-- ko if: hasCompetitors() -->
@@ -127,11 +126,13 @@
                         <!-- ko foreach: FuelPricesToDisplay -->
                         <!-- ko if: siteSupportsFuel -->
                         <td style="border-left: 2px solid #666" class="text-center" data-bind="css: (isDriveTimeBoundary() ? 'drive-time-boundary' : '')" >
-                            <span class="comp-day1-price" data-bind="html: FuelPrice.ForecourtYestPriceHtml(), attr: {'data-infotip': FuelPrice.YestPriceInfotip()}"></span>
+                            <span class="comp-day1-price price-excludes-drive-time" data-bind="html: FuelPrice.ForecourtYestPriceHtml(), attr: {'data-infotip': FuelPrice.YestPriceInfotip()}"></span>
+                            <span class="comp-day1-price price-includes-drive-time" data-bind="html: FuelPrice.CompDay2YestPriceIncDriveTimePriceHtml(), attr: {'data-infotip': FuelPrice.YestPriceInfotip()}"></span>
                         </td>
                         <td style="border-left: 1px solid #ccc;" data-bind="css: (competitorDay1UnleadedCellCss())">
                             <div >
-                                <span class="comp-day2-price" data-bind="html: FuelPrice.ForecourtTodayPriceHtml(), attr: {'data-infotip': FuelPrice.CompTodayPriceInfotip()}"></span>
+                                <span class="comp-day2-price price-excludes-drive-time" data-bind="html: FuelPrice.ForecourtTodayPriceHtml(), attr: {'data-infotip': FuelPrice.CompTodayPriceInfotip()}"></span>
+                                <span class="comp-day2-price price-includes-drive-time" data-bind="html: FuelPrice.CompDay1PriceIncDriveTimePriceHtml(), attr: {'data-infotip': FuelPrice.CompTodayPriceInfotip()}"></span>
 
                                 <i data-bind="attr: {class: (FuelPrice.Difference ==0 || FuelPrice.Difference == '-' ) ? 'fa fa-arrow-right' : (FuelPrice.Difference <= 0.1) ? 'fa fa-arrow-down': 'fa fa-arrow-up', style: (FuelPrice.Difference == 0 || FuelPrice.Difference == '-') ? 'color: grey' : (FuelPrice.Difference <= 0.1) ? 'color: red': 'color: green', }"></i>
                                 &nbsp;<span data-bind="text: (FuelPrice.Difference == 0 || FuelPrice.Difference == '-') ? '-' : (FuelPrice.Difference/10)"></span>

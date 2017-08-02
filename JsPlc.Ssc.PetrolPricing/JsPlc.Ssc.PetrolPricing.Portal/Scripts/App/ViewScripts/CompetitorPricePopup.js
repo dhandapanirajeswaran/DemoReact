@@ -6,7 +6,8 @@ function ($, ko, common, compNotePopup, notify) {
         showGrocers: true,
         showNonGrocers: true,
         insideDriveTime: true,
-        outsideDriveTime: true
+        outsideDriveTime: true,
+        includeDriveTime: false
     };
 
     var viewingSiteId = 0;
@@ -60,7 +61,9 @@ function ($, ko, common, compNotePopup, notify) {
             outsideFilterButton: '#competitorPricesToggleOutsideButton',
             resetDriveTimeFiltersButton: '#competitorPricesResetDriveTimeFilters',
             visibleCount: '#competitorPricePopupVisibleCount',
-            totalCount: '#competitorPricePopupTotalCount'
+            totalCount: '#competitorPricePopupTotalCount',
+            excludeDriveTimeButton: '#competitorPriceExcludeDriveTime',
+            includeDriveTimeButton: '#competitorPriceIncludeDriveTime'
         },
         naming: {
             editButton: '#EditSiteNoteButton_',
@@ -89,6 +92,7 @@ function ($, ko, common, compNotePopup, notify) {
         state.showNonGrocers = true;
         state.insideDriveTime = true;
         state.outsideDriveTime = true;
+        state.includeDriveTime = false;
     };
 
     function showLoading() {
@@ -166,6 +170,7 @@ function ($, ko, common, compNotePopup, notify) {
         redrawAllNoteToggles();
         redrawFilterButtons();
         redrawDriveTimeButtons();
+        redrawIncludeDriveTimeButtons();
         applyFilters();
 
         dstHeader.hide().html(srcThead.clone(false));
@@ -388,6 +393,9 @@ function ($, ko, common, compNotePopup, notify) {
 
         $(config.selectors.maximiseModalButton).off().click(maximiseModal);
         $(config.selectors.minimiseModalButton).off().click(minimiseModal);
+
+        $(config.selectors.excludeDriveTimeButton).off().click(excludeDriveTimeClick);
+        $(config.selectors.includeDriveTimeButton).off().click(includeDriveTimeClick);
     };
 
     function bindOutsideModalEvents() {
@@ -466,6 +474,20 @@ function ($, ko, common, compNotePopup, notify) {
         redrawDriveTimeButtons();
         applyFilters();
         notify.info('Reset Drive Time Filters (showing all Drive Times)')
+    };
+
+    function excludeDriveTimeClick() {
+        state.includeDriveTime = false;
+        redrawIncludeDriveTimeButtons();
+        applyFilters();
+        notify.info('Showing Competitor Prices (not including Drive Time Markup)');
+    };
+
+    function includeDriveTimeClick() {
+        state.includeDriveTime = true;
+        redrawIncludeDriveTimeButtons();
+        applyFilters();
+        notify.info('Showing Competitor Prices Including Drive Time Markup');
     };
 
     function bindNoteEvents() {
@@ -605,12 +627,22 @@ function ($, ko, common, compNotePopup, notify) {
         setButtonActiveState(config.selectors.insideFilterButton, state.insideDriveTime);
         setButtonActiveState(config.selectors.outsideFilterButton, state.outsideDriveTime);
     };
+
+    function redrawIncludeDriveTimeButtons() {
+        setButtonActiveState(config.selectors.excludeDriveTimeButton, !state.includeDriveTime);
+        setButtonActiveState(config.selectors.includeDriveTimeButton, state.includeDriveTime);
+    };
     
     function applyFilters() {
         var grid = $(config.selectors.pricesGrid),
             rows = grid.find(config.selectors.competitorRow),
             totalCount = 0,
             visibleCount = 0;
+
+            if (state.includeDriveTime)
+                grid.removeClass('show-competitors-excluding-drive-time').addClass('show-competitors-including-drive-time');
+            else
+                grid.removeClass('show-competitors-including-drive-time').addClass('show-competitors-excluding-drive-time');
 
         rows.each(function () {
             var row = $(this),
