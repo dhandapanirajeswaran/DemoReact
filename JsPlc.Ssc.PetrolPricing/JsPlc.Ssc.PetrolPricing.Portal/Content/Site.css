@@ -916,3 +916,17 @@ input[type=text].mono-font {
 
 .page-link,
 .info-link {text-decoration: underline; font-weight: bold;}
+
+
+/* Waiter */
+.waiter-overlay {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 60em;
+    height: 10em;
+    margin-top: -5em;
+    margin-left: -30em;
+    box-shadow: 0 6px 12px #666;
+    font-size: 125%;
+}

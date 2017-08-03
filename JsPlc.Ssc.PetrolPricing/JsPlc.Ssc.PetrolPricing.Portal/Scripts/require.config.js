@@ -50,6 +50,7 @@
             "driveTimeMarkup": "App/driveTimeMarkup",
             "DriveTimeChart": "App/DriveTimeChart",
             "SitePricingSorting": "App/SitePricingSorting",
+            "waiter": "App/Waiter",
 
             // popups
             "SiteEmailPopup" : "App/Popups/SiteEmailPopup",

@@ -358,6 +358,8 @@
     <Content Include="Scripts\App\ViewScripts\UploadCountdown.js" />
     <Content Include="Scripts\App\ViewScripts\SitePricing.js" />
     <Content Include="Scripts\App\Services\PetrolPricingService.js" />
+    <Content Include="Scripts\App\waiter.html" />
+    <Content Include="Scripts\App\Waiter.js" />
     <Content Include="Scripts\bootstrap-datepicker.js" />
     <Content Include="Scripts\bootstrap-datepicker.min.js" />
     <Content Include="Scripts\bootstrap-datetimepicker.js" />
