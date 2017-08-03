@@ -150,6 +150,10 @@ table.competitorTable > tbody > .competitor-row  {
     color: #fff;
 }
 
+.competitorTable .competitor-row.inside-drive-time:hover {
+    background: #aaccaa;
+}
+
 #competitorPricesPopup .footer-actions {
     float: left;
 }
