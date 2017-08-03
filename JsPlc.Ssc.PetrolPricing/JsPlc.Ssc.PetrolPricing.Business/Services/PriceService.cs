@@ -132,6 +132,11 @@ namespace JsPlc.Ssc.PetrolPricing.Business
             if (db == null)
                 db = _db;
 
+            if (site.Id == 9 && fuelId == (int)FuelTypeItem.Unleaded)
+            {
+                var count = 123;
+            }
+
             if (calcTaskData == null)
                 throw new ArgumentNullException("calcTaskData can't be null");
 
@@ -218,7 +223,9 @@ namespace JsPlc.Ssc.PetrolPricing.Business
                     float nextDriveTime = (isLastItem ? minDriveTime + DriveTimeMinutesBeyondLastRecord : driveTimeMarkupsForFuel[i + 1].DriveTime);
                     float maxDriveTime = nextDriveTime - 0.1f;
 
-                    var currentCompetitor = getCheapestPriceUsingParams(db, site, minDriveTime, maxDriveTime, fuelId, usingPricesforDate, driveTimeMarkup.Markup);
+                    // include Sainsburys as a Competitor...
+                    var includeJsSiteAsComp = true;
+                    var currentCompetitor = getCheapestPriceUsingParams(db, site, minDriveTime, maxDriveTime, fuelId, usingPricesforDate, driveTimeMarkup.Markup, includeJsSiteAsComp);
 
                     if (currentCompetitor.HasValue)
                         allCompetitors.Add(currentCompetitor.Value);
