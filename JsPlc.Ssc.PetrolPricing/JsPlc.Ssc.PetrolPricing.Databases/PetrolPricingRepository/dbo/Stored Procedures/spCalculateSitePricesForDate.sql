@@ -235,7 +235,8 @@ TomorrowPrices AS (
 			FROM dbo.SitePrice 
 			WHERE SiteId = st.SiteId 
 				AND FuelTypeId = st.FuelTypeId 
-				AND DateOfCalc >= @StartOfToday AND DateOfCalc < @StartOfTomorrow -- Today
+				--AND DateOfCalc >= @StartOfToday AND DateOfCalc < @StartOfTomorrow -- Today
+				AND DateOfCalc < @StartOfTomorrow -- Today
 				AND (SuggestedPrice > 0 OR OverriddenPrice > 0) -- NOTE: SuggestedPrice can be 0 and OverriddenPrice != 0
 			ORDER BY DateOfCalc DESC
 			)
