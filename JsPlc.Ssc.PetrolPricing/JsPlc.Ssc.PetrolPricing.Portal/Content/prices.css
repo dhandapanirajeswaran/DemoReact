@@ -135,6 +135,11 @@ table.competitorTable > tbody > .competitor-row  {
     background-color: #ffc;
 }
 
+.competitorTable .competitor-row:hover .grocer-brand {
+    background-color: #135a97;
+    color: #fff;
+}
+
 .competitorTable .competitor-row .drive-time-miles {
     background-color: #fff;
     border-radius: 4px;
@@ -152,6 +157,11 @@ table.competitorTable > tbody > .competitor-row  {
 
 .competitorTable .competitor-row.inside-drive-time:hover {
     background: #aaccaa;
+}
+
+.competitorTable .competitor-row.inside-drive-time:hover .grocer-brand {
+    background-color: #135a97;
+    color: #fff;
 }
 
 #competitorPricesPopup .footer-actions {
