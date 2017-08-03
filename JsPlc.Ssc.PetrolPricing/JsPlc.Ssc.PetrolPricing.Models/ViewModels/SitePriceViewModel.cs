@@ -97,5 +97,7 @@ namespace JsPlc.Ssc.PetrolPricing.Models.ViewModels
         public bool IsBasedOnCompetitor { get; set; }
         public bool HasNearbyCompetitorPrice { get; set; }
         public bool HasNearbyCompetitorWithOutPrice { get; set; }
+
+        public int MatchCompetitorMarkup { get; set; }
     }
 }

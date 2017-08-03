@@ -1326,3 +1326,26 @@ optgroup > option {
     color: black;
     background-color: #fff;
 }
+
+.price-match-info {
+    float: left;
+    color: #000;
+    font-weight: bold;
+}
+
+.price-match-info .markup-price {
+    color: #ED8B00;
+    margin-left: 4px;
+}
+
+.fuel-markup {
+    background-color: #fff;
+    color: #000;
+    border-radius: 6px;
+    padding: 4px;
+    text-align: center;
+    display: inline-block;
+    width: 3em;
+    box-shadow: 0 4px 6px #000;
+}
+

@@ -109,6 +109,7 @@ function ($, ko, common, compNotePopup, notify) {
 
     function populate(siteItem) {
         var popup = $(config.selectors.popup);
+
         popup.find('.storeNumber').text(siteItem.StoreNo);
         popup.find('.storeName').text(siteItem.StoreName);
         popup.find('.storeTown').text(siteItem.Town);
@@ -120,7 +121,6 @@ function ($, ko, common, compNotePopup, notify) {
         $('.compitatorData .storeName').text(siteItem.StoreName);
 
         $('.chosen-date').text($('#viewingDate').val());
-
         hideAllNotes(true);
     };
 
@@ -160,7 +160,15 @@ function ($, ko, common, compNotePopup, notify) {
         var dstHeader = $(config.selectors.header),
             srcDiv = $('#AjaxCollapseCompetitorsforsite' + siteItem.SiteId + ' .compitatorData'),
             srcThead = srcDiv.find('table thead'),
-            clonedDiv = srcDiv.clone(false);
+            clonedDiv = srcDiv.clone(false),
+            popup = $(config.selectors.popup),
+            priceMatchInfo = '',
+            matchCompetitorMarkup = siteItem.FuelPrices[0].MatchCompetitorMarkup,
+            markups = {
+                unleaded: 0,
+                diesel: 0,
+                superUnleaded: 0
+            };
 
         clonedDiv.css('visibility', 'hidden');
 
@@ -177,9 +185,41 @@ function ($, ko, common, compNotePopup, notify) {
 
         maximiseModal();
 
+        switch (siteItem.PriceMatchType) {
+            case 1:
+                priceMatchInfo = '<span data-infotip="Standard"><i class="fa fa-dot-circle-o"></i> Standard</span>';
+                markups.unleaded = siteItem.FuelPrices[1].Markup;
+                markups.diesel = siteItem.FuelPrices[2].Markup;
+                markups.superUnleaded = siteItem.FuelPrices[0].Markup;
+                break;
+            case 2:
+                priceMatchInfo = '<span data-infotip="Trial Price"><i class="fa fa-flask"></i> Trial Price <big class="markup-price">' + formatFuelMarkUp(siteItem.FuelPrices[0].CompetitorPriceOffset) + '</big></span>';
+                markups.unleaded = siteItem.FuelPrices[1].CompetitorPriceOffset;
+                markups.diesel = siteItem.FuelPrices[2].CompetitorPriceOffset;
+                markups.superUnleaded = siteItem.FuelPrices[0].CompetitorPriceOffset;
+                break;
+            case 3:
+                priceMatchInfo = '<span data-infotip="Match Competitor"><i class="fa fa-clone"></i> Match: ' + siteItem.FuelPrices[0].CompetitorName + '<big class="markup-price">' + formatFuelMarkUp(matchCompetitorMarkup) + '</big></span>';
+                markups.unleaded = matchCompetitorMarkup;
+                markups.diesel = matchCompetitorMarkup;
+                markups.superUnleaded = matchCompetitorMarkup;
+                break;
+        }
+
+        popup.find('.price-match-info').html(priceMatchInfo);
+        popup.find('.fuel-markup-unleaded').text(formatFuelMarkUp(markups.unleaded));
+        popup.find('.fuel-markup-diesel').text(formatFuelMarkUp(markups.diesel));
+        popup.find('.fuel-markup-super-unleaded').text(formatFuelMarkUp(markups.superUnleaded));
+
         setTimeout(afterDrawnPopup, 200);
 
         highlightSainsburysSiteRow();
+    };
+
+    function formatFuelMarkUp(markup) {
+        return markup < 0
+            ? '-' + Math.abs(markup) + 'p'
+            : '+' + Math.abs(markup) + 'p';
     };
 
     function highlightSainsburysSiteRow() {

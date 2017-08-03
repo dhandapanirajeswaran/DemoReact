@@ -16,5 +16,6 @@
 	[CompetitorSiteId] [int] NULL,
 	[Distance] [real] NULL,
 	[DriveTime] [real] NULL,
-	[DriveTimePence] [int] NULL 
+	[DriveTimePence] [int] NULL, 
+    [MatchCompetitorMarkup] INT NULL 
 )

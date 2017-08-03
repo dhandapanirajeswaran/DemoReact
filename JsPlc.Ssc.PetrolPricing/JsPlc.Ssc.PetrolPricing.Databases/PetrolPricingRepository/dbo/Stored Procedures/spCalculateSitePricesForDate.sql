@@ -128,6 +128,7 @@ SiteFuels AS (
 		os.TrailPriceCompetitorId [TrailPriceCompetitorId],
 		os.PriceMatchType [PriceMatchType],
 		os.CompetitorPriceOffset [CompetitorPriceOffset],
+		os.CompetitorPriceOffsetNew [MatchCompetitorMarkup],
 		ft.FuelTypeId [FuelTypeId]
 	FROM
 		OurSites os
@@ -265,7 +266,8 @@ Calculated AS (
 		st.CompetitorPriceOffset [CompetitorPriceOffset],
 		st.PriceMatchType [PriceMatchType],
 		ic.PriceSource,
-		ic.PriceSourceDateTime
+		ic.PriceSourceDateTime,
+		st.MatchCompetitorMarkup
 	FROM
 		SiteFuels st
 		LEFT JOIN dbo.Site matchcomp ON matchcomp.Id = st.TrailPriceCompetitorId
@@ -288,7 +290,8 @@ AllFuelPrices AS (
 		cal.PriceMatchType,
 		cal.PriceSource,
 		cal.PriceSourceDateTime,
-		cal.CompetitorSiteId
+		cal.CompetitorSiteId,
+		cal.MatchCompetitorMarkup
 	FROM 
 		Calculated cal
 	WHERE
@@ -311,7 +314,8 @@ AllFuelPrices AS (
 		unl.PriceMatchType,
 		unl.PriceSource,
 		unl.PriceSourceDateTime,
-		unl.CompetitorSiteId
+		unl.CompetitorSiteId,
+		sup.MatchCompetitorMarkup
 	FROM 
 		Calculated sup
 		INNER JOIN Calculated unl ON unl.SiteId = sup.SiteId AND unl.FuelTypeId = @FuelType_UNLEADED
@@ -342,7 +346,8 @@ AllFuelPrices AS (
 		super.PriceMatchType,
 		COALESCE(super.PriceSource, cal.PriceSource),
 		COALESCE(super.PriceSourceDateTime, cal.PriceSourceDateTime),
-		super.CompetitorSiteId
+		super.CompetitorSiteId,
+		super.MatchCompetitorMarkup
 	FROM 
 		Calculated cal
 	    INNER JOIN Calculated super ON super.SiteId=cal.SiteId and super.FuelTypeId=@FuelType_SUPER_UNLEADED
@@ -373,7 +378,8 @@ SELECT
 	COALESCE(afp.CompetitorSiteId, 0) [CompetitorSiteId],
 	COALESCE(stc.Distance, 0) [Distance],
 	COALESCE(stc.DriveTime, 0) [DriveTime],
-	dbo.fn_GetDriveTimePence(afp.FuelTypeId, stc.DriveTime) [DriveTimePence]
+	dbo.fn_GetDriveTimePence(afp.FuelTypeId, stc.DriveTime) [DriveTimePence],
+	afp.MatchCompetitorMarkup
 FROM 
 	AllFuelPrices afp
 	LEFT JOIN dbo.SiteToCompetitor stc ON stc.CompetitorId = afp.CompetitorSiteId AND stc.SiteId = afp.SiteId
