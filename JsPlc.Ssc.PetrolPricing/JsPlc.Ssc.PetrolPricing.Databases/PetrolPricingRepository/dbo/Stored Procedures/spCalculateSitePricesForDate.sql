@@ -1,4 +1,4 @@
-﻿ALTER PROCEDURE [dbo].[spCalculateSitePricesForDate] (
+﻿CREATE PROCEDURE [dbo].[spCalculateSitePricesForDate] (
 	@forDate DATE,
 	@SiteIds VARCHAR(MAX),
 	@PriceSnapshotId INT = NULL
