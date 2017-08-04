@@ -1331,6 +1331,8 @@ optgroup > option {
     float: left;
     color: #000;
     font-weight: bold;
+    margin-left: 0.5em;
+    line-height: 2em;
 }
 
 .price-match-info .markup-price {
@@ -1339,13 +1341,15 @@ optgroup > option {
 }
 
 .fuel-markup {
-    background-color: #fff;
-    color: #000;
-    border-radius: 6px;
-    padding: 4px;
+    background-color: #666;
+    color: #fff;
+    border-radius: 0;
+    padding: 4px 6px;
+    font-size: 75%;
     text-align: center;
     display: inline-block;
-    width: 3em;
-    box-shadow: 0 4px 6px #000;
+    margin-left: -1em;
+    position: absolute;
+    margin-top: 8px;
 }
 

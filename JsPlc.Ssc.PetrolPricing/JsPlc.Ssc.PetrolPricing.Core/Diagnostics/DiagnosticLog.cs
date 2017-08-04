@@ -16,7 +16,7 @@ namespace JsPlc.Ssc.PetrolPricing.Core.Diagnostics
 
     public static class DiagnosticLog
     {
-        private const int MaxLogEntries = 30;
+        private const int MaxLogEntries = 100;
 
         public static List<DiagnoticsLogEntry> Entries = new List<DiagnoticsLogEntry>();
 

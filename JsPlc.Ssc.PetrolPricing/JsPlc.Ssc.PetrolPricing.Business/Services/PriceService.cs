@@ -19,11 +19,17 @@ using JsPlc.Ssc.PetrolPricing.Models.Common;
 using JsPlc.Ssc.PetrolPricing.Models.ViewModels;
 using JsPlc.Ssc.PetrolPricing.Repository;
 using JsPlc.Ssc.PetrolPricing.Models.Enums;
+using System.Text;
+using JsPlc.Ssc.PetrolPricing.Core.Diagnostics;
 
 namespace JsPlc.Ssc.PetrolPricing.Business
 {
 	public class PriceService : IPriceService
 	{
+        // ignore Competitors beyond this Drive Time limit
+        const int MaximumCompetitorSearchDriveTime = 25;
+
+
 		protected readonly IPetrolPricingRepository _db;
 		protected readonly ILookupService _lookupService;
 		protected readonly IFactory _factory;
@@ -132,11 +138,6 @@ namespace JsPlc.Ssc.PetrolPricing.Business
             if (db == null)
                 db = _db;
 
-            if (site.Id == 9 && fuelId == (int)FuelTypeItem.Unleaded)
-            {
-                var count = 123;
-            }
-
             if (calcTaskData == null)
                 throw new ArgumentNullException("calcTaskData can't be null");
 
@@ -222,6 +223,17 @@ namespace JsPlc.Ssc.PetrolPricing.Business
                     float minDriveTime = driveTimeMarkup.DriveTime;
                     float nextDriveTime = (isLastItem ? minDriveTime + DriveTimeMinutesBeyondLastRecord : driveTimeMarkupsForFuel[i + 1].DriveTime);
                     float maxDriveTime = nextDriveTime - 0.1f;
+
+                    // safety check - ignore if outside the max DriveTime...
+                    if (minDriveTime >= MaximumCompetitorSearchDriveTime)
+                        continue;
+
+                    if (maxDriveTime >= MaximumCompetitorSearchDriveTime)
+                        maxDriveTime = MaximumCompetitorSearchDriveTime; // clip Max limit
+
+                    // reject if drive time range <= 0
+                    if (maxDriveTime <= minDriveTime)
+                        continue;
 
                     // include Sainsburys as a Competitor...
                     var includeJsSiteAsComp = true;
