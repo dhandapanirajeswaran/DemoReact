@@ -342,7 +342,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
             if (grocerStatus.HasFlag(NearbyGrocerStatuses.HasNearbyGrocers) && !grocerStatus.HasFlag(NearbyGrocerStatuses.AllGrocersHavePriceData))
             {
                 // are we higher than cheapest price ?
-                if (sitePrice.SuggestedPrice > todayprice)
+                if (todayprice > 0 && sitePrice.SuggestedPrice > todayprice)
                 {
                     // use today's price
                     sitePrice.SuggestedPrice = todayprice;
@@ -357,11 +357,14 @@ namespace JsPlc.Ssc.PetrolPricing.Business
             }
 
             // is within Price Variance (less or equal to)
-            var diff = sitePrice.SuggestedPrice - todayprice;
-            if (Math.Abs(diff) <= systemSettings.PriceChangeVarianceThreshold)
+            if (todayprice > 0)
             {
-                // Use today's price
-                sitePrice.SuggestedPrice = todayprice;
+                var diff = sitePrice.SuggestedPrice - todayprice;
+                if (Math.Abs(diff) <= systemSettings.PriceChangeVarianceThreshold)
+                {
+                    // Use today's price
+                    sitePrice.SuggestedPrice = todayprice;
+                }
             }
         }
 
