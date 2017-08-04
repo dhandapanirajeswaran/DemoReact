@@ -25,7 +25,9 @@
                 'sites.showNoEmails',
                 'build.date',
                 'pricing.priceSummaryTabIndex',
-                'pricing.autoHideOverrides'
+                'pricing.autoHideOverrides',
+                'pricing.includeDriveTime',
+                'pricing.hideNoPrices'
             ],
             values = readSettingsCookie();
 

@@ -1,5 +1,5 @@
-﻿define(["jquery", "knockout", "common", "competitorPriceNotePopup", "notify"],
-function ($, ko, common, compNotePopup, notify) {
+﻿define(["jquery", "knockout", "common", "competitorPriceNotePopup", "notify", "cookieSettings"],
+function ($, ko, common, compNotePopup, notify, cookieSettings) {
     "use strict";
     var state = {
         showNotes: false,
@@ -173,6 +173,8 @@ function ($, ko, common, compNotePopup, notify) {
         clonedDiv.css('visibility', 'hidden');
 
         $(config.selectors.pricesGrid).html(clonedDiv);
+
+        restoreCookieSettings();
 
         redrawAllNoteIcons();
         redrawAllNoteToggles();
@@ -521,6 +523,7 @@ function ($, ko, common, compNotePopup, notify) {
         redrawIncludeDriveTimeButtons();
         applyFilters();
         notify.info('Showing Competitor Prices (not including Drive Time Markup)');
+        cookieSettings.writeBoolean('pricing.includeDriveTime', false);
     };
 
     function includeDriveTimeClick() {
@@ -528,6 +531,7 @@ function ($, ko, common, compNotePopup, notify) {
         redrawIncludeDriveTimeButtons();
         applyFilters();
         notify.info('Showing Competitor Prices Including Drive Time Markup');
+        cookieSettings.writeBoolean('pricing.includeDriveTime', true);
     };
 
     function bindNoteEvents() {
@@ -715,6 +719,10 @@ function ($, ko, common, compNotePopup, notify) {
 
     function isNotWhitespace(note) {
         return /\S/.test(note);
+    };
+
+    function restoreCookieSettings() {
+        state.includeDriveTime = cookieSettings.readBoolean('pricing.includeDriveTime', false);
     };
 
     return {
