@@ -340,6 +340,13 @@ table.competitorTable > tbody > .competitor-row  {
 .pricing-grid .site-row.focused:hover {
     background-color: #ffc580;
 }
+
+.pricing-grid.show-price-variance-highlights .site-row .within-price-variance .price-fraction {
+    color: #fff;
+    background-color: #5cb85c;
+    text-decoration: underline;
+}
+
 .site-row.focused .site-name {color: #000;}
 
 .site-row:hover .price-na,
@@ -503,8 +510,8 @@ table.competitorTable > tbody > .competitor-row  {
     background-color: #ffc;
 }
 
-.pricing-grid .site-row .inside-price-variance,
-.pricing-grid .site-row .outside-price-variance {
+.pricing-grid .site-row .filter-inside-price-variance,
+.pricing-grid .site-row .filter-outside-price-variance {
     background-color: #ffd77f
 }
 

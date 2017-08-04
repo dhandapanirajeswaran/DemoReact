@@ -291,7 +291,16 @@
                     </div>
 
                     <div class="col-md-5">
-                        <div class="col-md-4 no-margin no-padding">
+
+                        <div class="col-md-3 no-margin no-padding">
+                            <label>Variance</label><br />
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-sm" data-bind="click: $root.showPriceVarianceHighlighting, css: ($root.highlightPriceVariances() ? 'btn-primary' : 'btn-default')" data-infotip="Show [b]Competitor[/b] Data %"><i class="fa fa-check-square-o"></i> On</button>
+                                <button type="button" class="btn btn-sm" data-bind="click: $root.hidePriceVarianceHighlighting, css: (!$root.highlightPriceVariances() ? 'btn-primary' : 'btn-default')" data-infotip="Show [b]Grocer[/b] Data %"><i class="fa fa-square-o"></i> Off</button>
+                            </div>
+                        </div>
+
+                        <div class="col-md-3 no-margin no-padding">
                             <label>Data %</label><br />
                             <div class="btn-group">
                                 <button type="button" class="btn btn-sm" data-bind="click: $root.showDataPercentAll, css: ($root.ShowingDataPercent() == 'all' ? 'btn-primary' : 'btn-default')" data-infotip="Show [b]Competitor[/b] Data %"><i class="fa fa-credit-card"></i> All</button>
@@ -299,20 +308,20 @@
                             </div>
                         </div>
 
-                        <div class="col-md-4 no-margin no-padding">
+                        <div class="col-md-3 no-margin no-padding">
                             <!-- ko if: (!$root.ViewingHistorical() && !$root.isDailyPriceFileOutdated())-->
-                            <label>Auto Hide Overrides:</label><br />
+                            <label>Hide Overrides:</label><br />
                             <div class="btn-group">
                                 <button type="button" class="btn btn-sm" data-bind="css: ($root.isAutoHideShowOverrides() ? 'btn-primary' : 'btn-default'), click: $root.enableAutoHideOverrides" data-infotip="Auto-hide empty [b]Overrides[/b] fields"><i class="fa fa-check-square-o"></i> On</button>
                                 <button type="button" class="btn btn-sm" data-bind="css: ($root.isAutoHideShowOverrides() ? 'btn-default' : 'btn-primary'), click: $root.disableAutoHideOverrides" data-infotip="[u]Always[/u] show the [b]Overrides[/b][br /]Even empty ones"><i class="fa fa-square-o"></i> Off</button>
                             </div>
                             <!-- /ko -->
                         </div>
-                        <div class="col-md-4 no-margin no-padding">
+                        <div class="col-md-3 no-margin no-padding">
                             <label>Scrolling:</label><br />
                             <div class="btn-group" role="group">
-                                <button type="button" class="btn btn-sm btn-primary" data-click="setExpandMode" data-mode="collapsed" data-states="expanded,collapsed" data-target="#PricingPanelScroller" data-message="Price grid collapsed" data-infotip-dock="below" data-infotip="Collapse the Pricing Grid"><i class="fa fa-toggle-up"></i> Collapse</button>
-                                <button type="button" class="btn btn-sm" data-click="setExpandMode" data-mode="expanded" data-states="expanded,collapsed" data-target="#PricingPanelScroller" data-message="Price grid expanded" data-infotip-dock="below" data-infotip="Expand the Pricing Grid"><i class="fa fa-toggle-down"></i> Expand</button>
+                                <button type="button" class="btn btn-sm btn-primary" data-click="setExpandMode" data-mode="collapsed" data-states="expanded,collapsed" data-target="#PricingPanelScroller" data-message="Price grid collapsed" data-infotip-dock="below" data-infotip="Collapse the Pricing Grid"><i class="fa fa-toggle-up"></i> Yes</button>
+                                <button type="button" class="btn btn-sm" data-click="setExpandMode" data-mode="expanded" data-states="expanded,collapsed" data-target="#PricingPanelScroller" data-message="Price grid expanded" data-infotip-dock="below" data-infotip="Expand the Pricing Grid"><i class="fa fa-toggle-down"></i> No</button>
                             </div>
                         </div>
                     </div>
