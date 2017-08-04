@@ -6,8 +6,8 @@ BEGIN
 SET NOCOUNT ON
 
 ----DEBUG:START
---DECLARE	@ForDate DATE = '2017-05-08 00:00:00'
---DECLARE	@SiteId INT = 6188
+--DECLARE	@ForDate DATE = GETDATE()
+--DECLARE	@SiteId INT = 4995
 ----DEBUG:END
 	
 	-- constants
@@ -193,7 +193,7 @@ SET NOCOUNT ON
 			ft.FuelTypeName,
 
 			CASE WHEN jss.TrailPriceCompetitorId = comp.CompetitorId 
-				THEN Jss.CompetitorPriceOffsetNew 
+				THEN Jss.CompetitorPriceOffsetNew
 				ELSE 0 
 			END [nOffset],
 
@@ -246,7 +246,10 @@ SET NOCOUNT ON
 
 			CASE WHEN caft.LatestPriceToday > 0 
 				THEN caft.LatestPriceToday + caft.nOffset 
-				ELSE caft.DailyPriceToday + caft.nOffset
+				ELSE CASE WHEN caft.DailyPriceToday > 0 
+					THEN caft.DailyPriceToday  + caft.nOffset
+					ELSE 0
+				END
 			END [TodayPrice],
 
 			CASE WHEN caft.LatestPriceYesterday > 0
