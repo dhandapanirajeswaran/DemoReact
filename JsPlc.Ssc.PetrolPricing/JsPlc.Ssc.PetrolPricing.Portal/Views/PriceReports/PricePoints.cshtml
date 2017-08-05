@@ -215,7 +215,15 @@
                             {
                                 <div class="alternativerow">
                                     <div class="row">
-                                        <div class="col-md-1" style="width:130px">@row.Brand</div>
+                                        <div class="col-md-1" style="width:130px">
+                                        @if (row.Brand == "SAINSBURYS")
+                                        {
+                                            <strong style="color:orange;">@row.Brand</strong>
+                                        }
+                                        else
+                                        {
+                                            @row.Brand
+                                        }</div>
                                         @foreach (var price in row.PricePointPrices)
                                         {
                                             <div class="col-md-1" style="width:50px">@price.Count</div>

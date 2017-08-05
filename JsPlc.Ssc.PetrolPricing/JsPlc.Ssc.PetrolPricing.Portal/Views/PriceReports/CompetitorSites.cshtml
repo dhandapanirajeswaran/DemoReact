@@ -102,13 +102,20 @@
     <hr style="border-width:3px; margin: 0.5px;" />
     <div class="actualdata">
 
-        @foreach (var item in Model.Report.BrandTimes)
+        @foreach (var item in Model.Report.BrandTimes.OrderBy(x => x.BrandName))
         {
             <div class="alternativerow">
 
                 <div class="row">
                     <div class="col-md-1 fixed-col-1" style="width:200px;">
-                        @item.BrandName
+                        @if (item.BrandName.ToUpper() == "SAINSBURYS")
+                        {
+                            <strong style="color: orange;">@item.BrandName</strong>
+                        }
+                        else
+                        {
+                            @item.BrandName
+                        }
                     </div>
                     <div class="col-md-1 fixed-col-1">
                         @item.Count0To5
