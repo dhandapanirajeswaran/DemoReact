@@ -3067,6 +3067,9 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
             //calculating by brands
             var distinctBrands = competitorSites.Select(x => x.Brand).Distinct().OrderBy(x => x).ToList();
 
+            distinctBrands.Remove("TESCO EXPRESS");
+            distinctBrands.Remove("TESCO EXTRA");
+
             distinctBrands = SortBrandsWithGrocersAtTop(distinctBrands);
 
             foreach (var fuelType in fuelTypeIds)
@@ -3080,11 +3083,30 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
 
                 foreach (var brand in distinctBrands)
                 {
+                    var isTesco = brand == "TESCO";
                     var brandAvg = new NationalAverageReportBrandViewModel();
                     fuelRow.Brands.Add(brandAvg);
-                    brandAvg.BrandName = brand;
+                    if (isTesco)
+                        brandAvg.BrandName = "TESCO (inc EXPRESS and EXTRA)";
+                    else
+                        brandAvg.BrandName = brand;
 
-                    var brandCatsNos = competitorSites.Where(x => x.Brand == brand).Where(x => x.CatNo.HasValue).Select(x => x.CatNo.Value).ToList();
+                    var brandCatsNos = competitorSites.Where(x => x.Brand == brand)
+                        .Where(x => x.CatNo.HasValue)
+                        .Select(x => x.CatNo.Value)
+                        .ToList();
+
+                    if (isTesco)
+                    {
+                        // combine TESCO, TESCO EXPRESS and TESCO EXTRA
+                        brandCatsNos.AddRange(
+                            competitorSites
+                            .Where(x => x.Brand == "TESCO EXPRESS" || x.Brand == "TESCO EXTRA")
+                            .Where(x => x.CatNo.HasValue)
+                            .Select(x => x.CatNo.Value)
+                            .ToList()
+                            );
+                    }
                     var pricesList = dailyPrices.Where(x => x.FuelTypeId == fuelType && brandCatsNos.Contains(x.CatNo)).ToList();
 
                     if (pricesList.Any())
