@@ -1360,3 +1360,55 @@ optgroup > option {
     margin-top: 8px;
 }
 
+
+/* site search and filters */
+.site-search-fields,
+.site-filter-fields {
+    margin-left: 3em;
+}
+.site-search-fields::before {
+    content: "Search";
+    width: 6em;
+    background-color: #e0ffe0;
+    color: #999;}
+.site-filter-fields::before {
+    content: "Filter";
+    width: 11em;
+    background-color: #eee;
+    color: #666;
+}
+
+.site-filter-fields::before,
+.site-search-fields::before {
+    margin-left: -1em;
+    display: block;
+    font-size: 110%;
+    font-weight: bold;
+    letter-spacing: 2px;
+    line-height: 2em;
+    -webkit-transform-origin: 0 0;
+    -webkit-transform: rotate(90deg) scale(-1, -1) translate(-100%, -1.75em);
+    text-align: center;
+}
+
+#siteFilterPopup {
+    width: 1280px; 
+    margin: 0.20em auto;
+    position: fixed;
+    top: 1em;
+    z-index: 2020;
+    display: none;
+}
+#siteFilterPopupLightbox {
+    display: none;
+    content: '.';
+    color: transparent;
+    background: rgba(0,0,0,0.5);
+    position: fixed;
+    z-index: 2000;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 33em;
+    cursor: pointer;
+}
