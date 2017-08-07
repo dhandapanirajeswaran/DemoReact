@@ -436,12 +436,12 @@
                                     </button>
 
                                     <div class="btn-group pull-right">
-                                        <button class="btn btn-default" type="button" style="width: 15em; margin-left: 1em;" data-bind="click: $root.showSiteFilterPopup" data-infotip="Open the [b]Site Filters[/b] Popup">
+                                        <button class="btn" type="button" style="width: 15em; margin-left: 1em;" data-bind="click: $root.showSiteFilterPopup, css: ($root.siteEmailFilter() == 'All Sites' ? 'btn-default' : 'primary')" data-infotip="Open the [b]Site Filters[/b] Popup">
                                             <span data-bind="text: $root.siteEmailFilter"></span>
                                             <i class="caret"></i>
                                         </button>
 
-                                        <button type="button" class="btn btn-warning btn-sm" style="padding-bottom: 9px;" data-bind="click: $root.resetSiteEmailFilter" data-infotip="Clear the [b]Site Filters[/b]"><i class="fa fa-eraser"></i></button>
+                                        <button type="button" class="btn btn-sm" style="padding-bottom: 9px;" data-bind="click: $root.resetSiteEmailFilter, css: ($root.siteEmailFilter() == 'All Sites' ? 'btn-default' : 'btn-warning')" data-infotip="Clear the [b]Site Filters[/b]"><i class="fa fa-eraser"></i></button>
                                     </div>
                                 </div>
                             </th>

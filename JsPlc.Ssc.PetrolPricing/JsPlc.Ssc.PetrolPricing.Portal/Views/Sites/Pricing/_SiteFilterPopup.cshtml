@@ -64,8 +64,9 @@
                         </div>
                     </div>
 
-                    <div class="col-md-2 newline">
-                        <button type="button" class="btn" data-bind="click: $root.setSiteFilterAllSites, css: ($root.siteEmailFilter() == 'All Sites' ? 'btn-primary' : 'btn-default')" data-infotip="Clear the Site Row Filter"><i class="fa fa-eraser"></i> All Sites</button>
+                    <div class="col-md-2">
+                        <label>Clear Filter</label><br />
+                        <button type="button" class="btn" data-bind="click: $root.setSiteFilterAllSites, css: ($root.siteEmailFilter() == 'All Sites' ? 'btn-warning' : 'btn-default')" data-infotip="Clear the Site Row Filter"><i class="fa fa-eraser"></i> All Sites</button>
                     </div>
                 </div>
 
