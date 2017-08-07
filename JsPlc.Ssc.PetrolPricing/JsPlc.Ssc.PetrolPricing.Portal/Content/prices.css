@@ -1348,16 +1348,17 @@ optgroup > option {
 }
 
 .fuel-markup {
-    background-color: #666;
+    background-color: #ED8B00;
     color: #fff;
     border-radius: 0;
-    padding: 4px 6px;
+    padding: 4px 8px;
     font-size: 75%;
     text-align: center;
     display: inline-block;
     margin-left: -1em;
     position: absolute;
     margin-top: 8px;
+    box-shadow: 2px 3px 4px #000;
 }
 
 

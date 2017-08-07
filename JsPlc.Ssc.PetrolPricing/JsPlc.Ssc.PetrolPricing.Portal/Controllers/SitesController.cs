@@ -478,7 +478,9 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
                 || model.PriceMatchType != site.PriceMatchType
                 || excludeCompetitorsAreDifferent
                 || excludeBrandsAreDifferent
-                || model.TrailPriceCompetitorId != site.TrailPriceCompetitorId;
+                || model.TrailPriceCompetitorId != site.TrailPriceCompetitorId
+                || model.CompetitorPriceOffset != site.CompetitorPriceOffset
+                || model.CompetitorPriceOffsetNew != site.CompetitorPriceOffsetNew;
         }
 
         [System.Web.Mvc.HttpGet]
