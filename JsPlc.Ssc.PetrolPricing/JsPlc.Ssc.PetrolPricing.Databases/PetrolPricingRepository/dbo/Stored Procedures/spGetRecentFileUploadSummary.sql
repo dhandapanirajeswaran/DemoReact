@@ -12,7 +12,7 @@ AS
 		fu.UploadedBy [UploadedBy]
 	FROM
 		dbo.UploadType ut
-		LEFT JOIN dbo.FileUpload fu ON fu.Id = (SELECT MAX(Id) FROM dbo.FileUpload WHERE UploadTypeId = ut.Id)
+		LEFT JOIN dbo.FileUpload fu ON fu.Id = (SELECT TOP 1 Id FROM dbo.FileUpload WHERE UploadTypeId = ut.Id ORDER BY UploadDateTime DESC)
 		LEFT JOIN dbo.ImportProcessStatus ips ON ips.Id = fu.StatusId
 	ORDER BY
 		ut.UploadTypeName ASC
