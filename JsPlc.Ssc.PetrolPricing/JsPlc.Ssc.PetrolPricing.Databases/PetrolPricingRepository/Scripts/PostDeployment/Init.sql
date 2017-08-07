@@ -64,8 +64,9 @@ INSERT [dbo].[PPUser] ([FirstName],[LastName],[Email]) VALUES (N'Owain',N'Fenn',
 INSERT [dbo].[PPUser] ([FirstName],[LastName],[Email]) VALUES (N'Sandip',N'Vaidya',N'Sandip.Vaidya@sainsburys.co.uk')
 INSERT [dbo].[PPUser] ([FirstName],[LastName],[Email]) VALUES (N'Garry',N'Leeder',N'Garry.Leeder@sainsburys.co.uk')
 INSERT [dbo].[PPUser] ([FirstName],[LastName],[Email]) VALUES (N'Premkumar',N'Krishnan',N'Premkumar.Krishnan@sainsburys.co.uk')
-INSERT [dbo].[PPUser] ([FirstName],[LastName],[Email]) VALUES (N'Ramaraju',N'Vittanala',N'Ramaraju.Vittanala@sainsburys.co.uk')
 INSERT [dbo].[PPUser] ([FirstName],[LastName],[Email]) VALUES (N'TestAdmin',N'Admin',N'testadmin@jsCoventryDev.onmicrosoft.com')
+INSERT [dbo].[PPUser] ([FirstName],[LastName],[Email]) VALUES (N'Laura',N'Smith1',N'Laura.Smith1@sainsburys.co.uk')
+INSERT [dbo].[PPUser] ([FirstName],[LastName],[Email]) VALUES (N'Ollie',N'Kemp',N'Ollie.Kemp@sainsburys.co.uk')
 
 END
 
@@ -149,7 +150,7 @@ MERGE
 UPDATE 
 	dbo.PPUserPermissions
 SET 
-	SystemSettingsUserPermissions = 3
+	SystemSettingsUserPermissions = @Default_SystemSettingsUserPermissions
 WHERE 
 	PPUserId IN (
 	SELECT usr.Id
@@ -159,7 +160,9 @@ WHERE
 		usr.Email IN (
 			'Shilpa.Lathika@sainsburys.co.uk',
 			'Izzy.Hexter@sainsburys.co.uk',
-			'Olivia.Darroch@sainsburys.co.uk'
+			'Olivia.Darroch@sainsburys.co.uk',
+			'Ollie.Kemp@sainsburys.co.uk',
+			'Laura.Smith1@sainsburys.co.uk'
 		)
 	);
 
@@ -180,7 +183,6 @@ WHERE
 	WHERE
 		usr.Email IN (
 			'Premkumar.Krishnan@sainsburys.co.uk', 
-			'Ramaraju.Vittanala@sainsburys.co.uk', 
 			'Garry.Leeder@sainsburys.co.uk', 
 			'Sandip.Vaidya@sainsburys.co.uk'
 		)
