@@ -1396,7 +1396,7 @@ optgroup > option {
     margin: 0.20em auto;
     position: fixed;
     top: 1em;
-    z-index: 2020;
+    z-index: 1020;
     display: none;
 }
 #siteFilterPopupLightbox {
@@ -1405,7 +1405,7 @@ optgroup > option {
     color: transparent;
     background: rgba(0,0,0,0.5);
     position: fixed;
-    z-index: 2000;
+    z-index: 1000;
     top: 0;
     left: 0;
     right: 0;

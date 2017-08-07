@@ -1,7 +1,7 @@
 ﻿@using JsPlc.Ssc.PetrolPricing.Models
 @model JsPlc.Ssc.PetrolPricing.Models.SiteViewModel
 
-<div id="siteFilterPopupLightbox"></div>
+<div id="siteFilterPopupLightbox" title="Close Search and Filters"></div>
 
 <div class="" id="siteFilterPopup" tabindex="-1" role="dialog" style="">
     <div class="modal-content">
@@ -14,19 +14,19 @@
                 <div class="row">
                     <div class="col-md-2">
                         <label>Store No:</label><br />
-                        <input type="number" class="form-control" id="SiteFilterPopup_StoreNo" name="SiteFilterPopup_StoreNo" data-bind="event: {keyup: $root.searchSites }" />
+                        <input type="number" class="form-control" id="SiteFilterPopup_StoreNo" name="SiteFilterPopup_StoreNo" data-bind="event: {keyup: $root.searchSites }" data-infotip="Enter a number or part of a number[br /]for the [b]Store Number[/b]" />
                     </div>
                     <div class="col-md-3">
                         <label>Store Name:</label><br />
-                        <input type="text" class="form-control" id="SiteFilterPopup_StoreName" name="SiteFilterPopup_StoreName" data-bind="event: {keyup: $root.searchSites }" />
+                        <input type="text" class="form-control" id="SiteFilterPopup_StoreName" name="SiteFilterPopup_StoreName" data-bind="event: {keyup: $root.searchSites }" data-infotip="Enter a Name or part of a Name[br /]for the [b]Store Name[/b]" />
                     </div>
                     <div class="col-md-3">
                         <label>Store Town:</label><br />
-                        <input type="text" class="form-control" id="SiteFilterPopup_StoreTown" name="SiteFilterPopup_StoreTown" data-bind="event: {keyup: $root.searchSites }" />
+                        <input type="text" class="form-control" id="SiteFilterPopup_StoreTown" name="SiteFilterPopup_StoreTown" data-bind="event: {keyup: $root.searchSites }" data-infotip="Enter a Town or part of a Town[br /]for the [b]Store Town[/b]" />
                     </div>
                     <div class="col-md-2">
                         <label>Catalist No:</label><br />
-                        <input type="number" class="form-control" id="SiteFilterPopup_CatNo" name="SiteFilterPopup_CatNo" data-bind="event: {keyup: $root.searchSites }" />
+                        <input type="number" class="form-control" id="SiteFilterPopup_CatNo" name="SiteFilterPopup_CatNo" data-bind="event: {keyup: $root.searchSites }" data-infotip="Enter a number or part of a number[br /]for the [b]Catalist Number[/b]" />
                     </div>
                     <div class="col-md-2 newline">
                         <button type="button" class="btn btn-success" data-bind="click: $root.searchSites()" data-infotip="Search the Sites"><i class="fa fa-search"></i> Search</button>&nbsp;
@@ -41,32 +41,32 @@
                     <div class="col-md-4">
                         <label>Emails/Selection</label><br />
                         <div class="btn-group">
-                            <button type="button" class="btn" data-bind="click: $root.setSiteFilterWithEmails, css: ($root.siteEmailFilter() == 'With Emails' ? 'btn-primary' : 'btn-default')">With Emails</button>
-                            <button type="button" class="btn" data-bind="click: $root.setSiteFilterNoEmails, css: ($root.siteEmailFilter() == 'No Emails' ? 'btn-primary' : 'btn-default')">No Emails</button>
-                            <button type="button" class="btn" data-bind="click: $root.setSiteFilterSelected, css: ($root.siteEmailFilter() == 'Selected' ? 'btn-primary' : 'btn-default')">Selected</button>
-                            <button type="button" class="btn" data-bind="click: $root.setSiteFilterNotSelected, css: ($root.siteEmailFilter() == 'Not Selected' ? 'btn-primary' : 'btn-default')">Not-Selected</button>
+                            <button type="button" class="btn" data-bind="click: $root.setSiteFilterWithEmails, css: ($root.siteEmailFilter() == 'With Emails' ? 'btn-primary' : 'btn-default')" data-infotip="Show Sites [u]with[/u] Email Addresses">With Emails</button>
+                            <button type="button" class="btn" data-bind="click: $root.setSiteFilterNoEmails, css: ($root.siteEmailFilter() == 'No Emails' ? 'btn-primary' : 'btn-default')" data-infotip="Show Sites with [b]No Email Addresses[/b]">No Emails</button>
+                            <button type="button" class="btn" data-bind="click: $root.setSiteFilterSelected, css: ($root.siteEmailFilter() == 'Selected' ? 'btn-primary' : 'btn-default')" data-infotip="Show Sites with [u]Emails and Selected[/u]">Selected</button>
+                            <button type="button" class="btn" data-bind="click: $root.setSiteFilterNotSelected, css: ($root.siteEmailFilter() == 'Not Selected' ? 'btn-primary' : 'btn-default')" data-infotip="SHow Sites With Emails but [i]not[/i] selected ">Not-Selected</button>
                         </div>
                     </div>
 
                     <div class="col-md-3">
                         <label>Override</label><br />
                         <div class="btn-group">
-                            <button type="button" class="btn" data-bind="click: $root.setSiteFilterNoOverrides, css: ($root.siteEmailFilter() == 'No Overrides' ? 'btn-primary' : 'btn-default')" `>No Overrides</button>
-                            <button type="button" class="btn" data-bind="click: $root.setSiteFilterWithOverrides, css: ($root.siteEmailFilter() == 'With Overrides' ? 'btn-primary' : 'btn-default')">With Overrides</button>
+                            <button type="button" class="btn" data-bind="click: $root.setSiteFilterNoOverrides, css: ($root.siteEmailFilter() == 'No Overrides' ? 'btn-primary' : 'btn-default')" data-infotip="Show Sites with [b]No Overrides[/b]">No Overrides</button>
+                            <button type="button" class="btn" data-bind="click: $root.setSiteFilterWithOverrides, css: ($root.siteEmailFilter() == 'With Overrides' ? 'btn-primary' : 'btn-default')" data-infotip="Shows Sites [b]with[/b] an Override">With Overrides</button>
                         </div>
                     </div>
 
                     <div class="col-md-3">
                         <label>Price Variance</label><br />
                         <div class="btn-group">
-                            <button type="button" class="btn" data-bind="click: $root.setSiteFilterInsideVariance, css: ($root.siteEmailFilter() == 'Inside Variance' ? 'btn-primary' : 'btn-default')">Inside Variance</button>
-                            <button type="button" class="btn" data-bind="click: $root.setSiteFilterOutsideVariance, css: ($root.siteEmailFilter() == 'Outside Variance' ? 'btn-primary' : 'btn-default')">Outside Variance</button>
+                            <button type="button" class="btn" data-bind="click: $root.setSiteFilterInsideVariance, css: ($root.siteEmailFilter() == 'Inside Variance' ? 'btn-primary' : 'btn-default')" data-infotip="Shows Sites with a price change [b]Less or Equal[/b][br /] to the [b]Price Variance[/b]">Inside Variance</button>
+                            <button type="button" class="btn" data-bind="click: $root.setSiteFilterOutsideVariance, css: ($root.siteEmailFilter() == 'Outside Variance' ? 'btn-primary' : 'btn-default')" data-infotip="Shows Sites with a price change [b]Greater than[/b][br /] the [b]Price Variance[/b]">Outside Variance</button>
                         </div>
                     </div>
 
                     <div class="col-md-2">
                         <label>Clear Filter</label><br />
-                        <button type="button" class="btn" data-bind="click: $root.setSiteFilterAllSites, css: ($root.siteEmailFilter() == 'All Sites' ? 'btn-warning' : 'btn-default')" data-infotip="Clear the Site Row Filter"><i class="fa fa-eraser"></i> All Sites</button>
+                        <button type="button" class="btn" data-bind="click: $root.setSiteFilterAllSites, css: ($root.siteEmailFilter() == 'All Sites' ? 'btn-warning' : 'btn-default')" data-infotip="Clear the Site [b]Filter[/b]"><i class="fa fa-eraser"></i> All Sites</button>
                     </div>
                 </div>
 
@@ -77,18 +77,18 @@
                     <div class="col-md-4">
                         <label>Exceeds &amp; Errors</label><br />
                         <div class="btn-group">
-                            <button type="button" class="btn" data-bind="click: $root.setSiteFilterExceedsAbsolutes, css: ($root.siteEmailFilter() == 'Exceeds Absolute Min/Max' ? 'btn-primary' : 'btn-default')">Exceeds Absolute Min/Max</button>
-                            <button type="button" class="btn" data-bind="click: $root.setSiteFilterExceedsWarnings, css: ($root.siteEmailFilter() == 'Exceeds +/- Warngins' ? 'btn-primary' : 'btn-default')">Exceeds +/- Warnings</button>
-                            <button type="button" class="btn" data-bind="click: $root.setSiteFilterHasErrors, css: ($root.siteEmailFilter() == 'Errors' ? 'btn-primary' : 'btn-default')">Errors</button>
+                            <button type="button" class="btn" data-bind="click: $root.setSiteFilterExceedsAbsolutes, css: ($root.siteEmailFilter() == 'Exceeds Absolute Min/Max' ? 'btn-primary' : 'btn-default')" data-infotip="Shows Sites whose price [b]Exceeds[/b][br /] the [b]Absolute Min/Max[/b]">Exceeds Absolute Min/Max</button>
+                            <button type="button" class="btn" data-bind="click: $root.setSiteFilterExceedsWarnings, css: ($root.siteEmailFilter() == 'Exceeds +/- Warngins' ? 'btn-primary' : 'btn-default')" data-infotip="Show Sites whose prices [b]Exceed[/b][br /]the [b]+/- Warning limits[/b]">Exceeds +/- Warnings</button>
+                            <button type="button" class="btn" data-bind="click: $root.setSiteFilterHasErrors, css: ($root.siteEmailFilter() == 'Errors' ? 'btn-primary' : 'btn-default')" data-infotip="Show Sites with [i]input errors[/i]">Errors</button>
                         </div>
                     </div>
 
                     <div class="col-md-8">
                         <label>Missing Data</label><br />
                         <div class="btn-group">
-                            <button type="button" class="btn" data-bind="click: $root.setSiteFilterMissingCatNo, css: ($root.siteEmailFilter() == 'Missing CatNo' ? 'btn-primary' : 'btn-default')">Missing CatNo</button>
-                            <button type="button" class="btn" data-bind="click: $root.setSiteFilterMissingPfsNo, css: ($root.siteEmailFilter() == 'Missing PfsNo' ? 'btn-primary' : 'btn-default')">Missing PfsNo</button>
-                            <button type="button" class="btn" data-bind="click: $root.setSiteFilterMissingStoreNo, css: ($root.siteEmailFilter() == 'Missing StoreNo' ? 'btn-primary' : 'btn-default')">Missing StoreNo</button>
+                            <button type="button" class="btn" data-bind="click: $root.setSiteFilterMissingCatNo, css: ($root.siteEmailFilter() == 'Missing CatNo' ? 'btn-primary' : 'btn-default')" data-infotip="Show Sites with a [i]Missing CatNo[/i]">Missing CatNo</button>
+                            <button type="button" class="btn" data-bind="click: $root.setSiteFilterMissingPfsNo, css: ($root.siteEmailFilter() == 'Missing PfsNo' ? 'btn-primary' : 'btn-default')" data-infotip="Show Sites with a [i]Missing PfsNo[/i]">Missing PfsNo</button>
+                            <button type="button" class="btn" data-bind="click: $root.setSiteFilterMissingStoreNo, css: ($root.siteEmailFilter() == 'Missing StoreNo' ? 'btn-primary' : 'btn-default')" data-infotip="Show Sites with a [i]Missing StoreNo[/i]">Missing StoreNo</button>
                         </div>
                     </div>
                 </div>
