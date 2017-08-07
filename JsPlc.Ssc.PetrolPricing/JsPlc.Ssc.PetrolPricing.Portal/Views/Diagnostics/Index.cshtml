@@ -101,6 +101,68 @@
     {
         @Html.AntiForgeryToken()
 
+
+            <!-- scheduler settings -->
+        <div class="panel panel-info expanded" id="SchedulerStatusPanel">
+            <div class="panel-heading">
+                <h4 data-toggle-expand="#SchedulerStatusPanel" data-infotip="Expand or Collapse panel"><i class="fa fa-clock-o"></i> Scheduler Status</h4>
+            </div>
+            <div class="panel-body">
+
+                <table class="table table-striped table-condensed">
+                    <tbody>
+                        <tr>
+                            <th class="text-right" style="width: 25%;">Is Running:</th>
+                            <td>@(Model.SchedulerStatus.IsRunning)</td>
+                        </tr>
+                        <tr>
+                            <th class="text-right">Last Started:</th>
+                            <td>
+                                @(Model.SchedulerStatus.LastStarted)
+                                &mdash;
+                                @Html.FormatFriendlyTimeAgo(Model.SchedulerStatus.LastStarted)
+                            </td>
+                        </tr>
+                        <tr>
+                            <th class="text-right">Last Stopped:</th>
+                            <td>
+                                @(Model.SchedulerStatus.LastStopped)
+                                &mdash;
+                                @Html.FormatFriendlyTimeAgo(Model.SchedulerStatus.LastStopped)
+                            </td>
+                        </tr>
+                        <tr>
+                            <th class="text-right">Last Polled:</th>
+                            <td>
+                                @(Model.SchedulerStatus.LastPolled)
+                                &mdash;
+                                @Html.FormatFriendlyTimeAgo(Model.SchedulerStatus.LastPolled)
+                            </td>
+                        </tr>
+                        <tr>
+                            <th class="text-right">Last Errored:</th>
+                            <td>
+                                @(Model.SchedulerStatus.LastErrored)
+                                &mdash;
+                                @Html.FormatFriendlyTimeAgo(Model.SchedulerStatus.LastErrored)
+                            </td>
+                        </tr>
+                        <tr>
+                            <th class="text-right">Last Error Message:</th>
+                            <td></td>
+                        </tr>
+
+                        <tr>
+                            <td colspan="2">
+                                @(Model.SchedulerStatus.LastErrorMessage)&nbsp;
+                            </td>
+                        </tr>
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
         <div class="expand-collapse-controls text-right">
             <div class="btn-group" role="group">
                 <button type="button" class="btn btn-default" data-expand-all="#DiagnosticsPanelList"><i class="fa fa-caret-square-o-down"></i> Expand All</button>
@@ -231,6 +293,7 @@
             </div>
         </div>
     }
+
 
     <!-- app settings -->
     <div class="panel panel-default collapsed" id="AppSettingsPanel">

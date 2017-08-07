@@ -183,6 +183,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business.Services
                 // mark as Running
                 scheduleItem.WinServiceEventStatusId = WinServiceEventStatus.Running;
                 scheduleItem.LastStartedOn = now;
+                scheduleItem.LastPolledOn = now;
                 _repository.UpsertWinServiceSchedule(scheduleItem);
 
                 _repository.AddWinServiceEventLog(scheduleItem.WinServiceScheduleId, WinServiceEventStatus.Running, "Started");

@@ -22,6 +22,7 @@ using WebGrease.Extensions;
 using JsPlc.Ssc.PetrolPricing.Portal.Helper;
 using System.Reflection;
 using System.IO;
+using JsPlc.Ssc.PetrolPricing.Portal.Facade;
 
 namespace JsPlc.Ssc.PetrolPricing.Portal
 {
@@ -41,6 +42,16 @@ namespace JsPlc.Ssc.PetrolPricing.Portal
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
+
+            var pollInterval = TimeSpan.FromMinutes(1);
+            var serviceFacade = new ServiceFacade(_logger);
+            var runner = new Action(() => serviceFacade.ExecuteWinServiceSchedule());
+            SimpleScheduler.Start(pollInterval, runner);
+        }
+
+        protected void Application_End()
+        {
+            SimpleScheduler.Stop();
         }
 
         protected void Application_Error(Object sender, EventArgs e)

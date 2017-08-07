@@ -111,6 +111,7 @@
     <Compile Include="FuelPriceSettings.cs" />
     <Compile Include="GenericStatus.cs" />
     <Compile Include="ImportProcessError.cs" />
+    <Compile Include="SchedulerStatus.cs" />
     <Compile Include="SitePricingSettings.cs" />
     <Compile Include="SystemSettings.cs" />
     <Compile Include="LatestCompPrice.cs" />
@@ -131,6 +132,7 @@
     <Compile Include="ViewModels\Diagnostics\DiagnosticsLogEntryViewModel.cs" />
     <Compile Include="ViewModels\Diagnostics\DiagnosticsDatabaseObject.cs" />
     <Compile Include="ViewModels\Diagnostics\DiagnosticsRecordCountViewModel.cs" />
+    <Compile Include="ViewModels\Diagnostics\DiagnosticsSchedulerStatusViewModel.cs" />
     <Compile Include="ViewModels\Diagnostics\DiagnosticsViewModel.cs" />
     <Compile Include="ViewModels\EmailTemplateNameViewModel.cs" />
     <Compile Include="ViewModels\EmailTemplateViewModel.cs" />

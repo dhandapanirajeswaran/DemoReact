@@ -50,7 +50,7 @@
                     <tbody>
                         <tr>
                             <td class="text-right" style="width: 33%"><label>Event Type:</label></td>
-                            <td><span class="event-type"></span></td>
+                            <td><span class="event-type font125pc"></span></td>
                         </tr>
                         <tr>
                             <td class="text-right"><label>is Active:</label></td>
@@ -63,7 +63,9 @@
                         <tr>
                             <td class="text-right" ><label>Scheduled For:</label></td>
                             <td>
-                                <input type="time" name="txtScheduledForHour" id="txtScheduledForHour" value="18:00" data-infotip="Please enter a time [b]HH:MM[/b]" /> (mm:ss)
+                                <div class="col-md-4">
+                                <input type="time" name="txtScheduledForHour" class="form-control" id="txtScheduledForHour" value="18:00" data-infotip="Please enter a time [b]HH:MM[/b]" />
+                                </div> (mm:ss)
                             </td>
                         </tr>
                         <tr>
@@ -85,7 +87,7 @@
 
                         <tr>
                             <td class="text-right"><label>Email Address:</label></td>
-                            <td><input type="email" id="txtEmailAddress" class="col-md-8" data-infotip="Please enter a [i]Sainsburys[/i] Email Address" /></td>
+                            <td><input type="email" id="txtEmailAddress" class="col-md-8 form-control mono-font" data-infotip="Please enter a [i]Sainsburys[/i] Email Address" /></td>
                         </tr>
                     </tbody>
                 </table>

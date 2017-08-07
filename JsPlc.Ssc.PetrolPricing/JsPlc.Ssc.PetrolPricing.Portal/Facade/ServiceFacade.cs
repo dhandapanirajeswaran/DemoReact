@@ -964,6 +964,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
                 if (response.IsSuccessStatusCode)
                 {
                     var result = response.Content.ReadAsAsync<DiagnosticsViewModel>().Result;
+                    PopulateSchedulerStatusModel(result);
                     return result;
                 }
                 else
@@ -978,6 +979,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
                 };
             }
         }
+
 
         public bool UpdateDiagnosticsSettings(DiagnosticsSettingsViewModel settings)
         {
@@ -1465,6 +1467,24 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
                 _logger.Error(ex);
                 throw new Exception("Exception in " + methodName + System.Environment.NewLine + ex.Message, ex);
             }
+        }
+
+        private void PopulateSchedulerStatusModel(DiagnosticsViewModel model)
+        {
+            if (model == null)
+                return;
+
+            var status = SimpleScheduler.GetStatus();
+
+            model.SchedulerStatus = new DiagnosticsSchedulerStatusViewModel()
+            {
+                IsRunning = status.IsRunning,
+                LastStarted = status.LastStarted,
+                LastStopped = status.LastStopped,
+                LastPolled = status.LastPolled,
+                LastErrored = status.LastErrored,
+                LastErrorMessage = status.LastErrorMessage
+            };
         }
 
         #endregion private methods

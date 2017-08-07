@@ -205,6 +205,7 @@
     <Compile Include="ActionFilters\AuthoriseSystemSettingsAttribute.cs" />
     <Compile Include="Controllers\EmailTemplateController.cs" />
     <Compile Include="Controllers\SettingsController.cs" />
+    <Compile Include="SimpleScheduler.cs" />
     <Compile Include="Security\AuthorisationPermissionChecker.cs" />
     <Compile Include="ActionFilters\AuthoriseDiagnosticsAttribute.cs" />
     <Compile Include="ActionFilters\AuthoriseFileUploadsAttribute.cs" />
