@@ -14,8 +14,6 @@ BEGIN
 			Value 
 		FROM 
 			dbo.tf_SplitStringOnComma(@Grocers)
-		WHERE
-			Value <> 'SAINSBURYS'
 	) AS Source(Brand)
 	ON (source.Brand = target.BrandName)
 	WHEN NOT MATCHED BY target THEN
