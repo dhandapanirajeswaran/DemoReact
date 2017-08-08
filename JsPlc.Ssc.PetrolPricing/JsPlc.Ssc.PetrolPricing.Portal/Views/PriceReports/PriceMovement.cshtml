@@ -16,7 +16,7 @@
     var requestedToDate = Model != null ? @Model.ToDate.Value.Date.ToString("dd-MMM-yyyy") : null;
 
 
-    var reportWidth = Model != null ? (Model.ReportWidth * 0.7) + "px" : "auto";
+    var reportWidth = Model != null ? (Model.ReportWidth * 0.75) + "px" : "auto";
 
     var reportInformationViewModel = new JsPlc.Ssc.PetrolPricing.Models.ViewModels.ReportInformationViewModel();
     reportInformationViewModel.Introduction = "Tracks retail prices of individual sites over a specified period.";
