@@ -63,7 +63,11 @@ function ($, ko, common, compNotePopup, notify, cookieSettings) {
             visibleCount: '#competitorPricePopupVisibleCount',
             totalCount: '#competitorPricePopupTotalCount',
             excludeDriveTimeButton: '#competitorPriceExcludeDriveTime',
-            includeDriveTimeButton: '#competitorPriceIncludeDriveTime'
+            includeDriveTimeButton: '#competitorPriceIncludeDriveTime',
+            searchBrandInput: '[data-click="competitorSearchBrand"]',
+            searchNameInput: '[data-click="competitorSearchStoreName"]',
+            resetBrandSearchButton: '[data-click="competitorSearchBrandClear"]',
+            resetNameSearchButton: '[data-click="competitorSearchStoreNameClear"]'
         },
         naming: {
             editButton: '#EditSiteNoteButton_',
@@ -216,6 +220,8 @@ function ($, ko, common, compNotePopup, notify, cookieSettings) {
         setTimeout(afterDrawnPopup, 200);
 
         highlightSainsburysSiteRow();
+
+        bindSearchEvents();
     };
 
     function formatFuelMarkUp(markup) {
@@ -438,6 +444,21 @@ function ($, ko, common, compNotePopup, notify, cookieSettings) {
 
         $(config.selectors.excludeDriveTimeButton).off().click(excludeDriveTimeClick);
         $(config.selectors.includeDriveTimeButton).off().click(includeDriveTimeClick);
+
+    };
+
+    function bindSearchEvents() {
+        var modal = $(config.selectors.popup);
+
+        // clear the seach boxes
+        $(config.selectors.searchNameInput).val('');
+        $(config.selectors.searchNameInput).val('');
+
+        // wire up events
+        modal.find(config.selectors.searchBrandInput).off().on('keyup change', peformCompetitorSearch);
+        modal.find(config.selectors.searchNameInput).off().on('keyup change', peformCompetitorSearch);
+        modal.find(config.selectors.resetBrandSearchButton).off().click(resetBrandSearchClick);
+        modal.find(config.selectors.resetNameSearchButton).off().click(resetNameSearchClick);
     };
 
     function bindOutsideModalEvents() {
@@ -532,6 +553,21 @@ function ($, ko, common, compNotePopup, notify, cookieSettings) {
         applyFilters();
         notify.info('Showing Competitor Prices Including Drive Time Markup');
         cookieSettings.writeBoolean('pricing.includeDriveTime', true);
+    };
+
+    function peformCompetitorSearch() {
+        applyFilters();
+    };
+    
+    function resetBrandSearchClick() {
+        $(config.selectors.searchBrandInput).val('');
+        peformCompetitorSearch();
+        notify.info('Cleared the Brand search');
+    };
+    function resetNameSearchClick() {
+        $(config.selectors.searchNameInput).val('');
+        peformCompetitorSearch();
+        notify.info('Cleared the Competitor Name search');
     };
 
     function bindNoteEvents() {
@@ -679,32 +715,59 @@ function ($, ko, common, compNotePopup, notify, cookieSettings) {
     
     function applyFilters() {
         var grid = $(config.selectors.pricesGrid),
+            popup = $(config.selectors.popup),
             rows = grid.find(config.selectors.competitorRow),
             totalCount = 0,
-            visibleCount = 0;
+            visibleCount = 0,
+            brandSearch = '',
+            hasBrandSearch = false,
+            storeNameSearch = '',
+            hasStoreNameSearch = false;
+
+        // workaround for weird issue with KO
+        if (popup.find(config.selectors.searchBrandInput).length == 2) {
+            brandSearch = (popup.find(config.selectors.searchBrandInput).eq(1).val() + '').toUpperCase();
+            hasBrandSearch = brandSearch != '';
+            storeNameSearch = (popup.find(config.selectors.searchNameInput).eq(1).val() + '').toUpperCase();
+            hasStoreNameSearch = storeNameSearch != '';
+        }
 
             if (state.includeDriveTime)
                 grid.removeClass('show-competitors-excluding-drive-time').addClass('show-competitors-including-drive-time');
             else
                 grid.removeClass('show-competitors-including-drive-time').addClass('show-competitors-excluding-drive-time');
 
-        rows.each(function () {
-            var row = $(this),
-                isGrocer = row.hasClass(config.classes.competitorGrocerRow),
-                isNonGrocer = row.hasClass(config.classes.competitorNonGrocerRow),
-                isInside = row.hasClass(config.classes.insideDriveTime),
-                isOutside = row.hasClass(config.classes.outsideDriveTime),
-                visibleGrocer = (isGrocer && state.showGrocers) || (isNonGrocer && state.showNonGrocers),
-                visibleDriveTime = (isInside && state.insideDriveTime) || (isOutside && state.outsideDriveTime);
+            rows.each(function () {
+                var row = $(this),
+                    rowBrandName = '',
+                    rowStoreName = '',
+                    isGrocer = row.hasClass(config.classes.competitorGrocerRow),
+                    isNonGrocer = row.hasClass(config.classes.competitorNonGrocerRow),
+                    isInside = row.hasClass(config.classes.insideDriveTime),
+                    isOutside = row.hasClass(config.classes.outsideDriveTime),
+                    visibleGrocer = (isGrocer && state.showGrocers) || (isNonGrocer && state.showNonGrocers),
+                    visibleDriveTime = (isInside && state.insideDriveTime) || (isOutside && state.outsideDriveTime),
+                    visibleBrand = true,
+                    visibleStoreName = true;
 
-            if (visibleGrocer && visibleDriveTime) {
-                row.show();
-                visibleCount++;
-            }
-            else
-                row.hide();
-            totalCount++;
-        });
+                if (hasBrandSearch) {
+                    rowBrandName = row.find('.comp-brand-name').text().toUpperCase();
+                    visibleBrand = rowBrandName.indexOf(brandSearch) != -1;
+                }
+
+                if (hasStoreNameSearch) {
+                    rowStoreName = row.find('.comp-store-name').text().toUpperCase();
+                    visibleStoreName = rowStoreName.indexOf(storeNameSearch) != -1;
+                }
+
+                if (visibleGrocer && visibleDriveTime && visibleBrand && visibleStoreName) {
+                    row.show();
+                    visibleCount++;
+                }
+                else
+                    row.hide();
+                totalCount++;
+            });
 
         $(config.selectors.visibleCount).text(visibleCount);
         $(config.selectors.totalCount).text(totalCount);
