@@ -8,10 +8,10 @@
 <h1><i class="fa fa-file"></i>
     New file upload <span id="FileUploadTitle"></span>
 </h1>
-<div class="alert alert-info @(string.IsNullOrWhiteSpace(ViewBag.Message) ? "hidden" : "")"><i class="fa fa-info-circle fa-2x large-message-icon"></i> @ViewBag.Message</div>
-<div class="alert alert-danger @(string.IsNullOrWhiteSpace(ViewBag.ErrorMessage) ? "hidden" : "")"><i class="fa fa-times fa-2x large-message-icon"></i> @ViewBag.ErrorMessage</div>
-<div class="alert alert-success @(string.IsNullOrWhiteSpace(ViewBag.SuccessMessage) ? "hidden" : "")"><i class="fa fa-check fa-2x large-message-icon"></i> @ViewBag.SuccessMessage</div>
-<div class="alert alert-warning @(string.IsNullOrWhiteSpace(ViewBag.WarningMessage) ? "hidden" : "")"><i class="fa fa-warning fa-2x large-message-icon"></i> <strong>@ViewBag.WarningMessage</strong></div>
+<div class="alert alert-info @(string.IsNullOrWhiteSpace(ViewBag.Message) ? "hidden" : "")"><i class="fa fa-info-circle fa-2x large-message-icon pulse-size"></i> @ViewBag.Message</div>
+<div class="alert alert-danger @(string.IsNullOrWhiteSpace(ViewBag.ErrorMessage) ? "hidden" : "")"><i class="fa fa-times fa-2x large-message-icon pulse-size"></i> @ViewBag.ErrorMessage</div>
+<div class="alert alert-success @(string.IsNullOrWhiteSpace(ViewBag.SuccessMessage) ? "hidden" : "")"><i class="fa fa-check fa-2x large-message-icon pulse-size"></i> @ViewBag.SuccessMessage</div>
+<div class="alert alert-warning @(string.IsNullOrWhiteSpace(ViewBag.WarningMessage) ? "hidden" : "")"><i class="fa fa-warning fa-2x large-message-icon pulse-size"></i> <strong>@ViewBag.WarningMessage</strong></div>
 <hr />
 <!-- start loader -->
 <div style="display: none;" id="FileUploadingDialog" class="alert alert-warning busy-loader">
