@@ -215,6 +215,11 @@
             function ($, busyloader) {
 
                 function submitSiteClick(ev) {
+
+                    // copy TrailPriceCompetitorId
+                    var matchCompetitorMenu = $('#mnuTrailPriceCompetitorId');
+                    $('#TrailPriceCompetitorId').val(matchCompetitorMenu.val());
+
                     busyloader.show({
                         message: 'Updating Site. Please wait...',
                         dull: true
