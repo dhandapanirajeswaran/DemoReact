@@ -432,6 +432,18 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             DapperHelper.Execute(this, sprocName, parameters);
         }
 
+        public int GetFuelDriveTimeMarkForSiteToCompetitor(int fuelTypeId, int siteId, int competitorId)
+        {
+            const string sprocName = "spGetFuelDriveTimeMarkForSiteToCompetitor";
+            var parameters = new
+            {
+                @FuelTypeId = fuelTypeId,
+                @SiteId = siteId,
+                @CompetitorId = competitorId
+            };
+            return DapperHelper.QueryScalar(this, sprocName, parameters);
+        }
+
         public void PurgePriceSnapshots(int daysAgo)
         {
             const string sprocName = "spDataCleansePriceSnapshots";

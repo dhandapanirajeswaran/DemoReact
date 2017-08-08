@@ -4147,9 +4147,12 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
         {
             _context.MarkPriceCacheOutdatedForDay(day);
         }
+        public int GetFuelDriveTimeMarkForSiteToCompetitor(int fuelTypeId, int siteId, int competitorId)
+        {
+            return _context.GetFuelDriveTimeMarkForSiteToCompetitor(fuelTypeId, siteId, competitorId);
+        }
 
         #endregion
-
 
         #region Windows Service
 

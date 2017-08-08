@@ -338,6 +338,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         void ResumePriceCacheForDay(DateTime day);
         void SuspendPriceCacheForDay(DateTime day);
         PriceSnapshotViewModel GetPriceSnapshotForDay(DateTime day);
+        int GetFuelDriveTimeMarkForSiteToCompetitor(int fuelTypeId, int siteId, int competitorId);
         void MarkPriceCacheOutdatedForDay(DateTime day);
 
         IEnumerable<ScheduleItemViewModel> GetWinServiceScheduledItems();
