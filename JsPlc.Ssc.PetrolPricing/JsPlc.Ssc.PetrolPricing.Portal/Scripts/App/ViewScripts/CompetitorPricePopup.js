@@ -174,6 +174,7 @@ function ($, ko, common, compNotePopup, notify, cookieSettings) {
                 superUnleaded: 0
             };
 
+
         clonedDiv.css('visibility', 'hidden');
 
         $(config.selectors.pricesGrid).html(clonedDiv);
@@ -216,7 +217,8 @@ function ($, ko, common, compNotePopup, notify, cookieSettings) {
         popup.find('.fuel-markup-unleaded').text(formatFuelMarkUp(markups.unleaded));
         popup.find('.fuel-markup-diesel').text(formatFuelMarkUp(markups.diesel));
         popup.find('.fuel-markup-super-unleaded').text(formatFuelMarkUp(markups.superUnleaded));
-
+        popup.find('.storeName').text(siteItem.StoreName);
+        
         setTimeout(afterDrawnPopup, 200);
 
         highlightSainsburysSiteRow();
