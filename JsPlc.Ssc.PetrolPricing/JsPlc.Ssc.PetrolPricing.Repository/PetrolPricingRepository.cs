@@ -485,9 +485,6 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             {
                 _logger.Debug("Started CallSitePriceSproc");
 
-                var useNewCode = CoreSettings.RepositorySettings.SitePrices.UseStoredProcedure;
-                var shouldCompareOldvsNew = CoreSettings.RepositorySettings.SitePrices.ShouldCompareWithOldCode;
-
                 var sainsburysSites =
                     _context.Sites.Where(x => x.IsSainsburysSite == true && x.IsActive == true);
 
@@ -546,20 +543,6 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                         Emails = site.Emails.Select(x => x.EmailAddress).ToList()
                     };
 
-                    #region OLD CODE
-                    if (useNewCode == false)
-                    {
-                        var TrialPrice = (int)site.CompetitorPriceOffset;
-                        TrialPrice = TrialPrice * 10;
-
-                        AddSitePriceRow(FuelTypeItem.Diesel, site, TrialPrice, forDate, catalistFileExits, sitePriceRow.FuelPrices, fuelPriceSettings);
-
-                        AddSitePriceRow(FuelTypeItem.Unleaded, site, TrialPrice, forDate, catalistFileExits, sitePriceRow.FuelPrices, fuelPriceSettings);
-
-                        AddSitePriceRow(FuelTypeItem.Super_Unleaded, site, TrialPrice, forDate, catalistFileExits, sitePriceRow.FuelPrices, fuelPriceSettings);
-                    }
-                    #endregion
-
                     dbList.Add(sitePriceRow);
                 }
 
@@ -571,27 +554,14 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
                 SetSiteCompetitorPriceInformation(forDate, dbList, maxCompetitorDriveTime);
 
-                if (useNewCode)
-                {
-                    _logger.Debug("Started: AddFuelPricesRowsForSites");
-                    AddFuelPricesRowsForSites(forDate, dbList);
-                    _logger.Debug("Finished: AddFuelPricesRowsForSites");
-                }
+                _logger.Debug("Started: AddFuelPricesRowsForSites");
+                AddFuelPricesRowsForSites(forDate, dbList);
+                _logger.Debug("Finished: AddFuelPricesRowsForSites");
 
                 var systemSettings = _context.SystemSettings.FirstOrDefault();
 
                 // Apply the Grocer, Decimal Rounding and Price Variance rules
                 ApplyGrocerRoundingAndPriceVarianceRules(forDate, dbList, nearbyGrocerStatuses, systemSettings);
-
-                // Apply5PMarkupForSuperUnleadedForNonCompetitorSites(dbList);
-
-                if (shouldCompareOldvsNew)
-                {
-                    _logger.Debug("Started: DumpNewCodeFuelPrices");
-
-                    DumpNewCodeFuelPrices(CoreSettings.RepositorySettings.SitePrices.CompareOutputFilename, forDate, dbList);
-                    _logger.Debug("Finished: DumpNewCodeFuelPrices");
-                }
 
                 // using test (NON-LIVE) email addresses ?
                 if (systemSettings.EnableSiteEmails == false)
@@ -775,105 +745,6 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         public void FixZeroSuggestedSitePricesForDay(DateTime forDate)
         {
             _context.FixZeroSuggestedSitePricesForDay(forDate);
-        }
-
-        /// <summary>
-        /// DEBUG - dump original vs new code for Fuel Prices
-        /// </summary>
-        /// <param name="filename"></param>
-        /// <param name="forDate"></param>
-        /// <param name="sites"></param>
-        private void DumpNewCodeFuelPrices(string filename, DateTime forDate, IEnumerable<SitePriceViewModel> sites) 
-        {
-            var dump = new System.Text.StringBuilder();
-
-            var showIdentical = true;
-
-            var siteIds = sites.Select(x => x.SiteId.ToString()).Aggregate((x, y) => x + "," + y);
-
-            var calculatedPrices = _context.CalculateFuelPricesForSitesAndDate(forDate, siteIds);
-            foreach (var site in sites)
-            {
-                var fuelPricesForSite = calculatedPrices.Where(x => x.SiteId == site.SiteId);
-
-                var newCode_SuperUnleaded = fuelPricesForSite.FirstOrDefault(x => x.FuelTypeId == (int)FuelTypeItem.Super_Unleaded);
-                var newCode_Unleaded = fuelPricesForSite.FirstOrDefault(x => x.FuelTypeId == (int)FuelTypeItem.Unleaded);
-                var newCode_Diesel = fuelPricesForSite.FirstOrDefault(x => x.FuelTypeId == (int)FuelTypeItem.Diesel);
-
-                var original_SuperUnleaded = site.FuelPrices.FirstOrDefault(x => x.FuelTypeId == (int)FuelTypeItem.Super_Unleaded);
-                var original_Unleaded = site.FuelPrices.FirstOrDefault(x => x.FuelTypeId == (int)FuelTypeItem.Unleaded);
-                var original_Diesel = site.FuelPrices.FirstOrDefault(x => x.FuelTypeId == (int)FuelTypeItem.Diesel);
-
-                dump.AppendLine("Site: " + site.SiteId + " - Name: " + site.StoreName + " - StoreNo: " + site.StoreNo);
-                dump.AppendLine("\t\t" + DumpSerialiseFuelPrice(FuelTypeItem.Super_Unleaded, original_SuperUnleaded, newCode_SuperUnleaded, showIdentical));
-                dump.AppendLine("\t\t" + DumpSerialiseFuelPrice(FuelTypeItem.Unleaded, original_Unleaded, newCode_Unleaded, showIdentical));
-                dump.AppendLine("\t\t" + DumpSerialiseFuelPrice(FuelTypeItem.Diesel, original_Diesel, newCode_Diesel, showIdentical));
-                dump.AppendLine();
-
-                dump.AppendLine();
-            }
-
-            System.IO.File.WriteAllText(filename, dump.ToString());
-        }
-
-        private string DumpSerialiseFuelPrice(FuelTypeItem fuelType, FuelPriceViewModel originalfuelPrice, FuelPriceViewModel newfuelPrice, bool showIdentical)
-        {
-            var propertyIndentation = "\n\t\t\t\t";
-
-
-            var oldAutoPrice = originalfuelPrice == null ? "NULL" : originalfuelPrice.AutoPrice.ToString();
-            var newAutoPrice = newfuelPrice == null ? "NULL" : newfuelPrice.AutoPrice.ToString();
-
-            var oldTodayPrice = originalfuelPrice == null ? "NULL" : originalfuelPrice.TodayPrice.ToString();
-            var newTodayPrice = newfuelPrice == null ? "NULL" : newfuelPrice.TodayPrice.ToString();
-
-            var oldYestPrice = originalfuelPrice == null ? "NULL" : originalfuelPrice.YestPrice.ToString();
-            var newYestPrice = originalfuelPrice == null ? "NULL" : newfuelPrice.YestPrice.ToString();
-
-            var oldMarkup = originalfuelPrice == null ? "NULL" : originalfuelPrice.Markup.ToString();
-            var newMarkup = newfuelPrice == null ? "NULL" : newfuelPrice.Markup.ToString();
-
-            var oldCompetitorName = originalfuelPrice == null ? "NULL" : originalfuelPrice.CompetitorName;
-            var newCompetitorName = newfuelPrice == null ? "NULL" : newfuelPrice.CompetitorName;
-
-            var oldIsTrailPrice = originalfuelPrice == null ? "NULL" : originalfuelPrice.IsTrailPrice.ToString();
-            var newIsTrailPrice = newfuelPrice == null ? "NULL" : newfuelPrice.IsTrailPrice.ToString();
-
-            var oldDifference = originalfuelPrice == null ? "NULL" : originalfuelPrice.Difference.ToString();
-            var newDifference = newfuelPrice == null ? "NULL" : newfuelPrice.Difference.ToString();
-
-            var oldCompetitorPriceOffset = originalfuelPrice == null ? "NULL" : originalfuelPrice.CompetitorPriceOffset.ToString();
-            var newCompetitorPriceOffset = newfuelPrice == null ? "NULL" : newfuelPrice.CompetitorPriceOffset.ToString();
-
-            var oldIsBasedOnCompetitor = originalfuelPrice == null ? "NULL" : originalfuelPrice.IsBasedOnCompetitor.ToString();
-            var newIsBasedOnCompetitor = newfuelPrice == null ? "NULL" : newfuelPrice.IsBasedOnCompetitor.ToString();
-
-            var result = new System.Text.StringBuilder();
-            result.Append("[" + fuelType.ToString().ToUpper() + "] : ");
-
-            DebugAppendComparision(result, propertyIndentation, "AutoPrice", showIdentical, oldAutoPrice, newAutoPrice);
-            DebugAppendComparision(result, propertyIndentation, "TodayPrice", showIdentical, oldTodayPrice, newTodayPrice);
-            DebugAppendComparision(result, propertyIndentation, "YestPrice", showIdentical, oldYestPrice, newYestPrice);
-            DebugAppendComparision(result, propertyIndentation, "Markup", showIdentical, oldMarkup, newMarkup);
-            DebugAppendComparision(result, propertyIndentation, "CompetitorName", showIdentical, oldCompetitorName, newCompetitorName);
-            DebugAppendComparision(result, propertyIndentation, "IsTrialPrice", showIdentical, oldIsTrailPrice, newIsTrailPrice);
-            DebugAppendComparision(result, propertyIndentation, "Difference", showIdentical, oldDifference, newDifference);
-            DebugAppendComparision(result, propertyIndentation, "CompetitorPriceOffset", showIdentical, oldCompetitorPriceOffset, newCompetitorPriceOffset);
-            DebugAppendComparision(result, propertyIndentation, "IsBasedOnCompetitor", showIdentical, oldIsBasedOnCompetitor, newIsBasedOnCompetitor);
-
-            return result.ToString();
-        }
-
-        private void DebugAppendComparision(System.Text.StringBuilder sb, string indentation, string fieldName, bool showIdentical, string oldValue, string newValue)
-        {
-            var isDifferent = oldValue != newValue;
-            var indicator = isDifferent ? "**" : "  ";
-
-            if (showIdentical || isDifferent)
-            {
-                sb.Append(indentation);
-                sb.AppendFormat(" {0} {1}: {2} --VS-- {3}", indicator, fieldName.PadRight(25,' '), oldValue, newValue);
-            }
         }
 
         private void AddFuelPricesRowsForSites(DateTime forDate, List<SitePriceViewModel> sites)
@@ -1173,166 +1044,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         private IEnumerable<SitePriceViewModel> CallCompetitorsWithPriceSproc(DateTime forDate, int siteId = 0,
             int pageNo = 1, int pageSize = Constants.PricePageSize)
         {
-
-            var useNewCode = CoreSettings.RepositorySettings.CompetitorPrices.UseStoredProcedure;
-            var shouldCompareData = CoreSettings.RepositorySettings.CompetitorPrices.ShouldCompareWithOldCode;
-            var debugOutputFile = CoreSettings.RepositorySettings.CompetitorPrices.CompareOutputFilename;
-
-            if (useNewCode)
-                return _context.GetCompetitorsWithPriceView(forDate, siteId);
-
-            //
-            // OLD CODE
-            //
-            try
-            {
-                var lastSiteId = -1;
-                SitePriceViewModel sitePriceRow = null;
-
-                var dbList = new List<SitePriceViewModel>();
-
-                var listOfbrands = GetExcludeBrands();
-                var allSites = GetSites();
-                Site Jssite = allSites.Where(x => x.Id == siteId).FirstOrDefault();
-                List<SiteToCompetitor> competitors = _context.SiteToCompetitors.Where(x => x.SiteId == siteId && x.DriveTime < 25 && x.IsExcluded == 0).ToList();
-
-                var forDateNextDay = forDate.Date.AddDays(1);
-
-                var yesterday = forDate.AddDays(-1);
-                var yesterdayNextDay = yesterday.Date.AddDays(1);
-
-                ///////////////////////////////////
-
-                var fileUpload_LatestCompPriceData_today = _context.FileUploads.Where(
-                                x =>
-                                    x.UploadDateTime >= forDate && x.UploadDateTime < forDateNextDay
-                                    && x.UploadTypeId == (int)FileUploadTypes.LatestCompPriceData 
-                                    && x.Status.Id == 10)
-                                    .OrderByDescending(x => x.Id)
-                                    .FirstOrDefault();
-
-                List<LatestCompPrice> latestCompPrices_today = null;
-                if (fileUpload_LatestCompPriceData_today != null)
-                {
-                    latestCompPrices_today = _context.LatestCompPrices.Where(x => x.UploadId == fileUpload_LatestCompPriceData_today.Id)
-                        .ToList();
-                }
-
-
-                ///////////////////////////////////
-
-                var fileUpload_DailyPriceData_today = _context.FileUploads.Where(
-                                x =>
-                                    x.UploadDateTime >= forDate && x.UploadDateTime < forDateNextDay
-                                    && x.UploadTypeId == (int)FileUploadTypes.DailyPriceData 
-                                    && x.Status.Id == 10)
-                                    .OrderByDescending(x => x.Id)
-                                    .FirstOrDefault();
-                
-                List<DailyPrice> dailypriceList_today = null;
-                if (fileUpload_DailyPriceData_today != null)
-                {
-                    dailypriceList_today = _context.DailyPrices.Include(x => x.DailyUpload)
-                        .Where(
-                            x =>
-                                    x.DailyUploadId.Value == fileUpload_DailyPriceData_today.Id)
-                                    .ToList();
-                }
-
-                ///////////////////////////////////
-
-                var fileUpload_LatestCompPriceData_yday = _context.FileUploads.Where(
-                           x =>
-                               x.UploadDateTime >= yesterday && x.UploadDateTime < yesterdayNextDay
-                               && x.UploadTypeId == (int)FileUploadTypes.LatestCompPriceData 
-                               && x.Status.Id == 10)
-                               .OrderByDescending(x => x.Id)
-                               .FirstOrDefault();
-
-                List<LatestCompPrice> latestCompPrices_yday = null;
-                if (fileUpload_LatestCompPriceData_today != null)
-                {
-                    latestCompPrices_yday = _context.LatestCompPrices.Where(x => x.UploadId == fileUpload_LatestCompPriceData_yday.Id)
-                        .ToList();
-                }
-
-                ///////////////////////////////////
-
-                var fileUpload_DailyPriceData_yday = _context.FileUploads.Where(
-                                x =>
-                                    x.UploadDateTime >= yesterday && x.UploadDateTime < yesterdayNextDay
-                                    && x.UploadTypeId == (int)FileUploadTypes.DailyPriceData 
-                                    && x.Status.Id == 10)
-                                    .OrderByDescending(x => x.Id)
-                                    .FirstOrDefault();
-
-                List<DailyPrice> dailypriceList_yday = null;
-                if (fileUpload_DailyPriceData_today != null)
-                {
-                    dailypriceList_yday = _context.DailyPrices.Include(x => x.DailyUpload)
-                        .Where(x =>x.DailyUploadId.Value == fileUpload_DailyPriceData_yday.Id)
-                        .ToList();
-                }
-
-                ///////////////////////////////////
-
-                var fuelTypes = new List<FuelTypeItem>()
-                {
-                    FuelTypeItem.Unleaded,
-                    FuelTypeItem.Diesel,
-                    FuelTypeItem.Super_Unleaded
-                };
-
-
-                foreach (var comp in competitors)
-                {
-                    Site Compsite = allSites.Where(x => x.Id == comp.CompetitorId).FirstOrDefault();
-
-                    var result = listOfbrands.Contains(Compsite.Brand);
-
-                    if (result == true || Compsite.IsActive==false) continue;
-                    sitePriceRow = new SitePriceViewModel();
-
-                    sitePriceRow.SiteId = comp.CompetitorId; // CompetitorId
-                    sitePriceRow.JsSiteId = comp.SiteId;
-                    sitePriceRow.CatNo = Compsite.CatNo;
-                    sitePriceRow.StoreName = Compsite.SiteName;
-                    sitePriceRow.Brand = Compsite.Brand;
-                    sitePriceRow.Address = Compsite.Address;
-
-                    sitePriceRow.DriveTime = comp.DriveTime;
-                    sitePriceRow.Distance = comp.Distance;
-
-                    sitePriceRow.Notes = Compsite.Notes;
-
-                    sitePriceRow.FuelPrices = sitePriceRow.FuelPrices ?? new List<FuelPriceViewModel>();
-                    int nOffSet = comp.CompetitorId == Jssite.TrailPriceCompetitorId ? (int)Jssite.CompetitorPriceOffsetNew : 0;
-
-                    foreach (var fuelType in fuelTypes)
-                    {
-                        AddCompetitorFuelPrice(sitePriceRow.FuelPrices, Jssite, Compsite, fuelType, nOffSet, forDate, latestCompPrices_today, dailypriceList_today, latestCompPrices_yday, dailypriceList_yday);
-                    }
-
-                    dbList.Add(sitePriceRow);
-                }
-
-                if (shouldCompareData)
-                {
-                    var newCodeData = _context.GetCompetitorsWithPriceView(forDate, siteId);
-
-                    var debugLog = new DebugCompareCompetitorPrices();
-                    debugLog.Compare(dbList, newCodeData);
-
-                    debugLog.WriteToFile(debugOutputFile);
-                }
-
-                return dbList;
-            }
-            catch (Exception ce)
-            {
-                _logger.Error(ce);
-                return null;
-            }
+            return _context.GetCompetitorsWithPriceView(forDate, siteId);
         }
 
         private void AddCompetitorFuelPrice(
@@ -1392,11 +1104,6 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                 //Difference between yesterday and today
                 Difference = todayPrice > 0 && yesterdayPrice > 0 ? todayPrice - yesterdayPrice : 0
             });
-        }
-
-        private void FillGetCompetitorsWithPriceView(SitePriceViewModel arg1, SqlMapper.GridReader arg2)
-        {
-            throw new NotImplementedException();
         }
 
         private static object cachedGetDailyPricesForFuelByCompetitorsLock = new Object();

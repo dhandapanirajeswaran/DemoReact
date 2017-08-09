@@ -29,6 +29,9 @@ namespace JsPlc.Ssc.PetrolPricing.Core.Diagnostics
             if (String.Compare(level, "Information", true) == 0 && !CoreSettings.Logging.LogInformationMessages)
                 return;
 
+            if (String.Compare(level, "Trace", true) == 0 && !CoreSettings.Logging.LogTraceMessages)
+                return;
+
             var entry = new DiagnoticsLogEntry()
             {
                 Created = DateTime.Now,

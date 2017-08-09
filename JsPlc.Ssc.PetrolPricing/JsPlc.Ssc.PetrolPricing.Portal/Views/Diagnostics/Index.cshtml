@@ -24,7 +24,7 @@
         }
 
         .code-listing {
-            width: 100%;
+            max-width: 70em;
             overflow: auto;
             max-height: 10em;
         }
@@ -198,6 +198,17 @@
                                 <label for="Logging_LogInformationMessages">Log Information Messages</label>
                             </div>
                         </div>
+
+
+                        <div class="row">
+                            <div class="col-md-1">
+                                <input type="checkbox" class="pull-left" name="Logging_LogTraceMessages" id="Logging_LogTraceMessages" value="True" @(Model.DiagnosticsSettings.Logging_LogTraceMessages ? "checked='checked'" : "") />
+                            </div>
+
+                            <div class="col-md-3">
+                                <label for="Logging_LogTraceMessages">Log Trace Messages</label>
+                            </div>
+                        </div>
                     </div>
                 </fieldset>
 
@@ -223,50 +234,6 @@
                     </div>
                 </fieldset>
                 <hr />
-
-                <fieldset>
-                    <legend>Site Prices</legend>
-                    <div class="container">
-                        <div class="row">
-                            <div class="col-md-1">
-                                @if (Model.DiagnosticsSettings.SitePrices_UseStoredProcedure)
-                                {
-                                    <input type="checkbox" name="SitePrices_UseStoredProcedure" id="SitePrices_UseStoredProcedure" value="True" checked="checked" />
-                                }
-                                else
-                                {
-                                    <input type="checkbox" name="SitePrices_UseStoredProcedure" id="SitePrices_UseStoredProcedure" value="True" />
-                                }
-                            </div>
-                            <div class="col-md-3">
-                                <label for="SitePrices_UseStoredProcedure">Use Stored Procedure</label>
-                            </div>
-                        </div>
-                    </div>
-                </fieldset>
-                <hr />
-
-                <fieldset>
-                    <legend>Competitor Sites</legend>
-
-                    <div class="container">
-                        <div class="row">
-                            <div class="col-md-1">
-                                @if (Model.DiagnosticsSettings.CompetitorPrices_UseStoredProcedure)
-                                {
-                                    <input type="checkbox" name="CompetitorPrices_UseStoredProcedure" id="CompetitorPrices_UseStoredProcedure" value="True" checked="checked" />
-                                }
-                                else
-                                {
-                                    <input type="checkbox" name="CompetitorPrices_UseStoredProcedure" id="CompetitorPrices_UseStoredProcedure" value="True" />
-                                }
-                            </div>
-                            <div class="col-md-3">
-                                <label for="CompetitorPrices_UseStoredProcedure">Use Stored Procedure</label>
-                            </div>
-                        </div>
-                    </div>
-                </fieldset>
 
                 <fieldset>
                     <legend>System Settings</legend>

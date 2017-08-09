@@ -240,7 +240,24 @@ namespace JsPlc.Ssc.PetrolPricing.Business
                     var currentCompetitor = getCheapestPriceUsingParams(db, site, minDriveTime, maxDriveTime, fuelId, usingPricesforDate, driveTimeMarkup.Markup, includeJsSiteAsComp);
 
                     if (currentCompetitor.HasValue)
+                    {
                         allCompetitors.Add(currentCompetitor.Value);
+
+                        var bestComp = currentCompetitor.Value.Key;
+
+                        DiagnosticLog.AddLog("Trace",
+                            "Found Competitor between " + minDriveTime + " and " + maxDriveTime
+                            , null
+                            , String.Format("SiteId: {0}, Fuel: {1}, CompetitorId: {2} - Price Daily: {3} - LatestCompPrice: {4}",
+                            site.Id,
+                            fuelId,
+                            bestComp.CompetitorWithDriveTime.CompetitorId,
+                            (bestComp.DailyPrice != null ? bestComp.DailyPrice.ModalPrice.ToString() : "??"),
+                            (bestComp.LatestCompPrice != null ? bestComp.LatestCompPrice.ModalPrice.ToString() : "??")
+                            )
+                        );
+
+                    }
                 }
 
                 //// APPLY PRICING RULES: based on drivetime (see Market Comparison sheet) as per meeting 02Dec2015 @ 13:00

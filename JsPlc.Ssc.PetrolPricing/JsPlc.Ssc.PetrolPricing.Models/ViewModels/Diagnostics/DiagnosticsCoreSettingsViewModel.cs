@@ -9,28 +9,15 @@ namespace JsPlc.Ssc.PetrolPricing.Models.ViewModels.Diagnostics
 {
     public class DiagnosticsSettingsViewModel
     {
-        [Display(Name="Log Database Calls")]
-        public bool Dapper_LogDatabaseCalls { get; set; }
-        [Display(Name="Use Stored Procedure")]
-        public bool SitePrices_UseStoredProcedure { get; set; }
-        [Display(Name = "Use Stored Procedure")]
-        public bool CompetitorPrices_UseStoredProcedure { get; set; }
+        [Display(Name = "Log Database Calls")]
+        public bool Dapper_LogDatabaseCalls { get; set; } = false;
         [Display(Name = "Log Information Messages")]
-        public bool Logging_LogInformationMessages { get; set; }
+        public bool Logging_LogInformationMessages { get; set; } = false;
         [Display(Name = "Log Debug Messages")]
-        public bool Logging_LogDebugMessages { get; set; }
-
+        public bool Logging_LogDebugMessages { get; set; } = false;
+        [Display(Name = "Log Trace Message")]
+        public bool Logging_LogTraceMessages { get; set; } = false;
         [Display(Name = "Data Cleanse Files After Days")]
-        public int DataCleanseFilesAfterDays { get; set; }
-
-        public DiagnosticsSettingsViewModel()
-        {
-            this.Dapper_LogDatabaseCalls = false;
-            this.SitePrices_UseStoredProcedure = false;
-            this.CompetitorPrices_UseStoredProcedure = false;
-            this.Logging_LogDebugMessages = false;
-            this.Logging_LogInformationMessages = false;
-            this.DataCleanseFilesAfterDays = 0;
-        }
+        public int DataCleanseFilesAfterDays { get; set; } = 60;
     }
 }

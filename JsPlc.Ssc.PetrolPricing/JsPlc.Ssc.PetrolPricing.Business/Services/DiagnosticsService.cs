@@ -50,9 +50,8 @@ namespace JsPlc.Ssc.PetrolPricing.Business.Services
                 {
                     Logging_LogDebugMessages = CoreSettings.Logging.LogDebugMessages,
                     Logging_LogInformationMessages = CoreSettings.Logging.LogInformationMessages,
+                    Logging_LogTraceMessages = CoreSettings.Logging.LogTraceMessages,
                     Dapper_LogDatabaseCalls = CoreSettings.RepositorySettings.Dapper.LogDapperCalls,
-                    SitePrices_UseStoredProcedure = CoreSettings.RepositorySettings.SitePrices.UseStoredProcedure,
-                    CompetitorPrices_UseStoredProcedure = CoreSettings.RepositorySettings.CompetitorPrices.UseStoredProcedure,
                     DataCleanseFilesAfterDays = systemSettings.DataCleanseFilesAfterDays
                 }
             };
@@ -95,14 +94,6 @@ namespace JsPlc.Ssc.PetrolPricing.Business.Services
             var coreSettings = new Dictionary<string, object>()
             {
                 {"Dapper.LogDatabaseCalls", CoreSettings.RepositorySettings.Dapper.LogDapperCalls },
-
-                {"SitePrices.UseStoredProcedure", CoreSettings.RepositorySettings.SitePrices.UseStoredProcedure },
-                {"SitePrices.ShouldCompareWithOldCode", CoreSettings.RepositorySettings.SitePrices.ShouldCompareWithOldCode },
-                {"SitePrices.CompareOutputFilename", CoreSettings.RepositorySettings.SitePrices.CompareOutputFilename},
-
-                {"CompetitorPrices.UseStoredProcedure", CoreSettings.RepositorySettings.CompetitorPrices.UseStoredProcedure },
-                {"CompetitorPrices.ShouldCompareWithOldCode", CoreSettings.RepositorySettings.CompetitorPrices.ShouldCompareWithOldCode },
-                {"CompetitorPrices.CompareOutputFilename", CoreSettings.RepositorySettings.CompetitorPrices.CompareOutputFilename },
             };
 
             var sysSettings = new Dictionary<string, object>()
@@ -185,10 +176,8 @@ namespace JsPlc.Ssc.PetrolPricing.Business.Services
         {
             CoreSettings.Logging.LogDebugMessages = settings.Logging_LogDebugMessages;
             CoreSettings.Logging.LogInformationMessages = settings.Logging_LogInformationMessages;
-
+            CoreSettings.Logging.LogTraceMessages = settings.Logging_LogTraceMessages;
             CoreSettings.RepositorySettings.Dapper.LogDapperCalls = settings.Dapper_LogDatabaseCalls;
-            CoreSettings.RepositorySettings.SitePrices.UseStoredProcedure = settings.SitePrices_UseStoredProcedure;
-            CoreSettings.RepositorySettings.CompetitorPrices.UseStoredProcedure = settings.CompetitorPrices_UseStoredProcedure;
 
             var systemSettings = _db.GetSystemSettings();
 

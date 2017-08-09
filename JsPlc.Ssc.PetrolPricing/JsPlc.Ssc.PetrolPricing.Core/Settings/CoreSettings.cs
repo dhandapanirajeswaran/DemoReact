@@ -12,6 +12,7 @@ namespace JsPlc.Ssc.PetrolPricing.Core.Settings
         {
             public static bool LogInformationMessages = false;
             public static bool LogDebugMessages = false;
+            public static bool LogTraceMessages = true;
         }
 
         public static class RepositorySettings
@@ -19,22 +20,6 @@ namespace JsPlc.Ssc.PetrolPricing.Core.Settings
             public static class Dapper
             {
                 public static bool LogDapperCalls = false;
-            }
-
-            public static class SitePrices
-            {
-                public static bool UseStoredProcedure = true;
-                public static bool ShouldCompareWithOldCode = false;
-
-                public static string CompareOutputFilename = @"C:\tempfile\logs\fuel_prices_old_vs_new.txt";
-            }
-
-            public static class CompetitorPrices
-            {
-                public static bool UseStoredProcedure = true;
-                public static bool ShouldCompareWithOldCode = false;
-
-                public static string CompareOutputFilename = @"C:\tempfile\logs\competitor_prices_old_vs_new.txt";
             }
         }
     }
