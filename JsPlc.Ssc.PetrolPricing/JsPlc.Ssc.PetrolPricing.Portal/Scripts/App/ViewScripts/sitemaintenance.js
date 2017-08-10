@@ -191,7 +191,10 @@
                 activeRows = $('tr.site-active'),
                 inactiveRows = $('tr.site-inactive'),
                 withDataButton = $('#btnShowWithData'),
-                missingDataButton = $('#btnShowMissingData');
+                missingDataButton = $('#btnShowMissingData'),
+                dataChooseGroup = $('[data-choose-group="with-data-group"]'),
+                emailChooseGroup = $('[data-choose-group="with-email-group"]'),
+                activeChooseGroup = $('[data-choose-group="active-site-group"]');
 
             if (siteFilters.showActiveSites && siteFilters.showInactiveSites && siteFilters.showHasEmails && siteFilters.showNoEmails && siteFilters.withData && siteFilters.missingData)
                 resetButton.hide();
@@ -204,7 +207,19 @@
             setButtonClassState(withNoEmailsButton, siteFilters.showNoEmails);
             setButtonClassState(withDataButton, siteFilters.withData);
             setButtonClassState(missingDataButton, siteFilters.missingData);
+
+            setChooseGroup(dataChooseGroup, !siteFilters.withData && !siteFilters.missingData);
+            setChooseGroup(emailChooseGroup, !siteFilters.showHasEmails && !siteFilters.showNoEmails);
+            setChooseGroup(activeChooseGroup, !siteFilters.showActiveSites && !siteFilters.showInactiveSites);
+
             applyRowFilters();
+        };
+
+        function setChooseGroup(groupEle, show ) {
+            if (show) 
+                groupEle.removeClass('pick-one-hide').addClass('pick-one-show');
+             else
+                groupEle.removeClass('pick-one-show').addClass('pick-one-hide');
         };
 
         function toggleShowActiveSites() {
@@ -262,12 +277,14 @@
         };
 
         function resetActiveSites() {
+            siteFilters.missingData = true;
+            siteFilters.withData = true;
             siteFilters.showHasEmails = true;
             siteFilters.showNoEmails = true;
             siteFilters.showActiveSites = true;
             siteFilters.showInactiveSites = true;
             redrawSiteFilterButtons();
-            notify.info('Showing all Sites');
+            notify.info('Showing all Sites - all filters removed');
             updateCookieSettings();
         };
 

@@ -19,6 +19,7 @@
             "bootstrap-datepickerGB": "locales/bootstrap-datepicker.en-GB.min",
             "URI": "UriJs/Uri",
             "underscore": "underscore",
+            "chosen": "chosen/chosen.jquery",
 
             // LINK Specific js files.
             "helpers": "Utils/helpers",
@@ -83,6 +84,7 @@
             "jqueryval": { deps: ["jquery"] },
             "knockout": { deps: ["jquery"] },
             "bootstrap": { deps: ["jquery"] },
+            "chosen": { deps: ["jquery"] },
             "SitePricing": { deps: ["jquery", "bootstrap-datepickerGB"] },
             'bootbox': {
                 deps: ['jquery']

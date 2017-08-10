@@ -31,7 +31,7 @@
         <div class="col-md-5">
             <input type="hidden" id="TrailPriceCompetitorId" name="TrailPriceCompetitorId" value="@(Model.TrailPriceCompetitorId)" />
 
-            <select id="mnuTrailPriceCompetitorId" name="mnuTrailPriceCompetitorId" data-placeholder="Choose a Competitor Site" class="chosen-select" tabindex="-1" style="width:100%;">
+            <select id="mnuTrailPriceCompetitorId" name="mnuTrailPriceCompetitorId" data-placeholder="Choose a Competitor Site" class="chosen hide-chosen-select" tabindex="-1" style="width:100%;">
                 @foreach(var item in Model.Competitors)
                 {
                     <option value="@(item.Id)" @(item.Id == Model.TrailPriceCompetitorId ? " selected='selected'" : "")>@(item.SiteName)</option>

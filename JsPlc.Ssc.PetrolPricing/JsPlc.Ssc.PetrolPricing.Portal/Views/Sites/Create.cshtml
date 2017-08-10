@@ -146,7 +146,10 @@
                     </div>
                 </div>
 
-                @Html.Partial("~/Views/Sites/_PriceMatchPanel.cshtml", Model)
+                @* standard price match *@
+                <input type="hidden" name="PriceMatchType" id="PriceMatchType" value="1" />
+                <input type="hidden" name="CompetitorPriceOffset" id="CompetitorPriceOffset" value="0" />
+                <input type="hidden" name="CompetitorPriceOffsetNew" id="CompetitorPriceOffsetNew" value="0" />
             </div>
         </div>
         <div class="panel-footer">
@@ -154,7 +157,7 @@
                 <a class="btn btn-default" href="@Url.Action("Index","Sites")"><i class="fa fa-backward"></i> Back to List</a>
             </div>
             <div class="col-md-6 text-right">
-                <button id="CreateSiteButton" type="submit" class="btn btn-primary"><i class="fa fa-star"></i> Create</button>
+                <button id="CreateSiteButton" type="submit" class="btn btn-primary"><i class="fa fa-star"></i> Create Site</button>
             </div>
             <div class="clearfix"></div>
         </div>
@@ -164,8 +167,8 @@
 
 @section Scripts {
     <script>
-        require(["jquery", "busyloader"],
-            function ($, busyloader) {
+        require(["jquery", "busyloader", "chosen"],
+            function ($, busyloader, chosen) {
 
                 function createSiteClick(ev) {
                     busyloader.show({
@@ -183,9 +186,11 @@
                         ? trialPricePanel.show()
                         : trialPricePanel.hide();
 
-                    priceMatchType == 3
-                        ? matchCompetitorPanel.show()
-                        : matchCompetitorPanel.hide();
+                    if (priceMatchType == 3) {
+                        matchCompetitorPanel.show()
+                        rebindChosenMenus();
+                    } else
+                        matchCompetitorPanel.hide();
                 };
 
                 function bindEvents() {
@@ -193,8 +198,18 @@
                     $('#PriceMatchType').off().on('change', priceMatchTypeChange);
                 };
 
-                function init() {
+                function rebindChosenMenus() {
+                    $('#mnuTrailPriceCompetitorId').chosen('destroy');
+                    $('#mnuTrailPriceCompetitorId').chosen();
+                };
+
+                function docReady() {
                     bindEvents();
+                    rebindChosenMenus();
+                };
+
+                function init() {
+                    $(docReady);
                 };
 
                 init();

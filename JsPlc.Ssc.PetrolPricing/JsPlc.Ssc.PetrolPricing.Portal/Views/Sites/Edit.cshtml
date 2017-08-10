@@ -211,7 +211,7 @@
     @Scripts.Render("~/bundles/jqueryval")
 
     <script>
-        require(["jquery", "busyloader"],
+        require(["jquery", "busyloader", "chosen"],
             function ($, busyloader) {
 
                 function submitSiteClick(ev) {
@@ -235,9 +235,16 @@
                         ? trialPricePanel.show()
                         : trialPricePanel.hide();
 
-                    priceMatchType == 3
-                        ? matchCompetitorPanel.show()
-                        : matchCompetitorPanel.hide();
+                    if (priceMatchType == 3) {
+                        matchCompetitorPanel.show()
+                        rebindChosenMenus();
+                    } else
+                        matchCompetitorPanel.hide();
+                };
+
+                function rebindChosenMenus() {
+                    $('#mnuTrailPriceCompetitorId').chosen('destroy');
+                    $('#mnuTrailPriceCompetitorId').chosen();
                 };
 
                 function bindEvents() {
@@ -245,8 +252,13 @@
                     $('#PriceMatchType').off().on('change', priceMatchTypeChange);
                 };
 
-                function init() {
+                function docReady() {
                     bindEvents();
+                    rebindChosenMenus();
+                };
+
+                function init() {
+                    $(docReady);
                 };
 
                 init();

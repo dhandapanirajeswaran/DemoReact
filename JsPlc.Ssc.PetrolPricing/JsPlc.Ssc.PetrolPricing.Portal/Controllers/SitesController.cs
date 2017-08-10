@@ -215,6 +215,8 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 
         public ActionResult Create()
         {
+            var model = new SiteViewModel();
+
             return View(new SiteViewModel());
         }
 
