@@ -1364,11 +1364,16 @@ optgroup > option {
     font-weight: bold;
     margin-left: 0.5em;
     line-height: 2em;
+    color: #000;
 }
 
 .price-match-info .markup-price {
     color: #ED8B00;
     margin-left: 4px;
+}
+
+.price-match-info .price-match-strategy {
+    color: #337ab7;
 }
 
 .fuel-markup {

@@ -1,11 +1,11 @@
 ﻿@using JsPlc.Ssc.PetrolPricing.Models
 @model JsPlc.Ssc.PetrolPricing.Models.SiteViewModel
 
-<div class="modal fade" id="competitorPricesPopup" tabindex="-1" role="dialog" aria-labelledby="competitorPricesPopupLabel">
+<div class="modal fade" id="competitorPricesPopup" tabindex="-1" role="dialog" aria-labelledby="competitorPricesPopupLabel" data-edit-site-link="@Url.Action("Edit", "Sites")/?id={SITEID}&calledFromSection=SitePricing">
     <div class="modal-content">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            <h4 class="modal-title" id="competitorPricesPopupLabel"><i class="fa fa-credit-card"></i> <span id="competitorPricePopupStoreName"></span> - Competitor Prices &mdash; Showing: <span id="competitorPricePopupVisibleCount">0</span> of <span id="competitorPricePopupTotalCount">0</span>
+            <h4 class="modal-title" id="competitorPricesPopupLabel"><i class="fa fa-credit-card"></i> <a class="btn btn-success" id="competitorPricePopupStoreName" data-infotip-dock="below" data-infotip="Edit this [b]Site[/b]"></a> - Competitor Prices &mdash; Showing: <span id="competitorPricePopupVisibleCount">0</span> of <span id="competitorPricePopupTotalCount">0</span>
             
             <span class="decimal-rounding" data-bind="text: $root.formattedDecimalRounding()" data-infotip-dock="below" data-infotip="This can be changed in the [b]Settings page[/b]"></span>
             <span class="price-variance" data-bind="text: $root.PriceChangeVariance()" data-infotip-dock="below" data-infotip="This can be changed in the [b]Settings page[/b]"></span>

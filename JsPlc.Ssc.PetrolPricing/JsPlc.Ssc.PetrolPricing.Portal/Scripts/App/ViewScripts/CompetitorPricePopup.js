@@ -1,5 +1,5 @@
-﻿define(["jquery", "knockout", "common", "competitorPriceNotePopup", "notify", "cookieSettings"],
-function ($, ko, common, compNotePopup, notify, cookieSettings) {
+﻿define(["jquery", "knockout", "common", "competitorPriceNotePopup", "notify", "cookieSettings", "bootbox"],
+function ($, ko, common, compNotePopup, notify, cookieSettings, bootbox) {
     "use strict";
     var state = {
         showNotes: false,
@@ -113,7 +113,7 @@ function ($, ko, common, compNotePopup, notify, cookieSettings) {
 
     function populate(siteItem) {
         var popup = $(config.selectors.popup);
-
+                        
         popup.find('.storeNumber').text(siteItem.StoreNo);
         popup.find('.storeName').text(siteItem.StoreName);
         popup.find('.storeTown').text(siteItem.Town);
@@ -126,6 +126,33 @@ function ($, ko, common, compNotePopup, notify, cookieSettings) {
 
         $('.chosen-date').text($('#viewingDate').val());
         hideAllNotes(true);
+    };
+
+    function confirmEditSite() {
+        var popup = $(config.selectors.popup),
+            editSiteLink = popup.data('edit-site-link').replace('{SITEID}', viewingSiteId);
+
+        bootbox.confirm({
+            title: "Confirm navigation",
+            message: 'Are you sure you with to proceed and <strong>Edit this Site</strong>?'
+                + '<br />'
+                + '<br />'
+                + 'This will <strong>lose any unsaved Overrides</strong>.',
+            buttons: {
+                confirm: {
+                    label: '<i class="fa fa-check"></i> Yes - Edit the Site',
+                    className: 'btn btn-danger'
+                },
+                cancel: {
+                    label: '<i class="fa fa-times"></i> No',
+                    className: 'btn btn-default'
+                }
+            },
+            callback: function (result) {
+                if (result)
+                    window.location = editSiteLink
+            }
+        });
     };
 
     function populateReadOnlyPopupPrices(siteId) {
@@ -194,19 +221,19 @@ function ($, ko, common, compNotePopup, notify, cookieSettings) {
 
         switch (siteItem.PriceMatchType) {
             case 1:
-                priceMatchInfo = '<span data-infotip="Standard"><i class="fa fa-dot-circle-o"></i> Standard</span>';
+                priceMatchInfo = '<div data-infotip="Standard"><span class="price-match-strategy"><i class="fa fa-dot-circle-o"></i> Standard</span></div>';
                 markups.unleaded = siteItem.FuelPrices[1].Markup;
                 markups.diesel = siteItem.FuelPrices[2].Markup;
                 markups.superUnleaded = siteItem.FuelPrices[0].Markup;
                 break;
             case 2:
-                priceMatchInfo = '<span data-infotip="Trial Price"><i class="fa fa-flask"></i> Trial Price <big class="markup-price">' + formatFuelMarkUp(siteItem.FuelPrices[0].CompetitorPriceOffset) + '</big></span>';
+                priceMatchInfo = '<div data-infotip="Trial Price"><span class="price-match-strategy"><i class="fa fa-flask"></i> Trial Price</span> <big class="markup-price">' + formatFuelMarkUp(siteItem.FuelPrices[0].CompetitorPriceOffset) + '</big></div>';
                 markups.unleaded = siteItem.FuelPrices[1].CompetitorPriceOffset;
                 markups.diesel = siteItem.FuelPrices[2].CompetitorPriceOffset;
                 markups.superUnleaded = siteItem.FuelPrices[0].CompetitorPriceOffset;
                 break;
             case 3:
-                priceMatchInfo = '<span data-infotip="Match Competitor"><i class="fa fa-clone"></i> Match: ' + siteItem.FuelPrices[0].CompetitorName + '<big class="markup-price">' + formatFuelMarkUp(matchCompetitorMarkup) + '</big></span>';
+                priceMatchInfo = '<div data-infotip="Match Competitor"><span class="price-match-strategy"><i class="fa fa-clone"></i> Match:</span> ' + siteItem.FuelPrices[0].CompetitorName + '<big class="markup-price">' + formatFuelMarkUp(matchCompetitorMarkup) + '</big></div>';
                 markups.unleaded = matchCompetitorMarkup;
                 markups.diesel = matchCompetitorMarkup;
                 markups.superUnleaded = matchCompetitorMarkup;
@@ -447,6 +474,7 @@ function ($, ko, common, compNotePopup, notify, cookieSettings) {
         $(config.selectors.excludeDriveTimeButton).off().click(excludeDriveTimeClick);
         $(config.selectors.includeDriveTimeButton).off().click(includeDriveTimeClick);
 
+        $(config.selectors.storeName).off().click(confirmEditSite);
     };
 
     function bindSearchEvents() {
