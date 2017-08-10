@@ -3052,7 +3052,9 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
                     ? GetSitesWithEmailsAndPrices(fromDt, toDt).ToList()
                     : GetBrandWithDailyPricesAsPrices(brandName, fromDt, toDt).ToList();
 
-                var sortedSitesWithPrices = siteName.Trim() == "empty" ? sitesWithPrices.OrderBy(x => x.SiteName) : sitesWithPrices.Where(x => x.SiteName.ToUpper().Trim().Contains(siteName.ToUpper().Trim())).OrderBy(x => x.SiteName);
+                var sortedSitesWithPrices = siteName.Trim() == "empty" 
+                ? sitesWithPrices.OrderBy(x => x.SiteName) 
+                : sitesWithPrices.Where(x => x.SiteName.ToUpper().Trim().Contains(siteName.ToUpper().Trim())).OrderBy(x => x.SiteName);
 
                 foreach (var s in sortedSitesWithPrices)
                 {
@@ -3070,13 +3072,37 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
                         PriceDate = d,
                         FuelPrices = GetSiteFuelPricesOnDate(s.Prices, d)
                     }));
+
+                    // Fill weekend/Bank holiday gaps
+                    FillPriceMovementReportWeekendGaps(dataItems, FuelTypeItem.Unleaded);
+                    FillPriceMovementReportWeekendGaps(dataItems, FuelTypeItem.Diesel);
+                    FillPriceMovementReportWeekendGaps(dataItems, FuelTypeItem.Super_Unleaded);
                 }
             });
             task.Wait();
-
-
             
             return retval;
+        }
+
+        private void FillPriceMovementReportWeekendGaps(List<PriceMovementReportDataItems> dataItems, FuelTypeItem fuelType)
+        {
+            if (dataItems == null)
+                return;
+
+            var sortedDays = dataItems.OrderBy(x => x.PriceDate);
+            var lastPrice = 0;
+
+            foreach(var day in sortedDays)
+            {
+                var fuelPrice = day.FuelPrices.FirstOrDefault(x => x.FuelTypeId == (int)fuelType);
+                if (fuelPrice == null)
+                    continue;
+
+                if (fuelPrice.PriceValue != 0)
+                    lastPrice = fuelPrice.PriceValue;
+                else
+                    fuelPrice.PriceValue = lastPrice;
+            }
         }
 
         /// <summary>

@@ -155,6 +155,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
                 DateOfPrice = usingPricesforDate.Date.AddDays(-1),
                 SuggestedPrice = 0,
                 UploadId = calcTaskData.FileUpload.Id,
+                Markup = 0,
                 CompetitorId = null
             };
 
@@ -173,6 +174,9 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 
             KeyValuePair<CheapestCompetitor, int>? cheapestCompetitor = null;
 
+            //
+            // Match Competitor - Price Match Strategy ?
+            //
             if (site.TrailPriceCompetitorId.HasValue)
             {
                 var foundCompetitorPrices = getCompetitorPriceUsingParams(db, site, fuelId, usingPricesforDate);
@@ -194,6 +198,13 @@ namespace JsPlc.Ssc.PetrolPricing.Business
                 {
                     cheapestPrice.IsTrailPrice = true;
                     minPriceFound = 0;
+                }
+
+                // No cheapest price for Match Competitor - return 0 = N/A
+                if (minPriceFound == 0)
+                {
+                    db.AddOrUpdateSitePriceRecord(cheapestPrice);
+                    return;
                 }
 
                 cheapestPrice.IsTrailPrice = minPriceFound > 0;
