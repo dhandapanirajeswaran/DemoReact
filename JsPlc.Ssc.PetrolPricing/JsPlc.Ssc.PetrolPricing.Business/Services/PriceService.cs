@@ -222,7 +222,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 
                     float minDriveTime = driveTimeMarkup.DriveTime;
                     float nextDriveTime = (isLastItem ? minDriveTime + DriveTimeMinutesBeyondLastRecord : driveTimeMarkupsForFuel[i + 1].DriveTime);
-                    float maxDriveTime = nextDriveTime - 0.1f;
+                    float maxDriveTime = nextDriveTime - 0.0001f; // NOTE: make sure this is more granular than the UI/data accuracy ! (e.g. 9.95)
 
                     // safety check - ignore if outside the max DriveTime...
                     if (minDriveTime >= MaximumCompetitorSearchDriveTime)
