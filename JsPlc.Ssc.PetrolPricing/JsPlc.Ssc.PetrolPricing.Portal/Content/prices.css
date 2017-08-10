@@ -51,6 +51,30 @@ table.competitorTable td, th {
     border-radius: 12px 12px 0 0;
 }
 
+#competitorPricesPopup .decimal-rounding,
+#competitorPricesPopup .price-variance {
+    float: right;
+    margin-right: 2em;
+    color: #000;
+}
+
+#competitorPricesPopup .decimal-rounding::before,
+#competitorPricesPopup .price-variance::before {
+    color: #666;
+    font-variant: small-caps;
+    text-transform: uppercase;
+    margin-right: 0.5em;
+    font-size: 85%;
+}
+
+#competitorPricesPopup .decimal-rounding::before {
+    content: "Rounding:";
+}
+#competitorPricesPopup .price-variance::before {
+    content: "Price-Variance:"
+}
+
+
 .compitatorData {
     height: 400px;
     overflow-y: auto;

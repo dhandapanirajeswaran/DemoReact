@@ -5,11 +5,19 @@
     <div class="modal-content">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            <h4 class="modal-title" id="competitorPricesPopupLabel"><i class="fa fa-credit-card"></i> <span id="competitorPricePopupStoreName"></span> - Competitor Prices &mdash; Showing: <span id="competitorPricePopupVisibleCount"></span> of <span id="competitorPricePopupTotalCount"></span></h4>
+            <h4 class="modal-title" id="competitorPricesPopupLabel"><i class="fa fa-credit-card"></i> <span id="competitorPricePopupStoreName"></span> - Competitor Prices &mdash; Showing: <span id="competitorPricePopupVisibleCount">0</span> of <span id="competitorPricePopupTotalCount">0</span>
+            
+            <span class="decimal-rounding" data-bind="text: $root.formattedDecimalRounding()" data-infotip-dock="below" data-infotip="This can be changed in the [b]Settings page[/b]"></span>
+            <span class="price-variance" data-bind="text: $root.PriceChangeVariance()" data-infotip-dock="below" data-infotip="This can be changed in the [b]Settings page[/b]"></span>
+            
+            </h4>
         </div>
         <div class="modal-body">
 
-            <div style="position: absolute; left: 2em; font-size: 115%; text-align: center; font-weight: bold;"><span>Viewing Date</span><br /><span class="chosen-date"></span></div>
+            <div class="text-center text-bold" style="position: absolute; left: 2em;">
+                <span>Viewing Date</span><br />
+                <span class="chosen-date font150pc"></span>
+            </div>
 
             <div class="btn-group" style="position: absolute; right: 2em;">
                 <button id="btnMinimiseModal" type="button" class="btn btn-default" data-infotip="Hide the Competitor Prices"><i class="fa fa-compress"></i> Hide</button>
