@@ -7,7 +7,7 @@ SET NOCOUNT ON
 
 ----DEBUG:START
 --DECLARE	@ForDate DATE = GETDATE()
---DECLARE	@SiteId INT = 4995
+--DECLARE	@SiteId INT = 2873
 ----DEBUG:END
 	
 	-- constants
@@ -256,7 +256,10 @@ SET NOCOUNT ON
 				--THEN (caft.LatestPriceYesterday / 10) + caft.nOffset
 				-- possible fix for issue 4: In site pricing page earlier today we seen some odd site price can we check this also please
 				THEN (caft.LatestPriceYesterday) + caft.nOffset
-				ELSE caft.DailyPriceYesterday + caft.nOffset
+				ELSE CASE 
+					WHEN caft.DailyPriceYesterday > 0 THEN caft.DailyPriceYesterday + caft.nOffset
+					ELSE 0
+					END
 			END [YesterdayPrice]
 
 			----- DEBUG
