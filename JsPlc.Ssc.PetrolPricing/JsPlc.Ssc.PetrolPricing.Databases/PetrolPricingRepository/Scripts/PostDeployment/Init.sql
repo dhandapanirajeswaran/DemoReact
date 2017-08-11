@@ -184,7 +184,8 @@ WHERE
 		usr.Email IN (
 			'Premkumar.Krishnan@sainsburys.co.uk', 
 			'Garry.Leeder@sainsburys.co.uk', 
-			'Sandip.Vaidya@sainsburys.co.uk'
+			'Sandip.Vaidya@sainsburys.co.uk',
+			'Ollie.Kemp@sainsburys.co.uk'
 		)
 	);
 
