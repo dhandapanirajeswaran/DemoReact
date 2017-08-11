@@ -52,14 +52,16 @@ table.competitorTable td, th {
 }
 
 #competitorPricesPopup .decimal-rounding,
-#competitorPricesPopup .price-variance {
+#competitorPricesPopup .price-variance,
+#competitorPricesPopup .super-unleaded-markup {
     float: right;
     margin-right: 2em;
     color: #000;
 }
 
 #competitorPricesPopup .decimal-rounding::before,
-#competitorPricesPopup .price-variance::before {
+#competitorPricesPopup .price-variance::before,
+#competitorPricesPopup .super-unleaded-markup::before {
     color: #666;
     font-variant: small-caps;
     text-transform: uppercase;
@@ -73,7 +75,9 @@ table.competitorTable td, th {
 #competitorPricesPopup .price-variance::before {
     content: "Price-Variance:"
 }
-
+#competitorPricesPopup .super-unleaded-markup::before {
+    content: "Super-Unleaded:"
+}
 
 .compitatorData {
     height: 400px;
