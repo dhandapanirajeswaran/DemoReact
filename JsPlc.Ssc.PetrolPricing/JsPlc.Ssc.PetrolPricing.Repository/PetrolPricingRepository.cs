@@ -601,6 +601,8 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             {
                 var siteGrocer = nearbyGrocerStatuses.FirstOrDefault(x => x.SiteId == site.SiteId);
 
+                var wasUnleadedSnappedBackToTodayPrice = false;
+
                 foreach (var siteFuel in site.FuelPrices)
                 {
                     var grocerStatus = NearbyGrocerStatuses.None;
@@ -627,6 +629,8 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                         {
                             // use today's price
                             autoPrice = todayPrice;
+                            if (siteFuel.FuelTypeId == (int)FuelTypeItem.Unleaded)
+                                wasUnleadedSnappedBackToTodayPrice = true;
                         }
                     }
 
@@ -641,11 +645,32 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                     {
                         // within Price Variance, so use today's price
                         autoPrice = todayPrice;
+                        if (siteFuel.FuelTypeId == (int)FuelTypeItem.Unleaded)
+                            wasUnleadedSnappedBackToTodayPrice = true;
                     }
 
                     // store auto price and recalculate difference
                     siteFuel.AutoPrice = (int?)autoPrice;
                     siteFuel.Difference = (int?)(autoPrice - todayPrice);
+                }
+
+                if (wasUnleadedSnappedBackToTodayPrice)
+                {
+                    var unleaded = site.FuelPrices.FirstOrDefault(x => x.FuelTypeId == (int)FuelTypeItem.Unleaded);
+                    var superUnleaded = site.FuelPrices.FirstOrDefault(x => x.FuelTypeId == (int)FuelTypeItem.Super_Unleaded);
+
+                    if (unleaded != null && superUnleaded != null)
+                    {
+                        superUnleaded.AutoPrice = (int?)unleaded.AutoPrice.Value + systemSettings.SuperUnleadedMarkupPrice;
+
+                        // get Super-Unleaded TodayPrice (if any)
+                        var superTodayPrice = superUnleaded.TodayPrice.HasValue
+                            ? superUnleaded.TodayPrice.Value
+                            : 0;
+
+                        // recalc diff
+                        superUnleaded.Difference = (int?)superUnleaded.AutoPrice - superTodayPrice;
+                    }
                 }
             }
         }
