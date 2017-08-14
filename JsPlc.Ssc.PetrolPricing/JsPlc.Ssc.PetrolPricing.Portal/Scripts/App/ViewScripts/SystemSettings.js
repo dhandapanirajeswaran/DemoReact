@@ -131,12 +131,39 @@
             }
         };
 
+        function decimalRoundingChange() {
+            bootbox.confirm({
+                title: 'Decimal Rounding Changed',
+                message: 'The <strong>Decimal Rounding</strong> has changed<br />'
+                    + '<br />'
+                    + 'Do you want to reset the <big class="text-bold">Price Variance</big> ?',
+                buttons: {
+                    confirm: {
+                        label: '<i class="fa fa-check"></i> Yes',
+                        className: 'btn btn-danger'
+                    },
+                    cancel: {
+                        label: '<i class="fa fa-times"></i> No',
+                        className: 'btn btn-default'
+                    }
+                },
+                callback: function (result) {
+                    if (result) {
+                        $('#PriceChangeVarianceThreshold').val('0.0');
+                        notify.info('The Price Variance has been reset');
+                    }
+                }
+            });
+        };
+
         function bindEvents() {
             controls.addButton.off().click(addButtonClick);
             controls.emailInput.on('keypress', emailInputKeyup);
             controls.enableMenu.on('change', redrawEnableWarnings);
 
             $(document.body).on('click', '[data-click="deleteSiteTestEmail"]', confirmDeleteTestEmail);
+
+            $('#DecimalRounding').off().on('change', decimalRoundingChange);
         };
 
         function getEmailList() {
