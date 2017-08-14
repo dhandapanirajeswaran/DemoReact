@@ -124,6 +124,15 @@ table.competitorTable td, th {
 
 }
 
+#competitorPricePopupPrices .comp-js-today-date {
+    color:#999;
+    font-weight: bold;
+}
+
+#competitorPricePopupPrices .comp-js-tomorrow-date {
+    color:orange;
+}
+
 #competitorPricePopupHeader th {
     background: #eee;
 }
@@ -190,6 +199,13 @@ table.competitorTable > tbody > .competitor-row  {
 .competitorTable .competitor-row.inside-drive-time:hover .grocer-brand {
     background-color: #135a97;
     color: #fff;
+}
+
+.competitorTable .competitor-row.comp-sainsburys-row .comp-store-name {
+    color: orange;
+    font-weight: bold;
+    background-color: #fff;
+    padding: 1px 8px;
 }
 
 #competitorPricesPopup .footer-actions {

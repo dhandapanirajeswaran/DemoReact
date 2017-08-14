@@ -35,12 +35,14 @@
         };
 
         function redrawUI() {
-            var stats = getStats(),
-                ticks = new Date().getTime() - stats.started,
-                taken = formatTicks(ticks),
-                message = stats.remaining == 0 ? 'Done' : taken;
-            ui.find('#DownloaderMessage').html(message);
-            ui.find('#DownloaderCount').text(stats.remaining);
+            if (ui && 'find' in ui) {
+                var stats = getStats(),
+                    ticks = new Date().getTime() - stats.started,
+                    taken = formatTicks(ticks),
+                    message = stats.remaining == 0 ? 'Done' : taken;
+                ui.find('#DownloaderMessage').html(message);
+                ui.find('#DownloaderCount').text(stats.remaining);
+            }
         };
 
         function getTicksDuration(ticks) {

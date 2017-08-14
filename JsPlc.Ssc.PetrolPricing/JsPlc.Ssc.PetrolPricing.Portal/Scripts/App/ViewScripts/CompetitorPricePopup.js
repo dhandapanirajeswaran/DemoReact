@@ -157,7 +157,9 @@ function ($, ko, common, compNotePopup, notify, cookieSettings, bootbox) {
 
     function populateReadOnlyPopupPrices(siteId) {
         var row = $('#SiteHeading' + siteId),
-            cells = row.find('>td');
+            cells = row.find('>td'),
+            tomorrow = $('#tomorrow1').text().replace(/[a-z ]/g,''),
+            today = $('#today1').text().replace(/[a-z]/g, '');
 
         cloneAsReadonlyHtml('.readonlyUnleadedYesterday', cells.get(4));
         cloneAsReadonlyHtml('.readonlyUnleadedToday', cells.get(5));

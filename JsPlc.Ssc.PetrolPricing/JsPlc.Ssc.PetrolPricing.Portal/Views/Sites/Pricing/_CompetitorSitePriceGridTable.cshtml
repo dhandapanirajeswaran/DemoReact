@@ -33,6 +33,20 @@
 
                 <thead>
                     <tr class="sainsburys-row">
+                        <th colspan="5"></th>
+
+                        <th class="text-center comp-js-today-date" data-bind="text: $root.todayDate()" data-infotip="Day [b]Minus 1[/b]"></th>
+                        <th class="text-center comp-js-tomorrow-date font125pc" data-bind="text: $root.tomorrowDate()" data-infotip="Day [b]Minus 2[/b]"></th>
+                        <th></th>
+                        <th class="text-center comp-js-today-date" data-bind="text: $root.todayDate()" data-infotip="Day [b]Minus 1[/b]"></th>
+                        <th class="text-center comp-js-tomorrow-date font125pc" data-bind="text: $root.tomorrowDate()" data-infotip="Day [b]Minus 2[/b]"></th>
+                        <th></th>
+                        <th class="text-center comp-js-today-date" data-bind="text: $root.todayDate()" data-infotip="Day [b]Minus 1[/b]"></th>
+                        <th class="text-center comp-js-tomorrow-date font125pc" data-bind="text: $root.tomorrowDate()" data-infotip="Day [b]Minus 2[/b]"></th>
+                        <th></th>
+                    </tr>
+
+                    <tr class="sainsburys-row">
                         <th colspan="5" class="text-right" style="color: #ED8B00;">
                             <div class="price-match-info"></div>
                             <big class="storeName"></big>&nbsp;
@@ -92,16 +106,16 @@
                         <th class="num4"><span>Drive-Time</span></th>
                         <th class="num5"><span>Cat No.</span></th>
 
-                        <th class="num6 tblHighlight text-center"><span class="compyday">Yesterday</span></th>
-                        <th class="num7 tblHighlight text-center"><span class="comptoday">Today</span></th>
+                        <th class="num6 tblHighlight text-center">Day -2<br /><span class="compyday">Yesterday</span></th>
+                        <th class="num7 tblHighlight text-center">Day -1<br /><span class="comptoday">Today</span></th>
                         <th class="num8 tblHighlight text-center"><span class="jsdiff">JS_Diff</span></th>
 
-                        <th class="num9 text-center"><span class="compyday">Yesterday</span></th>
-                        <th class="num10 text-center"><span class="comptoday">Today</span></th>
+                        <th class="num9 text-center">Day -2<br /><span class="compyday">Yesterday</span></th>
+                        <th class="num10 text-center">Day -1<br /><span class="comptoday">Today</span></th>
                         <th class="num11 text-center"><span class="jsdiff">JS_Diff</span></th>
 
-                        <th class="num12 tblHighlight text-center"><span class="compyday">Yesterday</span></th>
-                        <th class="num13 tblHighlight text-center"><span class="comptoday">Today</span></th>
+                        <th class="num12 tblHighlight text-center">Day -2<br /><span class="compyday">Yesterday</span></th>
+                        <th class="num13 tblHighlight text-center">Day -1<br /><span class="comptoday">Today</span></th>
                         <th class="num14 tblHighlight text-center"><span class="jsdiff">JS_Diff</span></th>
                     </tr>
                 </thead>
@@ -119,7 +133,8 @@
                     <!-- /ko -->
                     <!-- ko if: hasCompetitors() -->
                     <!-- ko foreach: competitors -->
-                    <tr class="competitor-row hoverable" data-bind="attr:{id:'CompetitorSiteRow_' + SiteId}, css: ((IsGrocer ? 'competitor-grocer' : 'competitor-non-grocer') + (DriveTime < $root.maxGrocerDriveTimeMinutes() ? ' inside-drive-time' : ' outside-drive-time'))">
+                    <tr class="competitor-row hoverable" data-bind="attr:{id:'CompetitorSiteRow_' + SiteId}, css: ((IsGrocer ? 'competitor-grocer' : 'competitor-non-grocer') + (DriveTime < $root.maxGrocerDriveTimeMinutes() ? ' inside-drive-time' : ' outside-drive-time')
+                            + (Brand == 'SAINSBURYS' ? ' comp-sainsburys-row' : ' comp-non-sainsburys-row'))">
                         <td class="num1">
                             <!-- ko if: IsGrocer -->
                             <div class="grocer-brand" data-infotip="Grocer">
