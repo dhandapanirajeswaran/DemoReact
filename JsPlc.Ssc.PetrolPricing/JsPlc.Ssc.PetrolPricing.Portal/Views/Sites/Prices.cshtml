@@ -242,7 +242,7 @@
                 <div class="clearfix"></div>
             </div>
 
-            <div style="display:none;" class="alert alert-danger" data-bind="visible: $root.hasAnyFieldErrors() && !$root.HasValidationErrors()">
+            <div style="display:none;" class="alert alert-danger" data-bind="visible: $root.hasAnyFieldErrors() && !$root.HasValidationErrors() && $root.fieldErrorCount() != 0">
                 <div class="col-md-1 text-center"><i class="fa fa-exclamation-triangle fa-2x"></i></div>
                 <div class="col-md-10">
                     <strong>There are <span data-bind="text: fieldErrorCount()"></span> field errors. Please correct and retry.</strong>
