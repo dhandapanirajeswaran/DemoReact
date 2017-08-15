@@ -931,3 +931,19 @@ input[type=email].mono-font {
     box-shadow: 0 6px 12px #666;
     font-size: 125%;
 }
+
+/* choose one */
+    .choose-one-group::before {
+        content: "choose one";
+        line-height: 1em;
+        font-variant: small-caps;
+        text-transform: uppercase;
+        background-color: #d9534f;
+        color: #fff;
+        position: absolute;
+        top: 2.5em;
+        width: 100%;
+        text-align: center;
+    }
+    .choose-one-group.choose-one-group-hide::before {visibility: hidden;}
+    .choose-one-group.choose-one-group-show::before {visibility: visible;}

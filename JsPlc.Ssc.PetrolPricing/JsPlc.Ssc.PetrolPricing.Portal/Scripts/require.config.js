@@ -52,6 +52,7 @@
             "DriveTimeChart": "App/DriveTimeChart",
             "SitePricingSorting": "App/SitePricingSorting",
             "waiter": "App/Waiter",
+            "chooseOneGroup": "App/chooseOneGroup",
 
             // popups
             "SiteEmailPopup" : "App/Popups/SiteEmailPopup",

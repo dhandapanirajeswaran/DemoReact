@@ -1,5 +1,5 @@
-﻿define(["SitePricing", "notify", "infotips", "cookieSettings"],
-    function (prices, notify, infotip, cookieSettings) {
+﻿define(["SitePricing", "notify", "infotips", "cookieSettings", "chooseOneGroup"],
+    function (prices, notify, infotip, cookieSettings, chooseOneGroup) {
         "use strict";
 
         var counts = {
@@ -191,10 +191,7 @@
                 activeRows = $('tr.site-active'),
                 inactiveRows = $('tr.site-inactive'),
                 withDataButton = $('#btnShowWithData'),
-                missingDataButton = $('#btnShowMissingData'),
-                dataChooseGroup = $('[data-choose-group="with-data-group"]'),
-                emailChooseGroup = $('[data-choose-group="with-email-group"]'),
-                activeChooseGroup = $('[data-choose-group="active-site-group"]');
+                missingDataButton = $('#btnShowMissingData');
 
             if (siteFilters.showActiveSites && siteFilters.showInactiveSites && siteFilters.showHasEmails && siteFilters.showNoEmails && siteFilters.withData && siteFilters.missingData)
                 resetButton.hide();
@@ -208,18 +205,11 @@
             setButtonClassState(withDataButton, siteFilters.withData);
             setButtonClassState(missingDataButton, siteFilters.missingData);
 
-            setChooseGroup(dataChooseGroup, !siteFilters.withData && !siteFilters.missingData);
-            setChooseGroup(emailChooseGroup, !siteFilters.showHasEmails && !siteFilters.showNoEmails);
-            setChooseGroup(activeChooseGroup, !siteFilters.showActiveSites && !siteFilters.showInactiveSites);
+            chooseOneGroup.drawGroup('data-choose-group', !siteFilters.withData && !siteFilters.missingData);
+            chooseOneGroup.drawGroup('email-choose-group', !siteFilters.showHasEmails && !siteFilters.showNoEmails);
+            chooseOneGroup.drawGroup('active-choose-group', !siteFilters.showActiveSites && !siteFilters.showInactiveSites);
 
             applyRowFilters();
-        };
-
-        function setChooseGroup(groupEle, show ) {
-            if (show) 
-                groupEle.removeClass('pick-one-hide').addClass('pick-one-show');
-             else
-                groupEle.removeClass('pick-one-show').addClass('pick-one-hide');
         };
 
         function toggleShowActiveSites() {
@@ -343,6 +333,7 @@
             redrawSiteFilterButtons();
             redrawHighlightingButtons();
             $('.loading-js').hide();
+            chooseOneGroup.init();
         };
 
         $(docReady);

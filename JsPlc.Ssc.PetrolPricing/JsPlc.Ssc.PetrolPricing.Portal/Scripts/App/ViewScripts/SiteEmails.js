@@ -1,5 +1,5 @@
-﻿define(["jquery", "common", "notify", "busyloader", "bootbox", "downloader", "PetrolPricingService"],
-    function ($, common, notify, busyloader, bootbox, downloader, petrolPricingService) {
+﻿define(["jquery", "common", "notify", "busyloader", "bootbox", "downloader", "PetrolPricingService", "chooseOneGroup"],
+    function ($, common, notify, busyloader, bootbox, downloader, petrolPricingService, chooseOneGroup) {
         "use strict";
 
         var state = {
@@ -122,6 +122,13 @@
             filterRows();
         };
 
+        function setChooseGroup(groupEle, show) {
+            if (show)
+                groupEle.removeClass('pick-one-hide').addClass('pick-one-show');
+            else
+                groupEle.removeClass('pick-one-show').addClass('pick-one-hide');
+        };
+
         function clearAllFiltersClick() {
             controls.storeNoFilter.val('');
             controls.siteNameFilter.val('');
@@ -203,10 +210,15 @@
 
             state[opts.name] = newstate;
             redrawFilterButtons();
+            redrawChooseOneGroups();
             filterRows();
             notify.info(message);
         };
 
+        function redrawChooseOneGroups() {
+            chooseOneGroup.drawGroup('active-choose-group', !state.activeSites && !state.inactiveSites);
+            chooseOneGroup.drawGroup('email-choose-group', !state.withEmails && !state.withNoEmails);
+        };
 
         function toggleActiveSitesClick() {
             commonToggleFilter({
@@ -291,6 +303,8 @@
             findControls();
             bindEvents();
             filterRows();
+            chooseOneGroup.init();
+            redrawChooseOneGroups();
         };
         
         $(docReady);

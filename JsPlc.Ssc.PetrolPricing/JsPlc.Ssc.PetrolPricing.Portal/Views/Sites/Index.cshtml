@@ -180,22 +180,6 @@
     }
     table.site-email-grid thead th { height: auto; padding: 0.5em; background-color: #666; color: #fff; border-right: 1px solid #fff;}
     table.site-email-grid thead {width: 1152px;}
-
-    .pick-one-group::before {
-        content: "choose one";
-        line-height: 1em;
-        font-variant: small-caps;
-        text-transform: uppercase;
-        background-color: #d9534f;
-        color: #fff;
-        position: absolute;
-        top: 2.5em;
-        width: 100%;
-        text-align: center;
-    }
-    .pick-one-hide::before {visibility: hidden;}
-    .pick-one-show::before {visibility: visible;}
-
 </style>
 
 <div class="row">
@@ -274,15 +258,15 @@
 
         <div class="col-md-8">
             <label>Show:</label><br />
-            <div class="btn-group pick-one-group pick-one-hide" data-choose-group="with-data-group" style="margin-right: 1em;">
+            <div class="btn-group" data-choose-one-group="data-choose-group" style="margin-right: 1em;">
                 <button id="btnShowWithData" type="button" class="btn btn-sm btn-default" data-infotip="Show or Hide sites [b]With Data[/b]"><i class="fa fa-plus-square"></i> Data <span class="badge">@(hasDataCount)</span></button>
                 <button id="btnShowMissingData" type="button" class="btn btn-sm btn-default" data-infotip="Show or Hide [b]Missing Data[/b]"><i class="fa fa-square"></i> Missing <span class="badge">@(missingDataCount)</span></button>
             </div>
-            <div class="btn-group pick-one-group pick-one-hide" data-choose-group="with-email-group" style="margin-right: 1em;">
+            <div class="btn-group" data-choose-one-group="email-choose-group" style="margin-right: 1em;">
                 <button id="btnShowWithEmails" type="button" class="btn btn-sm btn-default" data-infotip="Show or Hide the Sites [b]with[/b] Emails"><i class="fa fa-at"></i> With Emails <span class="badge">@(hasEmailSiteCount)</span></button>
                 <button id="btnShowNoEmails" type="button" class="btn btn-sm btn-default" data-infotip="Show or Hide the Sites with [em]NO[/em] Emails"><i class="fa fa-times"></i> No Emails <span class="badge">@(hasNoEmailSiteCount)</span> </button>
             </div>
-            <div class="btn-group pick-one-group pick-one-hide" data-choose-group="active-site-group" style="margin-right: 1em;">
+            <div class="btn-group" data-choose-one-group="active-choose-group" style="margin-right: 1em;">
                 <button id="btnShowActiveSites" type="button" class="btn btn-sm btn-default" data-infotip="Show or Hide the [b]Active[/b] Sites"><i class="fa fa-square"></i> Active <span class="badge">@(activeSiteCount)</span></button>
                 <button id="btnShowInActiveSites" type="button" class="btn btn-sm btn-default" data-infotip="Show or Hide the [b]In-active[/b] Sites"><i class="fa fa-square-o"></i> Inactive <span class="badge">@(inactiveSiteCount)</span></button>
             </div>

@@ -319,6 +319,7 @@
     <Content Include="Scripts\App\buildDetector.js" />
     <Content Include="Scripts\App\busyloader.html" />
     <Content Include="Scripts\App\busyloader.js" />
+    <Content Include="Scripts\App\chooseOneGroup.js" />
     <Content Include="Scripts\App\common.js" />
     <Content Include="Scripts\App\cookie.js" />
     <Content Include="Scripts\App\cookieSettings.js" />
