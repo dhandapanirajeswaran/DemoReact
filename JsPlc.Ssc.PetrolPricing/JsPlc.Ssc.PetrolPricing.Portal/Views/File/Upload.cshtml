@@ -27,13 +27,39 @@
 <form action="" method="post" enctype="multipart/form-data">
     @if (@Model != null)
     {
-        <div class="alert alert-info">
+        <div class="alert alert-warning font125pc">
             Uploaded data will be calculated as <strong id="calcultedasdate">@Model.UploadDate.ToString("dd/MM/yyyy")</strong>
             <span id="CalculateDateInfo" class="badge"></span>
         </div>
     }
 
     <div id="diverror" class="alert alert-danger" style="display: none;"></div>
+
+    <div class="row">
+        <div class="col-md-10 col-md-offset-2">
+            <div class="alert alert-info">
+                <div id="divDailyPriceHelp" style="display: none;">
+                    <big class="text-black">Daily Price Data:</big> &mdash;
+                    contains the <strong>Catalist</strong> price information for each Site (CatNo) for all 3 fuel grades (Unleaded, Petrol and Super-Unleaded).
+                </div>
+
+                <div id="divQuarterlyFileHelp" style="display: none;">
+                    <big class="text-black">Quarterly Site Data:</big> &mdash;
+                    contains <strong>Site</strong> information such as Name, Town, Distance, Drive Time, Brand, PostCode and Ownership.
+                </div>
+
+                <div id="divLatestJsHelp" style="display: none;">
+                    <big class="text-black">Latest JS Price Data:</big>  &mdash;
+                    contains the <strong>latest</strong> price data for <strong>Sainsbury's sites only</strong> for Unleaded, Petrol and Super-Unleaded.
+                </div>
+
+                <div id="divLatestCompHelp" style="display: none;">
+                    <big class="text-black">Latest Competitor Price Data :</big>  &mdash;
+                    contains the <strong>latest</strong> site (CatNo) price data of our <strong>Competitors</strong> for <strong>Unleaded and Petrol Only</strong>.
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- [Step 1] -->
     <div class="row step-panel active" id="Step1Panel">

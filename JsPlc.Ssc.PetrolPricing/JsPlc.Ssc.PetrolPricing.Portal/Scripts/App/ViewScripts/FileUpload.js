@@ -87,7 +87,28 @@
         function uploadTypeNameChange() {
             var uploadtype = $(selectors.uploadTypeName).val();
             redrawTemplateButtons(uploadtype);
+            redrawHelp();
             showSteps(2);
+        };
+
+        function redrawHelp() {
+            var uploadtype = $(selectors.uploadTypeName).val(),
+                dailyHelp = $('#divDailyPriceHelp'),
+                quarterlyHelp = $('#divQuarterlyFileHelp'),
+                latestJsHelp = $('#divLatestJsHelp'),
+                latestCompHelp = $('#divLatestCompHelp');
+
+            showOrHide(dailyHelp, uploadtype == 1);
+            showOrHide(quarterlyHelp, uploadtype == 2);
+            showOrHide(latestJsHelp, uploadtype == 3);
+            showOrHide(latestCompHelp, uploadtype == 4);
+        };
+
+        function showOrHide(ele, show) {
+            if (show)
+                ele.show();
+            else
+                ele.hide();
         };
 
         function redrawTemplateButtons(uploadType) {
@@ -299,6 +320,7 @@
             initDatePickers();
             redrawTemplateButtons(1);
             redrawStepLabels();
+            redrawHelp();
             drawCalculatedAsDate($(selectors.calculatedAsDate).text());
             if (selectedUploadType != '') {
                 uploadTypeMenu.val(selectedUploadType);
