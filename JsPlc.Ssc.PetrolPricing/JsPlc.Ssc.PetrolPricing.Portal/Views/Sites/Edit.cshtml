@@ -217,8 +217,15 @@
                 function submitSiteClick(ev) {
 
                     // copy TrailPriceCompetitorId
-                    var matchCompetitorMenu = $('#mnuTrailPriceCompetitorId');
+                    var matchCompetitorMenu = $('#mnuTrailPriceCompetitorId'),
+                        priceMatchType = $('#PriceMatchType').val();
                     $('#TrailPriceCompetitorId').val(matchCompetitorMenu.val());
+
+                    // prevent hidden ModalState errors
+                    if (priceMatchType != 2)
+                        $('#CompetitorPriceOffset').val('0');
+                    if (priceMatchType != 3)
+                        $('#CompetitorPriceOffsetNew').val('0');
 
                     busyloader.show({
                         message: 'Updating Site. Please wait...',
