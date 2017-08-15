@@ -11,25 +11,19 @@ AS
 			x.item.value('PfsNo[1]', 'INT') [PfsNo]
 		FROM
 			@SiteCatNoAndPfsNos.nodes('/*/SiteNumberImportViewModel') as x(item)
+	),
+	MatchedSites AS (
+		SELECT
+			st.*,
+			sh.CatNo [NewCatNo],
+			sh.PfsNo [NewPfsNo]
+		FROM 
+			Shredded sh
+			INNER JOIN dbo.Site st ON st.StoreNo = sh.StoreNo
 	)
-	MERGE
-		dbo.Site AS target
-		USING (
-			SELECT DISTINCT
-				sh.StoreNo,
-				sh.CatNo,
-				sh.PfsNo
-			FROM
-				Shredded sh
-			WHERE
-				sh.StoreNo > 0
-				AND
-				sh.CatNo > 0
-		) AS source(StoreNo, CatNo, PfsNo)
-		ON (source.StoreNo = target.StoreNo)
-		WHEN MATCHED THEN
-			UPDATE SET
-				CatNo = source.CatNo,
-				PfsNo = CASE WHEN source.PfsNo > 0 THEN source.PfsNo ELSE target.PfsNo END;
-
+	UPDATE
+		MatchedSites
+	SET
+		CatNo = NewCatNo,
+		PfsNo = CASE WHEN NewPfsNo > 0 THEN NewPfsNo ELSE PfsNo END;
 RETURN 0
