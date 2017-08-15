@@ -28,6 +28,8 @@ namespace JsPlc.Ssc.PetrolPricing.Portal
 {
     public class MvcApplication : System.Web.HttpApplication
     {
+        public const int PollEmailScheduleEveryMinute = 5;
+
         private  ILogger _logger ;
 
         public MvcApplication()
@@ -43,7 +45,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
 
-            var pollInterval = TimeSpan.FromMinutes(1);
+            var pollInterval = TimeSpan.FromMinutes(PollEmailScheduleEveryMinute);
             var serviceFacade = new ServiceFacade(_logger);
             var runner = new Action(() => serviceFacade.ExecuteWinServiceSchedule());
             SimpleScheduler.Start(pollInterval, runner);
