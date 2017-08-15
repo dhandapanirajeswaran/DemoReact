@@ -62,11 +62,11 @@ table.competitorTable td, th {
 #competitorPricesPopup .decimal-rounding::before,
 #competitorPricesPopup .price-variance::before,
 #competitorPricesPopup .super-unleaded-markup::before {
-    color: #666;
+    color: #999;
     font-variant: small-caps;
     text-transform: uppercase;
-    margin-right: 0.5em;
-    font-size: 85%;
+    margin-right: 0.25em;
+    font-size: 75%;
 }
 
 #competitorPricesPopup .decimal-rounding::before {
