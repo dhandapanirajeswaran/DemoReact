@@ -317,7 +317,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
         {
             const string apiUrl = "api/FileUpload/";
 
-            var response = _client.Value.PostAsync(apiUrl, fu, new JsonMediaTypeFormatter()).Result;
+            var response = _clientLongTimeout.Value.PostAsync(apiUrl, fu, new JsonMediaTypeFormatter()).Result;
             if (response.IsSuccessStatusCode)
             {
                 var result = response.Content.ReadAsAsync<FileUpload>().Result;
