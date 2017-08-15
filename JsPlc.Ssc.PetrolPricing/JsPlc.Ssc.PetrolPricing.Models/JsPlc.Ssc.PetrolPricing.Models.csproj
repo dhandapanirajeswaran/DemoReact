@@ -179,6 +179,7 @@
     <Compile Include="ViewModels\SiteEmailsPageViewModel.cs" />
     <Compile Include="ViewModels\SiteNoteUpdateViewModel.cs" />
     <Compile Include="ViewModels\SiteNoteViewModel.cs" />
+    <Compile Include="ViewModels\SiteNumberImportViewModel.cs" />
     <Compile Include="ViewModels\SiteViewModel.cs" />
     <Compile Include="SitePrice.cs" />
     <Compile Include="DailyPrice.cs" />

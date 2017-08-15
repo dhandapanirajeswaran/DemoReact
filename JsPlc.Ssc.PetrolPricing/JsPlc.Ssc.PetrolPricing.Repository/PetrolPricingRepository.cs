@@ -767,6 +767,11 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             };
         }
 
+        public bool UpsertSiteCatNoAndPfsNos(IEnumerable<SiteNumberImportViewModel> siteNumbers)
+        {
+            return _context.UpsertSiteCatNoAndPfsNos(siteNumbers) == 0;
+        }
+
         public void FixZeroSuggestedSitePricesForDay(DateTime forDate)
         {
             _context.FixZeroSuggestedSitePricesForDay(forDate);

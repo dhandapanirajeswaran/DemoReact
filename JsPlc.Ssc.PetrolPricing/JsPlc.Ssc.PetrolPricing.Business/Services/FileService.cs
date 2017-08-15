@@ -915,6 +915,8 @@ namespace JsPlc.Ssc.PetrolPricing.Business
         {
             var dataTable = _dataFileReader.GetSiteEmailAddressesData(excelFilePath);
 
+            var siteNumbers = new List<SiteNumberImportViewModel>();
+
             var siteEmailAddresses = new List<SiteEmailImportViewModel>();
             for(var i=0; i<dataTable.Rows.Count; i++)
             {
@@ -936,9 +938,27 @@ namespace JsPlc.Ssc.PetrolPricing.Business
                     };
                     siteEmailAddresses.Add(email);
                 }
+
+                var pfsNo = 0;
+                var catNo = 0;
+                var hasCatNo = Int32.TryParse(row[3].ToString(), out catNo) && catNo > 0;
+                var hasPfsNo = Int32.TryParse(row[4].ToString(), out pfsNo) && pfsNo > 0;
+              
+                if (storeNo > 0 && hasCatNo)
+                {
+                    var numbers = new SiteNumberImportViewModel()
+                    {
+                        StoreNo = storeNo,
+                        CatNo = catNo,
+                        PfsNo = hasPfsNo ? pfsNo : 0 // PfsNo is optional
+                    };
+                    siteNumbers.Add(numbers);
+                }
             }
 
             _db.UpsertSiteEmailAddresses(siteEmailAddresses);
+
+            _db.UpsertSiteCatNoAndPfsNos(siteNumbers);
         }
 
         #endregion

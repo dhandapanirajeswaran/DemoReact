@@ -357,6 +357,8 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         IEnumerable<SiteEmailAddressViewModel> GetSiteEmailAddresses(int siteId = 0);
         StatusViewModel UpsertSiteEmailAddresses(IEnumerable<SiteEmailImportViewModel> siteEmailAddresses);
 
+        bool UpsertSiteCatNoAndPfsNos(IEnumerable<SiteNumberImportViewModel> siteNumbers);
+
         void FixZeroSuggestedSitePricesForDay(DateTime forDate);
     }
 }

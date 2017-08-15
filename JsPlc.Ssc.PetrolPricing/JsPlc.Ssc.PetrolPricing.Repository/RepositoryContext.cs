@@ -574,6 +574,16 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             return DapperHelper.QueryScalar(this, sprocName, parameters);
         }
 
+        internal int UpsertSiteCatNoAndPfsNos(IEnumerable<SiteNumberImportViewModel> siteNumbers)
+        {
+            const string sprocName = "spUpsertSiteCatNoAndPfsNos";
+            var parameters = new
+            {
+                @SiteCatNoAndPfsNos = SqlHelper.ToSqlXml(siteNumbers.ToList())
+            };
+            return DapperHelper.QueryScalar(this, sprocName, parameters);
+        }
+
         public void FixZeroSuggestedSitePricesForDay(DateTime forDate)
         {
             const string sprocName = "spFixZeroSuggestedSitePricesForDay";
