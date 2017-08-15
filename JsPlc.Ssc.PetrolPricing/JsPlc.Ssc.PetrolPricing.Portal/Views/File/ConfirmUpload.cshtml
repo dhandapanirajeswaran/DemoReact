@@ -32,14 +32,15 @@
 </div>
 
 <script>
-    require(["jquery", "common", "busyloader", "infotips"],
-        function ($, common, busyloader, infotips) {
+    require(["jquery", "common", "busyloader", "infotips", "waiter"],
+        function ($, common, busyloader, infotips, waiter) {
             $(function () {
                 $('#OverWriteUploadButton').on('click', function () {
-                    busyloader.show({
-                        message: 'Overwritting file. Please wait...',
-                        dull: true
-                    });
+                    waiter.show({
+                        title: 'Overwriting file. Please wait...',
+                        message: 'ETA: between 1 and 2 minutes',
+                        icon: 'upload'
+                    })
                 });
             });
         });

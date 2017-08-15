@@ -1,12 +1,52 @@
-﻿define(['jquery', 'common', 'notify', 'busyloader', 'bootstrap-datepicker'],
-    function ($, common, notify, busyloader, bsDatePicker) {
+﻿define(['jquery', 'common', 'notify', 'busyloader', 'bootstrap-datepicker', 'waiter'],
+    function ($, common, notify, busyloader, bsDatePicker, waiter) {
         "use strict";
 
         var uploadTypeDefs = {
-            '1': { message: 'Daily Price Data', accept: ".csv, .txt", prompt: 'Please select a CSV or TXT file', templateId: null, filenameRegex: /^2\d{7}_\d{4}-DailyPriceData[\. ]/i },
-            '2': { message: 'Quarterly Site Data', accept: ".xls, .xlsx", prompt: 'Please select an Excel file', templateId: 'DownloadQuarterlyTemplateButton', filenameRegex: /^2\d{7}_\d{4}-QuarterlySiteData[\. ]/i },
-            '3': { message: 'Latest JS Price Data', accept: ".xls, .xlsx", prompt: 'Please select an Excel file', templateId: 'DownloadLatestPriceTemplateButton', filenameRegex: /^2\d{7}_\d{4}-LatestJsPriceData[\. ]/i },
-            '4': { message: 'Latest Competitors Price Data', accept: ".xls, .xlsx", prompt: 'Please select an Excel file', templateId: 'DownloadLatestCompPriceTemplateButton', filenameRegex: /^2\d{7}_\d{4}-LatestCompPriceData[\. ]/i }
+            '1': {
+                message: 'Daily Price Data',
+                accept: ".csv, .txt",
+                prompt: 'Please select a CSV or TXT file',
+                templateId: null,
+                filenameRegex: /^2\d{7}_\d{4}-DailyPriceData[\. ]/i,
+                submit: {
+                    title: 'Uploading Daily Price Data',
+                    message: 'ETA: between 1 and 2 minutes'
+                }
+            },
+            '2': {
+                message: 'Quarterly Site Data',
+                accept: ".xls, .xlsx",
+                prompt: 'Please select an Excel file',
+                templateId: 'DownloadQuarterlyTemplateButton',
+                filenameRegex: /^2\d{7}_\d{4}-QuarterlySiteData[\. ]/i,
+                submit: {
+                    title: 'Uploading Quarterly Site Data File',
+                    message: 'ETA: between 1 and 2 minutes'
+                }
+            },
+            '3': {
+                message: 'Latest JS Price Data',
+                accept: ".xls, .xlsx",
+                prompt: 'Please select an Excel file',
+                templateId: 'DownloadLatestPriceTemplateButton',
+                filenameRegex: /^2\d{7}_\d{4}-LatestJsPriceData[\. ]/i,
+                submit: {
+                    title: 'Uploading Latest JS Price Data',
+                    message: 'ETA: less than 1 minute'
+                }
+            },
+            '4': {
+                message: 'Latest Competitors Price Data',
+                accept: ".xls, .xlsx",
+                prompt: 'Please select an Excel file',
+                templateId: 'DownloadLatestCompPriceTemplateButton',
+                filenameRegex: /^2\d{7}_\d{4}-LatestCompPriceData[\. ]/i,
+                submit: {
+                    title: 'Latest Competitors Price Data',
+                    message: 'ETA: less than 1 minute'
+                }
+            }
         };
 
         var fileTypes = {
@@ -269,17 +309,18 @@
         };
 
         function uploadfileButtonClick() {
-
-            var delayed = function () {
-                $(selectors.uploadButton).attr('disabled', true);
-            }
+            var uploadtype = $('#UploadTypeName').val(),
+                uploadDef = uploadTypeDefs[uploadtype],
+                delayed = function () {
+                    $(selectors.uploadButton).attr('disabled', true);
+                };
 
             $(selectors.uploadButton).removeClass('btn-primary').addClass('btn-danger');
-            //$(selectors.fileUploadingDialog).show();
 
-            busyloader.show({
-                message: 'Uploading File. Please wait...',
-                dull: true
+            waiter.show({
+                title: uploadDef.submit.title,
+                message: uploadDef.submit.message,
+                icon: 'upload'
             });
 
             setTimeout(delayed, 100);

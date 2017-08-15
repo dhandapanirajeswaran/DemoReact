@@ -12,7 +12,8 @@
 
         var selectors = {
             title: '[data-waiter-id="title"]',
-            message: '[data-waiter-id="message"]'
+            message: '[data-waiter-id="message"]',
+            icon: '[data-waiter-id="icon"]'
         };
 
         var timings = {
@@ -22,7 +23,15 @@
 
         var defaultOptions = {
             title: 'Please wait',
-            message: 'Loading Data. Please wait'
+            message: 'Loading Data. Please wait',
+            icon: 'clock'
+        };
+
+        var icons = {
+            none: '',
+            clock: '<i class="fa fa-clock-o fa-4x spinner"></i>',
+            upload: '<i class="fa fa-upload fa-3x pulse-size"></i>',
+            download: '<i class="fa fa-download fa-3x pulse-size"></i>'
         };
 
         function initDom() {
@@ -41,10 +50,15 @@
         };
 
         function show(opts) {
-            var options = $.extend({}, defaultOptions, opts);
+            var options = $.extend({}, defaultOptions, opts),
+                icon = options.icon;
+
+            if (!icon in icons)
+                icon = 'none';
 
             overlay.find(selectors.title).html(options.title);
             overlay.find(selectors.message).html(options.message);
+            overlay.find(selectors.icon).html(icons[icon]);
 
             if (state.visible)
                 return;
