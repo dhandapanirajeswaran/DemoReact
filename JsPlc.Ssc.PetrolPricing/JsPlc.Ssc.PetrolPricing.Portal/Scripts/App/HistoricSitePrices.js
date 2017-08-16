@@ -55,7 +55,11 @@
         function formatPrice(price) {
             if (price == '' || price == 0)
                 return '&mdash;';
-            return (price / 10).toFixed(1);
+            var val = (price / 10).toFixed(1),
+                parts = val.split('.');
+
+            return '<big>' + parts[0] + '</big>.' + parts[1];
+
         };
 
         function readJsonDate(date) {
