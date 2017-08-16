@@ -600,23 +600,21 @@ table.fixed-header>tbody {
     margin-left: -8px;
     width: auto;
     display: inline-block;
-    background-color: #aaa;
-    color: #000;
-    opacity: 0.5;
+    background-color: #ccc;
+    color: #999;
+    opacity: 1;
 }
 
 .file-uploader-grid .date-header.date-today {
     border-left: 8px solid #666;
     background-color: #dda;
     color: #000;
-    opacity: 1;
 }
 
 .file-uploader-grid .date-header.date-yesterday {
     border-left: 8px solid #666;
     background-color: #CCE1CC;
     color: #000;
-    opacity: 1;
 }
 
 .file-uploader-grid .view-price-link {
@@ -624,6 +622,16 @@ table.fixed-header>tbody {
 }
 .file-uploader-grid .view-price-link:hover {
     text-decoration: underline;
+}
+.file-uploader-grid .view-price-link::after {
+    content: "<< Click to view Pricing";
+    position: absolute;
+    font-size: 80%;
+    font-variant: small-caps;
+    text-transform: uppercase;
+    color: #999;
+    margin-left: 2em;
+    padding: 2px 8px;
 }
 
 .recent-file-uploads tr.recent:nth-child(odd)
