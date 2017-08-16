@@ -5,6 +5,16 @@
         var modal = $(modalHtml),
             lightbox = $('<div class="lightbox-overlay"></div>');
 
+        var weekdays = [
+            'Sun',
+            'Mon',
+            'Tue',
+            'Wed',
+            'Thu',
+            'Fri',
+            'Sat'
+        ];
+
         function show(siteItem, data) {
             modal.modal('show');
             modal.find('.site-name').text(siteItem.StoreName);
@@ -15,12 +25,18 @@
                 j,
                 index = 0,
                 item,
-                colClass;
+                colClass,
+                rowClass,
+                day;
 
             rows.remove();
             while (index < data.length) {
-                row = $('<tr>');
-                $('<td>').text(formatJsonDate(data[index].PriceDate)).appendTo(row);
+                day = readJsonDate(data[index].PriceDate);
+                rowClass = isWeekend(day) ? 'row-weekend' : 'row-weekday';
+
+                row = $('<tr class="' + rowClass + '">');
+                $('<td>').text(formatDateWeekDay(day)).appendTo(row);
+                $('<td>').text(formatDateDDMMYYYY(day)).appendTo(row);
                 for (j = 0; j < 3; j++) {
                     colClass = j == 1 ? 'alt-col' : '';
                     item = data[index];
@@ -32,6 +48,8 @@
                 }
                 tbody.append(row);
             }
+
+            modal.find('.historic-price-scroller').scrollTop(0);
         };
 
         function formatPrice(price) {
@@ -40,14 +58,32 @@
             return (price / 10).toFixed(1);
         };
 
-        function formatJsonDate(date) {
+        function readJsonDate(date) {
+            if (!date)
+                return;
+            var ticks = ('' + date).replace(/\D/g, '');
+            return new Date(Number(ticks));
+        };
+
+        function isWeekend(date) {
+            if (!date)
+                return false;
+            var d = date.getDay();
+            return d == 0 || d == 6;
+        };
+
+        function formatDateWeekDay(date) {
             if (!date)
                 return '';
-            var ticks = ('' + date).replace(/\D/g, ''),
-                dt = new Date(Number(ticks)),
-                dd = dt.getDate(),
-                mm = dt.getMonth() + 1,
-                yyyy = dt.getFullYear();
+            return weekdays[date.getDay()];
+        };
+
+        function formatDateDDMMYYYY(date) {
+            if (!date)
+                return '';
+            var dd = date.getDate(),
+                mm = date.getMonth() + 1,
+                yyyy = date.getFullYear();
             return (dd < 10 ? '0' + dd : dd)
                 + '/' + (mm < 10 ? '0' + mm : mm)
                 + '/' + yyyy;
