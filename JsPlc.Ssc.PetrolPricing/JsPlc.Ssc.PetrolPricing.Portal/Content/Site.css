@@ -619,6 +619,13 @@ table.fixed-header>tbody {
     opacity: 1;
 }
 
+.file-uploader-grid .view-price-link {
+    color: #000;
+}
+.file-uploader-grid .view-price-link:hover {
+    text-decoration: underline;
+}
+
 .recent-file-uploads tr.recent:nth-child(odd)
 {
     background-color:  #efe;
