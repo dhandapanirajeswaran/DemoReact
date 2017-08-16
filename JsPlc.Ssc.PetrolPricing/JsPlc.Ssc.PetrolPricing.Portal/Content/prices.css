@@ -1438,3 +1438,37 @@ optgroup > option {
     height: 33em;
     cursor: pointer;
 }
+
+.lightbox-overlay {
+    z-index: 2010;
+    background: rgba(0,0,0,0.5);
+    position: fixed;
+    top: 0;
+    left:0;
+    right: 0;
+    bottom: 0;
+}
+
+.view-historic-price {
+    position: absolute;
+    top: 4px;
+    right: 8px;
+}
+
+#historicSitePricesPopup {
+    z-index: 2010;
+    width: 50em;
+    top: calc(50% - 23em);
+    left: calc(50% - 15em);
+}
+
+#historicSitePricesPopup .table .alt-col {
+    background-color: #eee;
+}
+#historicSitePricesPopup .table th,
+#historicSitePricesPopup .table td {text-align: center;}
+
+#historicSitePricesPopup .historic-price-scroller {
+    max-height: 32em;
+    overflow: auto;
+}

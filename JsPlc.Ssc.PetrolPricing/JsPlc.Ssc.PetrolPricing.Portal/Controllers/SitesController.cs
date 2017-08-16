@@ -617,6 +617,26 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             return View(model);
         }
 
+        [ScriptMethod(UseHttpGet = true)]
+        public JsonResult HistoricPricesForSite([FromUri] int siteId, [FromUri] string startDate, [FromUri] string endDate)
+        {
+            DateTime startingDate;
+            DateTime endingDate;
+            if (!DateTime.TryParse(startDate, out startingDate))
+                startingDate = DateTime.Now.Date;
+            if (!DateTime.TryParse(endDate, out endingDate))
+                endingDate = startingDate.Date.AddDays(-14);
+
+            var historicPrices = _serviceFacade.GetHistoricPricesForSite(siteId, startingDate, endingDate);
+
+            var jsonResult = new JsonResult
+            {
+                JsonRequestBehavior = JsonRequestBehavior.AllowGet,
+                Data = historicPrices
+            };
+            return jsonResult;
+        }
+
         private void PopulatePageData(SiteViewModel model)
         {
             var pagedata = model.PageData;

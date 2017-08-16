@@ -332,6 +332,8 @@
     <Content Include="Scripts\App\EditInPlace\edit-in-place.html" />
     <Content Include="Scripts\App\EditInPlace\edit-in-place.js" />
     <Content Include="Scripts\App\etaCountdown.js" />
+    <Content Include="Scripts\App\HistoricSitePrices.html" />
+    <Content Include="Scripts\App\HistoricSitePrices.js" />
     <Content Include="Scripts\App\infotips.js" />
     <Content Include="Scripts\App\layout.js" />
     <Content Include="Scripts\App\Popups\SiteEmailPopup.html" />

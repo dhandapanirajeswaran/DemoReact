@@ -777,6 +777,12 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             _context.FixZeroSuggestedSitePricesForDay(forDate);
         }
 
+        public IEnumerable<HistoricalPriceViewModel> GetHistoricPricesForSite(int siteId, DateTime startDate, DateTime endDate)
+        {
+            return _context.GetHistoricPricesForSite(siteId, startDate, endDate);
+        }
+
+
         private void AddFuelPricesRowsForSites(DateTime forDate, List<SitePriceViewModel> sites)
         {
             if (sites == null || !sites.Any())

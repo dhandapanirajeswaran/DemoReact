@@ -443,6 +443,11 @@ namespace JsPlc.Ssc.PetrolPricing.Business
             _db.MarkPriceCacheOutdatedForDay(day);
         }
 
+        public IEnumerable<HistoricalPriceViewModel> GetHistoricalPricesForSite(int siteId, DateTime startDate, DateTime endDate)
+        {
+            return _db.GetHistoricPricesForSite(siteId, startDate, endDate);
+        }
+
         #region Private Methods
         /// <summary>
         /// Demo 22/12/15 new requirement: Create SitePrices for SuperUnleaded with Markup

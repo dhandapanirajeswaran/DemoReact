@@ -593,5 +593,17 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             };
             DapperHelper.Execute(this, sprocName, parameters);
         }
+
+        internal IEnumerable<HistoricalPriceViewModel> GetHistoricPricesForSite(int siteId, DateTime startDate, DateTime endDate)
+        {
+            const string sprocName = "spGetHistoricalPricesForSite";
+            var parameters = new
+            {
+                @SiteId = siteId,
+                @StartDate = startDate,
+                @EndDate = endDate
+            };
+            return DapperHelper.QueryList<HistoricalPriceViewModel>(this, sprocName, parameters);
+        }
     }
 }

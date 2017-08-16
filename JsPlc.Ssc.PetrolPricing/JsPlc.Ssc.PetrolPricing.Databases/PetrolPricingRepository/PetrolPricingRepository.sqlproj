@@ -214,6 +214,7 @@
     <Build Include="dbo\Functions\Table Functions\tf_GetHistoricalSiteFuelPricesForDay.sql" />
     <Build Include="dbo\Stored Procedures\spPriceMovementReport.sql" />
     <Build Include="dbo\Stored Procedures\spUpsertSiteCatNoAndPfsNos.sql" />
+    <Build Include="dbo\Stored Procedures\spGetHistoricalPricesForSite.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Scripts\PostDeployment\Script.PostDeployment.sql" />

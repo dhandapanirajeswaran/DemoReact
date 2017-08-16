@@ -53,6 +53,7 @@
             "SitePricingSorting": "App/SitePricingSorting",
             "waiter": "App/Waiter",
             "chooseOneGroup": "App/chooseOneGroup",
+            "HistoricSitePrices": "App/HistoricSitePrices",
 
             // popups
             "SiteEmailPopup" : "App/Popups/SiteEmailPopup",

@@ -686,6 +686,31 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             return null;
         }
 
+        internal IEnumerable<HistoricalPriceViewModel> GetHistoricPricesForSite(int siteId, DateTime startingDate, DateTime endingDate)
+        {
+            try
+            {
+                var url = String.Format("api/GetHistoricPricesForSite/{0}/{1}/{2}",
+                    siteId,
+                    startingDate.ToString("ddMMMyyyy"),
+                    endingDate.ToString("ddMMMyyyy")
+                    );
+
+                var response = _client.Value.GetAsync(url).Result;
+                if (response.IsSuccessStatusCode)
+                {
+                    var result = response.Content.ReadAsAsync<IEnumerable<HistoricalPriceViewModel>>().Result;
+                    return result;
+                }
+                return new List<HistoricalPriceViewModel>();
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex);
+                throw new Exception("Exception in GetHistoricPricesForSite" + System.Environment.NewLine + ex.Message, ex);
+            }
+        }
+
         public PriceMovementReportViewModel GetPriceMovement(string brandName, DateTime fromDate, DateTime toDate, int fuelTypeId, string siteName)
         {
             try

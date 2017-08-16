@@ -360,5 +360,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         bool UpsertSiteCatNoAndPfsNos(IEnumerable<SiteNumberImportViewModel> siteNumbers);
 
         void FixZeroSuggestedSitePricesForDay(DateTime forDate);
+
+        IEnumerable<HistoricalPriceViewModel> GetHistoricPricesForSite(int siteId, DateTime startDate, DateTime endDate);
     }
 }

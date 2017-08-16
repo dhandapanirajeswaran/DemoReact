@@ -8,7 +8,8 @@ RETURNS
 (
 	SiteId INT,
 	FuelTypeId INT,
-	TodayPrice INT
+	TodayPrice INT,
+	PriceSource VARCHAR(20)
 )
 AS
 BEGIN
@@ -205,7 +206,8 @@ BEGIN
 		SELECT
 			cal.SiteId,
 			cal.FuelTypeId,
-			cal.TodayPrice
+			cal.TodayPrice,
+			cal.PriceSource
 		FROM 
 			Calculated cal
 		WHERE
@@ -216,7 +218,8 @@ BEGIN
 		SELECT
 			unl.SiteId,
 			sup.FuelTypeId,
-			sup.TodayPrice
+			sup.TodayPrice,
+			unl.PriceSource
 		FROM 
 			Calculated sup
 			INNER JOIN Calculated unl ON unl.SiteId = sup.SiteId AND unl.FuelTypeId = @FuelType_UNLEADED
@@ -234,7 +237,8 @@ BEGIN
 			CASE WHEN cal.TodayPrice = 0
 				THEN 0
 				ELSE cal.TodayPrice + @Markup_For_Super_Unleaded
-			END -- markup Super Unleaded
+			END, -- markup Super Unleaded
+			super.PriceSource
 		FROM 
 			Calculated cal
 			INNER JOIN Calculated super ON super.SiteId=cal.SiteId and super.FuelTypeId=@FuelType_SUPER_UNLEADED
@@ -248,7 +252,8 @@ BEGIN
 	SELECT
 		afp.SiteId [SiteId],
 		afp.FuelTypeId [FuelTypeId],
-		afp.TodayPrice [TodayPrice] -- Today's
+		afp.TodayPrice [TodayPrice], -- Today's
+		afp.PriceSource
 	FROM 
 		AllFuelPrices afp
 

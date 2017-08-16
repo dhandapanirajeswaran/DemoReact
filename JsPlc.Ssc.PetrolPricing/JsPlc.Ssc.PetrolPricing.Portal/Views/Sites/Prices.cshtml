@@ -546,8 +546,8 @@
                                         <i class="fa fa-clone" data-bind="visible: (PriceMatchType == 3)" data-infotip="[b]Match Competitor[/b]"></i>
 
                                         <a role="button" href="#" class="site-name" data-bind="attr:{id: SiteId}, click: getCompetitorPopupDataClick, html: (StoreName.replace('SAINSBURYS', ''))" data-toggle="modal" data-target="#competitorPricesPopup" data-infotip="View competitor's prices"></a>
-                                      
                                         <div class="hide-hover">
+                                            <button type="button" class="btn btn-default btn-xs view-historic-price" data-bind="click: viewHistoricSitePrices" data-infotip="View [b]Historic[/b] Prices"><i class="fa fa-gbp"></i> Historic</button>
                                             <div class="no-margin">
                                                 <span class="site-town" data-bind="text: Town"></span>
                                                 <span class="site-pfsno" data-bind="text: PfsNo"></span>
