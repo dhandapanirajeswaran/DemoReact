@@ -53,6 +53,11 @@ namespace JsPlc.Ssc.PetrolPricing.UnitTests.Business
                 FileUpload = new Models.FileUpload
                 {
                     Id = 1
+                },
+                SystemSettings = new Models.SystemSettings()
+                {
+                    MaxGrocerDriveTimeMinutes = 5,
+                    DecimalRounding = 9
                 }
             };
 

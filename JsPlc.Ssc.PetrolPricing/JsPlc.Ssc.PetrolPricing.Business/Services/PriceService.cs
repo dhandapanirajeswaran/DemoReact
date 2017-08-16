@@ -85,7 +85,8 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 				calculatePrices(new PriceCalculationTaskData
 				{
 					ForDate = forDate.Value,
-					FileUpload = dpFile
+					FileUpload = dpFile,
+                    SystemSettings = _systemSettingsService.GetSystemSettings()
 				});
 
 				_db.UpdateImportProcessStatus(10, dpFile); //Success 10
@@ -143,6 +144,9 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 
             if (site == null)
                 throw new ArgumentNullException("site can't be null");
+
+            if (calcTaskData.SystemSettings == null)
+                throw new ArgumentException("SystemSettings can't be null");
 
             var usingPricesforDate = calcTaskData.ForDate; // Uses dailyPrices of competitors Upload date matching this date
             int minPriceFound = int.MaxValue;
@@ -256,17 +260,17 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 
                         var bestComp = currentCompetitor.Value.Key;
 
-                        DiagnosticLog.AddLog("Trace",
-                            "Found Competitor between " + minDriveTime + " and " + maxDriveTime
-                            , null
-                            , String.Format("SiteId: {0}, Fuel: {1}, CompetitorId: {2} - Price Daily: {3} - LatestCompPrice: {4}",
-                            site.Id,
-                            fuelId,
-                            bestComp.CompetitorWithDriveTime.CompetitorId,
-                            (bestComp.DailyPrice != null ? bestComp.DailyPrice.ModalPrice.ToString() : "??"),
-                            (bestComp.LatestCompPrice != null ? bestComp.LatestCompPrice.ModalPrice.ToString() : "??")
-                            )
-                        );
+                        //DiagnosticLog.AddLog("Trace",
+                        //    "Found Competitor between " + minDriveTime + " and " + maxDriveTime
+                        //    , null
+                        //    , String.Format("SiteId: {0}, Fuel: {1}, CompetitorId: {2} - Price Daily: {3} - LatestCompPrice: {4}",
+                        //    site.Id,
+                        //    fuelId,
+                        //    bestComp.CompetitorWithDriveTime.CompetitorId,
+                        //    (bestComp.DailyPrice != null ? bestComp.DailyPrice.ModalPrice.ToString() : "??"),
+                        //    (bestComp.LatestCompPrice != null ? bestComp.LatestCompPrice.ModalPrice.ToString() : "??")
+                        //    )
+                        //);
 
                     }
                 }
@@ -319,9 +323,8 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 
             // get site prices
             var currentSitePrices = _siteService.GetSitesWithPrices(calcTaskData.ForDate, "", 0, 0, "", site.Id).FirstOrDefault();
-            var systemSettings = _systemSettingsService.GetSystemSettings();
 
-            ApplyGrocerRoundingAndPriceVarianceRules(cheapestPrice, systemSettings, calcTaskData.ForDate, site, currentSitePrices, fuelId);
+            ApplyGrocerRoundingAndPriceVarianceRules(cheapestPrice, calcTaskData.SystemSettings, calcTaskData.ForDate, site, currentSitePrices, fuelId);
 
             db.AddOrUpdateSitePriceRecord(cheapestPrice);
         }
@@ -361,7 +364,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
             }
 
             // get the 'today' price (Override or AutoPrice) from Yesterday
-            var todayprice = siteFuelPrice.OverridePrice.HasValue
+            var todayprice = siteFuelPrice.OverridePrice.HasValue && siteFuelPrice.OverridePrice.Value > 0
                 ? siteFuelPrice.OverridePrice.Value
                 : siteFuelPrice.TodayPrice.Value;
 
@@ -555,13 +558,9 @@ namespace JsPlc.Ssc.PetrolPricing.Business
                         LatestCompPrice = cheapestPriceFromCompPrice
                     };
                 }
-
-
-
             }
 
             return null;
-			
 		}
 
 		private void calculatePrices(PriceCalculationTaskData calcTaskData)
@@ -606,6 +605,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 	{
 		public DateTime ForDate { get; set; }
 		public FileUpload FileUpload { get; set; }
-	}
+        public SystemSettings SystemSettings { get; set; }
+    }
 
 }
