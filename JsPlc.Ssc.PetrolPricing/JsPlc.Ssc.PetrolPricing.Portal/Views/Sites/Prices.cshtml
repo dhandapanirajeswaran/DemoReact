@@ -534,8 +534,8 @@
                                 </td>
                                 <!-- Email envelope... -->
                                 <td class="col-email">
-                                    <input type="checkbox" data-bind="visible:HasEmails && !$root.ViewingHistorical() && canSendEmail(), checked: checkedEmail, click: clickCheckedEmail">
-                                    <i class="fa fa-minus text-info" data-bind="visible: HasEmails && !$root.ViewingHistorical() && !canSendEmail()" data-infotip="Site [u]has[/u] Emails address[br /]but has [em]No[/em] price changes."></i>
+                                    <input type="checkbox" data-bind="visible:HasEmails && !$root.ViewingHistorical() && canSendEmail(), checked: checkedEmail, click: clickCheckedEmail" data-infotip="Site has [br /][u]Email and Price changes[/u]" />
+                                    <i class="fa fa-minus text-info" data-bind="visible: HasEmails && !$root.ViewingHistorical() && !canSendEmail()" data-infotip="Site [u]has[/u] Email addresses[br /]but has [em]No[/em] price changes."></i>
                                     <i class="fa fa-times text-danger" data-bind="visible: !HasEmails" data-infotip="Site has [b]No[/b] Email addresses"></i>
                                 </td>
                                 <td class="col-store-name" style="position: relative;">
