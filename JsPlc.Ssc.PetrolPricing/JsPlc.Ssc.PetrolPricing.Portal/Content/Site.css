@@ -624,14 +624,17 @@ table.fixed-header>tbody {
     text-decoration: underline;
 }
 .file-uploader-grid .view-price-link::after {
-    content: "<< Click to view Pricing";
+    content: "View Prices";
+    display: inline-block;
     position: absolute;
-    font-size: 80%;
-    font-variant: small-caps;
-    text-transform: uppercase;
-    color: #999;
+    font-size: 75%;
+    font-weight: normal;
+    line-height: 1.5em;
+    background-color: #337ab7;
+    color: #fff;
+    border-radius: 3px;
+    padding: 1px 8px;
     margin-left: 2em;
-    padding: 2px 8px;
 }
 
 .recent-file-uploads tr.recent:nth-child(odd)
