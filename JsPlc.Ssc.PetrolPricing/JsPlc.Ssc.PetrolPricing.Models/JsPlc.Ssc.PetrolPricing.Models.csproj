@@ -92,6 +92,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Brand.cs" />
     <Compile Include="Common\Extensions.cs" />
     <Compile Include="Common\Functions.cs" />
     <Compile Include="Constants.cs" />

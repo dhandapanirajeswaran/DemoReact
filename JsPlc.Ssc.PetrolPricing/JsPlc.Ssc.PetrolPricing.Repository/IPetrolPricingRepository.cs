@@ -362,5 +362,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         void FixZeroSuggestedSitePricesForDay(DateTime forDate);
 
         IEnumerable<HistoricalPriceViewModel> GetHistoricPricesForSite(int siteId, DateTime startDate, DateTime endDate);
+
+        void RebuildBrands();
     }
 }

@@ -332,6 +332,9 @@ namespace JsPlc.Ssc.PetrolPricing.Business
                 // set Site Defaults (Price Match Type)
                 _db.RunPostQuarterlyFileUploadTasks();
 
+                // Rebuild the Brands from the Sites
+                _db.RebuildBrands();
+
 			}
 			catch (ExcelParseFileException ex)
 			{

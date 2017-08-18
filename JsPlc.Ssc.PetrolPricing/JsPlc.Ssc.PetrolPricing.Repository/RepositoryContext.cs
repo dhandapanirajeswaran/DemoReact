@@ -54,7 +54,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         public IDbSet<EmailTemplate> EmailTemplates { get; set; }
 
         public IDbSet<DriveTimeMarkup> DriveTimeMarkups { get; set; }
-
+        public IDbSet<Brand> Brands { get; set; }
 
         public RepositoryContext()
             : base("name=PetrolPricingRepository")
@@ -604,6 +604,13 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                 @EndDate = endDate
             };
             return DapperHelper.QueryList<HistoricalPriceViewModel>(this, sprocName, parameters);
+        }
+
+        internal void RebuildBrands()
+        {
+            const string sprocName = "spRebuildBrands";
+            var parameters = new { };
+            DapperHelper.Execute(this, sprocName, parameters);
         }
     }
 }

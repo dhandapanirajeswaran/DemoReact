@@ -99,6 +99,7 @@ namespace JsPlc.Ssc.PetrolPricing.Models
         public bool HasNearbySuperUnleadedGrocers { get; set; }
         public bool HasNearbySuperUnleadedGrocersPriceData { get; set; }
 
+        public int BrandId { get; set; }
         public PricesPageDataJsonViewModel PageData { get; set; }
 
         [Required]

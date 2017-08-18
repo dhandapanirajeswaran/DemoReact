@@ -215,6 +215,8 @@
     <Build Include="dbo\Stored Procedures\spPriceMovementReport.sql" />
     <Build Include="dbo\Stored Procedures\spUpsertSiteCatNoAndPfsNos.sql" />
     <Build Include="dbo\Stored Procedures\spGetHistoricalPricesForSite.sql" />
+    <Build Include="dbo\Tables\Brand.sql" />
+    <Build Include="dbo\Stored Procedures\spRebuildBrands.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Scripts\PostDeployment\Script.PostDeployment.sql" />

@@ -36,4 +36,12 @@ BEGIN
 		INSERT (BrandName) VALUES(source.Brand)
 	WHEN NOT MATCHED BY source THEN
 		DELETE;
+
+	--
+	-- Update the BrandIds
+	--
+	UPDATE eb
+	SET eb.BrandId = (SELECT TOP 1 Id FROM dbo.Brand WHERE BrandName = eb.BrandName)
+	FROM dbo.ExcludeBrands eb
+	--
 END

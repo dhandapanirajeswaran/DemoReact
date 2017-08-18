@@ -2,21 +2,18 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Runtime.InteropServices;
-using System.Runtime.Serialization;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace JsPlc.Ssc.PetrolPricing.Models
 {
-    public class ExcludeBrands
+    public class Brand
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
-        [Required]
-        [Display(Name = "BrandName")]
-        public string BrandName { get; set; } 
-
-        public int BrandId { get; set; }
+        public string BrandName { get; set; } = "";
     }
 }

@@ -782,7 +782,11 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             return _context.GetHistoricPricesForSite(siteId, startDate, endDate);
         }
 
-
+        public void RebuildBrands()
+        {
+            _context.RebuildBrands();
+        }
+                
         private void AddFuelPricesRowsForSites(DateTime forDate, List<SitePriceViewModel> sites)
         {
             if (sites == null || !sites.Any())
@@ -1280,7 +1284,10 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                 if (site.Competitors != null) UpdateSiteCompetitors(site);
                 _context.Entry(site).State = EntityState.Modified;
                 int nReturn = _context.SaveChanges();
-             
+
+                // rebuild brands
+                _context.RebuildBrands();
+
                 return true;
             }
             catch (Exception ce)
@@ -3288,15 +3295,15 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
                 foreach (string brandName in listOfBrands)
                 {
                     if (brandName == null) continue;
+                    var brand = _context.Brands.FirstOrDefault(x => x.BrandName.ToUpper() == brandName.ToUpper());
                     ExcludeBrands excludeBrand = new ExcludeBrands();
                     excludeBrand.BrandName = brandName;
+                    excludeBrand.BrandId = brand == null ? 0 : brand.Id; // lookup BrandId
                     _context.ExcludeBrands.Add(excludeBrand);
                 }
             }
             int nRet = _context.SaveChanges();
-
-
-
+            
             return nRet > 0;
         }
 

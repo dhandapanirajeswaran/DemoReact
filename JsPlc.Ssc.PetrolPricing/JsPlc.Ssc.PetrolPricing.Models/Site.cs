@@ -86,6 +86,8 @@ namespace JsPlc.Ssc.PetrolPricing.Models
 
         [NotMapped]
         public bool HasNearbySuperUnleadedGrocersPriceData { get; set; }
+
+        public int BrandId { get; set; }
     }
 
     public class SiteEmail
