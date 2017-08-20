@@ -115,7 +115,10 @@
             <table class="table table-striped file-uploader-grid">
                 @foreach (var item in Model)
                         {
-                            var daysAgo = (int)DateTime.Now.Date.Subtract(item.UploadDateTime.Date).TotalDays;
+                            var uploadedDateTime = item.UploadDateTime;
+                            var dataForDate = item.UploadTypeId == 1 ? uploadedDateTime.Date.AddDays(-1) : uploadedDateTime.Date;
+
+                            var daysAgo = (int)DateTime.Now.Date.Subtract(uploadedDateTime.Date).TotalDays;
                             var wasToday = daysAgo < 1;
                             var wasYesterday = daysAgo == 1;
                             var friendlyDaysAgo = wasToday ? "Today" : wasYesterday ? "Yesterday" : daysAgo + " Days ago";
@@ -130,6 +133,12 @@
                             var dateHeaderCss = "date-header" + (wasToday ? " date-today" : wasYesterday ? " date-yesterday" : "");
 
                             var dateYYYY_mm_dd = item.UploadDateTime.Date.ToString("yyyy-MM-dd");
+
+                            var uploadedInfoTip = String.Format("Uploaded on [b]{0}[/b] at [b]{1}[/b][br /]Data for [u]{2}[/u]",
+                                uploadedDateTime.ToString("dd-MMM-yyyy"),
+                                uploadedDateTime.ToString("HH:mm:ss"),
+                                dataForDate.ToString("dd-MMM-yyyy")
+                                );
 
                             if (item.IsForDifferentDay)
                             {
@@ -161,7 +170,7 @@
                 <td class="column-4">
                     @Html.DisplayFor(modelItem => item.UploadType.UploadTypeName)
                 </td>
-                <td class="column-5 text-center" data-infotip="Uploaded on [b]@(item.UploadDateTime.ToString("dd-MMM-yyyy"))[/b] at [b]@(item.UploadDateTime.ToString("HH:mm:ss"))[/b]">
+                <td class="column-5 text-center" data-infotip="@(uploadedInfoTip)">
                     @if (wasToday || wasYesterday)
                     {
                         <strong>@Html.FormatFriendlyDateTime(item.UploadDateTime)</strong>
