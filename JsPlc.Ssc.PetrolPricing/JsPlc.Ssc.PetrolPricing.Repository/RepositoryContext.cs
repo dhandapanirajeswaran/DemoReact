@@ -612,5 +612,16 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             var parameters = new { };
             DapperHelper.Execute(this, sprocName, parameters);
         }
+
+        internal FileUploadAttemptStatus ValidateUploadAttempt(int uploadTypeId, DateTime uploadDate)
+        {
+            const string sprocName = "spValidateUploadAttempt";
+            var parameters = new
+            {
+                @UploadTypeId = uploadTypeId,
+                @UploadDate = uploadDate
+            };
+            return DapperHelper.QueryFirst<FileUploadAttemptStatus>(this, sprocName, parameters);
+        }
     }
 }

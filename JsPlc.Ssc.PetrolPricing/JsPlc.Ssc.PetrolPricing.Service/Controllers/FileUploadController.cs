@@ -15,6 +15,7 @@ using JsPlc.Ssc.PetrolPricing.Models;
 using JsPlc.Ssc.PetrolPricing.Models.Common;
 using Newtonsoft.Json;
 using JsPlc.Ssc.PetrolPricing.Core;
+using System.Globalization;
 
 namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
 {
@@ -308,5 +309,22 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
                 return new ExceptionResult(ex, this);
             }
         }
+
+        [HttpGet]
+        [Route("api/ValidateUploadAttempt/{uploadType}/{uploadDate}")]
+        public IHttpActionResult ValidateUploadAttempt([FromUri] int uploadType, [FromUri] string uploadDate)
+        {
+            try
+            {
+                DateTime dt = DateTime.ParseExact(uploadDate, "yyyyMMdd", CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal);
+                var status = _fileService.ValidateUploadAttempt(uploadType, dt);
+                return Ok(status);
+            }
+            catch (Exception ex)
+            {
+                return new ExceptionResult(ex, this);
+            }
+        }
+
     }
 }

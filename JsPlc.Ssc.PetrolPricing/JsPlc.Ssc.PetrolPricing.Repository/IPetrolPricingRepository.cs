@@ -364,5 +364,6 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         IEnumerable<HistoricalPriceViewModel> GetHistoricPricesForSite(int siteId, DateTime startDate, DateTime endDate);
 
         void RebuildBrands();
+        FileUploadAttemptStatus ValidateUploadAttempt(int uploadType, DateTime uploadDate);
     }
 }

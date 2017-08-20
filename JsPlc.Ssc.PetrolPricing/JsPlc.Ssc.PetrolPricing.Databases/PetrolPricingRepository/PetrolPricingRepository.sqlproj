@@ -217,6 +217,7 @@
     <Build Include="dbo\Stored Procedures\spGetHistoricalPricesForSite.sql" />
     <Build Include="dbo\Tables\Brand.sql" />
     <Build Include="dbo\Stored Procedures\spRebuildBrands.sql" />
+    <Build Include="dbo\Stored Procedures\spValidateUploadAttempt.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Scripts\PostDeployment\Script.PostDeployment.sql" />

@@ -282,7 +282,7 @@
 
                     </div>
                     <div class="col-md-4" data-bind="visible: !$root.busyLoadingData()" style="display: none;">
-                        <strong>Grocers within <span data-bind="text: $root.MaxGrocerDriveTime()"></span> minutes:</strong><br />
+                        <strong>Nearby Grocers within <span data-bind="text: $root.MaxGrocerDriveTime()"></span> minutes:</strong><br />
                         <div class="btn-group">
                             <button type="button" class="btn btn-sm" data-bind="click: toggleHighlightNoNearbyGrocerPrices, css: {'btn-primary': $root.highlightNoNearbyGrocerPrices() }" data-infotip="Toggle highlighting for Site Fuels[br /] with [b]No Nearby Grocers[/b]"><i class="fa fa-times"></i> No Grocers <span class="badge" data-bind="text: $root.NoNearbyGrocersCount"></span></button>
                             <button type="button" class="btn btn-sm" data-bind="click: toggleHighlightHasNearbyGrocerWithOutPrices, css: {'btn-primary': $root.highlightHasNearbyGrocerWithOutPrices() }" data-infotip="Toggle highlighting for Site Fuels[br /][b]with Nearby Grocers[/b] but [em]Incomplete[/em] Prices"><i class="fa fa-question"></i> Incomplete <span class="badge" data-bind="text: $root.NearbyGrocersWithoutPricesCount"></span></button>

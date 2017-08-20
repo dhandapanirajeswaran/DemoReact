@@ -24,6 +24,7 @@ using System.Threading.Tasks;
 using System.Web;
 using JsPlc.Ssc.PetrolPricing.Exporting.Interfaces;
 using JsPlc.Ssc.PetrolPricing.Models.ViewModels.Schedule;
+using JsPlc.Ssc.PetrolPricing.Core;
 
 namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
 {
@@ -82,6 +83,10 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
         public PPUserList GetPPUsers()
         {
             var response = _client.Value.GetAsync("api/PPUsers/").Result;
+
+            //
+            // NOTE: if it crashes here then try rebuilding the Service project !
+            //
 
             var result = response.Content.ReadAsAsync<PPUserList>().Result;
             return (response.IsSuccessStatusCode) ? result : null;
@@ -199,6 +204,25 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
                 throw new ApplicationException(result); // json error structure
             }
             // Dont wrap the whole call in try catch as we can handle exceptions in Controllers
+        }
+
+        internal async Task<FileUploadAttemptStatus> ValidateUploadAttempt(FileUploadTypes uploadType, DateTime uploadDate)
+        {
+            var apiUrl = String.Format("api/ValidateUploadAttempt/{0}/{1}",
+                (int)uploadType,
+                uploadDate.ToString("yyyyMMdd")
+                );
+
+            var response = _client.Value.GetAsync(apiUrl).Result;
+            if (response.IsSuccessStatusCode)
+            {
+                var result = await response.Content.ReadAsAsync<FileUploadAttemptStatus>();
+                return result;
+            }
+            return new FileUploadAttemptStatus()
+            {
+                ErrorMessage = "Unable to verify upload attempt"
+            };
         }
 
         public async Task<List<EmailSendLog>> GetEmailSendLog(int siteId = 0, DateTime? forDate = null, string apiName = "getEmailSendLog")

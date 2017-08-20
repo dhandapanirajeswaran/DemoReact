@@ -99,7 +99,15 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
                 UploadDate = uploadTypes == 2 ? DateTime.Now : uploadDate.Value
             };
 
-            string errorMessage = string.Empty;
+            string errorMessage = ValidateUploadAttempt((FileUploadTypes)uploadTypes, uploadDate.Value).Result;
+            if (!String.IsNullOrWhiteSpace(errorMessage))
+            {
+                var url = String.Format("Upload?errMsg={0}&uploadType=",
+                    HttpUtility.UrlEncode(errorMessage),
+                    uploadTypes);
+
+                return new RedirectResult(url);
+            }
 
             try
             {
@@ -166,6 +174,12 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
                 errorMessage = StringMessages.Error_TryAgain;
             }
             return RedirectToAction("Upload", new { errMsg = errorMessage });
+        }
+
+        private async Task<string> ValidateUploadAttempt(FileUploadTypes uploadType, DateTime uploadDate)
+        {
+            var status = await _serviceFacade.ValidateUploadAttempt(uploadType, uploadDate);
+            return status.ErrorMessage;
         }
 
         public async Task<ActionResult> ConfirmUpload(string guidKey)

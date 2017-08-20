@@ -2,7 +2,8 @@
 (
 	[Id] INT NOT NULL PRIMARY KEY IDENTITY, 
     [BrandName] VARCHAR(200) NOT NULL, 
-    [IsSainsburys] BIT NOT NULL
+    [IsSainsburys] BIT NOT NULL, 
+    [BrandId] INT NOT NULL DEFAULT (0)
 )
 
 GO

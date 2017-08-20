@@ -786,7 +786,12 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         {
             _context.RebuildBrands();
         }
-                
+
+        public FileUploadAttemptStatus ValidateUploadAttempt(int uploadType, DateTime uploadDate)
+        {
+            return _context.ValidateUploadAttempt(uploadType, uploadDate);
+        }
+
         private void AddFuelPricesRowsForSites(DateTime forDate, List<SitePriceViewModel> sites)
         {
             if (sites == null || !sites.Any())

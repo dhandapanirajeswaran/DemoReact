@@ -40,8 +40,12 @@ BEGIN
 	--
 	-- Update the BrandIds
 	--
-	UPDATE eb
-	SET eb.BrandId = (SELECT TOP 1 Id FROM dbo.Brand WHERE BrandName = eb.BrandName)
+	update gr 
+	set BrandId = (SELECT TOP 1 Id FROM dbo.Brand WHERE BrandName = gr.BrandName)
+	FROM dbo.Grocers gr
+
+	update eb
+	set BrandId = (SELECT TOP 1 Id FROM dbo.Brand WHERE BrandName = eb.BrandName)
 	FROM dbo.ExcludeBrands eb
-	--
+
 END

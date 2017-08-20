@@ -964,6 +964,11 @@ namespace JsPlc.Ssc.PetrolPricing.Business
             _db.UpsertSiteCatNoAndPfsNos(siteNumbers);
         }
 
+        public FileUploadAttemptStatus ValidateUploadAttempt(int uploadType, DateTime uploadDate)
+        {
+            return _db.ValidateUploadAttempt(uploadType, uploadDate);
+        }
+
         #endregion
     }
 }

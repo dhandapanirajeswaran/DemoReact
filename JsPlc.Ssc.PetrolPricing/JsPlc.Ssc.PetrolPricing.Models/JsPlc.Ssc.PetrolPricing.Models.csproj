@@ -108,6 +108,7 @@
     <Compile Include="Enums\PriceMatchType.cs" />
     <Compile Include="Enums\SiteSectionType.cs" />
     <Compile Include="Enums\UserPermissionEnums.cs" />
+    <Compile Include="FileUploadAttemptStatus.cs" />
     <Compile Include="FuelPriceSetting.cs" />
     <Compile Include="FuelPriceSettings.cs" />
     <Compile Include="GenericStatus.cs" />
