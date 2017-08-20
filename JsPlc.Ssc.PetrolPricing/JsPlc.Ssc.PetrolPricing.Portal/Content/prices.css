@@ -1468,13 +1468,10 @@ optgroup > option {
 #historicSitePricesPopup .table th,
 #historicSitePricesPopup .table td {text-align: center;}
 
-#historicSitePricesPopup .row-weekend {
-    color: #337ab7;
-    background: #eee;
-}
-
+#historicSitePricesPopup .row-weekend,
 #historicSitePricesPopup .row-weekend .alt-col {
-    background: #ddd;
+    color: #aba;
+    background: #ded;
 }
 
 #historicSitePricesPopup .historic-price-scroller {
