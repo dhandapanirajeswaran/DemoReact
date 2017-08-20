@@ -9,7 +9,7 @@
     New file upload <span id="FileUploadTitle"></span>
 </h1>
 <div class="alert alert-info @(string.IsNullOrWhiteSpace(ViewBag.Message) ? "hidden" : "")"><i class="fa fa-info-circle fa-2x large-message-icon pulse-size"></i> @ViewBag.Message</div>
-<div class="alert alert-danger @(string.IsNullOrWhiteSpace(ViewBag.ErrorMessage) ? "hidden" : "")"><i class="fa fa-times fa-2x large-message-icon pulse-size"></i> @ViewBag.ErrorMessage</div>
+<div class="alert alert-danger font125pc @(string.IsNullOrWhiteSpace(ViewBag.ErrorMessage) ? "hidden" : "")"><i class="fa fa-times fa-2x large-message-icon pulse-size"></i> @ViewBag.ErrorMessage</div>
 <div class="alert alert-success @(string.IsNullOrWhiteSpace(ViewBag.SuccessMessage) ? "hidden" : "")"><i class="fa fa-check fa-2x large-message-icon pulse-size"></i> @ViewBag.SuccessMessage</div>
 <div class="alert alert-warning @(string.IsNullOrWhiteSpace(ViewBag.WarningMessage) ? "hidden" : "")"><i class="fa fa-warning fa-2x large-message-icon pulse-size"></i> <strong>@ViewBag.WarningMessage</strong></div>
 <hr />
@@ -162,6 +162,31 @@
     </div>
 
 </form>
+
+
+<div class="alert alert-info">
+    <div class="row">
+        <div class="col-md-2 text-right">
+            <strong class="font125pc">
+                <i class="fa fa-info-circle"></i> Historical Data
+            </strong>
+        </div>
+        <div class="col-md-10">
+            <p><strong>Note:</strong> When uploading historical files you need to follow this order:-</p>
+            <ol>
+                <li>
+                    <strong>Quarterly Site Data</strong> &mdash; This should be the very first file uploaded onto an empty system.
+                </li>
+                <li>
+                    <strong>Daily Price Data, Latest Js Price Data</strong> and <strong>Latest Competitor Price Data</strong> 
+                    &mdash; Should then be loaded in chronological order (from oldest to newest).<br />
+                    So for each day you upload all the files before moving onto the next day.
+                </li>
+            </ol>
+        </div>
+    </div>
+</div>
+
 <br />
 <div class="row">
     <div class="col-md-1">
