@@ -1271,6 +1271,10 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
         public Site NewSite(Site site)
         {
+            // lookup BrandId
+            var brand = _context.Brands.FirstOrDefault(x => x.BrandName.ToUpper() == site.Brand.ToUpper());
+            site.BrandId = brand == null ? 0 : brand.Id;
+
             var result = _context.Sites.Add(site);
             _context.SaveChanges();
 
@@ -1284,6 +1288,10 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
             try
             {
+                // lookup BrandId
+                var brand = _context.Brands.FirstOrDefault(x => x.BrandName.ToUpper() == site.Brand.ToUpper());
+                site.BrandId = brand == null ? 0 : brand.Id;
+
                 _context.Sites.Attach(site);
                 UpdateSiteEmails(site);
                 if (site.Competitors != null) UpdateSiteCompetitors(site);
