@@ -283,29 +283,37 @@
                 date = new Date(parseInt(parts[2], 10), parseInt(parts[1], 10)-1, parseInt(parts[0], 10)),
                 timeDiff = date.getTime() - today.getTime(),
                 diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24)),
-                friendly = '';
+                friendly1 = '',
+                friendly2 = ''
 
             $(selectors.calculatedAsDate).text(ddmmyyyy);
 
             switch (diffDays) {
                 case 0:
-                    friendly = '<span class="today-date">Today</span>';
+                    friendly1 = '<span class="badge font125pc">Today</span>';
+                    friendly2 = '<span class="date-indicator today">Today</span>';
                     break;
                 case -1:
-                    friendly = '<span class="yesterday-date">Yesterday</span>';
+                    friendly1 = '<span class="badge font125pc">Yesterday</span>';
+                    friendly2 = '<span class="date-indicator yesterday">Yesterday</span>';
                     break;
                 case 1:
-                    friendly = '<span class="tomorrow-date">Tomorrow</span>';
+                    friendly1 = '<span class="badge font125pc">Tomorrow</span>';
+                    friendly2 = '<span class="date-indicator tomorrow">Tomorrow</span>';
                     break;
                 default:
-                    if (diffDays < 0)
-                        friendly = '<span class="past-days">' + Math.abs(diffDays) + ' Days Ago</span>';
-                    else
-                        friendly = '<span class="future-days">' + diffDays + ' Days</span>';
+                    if (diffDays < 0) {
+                        friendly1 = '<span class="badge font125pc">' + Math.abs(diffDays) + ' Days Ago</span>';
+                        friendly2 = '<span class="date-indicator past">' + Math.abs(diffDays) + ' Days Ago</span>';
+                    }
+                    else {
+                        friendly1 = '<span class="badge font125pc">' + diffDays + ' Days</span>';
+                        friendly2 = '<span class="date-indicator future">' + diffDays + ' Days</span>';
+                    }
                     break;
             }
-            $(selectors.calculateDateInfo).html(friendly);
-            $(selectors.calculateDateInfo2).html(friendly);
+            $(selectors.calculateDateInfo).html(friendly1);
+            $(selectors.calculateDateInfo2).html(friendly2);
         };
 
         function uploadfileButtonClick() {

@@ -5,6 +5,43 @@
 <link type="text/css" rel="stylesheet" href="~/Content/uploads.css" />
 <link type="text/css" rel="stylesheet" href="~/Content/tips.css" />
 
+<style>
+    .date-indicator {
+        line-height: 1em;
+        padding: 3px 12px;
+        margin-left: 1em;
+        display: inline-block;
+        margin-top: 2px;
+    }
+
+    .date-indicator::before {
+        content: ".";
+        font-size: 0;
+        line-height: 0;
+        position: absolute;
+        overflow: hidden;
+        width: 32px;
+        height: 32px;
+        border: 16px solid transparent;
+        border-right: 16px solid red;
+        top: -2px;
+        left: -14px;
+    }
+
+    .date-indicator.today {background-color: #5cb85c; color: #fff;}
+    .date-indicator.yesterday,
+    .date-indicator.past {background-color: #777; color: #fff;}
+    .date-indicator.tomorrow,
+    .date-indicator.future {background-color: orange; color: #000;}
+
+    .date-indicator.today::before {border-right-color: #5cb85c;}
+    .date-indicator.yesterday::before,
+    .date-indicator.past::before {border-right-color: #777;}
+    .date-indicator.tomorrow::before,
+    .date-indicator.futur::beforee {border-right-color: orange;}
+</style>
+
+
 <h1><i class="fa fa-file"></i>
     New file upload <span id="FileUploadTitle"></span>
 </h1>
@@ -127,8 +164,8 @@
         </div>
 
         <div class="col-md-3" id="ChooseDatePanel">
-            @Html.TextBoxFor(m => m.UploadDate, "{0:dd/MM/yyyy}", new { @class = "datepicker form-control", style="width: 50%", id = "caldattimepicker", @maxlength = "12", @data_infotip="This will be displayed as the [b]Upload Date/Time[/b]" })
-            <span id="CalculateDateInfo2" class="badge"></span>
+            @Html.TextBoxFor(m => m.UploadDate, "{0:dd/MM/yyyy}", new { @class = "datepicker form-control", style="width: 35%", id = "caldattimepicker", @maxlength = "12", @data_infotip="This will be displayed as the [b]Upload Date/Time[/b]" })
+            <div id="CalculateDateInfo2" class="text-left" style="display: inline-block; position: relative;"></div>
         </div>
 
         <div class="col-md-6">
