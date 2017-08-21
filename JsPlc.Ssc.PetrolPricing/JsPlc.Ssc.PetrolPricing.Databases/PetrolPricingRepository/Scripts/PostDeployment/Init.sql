@@ -441,6 +441,11 @@ BEGIN
 END
 
 --
+-- Lookup BrandId for all Sites
+--
+EXEC dbo.spRebuildBrands
+
+--
 -- Lookup BrandIds
 --
 update gr 
@@ -450,7 +455,6 @@ FROM dbo.Grocers gr;
 update eb
 set BrandId = (SELECT TOP 1 Id FROM dbo.Brand WHERE BrandName = eb.BrandName)
 FROM dbo.ExcludeBrands eb;
-
 
 --
 -- Determine PriceMatchType for existing sites

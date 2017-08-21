@@ -38,6 +38,11 @@ BEGIN
 		DELETE;
 
 	--
+	-- rebuild the missing Brands
+	--
+	EXEC dbo.spRebuildBrands
+
+	--
 	-- Update the BrandIds
 	--
 	update gr 
