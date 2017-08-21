@@ -1,5 +1,5 @@
-﻿define(["infotips", "notify", "PetrolPricingService", "busyloader", "validation", "bootbox"],
-    function (infotips, notify, petrolPricingService, busyloader, validation, bootbox) {
+﻿define(["infotips", "notify", "PetrolPricingService", "busyloader", "validation", "bootbox", "UnsavedChanges"],
+    function (infotips, notify, petrolPricingService, busyloader, validation, bootbox, unsavedChanges) {
 
         "use strict";
 
@@ -68,6 +68,7 @@
             renderEmailList();
             controls.emailInput.val('');
             controls.emailInput.focus();
+            unsavedChanges.markAsChanged();
         };
 
         function confirmDeleteTestEmail() {
@@ -91,6 +92,7 @@
                     callback: function (result) {
                         if (result) {
                             removeTestEmail(email);
+                            unsavedChanges.markAsChanged();
                             renderEmailList();
                         }
                     }
@@ -199,11 +201,24 @@
             controls.emailList.html(html.join(''));
         };
 
+        function bindUnsavedChanges() {
+            unsavedChanges.bind(
+                {
+                    ele: $('form'),
+                    unsaved: function () {
+                        $('#divUnsavedChanges').slideDown(1000);
+                    }
+                }
+            );
+        };
+
         function docReady() {
             findControls();
             renderEmailList();
             redrawEnableWarnings();
             bindEvents();
+
+            bindUnsavedChanges();
 
             var error = $('#hdnPageErrorMessage').val(),
                 success = $('#hdnPageSuccessMessage').val()

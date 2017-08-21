@@ -348,6 +348,7 @@
     <Content Include="Scripts\App\Services\EmailTemplateService.js" />
     <Content Include="Scripts\App\Popups\SiteEmailHelp.html" />
     <Content Include="Scripts\App\sitePricingSettings.js" />
+    <Content Include="Scripts\App\unsavedChanges.js" />
     <Content Include="Scripts\App\validation.js" />
     <Content Include="Scripts\App\ViewScripts\CompetitorPriceNotePopup.js" />
     <Content Include="Scripts\App\ViewScripts\CompetitorPricePopup.js" />

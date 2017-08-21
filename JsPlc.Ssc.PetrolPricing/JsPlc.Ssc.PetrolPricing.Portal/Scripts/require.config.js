@@ -54,6 +54,7 @@
             "waiter": "App/Waiter",
             "chooseOneGroup": "App/chooseOneGroup",
             "HistoricSitePrices": "App/HistoricSitePrices",
+            "UnsavedChanges": "App/UnsavedChanges",
 
             // popups
             "SiteEmailPopup" : "App/Popups/SiteEmailPopup",

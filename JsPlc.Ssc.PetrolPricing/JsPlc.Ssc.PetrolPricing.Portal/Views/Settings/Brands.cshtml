@@ -36,6 +36,24 @@
     {
         @Html.AntiForgeryToken()
 
+        <div id="divUnsavedChanges" style="display: none;">
+            <br />
+            <div class="alert alert-warning">
+                <div class="row">
+                    <div class="col-md-10">
+                        <span class="font125pc">
+                            <i class="fa fa-warning pulse-size"></i> <strong>Warning:</strong> You have unsaved changes.
+                        </span>
+                    </div>
+
+                    <div class="col-md-2 text-right">
+                        <button type="button" id="btnUpdateBrandSettings" class="btn btn-primary pull-right" data-infotip="Update the [b]Excluded Brands[/b] and [b]Grocers[/b]"><i class="fa fa-check"></i> Save Changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
         <div class="col-md-6">
             <div class="panel panel-danger excluded-brands-panel">
                 <div class="panel-heading font150pc">
@@ -85,20 +103,12 @@
                 </div>
             </div>
         </div>
-
-        <div class="container">
-            <div class="row">
-                <div class="col-md-12">
-                    <button type="button" id="btnUpdateBrandSettings" class="btn btn-primary pull-right" data-infotip="Update the [b]Excluded Brands[/b] and [b]Grocers[/b]"><i class="fa fa-check"> Update</i></button>
-                </div>
-            </div>
-        </div>
     }
 </div>
 
 <script type="text/javascript">
-    require(["common", "infotips", "notify", "EasyTemplate", "busyloader"],
-        function (common, infotips, notify, easytemplate, busyloader) {
+    require(["common", "infotips", "notify", "EasyTemplate", "busyloader", "UnsavedChanges"],
+        function (common, infotips, notify, easytemplate, busyloader, unsavedChanges) {
 
             "use strict";
 
@@ -171,6 +181,7 @@
                     ele.remove();
                 });
                 notify.info('Removed Grocer ' + brand);
+                unsavedChanges.markAsChanged()
             };
 
             function excludedBrandRemoveClick() {
@@ -182,6 +193,7 @@
                     ele.remove();
                 });
                 notify.info('Removed ' + brand + ' from Excluded list');
+                unsavedChanges.markAsChanged();
             };
 
             function arrayIndex(value, items) {
@@ -217,6 +229,7 @@
                 redrawGrocersList(brand);
                 redrawCounts();
                 notify.info('Added ' + brand + ' to Grocers');
+                unsavedChanges.markAsChanged();
             };
 
             function excludedBrandsClick() {
@@ -228,6 +241,7 @@
                 redrawExcludedBrandsList(brand);
                 redrawCounts();
                 notify.info('Added ' + brand + ' to Excluded Brands');
+                unsavedChanges.markAsChanged();
             };
 
             function updateBrandSettingsClick() {
@@ -241,6 +255,8 @@
                 promise.done(function () {
                     busyloader.hide()
                     notify.success('Updated Brand Settings');
+                    unsavedChanges.saved();
+                    $('#divUnsavedChanges').fadeOut(1000);
                 });
                 promise.fail(function () {
                     busyloader.hide();
@@ -261,11 +277,23 @@
                 $(selectors.updateBrandsButton).off().click(updateBrandSettingsClick);
             };
 
+            function bindUnsavedChanges() {
+                unsavedChanges.bind(
+                    {
+                        ele: $('form'),
+                        unsaved: function () {
+                            $('#divUnsavedChanges').slideDown(1000);
+                        }
+                    }
+                );
+            };
+
             function docReady() {
                 redrawCounts();
                 redrawExcludedBrandsList();
                 redrawGrocersList();
                 bindEvents();
+                bindUnsavedChanges();
             };
 
             $(docReady);

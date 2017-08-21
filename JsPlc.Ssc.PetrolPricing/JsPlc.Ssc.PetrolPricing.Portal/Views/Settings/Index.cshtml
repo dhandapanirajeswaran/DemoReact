@@ -84,6 +84,23 @@
 
             <input type="hidden" name="Id" value="@(Model.Id)" />
 
+            <div id="divUnsavedChanges" style="display: none;">
+                <br />
+                <div class="alert alert-danger">
+                    <div class="row">
+                        <div class="col-md-10">
+                            <span class="font125pc">
+                                <i class="fa fa-warning pulse-size"></i> <strong>Warning:</strong> You have unsaved changes.
+                            </span>
+                        </div>
+
+                        <div class="col-md-2 text-right">
+                            <button type="submit" class="btn btn-primary"><i class="fa fa-check"> Save Settings</i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <fieldset>
 
                 <div class="row section-row">
@@ -323,7 +340,7 @@
                     <a class="btn btn-default" href="@Url.Action("Index", "Home")"><i class="fa fa-backward"></i> Back to Home</a>
                 </div>
                 <div class="col-md-8 text-right">
-                    <button type="submit" class="btn btn-primary"><i class="fa fa-check"> Update Settings</i></button>
+                    <button type="submit" class="btn btn-primary"><i class="fa fa-check"> Save Settings</i></button>
                 </div>
 
                 <div class="clear-fix"></div>
