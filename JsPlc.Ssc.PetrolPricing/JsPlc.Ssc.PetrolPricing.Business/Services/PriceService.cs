@@ -380,6 +380,10 @@ namespace JsPlc.Ssc.PetrolPricing.Business
                 }
             }
 
+            // handle no Suggested Price (AutoPrice)
+            if (sitePrice.SuggestedPrice == 0 && todayprice > 0)
+                sitePrice.SuggestedPrice = todayprice;
+
             // apply decimal rounding (if any)
             if (systemSettings.DecimalRounding != -1)
             {
