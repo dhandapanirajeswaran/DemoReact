@@ -457,6 +457,11 @@ set BrandId = (SELECT TOP 1 Id FROM dbo.Brand WHERE BrandName = eb.BrandName)
 FROM dbo.ExcludeBrands eb;
 
 --
+-- look Site Grocer and ExcludedBrand attributes
+--
+EXEC dbo.spRebuildSiteAttributes @SiteId = NULL -- Note: ALL sites
+
+--
 -- Determine PriceMatchType for existing sites
 --
 

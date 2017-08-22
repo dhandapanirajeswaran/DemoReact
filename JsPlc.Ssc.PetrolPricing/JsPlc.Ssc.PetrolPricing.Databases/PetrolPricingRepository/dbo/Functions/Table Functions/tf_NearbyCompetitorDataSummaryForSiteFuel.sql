@@ -59,15 +59,11 @@ BEGIN
 		SELECT
 			stc.CompetitorId [CompetitorSiteId],
 			compsite.CatNo [CatNo],
-			CASE 
-				WHEN EXISTS(SELECT TOP 1 NULL FROM dbo.Grocers WHERE BrandName = compsite.Brand) THEN 1
-			ELSE 0
-			END [IsGrocer]
+			compsite.isGrocer [IsGrocer]
 		FROM
 			dbo.Site st
 			INNER JOIN dbo.SiteToCompetitor stc ON stc.SiteId = st.Id
 			INNER JOIN dbo.Site compsite ON compsite.Id = stc.CompetitorId
-			LEFT JOIN dbo.Grocers gro ON gro.BrandName = compsite.Brand
 		WHERE
 			st.Id = @SiteId
 			AND
@@ -75,7 +71,7 @@ BEGIN
 			AND
 			compsite.IsActive = 1
 			AND
-			compsite.Brand NOT IN (SELECT BrandName FROM dbo.ExcludeBrands) -- ignore Excluded brands
+			compsite.IsExcludedBrand = 0 -- ignore Excluded brands
 
 	--
 	-- get nearby Competitor and Grocer Counts

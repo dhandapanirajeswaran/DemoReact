@@ -45,7 +45,6 @@ BEGIN
 			dbo.Site st
 			INNER JOIN dbo.SiteToCompetitor stc ON stc.SiteId = st.Id
 			INNER JOIN dbo.Site compsite ON compsite.Id = stc.CompetitorId
-			INNER JOIN dbo.Grocers gro ON gro.BrandName = compsite.Brand
 		WHERE
 			st.Id = @SiteId
 			AND
@@ -53,7 +52,9 @@ BEGIN
 			AND
 			compsite.IsActive = 1
 			AND
-			compsite.Brand NOT IN (SELECT BrandName FROM dbo.ExcludeBrands) -- ignore Excluded Brands
+			compsite.IsGrocer = 1
+			AND
+			compsite.IsExcludedBrand = 0 -- ignore Excluded Brands
 
 	IF EXISTS(SELECT TOP 1 NULL FROM @NearbyGrocerSites)
 	BEGIN

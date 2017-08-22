@@ -792,6 +792,11 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             return _context.ValidateUploadAttempt(uploadType, uploadDate);
         }
 
+        public void RebuildSiteAttributes(int? siteId)
+        {
+            _context.RebuildSiteAttributes(siteId);
+        }
+
         private void AddFuelPricesRowsForSites(DateTime forDate, List<SitePriceViewModel> sites)
         {
             if (sites == null || !sites.Any())
@@ -1300,6 +1305,9 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
                 // rebuild brands
                 _context.RebuildBrands();
+
+                // rebuild site attributes
+                _context.RebuildSiteAttributes(site.Id);
 
                 return true;
             }

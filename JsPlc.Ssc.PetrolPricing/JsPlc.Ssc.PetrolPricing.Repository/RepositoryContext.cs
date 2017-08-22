@@ -623,5 +623,15 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             };
             return DapperHelper.QueryFirst<FileUploadAttemptStatus>(this, sprocName, parameters);
         }
+
+        internal void RebuildSiteAttributes(int? siteId)
+        {
+            const string sprocName = "spRebuildSiteAttributes";
+            var parameters = new
+            {
+                @SiteId = siteId
+            };
+            DapperHelper.Execute(this, sprocName, parameters);
+        }
     }
 }

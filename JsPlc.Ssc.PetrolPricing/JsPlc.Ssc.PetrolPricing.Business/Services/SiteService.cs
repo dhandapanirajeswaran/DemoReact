@@ -165,5 +165,10 @@ namespace JsPlc.Ssc.PetrolPricing.Business
         {
             return _db.UpsertSiteEmailAddresses(emailAddresses);
         }
+
+        public void RebuildSiteAttributes()
+        {
+            _db.RebuildSiteAttributes(null);
+        }
     }
 }

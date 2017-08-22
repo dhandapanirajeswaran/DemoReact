@@ -16,4 +16,9 @@ AS
 	--
 	EXEC [dbo].[spInitSainsburysStoreInformation]
 
+	--
+	-- look Site Grocer and ExcludedBrand attributes
+	--
+	EXEC dbo.spRebuildSiteAttributes @SiteId = NULL -- Note: ALL sites
+
 RETURN 0

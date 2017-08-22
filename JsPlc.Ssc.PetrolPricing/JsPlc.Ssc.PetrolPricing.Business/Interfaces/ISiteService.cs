@@ -61,5 +61,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 
         IEnumerable<SiteEmailAddressViewModel> GetAllSiteEmailAddresses(int siteId = 0);
         StatusViewModel UpsertSiteEmailAddresses(IEnumerable<SiteEmailImportViewModel> emailAddresses);
+
+        void RebuildSiteAttributes();
     }
 }

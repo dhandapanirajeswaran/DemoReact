@@ -53,4 +53,9 @@ BEGIN
 	set BrandId = (SELECT TOP 1 Id FROM dbo.Brand WHERE BrandName = eb.BrandName)
 	FROM dbo.ExcludeBrands eb
 
+	--
+	-- rebuild the dbo.Site isGrocer and isExcludedBrands attributes
+	--
+	EXEC dbo.spRebuildSiteAttributes @SiteId = NULL; -- NOTE: all sites
+
 END

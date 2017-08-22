@@ -218,6 +218,7 @@
     <Build Include="dbo\Tables\Brand.sql" />
     <Build Include="dbo\Stored Procedures\spRebuildBrands.sql" />
     <Build Include="dbo\Stored Procedures\spValidateUploadAttempt.sql" />
+    <Build Include="dbo\Stored Procedures\spRebuildSiteAttributes.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Scripts\PostDeployment\Script.PostDeployment.sql" />

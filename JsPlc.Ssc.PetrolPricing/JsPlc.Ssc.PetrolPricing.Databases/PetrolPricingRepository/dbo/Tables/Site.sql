@@ -19,6 +19,8 @@
     [Notes] VARCHAR(MAX) NULL, 
     [PriceMatchType] INT NULL DEFAULT 1, 
     [BrandId] INT NOT NULL DEFAULT (0), 
+    [IsGrocer] BIT NOT NULL DEFAULT (0), 
+    [IsExcludedBrand] BIT NOT NULL DEFAULT (0), 
     CONSTRAINT [PK_dbo.Site] PRIMARY KEY CLUSTERED ([Id] ASC),
     CONSTRAINT [FK_dbo.Site_TrailPriceCompetitorId_dbo.Site_SiteId] FOREIGN KEY ([TrailPriceCompetitorId]) REFERENCES [dbo].[Site] ([Id])
 );

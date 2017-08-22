@@ -35,10 +35,7 @@ SET NOCOUNT ON
 		stc.DriveTime [DriveTime],
 		stc.Distance [Distance],
 		compsite.Notes [Notes],
-		CASE 
-			WHEN EXISTS(SELECT TOP 1 NULL FROM dbo.Grocers WHERE BrandName = compsite.Brand) THEN 1 
-			ELSE 0 
-		END [IsGrocer]
+		compsite.IsGrocer [IsGrocer]
 	FROM
 		dbo.SiteToCompetitor stc
 		INNER JOIN dbo.Site compsite ON compsite.Id = stc.CompetitorId AND compsite.IsActive = 1
@@ -49,7 +46,7 @@ SET NOCOUNT ON
 		AND
 		stc.DriveTime < @MaxDriveTime
 		AND
-		NOT EXISTS(SELECT NULL FROM dbo.ExcludeBrands WHERE BrandName = compsite.Brand)
+		compsite.IsExcludedBrand = 0 -- ignore Excluded Brands
 
 	;WITH FuelTypes AS (
 		SELECT

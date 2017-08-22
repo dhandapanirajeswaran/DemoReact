@@ -365,5 +365,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
         void RebuildBrands();
         FileUploadAttemptStatus ValidateUploadAttempt(int uploadType, DateTime uploadDate);
+
+        void RebuildSiteAttributes(int? siteId);
     }
 }

@@ -482,7 +482,9 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
                 }
 
                if (siteViewModel.ExcludeBrands.Count>0) _siteService.SaveExcludeBrands(siteViewModel.ExcludeBrands);
-                
+
+                _siteService.RebuildSiteAttributes();
+
                 return Ok(siteViewModel);
             }
             catch (Exception ex)
