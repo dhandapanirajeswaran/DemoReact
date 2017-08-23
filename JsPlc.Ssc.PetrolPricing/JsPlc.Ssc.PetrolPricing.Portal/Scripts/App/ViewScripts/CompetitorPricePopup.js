@@ -7,7 +7,8 @@ function ($, ko, common, compNotePopup, notify, cookieSettings, bootbox) {
         showNonGrocers: true,
         insideDriveTime: true,
         outsideDriveTime: true,
-        includeDriveTime: false
+        includeDriveTime: false,
+        showNoPrices: true
     };
 
     var viewingSiteId = 0;
@@ -67,7 +68,9 @@ function ($, ko, common, compNotePopup, notify, cookieSettings, bootbox) {
             searchBrandInput: '[data-click="competitorSearchBrand"]',
             searchNameInput: '[data-click="competitorSearchStoreName"]',
             resetBrandSearchButton: '[data-click="competitorSearchBrandClear"]',
-            resetNameSearchButton: '[data-click="competitorSearchStoreNameClear"]'
+            resetNameSearchButton: '[data-click="competitorSearchStoreNameClear"]',
+            showNoPriceButton: '#competitorShowNoPriceButton',
+            hideNoPriceButton: '#competitorHideNoPriceButton'
         },
         naming: {
             editButton: '#EditSiteNoteButton_',
@@ -155,6 +158,28 @@ function ($, ko, common, compNotePopup, notify, cookieSettings, bootbox) {
         });
     };
 
+    function commonSetNoPriceState(opts) {
+        state.showNoPrices = opts.state;
+        redrawNoPriceButtons();
+        applyFilters();
+        notify.info(opts.message);
+        cookieSettings.writeBoolean('pricing.hideNoPrices', opts.state);
+    };
+
+    function showNoPriceClick() {
+        commonSetNoPriceState({
+            state: true,
+            message: 'Showing all Prices (including N/A ones)'
+        });
+    };
+
+    function hideNoPriceClick() {
+        commonSetNoPriceState({
+            state: false,
+            message: 'Hiding N/A prices'
+        });
+    };
+
     function populateReadOnlyPopupPrices(siteId) {
         var row = $('#SiteHeading' + siteId),
             cells = row.find('>td'),
@@ -215,6 +240,7 @@ function ($, ko, common, compNotePopup, notify, cookieSettings, bootbox) {
         redrawFilterButtons();
         redrawDriveTimeButtons();
         redrawIncludeDriveTimeButtons();
+        redrawNoPriceButtons();
         applyFilters();
 
         dstHeader.hide().html(srcThead.clone(false));
@@ -296,6 +322,8 @@ function ($, ko, common, compNotePopup, notify, cookieSettings, bootbox) {
         bindOutsideModalEvents();
 
         populateReadOnlyPopupPrices(viewingSiteId);
+
+        applyNoPricesStyles();
     };
 
     function setHeaderWidths() {
@@ -477,6 +505,9 @@ function ($, ko, common, compNotePopup, notify, cookieSettings, bootbox) {
         $(config.selectors.includeDriveTimeButton).off().click(includeDriveTimeClick);
 
         $(config.selectors.storeName).off().click(confirmEditSite);
+
+        $(config.selectors.showNoPriceButton).off().click(showNoPriceClick);
+        $(config.selectors.hideNoPriceButton).off().click(hideNoPriceClick);
     };
 
     function bindSearchEvents() {
@@ -744,10 +775,27 @@ function ($, ko, common, compNotePopup, notify, cookieSettings, bootbox) {
         setButtonActiveState(config.selectors.excludeDriveTimeButton, !state.includeDriveTime);
         setButtonActiveState(config.selectors.includeDriveTimeButton, state.includeDriveTime);
     };
+
+    function redrawNoPriceButtons() {
+        setButtonActiveState(config.selectors.showNoPriceButton, state.showNoPrices);
+        setButtonActiveState(config.selectors.hideNoPriceButton, !state.showNoPrices);
+    };
     
+    function applyNoPricesStyles() {
+        var popup = $(config.selectors.popup),
+            tables = popup.find('table.competitorTable');
+
+        if (state.showNoPrices) {
+            tables.removeClass('hide-competitor-no-price-data').addClass('show-competitor-no-price-data')
+        } else {
+            tables.removeClass('show-competitor-no-price-data').addClass('hide-competitor-no-price-data');
+        }
+    };
+
     function applyFilters() {
         var grid = $(config.selectors.pricesGrid),
             popup = $(config.selectors.popup),
+            table = popup.find('table.competitorTable'),
             rows = grid.find(config.selectors.competitorRow),
             totalCount = 0,
             visibleCount = 0,
@@ -755,6 +803,8 @@ function ($, ko, common, compNotePopup, notify, cookieSettings, bootbox) {
             hasBrandSearch = false,
             storeNameSearch = '',
             hasStoreNameSearch = false;
+
+        applyNoPricesStyles();
 
         // workaround for weird issue with KO
         if (popup.find(config.selectors.searchBrandInput).length == 2) {
@@ -818,6 +868,7 @@ function ($, ko, common, compNotePopup, notify, cookieSettings, bootbox) {
 
     function restoreCookieSettings() {
         state.includeDriveTime = cookieSettings.readBoolean('pricing.includeDriveTime', false);
+        state.showNoPrices = cookieSettings.readBoolean('pricing.hideNoPrices', false);
     };
 
     return {

@@ -8,7 +8,7 @@
 <style>
     .date-indicator {
         line-height: 1em;
-        padding: 3px 12px;
+        padding: 2px 12px 5px 12px;
         margin-left: 1em;
         display: inline-block;
         margin-top: 2px;
@@ -23,22 +23,22 @@
         width: 32px;
         height: 32px;
         border: 16px solid transparent;
-        border-right: 16px solid red;
+        border-right: 16px solid #999;
         top: -2px;
         left: -14px;
     }
 
     .date-indicator.today {background-color: #5cb85c; color: #fff;}
     .date-indicator.yesterday,
-    .date-indicator.past {background-color: #777; color: #fff;}
+    .date-indicator.past {background-color: #d9534f; color: #fff;}
     .date-indicator.tomorrow,
     .date-indicator.future {background-color: orange; color: #000;}
 
     .date-indicator.today::before {border-right-color: #5cb85c;}
     .date-indicator.yesterday::before,
-    .date-indicator.past::before {border-right-color: #777;}
+    .date-indicator.past::before {border-right-color: #d9534f;}
     .date-indicator.tomorrow::before,
-    .date-indicator.futur::beforee {border-right-color: orange;}
+    .date-indicator.future::before {border-right-color: orange;}
 </style>
 
 
