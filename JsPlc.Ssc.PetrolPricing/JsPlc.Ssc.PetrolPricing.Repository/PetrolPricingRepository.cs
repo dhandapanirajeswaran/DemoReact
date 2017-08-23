@@ -396,12 +396,12 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
         public IEnumerable<SitePriceViewModel> GetSitesWithPrices(DateTime forDate, string storeName = "", int catNo = 0,
             int storeNo = 0, string storeTown = "", int siteId = 0, int pageNo = 1,
-            int pageSize = Constants.PricePageSize)
+            int pageSize = Constants.PricePageSize, bool pricesForCalc = false)
         {
             Task<IEnumerable<SitePriceViewModel>> task = Task<IEnumerable<SitePriceViewModel>>.Factory.StartNew(() =>
             {
 
-                return CallSitePriceSproc(forDate, storeName, catNo, storeNo, storeTown, siteId, pageNo, pageSize);
+                return CallSitePriceSproc(forDate, storeName, catNo, storeNo, storeTown, siteId, pageNo, pageSize, pricesForCalc);
                 ;
 
             });
@@ -478,7 +478,8 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         private IEnumerable<SitePriceViewModel> CallSitePriceSproc(
             DateTime forDate, string storeName = "", int catNo = 0, int storeNo = 0, string storeTown = "",
             int siteId = 0, int pageNo = 1,
-            int pageSize = Constants.PricePageSize)
+            int pageSize = Constants.PricePageSize,
+            bool pricesForCalc = false)
         {
 
             try
@@ -555,7 +556,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                 SetSiteCompetitorPriceInformation(forDate, dbList, maxCompetitorDriveTime);
 
                 _logger.Debug("Started: AddFuelPricesRowsForSites");
-                AddFuelPricesRowsForSites(forDate, dbList);
+                AddFuelPricesRowsForSites(forDate, dbList, pricesForCalc);
                 _logger.Debug("Finished: AddFuelPricesRowsForSites");
 
                 var systemSettings = _context.SystemSettings.FirstOrDefault();
@@ -797,18 +798,39 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             _context.RebuildSiteAttributes(siteId);
         }
 
-        private void AddFuelPricesRowsForSites(DateTime forDate, List<SitePriceViewModel> sites)
+        public SitePriceViewModel GetTodayPricesForCalcPrice(DateTime forDate, int siteId)
+        {
+            var pricesForCalc = true;
+            return GetSitesWithPrices(forDate, "", 0, 0, "", siteId, 1, Constants.PricePageSize, pricesForCalc).FirstOrDefault();
+
+            //return _context.GetTodayPricesForCalcPrice(forDate, siteId);
+        }
+
+        private void AddFuelPricesRowsForSites(DateTime forDate, List<SitePriceViewModel> sites, bool pricesForCalc)
         {
             if (sites == null || !sites.Any())
                 return;
 
+            List<FuelPriceViewModel> calculatedPrices = new List<FuelPriceViewModel>();
+
             var siteIds = sites.Select(x => x.SiteId.ToString()).Aggregate((x, y) => x + "," + y);
 
-            DiagnosticLog.StartDebug("AddFuelPricesRowsForSites - Calling SP");
+            if (pricesForCalc)
+            {
+                DiagnosticLog.StartDebug("AddFuelPricesRowsForSites - Calling SP - pricesForCalc");
 
-            var calculatedPrices = _context.CalculateFuelPricesForSitesAndDate(forDate, siteIds);
+                calculatedPrices = _context.GetTodayPricesForCalcPrice(forDate, sites.First().SiteId);
 
-            DiagnosticLog.StartDebug("AddFuelPricesRowsForSites - Finished SP");
+                DiagnosticLog.StartDebug("AddFuelPricesRowsForSites - Finished SP - pricesForCalc");
+            }
+            else
+            {
+                DiagnosticLog.StartDebug("AddFuelPricesRowsForSites - Calling SP");
+
+                calculatedPrices = _context.CalculateFuelPricesForSitesAndDate(forDate, siteIds);
+
+                DiagnosticLog.StartDebug("AddFuelPricesRowsForSites - Finished SP");
+            }
 
             foreach (var site in sites)
             {
@@ -1515,6 +1537,10 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                             }
 
                             newDbContext.SaveChanges();
+
+                            // Run the post file import task
+                            newDbContext.RunPostLatestJsFileImportTasks(fileDetails.Id, fileDetails.UploadDateTime);
+
                             tx.Commit();
                         }
                         return true;
@@ -1595,6 +1621,10 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                             }
 
                             newDbContext.SaveChanges();
+
+                            // Run the post file import tasks
+                            newDbContext.RunPostLatestCompetitorsFileImportTasks(fileDetails.Id, fileDetails.UploadDateTime);
+
                             tx.Commit();
                         }
                         return true;

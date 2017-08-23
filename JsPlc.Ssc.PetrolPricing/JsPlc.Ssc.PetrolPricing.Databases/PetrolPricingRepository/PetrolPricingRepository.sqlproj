@@ -219,6 +219,11 @@
     <Build Include="dbo\Stored Procedures\spRebuildBrands.sql" />
     <Build Include="dbo\Stored Procedures\spValidateUploadAttempt.sql" />
     <Build Include="dbo\Stored Procedures\spRebuildSiteAttributes.sql" />
+    <Build Include="dbo\Stored Procedures\spGetTodayPricesForCalcPrice.sql" />
+    <Build Include="dbo\Stored Procedures\spPostDailyCatalistFileImport.sql" />
+    <Build Include="dbo\Stored Procedures\spPostLatestCompetitorFileImport.sql" />
+    <Build Include="dbo\Stored Procedures\spPostLatestJsFileImport.sql" />
+    <Build Include="dbo\Stored Procedures\spPostQuarterlyFileImport.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Scripts\PostDeployment\Script.PostDeployment.sql" />

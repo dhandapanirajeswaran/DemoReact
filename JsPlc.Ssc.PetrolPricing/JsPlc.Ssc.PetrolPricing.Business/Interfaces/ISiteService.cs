@@ -63,5 +63,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
         StatusViewModel UpsertSiteEmailAddresses(IEnumerable<SiteEmailImportViewModel> emailAddresses);
 
         void RebuildSiteAttributes();
+
+        SitePriceViewModel GetTodayPricesForCalcPrice(DateTime forDate, int siteId);
     }
 }

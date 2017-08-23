@@ -633,5 +633,38 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             };
             DapperHelper.Execute(this, sprocName, parameters);
         }
+
+        internal List<FuelPriceViewModel> GetTodayPricesForCalcPrice(DateTime forDate, int siteId)
+        {
+            const string sprocName = "spGetTodayPricesForCalcPrice";
+            var parameters = new
+            {
+                @ForDate = forDate,
+                @SiteId = siteId
+            };
+            return DapperHelper.QueryList<FuelPriceViewModel>(this, sprocName, parameters);
+        }
+
+        internal void RunPostLatestJsFileImportTasks(int fileUploadId, DateTime uploadDateTime)
+        {
+            const string sprocName = "spPostLatestJsFileImport";
+            var parameters = new
+            {
+                @FileUploadId = fileUploadId,
+                @FileUploadDateTime = uploadDateTime
+            };
+            DapperHelper.Execute(this, sprocName, parameters);
+        }
+
+        internal void RunPostLatestCompetitorsFileImportTasks(int fileUploadId, DateTime uploadDateTime)
+        {
+            const string sprocName = "spPostLatestCompetitorFileImport";
+            var parameters = new
+            {
+                @FileUploadId = fileUploadId,
+                @FileUploadDateTime = uploadDateTime
+            };
+            DapperHelper.Execute(this, sprocName, parameters);
+        }
     }
 }

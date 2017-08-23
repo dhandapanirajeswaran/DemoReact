@@ -89,16 +89,16 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
 		Dictionary<int, Site> GetSitesWithCompetitors();
 
-		/// <summary>
-		/// Useful for pricing screen
-		/// </summary>
-		/// <param name="forDate"></param>
-		/// <param name="siteId"></param>
-		/// <param name="pageNo"></param>
-		/// <param name="pageSize"></param>
-		/// <returns></returns>
-		IEnumerable<SitePriceViewModel> GetSitesWithPrices(DateTime forDate, string storeName = "", int catNo = 0, int storeNo = 0, string storeTown = "", int siteId = 0, int pageNo = 1,
-			int pageSize = Constants.PricePageSize);
+        /// <summary>
+        /// Useful for pricing screen
+        /// </summary>
+        /// <param name="forDate"></param>
+        /// <param name="siteId"></param>
+        /// <param name="pageNo"></param>
+        /// <param name="pageSize"></param>
+        /// <returns></returns>
+        IEnumerable<SitePriceViewModel> GetSitesWithPrices(DateTime forDate, string storeName = "", int catNo = 0, int storeNo = 0, string storeTown = "", int siteId = 0, int pageNo = 1,
+            int pageSize = Constants.PricePageSize, bool getCalcPrices = false);
 
 		/// <summary>
 		/// Useful for pricing screen
@@ -367,5 +367,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         FileUploadAttemptStatus ValidateUploadAttempt(int uploadType, DateTime uploadDate);
 
         void RebuildSiteAttributes(int? siteId);
+
+        SitePriceViewModel GetTodayPricesForCalcPrice(DateTime forDate, int siteId);
     }
 }

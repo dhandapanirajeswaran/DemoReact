@@ -151,6 +151,8 @@ namespace JsPlc.Ssc.PetrolPricing.Business
             var usingPricesforDate = calcTaskData.ForDate; // Uses dailyPrices of competitors Upload date matching this date
             int minPriceFound = int.MaxValue;
 
+            var isSuperUnleaded = fuelId == (int)FuelTypeItem.Super_Unleaded;
+
             var cheapestPrice = new SitePrice
             {
                 SiteId = site.Id,
@@ -251,8 +253,14 @@ namespace JsPlc.Ssc.PetrolPricing.Business
                         continue;
 
                     // include Sainsburys as a Competitor...
+
+                    // NOTE: for Super-Unleaded search for Unleaded then apply a markup amount
+                    var competitorFuelTypeId = isSuperUnleaded
+                            ? (int)FuelTypeItem.Unleaded
+                            : fuelId;
+
                     var includeJsSiteAsComp = true;
-                    var currentCompetitor = getCheapestPriceUsingParams(db, site, minDriveTime, maxDriveTime, fuelId, usingPricesforDate, driveTimeMarkup.Markup, includeJsSiteAsComp);
+                    var currentCompetitor = getCheapestPriceUsingParams(db, site, minDriveTime, maxDriveTime, competitorFuelTypeId, usingPricesforDate, driveTimeMarkup.Markup, includeJsSiteAsComp);
 
                     if (currentCompetitor.HasValue)
                     {
@@ -288,6 +296,11 @@ namespace JsPlc.Ssc.PetrolPricing.Business
                         priceWithMarkup = currentCompetitor.Key.LatestCompPrice.ModalPrice + currentCompetitor.Value * 10;
                     }
 
+                    // Add Super-Unleaded markup (when using Unleaded as base price)
+                    if (isSuperUnleaded)
+                        priceWithMarkup += calcTaskData.SystemSettings.SuperUnleadedMarkupPrice;
+
+
                     if (minPriceFound > priceWithMarkup)
                     {
                         cheapestCompetitor = currentCompetitor;
@@ -322,7 +335,9 @@ namespace JsPlc.Ssc.PetrolPricing.Business
             }
 
             // get site prices
-            var currentSitePrices = _siteService.GetSitesWithPrices(calcTaskData.ForDate, "", 0, 0, "", site.Id).FirstOrDefault();
+            //var currentSitePrices = _siteService.GetSitesWithPrices(calcTaskData.ForDate, "", 0, 0, "", site.Id).FirstOrDefault();
+
+            var currentSitePrices = _siteService.GetTodayPricesForCalcPrice(calcTaskData.ForDate, site.Id);
 
             ApplyGrocerRoundingAndPriceVarianceRules(cheapestPrice, calcTaskData.SystemSettings, calcTaskData.ForDate, site, currentSitePrices, fuelId);
 
@@ -332,42 +347,51 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 
         private void ApplyGrocerRoundingAndPriceVarianceRules(SitePrice sitePrice, SystemSettings systemSettings, DateTime forDate, Site site, SitePriceViewModel currentSitePrices, int fuelTypeId)
         {
-            if (currentSitePrices == null)
-                return;
+            FuelPriceViewModel siteFuelPrice = null;
 
-            var siteFuelPrice = currentSitePrices.FuelPrices.FirstOrDefault(x => x.FuelTypeId == fuelTypeId);
-            if (siteFuelPrice == null)
-                return;
-
-            if (!siteFuelPrice.TodayPrice.HasValue)
-                return;
-
-            // get Grocer Statuses
-            var allGrocerStatuses = _db.GetNearbyGrocerPriceStatusForSites(forDate, site.Id.ToString(), systemSettings.MaxGrocerDriveTimeMinutes);
-            if (allGrocerStatuses == null || !allGrocerStatuses.Any())
-                return;
-
-            var firstGrocerStatus = allGrocerStatuses.First();
-
-            NearbyGrocerStatuses grocerStatus = NearbyGrocerStatuses.None;
-            switch (fuelTypeId)
+            if (currentSitePrices != null && currentSitePrices.FuelPrices != null)
             {
-                case (int)FuelTypeItem.Unleaded:
-                    grocerStatus = firstGrocerStatus.Unleaded;
-                    break;
-                case (int)FuelTypeItem.Diesel:
-                    grocerStatus = firstGrocerStatus.Diesel;
-                    break;
-                case (int)FuelTypeItem.Super_Unleaded:
-                    grocerStatus = firstGrocerStatus.SuperUnleaded;
-                    break;
+                siteFuelPrice = currentSitePrices.FuelPrices.FirstOrDefault(x => x.FuelTypeId == fuelTypeId);
+            }
+
+            if (siteFuelPrice == null)
+            {
+                siteFuelPrice = new FuelPriceViewModel()
+                {
+                    FuelTypeId = fuelTypeId,
+                    AutoPrice = 0,
+                    TodayPrice = 0,
+                    YestPrice = 0,
+                    OverridePrice = 0
+                };
+            }
+
+            // get Grocer Status for Fuel
+            NearbyGrocerStatuses grocerStatus = NearbyGrocerStatuses.None;
+
+            var allGrocerStatuses = _db.GetNearbyGrocerPriceStatusForSites(forDate, site.Id.ToString(), systemSettings.MaxGrocerDriveTimeMinutes);
+            if (allGrocerStatuses != null && allGrocerStatuses.Any())
+            {
+                var firstGrocerStatus = allGrocerStatuses.First();
+
+                switch (fuelTypeId)
+                {
+                    case (int)FuelTypeItem.Unleaded:
+                        grocerStatus = firstGrocerStatus.Unleaded;
+                        break;
+                    case (int)FuelTypeItem.Diesel:
+                        grocerStatus = firstGrocerStatus.Diesel;
+                        break;
+                    case (int)FuelTypeItem.Super_Unleaded:
+                        grocerStatus = firstGrocerStatus.SuperUnleaded;
+                        break;
+                }
             }
 
             // get the 'today' price (Override or AutoPrice) from Yesterday
             var todayprice = siteFuelPrice.OverridePrice.HasValue && siteFuelPrice.OverridePrice.Value > 0
                 ? siteFuelPrice.OverridePrice.Value
                 : siteFuelPrice.TodayPrice.Value;
-
 
             // Nearby Grocers, but Incomplete grocer data ?
             if (grocerStatus.HasFlag(NearbyGrocerStatuses.HasNearbyGrocers) && !grocerStatus.HasFlag(NearbyGrocerStatuses.AllGrocersHavePriceData))
@@ -598,7 +622,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 		    catch (Exception ce)
 		    {
                 _logger.Error(ce);
-		        int j = 0;
+                throw new Exception("Unable to calculate prices");
 		    }
 		}
 
