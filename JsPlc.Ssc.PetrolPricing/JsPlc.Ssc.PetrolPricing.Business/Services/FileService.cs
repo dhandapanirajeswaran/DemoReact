@@ -74,7 +74,8 @@ namespace JsPlc.Ssc.PetrolPricing.Business
                     if (processedFile == null)
                         throw new FileUploadException("Upload failed. Contact support team.");
 
-                    runRecalc(processedFile);
+                    // NOTE: breaks Competitor
+                    //runRecalc(processedFile);
 
                     break;
                 case 4:
@@ -83,7 +84,8 @@ namespace JsPlc.Ssc.PetrolPricing.Business
                     if (processedFile == null)
                         throw new FileUploadException("Upload failed. Contact support team.");
 
-                    runRecalc(processedFile);
+                    // NOTE: breaks Competitor
+                    //runRecalc(processedFile);
 
                     break;
 				default:

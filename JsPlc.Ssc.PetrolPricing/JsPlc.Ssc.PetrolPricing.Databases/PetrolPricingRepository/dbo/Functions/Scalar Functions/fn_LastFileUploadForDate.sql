@@ -19,7 +19,7 @@ BEGIN
 		AND
 		fu.UploadDateTime >= @ForDate AND fu.UploadDateTime < DATEADD(DAY, 1, @ForDate)
 	ORDER BY
-		fu.UploadDateTime DESC
+		fu.Id DESC -- NOTE: Time changes during upload !
 
 	RETURN @FileUploadId
 END
