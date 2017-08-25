@@ -319,11 +319,12 @@
         function uploadfileButtonClick() {
             var uploadtype = $('#UploadTypeName').val(),
                 uploadDef = uploadTypeDefs[uploadtype],
+                fileButton = $(selectors.uploadButton),
                 delayed = function () {
-                    $(selectors.uploadButton).attr('disabled', true);
+                    $(fileButton).attr('disabled', true);
                 };
 
-            $(selectors.uploadButton).removeClass('btn-primary').addClass('btn-danger');
+            fileButton.removeClass('btn-primary').addClass('btn-danger');
 
             waiter.show({
                 title: uploadDef.submit.title,
@@ -335,17 +336,21 @@
         };
 
         function showSteps(currentStep) {
+            var fileButton = $(selectors.fileButton),
+                fileIcon = fileButton.find('.fa');
+
             setStepClass(1, currentStep, selectors.step1Panel);
             setStepClass(2, currentStep, selectors.step2Panel);
             setStepClass(3, currentStep, selectors.step3Panel);
 
             if (currentStep == 2) {
                 $(selectors.selectFilePrompt).show();
-                $(selectors.fileButton).removeClass('btn-success').addClass('btn-danger');
-
+                fileButton.removeClass('btn-success').addClass('btn-danger');
+                fileIcon.removeClass('fa-check').addClass('fa-times');
             } else {
                 $(selectors.selectFilePrompt).hide();
-                $(selectors.fileButton).removeClass('btn-danger').addClass('btn-success');
+                fileButton.removeClass('btn-danger').addClass('btn-success');
+                fileIcon.removeClass('fa-times').addClass('fa-check');
             }
         };
 
