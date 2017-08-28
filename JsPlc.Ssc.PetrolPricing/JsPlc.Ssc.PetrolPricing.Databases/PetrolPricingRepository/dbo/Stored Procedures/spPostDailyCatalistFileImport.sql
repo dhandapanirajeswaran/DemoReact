@@ -2,8 +2,12 @@
 	@FileUploadId INT,
 	@FileUploadDateTime DATETIME
 AS
+BEGIN
 	SET NOCOUNT ON;
 
-	-- TODO
+	DECLARE @ForDate DATE = CONVERT(DATE, @FileUploadDateTime)
 
-RETURN 0
+	EXEC dbo.spPostFileImport_MergeCompetitorPrices @ForDate = @ForDate
+
+	RETURN 0
+END

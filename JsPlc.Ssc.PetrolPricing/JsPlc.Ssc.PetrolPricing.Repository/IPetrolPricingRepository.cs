@@ -162,14 +162,15 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 	    void TruncateLatestPriceData();
 
 		void TruncateSiteToCompetitor();
+        
 
-		/// <summary>
-		/// Do we have any daily prices for a given fuelId on the date
-		/// </summary>
-		/// <param name="fuelId"></param>
-		/// <param name="usingPricesforDate"></param>
-		/// <returns></returns>
-		bool AnyDailyPricesForFuelOnDate(int fuelId, DateTime usingPricesforDate, int fileUploadId);
+        /// <summary>
+        /// Do we have any daily prices for a given fuelId on the date
+        /// </summary>
+        /// <param name="fuelId"></param>
+        /// <param name="usingPricesforDate"></param>
+        /// <returns></returns>
+        bool AnyDailyPricesForFuelOnDate(int fuelId, DateTime usingPricesforDate, int fileUploadId);
 
 
 		/// <summary>
@@ -369,5 +370,11 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         void RebuildSiteAttributes(int? siteId);
 
         SitePriceViewModel GetTodayPricesForCalcPrice(DateTime forDate, int siteId);
+
+        void RunPostDailyCatalistFileImport(int fileUploadId, DateTime uploadDateTime);
+        void RunPostLatestJsFileImportTasks(int fileUploadId, DateTime uploadDateTime);
+        void RunPostLatestCompetitorsFileImportTasks(int fileUploadId, DateTime uploadDateTime);
+
+        void ProcessSitePricing(int SiteId, DateTime forDate, int fileUploadId, int maxDriveTime);
     }
 }

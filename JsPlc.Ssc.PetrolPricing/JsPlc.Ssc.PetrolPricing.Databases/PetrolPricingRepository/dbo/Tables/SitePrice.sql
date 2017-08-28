@@ -11,6 +11,7 @@
     [CompetitorId]    INT      NULL,
     [Markup]          INT      NOT NULL,
     [IsTrailPrice]    BIT      NOT NULL,
+    [PriceReasonFlags] INT NOT NULL DEFAULT (0), 
     CONSTRAINT [PK_dbo.SitePrice] PRIMARY KEY CLUSTERED ([Id] ASC),
     CONSTRAINT [FK_dbo.SitePrice_CompetitorId_dbo.Site_SiteId] FOREIGN KEY ([CompetitorId]) REFERENCES [dbo].[Site] ([Id]),
     CONSTRAINT [FK_dbo.SitePrice_dbo.FuelType_FuelTypeId] FOREIGN KEY ([FuelTypeId]) REFERENCES [dbo].[FuelType] ([Id]),

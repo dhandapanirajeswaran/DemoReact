@@ -806,6 +806,21 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             //return _context.GetTodayPricesForCalcPrice(forDate, siteId);
         }
 
+        public void RunPostDailyCatalistFileImport(int fileUploadId, DateTime uploadDateTime)
+        {
+            _context.RunPostDailyCatalistFileImport(fileUploadId, uploadDateTime);
+        }
+
+        public void RunPostLatestJsFileImportTasks(int fileUploadId, DateTime uploadDateTime)
+        {
+            _context.RunPostLatestJsFileImportTasks(fileUploadId, uploadDateTime);
+        }
+
+        public void RunPostLatestCompetitorsFileImportTasks(int fileUploadId, DateTime uploadDateTime)
+        {
+            _context.RunPostLatestCompetitorsFileImportTasks(fileUploadId, uploadDateTime);
+        }
+
         private void AddFuelPricesRowsForSites(DateTime forDate, List<SitePriceViewModel> sites, bool pricesForCalc)
         {
             if (sites == null || !sites.Any())
@@ -844,7 +859,8 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                 {
                     unleaded.HasNearbyCompetitorPrice = site.HasNearbyUnleadedGrocersPriceData;
                     unleaded.HasNearbyCompetitorWithOutPrice = site.HasNearbyUnleadedGrocersPriceData == false;
-                } else
+                }
+                else
                 {
                     unleaded = new FuelPriceViewModel()
                     {
@@ -857,7 +873,8 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                 {
                     superUnleaded.HasNearbyCompetitorPrice = site.HasNearbySuperUnleadedGrocersPriceData;
                     superUnleaded.HasNearbyCompetitorWithOutPrice = site.HasNearbySuperUnleadedGrocersPriceData == false;
-                } else
+                }
+                else
                 {
                     superUnleaded = new FuelPriceViewModel()
                     {
@@ -870,7 +887,8 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                 {
                     diesel.HasNearbyCompetitorPrice = site.HasNearbyDieselGrocersPriceData;
                     diesel.HasNearbyCompetitorWithOutPrice = site.HasNearbyDieselGrocersPriceData == false;
-                } else
+                }
+                else
                 {
                     diesel = new FuelPriceViewModel()
                     {
@@ -1210,7 +1228,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                                     x.UploadDateTime.Month == usingPricesforDate.Month &&
                                     x.UploadDateTime.Day == usingPricesforDate.Day &&
                                     x.UploadDateTime.Year == usingPricesforDate.Year).OrderByDescending(x=>x.Id).ToList();
-                        if (fileUpload.Count > 0)
+                        if (fileUpload.Any())
                         {
                             int fileUploadId = fileUpload[0].Id;
                             dailyPricesCache = _context.DailyPrices.Include(x => x.DailyUpload)
@@ -1256,8 +1274,9 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                     x =>
                         x.UploadDateTime.Month == usingPricesforDate.Month &&
                         x.UploadDateTime.Day == usingPricesforDate.Day &&
-                        x.UploadDateTime.Year == usingPricesforDate.Year && x.UploadTypeId==4).OrderByDescending(x => x.Id).ToList();
-            if (fileUpload.Count > 0)
+                        x.UploadDateTime.Year == usingPricesforDate.Year && 
+                        x.UploadTypeId==4).OrderByDescending(x => x.Id).ToList();
+            if (fileUpload.Any())
             {
                 int fileUploadId = fileUpload[0].Id;
                
@@ -1266,11 +1285,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                         x =>
                             x.UploadId == fileUploadId)
                     .ToDictionary(k => string.Format("{0}_{1}", k.FuelTypeId, k.CatNo), v => v);
-                
-               
-              
             }
-
 
             List<LatestCompPrice> result = new List<LatestCompPrice>();
 
@@ -1419,31 +1434,32 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                         {
                             foreach (CatalistQuarterly fileRecord in siteCatalistData)
                             {
-                                var dbRecord = new QuarterlyUploadStaging();
-                                dbRecord.QuarterlyUploadId = fileDetails.Id;
+                                var dbRecord = new QuarterlyUploadStaging()
+                                {
+                                    QuarterlyUploadId = fileDetails.Id,
 
-                                dbRecord.SainsSiteCatNo = (int) fileRecord.SainsCatNo;
-                                dbRecord.SainsSiteName = fileRecord.SainsSiteName;
-                                dbRecord.SainsSiteTown = fileRecord.SainsSiteTown;
+                                    SainsSiteCatNo = (int)fileRecord.SainsCatNo,
+                                    SainsSiteName = fileRecord.SainsSiteName,
+                                    SainsSiteTown = fileRecord.SainsSiteTown,
 
-                                dbRecord.Rank = (int) fileRecord.Rank;
-                                dbRecord.DriveDist = (float) fileRecord.DriveDistanceMiles;
-                                dbRecord.DriveTime = (float) fileRecord.DriveTimeMins;
-                                dbRecord.CatNo = (int) fileRecord.CatNo;
+                                    Rank = (int)fileRecord.Rank,
+                                    DriveDist = (float)fileRecord.DriveDistanceMiles,
+                                    DriveTime = (float)fileRecord.DriveTimeMins,
+                                    CatNo = (int)fileRecord.CatNo,
 
-                                dbRecord.Brand = fileRecord.Brand;
-                                dbRecord.SiteName = fileRecord.SiteName;
-                                dbRecord.Addr = fileRecord.Address;
-                                dbRecord.Suburb = fileRecord.Suburb;
+                                    Brand = fileRecord.Brand,
+                                    SiteName = fileRecord.SiteName,
+                                    Addr = fileRecord.Address,
+                                    Suburb = fileRecord.Suburb,
 
-                                dbRecord.Town = fileRecord.Town;
-                                dbRecord.PostCode = fileRecord.Postcode;
-                                dbRecord.Company = fileRecord.CompanyName;
-                                dbRecord.Ownership = fileRecord.Ownership;
+                                    Town = fileRecord.Town,
+                                    PostCode = fileRecord.Postcode,
+                                    Company = fileRecord.CompanyName,
+                                    Ownership = fileRecord.Ownership
+                                };
 
                                 newDbContext.QuarterlyUploadStaging.Add(dbRecord);
                                 addingEntryLineNo += 1;
-
                             }
 
                             newDbContext.SaveChanges();
@@ -1538,9 +1554,6 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
                             newDbContext.SaveChanges();
 
-                            // Run the post file import task
-                            newDbContext.RunPostLatestJsFileImportTasks(fileDetails.Id, fileDetails.UploadDateTime);
-
                             tx.Commit();
                         }
                         return true;
@@ -1622,9 +1635,6 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
                             newDbContext.SaveChanges();
 
-                            // Run the post file import tasks
-                            newDbContext.RunPostLatestCompetitorsFileImportTasks(fileDetails.Id, fileDetails.UploadDateTime);
-
                             tx.Commit();
                         }
                         return true;
@@ -1669,47 +1679,47 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             }
         }
 
-        public void AddOrUpdateLatestPrice(RepositoryContext newDbContext,LatestPriceDataModel latestPriceDataModel, FileUpload fileDetails,int fuelTypeId,double fuelPrice)
+        public void AddOrUpdateLatestPrice(RepositoryContext newDbContext, LatestPriceDataModel latestPriceDataModel, FileUpload fileDetails, int fuelTypeId, double fuelPrice)
         {
             LatestPrice dbRecord = null;
-            bool iNewRecord = false;
             var latestPriceList = newDbContext.LatestPrices.Where(
-                x =>
+                    x =>
                     x.PfsNo == latestPriceDataModel.PfsNo &&
                     x.StoreNo == latestPriceDataModel.StoreNo &&
-                    x.FuelTypeId == fuelTypeId).ToList();
-            dbRecord=latestPriceList.Count>0 ? latestPriceList[0] :
-            null;
+                    x.FuelTypeId == fuelTypeId)
+                    .ToList();
 
-            if (latestPriceList.Count > 0)
+            if (latestPriceList.Any())
             {
                 foreach (var latestprice in latestPriceList)
                 {
                     newDbContext.LatestPrices.Remove(latestprice);
                 }
-           
             }
-            dbRecord = new LatestPrice();
-            dbRecord.UploadId = fileDetails.Id;
-            dbRecord.PfsNo = latestPriceDataModel.PfsNo;
-            dbRecord.StoreNo = latestPriceDataModel.StoreNo;
-            dbRecord.FuelTypeId = fuelTypeId;
-            dbRecord.ModalPrice = (int)(fuelPrice * 10);
+
+            dbRecord = new LatestPrice()
+            {
+                UploadId = fileDetails.Id,
+                PfsNo = latestPriceDataModel.PfsNo,
+                StoreNo = latestPriceDataModel.StoreNo,
+                FuelTypeId = fuelTypeId,
+                ModalPrice = (int)(fuelPrice * 10)
+            };
+
             newDbContext.LatestPrices.Add(dbRecord);
-            
         }
 
         public void AddLatestCompPrice(RepositoryContext newDbContext, LatestCompPriceDataModel latestCompPriceDataModel, FileUpload fileDetails, int fuelTypeId, double fuelPrice)
         {
-            LatestCompPrice dbRecord = null;
-            bool iNewRecord = false;
-            dbRecord = new LatestCompPrice();
-            dbRecord.UploadId = fileDetails.Id;
-            dbRecord.CatNo = latestCompPriceDataModel.CatNo;
-            dbRecord.FuelTypeId = fuelTypeId;
-            dbRecord.ModalPrice =(int) (fuelPrice * 10);
-            newDbContext.LatestCompPrices.Add(dbRecord);
+            var dbRecord = new LatestCompPrice()
+            {
+                UploadId = fileDetails.Id,
+                CatNo = latestCompPriceDataModel.CatNo,
+                FuelTypeId = fuelTypeId,
+                ModalPrice = (int)(fuelPrice * 10)
+            };
 
+            newDbContext.LatestCompPrices.Add(dbRecord);
         }
 
         public bool NewDailyPrices(List<DailyPrice> dailyPriceList, FileUpload fileDetails, int startingLineNumber)
@@ -1827,22 +1837,9 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         {
             var Competitors = site.Competitors.ToList();
 
-            /*   var siteOrig = GetSite(site.Id);
-               if (siteOrig.Competitors.Any())
-               {
-                   var deletedCompetitors = siteOrig.Competitors.Where(x => !Competitors.Contains(x)).ToList();
-                   foreach (var delCompetitor in deletedCompetitors)
-                   {
-                       _context.Entry(delCompetitor).State = EntityState.Deleted;
-                   }
-               }
-               */
-
             foreach (var competitor in Competitors)
             {
                 _context.Entry(competitor).State = EntityState.Modified;
-                //  if (competitor.Id == 0) _context.Entry(competitor).State = EntityState.Added;
-                //  if (competitor.Id != 0) _context.Entry(competitor).State = EntityState.Modified;
             }
         }
         /// <summary>
@@ -1853,7 +1850,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             using (var db = new RepositoryContext())
             {
                 db.Database.ExecuteSqlCommand("Truncate table QuarterlyUploadStaging");
-                db.Database.ExecuteSqlCommand("DBCC CHECKIDENT ('QuarterlyUploadStaging',RESEED, 0)");
+                db.Database.ExecuteSqlCommand("DBCC CHECKIDENT ('QuarterlyUploadStaging',RESEED, 1)");
             }
         }
 
@@ -1862,7 +1859,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             using (var db = new RepositoryContext())
             {
                 db.Database.ExecuteSqlCommand("Truncate table LatestCompPrice");
-                db.Database.ExecuteSqlCommand("DBCC CHECKIDENT ('LatestCompPrice',RESEED, 0)");
+                db.Database.ExecuteSqlCommand("DBCC CHECKIDENT ('LatestCompPrice',RESEED, 1)");
 
             }
         }
@@ -1872,7 +1869,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             using (var db = new RepositoryContext())
             {
                 db.Database.ExecuteSqlCommand("Truncate table LatestPrice");
-                db.Database.ExecuteSqlCommand("DBCC CHECKIDENT ('LatestPrice',RESEED, 0)");
+                db.Database.ExecuteSqlCommand("DBCC CHECKIDENT ('LatestPrice',RESEED, 1)");
 
             }
         }
@@ -4337,6 +4334,11 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
         }
 
         #endregion Windows Service
+
+        public void ProcessSitePricing(int siteId, DateTime forDate, int fileUploadId, int maxDriveTime)
+        {
+            _context.ProcessSitePricing(siteId, forDate, fileUploadId, maxDriveTime);
+        }
 
         #region private methods
 

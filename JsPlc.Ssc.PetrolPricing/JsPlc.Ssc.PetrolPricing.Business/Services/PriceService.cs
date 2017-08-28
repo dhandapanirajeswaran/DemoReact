@@ -114,17 +114,39 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 
             var dpFile = _db.GetDailyFileAvailableForCalc(forDate);
 
-            foreach (var fuel in fuels.ToList())
-            {
-                var priceService = new PriceService(db, _appSettings, _lookupService, _factory, _siteService, _systemSettingsService);
+            // OLD PRICING !! 
+            //
+            //foreach (var fuel in fuels.ToList())
+            //{
+            //    var priceService = new PriceService(db, _appSettings, _lookupService, _factory, _siteService, _systemSettingsService);
 
-                priceService.CalcPrice(db, site, fuel.Id, new PriceCalculationTaskData
-                {
-                    ForDate = forDate,
-                    FileUpload = dpFile
-                });
-            }
-	    }
+            //    priceService.CalcPrice(db, site, fuel.Id, new PriceCalculationTaskData
+            //    {
+            //        ForDate = forDate,
+            //        FileUpload = dpFile
+            //    });
+            //}
+
+            var priceService = new PriceService(db, _appSettings, _lookupService, _factory, _siteService, _systemSettingsService);
+            priceService.PriceSiteFuels(db, site, new PriceCalculationTaskData
+            {
+                ForDate = forDate,
+                FileUpload = dpFile
+            });
+        }
+
+        public void PriceSiteFuels(IPetrolPricingRepository db, Site site, PriceCalculationTaskData calcTaskData)
+        {
+            var maxGrocerDriveTime = 25;
+
+            _db.ProcessSitePricing(
+                site.Id,
+                calcTaskData.ForDate,
+                calcTaskData.FileUpload.Id,
+                maxGrocerDriveTime
+                );
+        }
+
         /// <summary>
         /// Calculate price of a Fuel for a Given JS Site based on Pricing Rules and updates DB
         /// As per flow diagram 30 Nov 2015
@@ -345,7 +367,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
         }
 
 
-        private void ApplyGrocerRoundingAndPriceVarianceRules(SitePrice sitePrice, SystemSettings systemSettings, DateTime forDate, Site site, SitePriceViewModel currentSitePrices, int fuelTypeId)
+        private void ApplyGrocerRoundingAndPriceVarianceRules(SitePrice cheapestSitePrice, SystemSettings systemSettings, DateTime forDate, Site site, SitePriceViewModel currentSitePrices, int fuelTypeId)
         {
             FuelPriceViewModel siteFuelPrice = null;
 
@@ -397,32 +419,32 @@ namespace JsPlc.Ssc.PetrolPricing.Business
             if (grocerStatus.HasFlag(NearbyGrocerStatuses.HasNearbyGrocers) && !grocerStatus.HasFlag(NearbyGrocerStatuses.AllGrocersHavePriceData))
             {
                 // are we higher than cheapest price ?
-                if (todayprice > 0 && sitePrice.SuggestedPrice > todayprice)
+                if (todayprice > 0 && cheapestSitePrice.SuggestedPrice > todayprice)
                 {
                     // use today's price
-                    sitePrice.SuggestedPrice = todayprice;
+                    cheapestSitePrice.SuggestedPrice = todayprice;
                 }
             }
 
             // handle no Suggested Price (AutoPrice)
-            if (sitePrice.SuggestedPrice == 0 && todayprice > 0)
-                sitePrice.SuggestedPrice = todayprice;
+            if (cheapestSitePrice.SuggestedPrice == 0 && todayprice > 0)
+                cheapestSitePrice.SuggestedPrice = todayprice;
 
             // apply decimal rounding (if any)
             if (systemSettings.DecimalRounding != -1)
             {
-                if (sitePrice.SuggestedPrice > 0)
-                    sitePrice.SuggestedPrice = ((sitePrice.SuggestedPrice / 10) * 10) + systemSettings.DecimalRounding;
+                if (cheapestSitePrice.SuggestedPrice > 0)
+                    cheapestSitePrice.SuggestedPrice = ((cheapestSitePrice.SuggestedPrice / 10) * 10) + systemSettings.DecimalRounding;
             }
 
             // is within Price Variance (less or equal to)
             if (todayprice > 0)
             {
-                var diff = sitePrice.SuggestedPrice - todayprice;
+                var diff = cheapestSitePrice.SuggestedPrice - todayprice;
                 if (Math.Abs(diff) <= systemSettings.PriceChangeVarianceThreshold)
                 {
                     // Use today's price
-                    sitePrice.SuggestedPrice = todayprice;
+                    cheapestSitePrice.SuggestedPrice = todayprice;
                 }
             }
         }
@@ -599,25 +621,30 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 
 		        var sites = _db.GetJsSites().Where(x => x.IsActive).AsQueryable().AsNoTracking();
 
-		        var fuels =
-		            _lookupService.GetFuelTypes()
-		                .Where(x => _fuelSelectionArray.Contains(x.Id))
-		                .AsQueryable()
-		                .AsNoTracking()
-		                .ToList(); // Limit calc iterations to known fuels
+		        //var fuels =
+		        //    _lookupService.GetFuelTypes()
+		        //        .Where(x => _fuelSelectionArray.Contains(x.Id))
+		        //        .AsQueryable()
+		        //        .AsNoTracking()
+		        //        .ToList(); // Limit calc iterations to known fuels
 
                 foreach (var site in sites)
 		        {
                     var db = _factory.Create<IPetrolPricingRepository>(CreationMethod.ServiceLocator, null);
 
-                    foreach (var fuel in fuels.ToList())
-                    {
-                        var priceService = new PriceService(db, _appSettings, _lookupService, _factory, _siteService, _systemSettingsService);
-                        priceService.CalcPrice(db, site, fuel.Id, calcTaskData);
-                    }
-		        }
+                    // OLD SITE PRICING
+                    //
+                    //foreach (var fuel in fuels.ToList())
+                    //{
+                    //    var priceService = new PriceService(db, _appSettings, _lookupService, _factory, _siteService, _systemSettingsService);
+                    //    priceService.CalcPrice(db, site, fuel.Id, calcTaskData);
+                    //}
 
-		        createMissingSuperUnleadedFromUnleaded(forDate); // for performance, run for all sites
+                    var priceService = new PriceService(db, _appSettings, _lookupService, _factory, _siteService, _systemSettingsService);
+                    priceService.PriceSiteFuels(db, site, calcTaskData);
+                }
+
+		        //createMissingSuperUnleadedFromUnleaded(forDate); // for performance, run for all sites
 		    }
 		    catch (Exception ce)
 		    {

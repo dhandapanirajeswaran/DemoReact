@@ -27,5 +27,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
         void TriggerDailyPriceRecalculation(DateTime day);
 
         IEnumerable<HistoricalPriceViewModel> GetHistoricalPricesForSite(int siteId, DateTime startDate, DateTime endDate);
+
+        void PriceSiteFuels(IPetrolPricingRepository db, Site site, PriceCalculationTaskData calcTaskData);
     }
 }

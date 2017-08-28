@@ -1,4 +1,5 @@
-﻿using System;
+﻿using JsPlc.Ssc.PetrolPricing.Models.Enums;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -37,5 +38,7 @@ namespace JsPlc.Ssc.PetrolPricing.Models
         public int Markup { get; set; } // selected competitor markup to the site
 
         public bool IsTrailPrice { get; set; } // if true, then trial price has been selected 
+
+        public PriceReasonFlags  PriceReasonFlags { get; set; }
     }
 }

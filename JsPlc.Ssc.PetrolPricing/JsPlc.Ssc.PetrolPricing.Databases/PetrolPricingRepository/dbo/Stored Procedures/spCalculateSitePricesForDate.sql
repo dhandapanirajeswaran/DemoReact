@@ -136,6 +136,7 @@ SELECT
 		WHEN tomorrow.SuggestedPrice > 0 THEN 'Suggested'
 		ELSE ''
 	END [PriceSource],
+	tomorrow.DateOfPrice [PriceSourceDateTime],
 	tomorrow.DateOfCalc [DateOfCalc],
 	COALESCE(tomorrow.CompetitorId, 0) [CompetitorSiteId],
 	COALESCE(stc.Distance, 0) [Distance],

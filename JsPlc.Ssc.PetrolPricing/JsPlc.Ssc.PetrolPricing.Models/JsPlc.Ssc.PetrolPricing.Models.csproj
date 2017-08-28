@@ -102,10 +102,12 @@
     <Compile Include="EmailSendLog.cs" />
     <Compile Include="EmailTemplate.cs" />
     <Compile Include="EmailTemplateName.cs" />
+    <Compile Include="Enums\FileUploadType.cs" />
     <Compile Include="Enums\FuelTypeEnum.cs" />
     <Compile Include="Enums\NearbyGrocerStatus.cs" />
     <Compile Include="Enums\NotifyMessageType.cs" />
     <Compile Include="Enums\PriceMatchType.cs" />
+    <Compile Include="Enums\PriceReasonFlags.cs" />
     <Compile Include="Enums\SiteSectionType.cs" />
     <Compile Include="Enums\UserPermissionEnums.cs" />
     <Compile Include="FileUploadAttemptStatus.cs" />

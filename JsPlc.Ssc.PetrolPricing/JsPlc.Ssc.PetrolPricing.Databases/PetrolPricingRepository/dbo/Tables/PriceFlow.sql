@@ -1,0 +1,4 @@
+﻿CREATE TABLE [dbo].[PriceFlow]
+(
+	[Id] INT NOT NULL PRIMARY KEY
+)

@@ -9,6 +9,7 @@ AS
 	BEGIN TRY
 		BEGIN TRAN
 
+			TRUNCATE TABLE dbo.CompetitorPrice
 			TRUNCATE TABLE dbo.ExcludeBrands
 
 			TRUNCATE TABLE dbo.EmailSendLog
@@ -38,6 +39,7 @@ AS
 
 			-- Reseed the database tables
 
+			DBCC CHECKIDENT ('CompetitorPrice', RESEED, 1)
 			DBCC CHECKIDENT ('EmailSendLog', RESEED, 1)
 			DBCC CHECKIDENT ('DailyPrice', RESEED, 1)
 			DBCC CHECKIDENT ('DailyUploadStaging', RESEED, 1)

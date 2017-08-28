@@ -33,14 +33,25 @@ AS
 		ELSE
 		BEGIN
 			--
-			-- check if a Newer Daily Price Data, Latest Js Price Data or Latest Competitors Price Data file exists
+			-- check if a newer Daily Price Data exists (NOTE: UploadDateTime - 1 Day)
 			--
-			IF EXISTS(SELECT TOP 1 NULL FROM dbo.FileUpload 
-				WHERE UploadTypeId IN (@UploadType_Daily_Price_Data, @UploadType_Latest_JS_Price_Data, @UploadType_Latest_Competitors_Price_Data) 
-				AND StatusId = @ImportProcessStatus_Success
-				AND CONVERT(DATE, UploadDateTime) > @UploadDate)
+			IF EXISTS(SELECT TOP 1 NULL FROM dbo.FileUpload fu
+				WHERE fu.UploadTypeId = @UploadType_Daily_Price_Data
+				AND fu.StatusId = @ImportProcessStatus_Success
+				AND CONVERT(DATE, DATEADD(DAY, -1, fu.UploadDateTime)) > @UploadDate)
 			BEGIN
-				SET @ErrorMessage = 'A newer Daily Price Data, Latest Js Price Data or Latest Competitor Price Data file exists';
+				SET @ErrorMessage = 'A newer Daily Price Data file exists';
+			END
+
+			--
+			-- check if a newer Latest Js Price Data or Latest Competitors Price Data file exists
+			--
+			IF EXISTS(SELECT TOP 1 NULL FROM dbo.FileUpload fu
+				WHERE fu.UploadTypeId IN (@UploadType_Latest_JS_Price_Data, @UploadType_Latest_Competitors_Price_Data) 
+				AND fu.StatusId = @ImportProcessStatus_Success
+				AND CONVERT(DATE, fu.UploadDateTime) > @UploadDate)
+			BEGIN
+				SET @ErrorMessage = 'A newer Latest Js Price Data or Latest Competitor Price Data file exists';
 			END
 		END
 	END

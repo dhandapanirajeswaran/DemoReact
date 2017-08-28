@@ -63,4 +63,18 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="EnableSiteEmails" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="495456b9-4140-48b4-80cd-eea2fba692ca" ChangeDateTime="08/27/2017 21:55:02">
+    <Property Name="ElementName" Value="[dbo].[SitePrice].[PricingAttributes]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[SitePrice]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="PriceFlowId" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="f7b24039-5aa6-45d8-9b75-ffbd684dce0f" ChangeDateTime="08/27/2017 22:27:55">
+    <Property Name="ElementName" Value="[dbo].[SitePrice].[PriceFlowId]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[SitePrice]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="PriceReasonFlags" />
+  </Operation>
 </Operations>

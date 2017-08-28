@@ -1,6 +1,7 @@
 ﻿using JsPlc.Ssc.PetrolPricing.Core;
 using JsPlc.Ssc.PetrolPricing.Models;
 using JsPlc.Ssc.PetrolPricing.Models.Common;
+using JsPlc.Ssc.PetrolPricing.Models.Enums;
 using JsPlc.Ssc.PetrolPricing.Models.ViewModels;
 using JsPlc.Ssc.PetrolPricing.Repository;
 using MoreLinq;
@@ -49,7 +50,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 			// Use a fire and forget approach
 			switch (newUpload.UploadTypeId)
 			{
-				case 1:
+				case (int)FileUploadType.DailyPriceData:
 					processedFile = ProcessDailyPrice(newUploadList);
 
 					if (processedFile == null)
@@ -58,7 +59,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 					runRecalc(processedFile);
 
 					break;
-				case 2:
+				case (int)FileUploadType.QuarterlySiteData:
 					processedFile = ProcessQuarterlyFileNew(newUploadList);
 
 					if (processedFile == null)
@@ -68,24 +69,25 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 
 					break;
 
-                case 3:
+                case (int)FileUploadType.LatestJsPriceData:
                     processedFile = ProcessLatestPriceFileNew(newUploadList, newUpload.UploadTypeId);
 
                     if (processedFile == null)
                         throw new FileUploadException("Upload failed. Contact support team.");
 
-                    // NOTE: breaks Competitor
-                    //runRecalc(processedFile);
+
+                    // recalc Daily Price Data file (if any) for the same day
+                    runRecalc(processedFile);
 
                     break;
-                case 4:
+                case (int)FileUploadType.LatestCompetitorsPriceData:
                     processedFile = ProcessLatestPriceFileNew(newUploadList, newUpload.UploadTypeId);
 
                     if (processedFile == null)
                         throw new FileUploadException("Upload failed. Contact support team.");
 
-                    // NOTE: breaks Competitor
-                    //runRecalc(processedFile);
+                    // recalc Daily Price Data file (if any) for the same day
+                    runRecalc(processedFile);
 
                     break;
 				default:
@@ -201,10 +203,12 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 					if (hasWarning && aFile.StatusId == (int)ImportProcessStatuses.Success)
 						aFile.StatusId = (int)ImportProcessStatuses.Warning; // Warning
 
-					_db.UpdateImportProcessStatus(aFile.StatusId, aFile);    
-                     
-					
-				}
+					_db.UpdateImportProcessStatus(aFile.StatusId, aFile);
+
+                    // run the Post Import tasks
+                    _db.RunPostDailyCatalistFileImport(aFile.Id, aFile.UploadDateTime);
+
+                }
 				catch (Exception ex)
 				{
 					_db.LogImportError(aFile, ex, lineNumber);
@@ -391,7 +395,17 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 
                 bool gotWarning = false;
 
-                var success = UploadType == 3 ? importLatestPricRecords(aFile, dataRows, out gotWarning) : importLatestCompPricRecords(aFile, dataRows, out gotWarning); // dumps all rows into the quarterly staging table
+                var success = false;
+                switch((FileUploadType)UploadType)
+                {
+                    case FileUploadType.LatestJsPriceData:
+                        success = importLatestJsPriceRecords(aFile, dataRows, out gotWarning);
+                        break;
+
+                    case FileUploadType.LatestCompetitorsPriceData:
+                        success = importLatestCompPricRecords(aFile, dataRows, out gotWarning); // dumps all rows into the quarterly staging table
+                        break;
+                }
 
                 if (!success)
                 {
@@ -403,6 +417,20 @@ namespace JsPlc.Ssc.PetrolPricing.Business
                
 
                 _db.UpdateImportProcessStatus(aFile.StatusId, aFile); //ok 10, failed 15
+
+                if (success)
+                {
+                    // run post file import tasks
+                    switch ((FileUploadType)UploadType)
+                    {
+                        case FileUploadType.LatestJsPriceData:
+                            _db.RunPostLatestJsFileImportTasks(aFile.Id, aFile.UploadDateTime);
+                            break;
+                        case FileUploadType.LatestCompetitorsPriceData:
+                            _db.RunPostLatestCompetitorsFileImportTasks(aFile.Id, aFile.UploadDateTime);
+                            break;
+                    }
+                }
             }
             catch (ExcelParseFileException ex)
             {
@@ -646,31 +674,25 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 			return true;
 		}
 
-        private bool importLatestPricRecords(FileUpload aFile, IEnumerable<DataRow> allRows, out bool hasWarning)
+        private bool importLatestJsPriceRecords(FileUpload aFile, IEnumerable<DataRow> allRows, out bool hasWarning)
         {
-            int batchNo = 0;
-         
+        
             List<LatestPriceDataModel> allSites = parseLatestPrice(aFile, allRows, out hasWarning);
             if (hasWarning) return false;
-            var batchSuccess =
-                    _db.NewLatestPriceRecords(allSites, aFile, 2);
-
-               
+            var batchSuccess = _db.NewLatestPriceRecords(allSites, aFile, 2);
            
             return true;
         }
 
         private bool importLatestCompPricRecords(FileUpload aFile, IEnumerable<DataRow> allRows, out bool hasWarning)
         {
-            int batchNo = 0;
-
             List<LatestCompPriceDataModel> allSites = parseLatestCompPrice(aFile, allRows, out hasWarning);
             if (hasWarning) return false;
-            var batchSuccess =
-                    _db.NewLatestCompPriceRecords(allSites, aFile, 2);
+            var batchSuccess = _db.NewLatestCompPriceRecords(allSites, aFile, 2);
 
             return true;
         }
+
 		private DataTable getQuarterlyData(FileUpload aFile)
 		{
 			var storedFilePath = _appSettings.UploadPath;
@@ -885,7 +907,6 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 				_priceService.DoCalcDailyPrices(fileProcessed.UploadDateTime);
 			}
 		}
-
 
         public bool CalcDailyPrices(int siteId)
         {

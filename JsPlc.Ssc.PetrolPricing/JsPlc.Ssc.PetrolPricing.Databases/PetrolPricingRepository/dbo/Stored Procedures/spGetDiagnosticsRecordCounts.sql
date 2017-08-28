@@ -2,7 +2,8 @@
 AS
 	SET NOCOUNT ON
 
-	SELECT 'ContactDetails' [TableName], (SELECT COUNT(1) FROM dbo.ContactDetails) [RecordCount]
+	SELECT 'CompetitorPrice' [TableName], (SELECT COUNT(1) FROM dbo.CompetitorPrice) [RecordCount]
+	UNION ALL SELECT 'ContactDetails', (SELECT COUNT(1) FROM dbo.ContactDetails) 
 	UNION ALL SELECT 'DailyPrice', (SELECT COUNT(1) FROM dbo.DailyPrice)
 	UNION ALL SELECT 'DailyUploadStaging', (SELECT COUNT(1) FROM dbo.DailyUploadStaging)
 	UNION ALL SELECT 'DriveTimeMarkup', (SELECT COUNT(1) FROM dbo.DriveTimeMarkup)

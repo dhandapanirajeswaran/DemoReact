@@ -666,5 +666,29 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             };
             DapperHelper.Execute(this, sprocName, parameters);
         }
+
+        internal void RunPostDailyCatalistFileImport(int fileUploadId, DateTime uploadDateTime)
+        {
+            const string sprocName = "spPostDailyCatalistFileImport";
+            var parameters = new
+            {
+                @FileUploadId = fileUploadId,
+                @FileUploadDateTime = uploadDateTime
+            };
+            DapperHelper.Execute(this, sprocName, parameters);
+        }
+
+        internal void ProcessSitePricing(int siteId, DateTime forDate, int fileUploadId, int maxDriveTime)
+        {
+            const string sprocName = "spProcessSitePricing";
+            var parameters = new
+            {
+                @SiteId = siteId,
+                @ForDate = forDate,
+                @FileUploadId = fileUploadId,
+                @MaxDriveTime = maxDriveTime
+            };
+            DapperHelper.Execute(this, sprocName, parameters);
+        }
     }
 }

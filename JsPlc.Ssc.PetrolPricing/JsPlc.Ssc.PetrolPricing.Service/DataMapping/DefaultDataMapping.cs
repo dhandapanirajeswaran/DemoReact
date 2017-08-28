@@ -31,7 +31,8 @@ namespace JsPlc.Ssc.PetrolPricing.Service.DataMapping
                 .ForMember(co => co.SuggestedPrice, mo => mo.Ignore())
                 .ForMember(co => co.CompetitorId, mo => mo.Ignore())
                 .ForMember(co => co.Markup, mo => mo.Ignore())
-                .ForMember(co => co.IsTrailPrice, mo => mo.Ignore());
+                .ForMember(co => co.IsTrailPrice, mo => mo.Ignore())
+                .ForMember(co => co.PriceReasonFlags, mo => mo.Ignore());
 
             Mapper.CreateMap<SiteEmailViewModel, SiteEmail>()
                 .ForMember(co => co.Site, mo => mo.Ignore());
