@@ -24,12 +24,11 @@ RETURNS
 AS
 BEGIN
 
-
 ----DEBUG:START
---DECLARE	@SiteId INT = 6164
+--DECLARE	@SiteId INT = 9
 --DECLARE	@FuelTypeId INT = 2
---DECLARE	@ForDate DATE = '2017-08-17 12:30:00'
---DECLARE	@FileUploadId INT = 9
+--DECLARE	@ForDate DATE = '2017-08-14 12:30:00'
+--DECLARE	@FileUploadId INT = 3
 --DECLARE	@MaxDriveTime INT = 25
 
 --DECLARE @Result TABLE 
@@ -291,7 +290,7 @@ BEGIN
 				)
 				SELECT TOP 1
 					@Cheapest_CompetitorId = bcp.CompetitorId,
-					@Cheapest_SuggestedPrice = bcp.PriceIncDriveTime,
+					@Cheapest_SuggestedPrice = bcp.PriceIncDriveTime + @Site_TrialPriceMarkup * 10,
 					@Cheapest_Markup = @Site_TrialPriceMarkup,
 					@Cheapest_DateOfPrice = 
 					CASE 
@@ -340,7 +339,7 @@ BEGIN
 			--
 			DECLARE @NearbyGrocerStatus INT = dbo.fn_NearbyGrocerStatusForSiteFuel(@StartOfToday, @SystemSettings_MaxGrocerDriveTime, @SiteId, @FuelTypeId) 
 
-			SET @Cheapest_PriceReasonFlags = CASE @NearbyGrocerStatus
+			SET @Cheapest_PriceReasonFlags = @Cheapest_PriceReasonFlags | CASE @NearbyGrocerStatus
 				WHEN 0x00 THEN 0 -- No Nearby Grocers			
 				WHEN 0x01 THEN @PriceReasonFlags_HasGrocers | @PriceReasonFlags_HasIncompleteGrocers -- Grocers, but incomplete
 				WHEN 0x02 THEN @PriceReasonFlags_HasGrocers -- Grocers and Data
@@ -357,6 +356,8 @@ BEGIN
 				END
 			END
 
+
+
 			-- handle No Suggested Price
 			IF @Cheapest_SuggestedPrice = 0 AND @Today_Price > 0
 			BEGIN
@@ -371,7 +372,6 @@ BEGIN
 				SET @Cheapest_SuggestedPrice = dbo.fn_ReplaceLastPriceDigit(@Cheapest_SuggestedPrice, @SystemSettings_DecimalRounding)
 				SET @Cheapest_PriceReasonFlags = @Cheapest_PriceReasonFlags | @PriceReasonFlags_Rounded
 			END
-
 			-- check Price Variance
 			IF @Today_Price > 0
 			BEGIN
