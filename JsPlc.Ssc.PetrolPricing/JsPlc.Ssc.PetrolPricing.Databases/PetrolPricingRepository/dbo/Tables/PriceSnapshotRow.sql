@@ -17,5 +17,7 @@
 	[Distance] [real] NULL,
 	[DriveTime] [real] NULL,
 	[DriveTimePence] [int] NULL, 
-    [MatchCompetitorMarkup] INT NULL 
+    [MatchCompetitorMarkup] INT NULL, 
+    [TodayPriceReasonFlags] INT NOT NULL, 
+    [TomorrowPriceReasonFlags] INT NOT NULL 
 )

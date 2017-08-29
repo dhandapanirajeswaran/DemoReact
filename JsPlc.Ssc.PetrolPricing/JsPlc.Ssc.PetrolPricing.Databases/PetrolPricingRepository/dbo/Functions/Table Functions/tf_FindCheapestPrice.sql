@@ -29,7 +29,7 @@ BEGIN
 --DECLARE	@SiteId INT = 6164
 --DECLARE	@FuelTypeId INT = 2
 --DECLARE	@ForDate DATE = '2017-08-17 12:30:00'
---DECLARE	@FileUploadId INT = 8
+--DECLARE	@FileUploadId INT = 9
 --DECLARE	@MaxDriveTime INT = 25
 
 --DECLARE @Result TABLE 
@@ -142,34 +142,22 @@ BEGIN
 	--
 	-- Check for Latest JS Price Data for Date
 	--
-	DECLARE @LatestJsPrice_ModalPrice INT = NULL
-	DECLARE @LatestJsPrice_Id INT = NULL
-
 	DECLARE @LatestJsPrice_FileUploadId INT
-	DECLARE @LatestJsPrice_UploadDateTime DATETIME
-	SELECT TOP 1
-		@LatestJsPrice_FileUploadId = fu.Id,
-		@LatestJsPrice_UploadDateTime = fu.UploadDateTime
-	FROM
-		dbo.FileUpload fu
-	WHERE
-		fu.StatusId = 10
-		AND
-		fu.UploadTypeId = 3
-		AND
-		fu.UploadDateTime >= @StartOfToday
-		AND
-		fu.UploadDateTime < @StartOfTomorrow;
+	SET @LatestJsPrice_FileUploadId = dbo.fn_LastFileUploadForDate(@ForDate, 3)
 
 	-- lookup Latest Site Fuel Price from Latest JS Price Data
-
+	DECLARE @LatestJsPrice_ModalPrice INT = NULL
+	DECLARE @LatestJsPrice_Id INT = NULL
+	DECLARE @LatestJsPrice_UploadDateTime DATETIME
 	SELECT TOP 1
 		@LatestJsPrice_ModalPrice = lp.ModalPrice,
-		@LatestJsPrice_Id = lp.Id
-
+		@LatestJsPrice_Id = lp.Id,
+		@LatestJsPrice_UploadDateTime = (SELECT TOP 1 UploadDateTime FROM dbo.FileUpload WHERE Id = @LatestJsPrice_FileUploadId)
 	FROM
 		dbo.LatestPrice lp
 	WHERE
+		lp.FuelTypeId = @FuelTypeId
+		AND
 		lp.PfsNo = @Site_PfsNo
 		AND
 		lp.StoreNo = @Site_StoreNo

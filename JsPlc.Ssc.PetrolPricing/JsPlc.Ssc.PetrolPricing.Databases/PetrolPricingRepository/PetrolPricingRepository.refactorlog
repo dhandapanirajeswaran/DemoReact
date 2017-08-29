@@ -77,4 +77,25 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="PriceReasonFlags" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="c0d25bac-315e-48cc-8880-2e7feaf3ce75" ChangeDateTime="08/29/2017 11:46:17">
+    <Property Name="ElementName" Value="[dbo].[PriceReasonFlags].[Descript]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[PriceReasonFlags]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="BitMask" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="a75c947e-7b93-4cbe-91a7-d2ca7f4f75c7" ChangeDateTime="08/29/2017 11:46:46">
+    <Property Name="ElementName" Value="[dbo].[PriceReasonFlags].[Descript]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[PriceReasonFlags]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="Message" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="30c98c6c-10c3-4a30-bdca-f1de9effdfc8" ChangeDateTime="08/29/2017 11:49:07">
+    <Property Name="ElementName" Value="[dbo].[PriceReasonFlags].[Message]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[PriceReasonFlags]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="Descript" />
+  </Operation>
 </Operations>

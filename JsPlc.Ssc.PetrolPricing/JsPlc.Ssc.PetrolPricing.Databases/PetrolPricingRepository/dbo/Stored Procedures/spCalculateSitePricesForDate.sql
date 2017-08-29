@@ -147,7 +147,9 @@ SELECT
 		WHEN sfc.PriceMatchType = @PriceMatchType_TrailPrice THEN sfc.TrialPriceMarkup
 		WHEN sfc.PriceMatchType = @PriceMatchType_MatchCompetitorPrice THEN sfc.MatchCompetitorMarkup
 		ELSE 0
-	END MatchCompetitorMarkup
+	END MatchCompetitorMarkup,
+	COALESCE(today.PriceReasonFlags, 0) [TodayPriceReasonFlags],
+	COALESCE(tomorrow.PriceReasonFlags, 0) [TomorrowPriceReasonFlags]
 FROM 
 	SiteFuelCombos sfc
 	INNER JOIN dbo.Site st ON st.Id = sfc.SiteId
@@ -157,3 +159,5 @@ FROM
 ORDER BY 
 	SiteId, FuelTypeId
 END
+
+

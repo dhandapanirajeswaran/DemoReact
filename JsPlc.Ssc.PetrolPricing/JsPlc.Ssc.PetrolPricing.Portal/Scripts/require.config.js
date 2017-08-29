@@ -55,6 +55,7 @@
             "chooseOneGroup": "App/chooseOneGroup",
             "HistoricSitePrices": "App/HistoricSitePrices",
             "UnsavedChanges": "App/UnsavedChanges",
+            "PriceReasons": "App/PriceReasons",
 
             // popups
             "SiteEmailPopup" : "App/Popups/SiteEmailPopup",

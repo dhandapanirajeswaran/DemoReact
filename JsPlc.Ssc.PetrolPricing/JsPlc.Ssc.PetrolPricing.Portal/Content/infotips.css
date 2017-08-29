@@ -69,7 +69,29 @@
     text-decoration: none;
 }
 .infotip i {
-    color: #ff534f;
+    color: #ff737f;
     font-style: normal;
     font-weight: bold;
 }
+
+.infotip .price-reasons {
+    border-top: 1px solid #999;
+    margin-top: 1em;
+    padding-top: 1em;
+    font-size: 75%;
+}
+    .infotip .price-reasons::before {
+        content: "Price Reasons";
+        text-transform: uppercase;
+        font-variant: small-caps;
+        font-style: italic;
+        color: #999;
+        background: #333;
+        position: absolute;
+        margin-top: -1.5em;
+        width: auto;
+        left: calc(50% - 4em);
+        padding: 0 1em;
+        line-height: 1em;
+    }
+

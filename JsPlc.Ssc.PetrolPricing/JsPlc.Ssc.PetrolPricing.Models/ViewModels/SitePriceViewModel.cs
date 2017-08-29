@@ -99,5 +99,8 @@ namespace JsPlc.Ssc.PetrolPricing.Models.ViewModels
         public bool HasNearbyCompetitorWithOutPrice { get; set; }
 
         public int MatchCompetitorMarkup { get; set; }
+
+        public PriceReasonFlags TodayPriceReasonFlags { get; set; }
+        public PriceReasonFlags TomorrowPriceReasonFlags { get; set; }
     }
 }

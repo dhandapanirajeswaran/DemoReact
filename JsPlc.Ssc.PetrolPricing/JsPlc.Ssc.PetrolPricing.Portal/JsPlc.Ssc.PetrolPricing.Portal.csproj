@@ -339,6 +339,7 @@
     <Content Include="Scripts\App\Popups\SiteEmailPopup.html" />
     <Content Include="Scripts\App\Popups\SiteEmailPopup.js" />
     <Content Include="Scripts\App\priceChangesTab.js" />
+    <Content Include="Scripts\App\PriceReasons.js" />
     <Content Include="Scripts\App\prices.js" />
     <Content Include="Scripts\App\pricestats.js" />
     <Content Include="Scripts\App\scrollToElement.js" />

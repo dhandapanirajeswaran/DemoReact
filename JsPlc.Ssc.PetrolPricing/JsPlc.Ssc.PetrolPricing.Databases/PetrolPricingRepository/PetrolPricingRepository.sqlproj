@@ -230,6 +230,8 @@
     <Build Include="dbo\Stored Procedures\spProcessSitePricing.sql" />
     <Build Include="dbo\Tables\PriceFlow.sql" />
     <Build Include="dbo\Stored Procedures\spProcessSitePricingBatch.sql" />
+    <Build Include="dbo\Tables\PriceReasonFlags.sql" />
+    <Build Include="dbo\Functions\Scalar Functions\fn_GetPriceReasons.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Scripts\PostDeployment\Script.PostDeployment.sql" />
