@@ -28,8 +28,8 @@ BEGIN
 ----DEBUG:START
 --DECLARE	@SiteId INT = 6164
 --DECLARE	@FuelTypeId INT = 2
---DECLARE	@ForDate DATE = '2017-08-14 12:30:00'
---DECLARE	@FileUploadId INT = 3
+--DECLARE	@ForDate DATE = '2017-08-17 12:30:00'
+--DECLARE	@FileUploadId INT = 8
 --DECLARE	@MaxDriveTime INT = 25
 
 --DECLARE @Result TABLE 
@@ -73,6 +73,7 @@ BEGIN
 	DECLARE @PriceReasonFlags_NoSuggestedPrice INT = 0x00000800
 
 	DECLARE @PriceReasonFlags_PriceStuntFreeze INT = 0x00001000
+	DECLARE @PriceReasonFlags_LatestJSPrice INT = 0x00002000
 
 	--
 	-- Get SystemSettings
@@ -110,6 +111,8 @@ BEGIN
 	-- Lookup Site information
 	--
 	DECLARE @Site_CatNo INT
+	DECLARE @Site_PfsNo INT
+	DECLARE @Site_StoreNo INT
 	DECLARE @Site_PriceMatchType INT
 	DECLARE @Site_MatchCompetitorSiteId INT
 	DECLARE @Site_MatchCompetitorMarkup INT
@@ -117,6 +120,8 @@ BEGIN
 
 	SELECT TOP 1
 		@Site_CatNo = COALESCE(st.CatNo, 0),
+		@Site_PfsNo = COALESCE(st.PfsNo, 0),
+		@Site_StoreNo = COALESCE(st.StoreNo, 0),
 		@Site_PriceMatchType = st.PriceMatchType,
 		@Site_MatchCompetitorSiteId = CASE WHEN st.PriceMatchType = 3 THEN st.TrailPriceCompetitorId ELSE NULL END,
 		@Site_MatchCompetitorMarkup = CASE WHEN st.PriceMatchType = 3 THEN COALESCE(st.CompetitorPriceOffsetNew,0) ELSE 0 END,
@@ -134,6 +139,43 @@ BEGIN
 		ELSE 0
 	END
 
+	--
+	-- Check for Latest JS Price Data for Date
+	--
+	DECLARE @LatestJsPrice_ModalPrice INT = NULL
+	DECLARE @LatestJsPrice_Id INT = NULL
+
+	DECLARE @LatestJsPrice_FileUploadId INT
+	DECLARE @LatestJsPrice_UploadDateTime DATETIME
+	SELECT TOP 1
+		@LatestJsPrice_FileUploadId = fu.Id,
+		@LatestJsPrice_UploadDateTime = fu.UploadDateTime
+	FROM
+		dbo.FileUpload fu
+	WHERE
+		fu.StatusId = 10
+		AND
+		fu.UploadTypeId = 3
+		AND
+		fu.UploadDateTime >= @StartOfToday
+		AND
+		fu.UploadDateTime < @StartOfTomorrow;
+
+	-- lookup Latest Site Fuel Price from Latest JS Price Data
+
+	SELECT TOP 1
+		@LatestJsPrice_ModalPrice = lp.ModalPrice,
+		@LatestJsPrice_Id = lp.Id
+
+	FROM
+		dbo.LatestPrice lp
+	WHERE
+		lp.PfsNo = @Site_PfsNo
+		AND
+		lp.StoreNo = @Site_StoreNo
+		AND
+		lp.UploadId = @LatestJsPrice_FileUploadId
+
 	IF @Site_CatNo = 0
 		SET @Cheapest_PriceReasonFlags = @Cheapest_PriceReasonFlags | @PriceReasonFlags_MissingSiteCatNo
 
@@ -145,10 +187,26 @@ BEGIN
 	--
 	IF @Site_CatNo > 0 AND @IsDailyCatalistFileForDate = 1
 	BEGIN
+
+		--
+		-- Is there Latest JS Price available for Site Fuel ?
+		--
+		IF @LatestJsPrice_ModalPrice IS NOT NULL
+		BEGIN
+			SET @Cheapest_DateOfPrice = CONVERT(DATE, @LatestJsPrice_UploadDateTime)
+			SET @Cheapest_SuggestedPrice = @LatestJsPrice_ModalPrice
+			SET @Cheapest_UploadId = @LatestJsPrice_FileUploadId
+			SET @Cheapest_Markup = 0
+			SET @Cheapest_CompetitorId = NULL
+			SET @Cheapest_IsTrialPrice = 0
+			SET @Cheapest_IsTodayPrice = 0
+			SET @Cheapest_PriceReasonFlags = @Cheapest_PriceReasonFlags | @PriceReasonFlags_LatestJSPrice
+		END
+
 		--
 		-- Price Strategy Match: Match Competitor ?
 		--
-		IF @Site_PriceMatchType = 3
+		IF @Site_PriceMatchType = 3 AND @LatestJsPrice_ModalPrice IS NULL
 		BEGIN
 			--
 			-- Search for most recent Competitor Site Price for Fuel on (or before) Date
@@ -184,7 +242,7 @@ BEGIN
 		--
 		-- Price Strategy Match: Standard Price OR Trial price ?
 		--
-		IF @Site_PriceMatchType = 1 OR @Site_PriceMatchType = 2
+		IF (@Site_PriceMatchType = 1 OR @Site_PriceMatchType = 2) AND @LatestJsPrice_ModalPrice IS NULL
 		BEGIN
 			--
 			-- Find the cheapest 0-25 min Competitor
