@@ -15,6 +15,8 @@ RETURNS @results TABLE
 AS
 BEGIN
 
+	-- NOTE: FIX THIS SPEED ISSUE !!!
+
 
 ----DEBUG:START
 --DECLARE	@ForDate DATE = GETDATE()
@@ -45,70 +47,70 @@ BEGIN
 	DECLARE @CompetitorPriceCount INT = 0;
 	DECLARE @GrocerPriceCount INT = 0;
 
-	--
-	-- find nearby Competitors 
-	--
-	-- conditions:
-	--		(1) within X minutes drive time
-	--		(2) Brand is NOT excluded
-	--		(3) Competitor site is Active
-	--		(4) Grocer OR non-Grocers
-	--
-	DECLARE @NearbyCompetitors TABLE (CompetitorSiteId INT PRIMARY KEY, CatNo INT, IsGrocer BIT)
-	INSERT INTO @NearbyCompetitors
-		SELECT
-			stc.CompetitorId [CompetitorSiteId],
-			compsite.CatNo [CatNo],
-			compsite.isGrocer [IsGrocer]
-		FROM
-			dbo.Site st
-			INNER JOIN dbo.SiteToCompetitor stc ON stc.SiteId = st.Id
-			INNER JOIN dbo.Site compsite ON compsite.Id = stc.CompetitorId
-		WHERE
-			st.Id = @SiteId
-			AND
-			stc.DriveTime < @DriveTime
-			AND
-			compsite.IsActive = 1
-			AND
-			compsite.IsExcludedBrand = 0 -- ignore Excluded brands
+	----
+	---- find nearby Competitors 
+	----
+	---- conditions:
+	----		(1) within X minutes drive time
+	----		(2) Brand is NOT excluded
+	----		(3) Competitor site is Active
+	----		(4) Grocer OR non-Grocers
+	----
+	--DECLARE @NearbyCompetitors TABLE (CompetitorSiteId INT PRIMARY KEY, CatNo INT, IsGrocer BIT)
+	--INSERT INTO @NearbyCompetitors
+	--	SELECT
+	--		stc.CompetitorId [CompetitorSiteId],
+	--		compsite.CatNo [CatNo],
+	--		compsite.isGrocer [IsGrocer]
+	--	FROM
+	--		dbo.Site st
+	--		INNER JOIN dbo.SiteToCompetitor stc ON stc.SiteId = st.Id
+	--		INNER JOIN dbo.Site compsite ON compsite.Id = stc.CompetitorId
+	--	WHERE
+	--		st.Id = @SiteId
+	--		AND
+	--		stc.DriveTime < @DriveTime
+	--		AND
+	--		compsite.IsActive = 1
+	--		AND
+	--		compsite.IsExcludedBrand = 0 -- ignore Excluded brands
 
-	--
-	-- get nearby Competitor and Grocer Counts
-	--
-	SELECT
-		@CompetitorCount = (SELECT COUNT(1) FROM @NearbyCompetitors),
-		@GrocerCount = (SELECT COUNT(1) FROM @NearbyCompetitors WHERE IsGrocer=1)
+	----
+	---- get nearby Competitor and Grocer Counts
+	----
+	--SELECT
+	--	@CompetitorCount = (SELECT COUNT(1) FROM @NearbyCompetitors),
+	--	@GrocerCount = (SELECT COUNT(1) FROM @NearbyCompetitors WHERE IsGrocer=1)
 
-	--
-	-- get nearby Competitor and Grocer price data (if any)
-	--
-	;WITH NearbyPriceData AS (
-		SELECT DISTINCT
-			nbc.CatNo,
-			nbc.IsGrocer
-		FROM
-			@NearbyCompetitors nbc
-			INNER JOIN dbo.DailyPrice dp ON dp.CatNo = nbc.CatNo AND dp.FuelTypeId = @FuelTypeId
-		WHERE
-			dp.FuelTypeId = @FuelTypeId
-			AND
-			dp.DailyUploadId IN (
-				SELECT 
-					fu.Id
-				FROM
-					dbo.FileUpload fu
-				WHERE
-					fu.StatusId = @ImportProcessStatus_Success
-					AND
-					fu.UploadDateTime >= @ForDate
-					AND
-					fu.UploadDateTime < @ForDateNextDay
-			)
-	)
-	SELECT 
-		@CompetitorPriceCount = (SELECT COUNT(1) FROM NearbyPriceData),
-		@GrocerPriceCount = (SELECT COUNT(1) FROM NearbyPriceData WHERE IsGrocer = 1);
+	----
+	---- get nearby Competitor and Grocer price data (if any)
+	----
+	--;WITH NearbyPriceData AS (
+	--	SELECT DISTINCT
+	--		nbc.CatNo,
+	--		nbc.IsGrocer
+	--	FROM
+	--		@NearbyCompetitors nbc
+	--		INNER JOIN dbo.DailyPrice dp ON dp.CatNo = nbc.CatNo AND dp.FuelTypeId = @FuelTypeId
+	--	WHERE
+	--		dp.FuelTypeId = @FuelTypeId
+	--		AND
+	--		dp.DailyUploadId IN (
+	--			SELECT 
+	--				fu.Id
+	--			FROM
+	--				dbo.FileUpload fu
+	--			WHERE
+	--				fu.StatusId = @ImportProcessStatus_Success
+	--				AND
+	--				fu.UploadDateTime >= @ForDate
+	--				AND
+	--				fu.UploadDateTime < @ForDateNextDay
+	--		)
+	--)
+	--SELECT 
+	--	@CompetitorPriceCount = (SELECT COUNT(1) FROM NearbyPriceData),
+	--	@GrocerPriceCount = (SELECT COUNT(1) FROM NearbyPriceData WHERE IsGrocer = 1);
 
 	INSERT 
 		@results
