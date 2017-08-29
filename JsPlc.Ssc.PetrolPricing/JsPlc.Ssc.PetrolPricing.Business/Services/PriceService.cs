@@ -99,33 +99,12 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 			}
 		}
 
-	    public void DoCalcDailyPricesForSite(int siteId, DateTime forDate)
-	    {
-            var fuels =
-                   _lookupService.GetFuelTypes()
-                       .Where(x => _fuelSelectionArray.Contains(x.Id))
-                       .AsQueryable()
-                       .AsNoTracking()
-                       .ToList(); // Limit calc iterations to known fuels
-
-
+        public void DoCalcDailyPricesForSite(int siteId, DateTime forDate)
+        {
             var db = _factory.Create<IPetrolPricingRepository>(CreationMethod.ServiceLocator, null);
-	        var site = db.GetSite(siteId);
+            var site = db.GetSite(siteId);
 
             var dpFile = _db.GetDailyFileAvailableForCalc(forDate);
-
-            // OLD PRICING !! 
-            //
-            //foreach (var fuel in fuels.ToList())
-            //{
-            //    var priceService = new PriceService(db, _appSettings, _lookupService, _factory, _siteService, _systemSettingsService);
-
-            //    priceService.CalcPrice(db, site, fuel.Id, new PriceCalculationTaskData
-            //    {
-            //        ForDate = forDate,
-            //        FileUpload = dpFile
-            //    });
-            //}
 
             var priceService = new PriceService(db, _appSettings, _lookupService, _factory, _siteService, _systemSettingsService);
             priceService.PriceSiteFuels(db, site, new PriceCalculationTaskData
@@ -133,6 +112,22 @@ namespace JsPlc.Ssc.PetrolPricing.Business
                 ForDate = forDate,
                 FileUpload = dpFile
             });
+        }
+
+        public void DoCalcDailyPricesForSitesBatch(DateTime forDate, string siteIds)
+        {
+            var db = _factory.Create<IPetrolPricingRepository>(CreationMethod.ServiceLocator, null);
+            var dpFile = _db.GetDailyFileAvailableForCalc(forDate);
+
+            var priceService = new PriceService(db, _appSettings, _lookupService, _factory, _siteService, _systemSettingsService);
+
+            var calcTaskData = new PriceCalculationTaskData
+            {
+                ForDate = forDate,
+                FileUpload = dpFile
+            };
+
+            priceService.PriceSiteFuelsBatch(db, siteIds, calcTaskData);
         }
 
         public void PriceSiteFuels(IPetrolPricingRepository db, Site site, PriceCalculationTaskData calcTaskData)
@@ -144,6 +139,21 @@ namespace JsPlc.Ssc.PetrolPricing.Business
                 calcTaskData.ForDate,
                 calcTaskData.FileUpload.Id,
                 maxGrocerDriveTime
+                );
+        }
+
+        public void PriceSiteFuelsBatch(IPetrolPricingRepository db, string siteIds, PriceCalculationTaskData calcTaskData)
+        {
+            if (String.IsNullOrEmpty(siteIds))
+                return;
+
+            var maxGrocerDriveTime = 25;
+                    
+            _db.ProcessSitePricingBatch(
+                calcTaskData.ForDate,
+                calcTaskData.FileUpload.Id,
+                maxGrocerDriveTime,
+                siteIds
                 );
         }
 
@@ -615,36 +625,27 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 
 		private void calculatePrices(PriceCalculationTaskData calcTaskData)
 		{
-		    try
-		    {
+            const int batchSize = 50;
+
+            try
+            {
 		        var forDate = calcTaskData.ForDate;
 
 		        var sites = _db.GetJsSites().Where(x => x.IsActive).AsQueryable().AsNoTracking();
+                var siteCount = sites.Count();
 
-		        //var fuels =
-		        //    _lookupService.GetFuelTypes()
-		        //        .Where(x => _fuelSelectionArray.Contains(x.Id))
-		        //        .AsQueryable()
-		        //        .AsNoTracking()
-		        //        .ToList(); // Limit calc iterations to known fuels
+                var batchIndex = 0;
 
-                foreach (var site in sites)
-		        {
+                while (batchIndex < siteCount)
+                {
+                    var batchSiteIds = sites.Skip(batchIndex).Take(batchSize).Select(x => x.Id.ToString()).Aggregate((x, y) => x + "," + y);
+
                     var db = _factory.Create<IPetrolPricingRepository>(CreationMethod.ServiceLocator, null);
-
-                    // OLD SITE PRICING
-                    //
-                    //foreach (var fuel in fuels.ToList())
-                    //{
-                    //    var priceService = new PriceService(db, _appSettings, _lookupService, _factory, _siteService, _systemSettingsService);
-                    //    priceService.CalcPrice(db, site, fuel.Id, calcTaskData);
-                    //}
-
                     var priceService = new PriceService(db, _appSettings, _lookupService, _factory, _siteService, _systemSettingsService);
-                    priceService.PriceSiteFuels(db, site, calcTaskData);
-                }
+                    priceService.PriceSiteFuelsBatch(db, batchSiteIds, calcTaskData);
 
-		        //createMissingSuperUnleadedFromUnleaded(forDate); // for performance, run for all sites
+                    batchIndex += batchSize;
+                }
 		    }
 		    catch (Exception ce)
 		    {

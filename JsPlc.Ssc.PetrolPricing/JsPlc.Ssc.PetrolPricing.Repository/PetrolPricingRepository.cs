@@ -236,7 +236,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             return GetSites()
                 .Where(s => string.IsNullOrWhiteSpace(s.Company) == false)
                 .GroupBy(g => g.Company)
-                .Select(s => new {Count = s.Count(), CompanyName = s.Key})
+                .Select(s => new { Count = s.Count(), CompanyName = s.Key })
                 .OrderByDescending(x => x.Count)
                 .ToDictionary(k => k.CompanyName, v => v.Count);
         }
@@ -569,7 +569,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                 {
                     var testEmailAddresses = systemSettings.SiteEmailTestAddresses.Split(';').ToList();
 
-                    foreach(var site in dbList)
+                    foreach (var site in dbList)
                     {
                         site.HasEmails = testEmailAddresses.Any();
                         site.Emails = testEmailAddresses;
@@ -686,7 +686,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             IEnumerable<SiteCompetitorPriceSummaryRowViewModel> priceSummaries = _context.GetCompetitorInfoForSites(forDate, siteIds, maxGrocerDriveTimeMinutes);
 
             // calculate percentages
-            foreach(var summary in priceSummaries)
+            foreach (var summary in priceSummaries)
             {
                 summary.CompetitorPricePercent = summary.CompetitorCount == 0
                     ? 0
@@ -698,7 +698,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             }
 
             // attach each Fuel Summary to each Site
-            foreach(var site in sites)
+            foreach (var site in sites)
             {
                 var fuelsForSite = priceSummaries.Where(x => x.SiteId == site.SiteId);
                 var unleaded = fuelsForSite.FirstOrDefault(x => x.FuelTypeId == FuelTypeItem.Unleaded);
@@ -720,7 +720,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             var siteIds = sites.Select(x => x.SiteId.ToString()).Aggregate((x, y) => x + "," + y);
 
             var allGrocerFuelStatuses = GetNearbyGrocerPriceStatusForSites(forDate, siteIds, driveTime);
-            foreach(var status in allGrocerFuelStatuses)
+            foreach (var status in allGrocerFuelStatuses)
             {
                 var site = sites.First(x => x.SiteId == status.SiteId);
 
@@ -752,7 +752,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             };
         }
 
-        public IEnumerable<SiteEmailAddressViewModel> GetSiteEmailAddresses(int siteId=0)
+        public IEnumerable<SiteEmailAddressViewModel> GetSiteEmailAddresses(int siteId = 0)
         {
             var emailAddresses = _context.GetSiteEmailAddresses(siteId);
             return emailAddresses;
@@ -947,11 +947,11 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                     _context.Set<SitePrice>()
                         .Where(
                             x =>
-                                x.OverriddenPrice > 0 
-                                && x.SiteId == site.Id 
-                                && x.FuelTypeId == (int)orgFuelTypeID 
-                                && x.DateOfPrice.Day == forDate.Day 
-                                && x.DateOfPrice.Month == forDate.Month 
+                                x.OverriddenPrice > 0
+                                && x.SiteId == site.Id
+                                && x.FuelTypeId == (int)orgFuelTypeID
+                                && x.DateOfPrice.Day == forDate.Day
+                                && x.DateOfPrice.Month == forDate.Month
                                 && x.DateOfPrice.Year == forDate.Year)
                         .OrderBy(item => item.Id).FirstOrDefault();
 
@@ -1138,15 +1138,15 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         }
 
         private void AddCompetitorFuelPrice(
-            List<FuelPriceViewModel> lstFuelPriceViewModel, 
-            Site JsSite, 
+            List<FuelPriceViewModel> lstFuelPriceViewModel,
+            Site JsSite,
             Site compSite,
             FuelTypeItem fuelType,
-            int nOffSet, 
-            DateTime forDate, 
-            List<LatestCompPrice> latestCompPrices_today, 
+            int nOffSet,
+            DateTime forDate,
+            List<LatestCompPrice> latestCompPrices_today,
             List<DailyPrice> dailypriceList_today,
-            List<LatestCompPrice> latestCompPrices_yday, 
+            List<LatestCompPrice> latestCompPrices_yday,
             List<DailyPrice> dailypriceList_yday)
         {
 
@@ -1208,8 +1208,8 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         public IEnumerable<DailyPrice> GetDailyPricesForFuelByCompetitors(IEnumerable<int> competitorCatNos, int fuelId,
             DateTime usingPricesforDate)
         {
-           
-            string cacheKey = usingPricesforDate.Ticks.ToString() ;
+
+            string cacheKey = usingPricesforDate.Ticks.ToString();
             Dictionary<string, DailyPrice> dailyPricesCache = PetrolPricingRepositoryMemoryCache.CacheObj.Get(cacheKey) as Dictionary<string, DailyPrice>;
 
             //if (dailyPricesCache == null)
@@ -1227,7 +1227,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                                 x =>
                                     x.UploadDateTime.Month == usingPricesforDate.Month &&
                                     x.UploadDateTime.Day == usingPricesforDate.Day &&
-                                    x.UploadDateTime.Year == usingPricesforDate.Year).OrderByDescending(x=>x.Id).ToList();
+                                    x.UploadDateTime.Year == usingPricesforDate.Year).OrderByDescending(x => x.Id).ToList();
                         if (fileUpload.Any())
                         {
                             int fileUploadId = fileUpload[0].Id;
@@ -1245,7 +1245,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                             return new List<DailyPrice>();
                         }
                     }
-                }   
+                }
             }
 
             List<DailyPrice> result = new List<DailyPrice>();
@@ -1267,20 +1267,20 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
            DateTime usingPricesforDate)
         {
 
-            Dictionary<string, LatestCompPrice> latestCompPrices =new Dictionary<string, LatestCompPrice>();
+            Dictionary<string, LatestCompPrice> latestCompPrices = new Dictionary<string, LatestCompPrice>();
 
             var fileUpload =
                 _context.FileUploads.Where(
                     x =>
                         x.UploadDateTime.Month == usingPricesforDate.Month &&
                         x.UploadDateTime.Day == usingPricesforDate.Day &&
-                        x.UploadDateTime.Year == usingPricesforDate.Year && 
-                        x.UploadTypeId==4).OrderByDescending(x => x.Id).ToList();
+                        x.UploadDateTime.Year == usingPricesforDate.Year &&
+                        x.UploadTypeId == 4).OrderByDescending(x => x.Id).ToList();
             if (fileUpload.Any())
             {
                 int fileUploadId = fileUpload[0].Id;
-               
-                var LatestCP=_context.LatestCompPrices.ToList();
+
+                var LatestCP = _context.LatestCompPrices.ToList();
                 latestCompPrices = LatestCP.Where(
                         x =>
                             x.UploadId == fileUploadId)
@@ -1416,7 +1416,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             int startingLineNumber)
         {
             int addingEntryLineNo = startingLineNumber;
-          
+
             using (var newDbContext = new RepositoryContext())
             {
                 using (var tx = newDbContext.Database.BeginTransaction())
@@ -1424,12 +1424,12 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                     newDbContext.Configuration.AutoDetectChangesEnabled = false;
                     try
                     {
-                        var exitingSiteCatalistData=newDbContext.QuarterlyUploadStaging.ToList();
+                        var exitingSiteCatalistData = newDbContext.QuarterlyUploadStaging.ToList();
 
                         siteCatalistData.RemoveAll(
                             x =>
-                                exitingSiteCatalistData.Any(y => y.SainsSiteCatNo == (int) x.SainsCatNo) &&
-                                exitingSiteCatalistData.Any(y => y.CatNo == (int) x.CatNo));
+                                exitingSiteCatalistData.Any(y => y.SainsSiteCatNo == (int)x.SainsCatNo) &&
+                                exitingSiteCatalistData.Any(y => y.CatNo == (int)x.CatNo));
                         if (siteCatalistData.Count > 0)
                         {
                             foreach (CatalistQuarterly fileRecord in siteCatalistData)
@@ -1529,26 +1529,26 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                         {
                             foreach (LatestPriceDataModel LatestPriceDataModel in LatestSiteData)
                             {
-                              
+
                                 if (!String.IsNullOrEmpty(LatestPriceDataModel.UnleadedPrice))
                                 {
                                     AddOrUpdateLatestPrice(newDbContext, LatestPriceDataModel, fileDetails,
                                         (int)FuelTypeItem.Unleaded, Convert.ToDouble(LatestPriceDataModel.UnleadedPrice));
-                                  
+
 
                                 }
                                 if (!String.IsNullOrEmpty(LatestPriceDataModel.SuperUnleadedPrice))
                                 {
-                                  
+
                                     AddOrUpdateLatestPrice(newDbContext, LatestPriceDataModel, fileDetails,
                                      (int)FuelTypeItem.Super_Unleaded, Convert.ToDouble(LatestPriceDataModel.SuperUnleadedPrice));
-                            
+
 
                                 }
                                 if (!String.IsNullOrEmpty(LatestPriceDataModel.DieselPrice))
                                 {
-                                     AddOrUpdateLatestPrice(newDbContext, LatestPriceDataModel, fileDetails,
-                                   (int)FuelTypeItem.Diesel, Convert.ToDouble(LatestPriceDataModel.DieselPrice));
+                                    AddOrUpdateLatestPrice(newDbContext, LatestPriceDataModel, fileDetails,
+                                  (int)FuelTypeItem.Diesel, Convert.ToDouble(LatestPriceDataModel.DieselPrice));
                                 }
                             }
 
@@ -1950,7 +1950,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                     {
                         var existingSiteToCompetitorRecords = transactionContext.SiteToCompetitors.ToList();
                         var commonrecords = existingSiteToCompetitorRecords.Where(x => newSiteToCompetitorRecords.Any(y => y.SiteId == x.SiteId));
-                        var siteIdsToRemove=commonrecords.Select(x => x.SiteId).Distinct().ToList();
+                        var siteIdsToRemove = commonrecords.Select(x => x.SiteId).Distinct().ToList();
 
                         foreach (var siteID in siteIdsToRemove)
                         {
@@ -1960,12 +1960,12 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                             {
                                 transactionContext.SiteToCompetitors.Remove(siteToC);
                             }
-                            
-                        }
-                       
-                      //  newSiteToCompetitorRecords.RemoveAll(x =>siteIdsToRemove.Any(y => y == (int)x.SiteId) ); //Remove Common Records
 
-                    
+                        }
+
+                        //  newSiteToCompetitorRecords.RemoveAll(x =>siteIdsToRemove.Any(y => y == (int)x.SiteId) ); //Remove Common Records
+
+
                         if (newSiteToCompetitorRecords.Count > 0)
                         {
                             //add new site to competitor records
@@ -2166,40 +2166,40 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
             }
         }
 
-        private int UpdateFuelOverridePrice(DateTime? forDate,RepositoryContext db, SitePrice p)
+        private int UpdateFuelOverridePrice(DateTime? forDate, RepositoryContext db, SitePrice p)
         {
-             var dbPricesForDate =
-                        db.SitePrices.Where(x => DbFunctions.DiffDays(x.DateOfCalc, forDate) == 0)
-                            .AsNoTracking()
-                            .ToList();
+            var dbPricesForDate =
+                       db.SitePrices.Where(x => DbFunctions.DiffDays(x.DateOfCalc, forDate) == 0)
+                           .AsNoTracking()
+                           .ToList();
 
-                    SitePrice p1 = p; // to prevent closure issue
-                  
-                    var entry =
-                        dbPricesForDate.FirstOrDefault(x => x.SiteId == p1.SiteId && x.FuelTypeId == p1.FuelTypeId);
-                    if (entry == null)
-                    {
-                        entry = new SitePrice
-                        {
-                            SiteId = p.SiteId,
-                            FuelTypeId = p.FuelTypeId,
-                            DateOfCalc = forDate.Value,
-                            DateOfPrice = forDate.Value,
-                            SuggestedPrice = 0,
-                            OverriddenPrice = p.OverriddenPrice
-                        };
-                        db.Entry(entry).State = EntityState.Added;
-                        //throw new ApplicationException(
-                        //    String.Format("Price not found in DB for siteId={0}, fuelId={1}", p1.SiteId, p1.FuelTypeId));
-                    }
-                    else
-                    {
-                        entry.OverriddenPrice = p.OverriddenPrice;
-                        db.Entry(entry).State = EntityState.Modified;
-                    }
-                    //db.Entry(entry).Property(x => x.OverriddenPrice).IsModified = true;
-                
-                return  db.SaveChanges();
+            SitePrice p1 = p; // to prevent closure issue
+
+            var entry =
+                dbPricesForDate.FirstOrDefault(x => x.SiteId == p1.SiteId && x.FuelTypeId == p1.FuelTypeId);
+            if (entry == null)
+            {
+                entry = new SitePrice
+                {
+                    SiteId = p.SiteId,
+                    FuelTypeId = p.FuelTypeId,
+                    DateOfCalc = forDate.Value,
+                    DateOfPrice = forDate.Value,
+                    SuggestedPrice = 0,
+                    OverriddenPrice = p.OverriddenPrice
+                };
+                db.Entry(entry).State = EntityState.Added;
+                //throw new ApplicationException(
+                //    String.Format("Price not found in DB for siteId={0}, fuelId={1}", p1.SiteId, p1.FuelTypeId));
+            }
+            else
+            {
+                entry.OverriddenPrice = p.OverriddenPrice;
+                db.Entry(entry).State = EntityState.Modified;
+            }
+            //db.Entry(entry).Property(x => x.OverriddenPrice).IsModified = true;
+
+            return db.SaveChanges();
         }
 
         /// <summary>
@@ -2482,7 +2482,7 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
                                 : brandName;
                             var brandReportRow = brandReportRows.FirstOrDefault(x => x.BrandName == brandNameAfter);
 
-                            if (brandReportRow == null )
+                            if (brandReportRow == null)
                             {
                                 brandReportRow = new CompetitorBrandTimeViewModel();
                                 brandReportRow.BrandName = brandName;
@@ -2499,7 +2499,7 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
                     }
                     else
                     {
-                        var brandNames = sainsburysSite.Competitors.Select(x => x.Competitor.Brand).OrderBy(x=>x).Distinct();
+                        var brandNames = sainsburysSite.Competitors.Select(x => x.Competitor.Brand).OrderBy(x => x).Distinct();
 
                         // 2) all unique brand names e.g. ASDA, TESCO
                         foreach (string brandName in brandNames)
@@ -2508,7 +2508,7 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
                             // 3) brands of the competitor from step 2) e.g. ASDA so we get all ASDA here
                             var brandCompetitors = sainsburysSite.Competitors.Where(x => x.Competitor.Brand == brandName).ToList();
 
-                             // 4) have we already counted for this brand
+                            // 4) have we already counted for this brand
                             string brandNameAfter = (brandName == Const.TESCOEXTRA || brandName == Const.TESCOEXPRESS)
                                ? Const.TESCO
                                : brandName;
@@ -2567,7 +2567,7 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
 
                     var distinctPrices = dailyPrices.Select(x => x.ModalPrice).Distinct().OrderBy(x => x).ToList();
                     var distinctCatNos = dailyPrices.Select(x => x.CatNo).Distinct().ToList();
-                    var competitorSites = _context.Sites.Where(x => distinctCatNos.Contains(x.CatNo.Value) ).ToList();
+                    var competitorSites = _context.Sites.Where(x => distinctCatNos.Contains(x.CatNo.Value)).ToList();
                     var distinctBrands = competitorSites.Select(x => x.Brand).Distinct().OrderBy(x => x).ToList();
 
 
@@ -2683,7 +2683,7 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
                                 reportRowItem.PricePointPrices.Add(reportColumnItem);
                                 columnCounter++;
                             }
-                            if (distinctPrices.Count ==0)
+                            if (distinctPrices.Count == 0)
                             {
                                 var reportColumnItem = new PricePointPriceViewModel
                                 {
@@ -2702,7 +2702,7 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
 
                 return result;
             }
-            catch(Exception ce)
+            catch (Exception ce)
             {
                 _logger.Error(ce);
                 return null;
@@ -2713,7 +2713,7 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
         {
             var result = new NationalAverageReportViewModel();
 
-            var fuelTypeIds = new List<int> { (int)FuelTypeItem.Unleaded,(int)FuelTypeItem.Diesel };
+            var fuelTypeIds = new List<int> { (int)FuelTypeItem.Unleaded, (int)FuelTypeItem.Diesel };
 
             // Report uses Prices as per date of upload..(not date of Price in DailyPrice)..
             var FileUpload_DailyPriceData_today = _context.FileUploads.Where(
@@ -2749,7 +2749,7 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
                 distinctBrands.Remove(Const.TESCOEXPRESS);
                 distinctBrands.Remove(Const.TESCOEXTRA);
             }
-         
+
 
             foreach (var fuelType in fuelTypeIds)
             {
@@ -2947,9 +2947,9 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
             var competitorSites = _context.Sites.Where(x => distinctCatNos.Contains(x.CatNo.Value)).ToList();
 
             //calculating by brands
-            List<string> distinctBrands=new List<string>();// = competitorSites.Select(x => x.Brand).Distinct().OrderBy(x => x).ToList();
+            List<string> distinctBrands = new List<string>();// = competitorSites.Select(x => x.Brand).Distinct().OrderBy(x => x).ToList();
 
-           // if (distinctBrands.Count > 0)
+            // if (distinctBrands.Count > 0)
             {
                 distinctBrands.Remove(Const.SAINSBURYS);
                 distinctBrands.Insert(0, Const.SAINSBURYS);
@@ -3112,7 +3112,7 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
 
                             if (company.Equals(SainsburysCompanyName, StringComparison.InvariantCultureIgnoreCase))
                             {
-                                if (!result.SainsburysPrices.ContainsKey(fuelTypeId))  result.SainsburysPrices.Add(fuelTypeId, newFuel.Average);
+                                if (!result.SainsburysPrices.ContainsKey(fuelTypeId)) result.SainsburysPrices.Add(fuelTypeId, newFuel.Average);
                             }
                         }
                     }
@@ -3126,7 +3126,7 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
             return result;
         }
 
-        public PriceMovementReportViewModel GetReportPriceMovement(string brandName, DateTime fromDt, DateTime toDt, int fuelTypeId,string siteName)
+        public PriceMovementReportViewModel GetReportPriceMovement(string brandName, DateTime fromDt, DateTime toDt, int fuelTypeId, string siteName)
         {
             var retval = new PriceMovementReportViewModel();
 
@@ -3143,8 +3143,8 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
                     ? GetSitesWithEmailsAndPrices(fromDt, toDt).ToList()
                     : GetBrandWithDailyPricesAsPrices(brandName, fromDt, toDt).ToList();
 
-                var sortedSitesWithPrices = siteName.Trim() == "empty" 
-                ? sitesWithPrices.OrderBy(x => x.SiteName) 
+                var sortedSitesWithPrices = siteName.Trim() == "empty"
+                ? sitesWithPrices.OrderBy(x => x.SiteName)
                 : sitesWithPrices.Where(x => x.SiteName.ToUpper().Trim().Contains(siteName.ToUpper().Trim())).OrderBy(x => x.SiteName);
 
                 foreach (var s in sortedSitesWithPrices)
@@ -3171,7 +3171,7 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
                 }
             });
             task.Wait();
-            
+
             return retval;
         }
 
@@ -3183,7 +3183,7 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
             var sortedDays = dataItems.OrderBy(x => x.PriceDate);
             var lastPrice = 0;
 
-            foreach(var day in sortedDays)
+            foreach (var day in sortedDays)
             {
                 var fuelPrice = day.FuelPrices.FirstOrDefault(x => x.FuelTypeId == (int)fuelType);
                 if (fuelPrice == null)
@@ -3317,7 +3317,7 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
             try
             {
                 ExcludeBrands brand = _context.ExcludeBrands.ToList().Find(x => x.BrandName == strBrandName);
-               _context.ExcludeBrands.Remove(brand);
+                _context.ExcludeBrands.Remove(brand);
                 var returnval = _context.SaveChanges();
                 return returnval != null;
             }
@@ -3351,7 +3351,7 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
                 }
             }
             int nRet = _context.SaveChanges();
-            
+
             return nRet > 0;
         }
 
@@ -3583,7 +3583,7 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
 
         public bool DataCleanseFileUploads(int daysAgo, string fileUploadPath)
         {
-            var minDateTime = daysAgo == 0 
+            var minDateTime = daysAgo == 0
                 ? DateTime.Now.Date.AddDays(1) // Delete ALL files
                 : DateTime.Now.Date.AddDays(0 - daysAgo);
 
@@ -3597,7 +3597,7 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
 
             var ids = new List<int>();
 
-            foreach(var file in oldFileUploads)
+            foreach (var file in oldFileUploads)
             {
                 try
                 {
@@ -3998,7 +3998,7 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
             return _context.UpsertWinServiceSchedule(model);
         }
 
-        public void AddWinServiceEventLog(int winServiceScheduleId, WinServiceEventStatus eventStatus, string message, string exception="")
+        public void AddWinServiceEventLog(int winServiceScheduleId, WinServiceEventStatus eventStatus, string message, string exception = "")
         {
             _context.AddWinServiceEventLog(winServiceScheduleId, eventStatus, message, exception);
         }
@@ -4338,6 +4338,11 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
         public void ProcessSitePricing(int siteId, DateTime forDate, int fileUploadId, int maxDriveTime)
         {
             _context.ProcessSitePricing(siteId, forDate, fileUploadId, maxDriveTime);
+        }
+
+        public void ProcessSitePricingBatch(DateTime forDate, int fileUploadId, int maxDriveTime, string siteIds)
+        {
+            _context.ProcessSitePricingBatch(forDate, fileUploadId, maxDriveTime, siteIds);
         }
 
         #region private methods

@@ -229,6 +229,7 @@
     <Build Include="dbo\Functions\Table Functions\tf_FindCheapestPrice.sql" />
     <Build Include="dbo\Stored Procedures\spProcessSitePricing.sql" />
     <Build Include="dbo\Tables\PriceFlow.sql" />
+    <Build Include="dbo\Stored Procedures\spProcessSitePricingBatch.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Scripts\PostDeployment\Script.PostDeployment.sql" />

@@ -690,5 +690,18 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             };
             DapperHelper.Execute(this, sprocName, parameters);
         }
+
+        internal void ProcessSitePricingBatch(DateTime forDate, int fileUploadId, int maxDriveTime, string siteIds)
+        {
+            const string sprocName = "spProcessSitePricingBatch";
+            var parameters = new
+            {
+                @ForDate = forDate,
+                @FileUploadId = fileUploadId,
+                @MaxDriveTime = maxDriveTime,
+                @SiteIds = siteIds
+            };
+            DapperHelper.Execute(this, sprocName, parameters);
+        }
     }
 }
