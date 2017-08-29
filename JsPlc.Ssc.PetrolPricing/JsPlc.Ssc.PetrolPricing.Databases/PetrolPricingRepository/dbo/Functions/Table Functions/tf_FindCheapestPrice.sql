@@ -211,7 +211,7 @@ BEGIN
 							AND
 							FuelTypeId = @FuelTypeId
 							AND
-							DateOfPrice = @StartOfToday
+							DateOfPrice = @StartOfYesterday
 						ORDER BY
 							DateOfPrice DESC
 					)
@@ -378,7 +378,6 @@ BEGIN
 	--select * from dbo.Site where Id = @SiteId
 	--SELECT * FROM @Result
 	--SELECT * FROM dbo.Site where Id = @Cheapest_CompetitorId
-	--select @PriceStuntFreeze [@PriceStuntFreeze]
 	----DEBUG:END
 
 	RETURN 
