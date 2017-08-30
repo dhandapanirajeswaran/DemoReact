@@ -8,3 +8,6 @@
 	[DailyPriceId] [int] NULL,
 	[LatestCompPriceId] [int] NULL
 )
+GO
+
+CREATE UNIQUE INDEX [IX_CompetitorPrice_SiteFuelDate] ON [dbo].[CompetitorPrice] ([SiteId], [FuelTypeId], [DateOfPrice])
