@@ -1,5 +1,5 @@
-﻿define(["jquery", "waiter", "notify", "text!App/HistoricSitePrices.html"],
-    function ($, waiter, notify, modalHtml) {
+﻿define(["jquery", "waiter", "notify", "PriceReasons", "text!App/HistoricSitePrices.html"],
+    function ($, waiter, notify, priceReasons, modalHtml) {
         "use strict";
 
         var modal = $(modalHtml),
@@ -15,7 +15,7 @@
             'Sat'
         ];
 
-        function show(siteItem, data) {
+        function show(siteItem, data, today) {
             modal.modal('show');
             modal.find('.site-name').text(siteItem.StoreName);
             var tbody = modal.find('tbody'),
@@ -27,22 +27,26 @@
                 item,
                 colClass,
                 rowClass,
-                day;
+                day,
+                ddmmyyyy;
 
             rows.remove();
+
             while (index < data.length) {
                 day = readJsonDate(data[index].PriceDate);
-                rowClass = isWeekend(day) ? 'row-weekend' : 'row-weekday';
+                ddmmyyyy = formatDateDDMMYYYY(day),
+                rowClass = (isWeekend(day) ? 'row-weekend' : 'row-weekday')
+                    + (ddmmyyyy == today ? ' row-today' : '');
 
                 row = $('<tr class="' + rowClass + '">');
                 $('<td>').text(formatDateWeekDay(day)).appendTo(row);
-                $('<td>').text(formatDateDDMMYYYY(day)).appendTo(row);
+                $('<td>').text(ddmmyyyy).appendTo(row);
                 for (j = 0; j < 3; j++) {
                     colClass = j == 1 ? 'alt-col' : '';
                     item = data[index];
                     if (item == undefined)
-                        item = { TodayPrice: '', PriceSource: '' };
-                    $('<td class="' + colClass + '">').html(formatPrice(item.TodayPrice)).appendTo(row);
+                        item = { TodayPrice: '', PriceSource: '', PriceReasonFlags: 0 };
+                    $('<td class="' + colClass + '">').html(formatPrice(item.TodayPrice, item.PriceReasonFlags)).appendTo(row);
                     $('<td class="' + colClass + '">').html(item.PriceSource).appendTo(row);
                     index++;
                 }
@@ -52,14 +56,13 @@
             modal.find('.historic-price-scroller').scrollTop(0);
         };
 
-        function formatPrice(price) {
+        function formatPrice(price, priceReasonFlags) {
             if (price == '' || price == 0)
                 return '&mdash;';
             var val = (price / 10).toFixed(1),
                 parts = val.split('.');
 
-            return '<big>' + parts[0] + '</big>.' + parts[1];
-
+            return '<big data-infotip="' + priceReasons.simpleInfotip(priceReasonFlags) + '">' + parts[0] + '</big>.' + parts[1];
         };
 
         function readJsonDate(date) {

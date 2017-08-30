@@ -1474,6 +1474,14 @@ optgroup > option {
     background: #ded;
 }
 
+#historicSitePricesPopup .row-today {
+    color: #000;
+    background: #ffd77f;
+}
+#historicSitePricesPopup .row-today .alt-col {
+    background: #efc76f;
+}
+
 #historicSitePricesPopup .historic-price-scroller {
     max-height: 32em;
     overflow: auto;

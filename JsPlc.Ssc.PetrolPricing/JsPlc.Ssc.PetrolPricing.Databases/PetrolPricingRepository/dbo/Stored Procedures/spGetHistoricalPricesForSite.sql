@@ -3,6 +3,7 @@
 	@StartDate DATE,
 	@EndDate DATE
 AS
+BEGIN
 	SET NOCOUNT ON;
 
 ----DEBUG:START
@@ -31,17 +32,19 @@ AS
 			@SiteId [SiteId],
 			hfp.FuelTypeId [FuelTypeId],
 			hfp.TodayPrice [TodayPrice],
-			PriceSource [PriceSource]
+			PriceSource [PriceSource],
+			hfp.PriceReasonFlags [PriceReasonFlags]
 		FROM
 			DateRange dr
 			CROSS APPLY dbo.tf_GetHistoricalSiteFuelPricesForDay(dr.TheDate, @SiteId) hfp
 	)
 	SELECT
-		dr.TheDate [PriceDate],
+		DATEADD(DAY, 1, dr.TheDate) [PriceDate],
 		@SiteId [SiteId],
 		ft.FuelTypeId [FuelTypeId],
 		COALESCE(hp.TodayPrice, 0) [TodayPrice],
-		COALESCE(hp.PriceSource, '') [PriceSource]
+		COALESCE(hp.PriceSource, '') [PriceSource],
+		COALESCE(hp.PriceReasonFlags, 0) [PriceReasonFlags]
 	FROM
 		DateRange dr
 		CROSS APPLY FuelTypes ft
@@ -54,4 +57,5 @@ AS
 			WHEN 1 THEN 3	-- Super-Unleaded (3rd)
 		END ASC
 
-RETURN 0
+	RETURN
+END

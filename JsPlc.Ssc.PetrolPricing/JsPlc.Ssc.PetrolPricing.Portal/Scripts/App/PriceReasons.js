@@ -84,7 +84,7 @@
         };
         descriptions[PriceReasonFlags.NoSuggestedPrice] = { 
             name: 'No Suggested',
-            infotip: '[em]No Suggested[/em]',
+            infotip: '[em]No Suggested Price[/em]',
             text: 'No Suggested price' 
         };
 
@@ -107,6 +107,10 @@
         function getReasonFromFlags(flags, prop) {
             var reasons = [],
                 flag;
+
+            if (flags == 0)
+                flags = PriceReasonFlags.NoSuggestedPrice;
+
             for (flag in descriptions) {
                 if ((flags & Number(flag)))
                     reasons.push(descriptions[flag][prop]);

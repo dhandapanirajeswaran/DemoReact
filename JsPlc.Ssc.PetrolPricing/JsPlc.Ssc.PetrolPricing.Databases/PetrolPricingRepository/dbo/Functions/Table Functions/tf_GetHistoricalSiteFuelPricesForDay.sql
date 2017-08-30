@@ -9,10 +9,15 @@ RETURNS
 	SiteId INT,
 	FuelTypeId INT,
 	TodayPrice INT,
-	PriceSource VARCHAR(20)
+	PriceSource VARCHAR(20),
+	PriceReasonFlags INT
 )
 AS
 BEGIN
+
+	-- Constants
+	DECLARE @PriceReasonFlags_ManualOverride INT = 0x00004000
+
 	;WITH SiteFuelCombos AS (
 		SELECT
 			ids.Id [SiteId],
@@ -34,7 +39,11 @@ BEGIN
 			WHEN sp.OverriddenPrice > 0 THEN 'Override'
 			WHEN sp.SuggestedPrice > 0 THEN 'Suggested'
 			ELSE ''
-		END [PriceSource]
+		END [PriceSource],
+		CASE
+			WHEN sp.OverriddenPrice > 0 THEN @PriceReasonFlags_ManualOverride
+			ELSE sp.PriceReasonFlags
+		END [PriceReasonFlags]
 	FROM
 		SiteFuelCombos sfc
 		LEFT JOIN dbo.SitePrice sp ON sp.SiteId = sfc.SiteId AND sp.FuelTypeId = sfc.FuelTypeId AND DateOfCalc = @ForDate

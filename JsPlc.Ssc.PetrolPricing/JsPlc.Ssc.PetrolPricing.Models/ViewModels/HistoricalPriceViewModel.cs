@@ -1,4 +1,5 @@
-﻿using System;
+﻿using JsPlc.Ssc.PetrolPricing.Models.Enums;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,5 +14,6 @@ namespace JsPlc.Ssc.PetrolPricing.Models.ViewModels
         public int FuelTypeId { get; set; } = 0;
         public int TodayPrice { get; set; } = 0;
         public string PriceSource { get; set; } = "";
+        public PriceReasonFlags PriceReasonFlags { get; set; } = PriceReasonFlags.None;
     }
 }
