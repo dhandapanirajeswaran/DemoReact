@@ -477,6 +477,7 @@ VALUES (1, 0x00000001, 'Cheapest price Found')
 		,(12, 0x00000800, 'No Suggested Price')
 		,(13, 0x00001000, 'Price Stunt Freeze')
 		,(14, 0x00002000, 'Latest JS Price')
+		,(15, 0x00004000, 'Manual Price Override')
 
 --
 -- look Site Grocer and ExcludedBrand attributes
