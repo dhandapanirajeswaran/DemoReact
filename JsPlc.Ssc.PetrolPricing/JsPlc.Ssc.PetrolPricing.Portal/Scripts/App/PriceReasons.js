@@ -20,7 +20,8 @@
             NoSuggestedPrice: 0x00000800,
 
             PriceStuntFreeze: 0x00001000,
-            LatestJSPrice: 0x00002000
+            LatestJSPrice: 0x00002000,
+            ManualOverride: 0x00004000
         };
 
         var descriptions = {}
@@ -96,6 +97,11 @@
             name: 'Latest JS', 
             infotip: '[em]Latest JS[/em]',
             text: 'Latest JS Price' 
+        };
+        descriptions[PriceReasonFlags.ManualOverride] = {
+            name: 'Override',
+            infotip: '[em]Manual Price Override[/em]',
+            text: 'Manual Override'
         };
 
         function getReasonFromFlags(flags, prop) {

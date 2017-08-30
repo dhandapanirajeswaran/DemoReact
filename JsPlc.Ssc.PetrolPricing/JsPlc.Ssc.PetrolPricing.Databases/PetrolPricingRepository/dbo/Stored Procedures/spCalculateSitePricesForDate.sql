@@ -148,7 +148,10 @@ SELECT
 		WHEN sfc.PriceMatchType = @PriceMatchType_MatchCompetitorPrice THEN sfc.MatchCompetitorMarkup
 		ELSE 0
 	END MatchCompetitorMarkup,
-	COALESCE(today.PriceReasonFlags, 0) [TodayPriceReasonFlags],
+	CASE 
+		WHEN today.OverriddenPrice > 0 THEN 0x00004000
+		ELSE COALESCE(today.PriceReasonFlags, 0)
+	END [TodayPriceReasonFlags],
 	COALESCE(tomorrow.PriceReasonFlags, 0) [TomorrowPriceReasonFlags],
 	tomorrow.DriveTimeMarkup [DriveTimeMarkup],
 	tomorrow.CompetitorCount [CompetitorCount],

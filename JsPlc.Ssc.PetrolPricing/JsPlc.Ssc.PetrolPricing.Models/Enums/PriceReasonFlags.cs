@@ -31,6 +31,7 @@ namespace JsPlc.Ssc.PetrolPricing.Models.Enums
 
         // bits 12-5
         PriceStuntFreeze = 0x00001000,
-        LatestJSPrice = 0x00002000
+        LatestJSPrice = 0x00002000,
+        ManualOverride = 0x00004000
     }
 }
