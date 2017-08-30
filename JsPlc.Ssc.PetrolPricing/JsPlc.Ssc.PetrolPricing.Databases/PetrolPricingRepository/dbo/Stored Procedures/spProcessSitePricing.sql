@@ -9,8 +9,8 @@ BEGIN
 
 ----DEBUG:START
 --DECLARE @SiteId INT = 6164
---DECLARE @ForDate DATETIME = '2017-08-14 12:30:00'
---DECLARE @FileUploadId INT = 5
+--DECLARE @ForDate DATETIME = '2017-08-16 12:30:00'
+--DECLARE @FileUploadId INT = 4
 --DECLARE @MaxDriveTime INT = 25
 ----DEBUG:END
 
@@ -19,6 +19,9 @@ BEGIN
 	--
 	DECLARE @PriceReasonFlags_BasedOnUnleaded INT = 0x00000080
 
+	DECLARE @FuelType_SuperUnleaded INT = 1
+	DECLARE @FuelType_Unleaded INT = 2
+	DECLARE @FuelType_Diesel INT = 6
 
 	DECLARE @SuperUnleadedMarkup INT;
 	SELECT TOP 1
@@ -32,7 +35,7 @@ BEGIN
 			ft.Id [FuelTypeId]
 		FROM
 			dbo.Site st
-			CROSS APPLY (SELECT Id FROM dbo.FuelType WHERE Id IN (2, 6)) ft -- NOTE: Unleaded and Diesel ONLY
+			CROSS APPLY (SELECT Id FROM dbo.FuelType WHERE Id IN (@FuelType_Unleaded, @FuelType_Diesel)) ft -- NOTE: Unleaded and Diesel ONLY
 		WHERE
 			st.Id = @SiteId
 	),
@@ -47,7 +50,13 @@ BEGIN
 				chp.Markup,
 				chp.CompetitorId,
 				chp.IsTrialPrice,
-				chp.PriceReasonFlags
+				chp.PriceReasonFlags,
+				chp.DriveTimeMarkup,
+				chp.CompetitorCount,
+				chp.CompetitorPriceCount,
+				chp.GrocerCount,
+				chp.GrocerPriceCount,
+				chp.DriveTime
 			FROM
 				SiteFuelsCombo sfc
 				CROSS APPLY dbo.tf_FindCheapestPrice(sfc.SiteId, sfc.FuelTypeId, @ForDate, @FileUploadId, @MaxDriveTime) chp
@@ -64,14 +73,19 @@ BEGIN
 			cud.Markup,
 			cud.CompetitorId,
 			cud.IsTrialPrice,
-			cud.PriceReasonFlags
+			cud.PriceReasonFlags,
+			cud.DriveTimeMarkup,
+			cud.CompetitorCount,
+			cud.CompetitorPriceCount,
+			cud.GrocerCount,
+			cud.GrocerPriceCount
 		FROM 
 			CheapestUnleadedAndDiesel cud
 		UNION ALL
 		-- NOTE: Super-Unleaded = Unleaded + Markup
 		SELECT
 			unleaded.SiteId,
-			1 [FuelTypeId], -- Super-Unleaded
+			@FuelType_SuperUnleaded [FuelTypeId], -- Super-Unleaded
 			unleaded.DateOfCalc,
 			unleaded.DateOfPrice,
 			CASE 
@@ -83,13 +97,17 @@ BEGIN
 			unleaded.Markup,
 			unleaded.CompetitorId,
 			unleaded.IsTrialPrice,
-			unleaded.PriceReasonFlags | @PriceReasonFlags_BasedOnUnleaded
+			unleaded.PriceReasonFlags | @PriceReasonFlags_BasedOnUnleaded,
+			dbo.fn_GetDriveTimePence(@FuelType_SuperUnleaded, unleaded.DriveTime), -- NOTE: Super-Unleaded DriveTime markup
+			unleaded.CompetitorCount,
+			unleaded.CompetitorPriceCount,
+			unleaded.GrocerCount,
+			unleaded.GrocerPriceCount
 		FROM 
 			CheapestUnleadedAndDiesel unleaded
 		WHERE
-			unleaded.FuelTypeId = 2
+			unleaded.FuelTypeId = @FuelType_Unleaded -- NOTE: base price on UNLEADED
 	)
-
 	MERGE
 		dbo.SitePrice AS target
 		USING (
@@ -103,7 +121,12 @@ BEGIN
 				chp.Markup,
 				chp.CompetitorId,
 				chp.IsTrialPrice,
-				chp.PriceReasonFlags
+				chp.PriceReasonFlags,
+				chp.DriveTimeMarkup,
+				chp.CompetitorCount,
+				chp.CompetitorPriceCount,
+				chp.GrocerCount,
+				chp.GrocerPriceCount
 			FROM
 				CheapestAllFuelPrices chp
 		) AS source (
@@ -116,7 +139,12 @@ BEGIN
 				Markup,
 				CompetitorId,
 				IsTrialPrice,
-				PriceReasonFlags
+				PriceReasonFlags,
+				DriveTimeMarkup,
+				CompetitorCount,
+				CompetitorPriceCount,
+				GrocerCount,
+				GrocerPriceCount
 		)
 		ON (target.SiteId = source.SiteId AND target.FuelTypeId = source.FuelTypeId AND target.DateOfCalc = source.DateOfCalc)
 		WHEN MATCHED THEN
@@ -127,9 +155,14 @@ BEGIN
 				target.Markup = source.Markup,
 				target.CompetitorId = source.CompetitorId,
 				target.IsTrailPrice = source.IsTrialPrice,
-				target.PriceReasonFlags = source.PriceReasonFlags
+				target.PriceReasonFlags = source.PriceReasonFlags,
+				target.DriveTimeMarkup = source.DriveTimeMarkup,
+				target.CompetitorCount = source.CompetitorCount,
+				target.CompetitorPriceCount = source.CompetitorPriceCount,
+				target.GrocerCount = source.GrocerCount,
+				target.GrocerPriceCount = source.GrocerPriceCount
 		WHEN NOT MATCHED BY target THEN
-			INSERT (SiteId, FuelTypeId, DateOfCalc, DateOfPrice, UploadId, EffDate, SuggestedPrice, OverriddenPrice, CompetitorId, Markup, IsTrailPrice, PriceReasonFlags)
+			INSERT (SiteId, FuelTypeId, DateOfCalc, DateOfPrice, UploadId, EffDate, SuggestedPrice, OverriddenPrice, CompetitorId, Markup, IsTrailPrice, PriceReasonFlags, DriveTimeMarkup, CompetitorCount, CompetitorPriceCount, GrocerCount, GrocerPriceCount)
 			VALUES (
 				source.SiteId,
 				source.FuelTypeId,
@@ -142,7 +175,12 @@ BEGIN
 				source.CompetitorId,
 				source.Markup,
 				source.IsTrialPrice,
-				source.PriceReasonFlags
+				source.PriceReasonFlags,
+				source.DriveTimeMarkup,
+				source.CompetitorCount,
+				source.CompetitorPriceCount,
+				source.GrocerCount,
+				source.GrocerPriceCount
 			);
 
 END

@@ -149,7 +149,12 @@ SELECT
 		ELSE 0
 	END MatchCompetitorMarkup,
 	COALESCE(today.PriceReasonFlags, 0) [TodayPriceReasonFlags],
-	COALESCE(tomorrow.PriceReasonFlags, 0) [TomorrowPriceReasonFlags]
+	COALESCE(tomorrow.PriceReasonFlags, 0) [TomorrowPriceReasonFlags],
+	tomorrow.DriveTimeMarkup [DriveTimeMarkup],
+	tomorrow.CompetitorCount [CompetitorCount],
+	tomorrow.CompetitorPriceCount [CompetitorPriceCount],
+	tomorrow.GrocerCount  [GrocerCount],
+	tomorrow.GrocerPriceCount [GrocerPriceCount]
 FROM 
 	SiteFuelCombos sfc
 	INNER JOIN dbo.Site st ON st.Id = sfc.SiteId

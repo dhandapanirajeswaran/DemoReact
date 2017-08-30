@@ -9,9 +9,9 @@
 RETURNS 
 @Result TABLE 
 (
-	SiteId INT,
-	FuelTypeId INT,
-	DateOfCalc DATE,
+	SiteId INT NOT NULL,
+	FuelTypeId INT NOT NULL,
+	DateOfCalc DATE NOT NULL,
 	DateOfPrice DATE,
 	SuggestedPrice INT,
 	UploadId INT,
@@ -19,7 +19,13 @@ RETURNS
 	CompetitorId INT,
 	IsTrialPrice BIT,
 	IsTodayPrice BIT,
-	PriceReasonFlags INT
+	PriceReasonFlags INT,
+	DriveTimeMarkup INT,
+	CompetitorCount INT,
+	CompetitorPriceCount INT,
+	GrocerCount INT,
+	GrocerPriceCount INT,
+	DriveTime REAL
 )
 AS
 BEGIN
@@ -33,9 +39,9 @@ BEGIN
 
 --DECLARE @Result TABLE 
 --(
---	SiteId INT,
---	FuelTypeId INT,
---	DateOfCalc DATE,
+--	SiteId INT NOT NULL,
+--	FuelTypeId INT NOT NULL,
+--	DateOfCalc DATE NOT NULL,
 --	DateOfPrice DATE,
 --	SuggestedPrice INT,
 --	UploadId INT,
@@ -43,7 +49,13 @@ BEGIN
 --	CompetitorId INT,
 --	IsTrialPrice BIT,
 --	IsTodayPrice BIT,
---	PriceReasonFlags INT
+--	PriceReasonFlags INT,
+--	DriveTimeMarkup INT,
+--	CompetitorCount INT,
+--	CompetitorPriceCount INT,
+--	GrocerCount INT,
+--	GrocerPriceCount INT,
+--  DriveTime REAL
 --)
 ----DEBUG:END
 
@@ -102,6 +114,12 @@ BEGIN
 	DECLARE @Cheapest_IsTrialPrice BIT = 0
 	DECLARE @Cheapest_IsTodayPrice BIT = 0
 	DECLARE @Cheapest_PriceReasonFlags INT = 0
+	DECLARE @Cheapest_DriveTimeMarkup INT = 0
+	DECLARE @Cheapest_CompetitorCount INT = 0
+	DECLARE @Cheapest_CompetitorPriceCount INT = 0
+	DECLARE @Cheapest_GrocerCount INT = 0
+	DECLARE @Cheapest_GrocerPriceCount INT = 0
+	DECLARE @Cheapest_DriveTime REAL = 0
 
 	DECLARE @MinPriceFound INT = NULL
 	DECLARE @MinPriceCompetitorId INT = NULL
@@ -398,8 +416,31 @@ BEGIN
 					END
 				END
 			END
-
 		END
+
+
+		-- lookup Drive Time markup
+		IF @Cheapest_CompetitorId > 0
+		BEGIN
+			SELECT TOP 1 
+				@Cheapest_DriveTimeMarkup = dbo.fn_GetDriveTimePence(@FuelTypeId, stc.DriveTime),
+				@Cheapest_DriveTime = stc.DriveTime
+			FROM
+				dbo.SiteToCompetitor stc
+			WHERE
+				stc.SiteId = @SiteId
+				AND
+				stc.CompetitorId = @Cheapest_CompetitorId
+		END
+
+		-- lookup Nearby Competitor Data % counts
+		SELECT
+			@Cheapest_CompetitorCount = ncd.CompetitorCount,
+			@Cheapest_CompetitorPriceCount = ncd.CompetitorPriceCount,
+			@Cheapest_GrocerCount = ncd.GrocerCount,
+			@Cheapest_GrocerPriceCount = ncd.GrocerPriceCount
+		FROM
+			dbo.tf_NearbyCompetitorDataSummaryForSiteFuel(@ForDate, @MaxDriveTime, @SiteId, @FuelTypeId) ncd
 	END
 
 	--
@@ -417,7 +458,13 @@ BEGIN
 			@Cheapest_CompetitorId,
 			@Cheapest_IsTrialPrice,
 			@Cheapest_IsTodayPrice,
-			@Cheapest_PriceReasonFlags
+			@Cheapest_PriceReasonFlags,
+			@Cheapest_DriveTimeMarkup,
+			@Cheapest_CompetitorCount,
+			@Cheapest_CompetitorPriceCount,
+			@Cheapest_GrocerCount,
+			@Cheapest_GrocerPriceCount,
+			COALESCE(@Cheapest_DriveTime, 0.0)
 		)
 	
 	----DEBUG:START

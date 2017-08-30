@@ -16,7 +16,7 @@ AS
 BEGIN
 
 ----DEBUG:START
---DECLARE	@ForDate DATE = '2017-08-16'
+--DECLARE	@ForDate DATE = '2017-08-14'
 --DECLARE	@DriveTime INT = 25
 --DECLARE	@SiteId INT = 6164
 --DECLARE	@FuelTypeId INT = 2
@@ -98,7 +98,7 @@ BEGIN
 				FROM
 					dbo.FileUpload fu
 				WHERE
-					fu.StatusId = @ImportProcessStatus_Success
+					fu.StatusId IN (5, 10, 11)
 					AND
 					fu.UploadDateTime >= @ForDate
 					AND

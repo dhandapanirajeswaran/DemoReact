@@ -40,5 +40,11 @@ namespace JsPlc.Ssc.PetrolPricing.Models
         public bool IsTrailPrice { get; set; } // if true, then trial price has been selected 
 
         public PriceReasonFlags  PriceReasonFlags { get; set; }
+
+        public int DriveTimeMarkup { get; set; }
+        public int CompetitorCount { get; set; }
+        public int CompetitorPriceCount { get; set; }
+        public int GrocerCount { get; set; }
+        public int GrocerPriceCount { get; set; }
     }
 }

@@ -553,16 +553,13 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
                 var maxCompetitorDriveTime = 25; // 25 mins for ALL competitors (not just Grocers)
 
-                SetSiteCompetitorPriceInformation(forDate, dbList, maxCompetitorDriveTime);
-
                 _logger.Debug("Started: AddFuelPricesRowsForSites");
-                AddFuelPricesRowsForSites(forDate, dbList, pricesForCalc);
+                AddFuelPricesRowsForSites(forDate, dbList);
                 _logger.Debug("Finished: AddFuelPricesRowsForSites");
 
-                var systemSettings = _context.SystemSettings.FirstOrDefault();
+                SetSiteCompetitorPriceInformation(forDate, dbList, maxCompetitorDriveTime);
 
-                // Apply the Grocer, Decimal Rounding and Price Variance rules
-                ApplyGrocerRoundingAndPriceVarianceRules(forDate, dbList, nearbyGrocerStatuses, systemSettings);
+                var systemSettings = _context.SystemSettings.FirstOrDefault();
 
                 // using test (NON-LIVE) email addresses ?
                 if (systemSettings.EnableSiteEmails == false)
@@ -588,94 +585,6 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             }
         }
 
-        private void ApplyGrocerRoundingAndPriceVarianceRules(DateTime forDate,
-            List<SitePriceViewModel> dbList,
-            IEnumerable<NearbyGrocerPriceSiteStatus> nearbyGrocerStatuses,
-            SystemSettings systemSettings
-            )
-        {
-            // historical data ?
-            if (forDate.Date != DateTime.Now.Date)
-                return;
-
-            foreach (var site in dbList)
-            {
-                var siteGrocer = nearbyGrocerStatuses.FirstOrDefault(x => x.SiteId == site.SiteId);
-
-                var wasUnleadedSnappedBackToTodayPrice = false;
-
-                foreach (var siteFuel in site.FuelPrices)
-                {
-                    var grocerStatus = NearbyGrocerStatuses.None;
-                    if (siteGrocer != null) {
-                        if (siteFuel.FuelTypeId == (int)FuelTypeItem.Unleaded)
-                            grocerStatus = siteGrocer.Unleaded;
-                        else if (siteFuel.FuelTypeId == (int)FuelTypeItem.Diesel)
-                            grocerStatus = siteGrocer.Diesel;
-                        else if (siteFuel.FuelTypeId == (int)FuelTypeItem.Super_Unleaded)
-                            grocerStatus = siteGrocer.SuperUnleaded;
-                    }
-
-                    var todayPrice = siteFuel.TodayPrice.HasValue ? siteFuel.TodayPrice.Value : 0;
-                    var autoPrice = siteFuel.AutoPrice.HasValue ? siteFuel.AutoPrice.Value : 0;
-
-                    if (todayPrice == 0 || autoPrice == 0)
-                        continue;
-
-                    // Grocers but incomplete data ?
-                    if (grocerStatus.HasFlag(NearbyGrocerStatuses.HasNearbyGrocers) && !grocerStatus.HasFlag(NearbyGrocerStatuses.AllGrocersHavePriceData))
-                    {
-                        // are we higher than cheapest competitor ?
-                        if (autoPrice > todayPrice)
-                        {
-                            // use today's price
-                            autoPrice = todayPrice;
-                            if (siteFuel.FuelTypeId == (int)FuelTypeItem.Unleaded)
-                                wasUnleadedSnappedBackToTodayPrice = true;
-                        }
-                    }
-
-                    // apply decimal rounding (if any)
-                    if (systemSettings.DecimalRounding != -1)
-                    {
-                        autoPrice = (int)(autoPrice / 10) * 10 + systemSettings.DecimalRounding;
-                    }
-
-                    var diff = autoPrice - todayPrice;
-                    if (Math.Abs(diff) <= systemSettings.PriceChangeVarianceThreshold)
-                    {
-                        // within Price Variance, so use today's price
-                        autoPrice = todayPrice;
-                        if (siteFuel.FuelTypeId == (int)FuelTypeItem.Unleaded)
-                            wasUnleadedSnappedBackToTodayPrice = true;
-                    }
-
-                    // store auto price and recalculate difference
-                    siteFuel.AutoPrice = (int?)autoPrice;
-                    siteFuel.Difference = (int?)(autoPrice - todayPrice);
-                }
-
-                if (wasUnleadedSnappedBackToTodayPrice)
-                {
-                    var unleaded = site.FuelPrices.FirstOrDefault(x => x.FuelTypeId == (int)FuelTypeItem.Unleaded);
-                    var superUnleaded = site.FuelPrices.FirstOrDefault(x => x.FuelTypeId == (int)FuelTypeItem.Super_Unleaded);
-
-                    if (unleaded != null && superUnleaded != null)
-                    {
-                        superUnleaded.AutoPrice = (int?)unleaded.AutoPrice.Value + systemSettings.SuperUnleadedMarkupPrice;
-
-                        // get Super-Unleaded TodayPrice (if any)
-                        var superTodayPrice = superUnleaded.TodayPrice.HasValue
-                            ? superUnleaded.TodayPrice.Value
-                            : 0;
-
-                        // recalc diff
-                        superUnleaded.Difference = (int?)superUnleaded.AutoPrice - superTodayPrice;
-                    }
-                }
-            }
-        }
-
         private void SetSiteCompetitorPriceInformation(DateTime forDate, List<SitePriceViewModel> sites, int maxGrocerDriveTimeMinutes)
         {
             if (sites == null || !sites.Any())
@@ -683,33 +592,49 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
             var siteIds = sites.Select(x => x.SiteId.ToString()).Aggregate((x, y) => x + "," + y);
 
-            IEnumerable<SiteCompetitorPriceSummaryRowViewModel> priceSummaries = _context.GetCompetitorInfoForSites(forDate, siteIds, maxGrocerDriveTimeMinutes);
-
-            // calculate percentages
-            foreach (var summary in priceSummaries)
-            {
-                summary.CompetitorPricePercent = summary.CompetitorCount == 0
-                    ? 0
-                    : summary.CompetitorPriceCount * 100 / summary.CompetitorCount;
-
-                summary.GrocerPricePercent = summary.GrocerCount == 0
-                    ? 0
-                    : summary.GrocerPriceCount * 100 / summary.GrocerCount;
-            }
-
             // attach each Fuel Summary to each Site
             foreach (var site in sites)
             {
-                var fuelsForSite = priceSummaries.Where(x => x.SiteId == site.SiteId);
-                var unleaded = fuelsForSite.FirstOrDefault(x => x.FuelTypeId == FuelTypeItem.Unleaded);
-                var diesel = fuelsForSite.FirstOrDefault(x => x.FuelTypeId == FuelTypeItem.Diesel);
-                var superUnleaded = fuelsForSite.FirstOrDefault(x => x.FuelTypeId == FuelTypeItem.Super_Unleaded);
+                var unleaded = BuildSitePriceSummaryForFuel(site.SiteId, FuelTypeItem.Unleaded, site.FuelPrices);
+                var diesel = BuildSitePriceSummaryForFuel(site.SiteId, FuelTypeItem.Diesel, site.FuelPrices);
+                var superUnleaded = BuildSitePriceSummaryForFuel(site.SiteId, FuelTypeItem.Super_Unleaded, site.FuelPrices);
 
                 // add in set Order of Unleaded, Diesel, Super-unleaded
                 site.SiteCompetitorsInfo.PriceSummaries.Add(unleaded);
                 site.SiteCompetitorsInfo.PriceSummaries.Add(diesel);
                 site.SiteCompetitorsInfo.PriceSummaries.Add(superUnleaded);
             }
+        }
+
+        private SiteCompetitorPriceSummaryRowViewModel BuildSitePriceSummaryForFuel(int siteId, FuelTypeItem fuelType, IEnumerable<FuelPriceViewModel> fuelprices)
+        {
+            var price = fuelprices.FirstOrDefault(x => x.FuelTypeId == (int)fuelType);
+
+            if (price == null)
+                return new SiteCompetitorPriceSummaryRowViewModel()
+                {
+                    SiteId = siteId,
+                    FuelTypeId = fuelType
+                };
+
+            return new SiteCompetitorPriceSummaryRowViewModel()
+            {
+                SiteId = siteId,
+                FuelTypeId = fuelType,
+                CompetitorCount = price.CompetitorCount,
+                CompetitorPriceCount = price.CompetitorPriceCount,
+                CompetitorPricePercent = CalculatePercent(price.CompetitorPriceCount, price.CompetitorCount),
+                GrocerCount = price.GrocerCount,
+                GrocerPriceCount = price.GrocerPriceCount,
+                GrocerPricePercent = CalculatePercent(price.GrocerPriceCount, price.GrocerCount)
+            };
+        }
+
+        private int CalculatePercent(int part, int total)
+        {
+            return total == 0
+                ? 0
+                : 100 * part / total;
         }
 
         private IEnumerable<NearbyGrocerPriceSiteStatus> GetNearbyGrocerPriceStatus(DateTime forDate, IEnumerable<SitePriceViewModel> sites, int driveTime)
@@ -821,7 +746,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             _context.RunPostLatestCompetitorsFileImportTasks(fileUploadId, uploadDateTime);
         }
 
-        private void AddFuelPricesRowsForSites(DateTime forDate, List<SitePriceViewModel> sites, bool pricesForCalc)
+        private void AddFuelPricesRowsForSites(DateTime forDate, List<SitePriceViewModel> sites)
         {
             if (sites == null || !sites.Any())
                 return;
@@ -830,22 +755,12 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
             var siteIds = sites.Select(x => x.SiteId.ToString()).Aggregate((x, y) => x + "," + y);
 
-            if (pricesForCalc)
-            {
-                DiagnosticLog.StartDebug("AddFuelPricesRowsForSites - Calling SP - pricesForCalc");
 
-                calculatedPrices = _context.GetTodayPricesForCalcPrice(forDate, sites.First().SiteId);
+            DiagnosticLog.StartDebug("AddFuelPricesRowsForSites - Calling SP");
 
-                DiagnosticLog.StartDebug("AddFuelPricesRowsForSites - Finished SP - pricesForCalc");
-            }
-            else
-            {
-                DiagnosticLog.StartDebug("AddFuelPricesRowsForSites - Calling SP");
+            calculatedPrices = _context.CalculateFuelPricesForSitesAndDate(forDate, siteIds);
 
-                calculatedPrices = _context.CalculateFuelPricesForSitesAndDate(forDate, siteIds);
-
-                DiagnosticLog.StartDebug("AddFuelPricesRowsForSites - Finished SP");
-            }
+            DiagnosticLog.StartDebug("AddFuelPricesRowsForSites - Finished SP");
 
             foreach (var site in sites)
             {
@@ -911,200 +826,6 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                 AllFuels = allFuels
             };
             return settings;
-        }
-
-        private void AddSitePriceRow(FuelTypeItem fuelType, Site site, int trialPrice, DateTime forDate,
-            bool doesCatalistFileExist, List<FuelPriceViewModel> list, FuelPriceSettings fuelPriceSettings)
-        {
-            int fuelMarkup = 0;
-            var orgFuelTypeID = fuelType;
-
-            if (fuelType == FuelTypeItem.Super_Unleaded)
-            {
-                fuelType = FuelTypeItem.Unleaded;
-                fuelMarkup = fuelPriceSettings.SuperUnleaded.Markup;
-            }
-
-            var sitePriceData =
-                _context.Set<SitePrice>()
-                    .Where(
-                        x =>
-                            (x.SuggestedPrice > 0 || x.OverriddenPrice > 0)
-                            && x.SiteId == site.Id
-                            && (x.FuelTypeId == (int)fuelType))
-                    .OrderByDescending(item => item.Id)
-                    .FirstOrDefault();
-
-
-            if (sitePriceData != null)
-            {
-                var autoPrice = sitePriceData.SuggestedPrice + fuelMarkup;
-                //autoPrice = SetLastDigitTo9(autoPrice);
-
-                var overridePrice = 0;
-
-                var dieselPriceOverride =
-                    _context.Set<SitePrice>()
-                        .Where(
-                            x =>
-                                x.OverriddenPrice > 0
-                                && x.SiteId == site.Id
-                                && x.FuelTypeId == (int)orgFuelTypeID
-                                && x.DateOfPrice.Day == forDate.Day
-                                && x.DateOfPrice.Month == forDate.Month
-                                && x.DateOfPrice.Year == forDate.Year)
-                        .OrderBy(item => item.Id).FirstOrDefault();
-
-                if (dieselPriceOverride != null)
-                {
-                    overridePrice = dieselPriceOverride.OverriddenPrice;
-                    overridePrice += trialPrice;
-                    //overridePrice = SetLastDigitTo9(overridePrice);
-                }
-
-                //today Price Calculation
-                var todayPriceFromCalculation = GetTodayPrice(fuelType, site, forDate);
-
-                var todayPrice = todayPriceFromCalculation + fuelMarkup;
-                //todayPrice = SetLastDigitTo9(todayPrice);
-
-                var competitorId = sitePriceData.CompetitorId.HasValue ? sitePriceData.CompetitorId.Value : 0;
-                var competitorName = "Unknown";
-                if (competitorId > 0)
-                {
-                    var competitorSite = GetSite(competitorId);
-                    competitorName = string.Format("{0}/{1}", competitorSite.Brand, competitorSite.SiteName);
-                }
-                list.Add(new FuelPriceViewModel
-                {
-                    FuelTypeId = (int)orgFuelTypeID,
-                    AutoPrice = doesCatalistFileExist ? autoPrice : 0,
-                    OverridePrice = overridePrice,
-
-                    TodayPrice = todayPrice,
-                    Markup = sitePriceData.Markup,
-                    CompetitorName = competitorName,
-                    IsTrailPrice = sitePriceData.IsTrailPrice,
-                    CompetitorPriceOffset = site.CompetitorPriceOffset
-                    //  IsBasedOnCompetitor = trailPriceCompetitorId.HasValue
-                });
-            }
-            else
-            {
-                list.Add(new FuelPriceViewModel
-                {
-                    FuelTypeId = (int)orgFuelTypeID,
-                    AutoPrice = 0,
-                    OverridePrice = 0,
-
-                    TodayPrice = 0,
-                    Markup = 0,
-                    CompetitorName = "Unknown",
-                    IsTrailPrice = false,
-                    CompetitorPriceOffset = site.CompetitorPriceOffset
-                    //  IsBasedOnCompetitor = trailPriceCompetitorId.HasValue
-                });
-            }
-        }
-
-        private int SetLastDigitTo9(int value)
-        {
-            return (value / 10) * 10 + 9;
-        }
-
-        private int GetTodayPrice(FuelTypeItem fuelType, Site site, DateTime forDate)
-        {
-            //Latest Price DateTime
-            var latestPrice =
-                _context.LatestPrices.FirstOrDefault(
-                        x => x.PfsNo == site.PfsNo.Value
-                        && x.StoreNo == site.StoreNo.Value
-                        && x.FuelTypeId == (int)fuelType);
-
-            var overridepriceIfAny = _context.Set<SitePrice>()
-                .Where(
-                    x =>
-                        (x.OverriddenPrice > 0)
-                        && x.SiteId == site.Id
-                        && (x.FuelTypeId == (int)fuelType)
-                        )
-                .OrderByDescending(item => item.Id)
-                .FirstOrDefault();
-
-            var todayPriceSortByDate = _context.Set<DailyPrice>()
-                .Where(
-                    x =>
-                        (x.ModalPrice > 0)
-                        && x.CatNo == site.CatNo.Value
-                        && (x.FuelTypeId == (int)fuelType))
-                .OrderByDescending(item => item.Id)
-                .FirstOrDefault();
-
-            FileUpload fileUpload = latestPrice != null
-                ? fileUpload = _context.FileUploads.FirstOrDefault(x => x.Id == latestPrice.UploadId)
-                : null;
-
-            if (todayPriceSortByDate == null && overridepriceIfAny == null && latestPrice != null)
-            {
-                return latestPrice.ModalPrice;
-            }
-            else if (todayPriceSortByDate == null && overridepriceIfAny != null && latestPrice == null)
-            {
-                return overridepriceIfAny.OverriddenPrice;
-            }
-            else if (todayPriceSortByDate != null && overridepriceIfAny == null && latestPrice == null)
-            {
-                return todayPriceSortByDate.ModalPrice;
-            }
-            else if (todayPriceSortByDate != null && overridepriceIfAny != null && latestPrice == null)
-            {
-                return todayPriceSortByDate.DateOfPrice > overridepriceIfAny.DateOfPrice
-                    ? todayPriceSortByDate.ModalPrice
-                    : overridepriceIfAny.OverriddenPrice;
-            }
-            else if (todayPriceSortByDate == null && overridepriceIfAny != null && latestPrice != null)
-            {
-                return fileUpload.UploadDateTime > overridepriceIfAny.DateOfPrice
-                    ? latestPrice.ModalPrice
-                    : overridepriceIfAny.OverriddenPrice;
-            }
-            else if (todayPriceSortByDate != null && overridepriceIfAny == null && latestPrice != null)
-            {
-                return todayPriceSortByDate.DateOfPrice > fileUpload.UploadDateTime
-                    ? todayPriceSortByDate.ModalPrice
-                    : latestPrice.ModalPrice;
-            }
-            else if (todayPriceSortByDate != null && overridepriceIfAny != null && latestPrice != null)
-            {
-                if (todayPriceSortByDate.DateOfPrice > fileUpload.UploadDateTime)
-                {
-                    if (todayPriceSortByDate.DateOfPrice > overridepriceIfAny.DateOfPrice)
-                    {
-                        return todayPriceSortByDate.ModalPrice;
-                    }
-                    else if (fileUpload.UploadDateTime > overridepriceIfAny.DateOfPrice)
-                    {
-                        return latestPrice.ModalPrice;
-                    }
-                    else
-                    {
-                        return overridepriceIfAny.OverriddenPrice;
-                    }
-                }
-                else
-                {
-                    if (fileUpload.UploadDateTime > overridepriceIfAny.DateOfPrice)
-                    {
-                        return latestPrice.ModalPrice;
-                    }
-                    else
-                    {
-                        return overridepriceIfAny.OverriddenPrice;
-                    }
-                }
-
-            }
-            return 0;
         }
 
         private FileUpload GetLastFileUploadForDateAndUploadType(DateTime forDate, FileUploadTypes uploadType)
@@ -2569,44 +2290,6 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
                     var distinctCatNos = dailyPrices.Select(x => x.CatNo).Distinct().ToList();
                     var competitorSites = _context.Sites.Where(x => distinctCatNos.Contains(x.CatNo.Value)).ToList();
                     var distinctBrands = competitorSites.Select(x => x.Brand).Distinct().OrderBy(x => x).ToList();
-
-
-                    /*   #region original code
-
-                       if (useRefactoredCode == false)
-                       {
-                           foreach (var distinctPrice in distinctPrices)
-                           {
-                               var matchingDailyPrices = dailyPrices.Where(x => x.ModalPrice == distinctPrice).ToList();
-                               foreach (var dailyPrice in matchingDailyPrices)
-                               {
-                                   var reportRowItem = result.PricePointReportRows.FirstOrDefault(x => x.Price == distinctPrice);
-                                   if (reportRowItem == null)
-                                   {
-                                       reportRowItem = new PricePointReportRowViewModel
-                                       {
-                                           Price = distinctPrice
-                                       };
-                                       result.PricePointReportRows.Add(reportRowItem);
-                                   }
-
-                                   foreach (var distinctBrand in distinctBrands)
-                                   {
-                                       var b = reportRowItem.PricePointBrands.FirstOrDefault(x => x.Name == distinctBrand);
-                                       if (b == null)
-                                       {
-                                           b = new PricePointBrandViewModel
-                                           {
-                                               Name = distinctBrand
-                                           };
-                                           reportRowItem.PricePointBrands.Add(b);
-                                       }
-                                       b.Count += competitorSites.Count(x => x.Brand == distinctBrand && x.CatNo == dailyPrice.CatNo);                               
-                                   }
-                               }
-                           }
-                       }
-                       #endregion original code*/
 
                     #region new code
 
