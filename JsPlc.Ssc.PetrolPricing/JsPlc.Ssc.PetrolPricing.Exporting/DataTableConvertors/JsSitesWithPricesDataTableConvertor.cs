@@ -78,16 +78,28 @@ namespace JsPlc.Ssc.PetrolPricing.Exporting.DataTableConvertors
 
                 if (fuelPrice != null && fuelPrice.AutoPrice.HasValue)
                 {
-                    priceString = FormatPriceDivideBy10(fuelPrice.AutoPrice);
+                    var autoPrice = fuelPrice.AutoPrice.Value;
+                    var overridePrice = fuelPrice.OverridePrice.HasValue
+                        ? fuelPrice.OverridePrice.Value
+                        : 0;
+                    var todayPrice = fuelPrice.TodayPrice.HasValue
+                        ? fuelPrice.TodayPrice.Value
+                        : 0;
+
+                    var overrideOrAutoPrice = overridePrice > 0
+                        ? overridePrice
+                        : autoPrice;
+
+                    priceString = FormatPriceDivideBy10(overrideOrAutoPrice);
                     var diff = 0;
 
-                    if (fuelPrice.OverridePrice.HasValue && fuelPrice.OverridePrice > 0 && fuelPrice.TodayPrice.HasValue && fuelPrice.TodayPrice > 0)
+                    if (overridePrice > 0 && todayPrice > 0)
                     {
-                        diff = fuelPrice.OverridePrice.Value - fuelPrice.TodayPrice.Value;
+                        diff = overridePrice - todayPrice;
                     }
-                    else if (fuelPrice.AutoPrice.HasValue && fuelPrice.AutoPrice > 0 && fuelPrice.TodayPrice.HasValue && fuelPrice.TodayPrice > 0)
+                    else if (autoPrice > 0 && todayPrice > 0)
                     {
-                        diff = fuelPrice.AutoPrice.Value - fuelPrice.TodayPrice.Value;
+                        diff = autoPrice - todayPrice;
                     }
 
                     if (diff != 0)

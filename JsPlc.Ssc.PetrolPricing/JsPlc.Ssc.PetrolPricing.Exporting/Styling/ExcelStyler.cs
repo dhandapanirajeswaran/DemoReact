@@ -271,6 +271,17 @@ namespace JsPlc.Ssc.PetrolPricing.Exporting.Styling
             var firstDataRow = 3;
             var lastDataRow = 3 + totalRows - 1;
 
+            var viewingDate = DateTime.Parse(worksheet.Cell("A2").Value.ToString());
+            var mergeMessage = String.Format("NOTE: The prices for {0} were calculated on the {1}",
+                viewingDate.AddDays(1).ToString("dd MMM yyyy"),
+                viewingDate.ToString("dd MMM yyyy")
+                );
+
+            worksheet.Cell("J2").Value = mergeMessage;
+            worksheet.Cell("J2").Style.Font.FontColor = XLColor.Red;
+
+            worksheet.Cell("A2").Style.Font.FontColor = XLColor.Red;
+
             new ExcelColumnStyler(worksheet, firstDataRow, lastDataRow)
                 .FormatColumn("A", ExcelStyleFormatters.GeneralIntegerFormatter)
                 .FormatColumn("B", ExcelStyleFormatters.GeneralIntegerFormatter)
