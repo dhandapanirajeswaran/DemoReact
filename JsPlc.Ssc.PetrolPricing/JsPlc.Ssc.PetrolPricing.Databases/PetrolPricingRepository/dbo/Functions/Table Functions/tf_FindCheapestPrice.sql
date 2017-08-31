@@ -31,10 +31,10 @@ AS
 BEGIN
 
 ----DEBUG:START
---DECLARE	@SiteId INT = 9
---DECLARE	@FuelTypeId INT = 2
---DECLARE	@ForDate DATE = '2017-08-14 12:30:00'
---DECLARE	@FileUploadId INT = 3
+--DECLARE	@SiteId INT = 1783
+--DECLARE	@FuelTypeId INT = 6
+--DECLARE	@ForDate DATE = '2017-08-31 12:30:00'
+--DECLARE	@FileUploadId INT = 6
 --DECLARE	@MaxDriveTime INT = 25
 
 --DECLARE @Result TABLE 
@@ -364,17 +364,24 @@ BEGIN
 				WHEN 0x03 THEN @PriceReasonFlags_HasGrocers -- Grocers and Data
 			END
 
+			--
+			-- Incomplete Nearby Grocer data ?
+			--
 			IF @NearbyGrocerStatus = 0x01 -- incomplete Grocers data ?
 			BEGIN
-				IF @Today_Price > 0 AND @Cheapest_SuggestedPrice > @Today_Price
+				-- Is Today Price more expensive than the Cheapest Competitor price (inc drive time markup) ?
+				IF @Today_Price > 0 AND @Today_Price > @Cheapest_SuggestedPrice
 				BEGIN
+					SET @Cheapest_SuggestedPrice = @Cheapest_SuggestedPrice; -- use the Cheapest Competitor price
+				END
+				ELSE
+				BEGIN
+					-- Today Price is cheaper than the Cheapest Competitor price (do NOT move price due to incomplete Grocer data)
 					SET @Cheapest_SuggestedPrice = @Today_Price
 					SET @Cheapest_IsTodayPrice = 1
 					SET @Cheapest_PriceReasonFlags = @Cheapest_PriceReasonFlags | @PriceReasonFlags_TodayPriceSnapBack
 				END
 			END
-
-
 
 			-- handle No Suggested Price
 			IF @Cheapest_SuggestedPrice = 0 AND @Today_Price > 0
@@ -470,6 +477,7 @@ BEGIN
 	----DEBUG:START
 	--select * from dbo.Site where Id = @SiteId
 	--SELECT * FROM @Result
+	--SELECT dbo.fn_GetPriceReasons(PriceReasonFlags) from @Result
 	--SELECT * FROM dbo.Site where Id = @Cheapest_CompetitorId
 	----DEBUG:END
 
