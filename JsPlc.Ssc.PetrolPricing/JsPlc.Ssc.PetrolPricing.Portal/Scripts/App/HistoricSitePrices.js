@@ -18,6 +18,7 @@
         function show(siteItem, data, today) {
             modal.modal('show');
             modal.find('.site-name').text(siteItem.StoreName);
+            modal.find('.view-date').text(today);
             var tbody = modal.find('tbody'),
                 rows = tbody.find('tr'),
                 row,
@@ -28,25 +29,33 @@
                 colClass,
                 rowClass,
                 day,
-                ddmmyyyy;
+                dayCalculated,
+                ddmmyyyy,
+                dateInfotip,
+                dateWeekday;
 
             rows.remove();
 
             while (index < data.length) {
                 day = readJsonDate(data[index].PriceDate);
+                dayCalculated = addDays(-1, day);
                 ddmmyyyy = formatDateDDMMYYYY(day),
                 rowClass = (isWeekend(day) ? 'row-weekend' : 'row-weekday')
                     + (ddmmyyyy == today ? ' row-today' : '');
 
+                dateWeekday = formatDateWeekDay(day);
+
+                dateInfotip = 'Prices for [u]' + dateWeekday + ' ' + ddmmyyyy + '[/u] &mdash; Calculated on [em]' + formatDateDDMMYYYY(dayCalculated) + '[/em]';
+
                 row = $('<tr class="' + rowClass + '">');
-                $('<td>').text(formatDateWeekDay(day)).appendTo(row);
+                $('<td>').text(dateWeekday).appendTo(row);
                 $('<td>').text(ddmmyyyy).appendTo(row);
                 for (j = 0; j < 3; j++) {
                     colClass = j == 1 ? 'alt-col' : '';
                     item = data[index];
                     if (item == undefined)
                         item = { TodayPrice: '', PriceSource: '', PriceReasonFlags: 0 };
-                    $('<td class="' + colClass + '">').html(formatPrice(item.TodayPrice, item.PriceReasonFlags)).appendTo(row);
+                    $('<td class="' + colClass + '">').html(formatPrice(item.TodayPrice, item.PriceReasonFlags, dateInfotip)).appendTo(row);
                     $('<td class="' + colClass + '">').html(item.PriceSource).appendTo(row);
                     index++;
                 }
@@ -56,13 +65,13 @@
             modal.find('.historic-price-scroller').scrollTop(0);
         };
 
-        function formatPrice(price, priceReasonFlags) {
+        function formatPrice(price, priceReasonFlags, dateInfotip) {
             if (price == '' || price == 0)
                 return '&mdash;';
             var val = (price / 10).toFixed(1),
                 parts = val.split('.');
 
-            return '<big data-infotip="' + priceReasons.simpleInfotip(priceReasonFlags) + '">' + parts[0] + '</big>.' + parts[1];
+            return '<span data-infotip="' + dateInfotip + '[br /]' + priceReasons.simpleInfotip(priceReasonFlags) + '"><big>' + parts[0] + '</big>.' + parts[1] + '</span>';
         };
 
         function readJsonDate(date) {
@@ -83,6 +92,10 @@
             if (!date)
                 return '';
             return weekdays[date.getDay()];
+        };
+
+        function addDays(days, date) {
+            return new Date(date.getFullYear(), date.getMonth(), date.getDate() + days, 0, 0, 0, 0);
         };
 
         function formatDateDDMMYYYY(date) {

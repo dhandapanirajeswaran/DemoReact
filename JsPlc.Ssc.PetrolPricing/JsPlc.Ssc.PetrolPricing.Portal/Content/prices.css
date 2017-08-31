@@ -1462,6 +1462,22 @@ optgroup > option {
     left: calc(50% - 15em);
 }
 
+#historicSitePricesPopup .site-name {
+    color: orange;
+}
+
+#historicSitePricesPopup .view-date {
+    margin-left: 2em;
+    color: #000;
+}
+#historicSitePricesPopup .view-date::before {
+    content: "Viewing Date: ";
+    color: #999;
+    font-size: 75%;
+    text-transform: uppercase;
+    font-variant: small-caps;
+}
+
 #historicSitePricesPopup .table .alt-col {
     background-color: #eee;
 }
