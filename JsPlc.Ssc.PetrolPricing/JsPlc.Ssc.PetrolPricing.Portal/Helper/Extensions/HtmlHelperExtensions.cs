@@ -45,5 +45,35 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Helper.Extensions
             var json = Newtonsoft.Json.JsonConvert.SerializeObject(data, Formatting.None);
             return MvcHtmlString.Create(json);
         }
+
+        public static IHtmlString FormatEmailLink(this HtmlHelper helper, string emailAddress)
+        {
+            if (String.IsNullOrEmpty(emailAddress))
+                return MvcHtmlString.Create("unknown");
+
+            var fullname = ExtractFullNameFromEmail(emailAddress);
+
+            var infotip = String.Format("Send an Email to [em]{0}[/em]",
+                emailAddress);
+
+            var html = String.Format("<a target=\"_blank\" href=\"mailto:{0}\" data-infotip=\"{1}\">{2}</a>",
+                emailAddress,
+                infotip,
+                fullname
+                );
+
+            return MvcHtmlString.Create(html);
+        }
+
+        #region private methods
+
+        private static string ExtractFullNameFromEmail(string emailAddress)
+        {
+            return String.IsNullOrEmpty(emailAddress)
+                ? ""
+                : emailAddress.Split('@')[0].Replace('.', ' ');
+        }
+
+        #endregion private methods
     }
 }

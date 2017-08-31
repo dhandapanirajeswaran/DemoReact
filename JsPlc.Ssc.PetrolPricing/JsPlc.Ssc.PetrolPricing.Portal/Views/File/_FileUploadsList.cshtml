@@ -191,7 +191,7 @@
                         }
                 </td>
                 <td class="column-7">
-                    @Html.DisplayFor(modelItem => item.UploadedBy)
+                    @Html.FormatEmailLink(item.UploadedBy)
                 </td>
                 <td class="column-8">
                     <a class="btn btn-primary btn-xs" href="@Url.Action("Details", "File")/@item.Id" data-infotip="View File Upload Details">Details</a>

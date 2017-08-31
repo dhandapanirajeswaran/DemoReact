@@ -20,6 +20,15 @@
     var latestJsPriceDataUpload = Model.RecentFileUploads.Files.FirstOrDefault(x => x.UploadTypeId == 3 && x.ImportStatusId == 10 && x.UploadDateTime.Date == DateTime.Now.Date);
     var hasLatestJsPriceDataToday = latestJsPriceDataUpload != null;
 
+    var viewLatestDailyPricesUrl = Url.Action("Prices", "Sites");
+    var viewLatestDailyPriceDDMMYYY = "n/a";
+
+
+    if (lastDailyPriceDataUpload != null)
+    {
+        viewLatestDailyPricesUrl += "?date=" + lastDailyPriceDataUpload.UploadDateTime.ToString("yyyy-MM-dd");
+        viewLatestDailyPriceDDMMYYY =lastDailyPriceDataUpload.UploadDateTime.ToString("dd/MM/yyyy");
+    }
 }
 
 <link href="~/Content/prices.css" rel="stylesheet" />
@@ -48,7 +57,10 @@
                 if (!hasDailyPriceDataFileForToday)
                 {
                     <div class="banner banner-danger">
-                        <i class="fa fa-calendar"></i> <strong>Daily Price File is outdated</strong>, it was  uploaded by: <strong>@(lastDailyPriceDataUpload.UploadedBy)</strong> &mdash; @Html.FormatFriendlyDateTime(lastDailyPriceDataUpload.UploadDateTime) &mdash; (@Html.FormatFriendlyTimeAgo(lastDailyPriceDataUpload.UploadDateTime)) <a class="btn btn-primary btn-sm pull-right" href="@Url.Action("Upload","File")?UploadType=DailyPriceData" data-infotip="Upload a new [b]Daily Price Data[/b] file"><i class="fa fa-upload"></i> Upload</a>
+                        <i class="fa fa-calendar"></i> <strong>Daily Price File is outdated</strong>, it was  uploaded by: <strong>@(Html.FormatEmailLink(lastDailyPriceDataUpload.UploadedBy))</strong> &mdash; @Html.FormatFriendlyDateTime(lastDailyPriceDataUpload.UploadDateTime) &mdash; (@Html.FormatFriendlyTimeAgo(lastDailyPriceDataUpload.UploadDateTime)) 
+                        
+                        <a class="btn btn-default" href="@(viewLatestDailyPricesUrl)" style="margin-left: 2em;" data-infotip="View the [b]Last Daily Catalist file[/b] Prices[br /] File uploaded on [em]@(lastDailyPriceDataUpload.UploadDateTime.ToString("dd MMM yyyy"))[/em]"><i class="fa fa-gbp"></i> View @(viewLatestDailyPriceDDMMYYY)</a>
+                        <a class="btn btn-primary btn-sm pull-right" href="@Url.Action("Upload","File")?UploadType=DailyPriceData" data-infotip="Upload a new [b]Daily Price Data[/b] file"><i class="fa fa-upload"></i> Upload</a>
                         <input type="hidden" id="hdnDailyPriceFileMissingForToday" value="1" />
                     </div>
                 }

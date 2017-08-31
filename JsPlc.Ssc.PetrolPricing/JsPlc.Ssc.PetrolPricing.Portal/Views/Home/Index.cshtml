@@ -138,7 +138,7 @@
                                 <td>
                                     @if (hasFileUpload)
                                     {
-                                        @row.UploadedBy
+                                        @Html.FormatEmailLink(row.UploadedBy)
                                     }
                                     else
                                     {
