@@ -14,87 +14,95 @@ BEGIN
 --SET NOCOUNT ON;
 --DECLARE	@ForDate DATE = GETDATE()
 --DECLARE	@DriveTime INT = 5
---DECLARE	@SiteId INT = 6164
---DECLARE	@FuelTypeId INT = 2
+--DECLARE	@SiteId INT = 1783
+--DECLARE	@FuelTypeId INT = 6
 ----DEBUG:END
 
 	-- constants
 	DECLARE @HasNearbyGrocer_Flag TINYINT = 0x01; -- site has 1 or more nearby Grocers
 	DECLARE @AllGrocersHavePriceData_Flag TINYINT = 0x02;
 
-	DECLARE @ImportProcessStatus_Success INT = 10
+	DECLARE @StartOfYesterday DATE = DATEADD(DAY, -1, @ForDate)
 
-	DECLARE @ForDateNextDay DATE = DATEADD(DAY, 1, @ForDate);
-	DECLARE @yesterday DATE = DATEADD(DAY, -1, @forDate)
-	DECLARE @yesterdayNextDay DATE = DATEADD(DAY, 1, @yesterday)
+	DECLARE @NearbyGrocersCount INT
+	DECLARE @NearbyCompetitorPriceCount INT
 
-	--
-	-- Find ALL competitor Grocers 
-	--
-	-- conditions:
-	--		(1) within X minutes drive time
-	--		(2) Brand is not excluded
-	--		(3) Competitor site is active
-	--
-	DECLARE @NearbyGrocerSites TABLE (CompetitorSiteId INT PRIMARY KEY, CatNo INT);
-	INSERT INTO @NearbyGrocerSites
+	;WITH NearbyCompetitors AS (
 		SELECT
-			compsite.Id,
-			compsite.CatNo
+			stc.CompetitorId,
+			compsite.IsSainsburysSite
+			-- debug
+			,compsite.SiteName
 		FROM
-			dbo.Site st
-			INNER JOIN dbo.SiteToCompetitor stc ON stc.SiteId = st.Id
+			dbo.SiteToCompetitor stc
 			INNER JOIN dbo.Site compsite ON compsite.Id = stc.CompetitorId
 		WHERE
-			st.Id = @SiteId
+			stc.SiteId = @SiteId
 			AND
-			stc.DriveTime < @DriveTime
+			stc.IsExcluded = 0 -- Site Competitor is Not excluded
 			AND
-			compsite.IsActive = 1
+			compsite.IsActive = 1 -- Competitor is Active
 			AND
-			compsite.IsGrocer = 1
+			compsite.IsGrocer = 1 -- Competitor is Grocer
 			AND
-			compsite.IsExcludedBrand = 0 -- ignore Excluded Brands
+			compsite.IsExcludedBrand = 0 -- Brand is not excluded
+			AND
+			stc.DriveTime < @DriveTime -- within the X min drive time
+	)
+	--
+	-- Get a list of NON-Sainsburys competitor prices
+	--
+	,NonSainsburysNearbyCompetitorPrices AS (
+		SELECT
+			nbc.CompetitorId,
+			cp.ModalPrice [CompetitorPrice],
+			nbc.IsSainsburysSite [IsSainsburysSite]
+			-- debug
+			,nbc.SiteName
+		FROM
+			NearbyCompetitors nbc
+			INNER JOIN dbo.CompetitorPrice cp ON cp.SiteId = nbc.CompetitorId AND cp.FuelTypeId = @FuelTypeId --AND cp.DateOfPrice = @StartOfYesterday
+		WHERE
+			nbc.IsSainsburysSite = 0
+	),
+	--
+	-- Get a list of Sainsburys (self competitor) prices
+	--
+	SainsburysNearbyCompetitorPrices AS (
+		SELECT
+			nbc.CompetitorId,
+			sp.SuggestedPrice,
+			nbc.IsSainsburysSite [IsSainsburysSite]
+			-- debug
+			,nbc.SiteName
 
-	IF EXISTS(SELECT TOP 1 NULL FROM @NearbyGrocerSites)
-	BEGIN
-		SET @NearbyGrocerStatus = @HasNearbyGrocer_Flag;
-		--
-		-- Check if ALL nearby grocers have price data for the date
-		--
+		FROM
+			NearbyCompetitors nbc
+			INNER JOIN dbo.SitePrice sp ON sp.SiteId = nbc.CompetitorId AND FuelTypeId = @FuelTypeId AND sp.DateOfCalc = @StartOfYesterday
+		WHERE
+			nbc.IsSainsburysSite = 1
+	)
+	SELECT
+		@NearbyCompetitorPriceCount = (SELECT COUNT(1) FROM NonSainsburysNearbyCompetitorPrices) + (SELECT COUNT(1) FROM SainsburysNearbyCompetitorPrices),
+		@NearbyGrocersCount = (SELECT COUNT(1) FROM NearbyCompetitors)
 
-		DECLARE @NearbyGrocerCount INT = (SELECT COUNT(1) FROM @NearbyGrocerSites);
-		DECLARE @NearbyGrocerPriceDataCount INT = (SELECT COUNT(1)
-			FROM 
-				@NearbyGrocerSites gro
-				INNER JOIN dbo.DailyPrice dp ON dp.CatNo = gro.CatNo AND dp.FuelTypeId = @FuelTypeId
-			WHERE
-				dp.FuelTypeId = @FuelTypeId
-				AND
-				dp.DailyUploadId IN (
-					SELECT 
-						MAX(ID)
-					FROM 
-						dbo.FileUpload fu
-					WHERE
-						fu.StatusId = @ImportProcessStatus_Success
-						AND
-						fu.UploadDateTime >= @ForDate
-						AND
-						fu.UploadDateTime < @ForDateNextDay
-				)
-			)
-
-		IF @NearbyGrocerCount = @NearbyGrocerPriceDataCount
-		BEGIN
-			SET @NearbyGrocerStatus = @NearbyGrocerStatus + @AllGrocersHavePriceData_Flag;
+	SET @NearbyGrocerStatus =
+		CASE 
+			WHEN @NearbyGrocersCount != 0 THEN @HasNearbyGrocer_Flag 
+			ELSE 0 
 		END
-	END
+		+ CASE 
+			WHEN @NearbyCompetitorPriceCount = @NearbyGrocersCount THEN @AllGrocersHavePriceData_Flag 
+			ELSE 0 
+		END
+				
 
 	-- result
 	RETURN COALESCE(@NearbyGrocerStatus, 0)
 
 	----DEBUG:START
-	--SELECT @NearbyGrocerStatus [@NearbyGrocerStatus]
+	--SELECT @NearbyGrocerStatus [@NearbyGrocerStatus],
+	--	@NearbyGrocerCount [@NearbyGrocerCount],
+	--	@NearbyGrocerPriceDataCount [@NearbyGrocerPriceDataCount]
 	----DEBUG:END
 END

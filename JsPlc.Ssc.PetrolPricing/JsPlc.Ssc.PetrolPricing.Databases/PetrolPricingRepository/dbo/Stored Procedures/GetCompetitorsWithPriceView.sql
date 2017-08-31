@@ -29,7 +29,9 @@ SET NOCOUNT ON
 		stc.DriveTime [DriveTime],
 		stc.Distance [Distance],
 		compsite.Notes [Notes],
-		compsite.IsGrocer [IsGrocer]
+		compsite.IsGrocer [IsGrocer],
+		compsite.IsExcludedBrand [IsExcludedBrand],
+		compsite.IsActive [IsCompetitorActive]
 	FROM
 		dbo.SiteToCompetitor stc
 		INNER JOIN dbo.Site compsite ON compsite.Id = stc.CompetitorId AND compsite.IsActive = 1
@@ -39,10 +41,10 @@ SET NOCOUNT ON
 		stc.IsExcluded = 0 -- ignore excluded Site Competitors
 		AND
 		stc.DriveTime < @MaxDriveTime
-		AND
-		compsite.IsExcludedBrand = 0 -- ignore Excluded Brands
-		AND
-		compsite.IsActive = 1 -- active Competitor site
+		--AND
+		--compsite.IsExcludedBrand = 0 -- ignore Excluded Brands
+		--AND
+		--compsite.IsActive = 1 -- active Competitor site
 
 
 	;WITH CompSiteFuels AS (
@@ -59,10 +61,10 @@ SET NOCOUNT ON
 			stc.IsExcluded = 0 -- ignore excluded Site Competitors
 			AND
 			stc.DriveTime < @MaxDriveTime
-			AND
-			compsite.IsExcludedBrand = 0 -- ignore Excluded Brands
-			AND
-			compsite.IsActive = 1 -- active Competitor site
+			--AND
+			--compsite.IsExcludedBrand = 0 -- ignore Excluded Brands
+			--AND
+			--compsite.IsActive = 1 -- active Competitor site
 	)
 
 	--
