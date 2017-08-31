@@ -31,10 +31,10 @@ AS
 BEGIN
 
 ----DEBUG:START
---DECLARE	@SiteId INT = 1783
+--DECLARE	@SiteId INT = 6164
 --DECLARE	@FuelTypeId INT = 6
---DECLARE	@ForDate DATE = '2017-08-31 12:30:00'
---DECLARE	@FileUploadId INT = 6
+--DECLARE	@ForDate DATE = '2017-08-14 12:30:00'
+--DECLARE	@FileUploadId INT = 3
 --DECLARE	@MaxDriveTime INT = 25
 
 --DECLARE @Result TABLE 
@@ -376,13 +376,15 @@ BEGIN
 				END
 				ELSE
 				BEGIN
-					-- Today Price is cheaper than the Cheapest Competitor price (do NOT move price due to incomplete Grocer data)
-					SET @Cheapest_SuggestedPrice = @Today_Price
-					SET @Cheapest_IsTodayPrice = 1
-					SET @Cheapest_PriceReasonFlags = @Cheapest_PriceReasonFlags | @PriceReasonFlags_TodayPriceSnapBack
+					IF @Today_Price > 0
+					BEGIN
+						-- Today Price is cheaper than the Cheapest Competitor price (do NOT move price due to incomplete Grocer data)
+						SET @Cheapest_SuggestedPrice = @Today_Price
+						SET @Cheapest_IsTodayPrice = 1
+						SET @Cheapest_PriceReasonFlags = @Cheapest_PriceReasonFlags | @PriceReasonFlags_TodayPriceSnapBack
+					END
 				END
 			END
-
 			-- handle No Suggested Price
 			IF @Cheapest_SuggestedPrice = 0 AND @Today_Price > 0
 			BEGIN
@@ -398,7 +400,7 @@ BEGIN
 				SET @Cheapest_PriceReasonFlags = @Cheapest_PriceReasonFlags | @PriceReasonFlags_Rounded
 			END
 			-- check Price Variance
-			IF @Today_Price > 0
+			IF @Today_Price > 0 AND @Cheapest_SuggestedPrice > 0
 			BEGIN
 				DECLARE @Diff INT = @Cheapest_SuggestedPrice - @Today_Price
 
