@@ -13,11 +13,17 @@
 	[PriceMatchType] [int] NULL,
 	[PriceSource] [varchar](19) NULL,
 	[PriceSourceDateTime] [datetime] NULL,
+	[DateOfCalc] [datetime] NULL,
 	[CompetitorSiteId] [int] NULL,
 	[Distance] [real] NULL,
 	[DriveTime] [real] NULL,
 	[DriveTimePence] [int] NULL, 
     [MatchCompetitorMarkup] INT NULL, 
     [TodayPriceReasonFlags] INT NOT NULL, 
-    [TomorrowPriceReasonFlags] INT NOT NULL 
+    [TomorrowPriceReasonFlags] INT NOT NULL, 
+    [DriveTimeMarkup] INT NOT NULL, 
+    [CompetitorCount] INT NOT NULL, 
+    [CompetitorPriceCount] INT NOT NULL, 
+    [GrocerCount] INT NOT NULL, 
+    [GrocerPriceCount] INT NOT NULL 
 )
