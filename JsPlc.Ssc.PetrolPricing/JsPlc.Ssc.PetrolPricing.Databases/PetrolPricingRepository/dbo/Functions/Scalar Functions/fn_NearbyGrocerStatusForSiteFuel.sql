@@ -61,7 +61,7 @@ BEGIN
 			,nbc.SiteName
 		FROM
 			NearbyCompetitors nbc
-			INNER JOIN dbo.CompetitorPrice cp ON cp.SiteId = nbc.CompetitorId AND cp.FuelTypeId = @FuelTypeId --AND cp.DateOfPrice = @StartOfYesterday
+			INNER JOIN dbo.CompetitorPrice cp ON cp.SiteId = nbc.CompetitorId AND cp.FuelTypeId = @FuelTypeId AND cp.DateOfPrice = @StartOfYesterday
 		WHERE
 			nbc.IsSainsburysSite = 0
 	),
@@ -95,14 +95,13 @@ BEGIN
 			WHEN @NearbyCompetitorPriceCount = @NearbyGrocersCount THEN @AllGrocersHavePriceData_Flag 
 			ELSE 0 
 		END
-				
 
 	-- result
 	RETURN COALESCE(@NearbyGrocerStatus, 0)
 
 	----DEBUG:START
 	--SELECT @NearbyGrocerStatus [@NearbyGrocerStatus],
-	--	@NearbyGrocerCount [@NearbyGrocerCount],
-	--	@NearbyGrocerPriceDataCount [@NearbyGrocerPriceDataCount]
+	--	@NearbyGrocersCount [@NearbyGrocersCount],
+	--	@NearbyCompetitorPriceCount [@NearbyCompetitorPriceCount]
 	----DEBUG:END
 END
