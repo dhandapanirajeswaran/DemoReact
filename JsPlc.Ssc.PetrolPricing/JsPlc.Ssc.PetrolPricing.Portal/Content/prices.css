@@ -176,6 +176,10 @@ table.competitorTable > tbody > .competitor-row  {
     background-color: #135a97;
     color: #fff;
 }
+.competitorTable .competitor-row:hover .grocer-brand.grocer-brand-excluded {
+    background-color: transparent;
+    color: red;
+}
 
 .competitorTable .competitor-row .drive-time-miles {
     background-color: #fff;
@@ -201,11 +205,24 @@ table.competitorTable > tbody > .competitor-row  {
     color: #fff;
 }
 
+.competitorTable .competitor-row.inside-drive-time:hover .grocer-brand.grocer-brand-excluded {
+    background-color: #666;
+    color: #fff;
+}
+
 .competitorTable .competitor-row.comp-sainsburys-row .comp-store-name {
     color: orange;
     font-weight: bold;
     background-color: #fff;
     padding: 1px 8px;
+}
+
+.competitorTable .competitor-row.excluded-brand,
+.competitorTable .competitor-row.inactive-comp,
+.competitorTable .competitor-row.excluded-comp {
+    background: #999;
+    color: #333;
+    font-style: italic;
 }
 
 #competitorPricesPopup .footer-actions {
@@ -1046,6 +1063,12 @@ tr.site-row.row-override-exceeds-warning-limits td.outside-prices-warning-limits
     font-weight: bold;
     padding: 1px 2px;
 }
+    .grocer-brand.grocer-brand-excluded {
+        background-color: transparent;
+        color: red;
+        box-shadow: 0 0 2px #000;
+    }
+
 .non-grocer-brand {
     color: #333;
     padding: 1px 2px;

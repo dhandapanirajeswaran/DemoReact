@@ -56,6 +56,11 @@ namespace JsPlc.Ssc.PetrolPricing.Models.ViewModels
         public SiteCompetitorPriceSummaryViewModel SiteCompetitorsInfo { get; set; } = new SiteCompetitorPriceSummaryViewModel();
 
         public bool IsGrocer { get; set; }
+
+        // Competitor site information (Competitor popup modal)
+        public bool IsExcludedBrand { get; set; }
+        public bool IsExcluded { get; set; }
+        public bool IsActive { get; set; }
     }
 
     // each fuel's price

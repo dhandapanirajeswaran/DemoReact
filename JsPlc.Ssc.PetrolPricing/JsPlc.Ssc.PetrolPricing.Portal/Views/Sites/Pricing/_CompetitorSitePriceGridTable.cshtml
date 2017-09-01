@@ -83,19 +83,19 @@
                         <th colspan="3" class="tblHighlight text-center dividerLeft">
                             <h4>
                                 <span class="fuel-sign fuel-sign-unleaded"></span>
-                                <span class="fuel-markup fuel-markup-unleaded"></span>
+                                <span class="fuel-markup fuel-markup-unleaded" data-infotip="Any markup from a [br /][b]Match Competitor[/b] or [b]Trial Price[/b][br /] [em]Price Match Strategy[/em]"></span>
                             </h4>
                         </th>
                         <th colspan="3" class="text-center dividerLeft">
                             <h4>
                                 <span class="fuel-sign fuel-sign-diesel"></span>
-                                <span class="fuel-markup fuel-markup-diesel"></span>
+                                <span class="fuel-markup fuel-markup-diesel" data-infotip="Any markup from a [br /][b]Match Competitor[/b] or [b]Trial Price[/b][br /] [em]Price Match Strategy[/em]"></span>
                             </h4>
                         </th>
                         <th colspan="3" class="tblHighlight text-center dividerLeft">
                             <h4>
                                 <span class="fuel-sign fuel-sign-super-unleaded"></span>
-                                <span class="fuel-markup fuel-markup-super-unleaded"></span>
+                                <span class="fuel-markup fuel-markup-super-unleaded" data-infotip="Any markup from a [br /][b]Match Competitor[/b] or [b]Trial Price[/b][br /] [em]Price Match Strategy[/em]"></span>
                             </h4>
                         </th>
                     </tr>
@@ -134,13 +134,24 @@
                     <!-- ko if: hasCompetitors() -->
                     <!-- ko foreach: competitors -->
                     <tr class="competitor-row hoverable" data-bind="attr:{id:'CompetitorSiteRow_' + SiteId}, css: ((IsGrocer ? 'competitor-grocer' : 'competitor-non-grocer') + (DriveTime < $root.maxGrocerDriveTimeMinutes() ? ' inside-drive-time' : ' outside-drive-time')
-                            + (Brand == 'SAINSBURYS' ? ' comp-sainsburys-row' : ' comp-non-sainsburys-row'))">
+                            + (Brand == 'SAINSBURYS' ? ' comp-sainsburys-row' : ' comp-non-sainsburys-row')
+                            + (IsExcludedBrand ? ' excluded-brand' : ' included-brand')
+                            + (IsExcluded ? ' excluded-comp' : ' included-comp')
+                            + (IsActive ? ' active-comp' : ' inactive-comp'))">
                         <td class="num1">
                             <!-- ko if: IsGrocer -->
-                            <div class="grocer-brand" data-infotip="Grocer">
-                                <i class="fa fa-shopping-cart"></i>
-                                <span class="comp-brand-name" data-bind="text: Brand"></span>
-                            </div>
+                                <!-- ko if:IsExcludedBrand -->
+                                <div class="grocer-brand grocer-brand-excluded" data-infotip="Grocer [i]Brand Excluded[/i]">
+                                    <i class="fa fa-times"></i>
+                                    <span class="comp-brand-name" data-bind="text: Brand"></span>
+                                </div>
+                                <!-- /ko -->
+                                <!-- ko if:!IsExcludedBrand -->
+                                <div class="grocer-brand" data-infotip="Grocer">
+                                    <i class="fa fa-shopping-cart"></i>
+                                    <span class="comp-brand-name" data-bind="text: Brand"></span>
+                                </div>
+                                <!-- /ko -->
                             <!-- /ko -->
                             <!-- ko if: !IsGrocer-->
                             <div class="non-grocer-brand">
@@ -153,7 +164,12 @@
                             <button type="button" class="btn btn-default btn-xs triggerEditSiteNote" data-bind="attr:{id: 'EditSiteNoteButton_' + SiteId}" data-infotip="Create or edit note"><i class="fa fa-pencil"></i></button>
                             <button type="button" class="btn btn-default btn-xs triggerToggleNote" data-bind="attr:{id: 'ToggleSiteNoteButton_' + SiteId}" data-infotip="Show Note"><i class="fa fa-sort-up"></i></button>
                         </td>
-                        <td class="num3"><span class="comp-store-name" data-bind="text: StoreName"></span></td>
+                        <td class="num3">
+                            <span class="comp-store-name" data-bind="text: StoreName"></span>
+                            <i class="fa fa-warning text-danger" data-bind="visible: IsExcludedBrand" data-infotip="[i]Excluded Brand[/i]"></i>
+                            <i class="fa fa-credit-card text-danger" data-bind="visible: IsExcluded" data-infotip="Competitor is [i]Excluded by Site[/i]"></i>
+                            <i class="fa fa-minus-square-o text-danger" data-bind="visible: !IsActive" data-infotip="Competitor is [i]Inactive[/i]"></i>
+                        </td>
                         <td class="num4"><b class="drive-time-miles"><span data-bind="text: DriveTime.toFixed(2), attr: {'data-infotip': 'Drive Time of [b]' + DriveTime + '[/b] Minutes [br /] [q]Unleaded:[/q] [b]+' + DrivePenceForUnleaded + 'p[/b] &mdash; [q]Diesel:[/q] [b]+' + DrivePenceForDiesel + 'p[/b] &mdash; [q]Super-Unleaded:[/q] [b]+' + DrivePenceForSuperUnleaded + 'p[/b]'}"></span></b></td>
                         <td class="num5"><span data-bind="text: CatNo, attr: {'data-infotip': 'Catalist Number: [b]' + CatNo + '[/b]'}"></span></td>
 

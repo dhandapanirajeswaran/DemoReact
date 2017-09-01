@@ -31,14 +31,15 @@ SET NOCOUNT ON
 		compsite.Notes [Notes],
 		compsite.IsGrocer [IsGrocer],
 		compsite.IsExcludedBrand [IsExcludedBrand],
-		compsite.IsActive [IsCompetitorActive]
+		stc.IsExcluded [IsExcluded],
+		compsite.IsActive [IsActive]
 	FROM
 		dbo.SiteToCompetitor stc
-		INNER JOIN dbo.Site compsite ON compsite.Id = stc.CompetitorId AND compsite.IsActive = 1
+		INNER JOIN dbo.Site compsite ON compsite.Id = stc.CompetitorId
 	WHERE
 		stc.SiteId = @SiteId
-		AND
-		stc.IsExcluded = 0 -- ignore excluded Site Competitors
+		--AND
+		--stc.IsExcluded = 0 -- ignore excluded Site Competitors
 		AND
 		stc.DriveTime < @MaxDriveTime
 		--AND
@@ -57,8 +58,8 @@ SET NOCOUNT ON
 			CROSS APPLY (SELECT Id FROM dbo.FuelType WHERE Id IN (1, 2, 6)) ft
 		WHERE
 			stc.SiteId = @SiteId
-			AND
-			stc.IsExcluded = 0 -- ignore excluded Site Competitors
+			--AND
+			--stc.IsExcluded = 0 -- ignore excluded Site Competitors
 			AND
 			stc.DriveTime < @MaxDriveTime
 			--AND
