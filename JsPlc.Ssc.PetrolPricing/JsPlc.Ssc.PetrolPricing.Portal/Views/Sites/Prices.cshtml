@@ -118,25 +118,25 @@
                 <div class="col-md-1">
                     <label for="viewingStoreNo">Store No:</label>
                     <input type="text" id="viewingStoreNo" class="form-control" maxlength="9" style="width: 70px;"
-                           name="viewingStoreNo" data-bind="numeric, value: $root.StoreNo, click: $root.showSiteFilterPopup_StoreNo" data-infotip="Enter a [b]Store No[/b]" />
+                           name="viewingStoreNo" data-bind="click: $root.showSiteFilterPopup_StoreNo" data-infotip="Enter a [b]Store No[/b]" />
                 </div>
                 <!-- Store Name -->
                 <div class="col-md-2">
                     <label for="viewingStoreName">Store Name:</label>
                     <input type="text" id="viewingStoreName" class="form-control" maxlength="50"
-                           name="viewingStoreName" data-bind="value: $root.StoreName, click: $root.showSiteFilterPopup_StoreName" data-infotip="Enter a [b]Store Name[/b]" />
+                           name="viewingStoreName" data-bind="click: $root.showSiteFilterPopup_StoreName" data-infotip="Enter a [b]Store Name[/b]" />
                 </div>
                 <!-- Store Town -->
                 <div class="col-md-2">
                     <label for="viewingStoreTown">Store Town:</label>
                     <input type="text" id="viewingStoreTown" class="form-control" maxlength="50"
-                           name="viewingStoreTown" data-bind="value: $root.StoreTown, click: $root.showSiteFilterPopup_StoreTown" data-infotip="Enter a [b]Store Town[/b]" />
+                           name="viewingStoreTown" data-bind="click: $root.showSiteFilterPopup_StoreTown" data-infotip="Enter a [b]Store Town[/b]" />
                 </div>
                 <!-- Catalist No -->
                 <div class="col-md-1" style="width: 100px;">
                     <label for="viewingCatNo">Catalist No:</label>
                     <input type="text" id="viewingCatNo" class="form-control" maxlength="9" style="width: 70px;"
-                           name="viewingCatNo" data-bind="numeric, value: $root.CatNo, click: $root.showSiteFilterPopup_CatNo" data-infotip="Enter a [b]Catalist No[/b]" />
+                           name="viewingCatNo" data-bind="click: $root.showSiteFilterPopup_CatNo" data-infotip="Enter a [b]Catalist No[/b]" />
                 </div>
                 <!-- go button -->
                 <div class="col-md-1">
@@ -146,7 +146,7 @@
                 <!-- show all button -->
                 <div class="col-md-1">
                     <label>&nbsp;</label><br />
-                    <button type="button" class="btn btn-warning" data-bind="click: function() { reloadSearchPage('Sites/Prices?date='+$root.InitDateInUsFormat()) }" data-infotip="Clear all the filters"><i class="fa fa-eraser"></i> Clear filters</button>
+                    <button type="button" class="btn btn-warning" data-bind="click: $root.resetSearchSites" data-infotip="Clear all the filters"><i class="fa fa-eraser"></i> Clear filters</button>
                 </div>
                 <!-- ExportToExcel button -->
                 <div class="col-md-3 text-right last-col">

@@ -14,22 +14,22 @@
                 <div class="row">
                     <div class="col-md-2">
                         <label>Store No:</label><br />
-                        <input type="number" class="form-control" id="SiteFilterPopup_StoreNo" name="SiteFilterPopup_StoreNo" data-bind="event: {keyup: $root.searchSites }" data-infotip="Enter a number or part of a number[br /]for the [b]Store Number[/b]" />
+                        <input type="number" class="form-control" id="SiteFilterPopup_StoreNo" name="SiteFilterPopup_StoreNo" data-bind="event: {keyup: $root.siteSearchChanged }" data-infotip="Enter a number or part of a number[br /]for the [b]Store Number[/b]" />
                     </div>
                     <div class="col-md-3">
                         <label>Store Name:</label><br />
-                        <input type="text" class="form-control" id="SiteFilterPopup_StoreName" name="SiteFilterPopup_StoreName" data-bind="event: {keyup: $root.searchSites }" data-infotip="Enter a Name or part of a Name[br /]for the [b]Store Name[/b]" />
+                        <input type="text" class="form-control" id="SiteFilterPopup_StoreName" name="SiteFilterPopup_StoreName" data-bind="event: {keyup: $root.siteSearchChanged }" data-infotip="Enter a Name or part of a Name[br /]for the [b]Store Name[/b]" />
                     </div>
                     <div class="col-md-3">
                         <label>Store Town:</label><br />
-                        <input type="text" class="form-control" id="SiteFilterPopup_StoreTown" name="SiteFilterPopup_StoreTown" data-bind="event: {keyup: $root.searchSites }" data-infotip="Enter a Town or part of a Town[br /]for the [b]Store Town[/b]" />
+                        <input type="text" class="form-control" id="SiteFilterPopup_StoreTown" name="SiteFilterPopup_StoreTown" data-bind="event: {keyup: $root.siteSearchChanged }" data-infotip="Enter a Town or part of a Town[br /]for the [b]Store Town[/b]" />
                     </div>
                     <div class="col-md-2">
                         <label>Catalist No:</label><br />
-                        <input type="number" class="form-control" id="SiteFilterPopup_CatNo" name="SiteFilterPopup_CatNo" data-bind="event: {keyup: $root.searchSites }" data-infotip="Enter a number or part of a number[br /]for the [b]Catalist Number[/b]" />
+                        <input type="number" class="form-control" id="SiteFilterPopup_CatNo" name="SiteFilterPopup_CatNo" data-bind="event: {keyup: $root.siteSearchChanged }" data-infotip="Enter a number or part of a number[br /]for the [b]Catalist Number[/b]" />
                     </div>
                     <div class="col-md-2 newline">
-                        <button type="button" class="btn btn-success" data-bind="click: $root.searchSites()" data-infotip="Search the Sites"><i class="fa fa-search"></i> Search</button>&nbsp;
+                        <button type="button" class="btn btn-success" data-bind="click: $root.siteSearchChanged()" data-infotip="Search the Sites"><i class="fa fa-search"></i> Search</button>&nbsp;
                         <button type="button" class="btn btn-warning" data-bind="click: $root.resetSearchSites" data-infotip="Clear the Search Filters"><i class="fa fa-eraser"></i></button>
                     </div>
                 </div>

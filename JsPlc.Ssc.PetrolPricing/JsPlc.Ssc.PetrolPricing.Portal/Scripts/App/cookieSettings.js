@@ -27,7 +27,12 @@
                 'pricing.priceSummaryTabIndex',
                 'pricing.autoHideOverrides',
                 'pricing.includeDriveTime',
-                'pricing.hideNoPrices'
+                'pricing.hideNoPrices',
+                'pricing.viewDate',
+                'pricing.storeNo',
+                'pricing.storeName',
+                'pricing.storeTown',
+                'pricing.catNo'
             ],
             values = readSettingsCookie();
 
