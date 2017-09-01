@@ -5,9 +5,8 @@ BEGIN
 	SET NOCOUNT ON;
 
 ----DEBUG:START	
---DECLARE @ForDate DATE = '2017-08-24'
+--DECLARE @ForDate DATE = '2017-09-01'
 ----DEBUG:END
-
 
 	DECLARE @LatestCompUploadId INT = dbo.fn_LastFileUploadForDate(@ForDate, 4) -- Latest Comp Price Data
 	DECLARE @DailyPrice_FileUploadId INT = dbo.fn_LastFileUploadForDate(@ForDate, 1) -- Daily Catalist File
@@ -96,7 +95,7 @@ BEGIN
 			WHERE
 				lcp.UploadId = @LatestCompUploadId
 		) AS source (CompSiteId, FuelTypeId, ModalPrice, LatestCompPriceId)
-		ON (target.SiteId = source.CompSiteId AND target.FuelTypeId = source.FuelTypeId AND target.DateOfPrice = @Latest_DateOfPrice)
+		ON (target.SiteId = source.CompSiteId AND target.FuelTypeId = source.FuelTypeId AND target.DateOfPrice = @Daily_DateOfPrice)
 		WHEN MATCHED THEN
 			UPDATE SET
 				target.ModalPrice = source.ModalPrice,
@@ -107,7 +106,7 @@ BEGIN
 			VALUES (
 				source.CompSiteId,
 				source.FuelTypeId,
-				@Latest_DateOfPrice,
+				@Daily_DateOfPrice, -- NOTE: marked as yesterday for the pricing to find it
 				source.ModalPrice,
 				NULL,
 				source.LatestCompPriceId
