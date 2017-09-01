@@ -31,10 +31,10 @@ AS
 BEGIN
 
 ----DEBUG:START
---DECLARE	@SiteId INT = 6164
+--DECLARE	@SiteId INT = 354
 --DECLARE	@FuelTypeId INT = 6
---DECLARE	@ForDate DATE = '2017-08-14 12:30:00'
---DECLARE	@FileUploadId INT = 3
+--DECLARE	@ForDate DATE = '2017-09-01 12:30:00'
+--DECLARE	@FileUploadId INT = 8
 --DECLARE	@MaxDriveTime INT = 25
 
 --DECLARE @Result TABLE 
@@ -252,7 +252,7 @@ BEGIN
 			--
 			-- Find the cheapest 0-25 min Competitor
 			--	
-			;WITH NearbyActiveCompetitorPrices as (
+			;WITH NearbyActiveCompetitorPrices as ( -- NON-Sainsburys
 				SELECT
 					stc.CompetitorId,
 					stc.Distance,
@@ -260,7 +260,8 @@ BEGIN
 					cp.ModalPrice,
 					dbo.fn_GetDriveTimePence(@FuelTypeId, stc.DriveTime) * 10 [DriveTimeMarkup],
 					cp.DailyPriceId,
-					cp.LatestCompPriceId
+					cp.LatestCompPriceId,
+					NULL [SitePriceId]
 				FROM
 					dbo.SiteToCompetitor stc
 					INNER JOIN dbo.Site compsite ON compsite.Id = stc.CompetitorId AND compsite.IsActive = 1
@@ -291,12 +292,49 @@ BEGIN
 					AND
 					stc.DriveTime < @MaxDriveTime
 				),
+				NearbySainsburysCompetitorPrices AS (
+					SELECT
+						stc.CompetitorId,
+						stc.Distance,
+						stc.DriveTime,
+						CASE
+							WHEN sp.OverriddenPrice > 0 THEN sp.OverriddenPrice
+							WHEN sp.SuggestedPrice > 0 THEN sp.SuggestedPrice
+							ELSE 0
+						END [ModalPrice],
+						dbo.fn_GetDriveTimePence(@FuelTypeId, stc.DriveTime) * 10 [DriveTimeMarkup],
+						NULL [DailyPriceId],
+						NULL [LatestCompPriceId],
+						sp.Id [SitePriceId]
+					FROM
+						dbo.SiteToCompetitor stc
+						INNER JOIN dbo.Site compsite ON compsite.Id = stc.CompetitorId AND compsite.IsActive = 1
+						INNER JOIN dbo.SitePrice sp ON sp.SiteId = stc.CompetitorId AND compsite.IsActive = 1
+					WHERE
+						stc.SiteId = @SiteId
+						AND
+						stc.IsExcluded = 0 -- Site Competitor is not excluded
+						AND 
+						compsite.IsActive = 1 -- Competitor site is active
+						AND
+						compsite.IsExcludedBrand = 0 -- Not an Excluded Brand
+						AND
+						compsite.IsActive = 1 -- Active Competitor
+						AND
+						stc.DriveTime < @MaxDriveTime
+				),
 				NearbyCompetitorPricesIncDriveTime AS (
 					SELECT
 						nacp.*,
 						nacp.ModalPrice + nacp.DriveTimeMarkup [PriceIncDriveTime]
 					FROM
 						NearbyActiveCompetitorPrices nacp
+					UNION ALL
+					SELECT
+						nbsp.*,
+						nbsp.ModalPrice + nbsp.DriveTimeMarkup [PriceIncDriveTime]
+					FROM
+						NearbySainsburysCompetitorPrices nbsp
 				),
 				BestCompetitorPrice AS (
 					SELECT
@@ -316,6 +354,8 @@ BEGIN
 						THEN dp.DateOfPrice
 						WHEN bcp.LatestCompPriceId IS NOT NULL
 						THEN (SELECT TOP 1 UploadDateTime FROM dbo.FileUpload WHERE Id = lcp.UploadId)
+						WHEN bcp.SitePriceId IS NOT NULL
+						THEN sp.DateOfCalc
 						ELSE ''
 					END,
 					@Cheapest_PriceReasonFlags = @Cheapest_PriceReasonFlags | @PriceReasonFlags_CheapestPriceFound
@@ -323,6 +363,7 @@ BEGIN
 					BestCompetitorPrice bcp
 					LEFT JOIN dbo.DailyPrice dp ON dp.Id = bcp.DailyPriceId
 					LEFT JOIN dbo.LatestCompPrice lcp ON lcp.Id = bcp.LatestCompPriceId
+					LEFT JOIN dbo.SitePrice sp ON sp.Id = bcp.SitePriceId
 
 				--
 				-- Get most recent 'Today' price for Site Fuel (if any)
