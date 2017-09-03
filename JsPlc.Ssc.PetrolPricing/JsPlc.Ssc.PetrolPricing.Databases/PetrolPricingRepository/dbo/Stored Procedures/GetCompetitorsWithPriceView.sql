@@ -6,8 +6,8 @@ BEGIN
 SET NOCOUNT ON
 
 ----DEBUG:START
---DECLARE	@ForDate DATE = '2017-09-01'
---DECLARE	@SiteId INT = 354
+--DECLARE	@ForDate DATE = '2017-09-03'
+--DECLARE	@SiteId INT = 3425
 ----DEBUG:END
 	
 	-- constants
@@ -55,7 +55,7 @@ SET NOCOUNT ON
 			compsite.IsSainsburysSite [IsSainsburysSite]
 		FROM
 			dbo.SiteToCompetitor stc
-			INNER JOIN dbo.Site compsite ON compsite.Id = stc.CompetitorId AND compsite.IsActive = 1
+			INNER JOIN dbo.Site compsite ON compsite.Id = stc.CompetitorId
 			CROSS APPLY (SELECT Id FROM dbo.FuelType WHERE Id IN (1, 2, 6)) ft
 		WHERE
 			stc.SiteId = @SiteId
