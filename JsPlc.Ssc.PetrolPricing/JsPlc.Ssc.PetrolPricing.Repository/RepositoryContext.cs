@@ -117,14 +117,15 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             };
         }
 
-        public IEnumerable<SitePriceViewModel> GetCompetitorsWithPriceView(DateTime forDate, int siteId)
+        public IEnumerable<SitePriceViewModel> GetCompetitorsWithPriceView(DateTime forDate, int siteId, string siteIds)
         {
             const string sproc = "GetCompetitorsWithPriceView";
 
             var parameters = new
             {
                 @ForDate = forDate,
-                @SiteId = siteId
+                @SiteId = siteId,
+                SiteIds = siteIds
             };
 
             var model = DapperHelper.QueryMultiple<List<SitePriceViewModel>>(this, sproc, parameters, FillGetCompetitorsWithPriceView);

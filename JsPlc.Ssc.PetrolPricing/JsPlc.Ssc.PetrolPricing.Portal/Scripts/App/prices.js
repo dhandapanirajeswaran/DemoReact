@@ -18,6 +18,7 @@ define(["SitePricing", "notify", "busyloader", "downloader", "infotips", "cookie
             }).on('changeDate', function (e) {
                 $("#btnExportAll").prop("disabled", true);
                 $("#btnExportSites").prop("disabled", true);
+                $("#btnExportCompPrices").prop("disabled", true);
 
                 $("#viewingDate").focus();
             });
@@ -58,6 +59,33 @@ define(["SitePricing", "notify", "busyloader", "downloader", "infotips", "cookie
                 element: '#btnExportAll',
                 complete: function (download) {
                     notify.success('Export All completed - took ' + download.friendlyTimeTaken);
+                }
+            });
+
+            window.location.href = getRootSiteFolder() + url;
+        });
+
+        $("#btnExportCompPrices").click(function () {
+            var downloadId = downloader.generateId(),
+                url = "Sites/ExportCompPrices"
+                + "?downloadId=" + downloadId
+                + "&date=" + $('#viewingDate').val()
+                + "&storeName=" + $('#viewingStoreName').val()
+                + "&catNo=" + $('#viewingCatNo').val()
+                + "&storeNo=" + $('#viewingStoreNo').val()
+                + "&storeTown=" + $('#viewingStoreTown').val();
+
+            busyloader.show({
+                message: 'Exporting Competitors - Please wait (ETA 3 minutes)',
+                showtime: 4000,
+                dull: true
+            });
+
+            downloader.start({
+                id: downloadId,
+                element: '#btnExportCompPrices',
+                complete: function (download) {
+                    notify.success('Export Competitors completed - took ' + download.friendlyTimeTaken);
                 }
             });
 
@@ -142,6 +170,7 @@ define(["SitePricing", "notify", "busyloader", "downloader", "infotips", "cookie
         function disableExportButtons() {
             $("#btnExportAll").prop("disabled", true);
             $("#btnExportSites").prop("disabled", true);
+            $("btnExportCompPrices").prop("disabled", true);
         };
 
         $("#viewingStoreNo, #viewingStoreName, #viewingStoreNo, #viewingStoreTown").change(disableExportButtons);

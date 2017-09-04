@@ -55,6 +55,7 @@
     <Compile Include="DataTableConvertors\SiteEmailAddressesTableConvertor.cs" />
     <Compile Include="Exporters\BaseExporter.cs" />
     <Compile Include="Exporters\AllSitesPricesExporter.cs" />
+    <Compile Include="Exporters\CompetitorPricesExporter.cs" />
     <Compile Include="Exporters\JsSitesWithPricesExporter.cs" />
     <Compile Include="Exporters\SiteEmailAddressesExporter.cs" />
     <Compile Include="Formatting\ExcelStyleFormatters.cs" />

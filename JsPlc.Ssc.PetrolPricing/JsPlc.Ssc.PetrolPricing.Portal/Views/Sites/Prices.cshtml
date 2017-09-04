@@ -45,7 +45,7 @@
             <i class="fa fa-gbp"></i> Market comparison and planner
 
             <span class="historical-banner font75pc" data-bind="visible: $root.ViewingHistorical" style="display: none;">
-                <i class="fa fa-clock-o"></i> <strong>Note:</strong> You are viewing Historical Data &mdash; You cannot change any Override prices.
+                <i class="fa fa-clock-o"></i> <strong>Note:</strong> Historical Data &mdash; You cannot change any Override prices.
             </span>
 
             <button id="btnRecalculateDailyPrices" type="button" class="btn btn-danger pull-right" data-bind="visible: !$root.ViewingHistorical()" data-infotip="Recalculate the [b]Daily Prices[/b]"><i class="fa fa-power-off"></i> Recalculate Daily Prices</button>
@@ -139,22 +139,18 @@
                            name="viewingCatNo" data-bind="click: $root.showSiteFilterPopup_CatNo" data-infotip="Enter a [b]Catalist No[/b]" />
                 </div>
                 <!-- go button -->
-                <div class="col-md-1">
-                    <label>&nbsp;</label><br />
+                <div class="col-md-1 newline">
                     <button type="button" id="btnGO" class="btn btn-success" data-bind="click: loadPageWithParams" data-infotip="Filter the Site Prices"><i class="fa fa-filter"></i> Go</button>
-                </div>
-                <!-- show all button -->
-                <div class="col-md-1">
-                    <label>&nbsp;</label><br />
-                    <button type="button" class="btn btn-warning" data-bind="click: $root.resetSearchSites" data-infotip="Clear all the filters"><i class="fa fa-eraser"></i> Clear filters</button>
+                    <button type="button" class="btn btn-warning" data-bind="click: $root.resetSearchSites" data-infotip="Clear all the filters"><i class="fa fa-eraser"></i></button>
                 </div>
                 <!-- ExportToExcel button -->
-                <div class="col-md-3 text-right last-col">
-                    <label>&nbsp;</label>
+                <div class="col-md-4 last-col">
+                    <label>Export</label>
                     <label class="button"></label>
                     <div>
-                        <button type="button" style="margin-left:0px " class="btn btn-primary" id="btnExportAll" data-infotip="Export [b]All[/b] Sites"><i class="fa fa-download"></i> Export ALL</button>
-                        <button type="button" style="margin-left:0px" class="btn btn-primary" id="btnExportSites" data-infotip="Export [b]Sainsbury's'[/b] Sites Only"><i class="fa fa-download"></i> Export JS Sites</button>
+                        <button type="button" class="btn btn-primary" id="btnExportCompPrices" data-infotip="Export all [b] Prices and Competitors[/b]"><i class="fa fa-download"></i> Competitor Prices</button>
+                        <button type="button" style="margin-left: 1.75em " class="btn btn-primary" id="btnExportAll" data-infotip="Export [b]All[/b] Sites"><i class="fa fa-download"></i> All Sites</button>
+                        <button type="button" style="margin-left:0" class="btn btn-primary" id="btnExportSites" data-infotip="Export [b]Sainsbury's'[/b] Sites Only"><i class="fa fa-download"></i> Only JS Sites</button>
                     </div>
                 </div>
             </div>

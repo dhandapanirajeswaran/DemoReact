@@ -256,17 +256,19 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             string storeTown = "",
             int siteId = 0, int pageNo = 1,
             int pageSize = Constants.PricePageSize,
-            string apiName = "SitePrices")
+            string apiName = "SitePrices",
+            string siteIds = null)
         {
             // Optional params(defaults) - forDate (Date of Calc/Viewing today), siteId (0 for all sites), pageNo(1), PageSize(20)
             string filters = (forDate.HasValue) ? "forDate=" + forDate.Value.ToString("yyyy-MM-dd") + "&" : "";
-            filters = filters + "storeName=" + storeName + "&";
-            filters = filters + "storeTown=" + storeTown + "&";
-            filters = filters + "catNo=" + catNo + "&";
-            filters = filters + "storeNo=" + storeNo + "&";
-            filters = filters + "siteId=" + siteId + "&";
-            filters = filters + "pageNo=" + pageNo + "&";
-            filters = filters + "pageSize=" + pageSize + "&";
+            filters += "storeName=" + storeName + "&";
+            filters += "storeTown=" + storeTown + "&";
+            filters += "catNo=" + catNo + "&";
+            filters += "storeNo=" + storeNo + "&";
+            filters += "siteId=" + siteId + "&";
+            filters += "pageNo=" + pageNo + "&";
+            filters += "pageSize=" + pageSize + "&";
+            filters += "siteIds=" + siteIds + "&";
 
             DiagnosticLog.StartDebug("GetSitePrices");
 
@@ -296,9 +298,9 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
         /// <param name="pageSize"></param>
         /// <returns></returns>
         public IEnumerable<SitePriceViewModel> GetCompetitorsWithPrices(DateTime? forDate = null, int siteId = 0, int pageNo = 1,
-            int pageSize = Constants.PricePageSize)
+            int pageSize = Constants.PricePageSize, string siteIds=null)
         {
-            return GetSitePrices(forDate, string.Empty, 0, 0, string.Empty, siteId, pageNo, Constants.PricePageSize, apiName: "CompetitorPrices");
+            return GetSitePrices(forDate, string.Empty, 0, 0, string.Empty, siteId, pageNo, Constants.PricePageSize, apiName: "CompetitorPrices", siteIds: siteIds);
         }
 
         // Get list of file uploads

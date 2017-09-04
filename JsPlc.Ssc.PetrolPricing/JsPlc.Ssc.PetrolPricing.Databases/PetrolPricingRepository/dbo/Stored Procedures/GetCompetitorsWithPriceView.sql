@@ -1,6 +1,7 @@
 ﻿CREATE PROCEDURE [dbo].[GetCompetitorsWithPriceView]
 	@ForDate DATE,
-	@SiteId INT
+	@SiteId INT,
+	@SiteIds VARCHAR(MAX) = NULL
 AS
 BEGIN
 SET NOCOUNT ON
@@ -8,8 +9,15 @@ SET NOCOUNT ON
 ----DEBUG:START
 --DECLARE	@ForDate DATE = '2017-09-03'
 --DECLARE	@SiteId INT = 3425
+--DECLARE @SiteIds VARCHAR(MAX) ='6164,9'
 ----DEBUG:END
 	
+	-- handle single Site
+	IF @SiteIds IS NULL
+	BEGIN
+		SET @SiteIds = CONVERT(VARCHAR(MAX), @SiteId)
+	END
+
 	-- constants
 	DECLARE @MaxDriveTime INT = 25
 
@@ -34,39 +42,32 @@ SET NOCOUNT ON
 		stc.IsExcluded [IsExcluded],
 		compsite.IsActive [IsActive]
 	FROM
-		dbo.SiteToCompetitor stc
+		dbo.tf_SplitIdsOnComma(@SiteIds) ids
+		INNER JOIN dbo.SiteToCompetitor stc ON stc.SiteId = ids.Id
 		INNER JOIN dbo.Site compsite ON compsite.Id = stc.CompetitorId
 	WHERE
-		stc.SiteId = @SiteId
-		--AND
-		--stc.IsExcluded = 0 -- ignore excluded Site Competitors
-		AND
 		stc.DriveTime < @MaxDriveTime
-		--AND
-		--compsite.IsExcludedBrand = 0 -- ignore Excluded Brands
-		--AND
-		--compsite.IsActive = 1 -- active Competitor site
+
+		-- NOTE: Excluded Site Competiors, Excluded Brands or Inactive Competitor sites are handled via UI
+		--		This allows historical competitor prices to be seen
 
 
 	;WITH CompSiteFuels AS (
 		SELECT 
 			stc.CompetitorId [CompSiteId],
+			ids.Id [JsSiteId],
 			ft.Id [FuelTypeId],
 			compsite.IsSainsburysSite [IsSainsburysSite]
 		FROM
-			dbo.SiteToCompetitor stc
+			dbo.tf_SplitIdsOnComma(@SiteIds) ids
+			INNER JOIN dbo.SiteToCompetitor stc ON stc.SiteId = ids.Id
 			INNER JOIN dbo.Site compsite ON compsite.Id = stc.CompetitorId
 			CROSS APPLY (SELECT Id FROM dbo.FuelType WHERE Id IN (1, 2, 6)) ft
 		WHERE
-			stc.SiteId = @SiteId
-			--AND
-			--stc.IsExcluded = 0 -- ignore excluded Site Competitors
-			AND
 			stc.DriveTime < @MaxDriveTime
-			--AND
-			--compsite.IsExcludedBrand = 0 -- ignore Excluded Brands
-			--AND
-			--compsite.IsActive = 1 -- active Competitor site
+
+		-- NOTE: Excluded Site Competiors, Excluded Brands or Inactive Competitor sites are handled via UI
+		--		This allows historical competitor prices to be seen
 	)
 
 	--
@@ -75,7 +76,7 @@ SET NOCOUNT ON
 	,MergedCompetitorPrices AS ( 
 		SELECT
 			csf.CompSiteId [SiteId],
-			@SiteId [JsSiteId],
+			csf.JsSiteId [JsSiteId],
 			csf.FuelTypeId [FuelTypeId],
 			CASE 
 				WHEN csf.IsSainsburysSite = 1 
@@ -104,7 +105,7 @@ SET NOCOUNT ON
 	)
 	SELECT
 		mcp.SiteId [SiteId],
-		@SiteId [JsSiteId],
+		mcp.JsSiteId [JsSiteId],
 		mcp.FuelTypeId [FuelTypeId],
 		COALESCE(mcp.TodayPrice, 0) [TodayPrice],
 		COALESCE(mcp.YestPrice, 0) [YestPrice],
@@ -118,6 +119,6 @@ SET NOCOUNT ON
 		--,(select top 1 sitename from dbo.Site where Id = mcp.CompSiteId)
 	FROM
 		MergedCompetitorPrices mcp
-END
 
+END
 

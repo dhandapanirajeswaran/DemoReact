@@ -409,13 +409,13 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         }
 
         public IEnumerable<SitePriceViewModel> GetCompetitorsWithPrices(DateTime forDate, int siteId = 0, int pageNo = 1,
-            int pageSize = Constants.PricePageSize)
+            int pageSize = Constants.PricePageSize, string siteIds = null)
         {
             Task<IEnumerable<SitePriceViewModel>> task = Task<IEnumerable<SitePriceViewModel>>.Factory.StartNew(() =>
             {
                 var key = "CallCompetitorsWithPriceSproc-" + forDate.ToString() + "-" + Convert.ToString(siteId) + "-" +
                           Convert.ToString(pageNo) + "-" + Convert.ToString(pageSize);
-                var cachedCompetitorsWithPrices = CallCompetitorsWithPriceSproc(forDate, siteId, pageNo, pageSize);
+                var cachedCompetitorsWithPrices = CallCompetitorsWithPriceSproc(forDate, siteId, pageNo, pageSize, siteIds);
                 //   PetrolPricingRepositoryMemoryCache.CacheObj.Get(key) as IEnumerable<SitePriceViewModel>;
 
                 /* if (cachedCompetitorsWithPrices == null)
@@ -853,9 +853,9 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         /// <param name="pageSize">[Optional] Defaults to Pagesize as per constant, or specify a page size</param>
         /// <returns>List of SitePriceViewModel (with overridable price as an input price by user)</returns>
         private IEnumerable<SitePriceViewModel> CallCompetitorsWithPriceSproc(DateTime forDate, int siteId = 0,
-            int pageNo = 1, int pageSize = Constants.PricePageSize)
+            int pageNo = 1, int pageSize = Constants.PricePageSize, string siteIds = null)
         {
-            return _context.GetCompetitorsWithPriceView(forDate, siteId);
+            return _context.GetCompetitorsWithPriceView(forDate, siteId, siteIds);
         }
 
         private void AddCompetitorFuelPrice(

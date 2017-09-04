@@ -408,6 +408,32 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             return base.SendExcelFile(excelFilename, workbook, downloadId);
         }
 
+        [System.Web.Mvc.HttpGet]
+        public ActionResult ExportCompPrices(string downloadId, string date = null)
+        {
+            if (String.IsNullOrEmpty(downloadId))
+                throw new ArgumentException("DownloadId cannot be empty!");
+
+            DateTime forDate = DateTime.Now;
+            if (!DateTime.TryParse(date, out forDate))
+            {
+                string[] tokenize = date.Split('/');
+                date = tokenize[2] + "/" + tokenize[1] + "/" + tokenize[0];
+                forDate = new DateTime(Convert.ToInt16(tokenize[2]), Convert.ToInt16(tokenize[1]), Convert.ToInt16(tokenize[0]));
+            }
+
+            ExportCompetitorPricesViewModel compPrices = new ExportCompetitorPricesViewModel();
+            compPrices.SainsburysSitePrices = _serviceFacade.GetSitePrices(forDate, "", 0, 0, "", 0);
+            compPrices.DriveTimeMarkups = _serviceFacade.GetAllDriveTimeMarkups();
+
+            var siteIds = compPrices.SainsburysSitePrices.Select(x => x.SiteId.ToString()).Aggregate((x, y) => x + "," + y);
+            compPrices.CompetitorPrices = _serviceFacade.GetCompetitorsWithPrices(forDate, 0, 1, 2000, siteIds);
+
+            var workbook = new CompetitorPricesExporter().ToExcelWorkbook(compPrices, forDate);
+            var excelFilename = String.Format("AllCompetitorPrices[{0}].xlsx", forDate.ToString("dd-MMM-yyyy"));
+            return base.SendExcelFile(excelFilename, workbook, downloadId);
+        }
+
         [System.Web.Mvc.HttpPost]
         public ActionResult Edit(SiteViewModel site)
         {

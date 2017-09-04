@@ -270,14 +270,15 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
 		/// <param name="siteId">Optional - Specific SiteId or 0 for all Sites</param>
 		/// <param name="pageNo">Optional - Viewing PageNo</param>
 		/// <param name="pageSize">Optional - PageSize, set large value (e.g. 1000) to get all sites</param>
+        /// <param name="siteIds">Optional - list of JS sites to export</param>
 		/// <returns>List of SitePriceViewModel</returns>
 		[System.Web.Http.HttpGet]
 		[System.Web.Http.Route("api/CompetitorPrices")]
 		public IHttpActionResult GetCompetitorsWithPrices([FromUri] DateTime? forDate = null,
-			[FromUri]int siteId = 0, [FromUri]int pageNo = 1, [FromUri]int pageSize = Constants.PricePageSize)
+			[FromUri]int siteId = 0, [FromUri]int pageNo = 1, [FromUri]int pageSize = Constants.PricePageSize, [FromUri] string siteIds = null)
 		{
 			if (!forDate.HasValue) forDate = DateTime.Now;
-			IEnumerable<SitePriceViewModel> siteWithPrices = _siteService.GetCompetitorsWithPrices(forDate.Value, siteId, pageNo, pageSize);
+			IEnumerable<SitePriceViewModel> siteWithPrices = _siteService.GetCompetitorsWithPrices(forDate.Value, siteId, pageNo, pageSize, siteIds);
 
             siteWithPrices = siteWithPrices == null
                 ? new List<SitePriceViewModel>()

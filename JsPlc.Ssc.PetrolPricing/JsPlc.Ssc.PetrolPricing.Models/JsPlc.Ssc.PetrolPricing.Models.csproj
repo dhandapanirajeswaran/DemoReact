@@ -140,6 +140,7 @@
     <Compile Include="ViewModels\Diagnostics\DiagnosticsViewModel.cs" />
     <Compile Include="ViewModels\EmailTemplateNameViewModel.cs" />
     <Compile Include="ViewModels\EmailTemplateViewModel.cs" />
+    <Compile Include="ViewModels\ExportCompetitorPricesViewModel.cs" />
     <Compile Include="ViewModels\FileDownloadViewModel.cs" />
     <Compile Include="ViewModels\HistoricalPriceViewModel.cs" />
     <Compile Include="ViewModels\JsonResultViewModel.cs" />

@@ -100,16 +100,16 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         IEnumerable<SitePriceViewModel> GetSitesWithPrices(DateTime forDate, string storeName = "", int catNo = 0, int storeNo = 0, string storeTown = "", int siteId = 0, int pageNo = 1,
             int pageSize = Constants.PricePageSize, bool getCalcPrices = false);
 
-		/// <summary>
-		/// Useful for pricing screen
-		/// </summary>
-		/// <param name="forDate"></param>
-		/// <param name="siteId"></param>
-		/// <param name="pageNo"></param>
-		/// <param name="pageSize"></param>
-		/// <returns></returns>
-		IEnumerable<SitePriceViewModel> GetCompetitorsWithPrices(DateTime forDate, int siteId = 0, int pageNo = 1,
-			int pageSize = Constants.PricePageSize);
+        /// <summary>
+        /// Useful for pricing screen
+        /// </summary>
+        /// <param name="forDate"></param>
+        /// <param name="siteId"></param>
+        /// <param name="pageNo"></param>
+        /// <param name="pageSize"></param>
+        /// <returns></returns>
+        IEnumerable<SitePriceViewModel> GetCompetitorsWithPrices(DateTime forDate, int siteId = 0, int pageNo = 1,
+            int pageSize = Constants.PricePageSize, string siteIds = null);
 
 		// unsafe to use , see impl.
 		IQueryable<Site> GetSitesIncludePrices(DateTime? forDate = null);
