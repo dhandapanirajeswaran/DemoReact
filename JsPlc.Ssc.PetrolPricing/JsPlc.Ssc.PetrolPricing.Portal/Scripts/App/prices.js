@@ -76,7 +76,7 @@ define(["SitePricing", "notify", "busyloader", "downloader", "infotips", "cookie
                 + "&storeTown=" + $('#viewingStoreTown').val();
 
             busyloader.show({
-                message: 'Exporting Competitors - Please wait (ETA 3 minutes)',
+                message: 'Exporting Competitors - Please wait (ETA 1 minute)',
                 showtime: 4000,
                 dull: true
             });
