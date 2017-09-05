@@ -148,7 +148,6 @@
                 def = uploadTypeDefs[key];
                 showOrHide($(def.help), uploadtype == key);
                 showOrHide($(def.mostRecent), uploadtype == key);
-                console.log($(def.mostRecent));
             }
         };
 
