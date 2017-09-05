@@ -77,7 +77,8 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             {
                 UploadTypes = GetUploadTypes(),
                 UploadDate = DateTime.Now,
-                SelectedFileUploadType = (int)uploadType
+                SelectedFileUploadType = (int)uploadType,
+                RecentFiles = _serviceFacade.GetRecentFileUploadSummary().Files
             };
             var existingUploads = await ExistingDailyUploads(model.UploadDate);
             if (existingUploads != null && existingUploads.Any())
@@ -96,7 +97,8 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             var model = new UploadViewModel
             {
                 UploadTypes = GetUploadTypes(),
-                UploadDate = uploadTypes == 2 ? DateTime.Now : uploadDate.Value
+                UploadDate = uploadTypes == 2 ? DateTime.Now : uploadDate.Value,
+                RecentFiles = _serviceFacade.GetRecentFileUploadSummary().Files
             };
 
             string errorMessage = ValidateUploadAttempt((FileUploadTypes)uploadTypes, uploadDate.Value).Result;

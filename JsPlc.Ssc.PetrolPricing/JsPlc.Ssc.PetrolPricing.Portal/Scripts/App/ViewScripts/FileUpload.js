@@ -12,7 +12,9 @@
                 submit: {
                     title: 'Uploading Daily Price Data',
                     message: 'ETA: between 1 and 2 minutes'
-                }
+                },
+                help: '#divDailyPriceHelp',
+                mostRecent: '#divMostRecentDailyCatalistInfo'
             },
             '2': {
                 message: 'Quarterly Site Data',
@@ -23,7 +25,9 @@
                 submit: {
                     title: 'Uploading Quarterly Site Data File',
                     message: 'ETA: between 1 and 2 minutes'
-                }
+                },
+                help: '#divQuarterlyFileHelp',
+                mostRecent: '#divMostRecentQuarterlyInfo'
             },
             '3': {
                 message: 'Latest JS Price Data',
@@ -34,7 +38,9 @@
                 submit: {
                     title: 'Uploading Latest JS Price Data',
                     message: 'ETA: less than 1 minute'
-                }
+                },
+                help: '#divLatestJsHelp',
+                mostRecent: '#divMostRecentJSPriceDataInfo'
             },
             '4': {
                 message: 'Latest Competitors Price Data',
@@ -45,7 +51,9 @@
                 submit: {
                     title: 'Latest Competitors Price Data',
                     message: 'ETA: less than 1 minute'
-                }
+                },
+                help: '#divLatestCompHelp',
+                mostRecent: '#divMostRecentCompPriceDataInfo'
             }
         };
 
@@ -133,15 +141,15 @@
 
         function redrawHelp() {
             var uploadtype = $(selectors.uploadTypeName).val(),
-                dailyHelp = $('#divDailyPriceHelp'),
-                quarterlyHelp = $('#divQuarterlyFileHelp'),
-                latestJsHelp = $('#divLatestJsHelp'),
-                latestCompHelp = $('#divLatestCompHelp');
+                key,
+                def;
 
-            showOrHide(dailyHelp, uploadtype == 1);
-            showOrHide(quarterlyHelp, uploadtype == 2);
-            showOrHide(latestJsHelp, uploadtype == 3);
-            showOrHide(latestCompHelp, uploadtype == 4);
+            for (key in uploadTypeDefs) {
+                def = uploadTypeDefs[key];
+                showOrHide($(def.help), uploadtype == key);
+                showOrHide($(def.mostRecent), uploadtype == key);
+                console.log($(def.mostRecent));
+            }
         };
 
         function showOrHide(ele, show) {

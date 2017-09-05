@@ -13,6 +13,8 @@ namespace JsPlc.Ssc.PetrolPricing.Models.ViewModels
         public IEnumerable<UploadType> UploadTypes { get; set; }
         public DateTime UploadDate { get; set; }
 
+        public List<RecentFileUploadSummaryItem> RecentFiles = new List<RecentFileUploadSummaryItem>();
+
         public UploadViewModel()
         {
             this.SelectedFileUploadType = 1; // DailyPriceData

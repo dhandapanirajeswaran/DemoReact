@@ -1,0 +1,17 @@
+﻿@model JsPlc.Ssc.PetrolPricing.Models.ViewModels.RecentFileUploadSummaryItem
+@using JsPlc.Ssc.PetrolPricing.Portal.Helper.Extensions
+
+@if (Model.FileUploadId != 0)
+{
+<div class="last-file-upload-summary">
+    Last upload by @Html.FormatEmailLink(Model.UploadedBy)
+    on <strong>@Html.FormatFriendlyDateTime(Model.UploadDateTime) - (@Html.FormatFriendlyTimeAgo(Model.UploadDateTime))</strong>
+</div>
+}
+else
+{
+    <div class="last-file-upload-summary text-danger">
+        <i class="fa fa-file"></i> No recent file uploaded.
+    </div>
+}
+

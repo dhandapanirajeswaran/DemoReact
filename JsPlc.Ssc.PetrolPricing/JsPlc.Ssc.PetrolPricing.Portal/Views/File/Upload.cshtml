@@ -1,6 +1,13 @@
 ﻿@model JsPlc.Ssc.PetrolPricing.Models.ViewModels.UploadViewModel
+@using JsPlc.Ssc.PetrolPricing.Models.ViewModels
+@using JsPlc.Ssc.PetrolPricing.Models.Enums
 @{
     ViewBag.Title = "New file upload";
+
+    var lastDailyUpload = Model.RecentFiles.FirstOrDefault(x => x.UploadTypeId == (int)FileUploadType.DailyPriceData) ?? new RecentFileUploadSummaryItem();
+    var lastQuarterlyUpload = Model.RecentFiles.FirstOrDefault(x => x.UploadTypeId == (int)FileUploadType.QuarterlySiteData) ?? new RecentFileUploadSummaryItem();
+    var lastJSPriceDataUpload = Model.RecentFiles.FirstOrDefault(x => x.UploadTypeId == (int)FileUploadType.LatestJsPriceData) ?? new RecentFileUploadSummaryItem();
+    var lastCompPriceDataUpload = Model.RecentFiles.FirstOrDefault(x => x.UploadTypeId == (int)FileUploadType.LatestCompetitorsPriceData) ?? new RecentFileUploadSummaryItem();
 }
 <link type="text/css" rel="stylesheet" href="~/Content/uploads.css" />
 <link type="text/css" rel="stylesheet" href="~/Content/tips.css" />
@@ -39,6 +46,12 @@
     .date-indicator.past::before {border-right-color: #d9534f;}
     .date-indicator.tomorrow::before,
     .date-indicator.future::before {border-right-color: orange;}
+
+    .upload-recent-file-summary {
+        display: inline-block;
+        float: right;
+    }
+
 </style>
 
 
@@ -67,6 +80,19 @@
         <div class="alert alert-warning font125pc">
             Uploaded data will be calculated as <strong id="calcultedasdate">@Model.UploadDate.ToString("dd/MM/yyyy")</strong>
             <span id="CalculateDateInfo" class="badge"></span>
+
+            <div id="divMostRecentDailyCatalistInfo" class="upload-recent-file-summary">
+                @Html.Partial("~/Views/File/_FileUploadSummary.cshtml", lastDailyUpload)
+            </div>
+            <div id="divMostRecentQuarterlyInfo" class="upload-recent-file-summary" style="display: none;">
+                @Html.Partial("~/Views/File/_FileUploadSummary.cshtml", lastQuarterlyUpload)
+            </div>
+            <div id="divMostRecentJSPriceDataInfo" class="upload-recent-file-summary" style="display: none;">
+                @Html.Partial("~/Views/File/_FileUploadSummary.cshtml", lastJSPriceDataUpload)
+            </div>
+            <div id="divMostRecentCompPriceDataInfo" class="upload-recent-file-summary" style="display: none;">
+                @Html.Partial("~/Views/File/_FileUploadSummary.cshtml", lastCompPriceDataUpload)
+            </div>
         </div>
     }
 

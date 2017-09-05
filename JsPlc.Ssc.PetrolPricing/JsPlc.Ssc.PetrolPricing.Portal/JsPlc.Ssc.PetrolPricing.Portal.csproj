@@ -565,6 +565,7 @@
     <Content Include="Views\Sites\SiteEmails.cshtml" />
     <Content Include="Views\Sites\UploadSiteEmails.cshtml" />
     <Content Include="Views\Sites\Pricing\_SiteFilterPopup.cshtml" />
+    <Content Include="Views\File\_FileUploadSummary.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\uploads\" />
