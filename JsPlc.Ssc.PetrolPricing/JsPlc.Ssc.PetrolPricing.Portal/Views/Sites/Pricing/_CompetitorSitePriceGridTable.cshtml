@@ -175,7 +175,7 @@
 
                         <!-- ko foreach: FuelPricesToDisplay -->
                         <!-- ko if: siteSupportsFuel -->
-                        <td style="border-left: 2px solid #666" class="text-center" data-bind="css: (isDriveTimeBoundary() ? 'drive-time-boundary' : '')" >
+                        <td style="border-left: 2px solid #666" class="text-center" data-bind="css: (competitorDay2UnleadedCellCss())" >
                             <span class="comp-day1-price price-excludes-drive-time" data-bind="html: FuelPrice.ForecourtYestPriceHtml(), attr: {'data-infotip': FuelPrice.YestPriceInfotip()}"></span>
                             <span class="comp-day1-price price-includes-drive-time" data-bind="html: FuelPrice.CompDay2YestPriceIncDriveTimePriceHtml(), attr: {'data-infotip': FuelPrice.YestPriceInfotip()}"></span>
                         </td>

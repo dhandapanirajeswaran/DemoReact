@@ -238,15 +238,27 @@ namespace JsPlc.Ssc.PetrolPricing.Exporting.Exporters
                 : "+" + Math.Abs(value).ToString("0.0");
         }
 
+
+        private int GetOverrideOrTodayPrice(FuelPriceViewModel fuelPrice)
+        {
+            if (fuelPrice == null)
+                return 0;
+            if (fuelPrice.OverridePrice.HasValue && fuelPrice.OverridePrice.Value > 0)
+                return fuelPrice.OverridePrice.Value;
+            return fuelPrice.TodayPrice.HasValue
+                ? fuelPrice.TodayPrice.Value
+                : 0;
+        }
+
         private void AddSainburysSite(IXLWorksheet ws, SitePriceViewModel jssite)
         {
             var unleadedPrice = jssite.FuelPrices.FirstOrDefault(x => x.FuelTypeId == (int)FuelTypeItem.Unleaded);
             var dieselPrice = jssite.FuelPrices.FirstOrDefault(x => x.FuelTypeId == (int)FuelTypeItem.Diesel);
             var superUnleadedPrice = jssite.FuelPrices.FirstOrDefault(x => x.FuelTypeId == (int)FuelTypeItem.Super_Unleaded);
 
-            var unleaded = unleadedPrice == null ? 0 : unleadedPrice.TodayPrice.Value;
-            var diesel = dieselPrice == null ? 0 : dieselPrice.TodayPrice.Value;
-            var superUnleaded = superUnleadedPrice == null ? 0 : superUnleadedPrice.TodayPrice.Value;
+            var unleaded = GetOverrideOrTodayPrice(unleadedPrice);
+            var diesel = GetOverrideOrTodayPrice(dieselPrice);
+            var superUnleaded = GetOverrideOrTodayPrice(superUnleadedPrice);
 
             var strategy = "Standard";
             var markup = unleadedPrice == null ? 0.0 : unleadedPrice.CompetitorPriceOffset;

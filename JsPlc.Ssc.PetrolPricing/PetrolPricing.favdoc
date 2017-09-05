@@ -22,5 +22,25 @@
         <lineHash>No3T7fda98RqLsC/OWoxJlXFvtXQY/Q2Mh6FVbw9WzM=</lineHash>
       </position>
     </Favorite>
+    <Favorite>
+      <name>_CompetitorSitePriceGridTable.cshtml</name>
+      <path>JsPlc.Ssc.PetrolPricing.Portal\Views\Sites\Pricing\_CompetitorSitePriceGridTable.cshtml</path>
+      <absolutePath>C:\Users\garry.leeder\Source\Repos\PetrolPricing\JsPlc.Ssc.PetrolPricing\JsPlc.Ssc.PetrolPricing.Portal\Views\Sites\Pricing\_CompetitorSitePriceGridTable.cshtml</absolutePath>
+      <position>
+        <line>184</line>
+        <column>197</column>
+        <lineHash>NGXDN8t7QS5vwaU3L4o8f+af9jloJT6NzccOxO6NPfU=</lineHash>
+      </position>
+    </Favorite>
+    <Favorite>
+      <name>SitePricing.js</name>
+      <path>JsPlc.Ssc.PetrolPricing.Portal\Scripts\App\ViewScripts\SitePricing.js</path>
+      <absolutePath>C:\Users\garry.leeder\Source\Repos\PetrolPricing\JsPlc.Ssc.PetrolPricing\JsPlc.Ssc.PetrolPricing.Portal\Scripts\App\ViewScripts\SitePricing.js</absolutePath>
+      <position>
+        <line>187</line>
+        <column>1</column>
+        <lineHash>RDsq227nxicbvSK505ianf4m5pcaKGY6zo+jedT3HCA=</lineHash>
+      </position>
+    </Favorite>
   </favorites>
 </Favorites>

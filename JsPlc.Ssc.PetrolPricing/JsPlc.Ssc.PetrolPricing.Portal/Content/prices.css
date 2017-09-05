@@ -215,6 +215,8 @@ table.competitorTable > tbody > .competitor-row  {
     font-weight: bold;
     background-color: #fff;
     padding: 1px 8px;
+    border: 1px solid #666;
+    border-radius: 6px;
 }
 
 .competitorTable .competitor-row.excluded-brand,
@@ -223,6 +225,15 @@ table.competitorTable > tbody > .competitor-row  {
     background: #999;
     color: #333;
     font-style: italic;
+}
+
+.competitorTable .competitor-row .sainsburys-competitor {
+    font-weight: bold;
+}
+
+.competitorTable .competitor-row .sainsburys-competitor .price-excludes-drive-time,
+.competitorTable .competitor-row .sainsburys-competitor .price-includes-drive-time {
+    border-bottom: 1px double orange;
 }
 
 #competitorPricesPopup .footer-actions {

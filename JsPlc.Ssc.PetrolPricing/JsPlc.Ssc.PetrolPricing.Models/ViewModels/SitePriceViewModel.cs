@@ -77,9 +77,13 @@ namespace JsPlc.Ssc.PetrolPricing.Models.ViewModels
 
         // Todays's Prices
         public int? TodayPrice { get; set; } // from db
+        public DateTime? TodayDate { get; set; } // competitor VM
 
         // Yesterday's Prices
         public int? YestPrice { get; set; } // from db
+        public DateTime? YestDate { get; set; } // competitor VM
+
+        public bool IsSainsburysSite { get; set; } // competitor VM
 
         // Markup of the selected Competitor
         public int? Markup { get; set; }

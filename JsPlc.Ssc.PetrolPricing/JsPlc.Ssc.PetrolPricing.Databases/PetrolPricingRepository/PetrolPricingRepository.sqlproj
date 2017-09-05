@@ -232,6 +232,8 @@
     <Build Include="dbo\Stored Procedures\spProcessSitePricingBatch.sql" />
     <Build Include="dbo\Tables\PriceReasonFlags.sql" />
     <Build Include="dbo\Functions\Scalar Functions\fn_GetPriceReasons.sql" />
+    <Build Include="dbo\Functions\Scalar Functions\fn_LastCompetitorPriceId.sql" />
+    <Build Include="dbo\Functions\Scalar Functions\fn_LastSitePriceId.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Scripts\PostDeployment\Script.PostDeployment.sql" />

@@ -95,3 +95,44 @@
         line-height: 1em;
     }
 
+.infotip .sainsburys-sign::before {
+    content: "SAINSBURYS";
+    color: orange;
+    background-color: #fff;
+    border: 1px solid #000;
+    border-radius: 6px;
+    font-size: 125%;
+    font-weight: bold;
+    display: block;
+    margin: 4px
+}
+
+.infotip .unleaded-fuel-sign::before,
+.infotip .diesel-fuel-sign::before,
+.infotip .super-unleaded-fuel-sign::before {
+    content: "TODO";
+    display: block;
+    padding: 2px 6px;
+    border-radius: 6px;
+    width: 12em;
+    border: 1px solid #fff;
+    font-size: 125%;
+}
+
+.infotip .unleaded-fuel-sign::before {
+    content: "Unleaded";
+    color: #fff;
+    background-color: #5cb85c;
+}
+
+.infotip .diesel-fuel-sign::before {
+    content: "Diesel";
+    color: #fff;
+    background-color: #000;
+}
+
+.infotip .super-unleaded-fuel-sign::before {
+    content: "Super-Unleaded";
+    color: #000;
+    background-color: #fff;
+}
