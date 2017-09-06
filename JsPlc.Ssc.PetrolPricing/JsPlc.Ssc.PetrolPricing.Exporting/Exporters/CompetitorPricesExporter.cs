@@ -237,8 +237,7 @@ namespace JsPlc.Ssc.PetrolPricing.Exporting.Exporters
                 ? "-" + Math.Abs(value).ToString("0.0")
                 : "+" + Math.Abs(value).ToString("0.0");
         }
-
-
+        
         private int GetOverrideOrTodayPrice(FuelPriceViewModel fuelPrice)
         {
             if (fuelPrice == null)
@@ -250,15 +249,34 @@ namespace JsPlc.Ssc.PetrolPricing.Exporting.Exporters
                 : 0;
         }
 
+        private int GetTomorrowPrice(FuelPriceViewModel fuelPrice)
+        {
+            if (fuelPrice == null)
+                return 0;
+            if (fuelPrice.OverridePrice.HasValue && fuelPrice.OverridePrice > 0)
+                return fuelPrice.OverridePrice.Value;
+            if (fuelPrice.AutoPrice.HasValue && fuelPrice.AutoPrice > 0)
+                return fuelPrice.AutoPrice.Value;
+            return 0;
+        }
+
         private void AddSainburysSite(IXLWorksheet ws, SitePriceViewModel jssite)
         {
             var unleadedPrice = jssite.FuelPrices.FirstOrDefault(x => x.FuelTypeId == (int)FuelTypeItem.Unleaded);
             var dieselPrice = jssite.FuelPrices.FirstOrDefault(x => x.FuelTypeId == (int)FuelTypeItem.Diesel);
             var superUnleadedPrice = jssite.FuelPrices.FirstOrDefault(x => x.FuelTypeId == (int)FuelTypeItem.Super_Unleaded);
 
-            var unleaded = GetOverrideOrTodayPrice(unleadedPrice);
-            var diesel = GetOverrideOrTodayPrice(dieselPrice);
-            var superUnleaded = GetOverrideOrTodayPrice(superUnleadedPrice);
+            var unleaded = GetTomorrowPrice(unleadedPrice);
+            var diesel = GetTomorrowPrice(dieselPrice);
+            var superUnleaded = GetTomorrowPrice(superUnleadedPrice);
+
+            var unleadedToday = GetTodayPrice(FuelTypeItem.Unleaded, jssite.FuelPrices);
+            var dieselToday = GetTodayPrice(FuelTypeItem.Diesel, jssite.FuelPrices);
+            var superUnleadedToday = GetTodayPrice(FuelTypeItem.Super_Unleaded, jssite.FuelPrices);
+
+            var hasUnleadedOverride = unleadedPrice.OverridePrice.HasValue && unleadedPrice.OverridePrice > 0;
+            var hasDieselOverride = dieselPrice.OverridePrice.HasValue && dieselPrice.OverridePrice > 0;
+            var hasSuperUnleadedOverride = superUnleadedPrice.OverridePrice.HasValue && superUnleadedPrice.OverridePrice > 0;
 
             var strategy = "Standard";
             var markup = unleadedPrice == null ? 0.0 : unleadedPrice.CompetitorPriceOffset;
@@ -291,10 +309,7 @@ namespace JsPlc.Ssc.PetrolPricing.Exporting.Exporters
             SetColumn(ws, Columns.Sainsburys_PriceMatchStrategy, strategy, ExcelStyleFormatters.GeneralTextLeftAlignedFormatter);
             SetColumn(ws, Columns.Sainsburys_Markup, markup, ExcelStyleFormatters.GeneralPrice1DPFormatter);
 
-            SetPriceReasonColumn(ws, Columns.Competitor_Unleaded, unleadedPriceReasons);
-            SetPriceReasonColumn(ws, Columns.Competitor_Diesel, dieselPriceReasons);
-            SetPriceReasonColumn(ws, Columns.Competitor_SuperUnleaded, superUnleadedPriceReasons);
-
+         
             SetColumn(ws, Columns.Competitor_Unleaded, SimplePriceReasonText(unleadedPriceReasons), ExcelStyleFormatters.GeneralTextCenteredFormatter);
             SetColumn(ws, Columns.Competitor_Diesel, SimplePriceReasonText(dieselPriceReasons), ExcelStyleFormatters.GeneralTextCenteredFormatter);
             SetColumn(ws, Columns.Competitor_SuperUnleaded, SimplePriceReasonText(superUnleadedPriceReasons), ExcelStyleFormatters.GeneralTextCenteredFormatter);
@@ -305,19 +320,36 @@ namespace JsPlc.Ssc.PetrolPricing.Exporting.Exporters
 
             StyleSainsburysRowBordersAndColor(ws, Columns.Sainsburys_StoreNo, Columns.Competitor_SuperUnleadedIncMarkup);
 
+            SetPriceReasonColumn(ws, Columns.Competitor_Unleaded, unleadedPriceReasons, Columns.Competitor_UnleadedIncMarkup, unleadedToday, hasUnleadedOverride);
+            SetPriceReasonColumn(ws, Columns.Competitor_Diesel, dieselPriceReasons, Columns.Competitor_DieselIncMarkup, dieselToday, hasDieselOverride);
+            SetPriceReasonColumn(ws, Columns.Competitor_SuperUnleaded, superUnleadedPriceReasons, Columns.Competitor_SuperUnleadedIncMarkup, superUnleadedToday, hasSuperUnleadedOverride);
+
             NewRow();
         }
 
-        private void SetPriceReasonColumn(IXLWorksheet ws, Columns column, PriceReasonFlags priceReasons)
+        private void SetPriceReasonColumn(IXLWorksheet ws, Columns infoColumn, PriceReasonFlags priceReasons, Columns incPriceColumn, int todayPrice, bool hasOverride)
         {
+            if (hasOverride)
+            {
+                SetColumn(ws, infoColumn, "Override", ExcelStyleFormatters.GeneralTextCenteredFormatter);
+                SetFontAndFillColors(ws, infoColumn, XLColor.White, XLColor.Blue);
+                SetFontAndFillColors(ws, incPriceColumn, XLColor.White, XLColor.Blue);
+                return;
+            }
+
             var text = SimplePriceReasonText(priceReasons);
             if (String.IsNullOrEmpty(text))
                 return;
 
-            SetColumn(ws, column, text, ExcelStyleFormatters.GeneralTextCenteredFormatter);
-            var cell = ws.Cell(_row, (int)column);
+            SetColumn(ws, infoColumn, text, ExcelStyleFormatters.GeneralTextCenteredFormatter);
+            var cell = ws.Cell(_row, (int)infoColumn);
             cell.Style.Fill.SetBackgroundColor(XLColor.Orange);
             cell.Style.Font.SetFontColor(XLColor.Black);
+
+            cell = ws.Cell(_row, (int)incPriceColumn);
+            cell.Value = FormatPrice(todayPrice);
+            cell.Style.Font.SetFontColor(XLColor.Black);
+            cell.Style.Fill.SetBackgroundColor(XLColor.BattleshipGrey);
         }
 
         private string SimplePriceReasonText(PriceReasonFlags priceReasonFlags)
@@ -389,7 +421,7 @@ namespace JsPlc.Ssc.PetrolPricing.Exporting.Exporters
                 SetFontAndFillColors(ws, column, XLColor.Black, XLColor.Yellow);
                 if (isCompetitor)
                 {
-                    SetAllBorders(ws, column, XLColor.Orange, XLBorderStyleValues.Medium);
+                    SetAllBorders(ws, column, XLColor.Orange, XLBorderStyleValues.Thick);
                     SetBold(ws, column);
                 }
             }
@@ -398,7 +430,7 @@ namespace JsPlc.Ssc.PetrolPricing.Exporting.Exporters
                 SetFontAndFillColors(ws, column, XLColor.Black, XLColor.PastelGreen);
                 if (isCompetitor)
                 {
-                    SetAllBorders(ws, column, XLColor.Orange, XLBorderStyleValues.Medium);
+                    SetAllBorders(ws, column, XLColor.Orange, XLBorderStyleValues.Thick);
                     SetBold(ws, column);
                 }
             }
@@ -411,7 +443,7 @@ namespace JsPlc.Ssc.PetrolPricing.Exporting.Exporters
                 SetFontAndFillColors(ws, column, XLColor.Black, XLColor.Yellow);
                 if (isCompetitor)
                 {
-                    SetAllBorders(ws, column, XLColor.Orange, XLBorderStyleValues.Medium);
+                    SetAllBorders(ws, column, XLColor.Orange, XLBorderStyleValues.Thick);
                     SetBold(ws, column);
                 }
             }
@@ -420,7 +452,7 @@ namespace JsPlc.Ssc.PetrolPricing.Exporting.Exporters
                 SetFontAndFillColors(ws, column, XLColor.White, XLColor.Black);
                 if (isCompetitor)
                 {
-                    SetAllBorders(ws, column, XLColor.Orange, XLBorderStyleValues.Medium);
+                    SetAllBorders(ws, column, XLColor.Orange, XLBorderStyleValues.Thick);
                     SetBold(ws, column);
                 }
             }
@@ -433,7 +465,7 @@ namespace JsPlc.Ssc.PetrolPricing.Exporting.Exporters
                 SetFontAndFillColors(ws, column, XLColor.Black, XLColor.Yellow);
                 if (isCompetitor)
                 {
-                    SetAllBorders(ws, column, XLColor.Orange, XLBorderStyleValues.Medium);
+                    SetAllBorders(ws, column, XLColor.Orange, XLBorderStyleValues.Thick);
                     SetBold(ws, column);
                 }
             }
@@ -442,7 +474,7 @@ namespace JsPlc.Ssc.PetrolPricing.Exporting.Exporters
                 SetFontAndFillColors(ws, column, XLColor.Black, XLColor.White);
                 if (isCompetitor)
                 {
-                    SetAllBorders(ws, column, XLColor.Orange, XLBorderStyleValues.Medium);
+                    SetAllBorders(ws, column, XLColor.Orange, XLBorderStyleValues.Thick);
                     SetBold(ws, column);
                 }
             }
