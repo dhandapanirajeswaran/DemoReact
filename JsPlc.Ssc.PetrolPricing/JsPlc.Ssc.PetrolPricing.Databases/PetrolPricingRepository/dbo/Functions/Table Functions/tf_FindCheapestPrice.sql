@@ -31,9 +31,9 @@ AS
 BEGIN
 
 ----DEBUG:START
---DECLARE	@SiteId INT = 354
+--DECLARE	@SiteId INT = 1439
 --DECLARE	@FuelTypeId INT = 6
---DECLARE	@ForDate DATE = '2017-09-01 12:30:00'
+--DECLARE	@ForDate DATE = '2017-09-06 12:30:00'
 --DECLARE	@FileUploadId INT = 8
 --DECLARE	@MaxDriveTime INT = 25
 
@@ -214,7 +214,7 @@ BEGIN
 		IF @Site_PriceMatchType = 3 AND @LatestJsPrice_ModalPrice IS NULL
 		BEGIN
 			--
-			-- Search for most recent Competitor Site Price for Fuel on (or before) Date
+			-- Search for most recent Competitor Site Price for Fuel on Date
 			--
 			SELECT TOP 1
 				@MinPriceFound = cp.ModalPrice,
@@ -449,10 +449,13 @@ BEGIN
 				BEGIN
 					SET @Cheapest_SuggestedPrice = @Today_Price
 					SET @Cheapest_IsTodayPrice = 1 
-					SET @Cheapest_PriceReasonFlags = @Cheapest_PriceReasonFlags | @PriceReasonFlags_TodayPriceSnapBack
+					SET @Cheapest_PriceReasonFlags = @Cheapest_PriceReasonFlags | @PriceReasonFlags_TodayPriceSnapBack | @PriceReasonFlags_InsidePriceVariance
+				END
+				ELSE
+				BEGIN
+					SET @Cheapest_PriceReasonFlags = @Cheapest_PriceReasonFlags | @PriceReasonFlags_OutsidePriceVariance
 				END
 			END
-
 
 			-- check Price Stunt Freeze
 			IF @PriceStuntFreeze = 1
@@ -467,7 +470,6 @@ BEGIN
 				END
 			END
 		END
-
 
 		-- lookup Drive Time markup
 		IF @Cheapest_CompetitorId > 0

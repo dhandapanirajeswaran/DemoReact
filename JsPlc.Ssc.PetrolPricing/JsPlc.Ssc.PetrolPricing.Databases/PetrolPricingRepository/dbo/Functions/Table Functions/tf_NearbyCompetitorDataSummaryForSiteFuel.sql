@@ -16,9 +16,9 @@ AS
 BEGIN
 
 ----DEBUG:START
---DECLARE	@ForDate DATE = '2017-08-14'
+--DECLARE	@ForDate DATE = '2017-09-05'
 --DECLARE	@DriveTime INT = 25
---DECLARE	@SiteId INT = 6164
+--DECLARE	@SiteId INT = 1439
 --DECLARE	@FuelTypeId INT = 2
 
 --DECLARE @results TABLE
@@ -44,6 +44,10 @@ BEGIN
 	DECLARE @CompetitorPriceCount INT = 0;
 	DECLARE @GrocerPriceCount INT = 0;
 
+	DECLARE @LastCompetitorDateOfPrice DATE = (SELECT MAX(DateOfPrice) FROM dbo.CompetitorPrice WHERE DateOfPrice <= @ForDate)
+
+	DECLARE @LastSitePriceDateOfCalc DATE = (SELECT MAX(DateOfCalc) FROM dbo.SitePrice WHERE DateOfCalc <= DATEADD(DAY, -1, @ForDate))
+
 	--
 	-- find nearby Competitors 
 	--
@@ -53,12 +57,13 @@ BEGIN
 	--		(3) Competitor site is Active
 	--		(4) Grocer OR non-Grocers
 	--
-	DECLARE @NearbyCompetitors TABLE (CompetitorSiteId INT PRIMARY KEY, CatNo INT, IsGrocer BIT)
+	DECLARE @NearbyCompetitors TABLE (CompetitorSiteId INT PRIMARY KEY, CatNo INT, IsGrocer BIT, IsSainsburysSite BIT)
 	INSERT INTO @NearbyCompetitors
 		SELECT
 			stc.CompetitorId [CompetitorSiteId],
 			compsite.CatNo [CatNo],
-			compsite.isGrocer [IsGrocer]
+			compsite.isGrocer [IsGrocer],
+			compsite.IsSainsburysSite [IsSainsburysSite]
 		FROM
 			dbo.Site st
 			INNER JOIN dbo.SiteToCompetitor stc ON stc.SiteId = st.Id
@@ -71,6 +76,8 @@ BEGIN
 			compsite.IsActive = 1 -- Active competitor
 			AND
 			compsite.IsExcludedBrand = 0 -- ignore Excluded brands
+			AND
+			stc.IsExcluded = 0 -- ignore Excluded Site Competitors
 
 	--
 	-- get nearby Competitor and Grocer Counts
@@ -83,27 +90,21 @@ BEGIN
 	-- get nearby Competitor and Grocer price data (if any)
 	--
 	;WITH NearbyPriceData AS (
-		SELECT DISTINCT
-			nbc.CatNo,
+		SELECT
 			nbc.IsGrocer
 		FROM
 			@NearbyCompetitors nbc
-			INNER JOIN dbo.DailyPrice dp ON dp.CatNo = nbc.CatNo AND dp.FuelTypeId = @FuelTypeId
+			INNER JOIN dbo.CompetitorPrice cp ON cp.SiteId = nbc.CompetitorSiteId AND cp.FuelTypeId = @FuelTypeId AND cp.DateOfPrice = @LastCompetitorDateOfPrice
 		WHERE
-			dp.FuelTypeId = @FuelTypeId
-			AND
-			dp.DailyUploadId IN (
-				SELECT 
-					fu.Id
-				FROM
-					dbo.FileUpload fu
-				WHERE
-					fu.StatusId IN (5, 10, 11)
-					AND
-					fu.UploadDateTime >= @ForDate
-					AND
-					fu.UploadDateTime < @ForDateNextDay
-			)
+			nbc.IsSainsburysSite = 0
+		UNION ALL
+		SELECT
+			nbc.IsGrocer
+		FROM
+			@NearbyCompetitors nbc
+			INNER JOIN dbo.SitePrice sp ON sp.SiteId = nbc.CompetitorSiteId AND sp.FuelTypeId = @FuelTypeId AND sp.DateOfCalc = @LastSitePriceDateOfCalc
+		WHERE
+			nbc.IsSainsburysSite = 1
 	)
 	SELECT 
 		@CompetitorPriceCount = (SELECT COUNT(1) FROM NearbyPriceData),
@@ -119,6 +120,15 @@ BEGIN
 
 ----DEBUG:START
 --SELECT * FROM @results
+
+--SELECT 
+--	(SELECT COUNT(1) FROM @NearbyCompetitors) [CompetitorCount],
+--	@ForDate [@ForDate], 
+--	@FuelTypeId [@FuelTypeId],
+--	@LastCompetitorDateOfPrice [@LastCompetitorDateOfPrice],
+--	@LastSitePriceDateOfCalc [@LastSitePriceDateOfCalc]
+
+--SELECT TOP 1 * FROM dbo.Site WHERE Id = @SiteId
 ----DEBUG:END
 
 	RETURN

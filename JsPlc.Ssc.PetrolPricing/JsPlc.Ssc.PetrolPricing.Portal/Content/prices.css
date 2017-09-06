@@ -500,6 +500,20 @@ table.competitorTable > tbody > .competitor-row  {
     float: left;
 }
 
+#competitorPricePopupPrices .sainsburys-row .price-snapback::before,
+.site-row .price-snapback::before {
+    content: "";
+    position: absolute;
+    border: 8px solid transparent;
+    border-right-color: red;
+    margin-left: -18px;
+    margin-top: 4px;
+}
+
+#competitorPricePopupPrices .sainsburys-row .price-snapback::before {
+    margin-left: calc(-3em - 18px);
+}
+
 
 .pricing-sort-row th {
     text-align: center;

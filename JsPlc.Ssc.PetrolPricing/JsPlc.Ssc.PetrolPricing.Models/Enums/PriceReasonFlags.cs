@@ -29,7 +29,7 @@ namespace JsPlc.Ssc.PetrolPricing.Models.Enums
         NoMatchCompetitorPrice = 0x00000400,
         NoSuggestedPrice = 0x00000800,
 
-        // bits 12-5
+        // bits 12-15
         PriceStuntFreeze = 0x00001000,
         LatestJSPrice = 0x00002000,
         ManualOverride = 0x00004000

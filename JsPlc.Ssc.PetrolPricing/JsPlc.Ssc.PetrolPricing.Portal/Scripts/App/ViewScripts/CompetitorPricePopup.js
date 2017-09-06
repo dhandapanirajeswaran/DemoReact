@@ -201,6 +201,7 @@ function ($, ko, common, compNotePopup, notify, cookieSettings, bootbox) {
     function cloneAsReadonlyHtml(selector, ele) {
         var popup = $(config.selectors.popup),
             src = $(ele),
+            dst = popup.find(selector),
             value = src.find('input').val() || '',
             html = (src.html() + '')
             .replace(/data-bind="[^"]+"/i, '')
@@ -208,7 +209,14 @@ function ($, ko, common, compNotePopup, notify, cookieSettings, bootbox) {
             .replace(/\s+/g, ' ')
             .replace(/<input/i, '<input readonly="readonly" value="' + value + '"');
 
-        popup.find(selector).html(html);
+        console.log(src.hasClass('price-snapback'));
+
+        dst.html(html);
+
+        if (src.hasClass('price-snapback'))
+            dst.addClass('price-snapback');
+        else
+            dst.removeClass('price-snapback');
     };
 
     function drawPopup(siteItem) {

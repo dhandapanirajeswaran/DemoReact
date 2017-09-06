@@ -14,8 +14,8 @@ BEGIN
 --SET NOCOUNT ON;
 --DECLARE	@ForDate DATE = GETDATE()
 --DECLARE	@DriveTime INT = 5
---DECLARE	@SiteId INT = 1783
---DECLARE	@FuelTypeId INT = 6
+--DECLARE	@SiteId INT = 1439
+--DECLARE	@FuelTypeId INT = 2
 ----DEBUG:END
 
 	-- constants
@@ -86,15 +86,12 @@ BEGIN
 		@NearbyCompetitorPriceCount = (SELECT COUNT(1) FROM NonSainsburysNearbyCompetitorPrices) + (SELECT COUNT(1) FROM SainsburysNearbyCompetitorPrices),
 		@NearbyGrocersCount = (SELECT COUNT(1) FROM NearbyCompetitors)
 
-	SET @NearbyGrocerStatus =
-		CASE 
-			WHEN @NearbyGrocersCount != 0 THEN @HasNearbyGrocer_Flag 
-			ELSE 0 
-		END
-		+ CASE 
-			WHEN @NearbyCompetitorPriceCount = @NearbyGrocersCount THEN @AllGrocersHavePriceData_Flag 
-			ELSE 0 
-		END
+	IF @NearbyGrocersCount > 0
+	BEGIN
+		SET @NearbyGrocerStatus = @HasNearbyGrocer_Flag
+		IF @NearbyCompetitorPriceCount = @NearbyGrocersCount
+			SET @NearbyGrocerStatus = @HasNearbyGrocer_Flag + @AllGrocersHavePriceData_Flag
+	END
 
 	-- result
 	RETURN COALESCE(@NearbyGrocerStatus, 0)

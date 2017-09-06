@@ -52,9 +52,9 @@
             text: 'Today Price Snapback' 
         };
         descriptions[PriceReasonFlags.HasGrocers] = { 
-            name: 'Grocers', 
-            infotip: '[u]Grocers[/u]',
-            text: 'Has Grocers' 
+            name: 'Nearby Grocers', 
+            infotip: '[u]Nearby Grocers[/u]',
+            text: 'Has Nearby Grocers' 
         };
         descriptions[PriceReasonFlags.HasIncompleteGrocers] = { 
             name: 'Incomplete Grocers',
