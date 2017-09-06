@@ -21,7 +21,10 @@
 
             PriceStuntFreeze: 0x00001000,
             LatestJSPrice: 0x00002000,
-            ManualOverride: 0x00004000
+            ManualOverride: 0x00004000,
+            MatchCompetitorFound: 0x00008000,
+
+            TrialPriceFound: 0x00010000
         };
 
         var descriptions = {}
@@ -102,6 +105,11 @@
             name: 'Override',
             infotip: '[em]Manual Price Override[/em]',
             text: 'Manual Override'
+        };
+        descriptions[PriceReasonFlags.MatchCompetitorFound] = {
+            name: 'Match Competitor Found',
+            infotip: '[em]Match Competitor Found[/em]',
+            text: 'Match Competitor Found'
         };
 
         function getReasonFromFlags(flags, prop) {

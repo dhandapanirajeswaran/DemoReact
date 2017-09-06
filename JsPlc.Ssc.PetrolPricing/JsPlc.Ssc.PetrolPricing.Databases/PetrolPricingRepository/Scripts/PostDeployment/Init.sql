@@ -463,21 +463,23 @@ FROM dbo.ExcludeBrands eb;
 TRUNCATE TABLE dbo.pricereasonflags
 
 INSERT INTO dbo.PriceReasonFlags (Id, BitMask, Descript)
-VALUES (1, 0x00000001, 'Cheapest price Found')
-		,(2, 0x00000002, 'Rounded')
-		,(3, 0x00000004, 'Inside Price-Variance')
-		,(4, 0x00000008, 'Outside Price-Variance')
-		,(5, 0x00000010, 'Today Price SnapBack')
-		,(6, 0x00000020, 'Has Grocers')
-		,(7, 0x00000040, 'Has Incomplete Grocers')
-		,(8, 0x00000080, 'Based on Unleaded')
-		,(9, 0x00000100, 'Missing Site CatNo')
+VALUES	 (01, 0x00000001, 'Cheapest price Found')
+		,(02, 0x00000002, 'Rounded')
+		,(03, 0x00000004, 'Inside Price-Variance')
+		,(04, 0x00000008, 'Outside Price-Variance')
+		,(05, 0x00000010, 'Today Price SnapBack')
+		,(06, 0x00000020, 'Has Grocers')
+		,(07, 0x00000040, 'Has Incomplete Grocers')
+		,(08, 0x00000080, 'Based on Unleaded')
+		,(09, 0x00000100, 'Missing Site CatNo')
 		,(10, 0x00000200, 'Missing Daily Catalist')
 		,(11, 0x00000400, 'No Match-Competitor Price')
 		,(12, 0x00000800, 'No Suggested Price')
 		,(13, 0x00001000, 'Price Stunt Freeze')
 		,(14, 0x00002000, 'Latest JS Price')
 		,(15, 0x00004000, 'Manual Price Override')
+		,(16, 0x00008000, 'Match Competitor Price Found')
+		,(17, 0x00010000, 'Trial Price Found')
 
 --
 -- look Site Grocer and ExcludedBrand attributes

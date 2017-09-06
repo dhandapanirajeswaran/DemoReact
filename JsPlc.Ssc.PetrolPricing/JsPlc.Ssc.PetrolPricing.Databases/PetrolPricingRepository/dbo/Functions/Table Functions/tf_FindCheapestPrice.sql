@@ -31,7 +31,7 @@ AS
 BEGIN
 
 ----DEBUG:START
---DECLARE	@SiteId INT = 1439
+--DECLARE	@SiteId INT = 9
 --DECLARE	@FuelTypeId INT = 6
 --DECLARE	@ForDate DATE = '2017-09-06 12:30:00'
 --DECLARE	@FileUploadId INT = 8
@@ -85,7 +85,15 @@ BEGIN
 
 	DECLARE @PriceReasonFlags_PriceStuntFreeze INT = 0x00001000
 	DECLARE @PriceReasonFlags_LatestJSPrice INT = 0x00002000
+	DECLARE @PriceReasonFlags_ManualOverride INT = 0x00004000
+	DECLARE @PriceReasonFlags_MatchCompetitorFound INT = 0x00008000
 
+	DECLARE @PriceReasonFlags_TrialPriceFound INT = 0x00010000
+
+	-- Price Match Type
+	DECLARE @PriceMatchType_Standard INT = 1
+	DECLARE @PriceMatchType_TrialPrice INT = 2
+	DECLARE @PriceMatchType_MatchCompetitor INT = 3
 	--
 	-- Get SystemSettings
 	--
@@ -211,7 +219,7 @@ BEGIN
 		--
 		-- Price Strategy Match: Match Competitor ?
 		--
-		IF @Site_PriceMatchType = 3 AND @LatestJsPrice_ModalPrice IS NULL
+		IF @Site_PriceMatchType = @PriceMatchType_MatchCompetitor AND @LatestJsPrice_ModalPrice IS NULL
 		BEGIN
 			--
 			-- Search for most recent Competitor Site Price for Fuel on Date
@@ -228,7 +236,9 @@ BEGIN
 						SiteId = @Site_MatchCompetitorSiteId 
 						AND FuelTypeId = @FuelTypeId
 						AND ModalPrice > 0 
-						AND DateOfPrice = @StartOfYesterday
+						AND DateOfPrice <= @StartOfYesterday
+					ORDER BY
+						DateOfPrice DESC
 					)
 
 			IF @MinPriceFound > 0
@@ -236,7 +246,7 @@ BEGIN
 				SET @Cheapest_SuggestedPrice = @MinPriceFound + @Site_MatchCompetitorMarkup * 10
 				SET @Cheapest_CompetitorId = @MinPriceCompetitorId
 				SET @Cheapest_Markup = @Site_MatchCompetitorMarkup
-				SET @Cheapest_PriceReasonFlags = @Cheapest_PriceReasonFlags | @PriceReasonFlags_CheapestPriceFound
+				SET @Cheapest_PriceReasonFlags = @Cheapest_PriceReasonFlags | @PriceReasonFlags_MatchCompetitorFound
 			END
 			ELSE
 			BEGIN
@@ -247,7 +257,7 @@ BEGIN
 		--
 		-- Price Strategy Match: Standard Price OR Trial price ?
 		--
-		IF (@Site_PriceMatchType = 1 OR @Site_PriceMatchType = 2) AND @LatestJsPrice_ModalPrice IS NULL
+		IF (@Site_PriceMatchType = @PriceMatchType_Standard OR @Site_PriceMatchType = @PriceMatchType_TrialPrice) AND @LatestJsPrice_ModalPrice IS NULL
 		BEGIN
 			--
 			-- Find the cheapest 0-25 min Competitor
@@ -358,7 +368,12 @@ BEGIN
 						THEN sp.DateOfCalc
 						ELSE ''
 					END,
-					@Cheapest_PriceReasonFlags = @Cheapest_PriceReasonFlags | @PriceReasonFlags_CheapestPriceFound
+					@Cheapest_PriceReasonFlags = @Cheapest_PriceReasonFlags | 
+						CASE @Site_PriceMatchType
+							WHEN @PriceMatchType_Standard THEN @PriceReasonFlags_CheapestPriceFound
+							WHEN @PriceMatchType_TrialPrice THEN @PriceReasonFlags_CheapestPriceFound | @PriceReasonFlags_TrialPriceFound
+							ELSE 0
+						END
 				FROM 
 					BestCompetitorPrice bcp
 					LEFT JOIN dbo.DailyPrice dp ON dp.Id = bcp.DailyPriceId
@@ -366,7 +381,7 @@ BEGIN
 					LEFT JOIN dbo.SitePrice sp ON sp.Id = bcp.SitePriceId
 
 				--
-				-- Get most recent 'Today' price for Site Fuel (if any)
+				-- Get most recent Sainsburys 'Today' price for Site Fuel (if any)
 				--
 				DECLARE @Today_Price INT
 				SELECT
@@ -426,6 +441,7 @@ BEGIN
 					END
 				END
 			END
+
 			-- handle No Suggested Price
 			IF @Cheapest_SuggestedPrice = 0 AND @Today_Price > 0
 			BEGIN
@@ -520,10 +536,14 @@ BEGIN
 		)
 	
 	----DEBUG:START
-	--select * from dbo.Site where Id = @SiteId
+	--SELECT TOP 1 * FROM dbo.Site WHERE Id = @SiteId
 	--SELECT * FROM @Result
-	--SELECT dbo.fn_GetPriceReasons(PriceReasonFlags) from @Result
-	--SELECT * FROM dbo.Site where Id = @Cheapest_CompetitorId
+	--SELECT
+	--	(SELECT TOP 1 SiteName FROM dbo.Site WHERE Id = @SiteId) [SiteName],
+	--	dbo.fn_GetPriceReasons(@Cheapest_PriceReasonFlags) [@Cheapest_PriceReasonFlags], 
+	--	@Site_PriceMatchType [@Site_PriceMatchType],
+	--	@Cheapest_CompetitorId [@Cheapest_CompetitorId],
+	--	(SELECT TOP 1 SiteName FROM dbo.Site WHERE Id = @Cheapest_CompetitorId) [Cheapest Competitor Site]
 	----DEBUG:END
 
 	RETURN 
