@@ -7,8 +7,8 @@ BEGIN
 SET NOCOUNT ON
 
 ----DEBUG:START
---DECLARE	@ForDate DATE = '2017-08-29'
---DECLARE	@SiteId INT = 13
+--DECLARE	@ForDate DATE = GETDATE()
+--DECLARE	@SiteId INT = 9
 --DECLARE @SiteIds VARCHAR(MAX) = null
 ----DEBUG:END
 	
@@ -25,12 +25,12 @@ SET NOCOUNT ON
 	DECLARE @DayMinus1Date DATE = DATEADD(DAY, -1, @ForDate)
 	DECLARE @DayMinus0Date DATE = DATEADD(DAY, 0, @ForDate)
 
-	DECLARE @DayMinus1CompetitorPriceDate DATE = (SELECT MAX(DateOfPrice) FROM dbo.CompetitorPrice WHERE DateOfPrice <= @DayMinus1Date);
-	DECLARE @DayMinus2CompetitorPriceDate DATE = (SELECT MAX(DateOfPrice) FROM dbo.CompetitorPrice WHERE DateOfPrice <= @DayMinus2Date);
+	DECLARE @DayMinus1CompetitorPriceDate DATE = DATEADD(DAY, -1, @ForDate)
+	DECLARE @DayMinus2CompetitorPriceDate DATE = DATEADD(DAY, -2, @ForDate)
 
 	-- NOTE: Sainsburys dbo.SitePrice.DateOfCalc are for Tomorrow but have today's date (real Date = dbo.SitePrice.DateOfCalc + 1 Day !)
-	DECLARE @DayMinus1SitePriceDate DATE = (SELECT MAX(DateOfCalc) FROM dbo.SitePrice WHERE DateOfCalc <= @DayMinus1Date);
-	DECLARE @DayMinus2SitePriceDate DATE = (SELECT MAX(DateOfCalc) FROM dbo.SitePrice WHERE DateOfCalc <= @DayMinus2Date);
+	DECLARE @DayMinus1SitePriceDate DATE = DATEADD(DAY, 0, @DayMinus1Date)
+	DECLARE @DayMinus2SitePriceDate DATE =  DATEADD(DAY, 0, @DayMinus2Date)
 
 	--
 	-- Resultset #1 : Nearby Competitors Names (Active, Within 25 mins and NOT excluded-brand)
@@ -159,8 +159,8 @@ SET NOCOUNT ON
 		END [Difference],
 		csf.IsSainsburysSite [IsSainsburysSite]
 
-		---- debug
-		--,(select top 1 sitename from dbo.Site where Id = csf.CompSiteId)
+		-- debug
+		,(select top 1 sitename from dbo.Site where Id = csf.CompSiteId)
 	FROM
 		CompSiteFuels csf
 		LEFT JOIN MergedCompetitorPrices mcp ON mcp.CompSiteId = csf.CompSiteId AND mcp.FuelTypeId = csf.FuelTypeId
