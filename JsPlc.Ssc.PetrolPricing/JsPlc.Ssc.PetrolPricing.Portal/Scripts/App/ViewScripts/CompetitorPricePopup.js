@@ -209,8 +209,6 @@ function ($, ko, common, compNotePopup, notify, cookieSettings, bootbox) {
             .replace(/\s+/g, ' ')
             .replace(/<input/i, '<input readonly="readonly" value="' + value + '"');
 
-        console.log(src.hasClass('price-snapback'));
-
         dst.html(html);
 
         if (src.hasClass('price-snapback'))

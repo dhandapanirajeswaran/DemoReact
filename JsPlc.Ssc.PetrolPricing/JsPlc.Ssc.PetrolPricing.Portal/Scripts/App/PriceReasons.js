@@ -42,7 +42,7 @@
         };
         descriptions[PriceReasonFlags.OutsidePriceVariance] = { 
             name: 'Outside Variance', 
-            infotip: '',
+            infotip: '[b]Outside Price Variance[/b]',
             text: 'Outside Price Variance' 
         };
 
