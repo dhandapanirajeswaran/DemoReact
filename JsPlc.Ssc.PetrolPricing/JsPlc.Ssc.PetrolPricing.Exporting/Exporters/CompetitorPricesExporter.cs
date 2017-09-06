@@ -278,6 +278,10 @@ namespace JsPlc.Ssc.PetrolPricing.Exporting.Exporters
                     break;
             }
 
+            var unleadedPriceReasons = unleadedPrice.TomorrowPriceReasonFlags;
+            var dieselPriceReasons = dieselPrice.TomorrowPriceReasonFlags;
+            var superUnleadedPriceReasons = superUnleadedPrice.TomorrowPriceReasonFlags;
+
             SetColumn(ws, Columns.Sainsburys_StoreNo, jssite.StoreNo, ExcelStyleFormatters.GeneralIntegerFormatter);
             SetColumn(ws, Columns.Sainsburys_SiteName, jssite.StoreName, ExcelStyleFormatters.GeneralTextLeftAlignedFormatter);
             SetColumn(ws, Columns.Sainsburys_SiteTown, jssite.Town, ExcelStyleFormatters.GeneralTextLeftAlignedFormatter);
@@ -287,9 +291,42 @@ namespace JsPlc.Ssc.PetrolPricing.Exporting.Exporters
             SetColumn(ws, Columns.Sainsburys_PriceMatchStrategy, strategy, ExcelStyleFormatters.GeneralTextLeftAlignedFormatter);
             SetColumn(ws, Columns.Sainsburys_Markup, markup, ExcelStyleFormatters.GeneralPrice1DPFormatter);
 
+            SetPriceReasonColumn(ws, Columns.Competitor_Unleaded, unleadedPriceReasons);
+            SetPriceReasonColumn(ws, Columns.Competitor_Diesel, dieselPriceReasons);
+            SetPriceReasonColumn(ws, Columns.Competitor_SuperUnleaded, superUnleadedPriceReasons);
+
+            SetColumn(ws, Columns.Competitor_Unleaded, SimplePriceReasonText(unleadedPriceReasons), ExcelStyleFormatters.GeneralTextCenteredFormatter);
+            SetColumn(ws, Columns.Competitor_Diesel, SimplePriceReasonText(dieselPriceReasons), ExcelStyleFormatters.GeneralTextCenteredFormatter);
+            SetColumn(ws, Columns.Competitor_SuperUnleaded, SimplePriceReasonText(superUnleadedPriceReasons), ExcelStyleFormatters.GeneralTextCenteredFormatter);
+
+            SetColumn(ws, Columns.Competitor_UnleadedIncMarkup, FormatPrice(unleaded), ExcelStyleFormatters.GeneralPrice1DPFormatter);
+            SetColumn(ws, Columns.Competitor_DieselIncMarkup, FormatPrice(diesel), ExcelStyleFormatters.GeneralPrice1DPFormatter);
+            SetColumn(ws, Columns.Competitor_SuperUnleadedIncMarkup, FormatPrice(superUnleaded), ExcelStyleFormatters.GeneralPrice1DPFormatter);
+
             StyleSainsburysRowBordersAndColor(ws, Columns.Sainsburys_StoreNo, Columns.Competitor_SuperUnleadedIncMarkup);
 
             NewRow();
+        }
+
+        private void SetPriceReasonColumn(IXLWorksheet ws, Columns column, PriceReasonFlags priceReasons)
+        {
+            var text = SimplePriceReasonText(priceReasons);
+            if (String.IsNullOrEmpty(text))
+                return;
+
+            SetColumn(ws, column, text, ExcelStyleFormatters.GeneralTextCenteredFormatter);
+            var cell = ws.Cell(_row, (int)column);
+            cell.Style.Fill.SetBackgroundColor(XLColor.Orange);
+            cell.Style.Font.SetFontColor(XLColor.Black);
+        }
+
+        private string SimplePriceReasonText(PriceReasonFlags priceReasonFlags)
+        {
+            if (priceReasonFlags.HasFlag(PriceReasonFlags.PriceStuntFreeze))
+                return "Freeze";
+            if (priceReasonFlags.HasFlag(PriceReasonFlags.TodayPriceSnapBack))
+                return "SnapBack";
+            return "";
         }
 
         private void StyleSainsburysRowBordersAndColor(IXLWorksheet ws, Columns startColumn, Columns endColumn)
@@ -455,7 +492,10 @@ namespace JsPlc.Ssc.PetrolPricing.Exporting.Exporters
                 SetColumn(ws, Columns.Competitor_Brand, comp.Brand, ExcelStyleFormatters.GeneralTextLeftAlignedFormatter);
 
                 if (!isIgnored && comp.Brand.ToUpper() == "SAINSBURYS")
+                {
                     FormatSainsburysColor(ws, Columns.Competitor_Brand);
+                    FormatSainsburysColor(ws, Columns.Competitor_StoreName);
+                }
                 else if (comp.IsGrocer)
                     FormatGrocerCell(ws, Columns.Competitor_Brand);
 
@@ -467,7 +507,7 @@ namespace JsPlc.Ssc.PetrolPricing.Exporting.Exporters
                 if (unleadedModalPrice > 0)
                 {
                     var unleadedDriveTimeMarkup = unleadedDriveTimeLookup.GetMarkup(comp.DriveTime);
-                    var unleadedPriceIncMarkup = unleadedModalPrice + (int)(unleadedDriveTimeMarkup * 10);
+                    var unleadedPriceIncMarkup = unleadedModalPrice == 0 ? 0 : unleadedModalPrice + (int)(unleadedDriveTimeMarkup * 10);
                     var isCheapestUnleaded = unleadedPriceIncMarkup == cheapestUnleadedIncDriveTime;
                     var isUnleadedCompetitor = IsCompetitorName(unleadedCompetitorName, comp, unleadedModalPrice);
 
@@ -489,7 +529,7 @@ namespace JsPlc.Ssc.PetrolPricing.Exporting.Exporters
                 if (dieselModalPrice > 0)
                 {
                     var dieselDriveTimeMarkup = dieselDriveTimeLookup.GetMarkup(comp.DriveTime);
-                    var dieselPriceIncMarkup = dieselModalPrice + (int)(dieselDriveTimeMarkup * 10);
+                    var dieselPriceIncMarkup = dieselModalPrice == 0 ? 0 : dieselModalPrice + (int)(dieselDriveTimeMarkup * 10);
                     var isCheapestDiesel = dieselPriceIncMarkup == cheapestDieselIncDriveTime;
                     var isDieselCompetitor = IsCompetitorName(dieselCompetitorName, comp, dieselModalPrice);
 
@@ -511,7 +551,7 @@ namespace JsPlc.Ssc.PetrolPricing.Exporting.Exporters
                 if (superUnleadedModalPrice > 0)
                 {
                     var superUnleadedDriveTimeMarkup = superUnleadedDriveTimeLookup.GetMarkup(comp.DriveTime);
-                    var superUnleadedPriceIncMarkup = superUnleadedModalPrice = (int)(superUnleadedDriveTimeMarkup * 10);
+                    var superUnleadedPriceIncMarkup = superUnleadedModalPrice == 0 ? 0 : superUnleadedModalPrice + (int)(superUnleadedDriveTimeMarkup * 10);
                     var isCheapestSuperUnleaded = superUnleadedPriceIncMarkup == cheapestSuperUnleadedIncDriveTime;
                     var isSuperUnleadedCompetitor = IsCompetitorName(superUnleadedCompetitorName, comp, superUnleadedModalPrice);
 
