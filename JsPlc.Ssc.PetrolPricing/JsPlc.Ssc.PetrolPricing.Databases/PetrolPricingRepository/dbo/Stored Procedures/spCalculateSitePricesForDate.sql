@@ -175,7 +175,9 @@ DECLARE @PriceReasonFlags_ManualOverride INT = 0x00004000
 			COALESCE(tomorrow.CompetitorCount, 0) [CompetitorCount],
 			COALESCE(tomorrow.CompetitorPriceCount, 0) [CompetitorPriceCount],
 			COALESCE(tomorrow.GrocerCount, 0)  [GrocerCount],
-			COALESCE(tomorrow.GrocerPriceCount, 0) [GrocerPriceCount]
+			COALESCE(tomorrow.GrocerPriceCount, 0) [GrocerPriceCount],
+			COALESCE(tomorrow.NearbyGrocerCount, 0) [NearbyGrocerCount],
+			COALESCE(tomorrow.NearbyGrocerPriceCount, 0) [NearbyGrocerPriceCount]
 		FROM 
 			SiteFuelCombos sfc
 			INNER JOIN dbo.Site st ON st.Id = sfc.SiteId

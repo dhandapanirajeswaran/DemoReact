@@ -9,7 +9,7 @@ BEGIN
 
 ----DEBUG:START
 --DECLARE @SiteId INT = 6164
---DECLARE @ForDate DATETIME = '2017-08-16 12:30:00'
+--DECLARE @ForDate DATETIME = '2017-09-06 12:30:00'
 --DECLARE @FileUploadId INT = 4
 --DECLARE @MaxDriveTime INT = 25
 ----DEBUG:END
@@ -56,7 +56,9 @@ BEGIN
 				chp.CompetitorPriceCount,
 				chp.GrocerCount,
 				chp.GrocerPriceCount,
-				chp.DriveTime
+				chp.DriveTime,
+				chp.NearbyGrocerCount,
+				chp.NearbyGrocerPriceCount
 			FROM
 				SiteFuelsCombo sfc
 				CROSS APPLY dbo.tf_FindCheapestPrice(sfc.SiteId, sfc.FuelTypeId, @ForDate, @FileUploadId, @MaxDriveTime) chp
@@ -78,7 +80,10 @@ BEGIN
 			cud.CompetitorCount,
 			cud.CompetitorPriceCount,
 			cud.GrocerCount,
-			cud.GrocerPriceCount
+			cud.GrocerPriceCount,
+			cud.DriveTime,
+			cud.NearbyGrocerCount,
+			cud.NearbyGrocerPriceCount
 		FROM 
 			CheapestUnleadedAndDiesel cud
 		UNION ALL
@@ -102,7 +107,10 @@ BEGIN
 			unleaded.CompetitorCount,
 			unleaded.CompetitorPriceCount,
 			unleaded.GrocerCount,
-			unleaded.GrocerPriceCount
+			unleaded.GrocerPriceCount,
+			unleaded.DriveTime,
+			unleaded.NearbyGrocerCount,
+			unleaded.NearbyGrocerPriceCount
 		FROM 
 			CheapestUnleadedAndDiesel unleaded
 		WHERE
@@ -126,7 +134,9 @@ BEGIN
 				chp.CompetitorCount,
 				chp.CompetitorPriceCount,
 				chp.GrocerCount,
-				chp.GrocerPriceCount
+				chp.GrocerPriceCount,
+				chp.NearbyGrocerCount,
+				chp.NearbyGrocerPriceCount
 			FROM
 				CheapestAllFuelPrices chp
 		) AS source (
@@ -144,7 +154,9 @@ BEGIN
 				CompetitorCount,
 				CompetitorPriceCount,
 				GrocerCount,
-				GrocerPriceCount
+				GrocerPriceCount,
+				NearbyGrocerCount,
+				NearbyGrocerPriceCount
 		)
 		ON (target.SiteId = source.SiteId AND target.FuelTypeId = source.FuelTypeId AND target.DateOfCalc = source.DateOfCalc)
 		WHEN MATCHED THEN
@@ -160,9 +172,11 @@ BEGIN
 				target.CompetitorCount = source.CompetitorCount,
 				target.CompetitorPriceCount = source.CompetitorPriceCount,
 				target.GrocerCount = source.GrocerCount,
-				target.GrocerPriceCount = source.GrocerPriceCount
+				target.GrocerPriceCount = source.GrocerPriceCount,
+				target.NearbyGrocerCount = source.NearbyGrocerCount,
+				target.NearbyGrocerPriceCount = source.NearbyGrocerPriceCount
 		WHEN NOT MATCHED BY target THEN
-			INSERT (SiteId, FuelTypeId, DateOfCalc, DateOfPrice, UploadId, EffDate, SuggestedPrice, OverriddenPrice, CompetitorId, Markup, IsTrailPrice, PriceReasonFlags, DriveTimeMarkup, CompetitorCount, CompetitorPriceCount, GrocerCount, GrocerPriceCount)
+			INSERT (SiteId, FuelTypeId, DateOfCalc, DateOfPrice, UploadId, EffDate, SuggestedPrice, OverriddenPrice, CompetitorId, Markup, IsTrailPrice, PriceReasonFlags, DriveTimeMarkup, CompetitorCount, CompetitorPriceCount, GrocerCount, GrocerPriceCount, NearbyGrocerCount, NearbyGrocerPriceCount)
 			VALUES (
 				source.SiteId,
 				source.FuelTypeId,
@@ -180,7 +194,9 @@ BEGIN
 				source.CompetitorCount,
 				source.CompetitorPriceCount,
 				source.GrocerCount,
-				source.GrocerPriceCount
+				source.GrocerPriceCount,
+				source.NearbyGrocerCount,
+				source.NearbyGrocerPriceCount
 			);
 
 END

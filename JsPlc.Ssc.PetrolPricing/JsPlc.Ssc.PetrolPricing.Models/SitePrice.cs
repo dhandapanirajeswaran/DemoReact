@@ -46,5 +46,7 @@ namespace JsPlc.Ssc.PetrolPricing.Models
         public int CompetitorPriceCount { get; set; }
         public int GrocerCount { get; set; }
         public int GrocerPriceCount { get; set; }
+        public int NearbyGrocerCount { get; set; }
+        public int NearbyGrocerPriceCount { get; set; }
     }
 }

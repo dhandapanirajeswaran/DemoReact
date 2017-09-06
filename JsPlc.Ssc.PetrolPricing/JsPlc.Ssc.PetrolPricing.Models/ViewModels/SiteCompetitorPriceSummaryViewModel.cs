@@ -22,5 +22,8 @@ namespace JsPlc.Ssc.PetrolPricing.Models.ViewModels
         public int GrocerCount { get; set; } = 0;
         public int GrocerPriceCount { get; set; } = 0;
         public int GrocerPricePercent { get; set; } = 0;
+        public int NearbyGrocerCount { get; set; } = 0;
+        public int NearbyGrocerPriceCount { get; set; } = 0;
+        public int NearbyGrocerPricePercent { get; set; } = 0;
     }
 }

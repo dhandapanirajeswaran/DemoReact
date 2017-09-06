@@ -25,5 +25,7 @@
     [CompetitorCount] INT NOT NULL, 
     [CompetitorPriceCount] INT NOT NULL, 
     [GrocerCount] INT NOT NULL, 
-    [GrocerPriceCount] INT NOT NULL 
+    [GrocerPriceCount] INT NOT NULL, 
+    [NearbyGrocerCount] INT NOT NULL, 
+    [NearbyGrocerPriceCount] INT NOT NULL 
 )

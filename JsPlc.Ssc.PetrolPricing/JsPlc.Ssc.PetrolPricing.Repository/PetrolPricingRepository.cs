@@ -626,7 +626,10 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                 CompetitorPricePercent = CalculatePercent(price.CompetitorPriceCount, price.CompetitorCount),
                 GrocerCount = price.GrocerCount,
                 GrocerPriceCount = price.GrocerPriceCount,
-                GrocerPricePercent = CalculatePercent(price.GrocerPriceCount, price.GrocerCount)
+                GrocerPricePercent = CalculatePercent(price.GrocerPriceCount, price.GrocerCount),
+                NearbyGrocerCount = price.NearbyGrocerCount,
+                NearbyGrocerPriceCount = price.NearbyGrocerPriceCount,
+                NearbyGrocerPricePercent = CalculatePercent(price.NearbyGrocerPriceCount, price.NearbyGrocerCount)
             };
         }
 

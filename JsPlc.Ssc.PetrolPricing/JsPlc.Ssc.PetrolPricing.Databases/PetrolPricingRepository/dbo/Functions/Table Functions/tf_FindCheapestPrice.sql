@@ -25,7 +25,9 @@ RETURNS
 	CompetitorPriceCount INT,
 	GrocerCount INT,
 	GrocerPriceCount INT,
-	DriveTime REAL
+	DriveTime REAL,
+	NearbyGrocerCount INT,
+	NearbyGrocerPriceCount INT
 )
 AS
 BEGIN
@@ -55,7 +57,9 @@ BEGIN
 --	CompetitorPriceCount INT,
 --	GrocerCount INT,
 --	GrocerPriceCount INT,
---  DriveTime REAL
+--	DriveTime REAL,
+--	NearbyGrocerCount INT,
+--	NearbyGrocerPriceCount INT
 --)
 ----DEBUG:END
 
@@ -97,12 +101,12 @@ BEGIN
 	--
 	-- Get SystemSettings
 	--
-	DECLARE @SystemSettings_MaxGrocerDriveTime INT
+	DECLARE @SystemSettings_NearbyGrocerDriveTime INT
 	DECLARE @SystemSettings_PriceVariance INT
 	DECLARE @SystemSettings_DecimalRounding INT
 
 	SELECT TOP 1 
-		@SystemSettings_MaxGrocerDriveTime = MaxGrocerDriveTimeMinutes,
+		@SystemSettings_NearbyGrocerDriveTime = MaxGrocerDriveTimeMinutes,
 		@SystemSettings_PriceVariance = ss.PriceChangeVarianceThreshold,
 		@SystemSettings_DecimalRounding = ss.DecimalRounding
 	FROM 
@@ -128,9 +132,14 @@ BEGIN
 	DECLARE @Cheapest_GrocerCount INT = 0
 	DECLARE @Cheapest_GrocerPriceCount INT = 0
 	DECLARE @Cheapest_DriveTime REAL = 0
+	DECLARE @Cheapest_NearbyGrocerCount INT = 0
+	DECLARE @Cheapest_NearbyGrocerPriceCount INT = 0
 
 	DECLARE @MinPriceFound INT = NULL
 	DECLARE @MinPriceCompetitorId INT = NULL
+
+	DECLARE @HasNearbyGrocers BIT = 0
+	DECLARE @HasIncompleteNearbyGrocerPriceData BIT = 0
 
 	--
 	-- Lookup Site information
@@ -148,15 +157,15 @@ BEGIN
 		@Site_PfsNo = COALESCE(st.PfsNo, 0),
 		@Site_StoreNo = COALESCE(st.StoreNo, 0),
 		@Site_PriceMatchType = st.PriceMatchType,
-		@Site_MatchCompetitorSiteId = CASE WHEN st.PriceMatchType = 3 THEN st.TrailPriceCompetitorId ELSE NULL END,
-		@Site_MatchCompetitorMarkup = CASE WHEN st.PriceMatchType = 3 THEN COALESCE(st.CompetitorPriceOffsetNew,0) ELSE 0 END,
-		@Site_TrialPriceMarkup = CASE WHEN st.PriceMatchType = 2 THEN COALESCE(st.CompetitorPriceOffset, 0) ELSE 0 END
+		@Site_MatchCompetitorSiteId = CASE WHEN st.PriceMatchType = @PriceMatchType_MatchCompetitor THEN st.TrailPriceCompetitorId ELSE NULL END,
+		@Site_MatchCompetitorMarkup = CASE WHEN st.PriceMatchType = @PriceMatchType_MatchCompetitor THEN COALESCE(st.CompetitorPriceOffsetNew, 0) ELSE 0 END,
+		@Site_TrialPriceMarkup = CASE WHEN st.PriceMatchType = @PriceMatchType_TrialPrice THEN COALESCE(st.CompetitorPriceOffset, 0) ELSE 0 END
 	FROM
 		dbo.Site st
 	WHERE
 		st.Id = @SiteId
 	--
-	-- Check if Daily Catalist file exists for Date	
+	-- Check if Daily Catalist file exists for Date	(NOTE: always for Success, Processing, Calculating)
 	--
 	DECLARE @IsDailyCatalistFileForDate BIT = CASE 
 		WHEN EXISTS(SELECT TOP 1 NULL FROM dbo.FileUpload WHERE StatusId IN (5, 10, 11) AND UploadTypeId = 1 AND UploadDateTime BETWEEN @StartOfToday AND @StartOfTomorrow)
@@ -262,7 +271,7 @@ BEGIN
 			--
 			-- Find the cheapest 0-25 min Competitor
 			--	
-			;WITH NearbyActiveCompetitorPrices as ( -- NON-Sainsburys
+			;WITH NonSainsburysCompetitorPrices as ( -- NON-Sainsburys
 				SELECT
 					stc.CompetitorId,
 					stc.Distance,
@@ -302,7 +311,7 @@ BEGIN
 					AND
 					stc.DriveTime < @MaxDriveTime
 				),
-				NearbySainsburysCompetitorPrices AS (
+				SainsburysCompetitorPrices AS (
 					SELECT
 						stc.CompetitorId,
 						stc.Distance,
@@ -338,13 +347,13 @@ BEGIN
 						nacp.*,
 						nacp.ModalPrice + nacp.DriveTimeMarkup [PriceIncDriveTime]
 					FROM
-						NearbyActiveCompetitorPrices nacp
+						NonSainsburysCompetitorPrices nacp
 					UNION ALL
 					SELECT
 						nbsp.*,
 						nbsp.ModalPrice + nbsp.DriveTimeMarkup [PriceIncDriveTime]
 					FROM
-						NearbySainsburysCompetitorPrices nbsp
+						SainsburysCompetitorPrices nbsp
 				),
 				BestCompetitorPrice AS (
 					SELECT
@@ -408,22 +417,38 @@ BEGIN
 							DateOfCalc DESC
 					)
 
-			--
-			-- get Nearby Grocer Status
-			--
-			DECLARE @NearbyGrocerStatus INT = dbo.fn_NearbyGrocerStatusForSiteFuel(@StartOfToday, @SystemSettings_MaxGrocerDriveTime, @SiteId, @FuelTypeId) 
+			-- lookup Competitor, Grocer and Nearby Grocer Data % counts
+			SELECT
+				@Cheapest_CompetitorCount = ncd.CompetitorCount,
+				@Cheapest_CompetitorPriceCount = ncd.CompetitorPriceCount,
+				@Cheapest_GrocerCount = ncd.GrocerCount,
+				@Cheapest_GrocerPriceCount = ncd.GrocerPriceCount,
+				@Cheapest_NearbyGrocerCount = ncd.NearbyGrocerCount,
+				@Cheapest_NearbyGrocerPriceCount = ncd.NearbyGrocerPriceCount
+			FROM
+				dbo.tf_NearbyCompetitorDataSummaryForSiteFuel(@ForDate, @MaxDriveTime, @SiteId, @FuelTypeId, @SystemSettings_NearbyGrocerDriveTime) ncd
 
-			SET @Cheapest_PriceReasonFlags = @Cheapest_PriceReasonFlags | CASE @NearbyGrocerStatus
-				WHEN 0x00 THEN 0 -- No Nearby Grocers			
-				WHEN 0x01 THEN @PriceReasonFlags_HasGrocers | @PriceReasonFlags_HasIncompleteGrocers -- Grocers, but incomplete
-				WHEN 0x02 THEN @PriceReasonFlags_HasGrocers -- Grocers and Data
-				WHEN 0x03 THEN @PriceReasonFlags_HasGrocers -- Grocers and Data
+			-- Determine Nearby Grocer status
+			IF @Cheapest_NearbyGrocerCount <> 0
+			BEGIN
+				SET @HasNearbyGrocers = 1
+				SET @Cheapest_PriceReasonFlags = @Cheapest_PriceReasonFlags | @PriceReasonFlags_HasGrocers
+
+				IF @Cheapest_NearbyGrocerCount = @Cheapest_NearbyGrocerPriceCount
+				BEGIN
+					SET @HasIncompleteNearbyGrocerPriceData = 0
+				END
+				ELSE
+				BEGIN
+					SET @HasIncompleteNearbyGrocerPriceData = 1
+					SET @Cheapest_PriceReasonFlags = @Cheapest_PriceReasonFlags | @PriceReasonFlags_HasIncompleteGrocers
+				END
 			END
 
 			--
 			-- Incomplete Nearby Grocer data ?
 			--
-			IF @NearbyGrocerStatus = 0x01 -- incomplete Grocers data ?
+			IF @HasIncompleteNearbyGrocerPriceData = 1 -- incomplete Grocers data ?
 			BEGIN
 				-- Is Today Price more expensive than the Cheapest Competitor price (inc drive time markup) ?
 				IF @Today_Price > 0 AND @Today_Price > @Cheapest_SuggestedPrice
@@ -500,15 +525,6 @@ BEGIN
 				AND
 				stc.CompetitorId = @Cheapest_CompetitorId
 		END
-
-		-- lookup Nearby Competitor Data % counts
-		SELECT
-			@Cheapest_CompetitorCount = ncd.CompetitorCount,
-			@Cheapest_CompetitorPriceCount = ncd.CompetitorPriceCount,
-			@Cheapest_GrocerCount = ncd.GrocerCount,
-			@Cheapest_GrocerPriceCount = ncd.GrocerPriceCount
-		FROM
-			dbo.tf_NearbyCompetitorDataSummaryForSiteFuel(@ForDate, @MaxDriveTime, @SiteId, @FuelTypeId) ncd
 	END
 
 	--
@@ -532,11 +548,12 @@ BEGIN
 			@Cheapest_CompetitorPriceCount,
 			@Cheapest_GrocerCount,
 			@Cheapest_GrocerPriceCount,
-			COALESCE(@Cheapest_DriveTime, 0.0)
+			COALESCE(@Cheapest_DriveTime, 0.0),
+			@Cheapest_NearbyGrocerCount,
+			@Cheapest_NearbyGrocerPriceCount
 		)
 	
 	----DEBUG:START
-	--SELECT TOP 1 * FROM dbo.Site WHERE Id = @SiteId
 	--SELECT * FROM @Result
 	--SELECT
 	--	(SELECT TOP 1 SiteName FROM dbo.Site WHERE Id = @SiteId) [SiteName],
