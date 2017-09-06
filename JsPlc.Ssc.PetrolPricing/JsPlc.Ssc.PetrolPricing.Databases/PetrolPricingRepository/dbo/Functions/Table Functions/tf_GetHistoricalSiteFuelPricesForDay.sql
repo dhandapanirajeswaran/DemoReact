@@ -46,6 +46,26 @@ BEGIN
 		END [PriceReasonFlags]
 	FROM
 		SiteFuelCombos sfc
+		INNER JOIN dbo.Site st ON st.Id = sfc.SiteId
 		LEFT JOIN dbo.SitePrice sp ON sp.SiteId = sfc.SiteId AND sp.FuelTypeId = sfc.FuelTypeId AND DateOfCalc = @ForDate
+	WHERE
+		st.IsSainsburysSite = 1
+
+	UNION ALL
+	SELECT
+		sfc.SiteId,
+		sfc.FuelTypeId,
+		cp.ModalPrice [TodayPrice],
+		CASE	
+			WHEN cp.ModalPrice > 0 THEN 'Competitor'
+			ELSE ''
+		END [PriceSource],
+		0 [PriceReasonFlags]
+	FROM
+		SiteFuelCombos sfc
+		INNER JOIN dbo.Site st ON st.Id = sfc.SiteId
+		LEFT JOIN dbo.CompetitorPrice cp ON cp.SiteId = sfc.SiteId AND cp.FuelTypeId = sfc.FuelTypeId AND cp.DateOfPrice = @ForDate
+	WHERE
+		st.IsSainsburysSite = 0
 	RETURN 
 END

@@ -165,7 +165,7 @@
                             <button type="button" class="btn btn-default btn-xs triggerToggleNote" data-bind="attr:{id: 'ToggleSiteNoteButton_' + SiteId}" data-infotip="Show Note"><i class="fa fa-sort-up"></i></button>
                         </td>
                         <td class="num3">
-                            <span class="comp-store-name" data-bind="text: StoreName"></span>
+                            <span class="comp-store-name opens-historical-prices" data-bind="text: StoreName, attr: {'data-site-id': SiteId}" data-infotip="View [b]Historical Prices[/b]"></span>
                             <i class="fa fa-warning text-danger" data-bind="visible: IsExcludedBrand" data-infotip="[i]Excluded Brand[/i]"></i>
                             <i class="fa fa-credit-card text-danger" data-bind="visible: IsExcluded" data-infotip="Competitor is [i]Excluded by Site[/i]"></i>
                             <i class="fa fa-minus-square-o text-danger" data-bind="visible: !IsActive" data-infotip="Competitor is [i]Inactive[/i]"></i>

@@ -15,9 +15,9 @@
             'Sat'
         ];
 
-        function show(siteItem, data, today) {
+        function show(storeName, data, today) {
             modal.modal('show');
-            modal.find('.site-name').text(siteItem.StoreName);
+            modal.find('.site-name').text(storeName);
             modal.find('.view-date').text(today);
             var tbody = modal.find('tbody'),
                 rows = tbody.find('tr'),
