@@ -505,7 +505,7 @@ table.competitorTable > tbody > .competitor-row  {
     content: "";
     position: absolute;
     border: 8px solid transparent;
-    border-right-color: red;
+    border-right-color: #5cb85c;
     margin-left: -18px;
     margin-top: 4px;
 }
@@ -514,6 +514,11 @@ table.competitorTable > tbody > .competitor-row  {
     margin-left: calc(-3em - 18px);
 }
 
+.site-row .price-snapback .standard-price,
+.site-row .price-snapback .trial-price,
+.site-row .price-snapback .match-competitor-price {
+    color: #999;
+}
 
 .pricing-sort-row th {
     text-align: center;
