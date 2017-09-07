@@ -328,7 +328,7 @@ BEGIN
 					FROM
 						dbo.SiteToCompetitor stc
 						INNER JOIN dbo.Site compsite ON compsite.Id = stc.CompetitorId AND compsite.IsActive = 1
-						INNER JOIN dbo.SitePrice sp ON sp.SiteId = stc.CompetitorId AND compsite.IsActive = 1
+						INNER JOIN dbo.SitePrice sp ON sp.SiteId = stc.CompetitorId AND sp.FuelTypeId = @FuelTypeId AND sp.DateOfCalc = @StartOfYesterday
 					WHERE
 						stc.SiteId = @SiteId
 						AND
@@ -388,7 +388,6 @@ BEGIN
 					LEFT JOIN dbo.DailyPrice dp ON dp.Id = bcp.DailyPriceId
 					LEFT JOIN dbo.LatestCompPrice lcp ON lcp.Id = bcp.LatestCompPriceId
 					LEFT JOIN dbo.SitePrice sp ON sp.Id = bcp.SitePriceId
-
 				--
 				-- Get most recent Sainsburys 'Today' price for Site Fuel (if any)
 				--
@@ -560,6 +559,8 @@ BEGIN
 	--	dbo.fn_GetPriceReasons(@Cheapest_PriceReasonFlags) [@Cheapest_PriceReasonFlags], 
 	--	@Site_PriceMatchType [@Site_PriceMatchType],
 	--	@Cheapest_CompetitorId [@Cheapest_CompetitorId],
+	--	@Cheapest_SuggestedPrice [@Cheapest_SuggestedPrice],
+	--	@Cheapest_DriveTimeMarkup [@Cheapest_DriveTimeMarkup],
 	--	(SELECT TOP 1 SiteName FROM dbo.Site WHERE Id = @Cheapest_CompetitorId) [Cheapest Competitor Site]
 	----DEBUG:END
 

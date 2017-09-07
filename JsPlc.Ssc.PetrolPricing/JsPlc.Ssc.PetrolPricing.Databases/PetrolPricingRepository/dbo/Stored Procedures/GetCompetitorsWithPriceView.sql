@@ -98,14 +98,14 @@ SET NOCOUNT ON
 			csf.JsSiteId,
 			csf.FuelTypeId,
 			CASE
-				WHEN js1.OverriddenPrice > 0 THEN js1.OverriddenPrice - (js1.DriveTimeMarkup * 10) -- Remove the Drive-Time markup
-				WHEN js1.SuggestedPrice > 0 THEN js1.SuggestedPrice - (js1.DriveTimeMarkup * 10) -- Remove the Drive-Time markup
+				WHEN js1.OverriddenPrice > 0 THEN js1.OverriddenPrice
+				WHEN js1.SuggestedPrice > 0 THEN js1.SuggestedPrice
 				ELSE 0
 			END [TodayPrice],
 			DATEADD(DAY, 1, js1.DateOfCalc) [TodayDate],
 			CASE
-				WHEN js2.OverriddenPrice > 0 THEN js2.OverriddenPrice - (js2.DriveTimeMarkup * 10) -- Remove the Drive-Time markup
-				WHEN js2.SuggestedPrice > 0 THEN js2.SuggestedPrice - (js2.DriveTimeMarkup * 10) -- Remove the Drive-Time markup
+				WHEN js2.OverriddenPrice > 0 THEN js2.OverriddenPrice
+				WHEN js2.SuggestedPrice > 0 THEN js2.SuggestedPrice
 				ELSE 0
 			END [YestPrice],
 			DATEADD(DAY, 1, js2.DateOfCalc) [YestDate]
@@ -159,8 +159,8 @@ SET NOCOUNT ON
 		END [Difference],
 		csf.IsSainsburysSite [IsSainsburysSite]
 
-		-- debug
-		,(select top 1 sitename from dbo.Site where Id = csf.CompSiteId)
+		---- debug
+		--,(select top 1 sitename from dbo.Site where Id = csf.CompSiteId)
 	FROM
 		CompSiteFuels csf
 		LEFT JOIN MergedCompetitorPrices mcp ON mcp.CompSiteId = csf.CompSiteId AND mcp.FuelTypeId = csf.FuelTypeId
