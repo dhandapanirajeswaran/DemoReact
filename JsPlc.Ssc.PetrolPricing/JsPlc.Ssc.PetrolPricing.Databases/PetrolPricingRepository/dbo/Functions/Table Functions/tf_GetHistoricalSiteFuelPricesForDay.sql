@@ -56,7 +56,9 @@ BEGIN
 		sfc.SiteId,
 		sfc.FuelTypeId,
 		cp.ModalPrice [TodayPrice],
-		CASE	
+		CASE
+			WHEN cp.ModalPrice > 0 AND cp.DailyPriceId IS NOT NULL THEN 'Catalist'
+			WHEN cp.ModalPrice > 0 AND cp.LatestCompPriceId IS NOT NULL THEN 'Latest Comp'
 			WHEN cp.ModalPrice > 0 THEN 'Competitor'
 			ELSE ''
 		END [PriceSource],

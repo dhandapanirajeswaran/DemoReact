@@ -245,6 +245,17 @@ table.competitorTable > tbody > .competitor-row  {
 #competitorPricesPopup .show-competitors-including-drive-time .price-excludes-drive-time,
 #competitorPricesPopup .show-competitors-excluding-drive-time .price-includes-drive-time {display: none;}
 
+.competitorTable .competitor-row .opens-historical-prices {
+    color: blue;
+    padding: 2px 8px;
+}
+
+.competitorTable .competitor-row .opens-historical-prices:hover {
+    background-color: #000;
+    color: #fff;
+}
+
+
 .note-panel {
     background-color: #fff; 
     border-radius: 0 0 12px 12px;
