@@ -67,6 +67,7 @@ INSERT [dbo].[PPUser] ([FirstName],[LastName],[Email]) VALUES (N'Premkumar',N'Kr
 INSERT [dbo].[PPUser] ([FirstName],[LastName],[Email]) VALUES (N'TestAdmin',N'Admin',N'testadmin@jsCoventryDev.onmicrosoft.com')
 INSERT [dbo].[PPUser] ([FirstName],[LastName],[Email]) VALUES (N'Laura',N'Smith1',N'Laura.Smith1@sainsburys.co.uk')
 INSERT [dbo].[PPUser] ([FirstName],[LastName],[Email]) VALUES (N'Ollie',N'Kemp',N'Ollie.Kemp@sainsburys.co.uk')
+INSERT [dbo].[PPUser] ([FirstName],[LastName],[Email]) VALUES (N'Andy',N'Eaves',N'Andy.Eaves@sainsburys.co.uk')
 
 END
 
@@ -162,7 +163,8 @@ WHERE
 			'Izzy.Hexter@sainsburys.co.uk',
 			'Olivia.Darroch@sainsburys.co.uk',
 			'Ollie.Kemp@sainsburys.co.uk',
-			'Laura.Smith1@sainsburys.co.uk'
+			'Laura.Smith1@sainsburys.co.uk',
+			'Andy.Eaves@sainsburys.co.uk'
 		)
 	);
 
