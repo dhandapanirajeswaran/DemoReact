@@ -3,7 +3,7 @@
         "use strict";
 
         var modal = $(modalHtml),
-            lightbox = $('<div class="lightbox-overlay" style="z-index: 2009;"></div>');
+            lightbox = $('<div class="lightbox-overlay" style="z-index: 2009; cursor: pointer;" title="Click to Close"></div>');
 
         var weekdays = [
             'Sun',
@@ -15,8 +15,14 @@
             'Sat'
         ];
 
+        function hide() {
+            modal.modal('hide');
+            lightbox.fadeOut(1000);
+        };
+
         function show(storeName, data, today) {
             lightbox.show();
+            lightbox.off().click(hide);
 
             $('#historicSitePricesPopup').on('hidden.bs.modal', function () {
                 lightbox.hide();
