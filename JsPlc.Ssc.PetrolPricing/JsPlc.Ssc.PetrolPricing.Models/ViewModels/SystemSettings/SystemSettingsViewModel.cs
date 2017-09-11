@@ -81,7 +81,7 @@ namespace JsPlc.Ssc.PetrolPricing.Models.ViewModels.SystemSettings
         public double MaxSuperUnleadedPriceChange { get; set; }
 
         [Required]
-        [Range(-100.0, 100.0)]
+        [Range(1.0, 25.0)]
         [Display(Name ="Maximum Grocer DriveTime in Minutes")]
         public int MaxGrocerDriveTimeMinutes { get; set; }
 
@@ -108,6 +108,14 @@ namespace JsPlc.Ssc.PetrolPricing.Models.ViewModels.SystemSettings
         [Required]
         [Display(Name = "Site Email Test Addresses")]
         public string SiteEmailTestAddresses { get; set; }
+
+        [Display(Name = "File Upload Date Picker")]
+        public bool FileUploadDatePicker { get; set; }
+
+        [Required]
+        [Display(Name = "Competitor Max Drive Time")]
+        [Range(10, 45)]
+        public int CompetitorMaxDriveTime { get; set; }
 
         public SystemSettingsViewModel()
         {

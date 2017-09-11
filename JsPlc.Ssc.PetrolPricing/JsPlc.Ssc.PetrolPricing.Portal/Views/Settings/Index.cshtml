@@ -75,6 +75,8 @@
 
 </style>
 
+@Html.ValidationSummary(false)
+
 <div class="container">
     @using (Html.BeginForm())
     {
@@ -190,6 +192,27 @@
                         @Html.ValidationMessageFor(model => model.SuperUnleadedMarkupPrice, "", new { @class = "text-danger" })
                     </div>
                 </div>
+
+
+                <div class="row">
+                    <div class="col-md-3 col-md-offset-2">
+                        <label class="control-label">Show Upload DatePicker</label>
+                        <select id="FileUploadDatePicker" name="FileUploadDatePicker" class="form-control full-width" data-infotip="Show the [b]DatePicker[/b] when [b]Uploading Files[/b]">
+                            <option value="false" @(!Model.FileUploadDatePicker ? " selected='selected'" : "")>No</option>
+                            <option value="true" @(Model.FileUploadDatePicker ? " selected='selected'" : "")>Yes</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-3 col-md-offset-2">
+                        <label class="control-label">Maximum Competitor Drive Time</label>
+                        <div class="input-group">
+                            @Html.EditorFor(model => model.CompetitorMaxDriveTime, new { htmlAttributes = new { @class = "form-control mono-font text-right", data_infotip = "The [b]Max[/b] Drive Time for [b]All Competitors[/b][br /](e.g. 25 Minutes)" } })
+                            <span class="input-group-addon"><strong>Minutes</strong></span>
+                        </div>
+                    </div>
+
+                </div>
+
             </fieldset>
 
             <fieldset>

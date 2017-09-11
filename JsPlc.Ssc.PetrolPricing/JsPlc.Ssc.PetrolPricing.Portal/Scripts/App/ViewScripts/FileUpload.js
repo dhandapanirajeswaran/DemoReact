@@ -2,6 +2,10 @@
     function ($, common, notify, busyloader, dateUtils, bsDatePicker, waiter, priceFreezeEventService) {
         "use strict";
 
+        var options = {
+            datePicker: false
+        };
+
         var lastPriceFreezeEventDate = '';
 
         var uploadTypeDefs = {
@@ -91,9 +95,7 @@
 
             downloadQuarterlyTemplateButton: '#DownloadQuarterlyTemplateButton',
             downloadLatestPriceTemplateButton: '#DownloadLatestPriceTemplateButton',
-            downloadLatestCompPriceTemplateButton: '#DownloadLatestCompPriceTemplateButton',
-
-            showDatePickerCheckbox: '#chkShowDatePicker'
+            downloadLatestCompPriceTemplateButton: '#DownloadLatestCompPriceTemplateButton'
         };
 
         function bindEvents() {
@@ -218,7 +220,7 @@
                     redrawStepLabels();
                 }
 
-                if (filenameDate) {
+                if (filenameDate && options.datePicker) {
                     if (!$('#chkShowDatePicker').is(':checked'))
                         $('#chkShowDatePicker').trigger('click');
                     datePicker.val(filenameDate);
@@ -266,9 +268,8 @@
         };
 
         function redrawStepLabels() {
-            var value = $(selectors.uploadTypeName).val(),
-                alwaysShowDatePicker = $(selectors.showDatePickerCheckbox).is(":checked");
-            if (value == 1 || alwaysShowDatePicker) {
+            var value = $(selectors.uploadTypeName).val();
+            if (options.datePicker) {
                 $(selectors.chooseDatePanel).show();
                 $(selectors.step2Label).text('Date & File:');
             } else {
@@ -427,7 +428,8 @@
             reloadPriceFreezeWarning(forDate);
         };
 
-        function init() {
+        function init(opts) {
+            options = $.extend(options, opts);
             $(docReady);
         };
 

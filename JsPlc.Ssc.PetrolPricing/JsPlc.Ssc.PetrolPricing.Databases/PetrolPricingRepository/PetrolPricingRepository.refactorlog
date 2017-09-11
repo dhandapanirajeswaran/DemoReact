@@ -105,4 +105,18 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="PriceFreezeEventId" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="5613dc68-179e-4ca1-a19d-320ef5cd5625" ChangeDateTime="09/11/2017 12:36:00">
+    <Property Name="ElementName" Value="[dbo].[SystemSettings].[UploadDatePicker]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[SystemSettings]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="EnableUploadDatePicker" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="c6b157a3-9407-41dd-a69b-8ffe645608dc" ChangeDateTime="09/11/2017 12:37:26">
+    <Property Name="ElementName" Value="[dbo].[SystemSettings].[EnableUploadDatePicker]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[SystemSettings]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="FileUploadDatePicker" />
+  </Operation>
 </Operations>

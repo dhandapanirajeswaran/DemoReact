@@ -20,5 +20,7 @@
     [SuperUnleadedMarkupPrice] INT NOT NULL DEFAULT (50), 
     [DecimalRounding] INT NOT NULL DEFAULT (-1), 
     [EnableSiteEmails] BIT NOT NULL DEFAULT (0), 
-    [SiteEmailTestAddresses] VARCHAR(MAX) NOT NULL DEFAULT ('')
+    [SiteEmailTestAddresses] VARCHAR(MAX) NOT NULL DEFAULT (''), 
+    [FileUploadDatePicker] BIT NOT NULL DEFAULT (0), 
+    [CompetitorMaxDriveTime] INT NOT NULL DEFAULT (25)
 )

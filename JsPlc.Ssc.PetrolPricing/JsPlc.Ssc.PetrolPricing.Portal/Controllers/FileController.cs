@@ -78,7 +78,8 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
                 UploadTypes = GetUploadTypes(),
                 UploadDate = DateTime.Now,
                 SelectedFileUploadType = (int)uploadType,
-                RecentFiles = _serviceFacade.GetRecentFileUploadSummary().Files
+                RecentFiles = _serviceFacade.GetRecentFileUploadSummary().Files,
+                SystemSettings = _serviceFacade.GetSystemSettings()
             };
             var existingUploads = await ExistingDailyUploads(model.UploadDate);
             if (existingUploads != null && existingUploads.Any())
@@ -98,7 +99,8 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             {
                 UploadTypes = GetUploadTypes(),
                 UploadDate = uploadTypes == 2 ? DateTime.Now : uploadDate.Value,
-                RecentFiles = _serviceFacade.GetRecentFileUploadSummary().Files
+                RecentFiles = _serviceFacade.GetRecentFileUploadSummary().Files,
+                SystemSettings = _serviceFacade.GetSystemSettings()
             };
 
             string errorMessage = ValidateUploadAttempt((FileUploadTypes)uploadTypes, uploadDate.Value).Result;
@@ -123,8 +125,6 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
                     _logger.Error(new ApplicationException(StringMessages.Error_UploadedFileLengthGreaterThanMaxSize));
                     throw new ApplicationException(StringMessages.Error_UploadedFileLengthGreaterThanMaxSize);
                 }
-
-
 
                 var fu = file.ToFileUpload(User.Identity.Name, uploadDate, uploadTypes);
 

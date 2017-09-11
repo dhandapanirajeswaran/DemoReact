@@ -3376,6 +3376,8 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
             row.DecimalRounding = systemSettings.DecimalRounding;
             row.EnableSiteEmails = systemSettings.EnableSiteEmails;
             row.SiteEmailTestAddresses = systemSettings.SiteEmailTestAddresses;
+            row.FileUploadDatePicker = systemSettings.FileUploadDatePicker;
+            row.CompetitorMaxDriveTime = systemSettings.CompetitorMaxDriveTime;
 
             _context.SaveChanges();
         }
@@ -3402,7 +3404,9 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
                 SuperUnleadedMarkupPrice = settings.SuperUnleadedMarkupPrice.ToActualPrice(),
                 DecimalRounding = settings.DecimalRounding,
                 EnableSiteEmails = settings.EnableSiteEmails,
-                SiteEmailTestAddresses = settings.SiteEmailTestAddresses
+                SiteEmailTestAddresses = settings.SiteEmailTestAddresses,
+                FileUploadDatePicker = settings.FileUploadDatePicker,
+                CompetitorMaxDriveTime = settings.CompetitorMaxDriveTime
             };
 
             return model;

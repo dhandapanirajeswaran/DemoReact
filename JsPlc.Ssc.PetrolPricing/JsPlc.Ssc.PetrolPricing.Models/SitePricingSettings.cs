@@ -26,5 +26,7 @@ namespace JsPlc.Ssc.PetrolPricing.Models
         public int DecimalRounding { get; set; }
         public bool EnableSiteEmails { get; set; }
         public string SiteEmailTestAddresses { get; set; }
+        public bool FileUploadDatePicker { get; set; }
+        public int CompetitorMaxDriveTime { get; set; }
     }
 }
