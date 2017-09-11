@@ -303,11 +303,11 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             var model = _serviceFacade.GetSite(id);
             model.CalledFromSection = calledFromSection;
 
-            var sortedCompetitors = model.Competitors.Where(c => c.IsSainsburysSite == false).OrderBy(c => c.SiteName).ToList();
+            var sortedCompetitors = model.Competitors.OrderBy(c => c.SiteName).ToList();
 
             sortedCompetitors.Insert(0, new SiteViewModel
             {
-                SiteName = "Not specified"
+                SiteName = "------- Not specified --------"
             });
 
             model.ExcludeCompetitors = model.ExcludeCompetitors.Distinct().ToList();

@@ -1027,7 +1027,8 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
         public Site GetSite(int id)
         {
-            return _context.Sites.Include(s => s.Emails).FirstOrDefault(q => q.Id == id);
+            var site =  _context.Sites.Include(s => s.Emails).FirstOrDefault(q => q.Id == id);
+            return site;
         }
 
         public Site GetSiteByCatNo(int catNo)
