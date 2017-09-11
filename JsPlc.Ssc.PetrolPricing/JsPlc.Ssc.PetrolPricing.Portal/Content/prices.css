@@ -531,6 +531,12 @@ table.competitorTable > tbody > .competitor-row  {
     color: #999;
 }
 
+.site-row .price-freeze .standard-price,
+.site-row .price-freeze .trial-price,
+.site-row .price-freeze .match-competitor-price {
+    border-bottom: 2px solid#83caf7;
+}
+
 .pricing-sort-row th {
     text-align: center;
     background-color: #fff;
@@ -1094,8 +1100,17 @@ tr.site-row.row-override-exceeds-warning-limits td.outside-prices-warning-limits
     background-color:#f0ad4e;
     color: #fff;
     margin: 0.5em;
-    padding: 0.25em 2em;
-    border-radius: 8px;
+    padding: 0.25em 1em;
+    border-radius: 6px;
+}
+
+.price-freeze-event-banner {
+    background-color: #135a97;
+    color: #fff;
+    margin: 0.25em;
+    padding: 0.25em 1em;
+    border-radius: 6px;
+    box-shadow: 4px 4px 12px #83caf7;
 }
 
 .grocer-brand {

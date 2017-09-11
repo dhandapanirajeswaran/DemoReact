@@ -56,6 +56,8 @@
             "HistoricSitePrices": "App/HistoricSitePrices",
             "UnsavedChanges": "App/UnsavedChanges",
             "PriceReasons": "App/PriceReasons",
+            "PriceFreezeEvents": "App/PriceFreezeEvents",
+            "DateUtils": "App/DateUtils",
 
             // popups
             "SiteEmailPopup" : "App/Popups/SiteEmailPopup",
@@ -65,6 +67,8 @@
             "EmailTemplateService": "App/Services/EmailTemplateService",
             "DriveTimeMarkupService": "App/Services/DriveTimeMarkupService",
             "EmailScheduleService": "App/Services/EmailScheduleService",
+            "PriceFreezeEventService": "App/Services/PriceFreezeEventService",
+            "ServiceUtils": "App/Services/ServiceUtils",
 
             //View scripts
             "SitePricing": "App/ViewScripts/SitePricing",

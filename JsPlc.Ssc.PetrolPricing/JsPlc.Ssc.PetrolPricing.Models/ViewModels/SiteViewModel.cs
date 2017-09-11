@@ -1,5 +1,6 @@
 ﻿using JsPlc.Ssc.PetrolPricing.Models.Enums;
 using JsPlc.Ssc.PetrolPricing.Models.ViewModels;
+using JsPlc.Ssc.PetrolPricing.Models.ViewModels.SystemSettings;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;

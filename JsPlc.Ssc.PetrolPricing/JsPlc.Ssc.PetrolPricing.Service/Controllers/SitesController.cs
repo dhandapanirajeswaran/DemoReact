@@ -26,123 +26,123 @@ using JsPlc.Ssc.PetrolPricing.Core;
 using JsPlc.Ssc.PetrolPricing.Core.Interfaces;
 using JsPlc.Ssc.PetrolPricing.Business.Interfaces;
 using System.Globalization;
+using JsPlc.Ssc.PetrolPricing.Models.ViewModels.SystemSettings;
 
 namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
 {
-	public class SitesController : ApiController
-	{
-		ISiteService _siteService;
-		IPriceService _priceService;
-		IEmailService _emailService;
-        IEmailTemplateService _emailTemplateService;
-	    private ILogger _logger;
-		
-		public SitesController(
-			ISiteService siteService,
-			IPriceService priceService,
-			IEmailService emailService,
+    public class SitesController : ApiController
+    {
+        private ISiteService _siteService;
+        private IPriceService _priceService;
+        private IEmailService _emailService;
+        private IEmailTemplateService _emailTemplateService;
+        private ILogger _logger;
+
+        public SitesController(
+            ISiteService siteService,
+            IPriceService priceService,
+            IEmailService emailService,
             IEmailTemplateService emailTemplateService
            )
-		{
-			_siteService = siteService;
-			_priceService = priceService;
-			_emailService = emailService;
+        {
+            _siteService = siteService;
+            _priceService = priceService;
+            _emailService = emailService;
             _emailTemplateService = emailTemplateService;
-		    _logger = new PetrolPricingLogger();
-		}
+            _logger = new PetrolPricingLogger();
+        }
 
-		[System.Web.Http.HttpGet]
-		//[Route("api/site/{id}")] // Not needed but works
-		public IHttpActionResult Get([FromUri]int id)
-		{
-			var site = _siteService.GetSite(id);
+        [System.Web.Http.HttpGet]
+        //[Route("api/site/{id}")] // Not needed but works
+        public IHttpActionResult Get([FromUri]int id)
+        {
+            var site = _siteService.GetSite(id);
 
-			if (site == null)
-				return NotFound();
+            if (site == null)
+                return NotFound();
 
-			return Ok(site.ToSiteViewModel());
-		}
+            return Ok(site.ToSiteViewModel());
+        }
 
-		[System.Web.Http.HttpGet]
-		//[Route("api/sites")]
-		public IHttpActionResult Get()
-		{
-			var sites = _siteService.GetJsSites();
-			var sitesList = sites as Site[] ?? sites.ToArray();
-			if (sites == null || !sitesList.Any())
-				return NotFound();
-			List<SiteViewModel> sitesVm = sitesList.ToList().ToSiteViewModelList();
+        [System.Web.Http.HttpGet]
+        //[Route("api/sites")]
+        public IHttpActionResult Get()
+        {
+            var sites = _siteService.GetJsSites();
+            var sitesList = sites as Site[] ?? sites.ToArray();
+            if (sites == null || !sitesList.Any())
+                return NotFound();
+            List<SiteViewModel> sitesVm = sitesList.ToList().ToSiteViewModelList();
 
-			return Ok(sitesVm);
-		}
+            return Ok(sitesVm);
+        }
 
-		[System.Web.Http.HttpGet]
-		[System.Web.Http.Route("api/brands")]
-		public IHttpActionResult GetBrands()
-		{
-			var sites = _siteService.GetSites().Where(s => string.IsNullOrWhiteSpace(s.Brand) == false).Select(s => s.Brand).Distinct().OrderBy(x => x).ToList();
-			if (!sites.Any())
-				return NotFound();
-			return Ok(sites);
-		}
+        [System.Web.Http.HttpGet]
+        [System.Web.Http.Route("api/brands")]
+        public IHttpActionResult GetBrands()
+        {
+            var sites = _siteService.GetSites().Where(s => string.IsNullOrWhiteSpace(s.Brand) == false).Select(s => s.Brand).Distinct().OrderBy(x => x).ToList();
+            if (!sites.Any())
+                return NotFound();
+            return Ok(sites);
+        }
 
-		[System.Web.Http.HttpGet]
-		[System.Web.Http.Route("api/companies")]
-		public IHttpActionResult GetCompanies()
-		{
-			var companies = _siteService.GetCompanies()
-				.Where(s => s.Value > 1)
-				.ToDictionary(k => k.Key, v => v.Value);
+        [System.Web.Http.HttpGet]
+        [System.Web.Http.Route("api/companies")]
+        public IHttpActionResult GetCompanies()
+        {
+            var companies = _siteService.GetCompanies()
+                .Where(s => s.Value > 1)
+                .ToDictionary(k => k.Key, v => v.Value);
 
-			if (!companies.Any())
-				return NotFound();
-			return Ok(companies);
-		}
+            if (!companies.Any())
+                return NotFound();
+            return Ok(companies);
+        }
 
-		/// <summary>
-		/// Create new site
-		/// </summary>
-		/// <param name="site"></param>
-		/// <returns></returns>
-		[System.Web.Http.HttpPost]
-		public IHttpActionResult Post(SiteViewModel site)
-		{
-			if (site == null)
-			{
-				return BadRequest("Invalid passed data: site");
-			}
+        /// <summary>
+        /// Create new site
+        /// </summary>
+        /// <param name="site"></param>
+        /// <returns></returns>
+        [System.Web.Http.HttpPost]
+        public IHttpActionResult Post(SiteViewModel site)
+        {
+            if (site == null)
+            {
+                return BadRequest("Invalid passed data: site");
+            }
 
-			try
-			{
-				if (_siteService.ExistsSite(Mapper.Map<Site>(site)))
-				{
-					return BadRequest("Site with that name/Cat no already exists. Please try again.");
-				}
+            try
+            {
+                if (_siteService.ExistsSite(Mapper.Map<Site>(site)))
+                {
+                    return BadRequest("Site with that name/Cat no already exists. Please try again.");
+                }
 
-				if (false == _siteService.IsUnique(Mapper.Map<Site>(site)))
-				{
-					return BadRequest("Site with this Name, Pfs Number and Store Number already exists. Please try again.");
-				}
+                if (false == _siteService.IsUnique(Mapper.Map<Site>(site)))
+                {
+                    return BadRequest("Site with this Name, Pfs Number and Store Number already exists. Please try again.");
+                }
 
                 if (_siteService.HasDuplicateEmailAddresses(Mapper.Map<Site>(site)))
                 {
                     return BadRequest("Site has duplicate email addresses.");
                 }
 
-				var su = _siteService.NewSite(site.ToSite());
+                var su = _siteService.NewSite(site.ToSite());
 
-				return Ok(su.ToSiteViewModel());
-			}
-			catch (Exception ex)
-			{
+                return Ok(su.ToSiteViewModel());
+            }
+            catch (Exception ex)
+            {
                 _logger.Error(ex);
-				return new ExceptionResult(ex, this);
-			}
-		}
+                return new ExceptionResult(ex, this);
+            }
+        }
 
-
-		[System.Web.Http.HttpPut] // Edit new site
-		public async Task<IHttpActionResult> Update(SiteViewModel siteViewModel)
+        [System.Web.Http.HttpPut] // Edit new site
+        public async Task<IHttpActionResult> Update(SiteViewModel siteViewModel)
         {
             if (siteViewModel == null)
             {
@@ -170,8 +170,6 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
 
             try
             {
-               
-
                 //ToUpdate Exclude Competitors
                 List<SiteToCompetitor> itemsToUpdate = new List<SiteToCompetitor>();
                 foreach (int competitorID in siteViewModel.ExcludeCompetitors)
@@ -186,7 +184,7 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
                     siteToComp.IsExcluded = 0;
                     itemsToUpdate.Add(siteToComp);
                 }
-                if (itemsToUpdate.Count > 0)  site.Competitors = itemsToUpdate;
+                if (itemsToUpdate.Count > 0) site.Competitors = itemsToUpdate;
                 _siteService.UpdateSite(site);
                 return Ok(siteViewModel);
             }
@@ -197,37 +195,37 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
             }
         }
 
-		[System.Web.Http.HttpPut]
-		[System.Web.Http.Route("api/SaveOverridePrices/")]
-		public async Task<IHttpActionResult> PutOverridePrices(List<OverridePricePostViewModel> pricesToSave)
-		{
-			try
-			{
-				int rows = await _priceService.SaveOverridePricesAsync(Mapper.Map<List<SitePrice>>(pricesToSave));
+        [System.Web.Http.HttpPut]
+        [System.Web.Http.Route("api/SaveOverridePrices/")]
+        public async Task<IHttpActionResult> PutOverridePrices(List<OverridePricePostViewModel> pricesToSave)
+        {
+            try
+            {
+                int rows = await _priceService.SaveOverridePricesAsync(Mapper.Map<List<SitePrice>>(pricesToSave));
 
-				return Ok(rows);
-			}
-			catch (Exception ex) // format the exception to report back to Client
-			{
-				return new ExceptionResult(ex, this);
-			}
-		}
+                return Ok(rows);
+            }
+            catch (Exception ex) // format the exception to report back to Client
+            {
+                return new ExceptionResult(ex, this);
+            }
+        }
 
-		/// <summary>
-		///  Not used yet, churns out a lot of data
-		/// </summary>
-		/// <returns></returns>
-		[System.Web.Http.HttpGet]
-		[System.Web.Http.Route("api/SiteDetails/")]
-		public IHttpActionResult GetSitesWithEmailsAndPrices()
-		{
-			var sites = _siteService.GetSitesWithEmailsAndPrices();
-			return Ok(sites);
-		}
+        /// <summary>
+        ///  Not used yet, churns out a lot of data
+        /// </summary>
+        /// <returns></returns>
+        [System.Web.Http.HttpGet]
+        [System.Web.Http.Route("api/SiteDetails/")]
+        public IHttpActionResult GetSitesWithEmailsAndPrices()
+        {
+            var sites = _siteService.GetSitesWithEmailsAndPrices();
+            return Ok(sites);
+        }
 
         /// <summary>
         /// Gets a list of SitePriceViewModel for SitePricing tab main data
-        /// Test Url: api/SitePrices?forDate=2015-11-30&amp;siteId=1 
+        /// Test Url: api/SitePrices?forDate=2015-11-30&amp;siteId=1
         /// or api/SitePrices
         /// </summary>
         /// <param name="forDate"></param>
@@ -261,42 +259,42 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
             return Ok(siteWithPrices.ToList());
         }
 
-		/// <summary>
-		/// Gets a list of SitePriceViewModel for SitePricing tab collapsible data
-		/// Test Url: api/CompetitorPrices?forDate=2015-12-17&amp;siteId=1 
-		/// or api/SitePrices
-		/// </summary>
-		/// <param name="forDate">Optional - Date of Calc/Viewing</param>
-		/// <param name="siteId">Optional - Specific SiteId or 0 for all Sites</param>
-		/// <param name="pageNo">Optional - Viewing PageNo</param>
-		/// <param name="pageSize">Optional - PageSize, set large value (e.g. 1000) to get all sites</param>
+        /// <summary>
+        /// Gets a list of SitePriceViewModel for SitePricing tab collapsible data
+        /// Test Url: api/CompetitorPrices?forDate=2015-12-17&amp;siteId=1
+        /// or api/SitePrices
+        /// </summary>
+        /// <param name="forDate">Optional - Date of Calc/Viewing</param>
+        /// <param name="siteId">Optional - Specific SiteId or 0 for all Sites</param>
+        /// <param name="pageNo">Optional - Viewing PageNo</param>
+        /// <param name="pageSize">Optional - PageSize, set large value (e.g. 1000) to get all sites</param>
         /// <param name="siteIds">Optional - list of JS sites to export</param>
-		/// <returns>List of SitePriceViewModel</returns>
-		[System.Web.Http.HttpGet]
-		[System.Web.Http.Route("api/CompetitorPrices")]
-		public IHttpActionResult GetCompetitorsWithPrices([FromUri] DateTime? forDate = null,
-			[FromUri]int siteId = 0, [FromUri]int pageNo = 1, [FromUri]int pageSize = Constants.PricePageSize, [FromUri] string siteIds = null)
-		{
-			if (!forDate.HasValue) forDate = DateTime.Now;
-			IEnumerable<SitePriceViewModel> siteWithPrices = _siteService.GetCompetitorsWithPrices(forDate.Value, siteId, pageNo, pageSize, siteIds);
+        /// <returns>List of SitePriceViewModel</returns>
+        [System.Web.Http.HttpGet]
+        [System.Web.Http.Route("api/CompetitorPrices")]
+        public IHttpActionResult GetCompetitorsWithPrices([FromUri] DateTime? forDate = null,
+            [FromUri]int siteId = 0, [FromUri]int pageNo = 1, [FromUri]int pageSize = Constants.PricePageSize, [FromUri] string siteIds = null)
+        {
+            if (!forDate.HasValue) forDate = DateTime.Now;
+            IEnumerable<SitePriceViewModel> siteWithPrices = _siteService.GetCompetitorsWithPrices(forDate.Value, siteId, pageNo, pageSize, siteIds);
 
             siteWithPrices = siteWithPrices == null
                 ? new List<SitePriceViewModel>()
                 : siteWithPrices.ToList();
             return Ok(siteWithPrices);
-		}
+        }
 
-		[System.Web.Http.HttpGet]
-		[System.Web.Http.Route("api/TestSendMail")]
-		public IHttpActionResult TestSendMail()
-		{
-			string result = _emailService.SendTestEmail();
+        [System.Web.Http.HttpGet]
+        [System.Web.Http.Route("api/TestSendMail")]
+        public IHttpActionResult TestSendMail()
+        {
+            string result = _emailService.SendTestEmail();
 
-			return Ok(result);
-		}
+            return Ok(result);
+        }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="emailTemplateId">Id of the EmailTemplate</param>
         /// <param name="siteIdsList">0 to send for all sites, otherwise specific siteID</param>
@@ -304,15 +302,15 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
         /// <param name="loginUserEmail">Reports send log back to this emailaddr</param>
         /// <returns></returns>
         [System.Web.Http.HttpGet]
-		[System.Web.Http.Route("api/emailSites")]
-		public async Task<IHttpActionResult> EmailSites(int emailTemplateId, string siteIdsList, DateTime? endTradeDate = null, string loginUserEmail = "")
-		{
-			try
-			{
-				if (endTradeDate == null)
-				{
-					endTradeDate = DateTime.Now;
-				}
+        [System.Web.Http.Route("api/emailSites")]
+        public async Task<IHttpActionResult> EmailSites(int emailTemplateId, string siteIdsList, DateTime? endTradeDate = null, string loginUserEmail = "")
+        {
+            try
+            {
+                if (endTradeDate == null)
+                {
+                    endTradeDate = DateTime.Now;
+                }
 
                 var emailTemplate = _emailTemplateService.GetEmailTemplate(emailTemplateId);
                 if (emailTemplate == null)
@@ -320,80 +318,79 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
 
                 var listOfSites = new List<SitePriceViewModel>();
 
-				var sendLog = new ConcurrentDictionary<int, EmailSendLog>();
+                var sendLog = new ConcurrentDictionary<int, EmailSendLog>();
                 List<string> siteIds = siteIdsList.Split(',').ToList();
                 List<int> siteIdNumsList = siteIds.Select(int.Parse).ToList();
-                if (siteIdNumsList.Count ==1)
-				{
+                if (siteIdNumsList.Count == 1)
+                {
                     var siteVMList = _siteService.GetSitesWithPrices(endTradeDate.Value, "", 0, 0, "", siteIdNumsList[0]).ToList();
 
                     if (siteVMList != null) listOfSites.AddRange(siteVMList);
-				}
-				else
-				{
-					listOfSites = _siteService.GetSitesWithPrices(endTradeDate.Value).ToList();
-				}
+                }
+                else
+                {
+                    listOfSites = _siteService.GetSitesWithPrices(endTradeDate.Value).ToList();
+                }
 
-               listOfSites.RemoveAll(x =>  !siteIdNumsList.Contains(x.SiteId));
+                listOfSites.RemoveAll(x => !siteIdNumsList.Contains(x.SiteId));
 
-				if (listOfSites.Any())
-				{
+                if (listOfSites.Any())
+                {
                     sendLog = await _emailService.SendEmailAsync(emailTemplate, listOfSites, endTradeDate.Value, loginUserEmail);
-					// We continue sending on failure.. Log shows which passed or failed
-				}
+                    // We continue sending on failure.. Log shows which passed or failed
+                }
 
-				List<EmailSendLog> logEntries = sendLog.AsParallel().Select(s => s.Value).ToList();
-				logEntries = await _emailService.SaveEmailLogToRepositoryAsync(logEntries);
-				return Ok(logEntries);
-			}
-			catch (Exception ex)
-			{
+                List<EmailSendLog> logEntries = sendLog.AsParallel().Select(s => s.Value).ToList();
+                logEntries = await _emailService.SaveEmailLogToRepositoryAsync(logEntries);
+                return Ok(logEntries);
+            }
+            catch (Exception ex)
+            {
                 _logger.Error(ex);
                 return new ExceptionResult(ex, this);
-			}
-		}
+            }
+        }
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="siteId">0 to send for all sites, otherwise specific siteID</param>
-		/// <param name="forDate"></param>
-		/// <returns></returns>
-		[System.Web.Http.HttpGet]
-		[System.Web.Http.Route("api/getEmailSendLog")]
-		public async Task<IHttpActionResult> GetEmailSendLog(int siteId = 0, DateTime? forDate = null)
-		{
-			try
-			{
-				if (forDate == null)
-				{
-					forDate = DateTime.Now;
-				}
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="siteId">0 to send for all sites, otherwise specific siteID</param>
+        /// <param name="forDate"></param>
+        /// <returns></returns>
+        [System.Web.Http.HttpGet]
+        [System.Web.Http.Route("api/getEmailSendLog")]
+        public async Task<IHttpActionResult> GetEmailSendLog(int siteId = 0, DateTime? forDate = null)
+        {
+            try
+            {
+                if (forDate == null)
+                {
+                    forDate = DateTime.Now;
+                }
 
-				List<EmailSendLog> sendLog = await _emailService.GetEmailSendLog(siteId, forDate);
-				// We continue sending on failure.. Log shows which passed or failed
+                List<EmailSendLog> sendLog = await _emailService.GetEmailSendLog(siteId, forDate);
+                // We continue sending on failure.. Log shows which passed or failed
 
-				return Ok(sendLog); // return a List<EmailSendLog> 
-			}
-			catch (Exception ex)
-			{
+                return Ok(sendLog); // return a List<EmailSendLog>
+            }
+            catch (Exception ex)
+            {
                 _logger.Error(ex);
-				return new ExceptionResult(ex, this);
-			}
-		}
+                return new ExceptionResult(ex, this);
+            }
+        }
 
-
-		/// <summary>
-		/// Test email body replacement values, usable for UI click to get full email Html with prices
-		/// </summary>
-		/// <param name="siteId"></param>
-		/// <param name="endTradeDate"></param>
-		/// <returns></returns>
-		[System.Web.Http.HttpGet]
-		[System.Web.Http.Route("api/ShowEmailBody")]
-		public HttpResponseMessage ShowSitesEmailBody(int siteId = 0, DateTime? endTradeDate = null)
-		{
-			/*if (endTradeDate == null) endTradeDate = DateTime.Now;
+        /// <summary>
+        /// Test email body replacement values, usable for UI click to get full email Html with prices
+        /// </summary>
+        /// <param name="siteId"></param>
+        /// <param name="endTradeDate"></param>
+        /// <returns></returns>
+        [System.Web.Http.HttpGet]
+        [System.Web.Http.Route("api/ShowEmailBody")]
+        public HttpResponseMessage ShowSitesEmailBody(int siteId = 0, DateTime? endTradeDate = null)
+        {
+            /*if (endTradeDate == null) endTradeDate = DateTime.Now;
 
 			var listOfSites = new List<SiteViewModel>();
 			var emailBodies = new List<string>();
@@ -424,7 +421,7 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
 			return response;*/
 
             return null;
-		}
+        }
 
         [System.Web.Http.HttpGet]
         [System.Web.Http.Route("api/excludebrands")]
@@ -448,10 +445,6 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
             siteViewModel.ExcludeBrandsOrg = _siteService.GetExcludeBrands().ToList();
             if (siteViewModel.ExcludeBrands != null)
             {
-
-
-
-
                 var list_intersect = siteViewModel.ExcludeBrands.Intersect(siteViewModel.ExcludeBrandsOrg).ToList();
                 bool bIsChangeInList = siteViewModel.ExcludeBrands.Count != siteViewModel.ExcludeBrandsOrg.Count;
                 if (siteViewModel.ExcludeBrands.Count == siteViewModel.ExcludeBrandsOrg.Count)
@@ -463,7 +456,7 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
                             bIsChangeInList = true;
                             break;
                         }
-                      }
+                    }
                 }
 
                 if (!bIsChangeInList) return Ok(siteViewModel);
@@ -472,17 +465,15 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
                     siteViewModel.ExcludeBrands.Remove(brandname);
                     siteViewModel.ExcludeBrandsOrg.Remove(brandname);
                 }
-
             }
             try
             {
-                
                 foreach (String strBrand in siteViewModel.ExcludeBrandsOrg)
                 {
                     _siteService.RemoveExcludeBrand(strBrand);
                 }
 
-               if (siteViewModel.ExcludeBrands.Count>0) _siteService.SaveExcludeBrands(siteViewModel.ExcludeBrands);
+                if (siteViewModel.ExcludeBrands.Count > 0) _siteService.SaveExcludeBrands(siteViewModel.ExcludeBrands);
 
                 _siteService.RebuildSiteAttributes();
 
@@ -504,7 +495,7 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
                 var model = _siteService.GetSiteNote(siteId);
                 return Ok(model);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _logger.Error(ex);
                 return new ExceptionResult(ex, this);
@@ -660,7 +651,7 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
 
         [System.Web.Http.HttpGet]
         [System.Web.Http.Route("api/GetAllSiteEmailAddresses")]
-        public async Task<IHttpActionResult> GetAllSiteEmailAddresses([FromUri] int siteId=0)
+        public async Task<IHttpActionResult> GetAllSiteEmailAddresses([FromUri] int siteId = 0)
         {
             try
             {
@@ -713,7 +704,87 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
             try
             {
                 var result = _priceService.GetHistoricalPricesForSite(siteId, startDate, endDate);
-                    return Ok(result);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex);
+                return new ExceptionResult(ex, this);
+            }
+        }
+
+        [System.Web.Http.HttpGet]
+        [System.Web.Http.Route("api/GetPriceFreezeEvents")]
+        public async Task<IHttpActionResult> GetPriceFreezeEvents()
+        {
+            try
+            {
+                var result = _priceService.GetPriceFreezeEvents();
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex);
+                return new ExceptionResult(ex, this);
+            }
+        }
+
+        [System.Web.Http.HttpGet]
+        [System.Web.Http.Route("api/GetPriceFreezeEvent/{id}")]
+        public async Task<IHttpActionResult> GetPriceFreezeEvent([FromUri] int id)
+        {
+            try
+            {
+                var result = _priceService.GetPriceFreezeEvent(id);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex);
+                return new ExceptionResult(ex, this);
+            }
+        }
+
+        [System.Web.Http.HttpPost]
+        [System.Web.Http.Route("api/UpsertPriceFreezeEvent")]
+        public async Task<IHttpActionResult> UpsertPriceFreezeEvent([FromBody] PriceFreezeEventViewModel model)
+        {
+            try
+            {
+                var result = _priceService.UpsertPriceFreezeEvent(model);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex);
+                return new ExceptionResult(ex, this);
+            }
+        }
+
+        [System.Web.Http.HttpGet]
+        [System.Web.Http.Route("api/DeletePriceFreezeEvent/{id}")]
+        public async Task<IHttpActionResult> DeletePriceFreezeEvent([FromUri] int id)
+        {
+            try
+            {
+                var result = _priceService.DeletePriceFreezeEvent(id);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex);
+                return new ExceptionResult(ex, this);
+            }
+        }
+
+        [System.Web.Http.HttpGet]
+        [System.Web.Http.Route("api/GetPriceFreezeEventForDate/{date}")]
+        public async Task<IHttpActionResult> GetPriceFreezeEventForDate([FromUri] DateTime date)
+        {
+            try
+            {
+                var result = _priceService.GetPriceFreezeEventForDate(date);
+                return Ok(result);
             }
             catch (Exception ex)
             {
@@ -723,11 +794,12 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
         }
 
         #region private methods
+
         private DateTime ParseDateTime(string datetime)
         {
             return DateTime.ParseExact(datetime, "yyyyMMddThhmmZ", CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal);
         }
-        #endregion
 
+        #endregion private methods
     }
 }

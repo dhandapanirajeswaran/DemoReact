@@ -74,6 +74,12 @@
 </div>
 <!-- end loader-->
 
+<div class="alert alert-danger font125pc" id="divPriceFreezeWarning" style="display: none;">
+    <i class="fa fa-warning"></i><strong>Warning:</strong> <strong>Price Freeze Event</strong> is active between <strong data-value="DateFrom"></strong> and <strong data-value="DateTo"></strong> &mdash; (<strong data-value="DaysRemaining"></strong> remaining) - by <span data-value="CreatedBy"></span>
+    <a class="btn btn-default pull-right" href="@Url.Action("PriceFreeze", "Settings")" data-infotip="Manage the [q]Price Freeze Events[/q] from the [b]System Settings[/b]"><i class="fa fa-hourglass-start"></i> Price Freeze Events</a>
+</div>
+
+
 <form action="" method="post" enctype="multipart/form-data">
     @if (@Model != null)
     {

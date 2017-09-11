@@ -323,6 +323,7 @@
     <Content Include="Scripts\App\common.js" />
     <Content Include="Scripts\App\cookie.js" />
     <Content Include="Scripts\App\cookieSettings.js" />
+    <Content Include="Scripts\App\DateUtils.js" />
     <Content Include="Scripts\App\downloader.js" />
     <Content Include="Scripts\App\DriveTimeChart.html" />
     <Content Include="Scripts\App\DriveTimeChart.js" />
@@ -339,6 +340,8 @@
     <Content Include="Scripts\App\Popups\SiteEmailPopup.html" />
     <Content Include="Scripts\App\Popups\SiteEmailPopup.js" />
     <Content Include="Scripts\App\priceChangesTab.js" />
+    <Content Include="Scripts\App\PriceFreezeEvents.html" />
+    <Content Include="Scripts\App\PriceFreezeEvents.js" />
     <Content Include="Scripts\App\PriceReasons.js" />
     <Content Include="Scripts\App\prices.js" />
     <Content Include="Scripts\App\pricestats.js" />
@@ -348,6 +351,8 @@
     <Content Include="Scripts\App\Services\EmailScheduleService.js" />
     <Content Include="Scripts\App\Services\EmailTemplateService.js" />
     <Content Include="Scripts\App\Popups\SiteEmailHelp.html" />
+    <Content Include="Scripts\App\Services\PriceFreezeEventService.js" />
+    <Content Include="Scripts\App\Services\ServiceUtils.js" />
     <Content Include="Scripts\App\sitePricingSettings.js" />
     <Content Include="Scripts\App\unsavedChanges.js" />
     <Content Include="Scripts\App\validation.js" />
@@ -566,6 +571,7 @@
     <Content Include="Views\Sites\UploadSiteEmails.cshtml" />
     <Content Include="Views\Sites\Pricing\_SiteFilterPopup.cshtml" />
     <Content Include="Views\File\_FileUploadSummary.cshtml" />
+    <Content Include="Views\Settings\PriceFreeze.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\uploads\" />

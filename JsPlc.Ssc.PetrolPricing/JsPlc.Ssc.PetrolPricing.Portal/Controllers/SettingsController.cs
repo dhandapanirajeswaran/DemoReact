@@ -140,5 +140,40 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             var result = _serviceFacade.ClearWinServiceEventLog();
             return base.JsonGetResult(result);
         }
+
+        [System.Web.Mvc.HttpGet]
+        [AuthoriseSystemSettings(Permissions = SystemSettingsUserPermissions.View | SystemSettingsUserPermissions.Edit)]
+        public ActionResult PriceFreeze()
+        {
+            var model = _serviceFacade.GetPriceFreezePage();
+            return View(model);
+        }
+
+        [System.Web.Mvc.HttpGet]
+        [AuthoriseSystemSettings(Permissions = SystemSettingsUserPermissions.View | SystemSettingsUserPermissions.Edit)]
+        public ActionResult GetPriceFreezeEvent(int eventId)
+        {
+            var result = _serviceFacade.GetPriceFreezeEvent(eventId);
+            return base.JsonGetResult(result);
+        }
+
+        [System.Web.Mvc.HttpPost]
+        [AuthoriseSystemSettings(Permissions = SystemSettingsUserPermissions.View | SystemSettingsUserPermissions.Edit)]
+        public ActionResult updatePriceFreezeEvent(PriceFreezeEventViewModel priceFreezeEvent)
+        {
+            priceFreezeEvent.CreatedBy = User.Identity.Name;
+            priceFreezeEvent.CreatedOn = DateTime.Now;
+            priceFreezeEvent.DateTo = priceFreezeEvent.DateFrom.AddDays(priceFreezeEvent.Days - 1);
+            var result = _serviceFacade.UpsertPriceFreezeEvent(priceFreezeEvent);
+            return base.JsonGetResult(result);
+        }
+
+        [System.Web.Mvc.HttpGet]
+        [AuthoriseSystemSettings(Permissions = SystemSettingsUserPermissions.View | SystemSettingsUserPermissions.Edit)]
+        public ActionResult DeletePriceFreezeEvent(int eventId)
+        {
+            var result = _serviceFacade.DeletePriceFreezeEvent(eventId);
+            return base.JsonGetResult(result);
+        }
     }
 }

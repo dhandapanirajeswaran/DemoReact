@@ -1,0 +1,166 @@
+﻿@model JsPlc.Ssc.PetrolPricing.Models.ViewModels.SystemSettings.PriceFreezePageViewModel
+@using JsPlc.Ssc.PetrolPricing.Portal.Helper.Extensions
+@{
+    ViewBag.Title = "Price Freeze Events";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var startOfToday = DateTime.Now.Date;
+}
+
+<style>
+    #PriceFreezeEventsGrid .event-row-inactive {
+        background-color: #ccc;
+        color: #333;
+        border-left: 4px solid #999;
+    }
+
+    #PriceFreezeEventsGrid .event-row-expired {
+        color: #aaa;
+        font-style: italic;
+        border-left: 4px solid #999;
+    }
+
+    #PriceFreezeEventsGrid .event-row-running {
+        background-color: #dfd;
+        font-weight: bold;
+        border-left: 4px solid #9c9;
+    }
+
+    #PriceFreezeEventsGrid .event-row-future{
+        color: orange;
+        border-left: 4px solid orange;
+
+    }
+
+</style>
+
+<h1>
+    <i class="fa fa-hourglass-start"></i> Price Freeze Events
+</h1>
+
+<ul class="nav nav-tabs nav-condensed">
+    <li><a href="@Url.Action("Index", "Settings")"><i class="fa fa-cogs"></i> Common Settings</a></li>
+    <li><a href="@Url.Action("DriveTime", "Settings")"><i class="fa fa-clock-o"></i> Drive Time</a></li>
+    <li><a href="@Url.Action("Brands", "Settings")"><i class="fa fa-apple"></i> Brands &amp; Grocers</a></li>
+    <li><a href="@Url.Action("Schedule", "Settings")"><i class="fa fa-calendar"></i> Email Schedule</a></li>
+    <li class="active"><a href="@Url.Action("PriceFreeze", "Settings")"><i class="fa fa-hourglass-start"></i> Price Freeze Events</a></li>
+</ul>
+
+<br />
+
+<div class="alert alert-info font125pc">
+    <i class="fa fa-hourglass-start"></i> During a <strong>Price Freeze Event</strong> Sainsbury's fuel prices <strong>cannot</strong> increase in price (for legal reasons), but they can decrease.
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-9">
+
+        </div>
+        <div class="col-md-3">
+            <button type="button" id="btnAddEvent" class="btn btn-sm btn-primary pull-right" data-infotip="Add a new [b]Price Freeze Event[/b]"><i class="fa fa-plus"></i> Add Event</button>
+        </div>
+    </div>
+
+    <div class="row">
+        <table class="table table-condensed table-striped" id="PriceFreezeEventsGrid">
+            <thead>
+                <tr>
+                    <th class="text-center" style="width: 6%">Status</th>
+                    <th class="text-center" style="width: 7%">First Day</th>
+                    <th class="text-center" style="width: 7%">Last Day</th>
+                    <th class="text-center" style="width: 5%">Duration</th>
+                    <th class="text-center" style="width: 16%">Updated On</th>
+                    <th class="text-center" style="width: 16%">Updated By</th>
+                    <th class="text-center" style="width: 6%">Active</th>
+                    <th class="text-center" style="width: 10%">Remaing</th>
+                    <th class="text-center" style="width: 10%">Actions</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @if (!Model.PriceFreezeEvents.Any())
+                {
+                    <tr>
+                        <td colspan="8" class="font125pc text-warning text-center">Sorry, there are 0 Price Freeze Events &mdash; Please add one</td>
+                    </tr>
+                }
+
+                @foreach (var item in Model.PriceFreezeEvents.OrderBy(x => x.DateFrom))
+                {
+                    var remainingDays = item.IsActive && DateTime.Now.Date >= item.DateFrom && DateTime.Now.Date <= item.DateTo
+                        ? String.Format("{0} Days", item.DateTo.AddDays(1).Subtract(DateTime.Now.Date).TotalDays)
+                        : "-";
+
+                    var status = (!item.IsActive ? "Inactive" : "")
+                        + (item.IsActive && item.DateTo < startOfToday ? "Expired" : "")
+                        + (item.IsActive && item.DateFrom <= startOfToday && item.DateTo >= startOfToday ? "Running" : "")
+                        + (item.IsActive && item.DateFrom > startOfToday ? "Future" : "");
+
+                    var rowClass = (item.IsActive ? "event-row-active" : "event-row-inactive")
+                            + (item.IsActive && item.DateTo < startOfToday ? " event-row-expired" : "")
+                            + (item.IsActive && item.DateFrom <= startOfToday && item.DateTo >= startOfToday ? " event-row-running" : "")
+                            + (item.IsActive && item.DateFrom > startOfToday ? " event-row-future" : "");
+
+                    <tr class="@(rowClass)">
+                        <td class="text-center">
+                            @(status)
+                        </td>
+                        <td class="text-center" data-infotip="Starts on [b]@(item.DateFrom.ToString("dd MMM yyyy"))[/b]">
+                            @(item.DateFrom.ToString("dd/MM/yyyy"))
+                        </td>
+                        <td class="text-center" data-infotip="End on [b]@(item.DateTo.ToString("dd MMM yyyy"))[/b]">
+                            @if (item.DateTo == startOfToday)
+                            {
+                                <strong>Today</strong>
+                            }
+                            else
+                            {
+                                @(item.DateTo.ToString("dd/MM/yyyy"))
+                            }
+                        </td>
+                        <td class="text-center">
+                            @(item.Days)
+                        </td>
+                        <td class="text-center" data-infotip="Created/Updated on [b]@(item.CreatedOn.ToString("dd MMM yyyy"))[/b]">
+                            @Html.FormatFriendlyDateTime(item.CreatedOn) <br />
+                            @Html.FormatFriendlyTimeAgo(item.CreatedOn)
+                        </td>
+                        <td class="text-center">
+                            @Html.FormatEmailLink(item.CreatedBy)
+                        </td>
+                        <td class="text-center">
+                            @if (item.IsActive)
+                            {
+                                <span class="text-success" data-infotip="[q]Price Freeze Event[/q] is [u]Active[/u]"><i class="fa fa-check"></i></span>
+                            }
+                            else
+                            {
+                                <span class="text-danger" data-infotip="[q]Price Freeze Event[/q] is [i]Not Active[/i]"><i class="fa fa-times"></i></span>
+                            }
+                        </td>
+                        <td class="text-center font125pc">
+                            @(remainingDays)
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-xs btn-danger pull-left" data-click-action="delete-event" data-event-id="@(item.PriceFreezeEventId)" data-infotip="Remove this [b]Price Freeze Event[/b]"><i class="fa fa-remove"></i> Remove</button>
+                            <button type="button" class="btn btn-xs btn-primary pull-right" data-click-action="edit-event" data-event-id="@(item.PriceFreezeEventId)" data-infotip="Edit this [b]Price Freeze Event[/b]"><i class="fa fa-edit"></i> Edit</button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+<div class="alert alert-warning font125pc">
+    <i class="fa fa-info-circle"></i> <strong>Note:</strong> &nbsp; A <strong>Price Freeze</strong> with a status of <strong>Running</strong> will take affect after the next <strong>Daily Catalist</strong> or <strong>Latest JS Price</strong> file has been uploaded.
+</div>
+
+<script>
+    require(["PriceFreezeEvents"],
+        function (priceFreezeEvents) {
+            priceFreezeEvents.init();
+        });
+</script>

@@ -270,19 +270,16 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             model.RecentFileUploads = _serviceFacade.GetRecentFileUploadSummary();
             model.PriceSnapshot = _serviceFacade.GetPriceSnapshotForDay(requestDate) ?? new PriceSnapshotViewModel();
 
-            // model.ExcludeBrands = _serviceFacade.GetBrands().ToList();
-
             var allBrands = _serviceFacade.GetBrands();
             model.AllBrands = allBrands != null ? allBrands.ToList() : new List<string>();
             var excludebrands = _serviceFacade.GetExcludeBrands();
             model.ExcludeBrands = excludebrands != null ? excludebrands.ToList() : null;
             model.ExcludeBrandsOrg = model.ExcludeBrands;
 
-            PopulatePageData(model);
+            PopulatePageData(model, requestDate);
 
             return View("Prices", model); // Razor based view
         }
-
 
         [System.Web.Mvc.HttpPost]
         public ActionResult PostPrices([FromBody] string postBackData = "")
@@ -663,7 +660,16 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             return jsonResult;
         }
 
-        private void PopulatePageData(SiteViewModel model)
+        [ScriptMethod(UseHttpGet =true)]
+        public JsonResult GetPriceFreezeEventForDate(DateTime forDate)
+        {
+            var result = _serviceFacade.GetPriceFreezeEventForDate(forDate);
+            return base.JsonGetResult(result);
+        }
+
+        #region private methods
+
+        private void PopulatePageData(SiteViewModel model, DateTime requestDate)
         {
             var pagedata = model.PageData;
 
@@ -685,6 +691,10 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
                 pagedata.PriceSnapshot.IsActive = model.PriceSnapshot.IsActive;
                 pagedata.PriceSnapshot.IsOutdated = model.PriceSnapshot.IsOutdated;
             }
+
+            pagedata.PriceFreezeEvent = _serviceFacade.GetPriceFreezeEventForDate(requestDate);
         }
+
+        #endregion
     }
 }

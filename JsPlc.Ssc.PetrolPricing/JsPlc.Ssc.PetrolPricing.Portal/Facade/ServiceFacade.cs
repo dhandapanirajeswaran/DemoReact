@@ -1484,6 +1484,51 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             return CallAndCatchAsyncGet<List<int>>("GetJsSitesByPfsNum", apiUrl);
         }
 
+        public PriceFreezePageViewModel GetPriceFreezePage()
+        {
+            var model = new PriceFreezePageViewModel();
+            try
+            {
+                var apiUrl = String.Format("api/GetPriceFreezeEvents");
+                model.PriceFreezeEvents = CallAndCatchAsyncGet<IEnumerable<PriceFreezeEventViewModel>>("GetPriceFreezePage", apiUrl);
+            }
+            catch (Exception ex)
+            {
+                model.Status.ErrorMessage = "Unable to load Price Freeze Events";
+            }
+
+            return model;
+        }
+
+        public PriceFreezeEventViewModel GetPriceFreezeEvent(int priceFreezeEventId)
+        {
+            var apiUrl = String.Format("api/GetPriceFreezeEvent/{0}", priceFreezeEventId);
+            var result = CallAndCatchAsyncGet<PriceFreezeEventViewModel>("GetPriceFreezeEvent", apiUrl);
+            return result;
+        }
+
+        public StatusViewModel UpsertPriceFreezeEvent(PriceFreezeEventViewModel priceFreezeEvent)
+        {
+            var apiUrl = String.Format("api/UpsertPriceFreezeEvent");
+            var result = CallAndCatchAsyncPost<StatusViewModel, PriceFreezeEventViewModel>("UpsertPriceFreezeEvent", apiUrl, priceFreezeEvent);
+            return result;
+        }
+
+        public StatusViewModel DeletePriceFreezeEvent(int priceFreezeEventId)
+        {
+            var apiUrl = String.Format("api/DeletePriceFreezeEvent/{0}", priceFreezeEventId);
+            var result = CallAndCatchAsyncGet<StatusViewModel>("DeletePriceFreezeEvent", apiUrl);
+            return result;
+        }
+
+
+        public PriceFreezeEventViewModel GetPriceFreezeEventForDate(DateTime forDate)
+        {
+            var apiUrl = String.Format("api/GetPriceFreezeEventForDate/{0}", forDate.ToString("ddMMMyyyy"));
+            var result = CallAndCatchAsyncGet<PriceFreezeEventViewModel>("GetPriceFreezeEventForDate", apiUrl);
+            return result;
+        }
+
         #region private methods
 
         private T CallAndCatchAsyncGet<T>(string methodName, string apiUrl)

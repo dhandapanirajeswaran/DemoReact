@@ -44,8 +44,12 @@
         <h1>
             <i class="fa fa-gbp"></i> Market comparison and planner
 
-            <span class="historical-banner font75pc" data-bind="visible: $root.ViewingHistorical" style="display: none;">
-                <i class="fa fa-clock-o"></i> <strong>Note:</strong> Historical Data &mdash; You cannot change any Override prices.
+            <span class="historical-banner font75pc" data-bind="visible: $root.ViewingHistorical" style="display: none;" data-infotip-dock="below" data-infotip="You are viewing [b]Historical Data[/b] - you [i]cannot[/i] edit any Price Overrides">
+                <i class="fa fa-clock-o"></i> <strong>Historical Data -</strong> Overrides locked
+            </span>
+
+            <span class="price-freeze-event-banner font75pc" data-bind="visible: $root.IsPriceFreezeEventRunning" style="display: none;" data-infotip-dock="below" data-infotip="A [q]Price Freeze Event[/q] is actively running - Prices [i]cannot[/i] increase during this period.">
+                <i class="fa fa-hourglass-start"></i> <strong> Price Freeze</strong> until <strong data-bind="text: $root.PriceFreezeEventEndDate"></strong> &mdash; <strong data-bind="text: $root.PriceFreezeEventDaysRemaining"></strong>
             </span>
 
             <button id="btnRecalculateDailyPrices" type="button" class="btn btn-danger pull-right" data-bind="visible: !$root.ViewingHistorical()" data-infotip="Recalculate the [b]Daily Prices[/b]"><i class="fa fa-power-off"></i> Recalculate Daily Prices</button>
@@ -148,7 +152,7 @@
                     <label>Export</label>
                     <label class="button"></label>
                     <div>
-                        <button type="button" class="btn btn-primary" id="btnExportCompPrices" data-infotip="Export all [b] Prices and Competitors[/b]"><i class="fa fa-download"></i> Competitor Prices</button>
+                        <button type="button" class="btn btn-info" id="btnExportCompPrices" data-infotip="Export all [b] Prices and Competitors[/b]"><i class="fa fa-download"></i> Competitor Prices</button>
                         <button type="button" style="margin-left: 1.75em " class="btn btn-primary" id="btnExportAll" data-infotip="Export [b]All[/b] Sites"><i class="fa fa-download"></i> All Sites</button>
                         <button type="button" style="margin-left:0" class="btn btn-primary" id="btnExportSites" data-infotip="Export [b]Sainsbury's'[/b] Sites Only"><i class="fa fa-download"></i> Only JS Sites</button>
                     </div>

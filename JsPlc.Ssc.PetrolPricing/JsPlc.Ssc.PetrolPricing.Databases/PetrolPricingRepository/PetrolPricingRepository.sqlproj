@@ -233,6 +233,14 @@
     <Build Include="dbo\Functions\Scalar Functions\fn_GetPriceReasons.sql" />
     <Build Include="dbo\Functions\Scalar Functions\fn_LastCompetitorPriceId.sql" />
     <Build Include="dbo\Functions\Scalar Functions\fn_LastSitePriceId.sql" />
+    <Build Include="dbo\Tables\PriceFreezeEvent.sql" />
+    <Build Include="dbo\Stored Procedures\spGetPriceFreezeEvents.sql" />
+    <Build Include="dbo\Stored Procedures\spDeletePriceFreezeEvent.sql" />
+    <Build Include="dbo\Stored Procedures\spGetPriceFreezeEvent.sql" />
+    <Build Include="dbo\Stored Procedures\spGetPriceFreezeEventForDate.sql" />
+    <Build Include="dbo\Stored Procedures\spUpsertPriceFreezeEvent.sql" />
+    <Build Include="dbo\Functions\Scalar Functions\fn_IsDateOverlap.sql" />
+    <Build Include="dbo\Functions\Scalar Functions\fn_IsPriceFreezeActiveForDate.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Scripts\PostDeployment\Script.PostDeployment.sql" />

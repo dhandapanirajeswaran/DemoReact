@@ -1,4 +1,5 @@
-﻿using System;
+﻿using JsPlc.Ssc.PetrolPricing.Models.ViewModels.SystemSettings;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -30,5 +31,8 @@ namespace JsPlc.Ssc.PetrolPricing.Models.ViewModels
         public LatestPriceDataPageDataViewModel LatestPriceData = new LatestPriceDataPageDataViewModel();
 
         public PriceSnapshotPageDataViewModel PriceSnapshot = new PriceSnapshotPageDataViewModel();
+
+        public PriceFreezeEventViewModel PriceFreezeEvent = new PriceFreezeEventViewModel();
+
     }
 }

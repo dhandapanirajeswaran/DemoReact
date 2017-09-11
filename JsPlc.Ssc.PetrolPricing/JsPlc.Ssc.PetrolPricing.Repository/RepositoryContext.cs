@@ -692,5 +692,71 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             };
             DapperHelper.Execute(this, sprocName, parameters);
         }
+
+        internal IEnumerable<PriceFreezeEventViewModel> GetPriceFreezeEvents()
+        {
+            const string sprocName = "spGetPriceFreezeEvents";
+            return DapperHelper.QueryList<PriceFreezeEventViewModel>(this, sprocName, null);
+        }
+
+        internal PriceFreezeEventViewModel GetPriceFreezeEvent(int priceFreezeEventId)
+        {
+            const string sprocName = "spGetPriceFreezeEvent";
+            var parameters = new
+            {
+                @PriceFreezeEventId = priceFreezeEventId
+            };
+            return DapperHelper.QueryFirstOrDefault<PriceFreezeEventViewModel>(this, sprocName, parameters);
+        }
+
+        internal int UpsertPriceFreezeEvent(PriceFreezeEventViewModel model)
+        {
+            const string sprocName = "spUpsertPriceFreezeEvent";
+            var parameters = new
+            {
+                @PriceFreezeEventId = model.PriceFreezeEventId,
+                @DateFrom = model.DateFrom.Date,
+                @DateTo = model.DateTo.Date,
+                @IsActive = model.IsActive,
+                @CreatedBy = model.CreatedBy
+            };
+            return DapperHelper.QueryScalar(this, sprocName, parameters);
+        }
+
+        internal bool DeletePriceFreezeEvent(int priceFreezeEventId)
+        {
+            const string sprocName = "spDeletePriceFreezeEvent";
+            var parameters = new
+            {
+                @PriceFreezeEventId = priceFreezeEventId
+
+            };
+            return DapperHelper.QueryScalar(this, sprocName, parameters) == 0;
+        }
+
+        internal PriceFreezeEventViewModel GetPriceFreezeEventForDate(DateTime forDate)
+        {
+            const string sprocName = "spGetPriceFreezeEventForDate";
+            var parameters = new
+            {
+                @ForDate = forDate
+            };
+            var result = DapperHelper.QueryFirstOrDefault<PriceFreezeEventViewModel>(this, sprocName, parameters);
+            return result ?? new PriceFreezeEventViewModel();
+        }
+
+        internal void UpsertLatestPrice(int fileUploadId, int pfsNo, int storeNo, int fuelTypeId, int modalPrice)
+        {
+            const string sprocName = "sp_UpsertLatestPrice";
+            var parameters = new
+            {
+                @UploadId = fileUploadId,
+                @PfsNo = pfsNo,
+                @StoreNo = storeNo,
+                @FuelTypeId = fuelTypeId,
+                @ModalPrice = modalPrice
+            };
+            DapperHelper.Execute(this, sprocName, parameters, disableDapperLog: true);
+        }
     }
 }

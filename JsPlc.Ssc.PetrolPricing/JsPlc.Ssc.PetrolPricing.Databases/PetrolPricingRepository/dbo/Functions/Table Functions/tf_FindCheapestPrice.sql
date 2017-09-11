@@ -63,7 +63,7 @@ BEGIN
 --)
 ----DEBUG:END
 
-	DECLARE @PriceStuntFreeze BIT = 0
+	DECLARE @PriceStuntFreeze BIT = dbo.fn_IsPriceFreezeActiveForDate(@ForDate);
 
 	DECLARE @StartOfYesterday DATETIME = CONVERT(DATE, DATEADD(DAY, -1, @ForDate))
 	DECLARE @StartOfToday DATETIME = CONVERT(DATE, @ForDate)
@@ -209,6 +209,33 @@ BEGIN
 	--
 	IF @Site_CatNo > 0 AND @IsDailyCatalistFileForDate = 1
 	BEGIN
+		--
+		-- Get most recent Sainsburys 'Today' price for Site Fuel (if any)
+		--
+		DECLARE @Today_Price INT
+		SELECT
+			@Today_Price = CASE
+				WHEN sp.OverriddenPrice > 0 THEN sp.OverriddenPrice
+				WHEN sp.SuggestedPrice > 0 THEN sp.SuggestedPrice
+				ELSE 0
+			END
+		FROM
+			dbo.SitePrice sp
+		WHERE
+			sp.Id = (
+				SELECT TOP 1
+					Id
+				FROM
+					dbo.SitePrice
+				WHERE
+					SiteId = @SiteId
+					AND
+					FuelTypeId = @FuelTypeId
+					AND
+					DateOfCalc < @StartOfToday
+				ORDER BY
+					DateOfCalc DESC
+			)
 
 		--
 		-- Is there Latest JS Price available for Site Fuel ?
@@ -223,6 +250,16 @@ BEGIN
 			SET @Cheapest_IsTrialPrice = 0
 			SET @Cheapest_IsTodayPrice = 0
 			SET @Cheapest_PriceReasonFlags = @Cheapest_PriceReasonFlags | @PriceReasonFlags_LatestJSPrice
+
+			If @PriceStuntFreeze = 1
+			BEGIN
+				-- Prevent price increase during a Price Freeze Event
+				IF @Today_Price > 0 AND @Cheapest_SuggestedPrice > @Today_Price
+				BEGIN
+					SET @Cheapest_SuggestedPrice = @Today_Price
+					SET @Cheapest_PriceReasonFlags = @Cheapest_PriceReasonFlags | @PriceReasonFlags_PriceStuntFreeze
+				END
+			END
 		END
 
 		--
@@ -388,33 +425,7 @@ BEGIN
 					LEFT JOIN dbo.DailyPrice dp ON dp.Id = bcp.DailyPriceId
 					LEFT JOIN dbo.LatestCompPrice lcp ON lcp.Id = bcp.LatestCompPriceId
 					LEFT JOIN dbo.SitePrice sp ON sp.Id = bcp.SitePriceId
-				--
-				-- Get most recent Sainsburys 'Today' price for Site Fuel (if any)
-				--
-				DECLARE @Today_Price INT
-				SELECT
-					@Today_Price = CASE
-						WHEN sp.OverriddenPrice > 0 THEN sp.OverriddenPrice
-						WHEN sp.SuggestedPrice > 0 THEN sp.SuggestedPrice
-						ELSE 0
-					END
-				FROM
-					dbo.SitePrice sp
-				WHERE
-					sp.Id = (
-						SELECT TOP 1
-							Id
-						FROM
-							dbo.SitePrice
-						WHERE
-							SiteId = @SiteId
-							AND
-							FuelTypeId = @FuelTypeId
-							AND
-							DateOfCalc < @StartOfToday
-						ORDER BY
-							DateOfCalc DESC
-					)
+
 
 			-- lookup Competitor, Grocer and Nearby Grocer Data % counts
 			SELECT

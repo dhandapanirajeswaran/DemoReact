@@ -21,6 +21,7 @@ using JsPlc.Ssc.PetrolPricing.Repository;
 using JsPlc.Ssc.PetrolPricing.Models.Enums;
 using System.Text;
 using JsPlc.Ssc.PetrolPricing.Core.Diagnostics;
+using JsPlc.Ssc.PetrolPricing.Models.ViewModels.SystemSettings;
 
 namespace JsPlc.Ssc.PetrolPricing.Business
 {
@@ -509,6 +510,52 @@ namespace JsPlc.Ssc.PetrolPricing.Business
         public IEnumerable<HistoricalPriceViewModel> GetHistoricalPricesForSite(int siteId, DateTime startDate, DateTime endDate)
         {
             return _db.GetHistoricPricesForSite(siteId, startDate, endDate);
+        }
+
+        public IEnumerable<PriceFreezeEventViewModel> GetPriceFreezeEvents()
+        {
+            return _db.GetPriceFreezeEvents();
+        }
+        public PriceFreezeEventViewModel GetPriceFreezeEvent(int priceFreezeEventId)
+        {
+            return _db.GetPriceFreezeEvent(priceFreezeEventId);
+        }
+
+        public StatusViewModel UpsertPriceFreezeEvent(PriceFreezeEventViewModel model)
+        {
+            var result = new StatusViewModel();
+            try
+            {
+                result = _db.UpsertPriceFreezeEvent(model);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex);
+                result.ErrorMessage = "Unable to update Price Freeze Event";
+            }
+            return result;
+        }
+
+        public StatusViewModel DeletePriceFreezeEvent(int priceFreezeEventId)
+        {
+            var result = new StatusViewModel();
+            try
+            {
+                _db.DeletePriceFreezeEvent(priceFreezeEventId);
+                result.SuccessMessage = "Deleted Price Freeze Event";
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex);
+                result.ErrorMessage = "Unable to Delete Price Freeze Event";
+            }
+            return result;
+        }
+
+        public PriceFreezeEventViewModel GetPriceFreezeEventForDate(DateTime date)
+        {
+            var model = _db.GetPriceFreezeEventForDate(date);
+            return model;
         }
 
         #region Private Methods

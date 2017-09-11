@@ -1431,6 +1431,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             };
 
             newDbContext.LatestPrices.Add(dbRecord);
+
         }
 
         public void AddLatestCompPrice(RepositoryContext newDbContext, LatestCompPriceDataModel latestCompPriceDataModel, FileUpload fileDetails, int fuelTypeId, double fuelPrice)
@@ -4195,6 +4196,49 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
         IEnumerable<SiteEmailAddressViewModel> IPetrolPricingRepository.GetSiteEmailAddresses(int siteId)
         {
             return _context.GetSiteEmailAddresses(siteId);
+        }
+
+        public IEnumerable<PriceFreezeEventViewModel> GetPriceFreezeEvents()
+        {
+            return _context.GetPriceFreezeEvents();
+        }
+        public PriceFreezeEventViewModel GetPriceFreezeEvent(int priceFreezeEventId)
+        {
+            return _context.GetPriceFreezeEvent(priceFreezeEventId);
+        }
+        public StatusViewModel UpsertPriceFreezeEvent(PriceFreezeEventViewModel model)
+        {
+            var result = new StatusViewModel();
+            var code = _context.UpsertPriceFreezeEvent(model);
+            switch (code)
+            {
+                case 0:
+                    result.SuccessMessage = "Updated Price Freeze Event";
+                    break;
+                case -1:
+                    result.ErrorMessage = "End date cannot be before the start date";
+                    break;
+                case -2:
+                    result.ErrorMessage = "Dates overlap with another Price Freeze Event";
+                    break;
+                default:
+                    result.ErrorMessage = "Unknown Error";
+                    break;               
+            }
+            return result;
+        }
+        public StatusViewModel DeletePriceFreezeEvent(int priceFreezeEventId)
+        {
+            var result = new StatusViewModel();
+            if (_context.DeletePriceFreezeEvent(priceFreezeEventId))
+                result.SuccessMessage = "Deleted Price Freeze Event";
+            else
+                result.ErrorMessage = "Unable to Delete Price Freeze Event";
+            return result;
+        }
+        public PriceFreezeEventViewModel GetPriceFreezeEventForDate(DateTime date)
+        {
+            return _context.GetPriceFreezeEventForDate(date);
         }
 
         #endregion private methods

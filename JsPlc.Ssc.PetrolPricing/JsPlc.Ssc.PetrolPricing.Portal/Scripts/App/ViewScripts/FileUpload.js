@@ -1,6 +1,8 @@
-﻿define(['jquery', 'common', 'notify', 'busyloader', 'bootstrap-datepicker', 'waiter'],
-    function ($, common, notify, busyloader, bsDatePicker, waiter) {
+﻿define(['jquery', 'common', 'notify', 'busyloader', 'DateUtils', 'bootstrap-datepicker', 'waiter', "PriceFreezeEventService"],
+    function ($, common, notify, busyloader, dateUtils, bsDatePicker, waiter, priceFreezeEventService) {
         "use strict";
+
+        var lastPriceFreezeEventDate = '';
 
         var uploadTypeDefs = {
             '1': {
@@ -246,12 +248,8 @@
                 });
         };
 
-        function padZero2Digit(n) {
-            return n < 10 ? '0' + n : n;
-        };
-
         function formatDDMMYYYY(year, month, day) {
-            return padZero2Digit(day) + '/' + padZero2Digit(month) + '/' + year;
+            return (day < 10 ? '0' + day : day) + '/' + (month < 10 ? '0' + month : month) + '/' + year;
         };
 
         function uploadTypeNameChange2() {
@@ -282,6 +280,43 @@
         function calDateTimeChange() {
             var value = $(selectors.chosenDate).val()
             drawCalculatedAsDate(value);
+            if (value != lastPriceFreezeEventDate) {
+                lastPriceFreezeEventDate = value;
+                reloadPriceFreezeWarning(value);
+            }
+        };
+
+        function formatDaysRemaining(dateTo) {
+            var days = dateUtils.dayDiff(new Date(), dateTo);
+            return days == 1 ? '1 Day' : days + ' Days';
+        };
+
+        function redrawPriceFreezeEvent(event) {
+            var panel = $('#divPriceFreezeWarning');
+
+            if (event && event.PriceFreezeEventId > 0) {
+                panel.find('[data-value="DateFrom"]').text(common.formatDateDDMMYYY(event.DateFrom));
+                panel.find('[data-value="DateTo"]').text(common.formatDateDDMMYYY(event.DateTo));
+                panel.find('[data-value="DaysRemaining"]').text(formatDaysRemaining(event.DateTo));
+                panel.find('[data-value="CreatedBy"]').text(event.CreatedBy.split('@')[0].replace('.', ' '));
+                panel.show();
+            } else {
+                panel.hide();
+            }
+        };
+
+        function reloadPriceFreezeWarning(forDate) {
+            function failure() {
+                notify.error('Unable to load Price Freeeze Event for ' + forDate);
+            };
+
+            function success(data) {
+                data.DateFrom = common.convertJsonDate(data.DateFrom);
+                data.DateTo = common.convertJsonDate(data.DateTo);
+                redrawPriceFreezeEvent(data);
+            };
+
+            priceFreezeEventService.getPriceFreezeEventForDate(success, failure, forDate);
         };
 
         function drawCalculatedAsDate(ddmmyyyy) {
@@ -374,7 +409,8 @@
 
         function docReady() {
             var uploadTypeMenu = $(selectors.uploadTypeName),
-                selectedUploadType = $('#hdnSelectedFileUploadType').val() || '';
+                selectedUploadType = $('#hdnSelectedFileUploadType').val() || '',
+                forDate = $(selectors.chosenDate).val();
             removeHideClass();
             showSteps(2);
             bindEvents();
@@ -387,6 +423,8 @@
                 uploadTypeMenu.val(selectedUploadType);
                 uploadTypeMenu.trigger('change');
             }
+            lastPriceFreezeEventDate = forDate;
+            reloadPriceFreezeWarning(forDate);
         };
 
         function init() {

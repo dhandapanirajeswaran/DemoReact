@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using JsPlc.Ssc.PetrolPricing.Models.ViewModels.SystemSettings;
 
 namespace JsPlc.Ssc.PetrolPricing.Business
 {
@@ -29,5 +30,11 @@ namespace JsPlc.Ssc.PetrolPricing.Business
         IEnumerable<HistoricalPriceViewModel> GetHistoricalPricesForSite(int siteId, DateTime startDate, DateTime endDate);
 
         void PriceSiteFuels(IPetrolPricingRepository db, Site site, PriceCalculationTaskData calcTaskData);
+
+        IEnumerable<PriceFreezeEventViewModel> GetPriceFreezeEvents();
+        PriceFreezeEventViewModel GetPriceFreezeEvent(int priceFreezeEventId);
+        StatusViewModel UpsertPriceFreezeEvent(PriceFreezeEventViewModel model);
+        StatusViewModel DeletePriceFreezeEvent(int priceFreezeEventId);
+        PriceFreezeEventViewModel GetPriceFreezeEventForDate(DateTime date);
     }
 }

@@ -377,5 +377,11 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
         void ProcessSitePricing(int SiteId, DateTime forDate, int fileUploadId, int maxDriveTime);
         void ProcessSitePricingBatch(DateTime forDate, int fileUploadId, int maxDriveTime, string siteIds);
+
+        IEnumerable<PriceFreezeEventViewModel> GetPriceFreezeEvents();
+        PriceFreezeEventViewModel GetPriceFreezeEvent(int priceFreezeEventId);
+        StatusViewModel UpsertPriceFreezeEvent(PriceFreezeEventViewModel model);
+        StatusViewModel DeletePriceFreezeEvent(int priceFreezeEventId);
+        PriceFreezeEventViewModel GetPriceFreezeEventForDate(DateTime date);
     }
 }
