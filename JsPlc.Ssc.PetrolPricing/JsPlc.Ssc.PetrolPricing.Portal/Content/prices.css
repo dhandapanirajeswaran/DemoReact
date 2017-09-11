@@ -1105,12 +1105,14 @@ tr.site-row.row-override-exceeds-warning-limits td.outside-prices-warning-limits
 }
 
 .price-freeze-event-banner {
-    background-color: #135a97;
-    color: #fff;
+    background-color:#83caf7;
+    color: #235a6f;
+    box-shadow: 4px 4px 16px #83caf7;
+    text-shadow: 0 -1px 0 #fff;
+    border: 1px solid #fff;
     margin: 0.25em;
     padding: 0.25em 1em;
     border-radius: 6px;
-    box-shadow: 4px 4px 12px #83caf7;
 }
 
 .grocer-brand {

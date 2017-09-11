@@ -986,4 +986,14 @@ input[type=email].mono-font {
     .choose-one-group.choose-one-group-hide::before {visibility: hidden;}
     .choose-one-group.choose-one-group-show::before {visibility: visible;}
 
-.full-width {width: 100%;}
+/* extra alert types */
+.alert.alert-freeze {
+    background-color:#83caf7;
+    color: #235a6f;
+    box-shadow: 4px 4px 16px #83caf7;
+    text-shadow: 0 -1px 0 #fff;
+    border: 1px solid #fff;
+}
+.alert.alert-freeze .btn {
+    text-shadow: none;
+}
