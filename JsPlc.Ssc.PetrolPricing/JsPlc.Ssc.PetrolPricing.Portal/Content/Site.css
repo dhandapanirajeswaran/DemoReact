@@ -770,6 +770,7 @@ input[type=email].mono-font {
     color: #fff;
     font-size: 125%;
     text-align: center;
+    z-index: 2000;
 }
 .build-notification #btnAcknowledgeNewBuild {
     margin-left: 2em;
@@ -984,3 +985,5 @@ input[type=email].mono-font {
     }
     .choose-one-group.choose-one-group-hide::before {visibility: hidden;}
     .choose-one-group.choose-one-group-show::before {visibility: visible;}
+
+.full-width {width: 100%;}
