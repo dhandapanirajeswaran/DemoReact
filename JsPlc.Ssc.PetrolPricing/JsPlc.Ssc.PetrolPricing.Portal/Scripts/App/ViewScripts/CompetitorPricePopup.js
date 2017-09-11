@@ -228,6 +228,7 @@ function ($, ko, common, compNotePopup, notify, cookieSettings, bootbox) {
             popup = $(config.selectors.popup),
             priceMatchInfo = '',
             matchCompetitorMarkup = siteItem.FuelPrices[0].MatchCompetitorMarkup,
+            fuelMarkupInfotip = '',
             markups = {
                 unleaded: 0,
                 diesel: 0,
@@ -259,18 +260,22 @@ function ($, ko, common, compNotePopup, notify, cookieSettings, bootbox) {
                 markups.unleaded = siteItem.FuelPrices[1].Markup;
                 markups.diesel = siteItem.FuelPrices[2].Markup;
                 markups.superUnleaded = siteItem.FuelPrices[0].Markup;
+                fuelMarkupInfotip = '';
                 break;
             case 2:
                 priceMatchInfo = '<div data-infotip="Trial Price"><span class="price-match-strategy"><i class="fa fa-flask"></i> Trial Price</span> <big class="markup-price">' + formatFuelMarkUp(siteItem.FuelPrices[0].CompetitorPriceOffset) + '</big></div>';
                 markups.unleaded = siteItem.FuelPrices[1].CompetitorPriceOffset;
                 markups.diesel = siteItem.FuelPrices[2].CompetitorPriceOffset;
                 markups.superUnleaded = siteItem.FuelPrices[0].CompetitorPriceOffset;
+                fuelMarkupInfotip = 'Any markup from a [br /][b]Match Competitor[/b] or [b]Trial Price[/b][br /] [em]Price Match Strategy[/em]';
+                fuelMarkupInfotip = '[b class="fa fa-flask"][/b] [b]Trial Price[/b] Markup of [em]' + formatFuelMarkUp(siteItem.FuelPrices[0].CompetitorPriceOffset) + '[/em]';
                 break;
             case 3:
                 priceMatchInfo = '<div data-infotip="Match Competitor"><span class="price-match-strategy"><i class="fa fa-clone"></i> Match:</span> ' + siteItem.FuelPrices[0].CompetitorName + '<big class="markup-price">' + formatFuelMarkUp(matchCompetitorMarkup) + '</big></div>';
                 markups.unleaded = matchCompetitorMarkup;
                 markups.diesel = matchCompetitorMarkup;
                 markups.superUnleaded = matchCompetitorMarkup;
+                fuelMarkupInfotip = '[b class="fa fa-clone"][/b] [b]Match Competitor[/b] Markup of [em]' + formatFuelMarkUp(matchCompetitorMarkup) + '[/em]';
                 break;
         }
 
@@ -279,6 +284,10 @@ function ($, ko, common, compNotePopup, notify, cookieSettings, bootbox) {
         popup.find('.fuel-markup-diesel').text(formatFuelMarkUp(markups.diesel));
         popup.find('.fuel-markup-super-unleaded').text(formatFuelMarkUp(markups.superUnleaded));
         popup.find('.storeName').text(siteItem.StoreName);
+
+        popup.find('.fuel-markup-unleaded').attr('data-infotip', fuelMarkupInfotip)[fuelMarkupInfotip == '' ? 'hide': 'show']();
+        popup.find('.fuel-markup-diesel').attr('data-infotip', fuelMarkupInfotip)[fuelMarkupInfotip == '' ? 'hide': 'show']();
+        popup.find('.fuel-markup-super-unleaded').attr('data-infotip', fuelMarkupInfotip)[fuelMarkupInfotip == '' ? 'hide': 'show']();
         
         setTimeout(afterDrawnPopup, 200);
 
