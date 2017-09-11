@@ -438,8 +438,13 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 
             ValidateSiteEditOrCreate(site);
 
-			List<SiteViewModel> sortedCompetitors = model.Competitors.Where(c => c.IsSainsburysSite == false).OrderBy(c => c.SiteName).ToList();
-           
+			List<SiteViewModel> sortedCompetitors = model.Competitors.OrderBy(c => c.SiteName).ToList();
+
+            sortedCompetitors.Insert(0, new SiteViewModel
+            {
+                SiteName = "------- Not specified --------"
+            });
+
             model.ExcludeCompetitors = model.ExcludeCompetitors.Distinct().ToList();
 			site.Competitors = sortedCompetitors;
             site.ExcludeCompetitorsOrg = model.ExcludeCompetitors;
