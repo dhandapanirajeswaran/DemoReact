@@ -35,7 +35,7 @@ BEGIN
 ----DEBUG:START
 --DECLARE	@SiteId INT = 9
 --DECLARE	@FuelTypeId INT = 6
---DECLARE	@ForDate DATE = '2017-09-06 12:30:00'
+--DECLARE	@ForDate DATE = GETDATE()
 --DECLARE	@FileUploadId INT = 8
 --DECLARE	@MaxDriveTime INT = 25
 
@@ -151,6 +151,7 @@ BEGIN
 	DECLARE @Site_MatchCompetitorSiteId INT
 	DECLARE @Site_MatchCompetitorMarkup INT
 	DECLARE @Site_TrialPriceMarkup INT
+	DECLARE @Site_MatchCompetitorIsSainsburysSite BIT = 0
 
 	SELECT TOP 1
 		@Site_CatNo = COALESCE(st.CatNo, 0),
@@ -268,24 +269,54 @@ BEGIN
 		IF @Site_PriceMatchType = @PriceMatchType_MatchCompetitor AND @LatestJsPrice_ModalPrice IS NULL
 		BEGIN
 			--
+			-- Determine if Match Competitor Site is a Sainsburys site
+			--
+			SET @Site_MatchCompetitorIsSainsburysSite = CASE 
+				WHEN (SELECT TOP 1 IsSainsburysSite FROM dbo.Site WHERE Id = @Site_MatchCompetitorSiteId) =1 THEN 1 
+				ELSE 0 
+			END
+
+			--
 			-- Search for most recent Competitor Site Price for Fuel on Date
 			--
-			SELECT TOP 1
-				@MinPriceFound = cp.ModalPrice,
-				@MinPriceCompetitorId = cp.SiteId
-			FROM
-				dbo.CompetitorPrice cp
-			WHERE
-				cp.Id = (SELECT TOP 1 Id 
-					FROM dbo.CompetitorPrice 
-					WHERE 
-						SiteId = @Site_MatchCompetitorSiteId 
-						AND FuelTypeId = @FuelTypeId
-						AND ModalPrice > 0 
-						AND DateOfPrice <= @StartOfYesterday
-					ORDER BY
-						DateOfPrice DESC
-					)
+			IF @Site_MatchCompetitorIsSainsburysSite = 1
+			BEGIN
+				SELECT TOP 1
+					@MinPriceFound = CASE 
+						WHEN sp.OverriddenPrice > 0 THEN sp.OverriddenPrice
+						WHEN sp.SuggestedPrice > 0 THEN sp.SuggestedPrice
+						ELSE NULL
+					END,
+					@MinPriceCompetitorId = sp.SiteId
+				FROM
+					dbo.SitePrice sp
+				WHERE
+					sp.SiteId = @Site_MatchCompetitorSiteId
+					AND
+					sp.FuelTypeId = @FuelTypeId
+					AND
+					sp.DateOfCalc <= @StartOfYesterday
+			END
+			ELSE
+			BEGIN
+				-- Non-Sainsburys Match Competitor Site
+				SELECT TOP 1
+					@MinPriceFound = cp.ModalPrice,
+					@MinPriceCompetitorId = cp.SiteId
+				FROM
+					dbo.CompetitorPrice cp
+				WHERE
+					cp.Id = (SELECT TOP 1 Id 
+						FROM dbo.CompetitorPrice 
+						WHERE 
+							SiteId = @Site_MatchCompetitorSiteId 
+							AND FuelTypeId = @FuelTypeId
+							AND ModalPrice > 0 
+							AND DateOfPrice <= @StartOfYesterday
+						ORDER BY
+							DateOfPrice DESC
+						)
+			END
 
 			IF @MinPriceFound > 0
 			BEGIN
