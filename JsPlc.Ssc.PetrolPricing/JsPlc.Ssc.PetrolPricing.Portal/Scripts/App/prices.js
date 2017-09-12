@@ -200,6 +200,16 @@ define(["SitePricing", "notify", "busyloader", "downloader", "infotips", "cookie
             });
         });
 
+        function triggerThisClick() {
+            $(this).trigger('click');
+        }
+
+        // Hook up Knockout events triggers
+        $('#viewingStoreNo').on('focus change keyup', triggerThisClick);
+        $('#viewingStoreName').on('focus change keyup', triggerThisClick);
+        $('#viewingStoreTown').on('focus change keyup', triggerThisClick);
+        $('#viewingCatNo').on('focus change keyup', triggerThisClick);
+
         function triggerRecalculation() {
 
             function failure() {
