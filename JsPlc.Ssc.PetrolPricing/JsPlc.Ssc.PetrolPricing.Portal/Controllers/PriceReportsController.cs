@@ -250,11 +250,11 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
                 }
 
                 var result = LoadPriceMovementReport(model);
-                result.ReportWidth = 250;
+                result.ReportWidth = 0;
 
                 if (result.PriceMovementReport.ReportRows.Any())
                 {
-                    result.ReportWidth += result.PriceMovementReport.ReportRows.First().DataItems.Select(x => x.PriceDate).Count() * 150;
+                    result.ReportWidth = result.PriceMovementReport.ReportRows.First().DataItems.Select(x => x.PriceDate).Count();
                 }
 
                 return View(result);

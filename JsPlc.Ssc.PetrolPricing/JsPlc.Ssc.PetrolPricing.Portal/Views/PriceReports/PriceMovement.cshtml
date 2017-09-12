@@ -16,7 +16,7 @@
     var requestedToDate = Model != null ? @Model.ToDate.Value.Date.ToString("dd-MMM-yyyy") : null;
 
 
-    var reportWidth = Model != null ? (Model.ReportWidth * 0.75) + "px" : "auto";
+    var reportWidth = Model != null ? (Model.ReportWidth * 102) + 250 + "px" : "auto";
 
     var reportInformationViewModel = new JsPlc.Ssc.PetrolPricing.Models.ViewModels.ReportInformationViewModel();
     reportInformationViewModel.Introduction = "Tracks retail prices of individual sites over a specified period.";
@@ -99,6 +99,9 @@
 
 
 </style>
+
+<h1> @(Model.ReportWidth)</h1>
+
 
 <div class="row">
     <div class="col-md-6">
@@ -185,7 +188,7 @@
         {
             <!-- Report Data -->
             <div class="divtable">
-                <div id="tableDiv" class="show-fuel-2">
+                <div id="tableDiv" style="width: @(reportWidth)" class="show-fuel-2">
                     <div class="row" style="font-weight:bold">
                         <div class="col-md-1 fixed-col-1" style="width:250px">Sites</div>
 
