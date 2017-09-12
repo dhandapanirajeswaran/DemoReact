@@ -1,5 +1,5 @@
-﻿define(['cookie'],
-    function (cookieMonster) {
+﻿define(['cookie', 'DateUtils'],
+    function (cookieMonster, dateUtils) {
 
         var cookieName = 'uiSettings',
             days = 365,
@@ -32,7 +32,8 @@
                 'pricing.storeNo',
                 'pricing.storeName',
                 'pricing.storeTown',
-                'pricing.catNo'
+                'pricing.catNo',
+                'cookie.updatedOn'
             ],
             values = readSettingsCookie();
 
@@ -49,6 +50,9 @@
         function updateSettingsCookie() {
             var i,
                 data = [];
+
+            values['cookie.updatedOn'] = getTodayDateStamp();
+
             for (i = 0; i < names.length; i++) {
                 data.push(values[names[i]]);
             }
@@ -106,6 +110,16 @@
             }
         };
 
+
+        function getTodayDateStamp() {
+            return dateUtils.format('YYYY-MM-DD', new Date());
+        };
+
+        function wasUpdatedToday() {
+            var crumb = read('cookie.updatedOn', '');
+            return crumb && crumb == getTodayDateStamp();
+        };
+
         // API
         return {
             read: read,
@@ -115,7 +129,8 @@
             writeBoolean: writeBoolean,
             writeInteger: writeInteger,
             restore: restoreObject,
-            update: updateObject
+            update: updateObject,
+            wasUpdatedToday: wasUpdatedToday
         };
     }
 );
