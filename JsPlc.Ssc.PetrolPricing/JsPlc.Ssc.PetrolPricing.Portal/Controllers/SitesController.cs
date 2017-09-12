@@ -473,7 +473,6 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 
             if (isRecalcRequired)
             {
-                _serviceFacade.CalcDailyPrices(site.Id);
                 _serviceFacade.TriggerDailyPriceRecalculation(DateTime.Now.Date);
             }
             if (editSite.ViewModel != null)

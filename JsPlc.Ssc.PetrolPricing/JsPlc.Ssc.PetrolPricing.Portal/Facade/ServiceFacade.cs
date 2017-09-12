@@ -877,25 +877,6 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             return resultViewModel;
         }
 
-        // Get a list of companies
-        public bool CalcDailyPrices(int siteId)
-        {
-            var url = string.Format("api/CalcDailyPrices?siteId={0}", siteId);
-
-            try
-            {
-                var response = _client.Value.GetAsync(url).Result;
-
-                var result = response.Content.ReadAsAsync<bool>().Result;
-                return (response.IsSuccessStatusCode) ? result : false;
-            }
-            catch (Exception ex)
-            {
-                _logger.Error(ex);
-                return false;
-            }
-        }
-
         public SiteNoteViewModel GetSiteNote(int siteId)
         {
             try
