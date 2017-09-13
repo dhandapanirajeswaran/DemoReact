@@ -112,8 +112,14 @@ SET NOCOUNT ON
 
 		FROM
 			CompSiteFuels csf
-			LEFT JOIN dbo.SitePrice js1 ON js1.SiteId = csf.CompSiteId AND js1.FuelTypeId = csf.FuelTypeId AND js1.DateOfCalc = @DayMinus1SitePriceDate
-			LEFT JOIN dbo.SitePrice js2 ON js2.SiteId = csf.CompSiteId AND js2.FuelTypeId = csf.FuelTypeId AND js2.DateOfCalc = @DayMinus2SitePriceDate
+			LEFT JOIN dbo.SitePrice js1 ON js1.SiteId = csf.CompSiteId AND js1.FuelTypeId = csf.FuelTypeId AND js1.DateOfCalc = (SELECT MAX(DateOfCalc)
+				FROM dbo.SitePrice
+				WHERE SiteId = csf.CompSiteId AND FuelTypeId = csf.FuelTypeId AND DateOfCalc <= @DayMinus1SitePriceDate
+			)
+			LEFT JOIN dbo.SitePrice js2 ON js2.SiteId = csf.CompSiteId AND js2.FuelTypeId = csf.FuelTypeId AND js2.DateOfCalc = (SELECT MAX(DateOfCalc)
+				FROM dbo.SitePrice 
+				WHERE SiteId = csf.CompSiteId AND FuelTypeId = csf.FuelTypeId AND DateOfCalc <= @DayMinus2SitePriceDate
+			)
 
 		WHERE
 			csf.IsSainsburysSite = 1
@@ -159,8 +165,8 @@ SET NOCOUNT ON
 		END [Difference],
 		csf.IsSainsburysSite [IsSainsburysSite]
 
-		---- debug
-		--,(select top 1 sitename from dbo.Site where Id = csf.CompSiteId)
+		-- debug
+		,(select top 1 sitename from dbo.Site where Id = csf.CompSiteId)
 	FROM
 		CompSiteFuels csf
 		LEFT JOIN MergedCompetitorPrices mcp ON mcp.CompSiteId = csf.CompSiteId AND mcp.FuelTypeId = csf.FuelTypeId
