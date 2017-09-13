@@ -54,16 +54,44 @@
 
 <div class="container">
     <div class="row">
-        <div class="col-md-9">
-
+        <div class="col-md-4">
         </div>
-        <div class="col-md-3">
+
+        <div class="col-md-2">
+            <label>Inactive Events</label><br />
+            <button type="button" class="btn btn-sm btn-primary" id="btnHideInactiveEvents" data-infotip="Hide [b]Inactive[/b] Price Freeze Events"><i class="fa fa-square-o"></i> Hide</button>
+            <button type="button" class="btn btn-sm btn-default" id="btnShowInactiveEvents" data-infotip="Show [b]Inactive[/b] Price Freeze Events"><i class="fa fa-check-square-o"></i> Show</button>
+        </div>
+
+        <div class="col-md-2">
+            <label>Expired Events</label><br />
+            <button type="button" class="btn btn-sm btn-primary" id="btnHideExpiredEvents" data-infotip="Hide [b]Expired[/b] Price Freeze Events"><i class="fa fa-square-o"></i> Hide</button>
+            <button type="button" class="btn btn-sm btn-default" id="btnShowExpiredEvents" data-infotip="Show [b]Expired[/b] Price Freeze Events"><i class="fa fa-check-square-o"></i> Show</button>
+        </div>
+
+        <div class="col-md-2">
+            <label>Future Events</label><br />
+            <button type="button" class="btn btn-sm btn-primary" id="btnHideFutureEvents" data-infotip="Hide [b]Future[/b] Price Freeze Events"><i class="fa fa-square-o"></i> Hide</button>
+            <button type="button" class="btn btn-sm btn-default" id="btnShowFutureEvents" data-infotip="Show [b]Future[/b] Price Freeze Events"><i class="fa fa-check-square-o"></i> Show</button>
+        </div>
+
+        <div class="col-md-2 newline">
             <button type="button" id="btnAddEvent" class="btn btn-sm btn-primary pull-right" data-infotip="Add a new [b]Price Freeze Event[/b]"><i class="fa fa-plus"></i> Add Event</button>
         </div>
     </div>
 
+    <br />
+
+    <div id="divLoadingMessage" class="row">
+        <div class="col-md-6 col-md-offset-3">
+            <div class="alert alert-success font125pc">
+                <i class="fa fa-clock-o pulse-size"></i> &nbsp; Loading Price Freeze Events. Please wait...
+            </div>
+        </div>
+    </div>
+
     <div class="row">
-        <table class="table table-condensed table-striped" id="PriceFreezeEventsGrid">
+        <table class="table table-condensed table-striped" id="PriceFreezeEventsGrid" style="display:none">
             <thead>
                 <tr>
                     <th class="text-center" style="width: 6%">Status</th>
@@ -92,9 +120,11 @@
                         ? String.Format("{0} Days", item.DateTo.AddDays(1).Subtract(DateTime.Now.Date).TotalDays)
                         : "-";
 
+                    var isRunning = item.IsActive && item.DateFrom <= startOfToday && item.DateTo >= startOfToday;
+
                     var status = (!item.IsActive ? "Inactive" : "")
                         + (item.IsActive && item.DateTo < startOfToday ? "Expired" : "")
-                        + (item.IsActive && item.DateFrom <= startOfToday && item.DateTo >= startOfToday ? "Running" : "")
+                        + (isRunning ? "Running" : "")
                         + (item.IsActive && item.DateFrom > startOfToday ? "Future" : "");
 
                     var rowClass = (item.IsActive ? "event-row-active" : "event-row-inactive")
@@ -143,7 +173,10 @@
                             @(remainingDays)
                         </td>
                         <td>
-                            <button type="button" class="btn btn-xs btn-danger pull-left" data-click-action="delete-event" data-event-id="@(item.PriceFreezeEventId)" data-infotip="Remove this [b]Price Freeze Event[/b]"><i class="fa fa-remove"></i> Remove</button>
+                            @if (!isRunning)
+                            {
+                                <button type="button" class="btn btn-xs btn-danger pull-left" data-click-action="delete-event" data-event-id="@(item.PriceFreezeEventId)" data-infotip="Remove this [b]Price Freeze Event[/b]"><i class="fa fa-remove"></i> Remove</button>
+                            }
                             <button type="button" class="btn btn-xs btn-primary pull-right" data-click-action="edit-event" data-event-id="@(item.PriceFreezeEventId)" data-infotip="Edit this [b]Price Freeze Event[/b]"><i class="fa fa-edit"></i> Edit</button>
                         </td>
                     </tr>
@@ -159,8 +192,147 @@
 </div>
 
 <script>
-    require(["PriceFreezeEvents"],
-        function (priceFreezeEvents) {
+    require(["notify", "PriceFreezeEvents"],
+        function (notify, priceFreezeEvents) {
             priceFreezeEvents.init();
+
+            var state = {
+                showExpired: false,
+                showFuture: true,
+                showInactive: false
+            };
+
+            var selectors = {
+                grid: '#PriceFreezeEventsGrid',
+                loader: '#divLoadingMessage',
+                hideExpiredButton: '#btnHideExpiredEvents',
+                showExpiredButton: '#btnShowExpiredEvents',
+                hideInactiveButton: '#btnHideInactiveEvents',
+                showInactiveButton: '#btnShowInactiveEvents',
+                hideFutureButton: '#btnHideFutureEvents',
+                showFutureButton: '#btnShowFutureEvents'
+            };
+
+
+            function hideLoader() {
+                $(selectors.loader).hide();
+                $(selectors.grid).show();
+            };
+
+            function showOrHide(btn, show) {
+                if (show)
+                    btn.removeClass('btn-default').addClass('btn-primary');
+                else
+                    btn.removeClass('btn-primary').addClass('btn-default');
+            };
+
+            function applyFilters() {
+                var grid = $(selectors.grid),
+                    rows = grid.find('tbody tr');
+                rows.each(function () {
+                    var row = $(this),
+                        visible = true;
+                    console.log(row);
+                    if (row.hasClass('event-row-expired') && !state.showExpired)
+                        visible = false;
+                    if (row.hasClass('event-row-future') && !state.showFuture)
+                        visible = false;
+                    if (row.hasClass('event-row-inactive') && !state.showInactive)
+                        visible = false;
+
+                    row[visible ? 'show' : 'hide']();
+                });
+            };
+
+            function redrawToggleButton(active, onSelector, offSelector) {
+                var onButton = $(onSelector),
+                    offButton = $(offSelector);
+                if (active) {
+                    onButton.removeClass('btn-default').addClass('btn-primary');
+                    offButton.removeClass('btn-primary').addClass('btn-default');
+                } else {
+                    onButton.removeClass('btn-primary').addClass('btn-default');
+                    offButton.removeClass('btn-default').addClass('btn-primary');
+                }
+            };
+
+            function redrawFilterButtons() {
+                redrawToggleButton(state.showExpired, selectors.showExpiredButton, selectors.hideExpiredButton);
+                redrawToggleButton(state.showFuture, selectors.showFutureButton, selectors.hideFutureButton);
+                redrawToggleButton(state.showInactive, selectors.showInactiveButton, selectors.hideInactiveButton);
+            };
+
+            function commonSetFilter(opts) {
+                state[opts.name] = opts.value;
+                redrawFilterButtons();
+                applyFilters();
+                notify.info(opts.message);
+            };
+
+            function hideExpiredClick() {
+                commonSetFilter({
+                    name: 'showExpired' ,
+                    value: false,
+                    message: 'Hiding Expired Price Freeze Events'
+                });
+            };
+
+            function showExpiredClick() {
+                commonSetFilter( {
+                    name: 'showExpired',
+                    value: true,
+                    message: 'Showing Expired Price Freeze Events'
+                });
+            };
+
+            function hideInactiveClick() {
+                commonSetFilter({
+                    name: 'showInactive',
+                    value: false,
+                    message: 'Hiding Inactive Price Freeze Events'
+                });
+            };
+
+            function showInactiveClick() {
+                commonSetFilter({
+                    name: 'showInactive',
+                    value: true,
+                    message: 'Showing Inactive Price Freeze Events'
+                });
+            };
+
+            function hideFutureClick() {
+                commonSetFilter({
+                    name: 'showFuture',
+                    value: false,
+                    message: 'Hiding Future Price Freeze Events'
+                });
+            };
+
+            function showFutureClick() {
+                commonSetFilter({
+                    name: 'showFuture',
+                    value: true,
+                    message: 'Showing Future Price Freeze Events'
+                });
+            };
+
+            function bindEvents() {
+                $(selectors.hideExpiredButton).off().click(hideExpiredClick);
+                $(selectors.showExpiredButton).off().click(showExpiredClick);
+                $(selectors.hideInactiveButton).off().click(hideInactiveClick);
+                $(selectors.showInactiveButton).off().click(showInactiveClick);
+                $(selectors.hideFutureButton).off().click(hideFutureClick);
+                $(selectors.showFutureButton).off().click(showFutureClick);
+            };
+
+            function docReady() {
+                redrawFilterButtons();
+                applyFilters();
+                bindEvents();
+                hideLoader();
+            };
+
+            $(docReady);
         });
 </script>
