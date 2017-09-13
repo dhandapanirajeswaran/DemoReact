@@ -39,5 +39,8 @@ namespace JsPlc.Ssc.PetrolPricing.Business
         StatusViewModel RunWinServiceSchedule();
 
         StatusViewModel ClearWinServiceEventLog();
+
+        string ExportSettings();
+        void ImportSettings(string settingsXml);
     }
 }

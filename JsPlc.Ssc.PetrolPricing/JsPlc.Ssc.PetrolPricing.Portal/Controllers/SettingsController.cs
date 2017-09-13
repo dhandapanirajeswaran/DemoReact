@@ -175,5 +175,26 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             var result = _serviceFacade.DeletePriceFreezeEvent(eventId);
             return base.JsonGetResult(result);
         }
+
+        [System.Web.Mvc.HttpGet]
+        [AuthoriseSystemSettings(Permissions = SystemSettingsUserPermissions.View | SystemSettingsUserPermissions.Edit)]
+        public ActionResult ExportSettings()
+        {
+            var settingsXml = _serviceFacade.ExportSettings();
+            var filename = "PetrolPricing-SystemSettings.xml";
+            var fileBytes = System.Text.Encoding.ASCII.GetBytes(settingsXml);
+            return File(fileBytes, System.Net.Mime.MediaTypeNames.Application.Octet, filename);
+        }
+
+        [System.Web.Mvc.HttpGet]
+        [AuthoriseSystemSettings(Permissions = SystemSettingsUserPermissions.View | SystemSettingsUserPermissions.Edit)]
+        public ActionResult ImportSettings()
+        {
+            // TODO - file upload and error handling
+            var settingsXml = "todo";
+            _serviceFacade.ImportSettings(settingsXml);
+            var model = new object();
+            return View(model);
+        }
     }
 }

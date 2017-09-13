@@ -4246,6 +4246,16 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
             return _context.GetPriceFreezeEventForDate(date);
         }
 
+        public string ExportSettings()
+        {
+            return _context.ExportSettings();
+        }
+
+        public void ImportSettings(string settingsXml)
+        {
+            _context.ImportSettings(settingsXml);
+        }
+
         #endregion private methods
     }
 }

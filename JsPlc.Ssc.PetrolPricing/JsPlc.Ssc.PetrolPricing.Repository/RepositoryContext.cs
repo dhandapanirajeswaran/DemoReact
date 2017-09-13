@@ -758,5 +758,21 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             };
             DapperHelper.Execute(this, sprocName, parameters, disableDapperLog: true);
         }
+
+        internal string ExportSettings()
+        {
+            const string sprocName = "spExportSettings";
+            return DapperHelper.QueryFirst<string>(this, sprocName, null);
+        }
+
+        internal void ImportSettings(string settingsXml)
+        {
+            const string sprocName = "spImportSettings";
+            var parameters = new
+            {
+                @SettingsXml = settingsXml
+            };
+            DapperHelper.Execute(this, sprocName, parameters);
+        }
     }
 }

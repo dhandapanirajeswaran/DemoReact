@@ -1510,6 +1510,20 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             return result;
         }
 
+        public string ExportSettings()
+        {
+            var apiUrl = String.Format("api/ExportSettings");
+            var result = CallAndCatchAsyncGet<string>("ExportSettings", apiUrl);
+            return result;
+        }
+
+        public void ImportSettings(string settingsXml)
+        {
+            var apiUrl = String.Format("api/ImportSettings");
+            var response = _client.Value.PostAsync(apiUrl, settingsXml, new JsonMediaTypeFormatter()).Result;
+            var result = response.Content.ReadAsAsync<int>().Result;
+        }
+
         #region private methods
 
         private T CallAndCatchAsyncGet<T>(string methodName, string apiUrl)

@@ -383,5 +383,8 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         StatusViewModel UpsertPriceFreezeEvent(PriceFreezeEventViewModel model);
         StatusViewModel DeletePriceFreezeEvent(int priceFreezeEventId);
         PriceFreezeEventViewModel GetPriceFreezeEventForDate(DateTime date);
+
+        String ExportSettings();
+        void ImportSettings(string xml);
     }
 }

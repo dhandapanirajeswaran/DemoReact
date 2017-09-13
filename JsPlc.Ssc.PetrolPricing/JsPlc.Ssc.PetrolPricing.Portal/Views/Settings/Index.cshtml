@@ -19,9 +19,19 @@
     };
 }
 
-<h1>
-    <i class="fa fa-cogs"> System Settings</i>
-</h1>
+<div class="row">
+    <div class="col-md-10">
+        <h1>
+            <i class="fa fa-cogs"> System Settings</i>
+        </h1>
+    </div>
+    <div class="col-md-1 newline">
+        <button type="button" id="btnImportSettings" class="btn btn-primary" data-infotip=""><i class="fa fa-upload"></i> Import</button>
+    </div>
+    <div class="col-md-1 newline">
+        <a  id="btnExportSettings" class="btn btn-primary" href="@Url.Action("ExportSettings", "Settings")" data-infotip="Export all the [b]Settings[/b]"><i class="fa fa-download"></i> Export</a>
+    </div>
+</div>
 
 <ul class="nav nav-tabs nav-condensed">
     <li class="active"><a href="@Url.Action("Index", "Settings")"><i class="fa fa-cogs"></i> Common Settings</a></li>
@@ -30,7 +40,6 @@
     <li><a href="@Url.Action("Schedule", "Settings")"><i class="fa fa-calendar"></i> Email Schedule</a></li>
     <li><a href="@Url.Action("PriceFreeze", "Settings")"><i class="fa fa-hourglass-start"></i> Price Freeze Events</a></li>
 </ul>
-
 
 <style>
     .alt-row {
@@ -377,9 +386,33 @@
 <input type="hidden" id="hdnPageSuccessMessage" value="@(Model.Status.SuccessMessage)" />
 
     <script type="text/javascript">
-        require(["SystemSettings"],
-            function (systemSettings) {
+        require(["SystemSettings", "busyloader"],
+            function (systemSettings, busyloader) {
                 systemSettings.init();
+
+                function exportSettingsClick() {
+                    busyloader.show({
+                        message: 'Exporting Settings. Please wait...',
+                        showtime: 1000,
+                        dull: true
+                    });
+                    window.location = "ExportSettings";
+                };
+                
+                function importSettingsClick() {
+                    alert('Coming soon...');
+                };
+
+                function bindEvents() {
+                    $('#btnExportSettings').off().click(exportSettingsClick);
+                    $('#btnImportSettings').off().click(importSettingsClick);
+                };
+
+                function docReady() {
+                    bindEvents();
+                };
+
+                $(docReady);
             }
         );
     </script>

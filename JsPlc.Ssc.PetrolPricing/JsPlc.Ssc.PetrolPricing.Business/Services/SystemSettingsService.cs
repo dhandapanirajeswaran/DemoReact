@@ -149,6 +149,32 @@ namespace JsPlc.Ssc.PetrolPricing.Business.Services
             }
         }
 
+        public string ExportSettings()
+        {
+            try
+            {
+                return _repository.ExportSettings();
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex);
+                return null;
+            }
+        }
+
+        public void ImportSettings(string settingsXml)
+        {
+            try
+            {
+                _repository.ImportSettings(settingsXml);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex);
+            }
+        }
+
+        #region private methods
         private StatusViewModel ProcessEmailSchedule(ScheduleItemViewModel scheduleItem)
         {
             var now = DateTime.Now;
@@ -275,5 +301,6 @@ namespace JsPlc.Ssc.PetrolPricing.Business.Services
             }
             return "Unable to send";
         }
+        #endregion
     }
 }

@@ -265,5 +265,37 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
                 return new ExceptionResult(ex, this);
             }
         }
+
+        [HttpGet]
+        [Route("api/ExportSettings")]
+        public async Task<IHttpActionResult> ExportSettings()
+        {
+            try
+            {
+                var result = _systemSettingsService.ExportSettings();
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex);
+                return new ExceptionResult(ex, this);
+            }
+        }
+
+        [HttpPost]
+        [Route("api/ImportSettings")]
+        public async Task<IHttpActionResult> ImportSettings([FromBody] string settingsXml)
+        {
+            try
+            {
+                _systemSettingsService.ImportSettings(settingsXml);
+                return Ok(true);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex);
+                return new ExceptionResult(ex, this);
+            }
+        }
     }
 }
