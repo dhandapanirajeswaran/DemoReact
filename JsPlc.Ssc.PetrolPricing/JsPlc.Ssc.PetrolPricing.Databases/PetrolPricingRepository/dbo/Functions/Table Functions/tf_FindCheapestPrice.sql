@@ -180,7 +180,7 @@ BEGIN
 	DECLARE @LatestJsPrice_FileUploadId INT
 	SET @LatestJsPrice_FileUploadId = dbo.fn_LastFileUploadForDate(@ForDate, 3)
 
-	-- lookup Latest Site Fuel Price from Latest JS Price Data
+	-- lookup Latest Site Fuel Price from Latest JS Price Data (if any)
 	DECLARE @LatestJsPrice_ModalPrice INT = NULL
 	DECLARE @LatestJsPrice_Id INT = NULL
 	DECLARE @LatestJsPrice_UploadDateTime DATETIME
@@ -243,8 +243,9 @@ BEGIN
 		--
 		IF @LatestJsPrice_ModalPrice IS NOT NULL
 		BEGIN
+			SET @Today_Price = @LatestJsPrice_ModalPrice
+
 			SET @Cheapest_DateOfPrice = CONVERT(DATE, @LatestJsPrice_UploadDateTime)
-			SET @Cheapest_SuggestedPrice = @LatestJsPrice_ModalPrice
 			SET @Cheapest_UploadId = @LatestJsPrice_FileUploadId
 			SET @Cheapest_Markup = 0
 			SET @Cheapest_CompetitorId = NULL
@@ -252,27 +253,29 @@ BEGIN
 			SET @Cheapest_IsTodayPrice = 0
 			SET @Cheapest_PriceReasonFlags = @Cheapest_PriceReasonFlags | @PriceReasonFlags_LatestJSPrice
 
-			If @PriceStuntFreeze = 1
+			-- Price Freeze and higher Latest JS Price than Today ?
+			IF @PriceStuntFreeze = 1 AND @Today_Price > 0 AND @LatestJsPrice_ModalPrice > @Today_Price
 			BEGIN
-				-- Prevent price increase during a Price Freeze Event
-				IF @Today_Price > 0 AND @Cheapest_SuggestedPrice > @Today_Price
-				BEGIN
-					SET @Cheapest_SuggestedPrice = @Today_Price
-					SET @Cheapest_PriceReasonFlags = @Cheapest_PriceReasonFlags | @PriceReasonFlags_PriceStuntFreeze
-				END
+				-- Do nothing, keep existing Today Price
+				SET @Today_Price = @Today_Price
+			END
+			ELSE
+			BEGIN
+				-- Not in a Price Freeze, so accept ANY price (even higher ones) from Latest JS Price Data file
+				SET @Today_Price = @LatestJsPrice_ModalPrice
 			END
 		END
 
 		--
 		-- Price Strategy Match: Match Competitor ?
 		--
-		IF @Site_PriceMatchType = @PriceMatchType_MatchCompetitor AND @LatestJsPrice_ModalPrice IS NULL
+		IF @Site_PriceMatchType = @PriceMatchType_MatchCompetitor
 		BEGIN
 			--
 			-- Determine if Match Competitor Site is a Sainsburys site
 			--
 			SET @Site_MatchCompetitorIsSainsburysSite = CASE 
-				WHEN (SELECT TOP 1 IsSainsburysSite FROM dbo.Site WHERE Id = @Site_MatchCompetitorSiteId) =1 THEN 1 
+				WHEN (SELECT TOP 1 IsSainsburysSite FROM dbo.Site WHERE Id = @Site_MatchCompetitorSiteId) = 1 THEN 1 
 				ELSE 0 
 			END
 
@@ -296,6 +299,8 @@ BEGIN
 					sp.FuelTypeId = @FuelTypeId
 					AND
 					sp.DateOfCalc <= @StartOfYesterday
+				ORDER BY
+					sp.DateOfCalc DESC
 			END
 			ELSE
 			BEGIN
@@ -334,7 +339,7 @@ BEGIN
 		--
 		-- Price Strategy Match: Standard Price OR Trial price ?
 		--
-		IF (@Site_PriceMatchType = @PriceMatchType_Standard OR @Site_PriceMatchType = @PriceMatchType_TrialPrice) AND @LatestJsPrice_ModalPrice IS NULL
+		IF (@Site_PriceMatchType = @PriceMatchType_Standard OR @Site_PriceMatchType = @PriceMatchType_TrialPrice)
 		BEGIN
 			--
 			-- Find the cheapest 0-25 min Competitor

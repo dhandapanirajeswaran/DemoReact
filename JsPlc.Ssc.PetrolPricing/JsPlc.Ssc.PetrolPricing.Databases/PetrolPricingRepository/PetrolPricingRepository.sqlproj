@@ -241,6 +241,7 @@
     <Build Include="dbo\Stored Procedures\spUpsertPriceFreezeEvent.sql" />
     <Build Include="dbo\Functions\Scalar Functions\fn_IsDateOverlap.sql" />
     <Build Include="dbo\Functions\Scalar Functions\fn_IsPriceFreezeActiveForDate.sql" />
+    <Build Include="dbo\Functions\Scalar Functions\fn_TodayPriceForSiteFuelDate.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Scripts\PostDeployment\Script.PostDeployment.sql" />
