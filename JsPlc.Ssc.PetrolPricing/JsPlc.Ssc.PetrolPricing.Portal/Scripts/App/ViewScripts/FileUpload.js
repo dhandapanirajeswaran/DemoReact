@@ -269,7 +269,7 @@
 
         function redrawStepLabels() {
             var value = $(selectors.uploadTypeName).val();
-            if (options.datePicker) {
+            if (options.datePicker || value == 1) {
                 $(selectors.chooseDatePanel).show();
                 $(selectors.step2Label).text('Date & File:');
             } else {
