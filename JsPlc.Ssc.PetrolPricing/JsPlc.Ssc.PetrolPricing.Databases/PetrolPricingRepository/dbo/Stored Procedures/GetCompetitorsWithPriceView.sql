@@ -84,7 +84,8 @@ SET NOCOUNT ON
 			COALESCE(dm1.ModalPrice, 0) [TodayPrice],
 			dm1.DateOfPrice [TodayDate],
 			COALESCE(dm2.ModalPrice, 0) [YestPrice],
-			dm2.DateOfPrice [YestDate]
+			dm2.DateOfPrice [YestDate],
+			(SELECT MAX(DateOfPrice) FROM dbo.CompetitorPrice WHERE SiteId= csf.CompSiteId AND FuelTypeId = csf.FuelTypeId AND DateOfPrice <= @DayMinus1Date) [LastPriceDate]
 		FROM
 			CompSiteFuels csf
 			LEFT JOIN dbo.CompetitorPrice dm1 ON dm1.SiteId = csf.CompSiteId AND dm1.FuelTypeId = csf.FuelTypeId AND dm1.DateOfPrice = @DayMinus1CompetitorPriceDate
@@ -108,8 +109,8 @@ SET NOCOUNT ON
 				WHEN js2.SuggestedPrice > 0 THEN js2.SuggestedPrice
 				ELSE 0
 			END [YestPrice],
-			DATEADD(DAY, 1, js2.DateOfCalc) [YestDate]
-
+			DATEADD(DAY, 1, js2.DateOfCalc) [YestDate],
+			(SELECT DATEADD(DAY, 1, MAX(DateOfCalc)) FROM dbo.SitePrice WHERE SiteId=csf.CompSiteId AND FuelTypeId = csf.FuelTypeId AND DateOfCalc <= @DayMinus1Date) [LastPriceDate]
 		FROM
 			CompSiteFuels csf
 			LEFT JOIN dbo.SitePrice js1 ON js1.SiteId = csf.CompSiteId AND js1.FuelTypeId = csf.FuelTypeId AND js1.DateOfCalc = (SELECT MAX(DateOfCalc)
@@ -132,7 +133,8 @@ SET NOCOUNT ON
 			lnsp.TodayPrice,
 			lnsp.TodayDate,
 			lnsp.YestPrice,
-			lnsp.YestDate
+			lnsp.YestDate,
+			lnsp.LastPriceDate
 		FROM
 			LastNonSainsburysPrices lnsp
 		UNION ALL
@@ -143,7 +145,8 @@ SET NOCOUNT ON
 			lsp.TodayPrice,
 			lsp.TodayDate,
 			lsp.YestPrice,
-			lsp.YestDate
+			lsp.YestDate,
+			lsp.LastPriceDate
 		FROM
 			LastSainsburysPrices lsp
 	)
@@ -163,10 +166,11 @@ SET NOCOUNT ON
 			THEN mcp.TodayPrice - mcp.YestPrice
 			ELSE 0
 		END [Difference],
-		csf.IsSainsburysSite [IsSainsburysSite]
+		csf.IsSainsburysSite [IsSainsburysSite],
+		mcp.LastPriceDate
 
-		-- debug
-		,(select top 1 sitename from dbo.Site where Id = csf.CompSiteId)
+		---- debug
+		--,(select top 1 sitename from dbo.Site where Id = csf.CompSiteId)
 	FROM
 		CompSiteFuels csf
 		LEFT JOIN MergedCompetitorPrices mcp ON mcp.CompSiteId = csf.CompSiteId AND mcp.FuelTypeId = csf.FuelTypeId

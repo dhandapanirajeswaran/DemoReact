@@ -55,6 +55,8 @@
         };
 
         function format(template, dt) {
+            if (!dt || !('getFullYear' in dt))
+                return 'N/A';
             var yyyy = dt.getFullYear(),
                 mm = dt.getMonth() + 1,
                 dd = dt.getDate(),
@@ -67,8 +69,14 @@
         };
 
         function dayDiff(dt1, dt2) {
-            var ticks = Math.abs(addDays(1, startOfDay(dt2)).getTime() - startOfDay(dt1).getTime());
-            return Math.ceil(ticks / (1000 * 60 * 60 * 24));
+            if (!dt1 || !dt2 || !('getFullYear' in dt1) || !('getFullYear' in dt2))
+                return undefined;
+            var diff = startOfDay(dt2).getTime() - startOfDay(dt1).getTime(),
+                ticks = Math.abs(diff),
+                absDays = Math.ceil(ticks / (1000 * 60 * 60 * 24));
+            return diff < 0
+                ? 0 - absDays
+                : absDays;
         };
 
         function convertJsonDate(date) {

@@ -119,5 +119,6 @@ namespace JsPlc.Ssc.PetrolPricing.Models.ViewModels
         public int GrocerPriceCount { get; set; }
         public int NearbyGrocerCount { get; set; }
         public int NearbyGrocerPriceCount { get; set; }
+        public DateTime? LastPriceDate { get; set; }
     }
 }

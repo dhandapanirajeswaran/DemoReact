@@ -31,7 +31,7 @@
                     <col width="4%" />
                 </colgroup>
 
-                <thead>
+                <thead style="z-index: 100;">
                     <tr>
                         <th colspan="5"></th>
 
@@ -186,6 +186,8 @@
 
                                 <i data-bind="attr: {class: (FuelPrice.Difference ==0 || FuelPrice.Difference == '-' ) ? 'fa fa-arrow-right' : (FuelPrice.Difference <= 0.1) ? 'fa fa-arrow-down': 'fa fa-arrow-up', style: (FuelPrice.Difference == 0 || FuelPrice.Difference == '-') ? 'color: grey' : (FuelPrice.Difference <= 0.1) ? 'color: red': 'color: green', }"></i>
                                 &nbsp;<span data-bind="text: (FuelPrice.Difference == 0 || FuelPrice.Difference == '-') ? '-' : (FuelPrice.Difference/10)"></span>
+
+                                <span class="comp-last-price-days-ago" data-bind="css: LastPriceDaysAgoCss(), html: LastPriceDaysAgoHtml(), attr: {'data-infotip': LastPriceDaysAgoInfotip()}"></span>
                             </div>
                         </td>
                         <td style="border-left: 1px solid #ccc;" class="text-center" data-bind="class: (FuelPrice.FuelTypeId==2 ? 'diesel-fuel' : ''), css: (isDriveTimeBoundary() ? ' drive-time-boundary' : '')">

@@ -39,7 +39,7 @@ table.competitorTable td, th {
 }
 
 #competitorPricesPopup {
-    width: 90%;
+    width: 95%;
     margin: 1em auto 1em auto;
 }
 
@@ -132,6 +132,37 @@ table.competitorTable td, th {
 #competitorPricePopupPrices .comp-js-tomorrow-date {
     color:orange;
 }
+
+#competitorPricePopupPrices .comp-last-price-days-ago {
+    float: right;
+    margin-right: 0.25em;
+    color: #000;
+    background-color: #fff;
+    padding: 2px 4px;
+}
+
+#competitorPricePopupPrices .comp-last-price-days-ago.days-ago-none {
+    background-color: #666;
+    color: #ccc;
+}
+#competitorPricePopupPrices .comp-last-price-days-ago.days-ago-today {
+    background-color: #910048;
+    color: #fff;
+}
+
+#competitorPricePopupPrices .comp-last-price-days-ago.days-ago-success {
+    background-color: #5cb85c;
+    color: #fff;
+}
+#competitorPricePopupPrices .comp-last-price-days-ago.days-ago-warning {
+    background-color: orange;
+    color: #000;
+}
+#competitorPricePopupPrices .comp-last-price-days-ago.days-ago-danger {
+    background-color: red;
+    color: #fff;
+}
+
 
 #competitorPricePopupHeader th {
     background: #eee;
