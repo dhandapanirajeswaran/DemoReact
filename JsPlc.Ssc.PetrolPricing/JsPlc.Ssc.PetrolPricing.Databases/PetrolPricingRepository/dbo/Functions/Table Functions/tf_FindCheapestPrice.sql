@@ -33,8 +33,8 @@ AS
 BEGIN
 
 ----DEBUG:START
---DECLARE	@SiteId INT = 9
---DECLARE	@FuelTypeId INT = 6
+--DECLARE	@SiteId INT = 6164
+--DECLARE	@FuelTypeId INT = 2
 --DECLARE	@ForDate DATE = GETDATE()
 --DECLARE	@FileUploadId INT = 8
 --DECLARE	@MaxDriveTime INT = 25
@@ -135,7 +135,7 @@ BEGIN
 	DECLARE @Cheapest_NearbyGrocerCount INT = 0
 	DECLARE @Cheapest_NearbyGrocerPriceCount INT = 0
 
-	DECLARE @MinPriceFound INT = NULL
+	DECLARE @MatchCompetitorPriceFound INT = NULL
 	DECLARE @MinPriceCompetitorId INT = NULL
 
 	DECLARE @HasNearbyGrocers BIT = 0
@@ -174,31 +174,6 @@ BEGIN
 		ELSE 0
 	END
 
-	--
-	-- Check for Latest JS Price Data for Date
-	--
-	DECLARE @LatestJsPrice_FileUploadId INT
-	SET @LatestJsPrice_FileUploadId = dbo.fn_LastFileUploadForDate(@ForDate, 3)
-
-	-- lookup Latest Site Fuel Price from Latest JS Price Data (if any)
-	DECLARE @LatestJsPrice_ModalPrice INT = NULL
-	DECLARE @LatestJsPrice_Id INT = NULL
-	DECLARE @LatestJsPrice_UploadDateTime DATETIME
-	SELECT TOP 1
-		@LatestJsPrice_ModalPrice = lp.ModalPrice,
-		@LatestJsPrice_Id = lp.Id,
-		@LatestJsPrice_UploadDateTime = (SELECT TOP 1 UploadDateTime FROM dbo.FileUpload WHERE Id = @LatestJsPrice_FileUploadId)
-	FROM
-		dbo.LatestPrice lp
-	WHERE
-		lp.FuelTypeId = @FuelTypeId
-		AND
-		lp.PfsNo = @Site_PfsNo
-		AND
-		lp.StoreNo = @Site_StoreNo
-		AND
-		lp.UploadId = @LatestJsPrice_FileUploadId
-
 	IF @Site_CatNo = 0
 		SET @Cheapest_PriceReasonFlags = @Cheapest_PriceReasonFlags | @PriceReasonFlags_MissingSiteCatNo
 
@@ -213,56 +188,33 @@ BEGIN
 		--
 		-- Get most recent Sainsburys 'Today' price for Site Fuel (if any)
 		--
-		DECLARE @Today_Price INT
+		DECLARE @Today_Price INT = dbo.fn_TodayPriceForSiteFuelDate(@SiteId, @FuelTypeId, @ForDate)
+
+		-- lookup Competitor, Grocer and Nearby Grocer Data % counts
 		SELECT
-			@Today_Price = CASE
-				WHEN sp.OverriddenPrice > 0 THEN sp.OverriddenPrice
-				WHEN sp.SuggestedPrice > 0 THEN sp.SuggestedPrice
-				ELSE 0
-			END
+			@Cheapest_CompetitorCount = ncd.CompetitorCount,
+			@Cheapest_CompetitorPriceCount = ncd.CompetitorPriceCount,
+			@Cheapest_GrocerCount = ncd.GrocerCount,
+			@Cheapest_GrocerPriceCount = ncd.GrocerPriceCount,
+			@Cheapest_NearbyGrocerCount = ncd.NearbyGrocerCount,
+			@Cheapest_NearbyGrocerPriceCount = ncd.NearbyGrocerPriceCount
 		FROM
-			dbo.SitePrice sp
-		WHERE
-			sp.Id = (
-				SELECT TOP 1
-					Id
-				FROM
-					dbo.SitePrice
-				WHERE
-					SiteId = @SiteId
-					AND
-					FuelTypeId = @FuelTypeId
-					AND
-					DateOfCalc < @StartOfToday
-				ORDER BY
-					DateOfCalc DESC
-			)
+			dbo.tf_NearbyCompetitorDataSummaryForSiteFuel(@ForDate, @MaxDriveTime, @SiteId, @FuelTypeId, @SystemSettings_NearbyGrocerDriveTime) ncd
 
-		--
-		-- Is there Latest JS Price available for Site Fuel ?
-		--
-		IF @LatestJsPrice_ModalPrice IS NOT NULL
+		-- Determine Nearby Grocer status
+		IF @Cheapest_NearbyGrocerCount <> 0
 		BEGIN
-			SET @Today_Price = @LatestJsPrice_ModalPrice
+			SET @HasNearbyGrocers = 1
+			SET @Cheapest_PriceReasonFlags = @Cheapest_PriceReasonFlags | @PriceReasonFlags_HasGrocers
 
-			SET @Cheapest_DateOfPrice = CONVERT(DATE, @LatestJsPrice_UploadDateTime)
-			SET @Cheapest_UploadId = @LatestJsPrice_FileUploadId
-			SET @Cheapest_Markup = 0
-			SET @Cheapest_CompetitorId = NULL
-			SET @Cheapest_IsTrialPrice = 0
-			SET @Cheapest_IsTodayPrice = 0
-			SET @Cheapest_PriceReasonFlags = @Cheapest_PriceReasonFlags | @PriceReasonFlags_LatestJSPrice
-
-			-- Price Freeze and higher Latest JS Price than Today ?
-			IF @PriceStuntFreeze = 1 AND @Today_Price > 0 AND @LatestJsPrice_ModalPrice > @Today_Price
+			IF @Cheapest_NearbyGrocerCount = @Cheapest_NearbyGrocerPriceCount
 			BEGIN
-				-- Do nothing, keep existing Today Price
-				SET @Today_Price = @Today_Price
+				SET @HasIncompleteNearbyGrocerPriceData = 0
 			END
 			ELSE
 			BEGIN
-				-- Not in a Price Freeze, so accept ANY price (even higher ones) from Latest JS Price Data file
-				SET @Today_Price = @LatestJsPrice_ModalPrice
+				SET @HasIncompleteNearbyGrocerPriceData = 1
+				SET @Cheapest_PriceReasonFlags = @Cheapest_PriceReasonFlags | @PriceReasonFlags_HasIncompleteGrocers
 			END
 		END
 
@@ -280,12 +232,12 @@ BEGIN
 			END
 
 			--
-			-- Search for most recent Competitor Site Price for Fuel on Date
+			-- Search for most recent COMPETITOR Site Price for Fuel on Date
 			--
 			IF @Site_MatchCompetitorIsSainsburysSite = 1
 			BEGIN
 				SELECT TOP 1
-					@MinPriceFound = CASE 
+					@MatchCompetitorPriceFound = CASE 
 						WHEN sp.OverriddenPrice > 0 THEN sp.OverriddenPrice
 						WHEN sp.SuggestedPrice > 0 THEN sp.SuggestedPrice
 						ELSE NULL
@@ -306,7 +258,7 @@ BEGIN
 			BEGIN
 				-- Non-Sainsburys Match Competitor Site
 				SELECT TOP 1
-					@MinPriceFound = cp.ModalPrice,
+					@MatchCompetitorPriceFound = cp.ModalPrice,
 					@MinPriceCompetitorId = cp.SiteId
 				FROM
 					dbo.CompetitorPrice cp
@@ -323,15 +275,18 @@ BEGIN
 						)
 			END
 
-			IF @MinPriceFound > 0
+			IF @MatchCompetitorPriceFound > 0
 			BEGIN
-				SET @Cheapest_SuggestedPrice = @MinPriceFound + @Site_MatchCompetitorMarkup * 10
+				-- Found price for Match Competitor site
+				SET @Cheapest_SuggestedPrice = @MatchCompetitorPriceFound + @Site_MatchCompetitorMarkup * 10
 				SET @Cheapest_CompetitorId = @MinPriceCompetitorId
 				SET @Cheapest_Markup = @Site_MatchCompetitorMarkup
 				SET @Cheapest_PriceReasonFlags = @Cheapest_PriceReasonFlags | @PriceReasonFlags_MatchCompetitorFound
 			END
 			ELSE
 			BEGIN
+				-- No price found for Match Competitor site
+				SET @Cheapest_SuggestedPrice = @Today_Price
 				SET @Cheapest_PriceReasonFlags = @Cheapest_PriceReasonFlags | @PriceReasonFlags_NoMatchCompetitorPrice
 			END
 		END
@@ -462,35 +417,6 @@ BEGIN
 					LEFT JOIN dbo.LatestCompPrice lcp ON lcp.Id = bcp.LatestCompPriceId
 					LEFT JOIN dbo.SitePrice sp ON sp.Id = bcp.SitePriceId
 
-
-			-- lookup Competitor, Grocer and Nearby Grocer Data % counts
-			SELECT
-				@Cheapest_CompetitorCount = ncd.CompetitorCount,
-				@Cheapest_CompetitorPriceCount = ncd.CompetitorPriceCount,
-				@Cheapest_GrocerCount = ncd.GrocerCount,
-				@Cheapest_GrocerPriceCount = ncd.GrocerPriceCount,
-				@Cheapest_NearbyGrocerCount = ncd.NearbyGrocerCount,
-				@Cheapest_NearbyGrocerPriceCount = ncd.NearbyGrocerPriceCount
-			FROM
-				dbo.tf_NearbyCompetitorDataSummaryForSiteFuel(@ForDate, @MaxDriveTime, @SiteId, @FuelTypeId, @SystemSettings_NearbyGrocerDriveTime) ncd
-
-			-- Determine Nearby Grocer status
-			IF @Cheapest_NearbyGrocerCount <> 0
-			BEGIN
-				SET @HasNearbyGrocers = 1
-				SET @Cheapest_PriceReasonFlags = @Cheapest_PriceReasonFlags | @PriceReasonFlags_HasGrocers
-
-				IF @Cheapest_NearbyGrocerCount = @Cheapest_NearbyGrocerPriceCount
-				BEGIN
-					SET @HasIncompleteNearbyGrocerPriceData = 0
-				END
-				ELSE
-				BEGIN
-					SET @HasIncompleteNearbyGrocerPriceData = 1
-					SET @Cheapest_PriceReasonFlags = @Cheapest_PriceReasonFlags | @PriceReasonFlags_HasIncompleteGrocers
-				END
-			END
-
 			--
 			-- Incomplete Nearby Grocer data ?
 			--
@@ -511,49 +437,60 @@ BEGIN
 						SET @Cheapest_PriceReasonFlags = @Cheapest_PriceReasonFlags | @PriceReasonFlags_TodayPriceSnapBack
 					END
 				END
-			END
+			END -- @HasIncompleteNearbyGrocerPriceData = 1 
+		END --  @PriceMatchType_Standard OR @PriceMatchType_TrialPrice)
 
-			-- handle No Suggested Price
-			IF @Cheapest_SuggestedPrice = 0 AND @Today_Price > 0
+		--
+		-- handle No Suggested Price
+		--
+		IF @Cheapest_SuggestedPrice = 0 AND @Today_Price > 0
+		BEGIN
+			SET @Cheapest_SuggestedPrice = @Today_Price
+			SET @Cheapest_IsTodayPrice = 1
+			SET @Cheapest_PriceReasonFlags = @Cheapest_PriceReasonFlags | @PriceReasonFlags_NoSuggestedPrice 
+		END
+
+		--
+		-- apply Decimal Rounding (if any)
+		--
+		IF @SystemSettings_DecimalRounding <> -1 AND @Cheapest_SuggestedPrice > 0
+		BEGIN
+			SET @Cheapest_SuggestedPrice = dbo.fn_ReplaceLastPriceDigit(@Cheapest_SuggestedPrice, @SystemSettings_DecimalRounding)
+			SET @Cheapest_PriceReasonFlags = @Cheapest_PriceReasonFlags | @PriceReasonFlags_Rounded
+		END
+
+		--
+		-- check Price Variance
+		--
+		IF @Today_Price > 0 AND @Cheapest_SuggestedPrice > 0
+		BEGIN
+			DECLARE @Diff INT = @Cheapest_SuggestedPrice - @Today_Price
+
+			IF ABS(@Diff) <= @SystemSettings_PriceVariance
 			BEGIN
+				-- Within Price Variance
 				SET @Cheapest_SuggestedPrice = @Today_Price
-				SET @Cheapest_IsTodayPrice = 1
-				SET @Cheapest_PriceReasonFlags = @Cheapest_PriceReasonFlags | @PriceReasonFlags_NoSuggestedPrice 
+				SET @Cheapest_IsTodayPrice = 1 
+				SET @Cheapest_PriceReasonFlags = @Cheapest_PriceReasonFlags | @PriceReasonFlags_TodayPriceSnapBack | @PriceReasonFlags_InsidePriceVariance
 			END
-
-			-- apply Decimal Rounding (if any)
-			IF @SystemSettings_DecimalRounding <> -1 AND @Cheapest_SuggestedPrice > 0
+			ELSE
 			BEGIN
-				SET @Cheapest_SuggestedPrice = dbo.fn_ReplaceLastPriceDigit(@Cheapest_SuggestedPrice, @SystemSettings_DecimalRounding)
-				SET @Cheapest_PriceReasonFlags = @Cheapest_PriceReasonFlags | @PriceReasonFlags_Rounded
+				-- Outside Price Variance
+				SET @Cheapest_PriceReasonFlags = @Cheapest_PriceReasonFlags | @PriceReasonFlags_OutsidePriceVariance
 			END
-			-- check Price Variance
+		END
+
+		--
+		-- check Price Stunt Freeze
+		--
+		IF @PriceStuntFreeze = 1
+		BEGIN
 			IF @Today_Price > 0 AND @Cheapest_SuggestedPrice > 0
 			BEGIN
-				DECLARE @Diff INT = @Cheapest_SuggestedPrice - @Today_Price
-
-				IF ABS(@Diff) <= @SystemSettings_PriceVariance
+				IF @Cheapest_SuggestedPrice > @Today_Price
 				BEGIN
 					SET @Cheapest_SuggestedPrice = @Today_Price
-					SET @Cheapest_IsTodayPrice = 1 
-					SET @Cheapest_PriceReasonFlags = @Cheapest_PriceReasonFlags | @PriceReasonFlags_TodayPriceSnapBack | @PriceReasonFlags_InsidePriceVariance
-				END
-				ELSE
-				BEGIN
-					SET @Cheapest_PriceReasonFlags = @Cheapest_PriceReasonFlags | @PriceReasonFlags_OutsidePriceVariance
-				END
-			END
-
-			-- check Price Stunt Freeze
-			IF @PriceStuntFreeze = 1
-			BEGIN
-				IF @Today_Price > 0 AND @Cheapest_SuggestedPrice > 0
-				BEGIN
-					IF @Cheapest_SuggestedPrice > @Today_Price
-					BEGIN
-						SET @Cheapest_SuggestedPrice = @Today_Price
-						SET @Cheapest_PriceReasonFlags = @Cheapest_PriceReasonFlags | @PriceReasonFlags_PriceStuntFreeze | @PriceReasonFlags_TodayPriceSnapBack
-					END
+					SET @Cheapest_PriceReasonFlags = @Cheapest_PriceReasonFlags | @PriceReasonFlags_PriceStuntFreeze | @PriceReasonFlags_TodayPriceSnapBack
 				END
 			END
 		END
