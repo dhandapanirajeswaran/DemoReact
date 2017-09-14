@@ -343,6 +343,8 @@ function ($, ko, common, compNotePopup, notify, cookieSettings, bootbox) {
 
         populateReadOnlyPopupPrices(viewingSiteId);
 
+        $(config.selectors.popup).on('click', '.comp-brand-name', compBrandNameClick);
+
         applyNoPricesStyles();
     };
 
@@ -651,6 +653,13 @@ function ($, ko, common, compNotePopup, notify, cookieSettings, bootbox) {
         $(config.selectors.searchNameInput).val('');
         peformCompetitorSearch();
         notify.info('Cleared the Competitor Name search');
+    };
+
+    function compBrandNameClick() {
+        var brandName = $(this).text();
+        $(config.selectors.searchBrandInput).val(brandName);
+        peformCompetitorSearch();
+        notify.info('Filtered by Brand: ' + brandName);
     };
 
     function bindNoteEvents() {
