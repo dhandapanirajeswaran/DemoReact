@@ -215,6 +215,11 @@ function ($, ko, common, compNotePopup, notify, cookieSettings, bootbox) {
             dst.addClass('price-snapback');
         else
             dst.removeClass('price-snapback');
+
+        if (src.hasClass('price-freeze'))
+            dst.addClass('price-freeze');
+        else
+            dst.removeClass('price-freeze');
     };
 
     function drawPopup(siteItem) {
