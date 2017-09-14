@@ -1,5 +1,5 @@
-﻿define(["jquery", "knockout", "common", "competitorPriceNotePopup", "notify", "cookieSettings", "bootbox"],
-function ($, ko, common, compNotePopup, notify, cookieSettings, bootbox) {
+﻿define(["jquery", "knockout", "common", "competitorPriceNotePopup", "notify", "cookieSettings", "bootbox",  "chooseOneGroup"],
+function ($, ko, common, compNotePopup, notify, cookieSettings, bootbox, chooseOneGroup) {
     "use strict";
     var state = {
         showNotes: false,
@@ -253,6 +253,7 @@ function ($, ko, common, compNotePopup, notify, cookieSettings, bootbox) {
         redrawDriveTimeButtons();
         redrawIncludeDriveTimeButtons();
         redrawNoPriceButtons();
+        redrawChooseOneGroups();
         applyFilters();
 
         dstHeader.hide().html(srcThead.clone(false));
@@ -299,6 +300,8 @@ function ($, ko, common, compNotePopup, notify, cookieSettings, bootbox) {
         highlightSainsburysSiteRow();
 
         bindSearchEvents();
+
+        chooseOneGroup.init();
     };
 
     function formatFuelMarkUp(markup) {
@@ -573,6 +576,7 @@ function ($, ko, common, compNotePopup, notify, cookieSettings, bootbox) {
         applyFilters();
         redrawFilterButtons();
         redrawDriveTimeButtons();
+        redrawChooseOneGroups();
         notify.info(message);
     };
 
@@ -597,6 +601,7 @@ function ($, ko, common, compNotePopup, notify, cookieSettings, bootbox) {
         state.showNonGrocers = true;
         applyFilters();
         redrawFilterButtons();
+        redrawChooseOneGroups();
         notify.info('Filters have been reset &mdash; Showing all items');
     };
 
@@ -620,6 +625,7 @@ function ($, ko, common, compNotePopup, notify, cookieSettings, bootbox) {
         state.insideDriveTime = true;
         state.outsideDriveTime = true;
         redrawDriveTimeButtons();
+        redrawChooseOneGroups();
         applyFilters();
         notify.info('Reset Drive Time Filters (showing all Drive Times)')
     };
@@ -810,6 +816,11 @@ function ($, ko, common, compNotePopup, notify, cookieSettings, bootbox) {
         setButtonActiveState(config.selectors.hideNoPriceButton, !state.showNoPrices);
     };
     
+    function redrawChooseOneGroups() {
+        chooseOneGroup.drawGroup('grocers-choose-group', !state.showGrocers && !state.showNonGrocers);
+        chooseOneGroup.drawGroup('drivetime-choose-group', !state.insideDriveTime && !state.outsideDriveTime);
+    };
+
     function applyNoPricesStyles() {
         var popup = $(config.selectors.popup),
             tables = popup.find('table.competitorTable');
