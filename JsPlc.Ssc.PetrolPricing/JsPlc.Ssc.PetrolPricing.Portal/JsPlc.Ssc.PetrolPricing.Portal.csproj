@@ -204,7 +204,9 @@
     <Compile Include="ActionFilters\AuthoriseReportsAttribute.cs" />
     <Compile Include="ActionFilters\AuthoriseSystemSettingsAttribute.cs" />
     <Compile Include="Controllers\EmailTemplateController.cs" />
+    <Compile Include="Controllers\PublicApiController.cs" />
     <Compile Include="Controllers\SettingsController.cs" />
+    <Compile Include="EmailScheduleLauncher.cs" />
     <Compile Include="SimpleScheduler.cs" />
     <Compile Include="Security\AuthorisationPermissionChecker.cs" />
     <Compile Include="ActionFilters\AuthoriseDiagnosticsAttribute.cs" />
@@ -579,6 +581,7 @@
     <Folder Include="Views\DriveTimeMarkup\" />
     <Folder Include="Views\EmailTemplate\" />
     <Folder Include="Views\Layout\" />
+    <Folder Include="Views\PublicApi\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />

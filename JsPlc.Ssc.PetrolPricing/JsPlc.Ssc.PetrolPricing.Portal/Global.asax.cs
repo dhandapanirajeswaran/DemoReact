@@ -23,6 +23,8 @@ using JsPlc.Ssc.PetrolPricing.Portal.Helper;
 using System.Reflection;
 using System.IO;
 using JsPlc.Ssc.PetrolPricing.Portal.Facade;
+using System.Net;
+using System.Threading;
 
 namespace JsPlc.Ssc.PetrolPricing.Portal
 {
@@ -44,11 +46,6 @@ namespace JsPlc.Ssc.PetrolPricing.Portal
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
-
-            var pollInterval = TimeSpan.FromMinutes(PollEmailScheduleEveryMinute);
-            var serviceFacade = new ServiceFacade(_logger);
-            var runner = new Action(() => serviceFacade.ExecuteWinServiceSchedule());
-            SimpleScheduler.Start(pollInterval, runner);
         }
 
         protected void Application_End()
@@ -85,6 +82,8 @@ namespace JsPlc.Ssc.PetrolPricing.Portal
        
         protected void Application_BeginRequest()
         {
+            EmailScheduleLauncher.BeginRequestHook(_logger, PollEmailScheduleEveryMinute);
+
             Response.Cache.SetCacheability(HttpCacheability.NoCache);
             Response.Cache.SetExpires(DateTime.UtcNow.AddHours(-1));
             Response.Cache.SetNoStore();
