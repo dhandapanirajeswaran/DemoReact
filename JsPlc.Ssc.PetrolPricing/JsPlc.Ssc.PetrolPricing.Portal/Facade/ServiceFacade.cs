@@ -1200,6 +1200,24 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             }
         }
 
+        public LastSitePricesViewModel GetLastSitePricesViewModel(DateTime forDate)
+        {
+            try
+            {
+                var apiUrl = String.Format("api/GetLastSitePricesViewModel/{0}", forDate.ToString("ddMMMyyyy"));
+                var response = _client.Value.GetAsync(apiUrl).Result;
+                var result = response.Content.ReadAsAsync<LastSitePricesViewModel>().Result;
+                return response.IsSuccessStatusCode
+                    ? result
+                    : new LastSitePricesViewModel();
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex);
+                throw new Exception("Exception in GetLastSitePricesViewModel" + System.Environment.NewLine + ex.Message, ex);
+            }
+        }
+
         public bool DeleteAllData()
         {
             try

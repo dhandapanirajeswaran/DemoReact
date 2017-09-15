@@ -314,6 +314,8 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
         QuarterlySiteAnalysisReportViewModel GetQuarterlySiteAnalysisReport(int leftFileUploadId, int rightFileUploadId);
 
+        LastSitePricesViewModel GetLastSitePricesViewModel(DateTime forDate);
+
         FileUpload GetFileUploadInformation(int fileUploadId);
 
         bool DeleteAllData(string uploadPath);

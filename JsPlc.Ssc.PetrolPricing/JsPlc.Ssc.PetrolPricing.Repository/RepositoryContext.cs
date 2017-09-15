@@ -774,5 +774,33 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             };
             DapperHelper.Execute(this, sprocName, parameters);
         }
+
+        internal LastSitePricesViewModel GetLastSitePricesReport(DateTime forDate)
+        {
+            const string sprocName = "spGetLastSitePricesReport";
+            var parameters = new
+            {
+                @ForDate = forDate
+            };
+            var model = DapperHelper.QueryMultiple<LastSitePricesViewModel>(this, sprocName, parameters, FillGetLastSitePrices);
+            return model;
+        }
+
+        private void FillGetLastSitePrices(LastSitePricesViewModel model, SqlMapper.GridReader multiReader)
+        {
+            model.Sites = multiReader.Read<LastSitePriceSiteViewModel>().AsList();
+            if (model.Sites == null)
+                return;
+
+            var allFuelPrices = multiReader.Read<LastSitePricesFuelPriceViewModel>();
+            foreach(var fuelprice in allFuelPrices)
+            {
+                var site = model.Sites.FirstOrDefault(x => x.SiteId == fuelprice.SiteId);
+                if (site != null)
+                {
+                    site.FuelPrices.Add(fuelprice);
+                }
+            }
+        }
     }
 }

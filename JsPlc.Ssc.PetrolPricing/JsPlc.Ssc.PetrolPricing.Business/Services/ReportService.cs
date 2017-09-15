@@ -116,6 +116,12 @@ namespace JsPlc.Ssc.PetrolPricing.Business
             return report;
         }
 
+        public LastSitePricesViewModel GetLastSitePricesViewModel(DateTime forDate)
+        {
+            var report = _db.GetLastSitePricesViewModel(forDate);
+            return report;
+        }
+
         #region Private Methods
 
         private static string MakeCacheKey(string format, params object[] cacheKeyStrings)

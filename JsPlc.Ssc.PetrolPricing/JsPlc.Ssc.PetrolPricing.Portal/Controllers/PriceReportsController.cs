@@ -40,6 +40,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             {"PriceMovementReport", ReportExportFileType.PriceMovementReport},
             {"PricePointsReport", ReportExportFileType.PricePointsReport},
             {"QuarterlySiteAnalysisReport", ReportExportFileType.QuarterlySiteAnalysis },
+            {"LastSitePrices" , ReportExportFileType.LastSitePrices},
 
             // alternative filenames !
             {"SAINSBURYS PriceMovementReport", ReportExportFileType.PriceMovementReport }
@@ -308,6 +309,14 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
         {
             var viewModel = PopulateQuarterlySiteAnalysisModel(model.LeftFileUploadId, model.RightFileUploadId);
             return View(viewModel);
+        }
+
+
+        [System.Web.Mvc.HttpGet]
+        public ActionResult LastSitePrices()
+        {
+            var model = PopulateLastSitePricesModal();
+            return View(model);
         }
 
         #endregion
@@ -822,6 +831,13 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             return model;
         }
 
-		#endregion
-	}
+        private LastSitePricesViewModel PopulateLastSitePricesModal()
+        {
+            var forDate = DateTime.Now;
+            var model = _serviceFacade.GetLastSitePricesViewModel(forDate);
+            return model;
+        }
+
+        #endregion
+    }
 }

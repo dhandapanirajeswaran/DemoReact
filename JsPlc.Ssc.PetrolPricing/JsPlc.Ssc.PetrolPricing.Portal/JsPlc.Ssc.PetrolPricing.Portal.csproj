@@ -572,6 +572,7 @@
     <Content Include="Views\Sites\Pricing\_SiteFilterPopup.cshtml" />
     <Content Include="Views\File\_FileUploadSummary.cshtml" />
     <Content Include="Views\Settings\PriceFreeze.cshtml" />
+    <Content Include="Views\PriceReports\LastSitePrices.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\uploads\" />

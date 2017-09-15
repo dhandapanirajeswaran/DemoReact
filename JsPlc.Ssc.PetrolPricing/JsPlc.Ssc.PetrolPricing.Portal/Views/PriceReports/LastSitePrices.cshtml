@@ -1,0 +1,576 @@
+﻿@using System.Web.UI.WebControls
+@using JsPlc.Ssc.PetrolPricing.Models.Enums
+@model JsPlc.Ssc.PetrolPricing.Models.ViewModels.LastSitePricesViewModel
+@{
+    ViewBag.Title = "Report - Last Site Prices";
+
+    var reportInformationViewModel = new JsPlc.Ssc.PetrolPricing.Models.ViewModels.ReportInformationViewModel();
+    reportInformationViewModel.Introduction = "This reports shows the most recent (last) prices for all Sites (including Non-Sainsburys competitors).";
+}
+
+<style>
+
+    .report-table td:nth-of-type-(odd) {
+        background-color: #f0f0f0;
+    }
+
+    .report-table .col-1 { display: inline-block; width: 248px; }
+    .report-table .col-2 { display: inline-block; width: 70px; text-align: center; }
+    .report-table .col-3 { display: inline-block; width: 60px; text-align: center; }
+    .report-table .col-4 { display: inline-block; width: 80px; text-align: center; }
+    .report-table .col-5 { display: inline-block; width: 70px; text-align: center;   }
+
+    .report-table .col-6 { display: inline-block; width: 54px; text-align: center; border-left: 1px solid #999; }
+    .report-table .col-7 { display: inline-block; width: 80px; text-align: center; }
+    .report-table .col-8 { display: inline-block; width: 48px; text-align: center; }
+
+    .report-table .col-9 { display: inline-block; width: 54px; text-align: center; border-left: 1px solid #999; }
+    .report-table .col-10 { display: inline-block; width: 80px; text-align: center; }
+    .report-table .col-11 { display: inline-block; width: 48px; text-align: center; }
+
+    .report-table .col-12 { display: inline-block; width: 54px; text-align: center; border-left: 1px solid #999; }
+    .report-table .col-13 { display: inline-block; width: 80px; text-align: center; }
+    .report-table .col-14 { display: inline-block; width: 48px; text-align: center; }
+    
+    .report-table .col-6-7-8,
+    .report-table .col-9-10-11,
+    .report-table .col-12-13-14 {
+        display: inline-block;
+        width: 188px;
+        text-align: center;
+        border-left: 1px solid #999;
+    }
+
+    .report-table .col-site-name {overflow-x: hidden; white-space: nowrap;}
+
+    .report-scroller {
+        max-height: 500px;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .report-table td {
+        padding: 1px 2px;
+    }
+
+    .report-table-header {
+        border-bottom: 2px solid #999;
+        background-color: #ccc;
+        font-weight: bold;
+    }
+
+    .report-table .table-row:nth-child(odd) {
+        background-color: #f0f0f0;
+    }
+
+    .busy-dull {
+        opacity: 0.5;
+    }
+
+    #divFilterBusyMessage {
+        box-shadow: 4px 4px 16px#000;
+        position: absolute;
+        margin-top: 10em;
+        width: 30em;
+        left: calc(50% - 15em);
+        z-index: 100;
+    }
+
+    #LastSitePriceStatsTable {
+        border: 4px solid #f0f0f0;
+        margin: 2em auto;
+    }
+    #LastSitePriceStatsTable > thead > th {padding: 8px 8px; margin: 0;}
+    #LastSitePriceStatsTable td {padding: 0px 8px; margin: 0;}
+
+    #LastSitePriceStatsTable > thead > tr {
+        background-color: #ccc;
+        color: #000;
+    }
+
+    .row-js th{
+        color: orange;
+    }
+
+    .row-js.row-combined {
+        border-top: 2px solid orange;
+        border-bottom: 2px solid orange;
+    }
+
+    .row-non-js th {
+        color: blue;
+    }
+    .row-non-js.row-combined {
+        border-top: 2px solid blue;
+        border-bottom: 2px solid blue;
+    }
+
+    .total-row {
+        background: #f0f0f0;
+    }
+
+
+
+
+</style>
+
+<div class="row">
+    <div class="col-md-6">
+        <h1><i class="fa fa-bar-chart"></i> @ViewBag.Title</h1>
+    </div>
+    <div class="col-md-6 text-right font150pc">
+        Showing <span class="filtered-count"></span> of <span class="total-count"></span>
+    </div>
+</div>
+
+<hr />
+
+@Html.Partial("_ReportIntroduction", reportInformationViewModel)
+
+<div class="alert alert-warning font125pc" id="divLoadMessage">
+    <i class="fa fa-spinner spinner"></i> <strong>Loading Report. ETA 45 seconds. Please wait...</strong>
+</div>
+
+<div id="divFilterBusyMessage" class="alert alert-success text-center font150pc" style="display:none;">
+    <i class="fa fa-info-circle"></i> <strong> Filtering results. ETA 20 seconds Please wait...</strong>
+</div>
+
+<div class="report" id="divReportContainer" style="display: none;">
+    @if (Model != null)
+    {
+        <div class="report-table-header">
+            <div class="report-table">
+                    <div class="table-row">
+                        <div class="col-1">Site Name</div>
+                        <div class="col-2">CatNo</div>
+                        <div class="col-3">PfsNo</div>
+                        <div class="col-4">Sainsburys</div>
+                        <div class="col-5">Active</div>
+                        <div class="col-6-7-8 fuel-sign fuel-sign-unleaded"></div>
+                        <div class="col-9-10-11 fuel-sign fuel-sign-diesel"></div>
+                        <div class="col-12-13-14 fuel-sign fuel-sign-super-unleaded"></div>
+                    </div>
+                    <div class="table-row">
+                        <div class="col-1">
+                            <input type="text" id="txtFilterSiteName" class="form-control input-xs text-center no-margin " value="" maxlength="100" data-infotip="Filter by [b]Site Name[/b]" />
+                        </div>
+                        <div class="col-2">
+                            <input type="text" id="txtFilterCatNo" class="form-control input-xs text-center no-margin" value="" maxlength="6" data-infotip="Filter by [b]CatNo[/b]" />
+                        </div>
+                        <div class="col-3">
+                            <input type="text" id="txtFilterPfstNo" class="form-control input-xs text-center no-margin" value="" maxlength="6" data-infotip="Filter by [b]PfsNo[/b]" />
+                        </div>
+                        <div class="col-4">
+                            <select id="mnuFilterSainsburys" class="form-control" data-infotip="Filter by [em]Sainsburys[/em] or [b]Non-Sainsburys[/b] sites">
+                                <option value="">-</option>
+                                <option value="1">Yes</option>
+                                <option value="0">No</option>
+                            </select>
+                        </div>
+                        <div class="col-5">
+                            <select id="mnuFilterIsActive" class="form-control" data-infotip="Filter [b]Active[/b] or [i]Inactive[/i] sites">
+                                <option value="">-</option>
+                                <option value="1">Yes</option>
+                                <option value="0">No</option>
+                            </select>
+                        </div>
+
+                        <div class="col-6">Price</div>
+                        <div class="col-7">Date</div>
+                        <div class="col-8">Days</div>
+
+                        <div class="col-9">Price</div>
+                        <div class="col-10">Date</div>
+                        <div class="col-11">Days</div>
+
+                        <div class="col-12">Price</div>
+                        <div class="col-13">Date</div>
+                        <div class="col-14">Days</div>
+                    </div>
+            </div>
+        </div>
+
+        <div class="report-scroller">
+            <div class="report-table" id="LastSitePricesReportTable">
+                @foreach (var site in Model.Sites)
+                    {
+                        var colIndex = 6;
+
+                <div class="table-row">
+                    <div class="col-1 col-site-name">@(site.SiteName)</div>
+                    <div class="col-2">@(site.CatNo)</div>
+                    <div class="col-3">@(site.PfsNo)</div>
+                    <div class="col-4">
+                    @if (site.IsSainsburysSite)
+                    {
+                        <span class="text-success"><i class="fa fa-check"></i> Yes</span>
+                    } else
+                    {
+                        <span class="text-danger"><i class="fa fa-times"></i></span>
+                    }
+                    </div>
+                    <div class="col-5">
+                    @if (site.IsActive)
+                    {
+                        <span class="text-success"><i class="fa fa-check"></i></span>
+                    } else
+                    {
+                        <span class="text-danger"><i class="fa fa-times"></i></span>
+                    }
+                    </div>
+                    @foreach (var price in site.FuelPrices)
+                    {
+                        <div class="col-@(colIndex++)">
+                            @if (price.ModalPrice == 0)
+                            {
+                                <span class="price-na">&mdash;</span>
+                            }
+                            else
+                            {
+                                <span class="price-modal">
+                                    <big>@(price.ModalPrice / 10)</big>
+                                    <small>.@(price.ModalPrice % 9)</small>
+                                </span>
+                            }
+                        </div>
+                        if (price.LastPriceDate.HasValue)
+                        {
+                            <div class="col-@(colIndex++)">
+                                <span class="has-date">@(price.LastPriceDate.Value.ToString("dd-MM-yyyy"))</span>
+                            </div>
+                            <div class="col-@(colIndex++)">
+                                <span>@((int)DateTime.Now.Subtract(price.LastPriceDate.Value).TotalDays)</span>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="col-@(colIndex++)">
+                                <span class="no-date">&mdash;</span>
+                            </div>
+                            <div class="col-@(colIndex++)">
+                                <span class="no-date">&mdash;</span>
+                            </div>
+                        }
+                    }
+                </div>
+                }
+                </div>
+        </div>
+
+        <div class="report-stats">
+            <table id="LastSitePriceStatsTable">
+                <thead>
+                    <tr>
+                        <th>Competitor</th>
+                        <th>Active</th>
+                        <th>8 or more</th>
+                        <th>7 days</th>
+                        <th>6 days</th>
+                        <th>5 days</th>
+                        <th>4 days</th>
+                        <th>3 days</th>
+                        <th>2 days</th>
+                        <th>1 day</th>
+                        <th>0 days</th>
+                        <th>N/A</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+
+    }
+</div>
+<script>
+    require(["jquery", "notify", "infotips"],
+    function ($, notify, infotips) {
+
+        "use strict";
+
+        var state = {
+            isOutdated: false,
+            countdown: 10,
+            tick: 10,
+            totalCount: 0,
+            filteredCount: 0
+        };
+
+        var model = {
+            sites: [
+                {
+                    siteName: '',
+                    catNo: 0,
+                    pfsNo: 0,
+                    isSainsburys: false,
+                    isActive: false,
+                    unleadedPrice: 0,
+                    unleadedDate: new Date(),
+                    unleadedDaysAgo: 0,
+                    dieselPrice: 0,
+                    dieselDate: new Date(),
+                    dieselDaysAgo: 0,
+                    superPrice: 0,
+                    superDate: new Date(),
+                    superDaysAgo: 0
+                }
+            ]
+        };
+
+        var selectors = {
+            siteNameInput: '#txtFilterSiteName',
+            catNoInput: '#txtFilterCatNo',
+            pfsNoInput: '#txtFilterPfstNo',
+            sainsburysInput: '#mnuFilterSainsburys',
+            activeInput: '#mnuFilterIsActive',
+            grid: '#LastSitePricesReportTable',
+            filteringMessage: '#divFilterBusyMessage',
+            loadingMessage: '#divLoadMessage',
+            reportContainer: '#divReportContainer',
+            filteredCount: '.filtered-count',
+            totalCount: '.total-count',
+            statsTable: '#LastSitePriceStatsTable'
+        };
+
+        function initData() {
+            var grid = $(selectors.grid),
+                rows = grid.find('.table-row');
+
+            model.sites = [];
+
+            rows.each(function () {
+                var row = $(this),
+                site = {
+                    siteName: row.find('.col-1').text().toUpperCase(),
+                    catNo: row.find('.col-2').text().toUpperCase(),
+                    pfsNo: row.find('.col-3').text().toUpperCase(),
+                    isSainsburys: row.find('.col-4 .text-success').length,
+                    isActive: row.find('.col-5 .text-success').length,
+                    unleadedPrice: scrapPrice(row.find('.col-6').text()),
+                    unleadedDate: scrapDate(row.find('.col-7').text()),
+                    unleadedDaysAgo: scrapDaysAgo(row.find('.col-8').text()),
+                    dieselPrice: scrapPrice(row.find('.col-9').text()),
+                    dieselDate: scrapDate(row.find('.col-10').text()),
+                    dieselDaysAgo: scrapDaysAgo(row.find('.col-11').text()),
+                    superUnleadedPrice: scrapPrice(row.find('.col-12').text()),
+                    superUnleadedDate: scrapDate(row.find('.col-13').text()),
+                    superUnleadedDaysAgo: scrapDaysAgo(row.find('.col-14').text()),
+                };
+
+                model.sites.push(site);
+            });
+
+            state.totalCount = model.sites.length;
+            state.filteredCount = state.totalCount;
+        };
+
+        function scrapPrice(value) {
+            var trimmed = value.replace(/[^\d\.]/g, '');
+            return parseFloat(trimmed);
+        };
+
+        function scrapDate(value) {
+            var parts = value.split('-');
+            if (parts.length != 3)
+                return undefined;
+            return new Date(parts[2], parts[1], parts[0]);
+        };
+
+        function scrapDaysAgo(value) {
+            value = value.replace(/^\s+|\s+$/g, '');
+            return isNaN(Number(value))
+                ? undefined
+                : Number(value);
+        };
+
+        function redrawCounts() {
+            $(selectors.totalCount).text(state.totalCount);
+            $(selectors.filteredCount).text(state.filteredCount);
+        };
+
+        function watcher() {
+            if (state.isOutdated) {
+                state.tick--;
+                if (state.tick <= 0) {
+                    state.isOutdated = false;
+                    $(selectors.filteringMessage).show();
+
+                    setTimeout(function () {
+                        applyFilters();
+                        redrawCounts();
+                        $(selectors.filteringMessage).hide();
+                        $(selectors.grid).removeClass('busy-dull');
+                    }, 200);
+                }
+            }
+            setTimeout(watcher, 200);
+        };
+
+        function initWatcher() {
+            state.isOutdated = false;
+            state.tick = state.countdown;
+            setTimeout(watcher, 1000);
+        };
+
+        function searchChange() {
+            state.tick = state.countdown;
+            state.isOutdated = true;
+            $(selectors.grid).addClass('busy-dull');
+        };
+
+        function applyFilters() {
+            var grid = $(selectors.grid),
+                rows = grid.find('.table-row'),
+                sitename = $(selectors.siteNameInput).val().toUpperCase(),
+                catNo = $(selectors.catNoInput).val().toUpperCase(),
+                pfsNo = $(selectors.pfsNoInput).val().toUpperCase(),
+                sainsburys = $(selectors.sainsburysInput).val(),
+                active = $(selectors.activeInput).val(),
+                visibleCount = 0,
+                site,
+                row,
+                index = 0,
+                visible;
+
+            for (index = 0; index < model.sites.length; index++) {
+                site = model.sites[index];
+                row = $(rows[index]);
+                visible = true;
+
+                if (sitename != '' && site.siteName.indexOf(sitename) == -1) {
+                    visible = false;
+                } else if (catNo != '' && site.catNo.indexOf(catNo) == -1) {
+                    visible = false;
+                } else if (pfsNo != '' && site.pfsNo.indexOf(pfsNo) == -1) {
+                    visible = false;
+                } else if (sainsburys != '' && site.isSainsburys != sainsburys) {
+                        visible = false;
+                } else if (active != '' && site.isActive != active) {
+                    visible = false;
+                }
+
+                if (visible) {
+                    visibleCount++;
+                    row.show();
+                } else {
+                    row.hide();
+                }
+            }
+
+            state.filteredCount = visibleCount;
+        };
+
+        function createStat(text, active) {
+            return {
+                name: text,
+                active: active,
+                days7plus: 0,
+                days7: 0,
+                days6: 0,
+                days5: 0,
+                days4: 0,
+                days3: 0,
+                days2: 0,
+                days1: 0,
+                days0: 0,
+                daysNA: 0
+            };
+        };
+
+        function redrawStats() {
+            var table = $(selectors.statsTable),
+                tbody = table.find('tbody'),
+                site,
+                index,
+                stat,
+                combined,
+                stats = {
+                    activeJs: createStat('Sainsburys', '<i class="fa fa-check text-success" data-infotip="[u]Active[/u]"></i>'),
+                    inactiveJs: createStat('Sainsburys', '<i class="fa fa-times text-danger" data-infotip="[u]Inactive[/u]"></i>'),
+                    combinedJs: createStat('All Sainsburys', ''),
+                    activeNonJs: createStat('Competitors', '<i class="fa fa-check text-success" data-infotip="[u]Active[/u]"></i>'),
+                    inactiveNonJs: createStat('Competitors', '<i class="fa fa-times text-danger" data-infotip="[u]Inactive[/u]"></i>'),
+                    combinedNonJs: createStat('All Competitors', ''),
+                    total: createStat('Total', '')
+                };
+
+            for (index = 0; index < model.sites.length; index++) {
+                site = model.sites[index];
+                if (site.isSainsburys) {
+                    combined = stats.combinedJs;
+                    stat = site.isActive ? stats.activeJs : stats.inactiveJs;
+                } else {
+                    combined = stats.combinedNonJs;
+                    stat = site.isActive ? stats.activeNonJs : stats.inactiveNonJs;
+                }
+
+                updateStats(stats.total, combined, stat, site.unleadedDaysAgo);
+                updateStats(stats.total, combined, stat, site.dieselDaysAgo);
+                updateStats(stats.total, combined, stat, site.superUnleadedDaysAgo);
+            }
+
+            tbody.empty();
+
+            renderStatsRow(tbody, 'row-js row-active', stats.activeJs);
+            renderStatsRow(tbody, 'row-js row-inactive', stats.inactiveJs);
+            renderStatsRow(tbody, 'row-js row-combined', stats.combinedJs);
+            renderStatsRow(tbody, 'row-non-js row-active', stats.activeNonJs);
+            renderStatsRow(tbody, 'row-non-js row-inactive', stats.inactiveNonJs);
+            renderStatsRow(tbody, 'row-non-js row-combined', stats.combinedNonJs);
+            renderStatsRow(tbody, 'total-row', stats.total);
+        };
+
+        function renderStatsRow(tbody, css, stat) {
+            var tr = $('<tr>');
+            tr.addClass(css);
+            tr.appendTo(tbody);
+            $('<th>').text(stat.name).appendTo(tr);
+            $('<td class="text-center">').html(stat.active).appendTo(tr);
+            $('<td class="text-right">').text(stat.days7plus).appendTo(tr);
+            $('<td class="text-right">').text(stat.days7).appendTo(tr);
+            $('<td class="text-right">').text(stat.days6).appendTo(tr);
+            $('<td class="text-right">').text(stat.days5).appendTo(tr);
+            $('<td class="text-right">').text(stat.days4).appendTo(tr);
+            $('<td class="text-right">').text(stat.days3).appendTo(tr);
+            $('<td class="text-right">').text(stat.days2).appendTo(tr);
+            $('<td class="text-right">').text(stat.days1).appendTo(tr);
+            $('<td class="text-right">').text(stat.days0).appendTo(tr);
+            $('<td class="text-right">').text(stat.daysNA).appendTo(tr);
+        };
+
+        function updateStats(total, combined, stat, daysAgo) {
+            var prop;
+            if (daysAgo == undefined)
+                prop = 'daysNA';
+            else if (daysAgo <= 7)
+                prop = 'days' + daysAgo
+            else
+                prop = 'days7plus';
+
+            total[prop]++;
+            combined[prop]++;
+            stat[prop]++;
+        };
+
+        function bindEvents() {
+            $(selectors.siteNameInput).off().on('change keyup', searchChange);
+            $(selectors.catNoInput).off().on('change keyup', searchChange);
+            $(selectors.pfsNoInput).off().on('change keyup', searchChange);
+            $(selectors.sainsburysInput).off().on('change', searchChange);
+            $(selectors.activeInput).off().on('change', searchChange);
+        };
+
+        function docReady() {
+            $(selectors.loadingMessage).hide();
+            $(selectors.reportContainer).show();
+            initData();
+            redrawCounts();
+            bindEvents();
+            initWatcher();
+            redrawStats();
+        };
+
+        $(docReady);
+    });
+</script>
+

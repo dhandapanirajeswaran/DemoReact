@@ -3455,6 +3455,12 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
             return model;
         }
 
+        public LastSitePricesViewModel GetLastSitePricesViewModel(DateTime forDate)
+        {
+            var model = _context.GetLastSitePricesReport(forDate);
+            return model;
+        }
+
         public FileUpload GetFileUploadInformation(int fileUploadId)
         {
             var fileUpload = _context.FileUploads.FirstOrDefault(x => x.Id == fileUploadId);

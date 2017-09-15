@@ -187,5 +187,14 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
 
             return Ok(model);
         }
+
+        [HttpGet]
+        [Route("api/GetLastSitePricesViewModel/{forDate}")]
+        public IHttpActionResult GetLastSitePricesViewModel([FromUri] DateTime forDate)
+        {
+            var result = _reportService.GetLastSitePricesViewModel(forDate);
+            return Ok(result);
+        }
+
     }
 }

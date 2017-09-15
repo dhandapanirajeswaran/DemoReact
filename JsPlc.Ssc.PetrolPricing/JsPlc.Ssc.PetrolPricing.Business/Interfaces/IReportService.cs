@@ -28,5 +28,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
         IEnumerable<SelectItemViewModel> GetQuarterlyFileUploadOptions();
 
         QuarterlySiteAnalysisReportViewModel GetQuarterlySiteAnalysisReport(int leftId, int rightId);
+
+        LastSitePricesViewModel GetLastSitePricesViewModel(DateTime forDate);
     }
 }

@@ -47,6 +47,7 @@ namespace JsPlc.Ssc.PetrolPricing.Core
         NationalAverageReport2,
         PriceMovementReport,
         PricePointsReport,
-        QuarterlySiteAnalysis
+        QuarterlySiteAnalysis,
+        LastSitePrices
     }
 }
