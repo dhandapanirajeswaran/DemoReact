@@ -2,6 +2,7 @@
 using JsPlc.Ssc.PetrolPricing.Portal.Facade;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Net;
 using System.Web;
@@ -51,7 +52,9 @@ namespace JsPlc.Ssc.PetrolPricing.Portal
         private static void StartScheduler(ILogger logger, int pollInterval)
         {
             _emailPollInterval = pollInterval;
-            _pollUrl = String.Concat(_websiteBaseUrl, "/PublicApi/PollEmailSchedule");
+            //_pollUrl = String.Concat(_websiteBaseUrl, "/PublicApi/PollEmailSchedule");
+
+            _pollUrl = String.Concat(ConfigurationManager.AppSettings["ida:PostLogoutRedirectUri"], "PublicApi/PollEmailSchedule");
 
             var interval = TimeSpan.FromMinutes(pollInterval);
             var serviceFacade = new ServiceFacade(logger);
