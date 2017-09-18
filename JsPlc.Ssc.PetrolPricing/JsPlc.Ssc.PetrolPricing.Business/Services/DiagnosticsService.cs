@@ -88,7 +88,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business.Services
                 {"appSetting.FixedEmailTo", _appSettings.FixedEmailTo },
                 {"appSetting.SuperUnleadedMarkup", _appSettings.SuperUnleadedMarkup },
                 {"appSetting.UploadPath", _appSettings.UploadPath },
-                {"appSetting.LogFilePath", _appSettings.LogFilePath }
+                {"appSetting.LogFilePath", _appSettings.LogFilePath },
             };
 
             var coreSettings = new Dictionary<string, object>()

@@ -998,6 +998,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
                     var result = response.Content.ReadAsAsync<DiagnosticsViewModel>().Result;
                     PopulateSchedulerStatusModel(result);
                     PopulateAdditionalDiagnostics(result);
+                    PopulateAdditionalAppSettings(result);
                     return result;
                 }
                 else
@@ -1011,6 +1012,19 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
                     ApiExceptionMessage = ex.ToString()
                 };
             }
+        }
+
+        private string GetAppSettingsValue(string key)
+        {
+            return ConfigurationManager.AppSettings[key] ?? "";
+        }
+
+        private void PopulateAdditionalAppSettings(DiagnosticsViewModel result)
+        {
+            result.AppSettings.Add("appSetting.ServicesBaseUrl", GetAppSettingsValue("ServicesBaseUrl"));
+            result.AppSettings.Add("appSetting.ida:RedirectUri", GetAppSettingsValue("ida:RedirectUri"));
+            result.AppSettings.Add("appSetting.ida:PostLogoutRedirectUri", GetAppSettingsValue("ida:PostLogoutRedirectUri"));
+            result.AppSettings.Add("appSetting.SessionTimeout", GetAppSettingsValue("SessionTimeout"));
         }
 
         private void PopulateAdditionalDiagnostics(DiagnosticsViewModel model)
