@@ -96,21 +96,29 @@
         color: #000;
     }
 
-    .row-js th{
+    .row-active {
+        font-weight: bold;
+    }
+
+    .row-inactive {
+        color: #999;
+    }
+
+    .row-js.row-active th{
         color: orange;
     }
 
     .row-js.row-combined {
-        border-top: 2px solid orange;
-        border-bottom: 2px solid orange;
+        background-color: orange;
+        color: #000;
     }
 
-    .row-non-js th {
+    .row-non-js.row-active th {
         color: blue;
     }
     .row-non-js.row-combined {
-        border-top: 2px solid blue;
-        border-bottom: 2px solid blue;
+        background-color: blue;
+        color: #fff;
     }
 
     .total-row {
@@ -135,12 +143,16 @@
 
 @Html.Partial("_ReportIntroduction", reportInformationViewModel)
 
-<div class="alert alert-warning font125pc" id="divLoadMessage">
-    <i class="fa fa-spinner spinner"></i> <strong>Loading Report. ETA 45 seconds. Please wait...</strong>
+<div class="row" id="divLoadMessage">
+    <div class="col-md-8 col-md-offset-2">
+        <div class="alert alert-warning font150pc text-center" >
+            <i class="fa fa-spinner spinner"></i> <strong>Loading Report &mdash; Please wait... (ETA: 45 seconds)</strong>
+        </div>
+    </div>
 </div>
 
-<div id="divFilterBusyMessage" class="alert alert-success text-center font150pc" style="display:none;">
-    <i class="fa fa-info-circle"></i> <strong> Filtering results. ETA 20 seconds Please wait...</strong>
+<div class="alert alert-success text-center font150pc" id="divFilterBusyMessage" style="display:none;">
+    <i class="fa fa-info-circle"></i> <strong> Filtering results &mdash; Please wait... (ETA: 20 seconds)</strong>
 </div>
 
 <div class="report" id="divReportContainer" style="display: none;">
@@ -271,18 +283,18 @@
             <table id="LastSitePriceStatsTable">
                 <thead>
                     <tr>
-                        <th>Competitor</th>
                         <th>Active</th>
-                        <th>8 or more</th>
-                        <th>7 days</th>
-                        <th>6 days</th>
-                        <th>5 days</th>
-                        <th>4 days</th>
-                        <th>3 days</th>
-                        <th>2 days</th>
-                        <th>1 day</th>
-                        <th>0 days</th>
-                        <th>N/A</th>
+                        <th>Site Fuel Prices</th>
+                        <th class="text-right">8 or more</th>
+                        <th class="text-right">7 days</th>
+                        <th class="text-right">6 days</th>
+                        <th class="text-right">5 days</th>
+                        <th class="text-right">4 days</th>
+                        <th class="text-right">3 days</th>
+                        <th class="text-right">2 days</th>
+                        <th class="text-right">1 day</th>
+                        <th class="text-right">0 days</th>
+                        <th class="text-right">N/A</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -537,8 +549,8 @@
             var tr = $('<tr>');
             tr.addClass(css);
             tr.appendTo(tbody);
-            $('<th>').text(stat.name).appendTo(tr);
             $('<td class="text-center">').html(stat.active).appendTo(tr);
+            $('<th>').text(stat.name).appendTo(tr);
             $('<td class="text-right">').text(stat.days7plus).appendTo(tr);
             $('<td class="text-right">').text(stat.days7).appendTo(tr);
             $('<td class="text-right">').text(stat.days6).appendTo(tr);
