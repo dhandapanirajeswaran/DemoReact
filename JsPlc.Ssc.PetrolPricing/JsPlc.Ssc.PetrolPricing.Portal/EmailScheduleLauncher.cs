@@ -54,7 +54,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal
             _emailPollInterval = pollInterval;
             //_pollUrl = String.Concat(_websiteBaseUrl, "/PublicApi/PollEmailSchedule");
 
-            _pollUrl = String.Concat(ConfigurationManager.AppSettings["ida:PostLogoutRedirectUri"], "PublicApi/PollEmailSchedule");
+            _pollUrl = String.Concat(ConfigurationManager.AppSettings["ida:RedirectUri"], "PublicApi/PollEmailSchedule");
 
             var interval = TimeSpan.FromMinutes(pollInterval);
             var serviceFacade = new ServiceFacade(logger);
