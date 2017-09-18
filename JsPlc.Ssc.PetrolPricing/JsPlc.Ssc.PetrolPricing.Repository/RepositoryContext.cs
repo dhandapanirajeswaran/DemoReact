@@ -775,12 +775,14 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             DapperHelper.Execute(this, sprocName, parameters);
         }
 
-        internal LastSitePricesViewModel GetLastSitePricesReport(DateTime forDate)
+        internal LastSitePricesViewModel GetLastSitePricesReport(DateTime forDate, bool includeSainsburys, bool includeCompetitors)
         {
             const string sprocName = "spGetLastSitePricesReport";
             var parameters = new
             {
-                @ForDate = forDate
+                @ForDate = forDate,
+                @IncludeSainsburys = includeSainsburys,
+                @IncludeCompetitors = includeCompetitors
             };
             var model = DapperHelper.QueryMultiple<LastSitePricesViewModel>(this, sprocName, parameters, FillGetLastSitePrices);
             return model;

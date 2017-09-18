@@ -118,7 +118,9 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 
         public LastSitePricesViewModel GetLastSitePricesViewModel(DateTime forDate)
         {
-            var report = _db.GetLastSitePricesViewModel(forDate);
+            var includeSainsburys = true;
+            var includeCompetitors = true;
+            var report = _db.GetLastSitePricesViewModel(forDate, includeSainsburys, includeCompetitors);
             return report;
         }
 

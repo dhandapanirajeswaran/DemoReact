@@ -1,11 +1,19 @@
 ﻿@using System.Web.UI.WebControls
 @using JsPlc.Ssc.PetrolPricing.Models.Enums
+@using JsPlc.Ssc.PetrolPricing.Models.ViewModels
 @model JsPlc.Ssc.PetrolPricing.Models.ViewModels.LastSitePricesViewModel
 @{
     ViewBag.Title = "Report - Last Site Prices";
 
     var reportInformationViewModel = new JsPlc.Ssc.PetrolPricing.Models.ViewModels.ReportInformationViewModel();
     reportInformationViewModel.Introduction = "This reports shows the most recent (last) prices for all Sites (including Non-Sainsburys competitors).";
+
+    var fuelsInOrder = new List<FuelTypeItem>()
+    {
+        FuelTypeItem.Unleaded,
+        FuelTypeItem.Diesel,
+        FuelTypeItem.Super_Unleaded
+    };
 }
 
 <style>
@@ -119,7 +127,7 @@
         <h1><i class="fa fa-bar-chart"></i> @ViewBag.Title</h1>
     </div>
     <div class="col-md-6 text-right font150pc">
-        Showing <span class="filtered-count"></span> of <span class="total-count"></span>
+        Showing <span class="filtered-count">0</span> of <span class="total-count">0</span>
     </div>
 </div>
 
@@ -218,8 +226,10 @@
                         <span class="text-danger"><i class="fa fa-times"></i></span>
                     }
                     </div>
-                    @foreach (var price in site.FuelPrices)
+                    @foreach (var fuelType in fuelsInOrder)
                     {
+                        var price = site.FuelPrices.FirstOrDefault(x => x.FuelType == fuelType) ?? new LastSitePricesFuelPriceViewModel();
+
                         <div class="col-@(colIndex++)">
                             @if (price.ModalPrice == 0)
                             {

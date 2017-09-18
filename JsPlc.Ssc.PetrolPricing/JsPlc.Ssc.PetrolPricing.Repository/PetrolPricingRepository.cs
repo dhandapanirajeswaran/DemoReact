@@ -3455,9 +3455,9 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
             return model;
         }
 
-        public LastSitePricesViewModel GetLastSitePricesViewModel(DateTime forDate)
+        public LastSitePricesViewModel GetLastSitePricesViewModel(DateTime forDate, bool includeSainsburys, bool includeCompetitors)
         {
-            var model = _context.GetLastSitePricesReport(forDate);
+            var model = _context.GetLastSitePricesReport(forDate, includeSainsburys, includeCompetitors);
             return model;
         }
 

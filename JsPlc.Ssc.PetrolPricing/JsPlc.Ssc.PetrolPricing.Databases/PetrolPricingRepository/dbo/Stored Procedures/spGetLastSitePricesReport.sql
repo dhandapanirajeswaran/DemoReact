@@ -1,11 +1,15 @@
 ﻿CREATE PROCEDURE [dbo].[spGetLastSitePricesReport]
-	@ForDate DATE
+	@ForDate DATE,
+	@IncludeSainsburys BIT,
+	@IncludeCompetitors BIT
 AS
 BEGIN
 
---DEBUG:START
+----DEBUG:START
 --DECLARE @ForDate DATE = GETDATE()
---DEBUG:END
+--DECLARE	@IncludeSainsburys BIT = 1
+--DECLARE	@IncludeCompetitors BIT = 0
+----DEBUG:END
 
 	DECLARE @SitesTV TABLE (SiteId INT)
 	INSERT INTO @SitesTV
@@ -13,6 +17,10 @@ BEGIN
 		st.Id [SiteId]
 	FROM
 		dbo.Site st
+	WHERE
+		(st.IsSainsburysSite = 1 AND @IncludeSainsburys =1)
+		OR
+		(st.IsSainsburysSite = 0 AND @IncludeCompetitors = 1)
 	ORDER BY
 		st.SiteName
 
@@ -48,7 +56,9 @@ BEGIN
 			CROSS APPLY (SELECT Id [FuelTypeId] FROM dbo.FuelType WHERE Id IN (1,2,6)) ft
 			CROSS APPLY (
 				SELECT 
-					*
+					SuggestedPrice,
+					OverriddenPrice,
+					DateOfCalc
 				FROM 
 					dbo.SitePrice
 				WHERE
@@ -99,15 +109,13 @@ BEGIN
 			LastCompetitorPrices lcp
 	)
 	SELECT
-		st.Id [SiteId],
-		ft.FuelTypeId,
+		stv.SiteId [SiteId],
+		ft.FuelTypeId [FuelType],
 		COALESCE(asp.ModalPrice, 0) [ModalPrice],
 		asp.LastPriceDate [LastPriceDate]
 	FROM
-		dbo.Site st
+		@SitesTV stv
 		CROSS APPLY (SELECT Id [FuelTypeId] FROM dbo.FuelType WHERE Id IN (1, 2, 6)) ft
-		LEFT JOIN AllSitePrices asp ON asp.SiteId = st.Id AND asp.FuelTypeId = ft.FuelTypeId
-	ORDER BY
-		st.SiteName
+		LEFT JOIN AllSitePrices asp ON asp.SiteId = stv.SiteId AND asp.FuelTypeId = ft.FuelTypeId
 
 END
