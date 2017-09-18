@@ -108,6 +108,7 @@
     <Compile Include="Enums\NotifyMessageType.cs" />
     <Compile Include="Enums\PriceMatchType.cs" />
     <Compile Include="Enums\PriceReasonFlags.cs" />
+    <Compile Include="Enums\ScheduleEmailType.cs" />
     <Compile Include="Enums\SiteSectionType.cs" />
     <Compile Include="Enums\UserPermissionEnums.cs" />
     <Compile Include="FileUploadAttemptStatus.cs" />
@@ -115,6 +116,7 @@
     <Compile Include="FuelPriceSettings.cs" />
     <Compile Include="GenericStatus.cs" />
     <Compile Include="ImportProcessError.cs" />
+    <Compile Include="ScheduleEmailTemplate.cs" />
     <Compile Include="SchedulerStatus.cs" />
     <Compile Include="SitePricingSettings.cs" />
     <Compile Include="SystemSettings.cs" />

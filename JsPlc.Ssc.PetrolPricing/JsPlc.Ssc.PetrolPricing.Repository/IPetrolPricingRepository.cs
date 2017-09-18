@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using JsPlc.Ssc.PetrolPricing.Models.ViewModels.SystemSettings;
 using JsPlc.Ssc.PetrolPricing.Models.ViewModels.Schedule;
 using JsPlc.Ssc.PetrolPricing.Models.WindowsService;
+using JsPlc.Ssc.PetrolPricing.Models.Enums;
 
 namespace JsPlc.Ssc.PetrolPricing.Repository
 {
@@ -388,5 +389,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
         String ExportSettings();
         void ImportSettings(string xml);
+
+        ScheduleEmailTemplate GetScheduleEmailTemplateForType(ScheduleEmailType scheduleEmailType);
     }
 }

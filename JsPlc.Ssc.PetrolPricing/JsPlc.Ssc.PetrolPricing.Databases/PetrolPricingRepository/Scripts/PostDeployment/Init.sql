@@ -483,6 +483,43 @@ VALUES	 (01, 0x00000001, 'Cheapest price Found')
 		,(16, 0x00008000, 'Match Competitor Price Found')
 		,(17, 0x00010000, 'Trial Price Found')
 
+
+--
+-- Upsert dbo.ScheduleEmailTemplate records
+--
+MERGE dbo.ScheduleEmailTemplate AS target
+USING (
+	SELECT 
+		1 [ScheduleEmailType],
+		'(Automated) Sainsburys Petrol Pricing Daily Price File for ##DATE##' [SubjectLine],
+		'olivia.darroch@sainsburys.co.uk' [ContactEmail],
+		'Hi,
+
+This is an automated email sent out by the Sainsburys Petrol Pricing online application.
+
+The email is intended for ##EMAIL-TO## and was generated on ##DATE## at ##TIME##.
+
+If you are *NOT* the intended recipient then please contact the following person:
+
+##CONTACT-EMAIL##
+
+Thank you.' [EmailBody]
+) AS source (ScheduleEmailType, SubjectLine, ContactEmail, EmailBody)
+ON (target.ScheduleEmailType = source.ScheduleEmailType)
+WHEN MATCHED THEN
+	UPDATE SET
+		target.SubjectLine = source.SubjectLine,
+		target.ContactEmail = source.ContactEmail,
+		target.EmailBody = source.EmailBody
+WHEN NOT MATCHED BY target THEN
+	INSERT (ScheduleEmailType, SubjectLine, ContactEmail, EmailBody)
+	VALUES (
+		source.ScheduleEmailType,
+		source.SubjectLine,
+		source.ContactEmail,
+		source.EmailBody
+	);
+
 --
 -- look Site Grocer and ExcludedBrand attributes
 --

@@ -802,5 +802,16 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                 }
             }
         }
+
+
+        internal ScheduleEmailTemplate GetScheduleEmailTemplateForType(ScheduleEmailType scheduleEmailType)
+        {
+            const string sprocName = "spGetScheduleEmailTemplateForType";
+            var parameters = new
+            {
+                @ScheduleEmailType = scheduleEmailType
+            };
+            return DapperHelper.QueryFirst<ScheduleEmailTemplate>(this, sprocName, parameters);
+        }
     }
 }

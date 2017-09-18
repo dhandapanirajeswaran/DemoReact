@@ -15,6 +15,7 @@ using System.Threading.Tasks;
 using ClosedXML;
 using System.Net.Mail;
 using System.IO;
+using JsPlc.Ssc.PetrolPricing.Models.Enums;
 
 namespace JsPlc.Ssc.PetrolPricing.Business.Services
 {
@@ -274,10 +275,22 @@ namespace JsPlc.Ssc.PetrolPricing.Business.Services
 
                 var smtpClient = emailSettings.CreateSmtpClient();
 
+                var emailTemplate = _repository.GetScheduleEmailTemplateForType(ScheduleEmailType.DailyPriceEmail);
+
+                var now = DateTime.Now;
+
+                var tokens = new Dictionary<string, string>()
+                {
+                    {"##EMAIL-TO##", scheduleItem.EmailAddress },
+                    {"##DATE##", now.ToString("dd-MMM-yyy") },
+                    {"##TIME##", now.ToString("HH:mm:ss")},
+                    {"##CONTACT-EMAIL##", emailTemplate.ContactEmail }
+                };
+
                 var message = new MailMessage();
                 message.From = new MailAddress(_appSettings.EmailFrom, _appSettings.EmailFrom);
-                message.Subject = "Petrol Pricing Daily Price File for " + DateTime.Now.ToShortDateString();
-                message.Body = "Hi, please find attached the Daily Price File";
+                message.Subject = ReplaceEmailTemplateTokens(emailTemplate.SubjectLine, tokens);
+                message.Body = ReplaceEmailTemplateTokens(emailTemplate.EmailBody, tokens);
                 message.BodyEncoding = Encoding.ASCII;
                 message.IsBodyHtml = true;
 
@@ -301,6 +314,15 @@ namespace JsPlc.Ssc.PetrolPricing.Business.Services
             }
             return "Unable to send";
         }
+
+        private string ReplaceEmailTemplateTokens(string format, Dictionary<string, string> tokens)
+        {
+            var result = "" + format;
+            foreach (var kvp in tokens)
+                result = result.Replace(kvp.Key, kvp.Value);
+            return result;
+        }
+
         #endregion
     }
 }

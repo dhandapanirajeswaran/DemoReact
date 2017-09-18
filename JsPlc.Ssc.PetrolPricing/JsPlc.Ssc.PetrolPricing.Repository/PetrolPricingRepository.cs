@@ -4262,6 +4262,11 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
             _context.ImportSettings(settingsXml);
         }
 
+        public ScheduleEmailTemplate GetScheduleEmailTemplateForType(ScheduleEmailType scheduleEmailType)
+        {
+            return _context.GetScheduleEmailTemplateForType(scheduleEmailType);
+        }
+
         #endregion private methods
     }
 }

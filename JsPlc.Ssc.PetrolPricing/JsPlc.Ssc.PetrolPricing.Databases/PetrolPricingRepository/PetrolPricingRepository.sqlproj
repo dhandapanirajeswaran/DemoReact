@@ -245,6 +245,8 @@
     <Build Include="dbo\Stored Procedures\spExportSettings.sql" />
     <Build Include="dbo\Stored Procedures\spImportSystemSettings.sql" />
     <Build Include="dbo\Stored Procedures\spGetLastSitePricesReport.sql" />
+    <Build Include="dbo\Tables\ScheduleEmailTemplate.sql" />
+    <Build Include="dbo\Stored Procedures\spGetScheduleEmailTemplateForType.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Scripts\PostDeployment\Script.PostDeployment.sql" />
