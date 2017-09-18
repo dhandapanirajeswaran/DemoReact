@@ -58,11 +58,11 @@ namespace JsPlc.Ssc.PetrolPricing.Portal
 
             var interval = TimeSpan.FromMinutes(pollInterval);
             var serviceFacade = new ServiceFacade(logger);
-            var runner = new Action(() => EmailSchedulerPollAction());
+            var runner = new Action(() => EmailSchedulerPollAction(serviceFacade));
             SimpleScheduler.Start(interval, runner);
         }
 
-        private static void EmailSchedulerPollAction()
+        private static void EmailSchedulerPollAction(ServiceFacade serviceFacade)
         {
             _emailPollLastDateTime = DateTime.Now;
 
@@ -73,9 +73,14 @@ namespace JsPlc.Ssc.PetrolPricing.Portal
             }
             try
             {
-                WebRequest request = WebRequest.Create(_pollUrl);
-                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-                _emailPollLastStatus = response.StatusCode.ToString();
+                var status = serviceFacade.ExecuteWinServiceSchedule();
+                if (String.IsNullOrEmpty(status.ErrorMessage))
+                    _emailPollLastStatus = status.SuccessMessage;
+                else
+                    _emailPollLastStatus = status.ErrorMessage;
+
+                //WebRequest request = WebRequest.Create(_pollUrl);
+                //HttpWebResponse response = (HttpWebResponse)request.GetResponse();
             }
             catch (Exception ex)
             {
