@@ -33,7 +33,8 @@
                 'pricing.storeName',
                 'pricing.storeTown',
                 'pricing.catNo',
-                'cookie.updatedOn'
+                'cookie.updatedOn',
+                'cookie.viewDateUpdatedOn'
             ],
             values = readSettingsCookie();
 
@@ -78,6 +79,10 @@
         };
 
         function write(name, value) {
+            if (name == 'pricing.viewDate') {
+                values['cookie.viewDateUpdatedOn'] = getTodayDateStamp(); // capture when the 'pricing.viewDate' was last Set
+            }
+
             if (name in values) {
                 values[name] = value;
                 updateSettingsCookie();
@@ -110,13 +115,17 @@
             }
         };
 
-
         function getTodayDateStamp() {
             return dateUtils.format('YYYY-MM-DD', new Date());
         };
 
-        function wasUpdatedToday() {
+        function wasCookieUpdatedToday() {
             var crumb = read('cookie.updatedOn', '');
+            return crumb && crumb == getTodayDateStamp();
+        };
+
+        function wasViewDateUpdatedToday() {
+            var crumb = read('cookie.viewDateUpdatedOn', '');
             return crumb && crumb == getTodayDateStamp();
         };
 
@@ -130,7 +139,8 @@
             writeInteger: writeInteger,
             restore: restoreObject,
             update: updateObject,
-            wasUpdatedToday: wasUpdatedToday
+            wasCookieUpdatedToday: wasCookieUpdatedToday,
+            wasViewDateUpdatedToday: wasViewDateUpdatedToday
         };
     }
 );
