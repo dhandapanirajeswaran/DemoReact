@@ -997,6 +997,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
                 {
                     var result = response.Content.ReadAsAsync<DiagnosticsViewModel>().Result;
                     PopulateSchedulerStatusModel(result);
+                    PopulateAdditionalDiagnostics(result);
                     return result;
                 }
                 else
@@ -1012,6 +1013,13 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             }
         }
 
+        private void PopulateAdditionalDiagnostics(DiagnosticsViewModel model)
+        {
+            var emailSchedulerDiagnostics = EmailScheduleLauncher.GetDiagnosticValues();
+
+            foreach (var kvp in emailSchedulerDiagnostics)
+                model.Environment.Add(kvp.Key, kvp.Value);
+        }
 
         public bool UpdateDiagnosticsSettings(DiagnosticsSettingsViewModel settings)
         {
