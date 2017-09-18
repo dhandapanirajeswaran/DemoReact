@@ -587,12 +587,12 @@ table.fixed-header>tbody {
 }
 
 .file-uploader-grid .column-1{ width: 2%; }
-.file-uploader-grid .column-2{ width: 25%; overflow-wrap:break-word }
+.file-uploader-grid .column-2{ width: 35%; overflow-wrap:break-word }
 .file-uploader-grid .column-3{ width: 2%; }
 .file-uploader-grid .column-4{ width: 18%; }
 .file-uploader-grid .column-5{ width: 15%; }
 .file-uploader-grid .column-6{ width: 5%; }
-.file-uploader-grid .column-7{ width: 25%; }
+.file-uploader-grid .column-7{ width: 15%; }
 
 .file-uploader-grid .date-header {
     border-radius: 0 24px 24px 0;
