@@ -305,6 +305,17 @@
     <Content Include="Content\QuarterlySiteData-Template.xlsx" />
     <Content Include="Content\LatestCompPriceDataTemplate.xlsx" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
+    <Content Include="Help\faq-glossary.html" />
+    <Content Include="Help\faq-site-emails.html" />
+    <Content Include="Help\faq-site-pricing.html" />
+    <Content Include="Help\faq-site-management.html" />
+    <Content Include="Help\faq-reports.html" />
+    <Content Include="Help\faq-setting-up.html" />
+    <Content Include="Help\faq-user-management.html" />
+    <Content Include="Help\faq-settings.html" />
+    <Content Include="Help\faq-file-uploads.html" />
+    <Content Include="Help\faq.html" />
+    <Content Include="Help\index.html" />
     <Content Include="images\defaultfileicon.png" />
     <Content Include="images\excelcsvicon.png" />
     <Content Include="images\excelicon.png" />
@@ -335,6 +346,8 @@
     <Content Include="Scripts\App\EditInPlace\edit-in-place.html" />
     <Content Include="Scripts\App\EditInPlace\edit-in-place.js" />
     <Content Include="Scripts\App\etaCountdown.js" />
+    <Content Include="Scripts\App\Help.html" />
+    <Content Include="Scripts\App\help.js" />
     <Content Include="Scripts\App\HistoricSitePrices.html" />
     <Content Include="Scripts\App\HistoricSitePrices.js" />
     <Content Include="Scripts\App\infotips.js" />

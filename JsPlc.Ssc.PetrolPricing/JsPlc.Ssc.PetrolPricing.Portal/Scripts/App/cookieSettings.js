@@ -34,7 +34,9 @@
                 'pricing.storeTown',
                 'pricing.catNo',
                 'cookie.updatedOn',
-                'cookie.viewDateUpdatedOn'
+                'cookie.viewDateUpdatedOn',
+                'help.lastPage',
+                'help.isOpen'
             ],
             values = readSettingsCookie();
 

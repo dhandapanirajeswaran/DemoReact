@@ -1,0 +1,320 @@
+﻿<div class="help-page">
+
+    <section>
+        <h3>Site Pricing</h3>
+
+        <dl class="topic-list">
+            <dt>Topics</dt>
+            <dd><a href="#AbsoluteMinMax">Absolute Min/Max</a></dd>
+            <dd><a href="#BulkOverride">Bulk Override</a></dd>
+            <dd><a href="#CompetitorModal">Competitor Modal</a></dd>
+            <dd><a href="#ExcludedBrands">Excluded Brands</a></dd>
+            <dd><a href="#Exporting">Exporting</a></dd>
+            <dd><a href="#Filters">Filters</a></dd>
+            <dd><a href="#Grocers">Grocers</a></dd>
+            <dd><a href="#HistoricPrices">Historic Prices</a></dd>
+            <dd><a href="#MatchCompetitor">Match Competitor</a></dd>
+            <dd><a href="#NearbyGrocer">Nearby Grocer</a></dd>
+            <dd><a href="#PriceFreeze">Price Freeze</a></dd>
+            <dd><a href="#PriceMatchType">Price Match Type</a></dd>
+            <dd><a href="#Recalculate">Recalculate Prices</a></dd>
+            <dd><a href="#SiteEmails">Site Emails</a></dd>
+            <dd><a href="#SuggestedPrice">Suggested Price</a></dd>
+            <dd><a href="#TodayAndTomorrow">Today and Tomorrow Prices</a></dd>
+            <dd><a href="#TodayAndTomorrow">Today and Tomorrow Prices</a></dd>
+            <dd><a href="#WarningIndicators">Warning Indicators</a></dd>
+        </dl>
+    </section>
+
+    <section id="PriceFreeze">
+        <h4>Price Freeze</h4>
+        <p>
+            During a <strong>Price Freeze</strong> we <strong>cannot</strong> legally increase the price of any of our fuels on any site.
+        </p>
+        <p>We can make further price decreases during the <strong>Price Freeze</strong></p>
+        <p>A banner appears at the top of the <a href="/Sites/Prices">Pricing Page</a> indicating that a <strong>Price Freeze</strong> is active and how many days are remaining.</p>
+        <p class="note">
+            On the <strong>last day</strong> of a you continue pricing as normal (price increases are allowed) for <strong>Tomorrow</strong>
+        </p>
+    </section>
+
+    <section id="Recalculate">
+        <h4>Recalculate Daily Prices</h4>
+        <p>
+            This button can be found on the <a href="/Sites/Prices">Pricing Page</a> for the current day only.
+        </p>
+        <p>
+            The recalculation is the same as the normal pricing strategy and logic which is performed when <a href="/help/file-uploads">Uploading Price files</a>
+        </p>
+
+        <p class="notes">
+            You cannot trigger a recalculation of prices when viewing Historical data since the prices have already been sent out to the Sainsburys fuel sites.
+        </p>
+    </section>
+
+    <section id="Filters">
+        <h4>Filters</h4>
+        <p>
+            You can filter down the 300+ Sainsburys fuel sites using the Store No, Store Name, Store Town and Catalist No filters.
+        </p>
+        <p>
+            Filters can be removed (or 'cleared') using the <button type="button" class="btn btn-warning btn-xs"><i class="fa fa-eraser"></i></button> button.
+        </p>
+    </section>
+
+    <section id="Exporting">
+        <h4>Exporting Prices</h4>
+
+        <p>
+            You can currently Export <strong>Competitor Prices</strong>, <strong>All Sites Prices</strong> or <strong>Only JS Sites</strong> as an Excel file.
+        </p>
+
+        <p>
+            Prices can be exported on the <a href="/Sites/Prices">Pricing Page</a>.
+        </p>
+
+        <p class="note">
+            Some data exports can take upto a minute or more (depending on the amount of data required).
+        </p>
+    </section>
+
+    <section id="ExcludedBrands">
+        <h4>Excluded Brands</h4>
+        <p>
+            These are <strong>Brands</strong> which we wish to ignore when searching through the Competitor to find the cheapest price.
+        </p>
+        <p>
+            The Excluded Brands can also be managed on the <a href="/Settings/Brands">Brands &amp; Grocers</a> page.
+            Grocers will be highlighted on the Competitor popup modal.
+        </p>
+    </section>
+
+    <section id="Grocers">
+        <h4>Grocers</h4>
+        <p>There are our main (the largest grocing) competitors. Examples are ASDA, TESCO and MORRISONS</p>
+
+        <p>Grocers are managed on the <a href="/Settings/Brands">Brands &amp; Grocers</a> page</p>
+    </section>
+
+    <section id="HistoricPrices">
+        <h4>Historic Pries</h4>
+
+        <p>
+            You can review recent, historic prices for any site (either Sainsburys or our Competitors) by clicking on the
+            <button type="button" class="btn btn-default btn-xs"><i class="fa fa-gbp"></i> Historic</button> while hovering
+            the mouse over a <strong>Store Name</strong> on the <a href="/Sites/Prices">Pricing Page</a>, or,
+            by clicking a <strong>Competitor (Marker)</strong> name in the Competitor Popup modal.
+        </p>
+    </section>
+
+    <section id="CompetitorModal">
+        <h4>Competitor Modal</h4>
+        <p>
+            The Competitor Modal can be access on the <a href="/Sites/Prices">Pricing page</a> by clicking on a Sainsbury's Store Name.
+            Its purpose is to show which competitor was chosen (if any) for each fuel type.
+        </p>
+        <p>
+            The modal itself shows all the surrounding Competitors (including other Sainsburys sites) with (for example) <strong>25 minutes Drive Time</strong>.
+            Each of the 3 Fuel grades (Unleaded, Diesel, and Super-Unleaded) are displayed with their prices for the previous <strong>two days</strong> (Day -1 and Day -2).
+        </p>
+        <p>
+            For each fuel type the chosen <strong>Cheapest</strong> Competitor price is highlighted.
+        </p>
+        <p>
+            For each fuel type the age of the Fuel price is displayed (e.g. 3d = 3 days or 'X' no price available).
+        </p>
+        <p class="note">
+            The <a href="#Suggested">Suggested Price</a> will also include any <a href="#DriveTimeMarkup">Drive Time Markup</a> and possibly any <a href="#TrialCompetitor">Trial Price Markup</a> or <a href="#MatchCompetitor">Match Competitor</a> markup.
+        </p>
+
+        <h5>Filters and Toggles</h5>
+
+        <p>
+            At the bottom of the Competitor Modal are a series of filters and toggle buttons these affect how the
+            Competitors are display (or hidden).
+        </p>
+
+        <p>
+            For Example, the <button type="button" class="btn btn-primary btn-xs"><i class="fa fa-rss-square"></i> Inside</button>
+            and <button type="button" class="btn btn-primary btn-xs"><i class="fa fa-square-o"></i> Outside</button> will hide or show Competitors depending if they are inside or outside the <a href="#NearbyGrocer">Nearby Grocer</a> <a href="#DriveTime">Drive Time</a>
+        </p>
+
+        <p>
+            The <button type="button" class="btn btn-default"><i class="fa fa-minus-square"></i> Exclude</button> and
+            <button type="button" class="btn btn-primary"><i class="fa fa-plus-square"></i> Include</button> buttons will display the <strong>Day-1</strong> prices as either the base Competitor Price or the price including the Drive Time Markup.
+        </p>
+    </section>
+
+    <section id="MatchCompetitor">
+        <h4>Match Competitor</h4>
+
+        <p>
+            This is a type of <a href="#PriceMatchType">Price Match Type</a> and determines how a <a href="#Competitor">Competitor</ a> Price is calculated when searching the surrounding Competitors for the cheapest price for a <a href="#FuelType">Fuel Type</a>.
+        </p>
+
+        <p>
+            The <strong>Price Match Type</strong> is managed on a site-by-site basis and can changed by choosing a site from the <a href="/Sites">Sites Management</a> page.
+        </p>
+    </section>
+
+    <section id="NearbyGrocer">
+        <h4>Nearby Grocers</h4>
+
+        <p>
+            A <strong>Nearby Grocer</strong> is any <a href="#Grocer">Grocer</a> within (for example) 10 minute <a href="#DriveTime">Drive Time</a>
+        </p>
+
+        <p class="note">
+            A <strong>Nearby Grocer</strong> is a <a href="#Competitor">Competitor</a> within X minutes.
+        </p>
+
+        <p class="tip">
+            You can change the X minutes drive time threshold in the <a href="/Settings">Settings</a> page using the
+            <strong>Nearby Grocer Drive Time</strong> field.
+        </p>
+    </section>
+
+    <section id="BulkOverride">
+        <h4>Bulk Override</h4>
+
+        <p>
+            A <strong>Bulk</strong> (aka Mass) Override is entered on the <a href="/Sites/Prices">Pricing Page</a> under each of
+            the 3 Fuel signs and will set the <a href="#Override">Override</a> Price for a single fuel for <strong>ALL sites</strong>
+        </p>
+
+        <p>
+            <span class="fuel-sign fuel-sign-unleaded"></span> &mdash;
+            <span class="fuel-sign fuel-sign-diesel"></span> &mdash;
+            <span class="fuel-sign fuel-sign-super-unleaded"></span>
+        </p>
+
+        <p>
+            There are <strong>two modes</strong> of entering a Bulk Override, these are...
+        </p>
+
+        <dl class="glossary-list">
+            <dt>
+                (+/-n)
+            </dt>
+            <dd>This is a small increase/decrease value (E.g. <code>-2.0</code> will move all the Prices down by <code>2.0p</code>)</dd>
+
+            <dt>
+                <i class="fa fa-gbp"></i>
+            </dt>
+            <dd>
+                This will set the <strong>Absolute</strong> Price for <strong>all the sites</strong> (E.g. <code>109.0</code> will set all the sites to the price <code>&pound;109.00</code>)
+            </dd>
+        </dl>
+    </section>
+
+    <section id="TodayAndTomorrow">
+        <h4>Today And Tomorrow Prices</h4>
+
+        <p>
+            <strong>Today</strong> prices are the prices which are currently displayed at each Sainsburys fuel site
+        </p>
+
+        <p>
+            <strong>Tomorrow</strong> prices are the <strong>Suggested</strong> (aka Auto) price which have been calculated
+            by looking at all the surrounding Competitor fuel prices for that particular site. <strong>Drive Time markup</strong> is
+            applied when finding the cheapest price and is based on the <a href="/Settings/DriveTime">Drive Time markup</a> values.
+        </p>
+
+        <p>
+            <strong>Override</strong> prices are <strong>user</strong> entered prices and will be used instead of the Suggested/Auto price.
+        </p>
+
+        <p>
+            Either the <strong>Override</strong> or <strong>Suggested Tomorrow</strong> price will be sent out to each Sainsburys fuel site via email.
+        </p>
+    </section>
+
+    <section id="PriceMatchType">
+        <h4>Price Match Type (aka Site Price Strategy)</h4>
+        <p>
+            This is the strategy of how a Sainsburys <a href="#SuggestedPrice">Suggested Price</a> is calculated from surrounding <a href="#Competitor">Competitors</a> (normally within 25 minutes drive time).
+        </p>
+
+        <p>There are currently 3 types of Price Match Types</p>
+
+        <dl>
+            <dt>Standard</dt>
+            <dd>
+                The Standard takes the cheapest Competitor price for each <a href="#FuelType">Fuel Type</a> &mdash;
+                <a href="#DriveTimeMarkup">Drive Time Markup</a> is added to this base price.
+            </dd>
+
+            <dt>Trial Price</dt>
+            <dd>
+                The Trial Price takes the cheapest Competitor price for each Fuel Type and then applies an additional <a href="#Markup">Markup</a> (E.g. +2.0p) &mdash;
+                <a href="#DriveTimeMarkup">Drive Time Markup</a> is added to this base price.
+            </dd>
+
+            <dt>Match Competitor</dt>
+            <dd>
+                The Match Competitor uses a <strong>one, fixed</strong> Competitor to use as its base price (other Competitors are <strong>not</strong> used) then an additional markup is applied.
+            </dd>
+        </dl>
+
+        <p class="note">
+            <strong>Match Competitor</strong> does <strong>not</strong> apply <a href="#DriveTimeMarkup">Drive Time Markup</a> based on the amount of Drive Time/Distance from the Sainsburys site to the Matched Competitor&mdash;
+            It is up to the user to specific the total markup in the Match Competitor +/- value.
+        </p>
+    </section>
+
+    <section id="SiteEmails">
+        <h4>Site Emails</h4>
+        <p>
+            For each Sainsburys site fuel price change an email will be sent out to that fuel site <strong>only</strong> if there is a price change for
+            any of the 3 fuel types.
+        </p>
+
+        <p class="note">
+            It is possible that very small changes in fuel prices (such as <code>+0.1p</code> or <code>-0.7p</code>) might be ignored depending on the
+            <a href="/Settings">Price Change Variance</a> value. If the change is <strong>within this Price Variance</strong> then the price is <strong>Snapped back</strong>
+            to the <a href="#TodayAndTomorrow">Today Price</a>
+        </p>
+    </section>
+
+    <section id="SuggestedPrice">
+        |<h4>Suggested Price</h4>
+
+        <p>
+            This is the <strong>Suggested</strong> (aka the <strong>Auto</strong>) Price and is used when calculating the <a href="#TodayAndTomorrow">Tomorrow Price</a>.
+        </p>
+
+        <p>
+            The price itself is built on some complex pricing logic which is based on surrounding <a href="#Competitor">Competitors</a>, their <a href="#DriveTime">Drive Time</a> distance and the <a href="#FuelType">Fuel Type</a>
+        </p>
+    </section>
+
+    <section id="AbsoluteMinMax">
+        <h4>Absolute Min/Max Prices</h4>
+
+        <p>
+            You can only enter <a href="#FuelPrice">Fuel Prices</a> between a <strong>min</strong> and <strong>max</strong> range.
+            This helps to prevent user errors when entering <a href="#Override">Override Prices</a>.
+        </p>
+
+        <p>
+            You <strong>cannot</strong> enter a value smaller than the <strong>Min</strong> value or higher than the <strong>Max</strong> limit.
+        </p>
+
+        <p class="tip">
+            The <strong>Absolute Min/Max Prices</strong> are managed on the <a href="/Settings">Settings</a> page for each Fuel Type.
+        </p>
+    </section>
+
+    <section id="WarningIndicators">
+        <h4>Warning Indicators</h4>
+
+        <p>
+            When entering a <a href="#BulkOverride">Bulk Override</a> the UI will warning you if you are entering a price change
+            which it outside a certain range. You are still free to make the price change.
+        </p>
+
+        <p class="tip">
+            You can review and manage the Warning Indicator limits in the <a href="/Settings">Settings</a> page.
+        </p>
+    </section>
+</div>

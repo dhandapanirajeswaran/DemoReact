@@ -1,0 +1,93 @@
+﻿<div class="help-page">
+    <section>
+        <h3>Glossary of terms</h3>
+
+        <p>Here is a list of the commonly used terms within the Petrol Pricing tool</p>
+
+        <dl class="glossary-list">
+
+            <dt id="BulkOverride">Bulk Or Mass Override</dt>
+            <dd>
+                A <strong>Bulk</strong> or <strong>Mass</strong> Override is when multiple petrol sites have one of the <a href="#FuelTypes">Fuel Types</a> prices set.
+                (see the <a href="/Sites/Prices">Site Pricing</a> page)
+            </dd>
+
+            <dt id="Competitor">Competitor</dt>
+            <dd>
+                A competitor is either a Saninsburys or competitor (such as ASDA, TESCO or an independant petrol retailer) site. &mdash;
+                Competitor are searched based on <a href="#DriveTime">Drive Time</a> distance from each individual Sainsburys Fuel site.
+            </dd>
+
+            <dt id="DecimalRounding">Decimal Rounding</dt>
+            <dd>
+                This is when the last digit of a <a href="#ModalPrice">Modal Price</a> is replaced with a different digit.
+                For example you may wish to change all prices to end with <code>.9</code> &mdash;
+                This can be done on the <a href="#Settings">Settings page</a>
+            </dd>
+
+            <dt id="DriveTime">Drive Time</dt>
+            <dd>
+                This is the amount of time it takes to reach a <a href="#Competitor">Competitor</a> fuel site.
+                When calculating prices the <strong>Drive Time</strong> is taken into consideration and a <a href="#DriveTimeMarkup">Drive Time Markup</a> is added to the base Fuel price.
+            </dd>
+
+            <dt id="DriveTimeMarkup">Drive Time Markup</dt>
+            <dd>
+                This is a <a href="#Markup">Markup</a> added to the base Fuel price based on the amount of <a href="#DriveTime">DriveTime</a> &mdash;
+                The markup values are managed on the <a href="/Settings/DriveTime">Drive Time markup</a> settings page.
+            </dd>
+
+            <dt id="FuelTypes">Fuel Types</dt>
+            <dd>The Petrol Pricing tool supported 3 fuel Types &mdash; Unleaded, Diesel and Super-Unleaded</dd>
+
+            <dt id="FuelMarkup">Fuel Markup</dt>
+            <dd>
+                This is an additional cost (markup) applied to the base price of a Fuel<br />
+                (E.g. Super-Unleaded could be +5.0p more expensive than Unleaded)
+            </dd>
+
+            <dt id="Grocer">Grocer</dt>
+            <dd>A <strong>Grocer</strong> is a large scale (large grocing) Competitor Brand (such as ASDA or TESCO)</dd>
+
+            <dt id="ManualOverride">Manual Override</dt>
+            <dd>A <strong>Manual Override</strong> is the same as a <a href="#Override">Override</a></dd>
+
+            <dt id="ModalPrice">Modal Price</dt>
+            <dd>This is the actual price multipled by 10.<br />E.g. <code>123.4</code> will be stored as the <strong>Modal price</strong> of <code>1234</code></dd>
+
+            <dt id="NearbyGrocer">Nearby Grocer</dt>
+            <dd>A <strong>Nearby Grocer</strong> is a <a href="#Grocer">Grocer</a> within a small <a href="#DriveTime">Drive Time</a> (such as 10 minutes)</dd>
+
+            <dt id="PriceVariance">Price Variance</dt>
+            <dd>This is a threshold value used when deciding whether it is economical to send a fuel price change out to a site, or, to <a href="PriceSnapback">Price Snapback</a> to the <a href="#Today">Today Price</a></dd>
+
+            <dt id="PriceFreeze">Price Freeze</dt>
+            <dd>
+                When a Price Freeze happens we <strong>cannot</strong> for legal reasons increase our fuel prices for a period of time (E.g. 7 days). &mdash; However, we can lower the prices of our fuels.
+                Price Freeze Events can be managed on the <a href="/Settings/PriceFreeze">Price Freeze Event</a> page
+            </dd>
+
+            <dt id="PriceSnapback">Price Snapback</dt>
+            <dd>This is when a <a href="#Suggested">Suggested Price</a> is rejected and the <a href="#Today">Today Price</a> is used.</dd>
+
+            <dt id="Override">Override</dt>
+            <dd>An <strong>Override</strong> is a way for a user to ignore (or Override) the <a href="#Suggested">Suggested Price</a> and specify a different price</dd>
+
+            <dt id="SuperUnleaded">Super-Unleaded</dt>
+            <dd>
+                The <strong>Super-Unleaded</strong> fuel price is often based on the price of <strong>Unleaded</strong> plus a <a href="#FuelMarkup">Fuel Markup</a> cost.<br />
+                The Super-Unleaded Markup can found on the <a href="/Settings">Settings page</a>
+            </dd>
+
+            <dt id="Today">Today</dt>
+            <dd>This means the <strong>Viewing Date</strong> on the main pricing page</dd>
+
+            <dt id="Tomorrow">Tomorrow</dt>
+            <dd>
+                This is the <a href="#Suggested">Suggested Price</a> or <a href="#Override">Override Price</a> for <strong>Tomorrow</strong><br />
+                <br />
+                These are the prices which will be sent via email to the individual <strong>Sainsburys</strong> Petrol sites.
+            </dd>
+        </dl>
+    </section>
+</div>

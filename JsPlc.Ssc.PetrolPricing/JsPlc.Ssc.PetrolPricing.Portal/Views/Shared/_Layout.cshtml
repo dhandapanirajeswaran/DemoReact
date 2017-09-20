@@ -122,8 +122,8 @@
     @RenderSection("scripts", required: false)
 
     <script type="text/javascript">
-        require(['layout', 'buildDetector'],
-            function (layout, buildDetector) {
+        require(['layout', 'buildDetector', 'Help'],
+            function (layout, buildDetector, help) {
                 layout.init();
                 buildDetector.init('@(correctedBuildDateTime.ToString("yyyy-MM-dd a\\t HH:mm:ss"))');
             }

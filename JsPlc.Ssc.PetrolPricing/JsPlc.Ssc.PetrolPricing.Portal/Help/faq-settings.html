@@ -1,0 +1,173 @@
+﻿<div class="help-page">
+
+    <h3>Settings</h3>
+
+    <dl class="topic-list">
+        <dt>Frequently Asked Questions</dt>
+        <dd><a href="#SiteEmailSettings">Site Email Settings</a></dd>
+        <dd><a href="#CommonSystemSettings">Common Settings</a></dd>
+        <dd><a href="#PriceOverridesLimits">Price Overrides limits and warnings</a></dd>
+        <dd><a href="#DriveTime">Drive Time Markup</a></dd>
+        <dd><a href="#BrandsGrocers">Brands &amp; Grocers</a></dd>
+        <dd><a href="#EmailSchedule">Email Schedule</a></dd>
+        <dd><a href="#PriceFreezeEvents">Price Freeze Events</a></dd>
+    </dl>
+
+    <section id="SiteEmailSettings">
+        <h4>Site Email Settings</h4>
+        <p>
+            This controls if the <strong>Testing Email Address</strong> or the <strong class="text-danger">LIVE</strong>
+            Site Email Addresses will be used when sending out Price Changes to the Sainsburuys fuel sites.
+        </p>
+    </section>
+
+    <section id="CommonSystemSettings">
+        <h4>Common System Settings</h4>
+        <p>
+            The <strong>Common System Settings</strong> section has the following settings
+        </p>
+
+        <dl class="two-column">
+            <dt>Nearby Grocer Drive Time</dt>
+            <dd>
+                The number of minutes used to find Nearby Grocers
+            </dd>
+            <dt>Price Change Variance</dt>
+            <dd>
+                The +/- threshold used to detect small price changes. If the price change is within or equal to the
+                Price Change Variance then the price will be <strong>snapped back</strong> to Today price.
+            </dd>
+            <dt>Decimal Rounding</dt>
+            <dd>
+                This menu specifics if the number after the decimal point in a price should be replaced and with what
+                the number digit should be.
+            </dd>
+            <dt>Super-Unleaded Markup</dt>
+            <dd>
+                This value is the number of pence that will be added to the <strong>Unleaded</strong> Price to calculate
+                the <strong>Super-Unleaded</strong> price. Normally this is 5.0 which means Super-Unleaded is +5.0p more expensive than Unleaded.
+            </dd>
+            <dt>Show Unload Date Picker</dt>
+            <dd>
+                This enables/disables whether the Date Picker should appear for all the 4 <a href="help/faq-file-uploads">File Upload types</a>.<br />
+                This is useful when uploading historical data during <a href="help/faq-setting-up">System Setup</a>
+            </dd>
+            <dt>Maximum Competitor Drive Time</dt>
+            <dd>
+                This is the maximum number of minutes (drive time range) when searching for the cheapest Competitor price.
+            </dd>
+        </dl>
+    </section>
+
+    <section id="PriceOverridesLimits">
+        <h4>Price Overrides limits and warnings</h4>
+        <p>
+            These numbers defined the <strong>Absolute Min/Max</strong> Price limits and the <strong>Warning Indicator</strong> limits
+            for each of the fuel types.
+        </p>
+
+        <p>
+            The <strong>Absolute Min/Max</strong> prevent the user from entering an Override price below the <strong>Min</strong>
+            or higher than the <strong>Max</strong> limit.
+        </p>
+
+        <p>
+            The <strong>Warning Indicator</strong> limits are prompts to warning, but not prevent, the user from making large
+            price changes. (E.g. a price change less than <code>-5.0p</code> or higher than <code>+5.0p</code>)
+        </p>
+    </section>
+
+    <section id="DriveTime">
+        <h4>Drive Time Markup</h4>
+        <p>
+            For each of the 3 Fuel Types (Unleaded, Diesel and Super-Unleaded) you can define the <strong>Drive Time markup</strong>
+            based on the drive time to a Competitor site.
+        </p>
+
+        <p>
+            You can manage the <a href="/Settings/DriveTime">Drive Time Mark</a>.
+        </p>
+
+        <dl class="two-column">
+            <dt>Removing</dt>
+            <dd>
+                To remove an existing Drive Time Markup click on the <button type="button" class="btn btn-danger btn-xs"><i class="fa fa-times"></i></button> button.
+            </dd>
+
+            <dt>Editing</dt>
+            <dd>
+                To edit an existing Drive Time Markup click on the row itself and then change the <strong>Drive Time</strong> and <strong>Markup</strong> values.
+                Once finished press the <button type="button" class="btn btn-success btn-xs"><i class="fa fa-check"></i></button> button.
+            </dd>
+            <dt>Adding</dt>
+            <dd>
+                To add a new Drive Time Markup enter values into the <strong>Drive Time</strong> and <strong>Markup</strong> fields
+                and then click the <button type="button" class="btn btn-success btn-xs"><i class="fa fa-check"></i></button> button.
+            </dd>
+        </dl>
+    </section>
+
+    <section id="BrandsGrocers">
+        <h4>Brands &amp; Grocers</h4>
+        <p>
+            From the <a href="/Settings/Brands">Brands &amp; Grocers</a> page you can manage the <strong>Excluded Brands</strong> and <strong>Grocers</strong>
+        </p>
+
+        <p>
+            A <strong>Exclude Brand</strong> will prevent that Brand from being used when searching for the cheapest Competitor.
+        </p>
+
+        <p>
+            A <strong>Grocer</strong> is our main (highest grocing) Competitors and can include ourselves.
+            (e.g. ASDA, Morrisons,Tesco and Sainsburys)
+        </p>
+
+    </section>
+
+    <section id="EmailSchedule">
+        <h4>Email Schedule</h4>
+        <p>
+            The <a href="/Settings/Schedule">Email Schedule</a> page allows you to change the time of the scheduled email report,
+            view the recent <strong>Schedule Event Log</strong> entries, clear down the log or disable the scheduled email.
+        </p>
+
+        <p>
+            The <strong>Scheduled Item</strong> currently will send out the <strong>Daily Price Email</strong> report to the
+            specified recipient in the Email Address.
+        </p>
+
+        <p class="tip">
+            Once you <strong>Edit</strong> the Schedule Item and press the <button type="button" class="btn btn-success btn-sm"><i class="fa fa-check"></i> Update</button> button the <strong>Scheduled For</strong> column will display <code>Today at HH:MM</code>. This means the email has <strong>not</strong> been sent out today.
+        </p>
+
+        <p class="tip">
+            Clicking on the <button type="button" class="btn btn-primary"><i class="fa fa-location-arrow"></i> Run Schedule</button> will send out any pending (Scheduled For) emails for <strong>today</strong>. The Scheduled For column will
+            then be updated to show <code>Tomorrow at HH:MM</code>.
+        </p>
+    </section>
+
+    <section id="PriceFreezeEvents">
+        <h4>Price Freeze Events</h4>
+        <p>
+            On the <a href="/Settings/PriceFreeze">Price Freeze Events</a> page you can manage a number of Price Freeze Events.
+        </p>
+
+        <dl class="two-column">
+            <dt>Inactive Events</dt>
+            <dd>
+                These are Price Freeze Events which will <strong>not</strong> be used for their date range.
+            </dd>
+
+            <dt>Expired Events</dt>
+            <dd>
+                These are Price Freeze Events whose end date is in the past.
+            </dd>
+
+            <dt>Future Events</dt>
+            <dd>
+                These are Price Freeze Events whose start date is in the future.
+            </dd>
+        </dl>
+
+    </section>
+</div> 

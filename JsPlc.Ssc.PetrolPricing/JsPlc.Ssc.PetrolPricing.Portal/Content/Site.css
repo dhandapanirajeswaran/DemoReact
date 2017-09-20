@@ -307,10 +307,18 @@ textarea {
     margin-bottom: 0;
 }
 
-
-
-
-
+#navHelpButton {
+    position: fixed;
+    top: 0.75em;
+    box-shadow: 1px 2px 8px #242;
+    border: 2px solid #fff;
+    border-radius: 50%;
+    letter-spacing: 1px;
+    font-variant: small-caps;
+    text-transform: uppercase;
+    width: 4em;
+    height: 4em;
+}
 
 .link-footer {
     color: #d8d2d2;
@@ -519,6 +527,10 @@ table.fixed-header>tbody {
 .hide {display: none;}
 .hide-first-load {
     display: none;
+}
+
+#TopNav {
+    margin-right: 4em;
 }
 
 #TopNav>li {
@@ -996,4 +1008,184 @@ input[type=email].mono-font {
 }
 .alert.alert-freeze .btn {
     text-shadow: none;
+}
+
+/* help panel */
+.help-window {
+    position: fixed;
+    top: -4px;
+    left: 1em;
+    width: 700px;
+    margin: 0;
+    padding: 0;
+    background-color: #fff;
+    color: #000;
+    border: 4px solid #4cae4c;
+    box-shadow: 2px 4px 12px #000;
+    z-index: 3000;
+}
+
+.help-window .help-nav,
+.help-window .help-footer {
+    background: #333;
+    color: #fff;
+    border-bottom: 2px solid #999;
+    padding: 0.25em 1em;
+    min-height: 2em;
+}
+
+.help-window .help-page {
+    font-size: 110%;
+    padding: 1em;
+    overflow: auto;
+    max-height: 500px;
+    position: relative;
+}
+
+.help-window .help-page h3 {
+    border-left: 4px solid #337ab7;
+    background-color: #eee;
+    color: #999;
+    padding: 0.25em;
+}
+
+.help-window .help-page h4 {
+    color: #337ab7;
+    border-left: 4px solid #eee;
+    padding: 0.25em 0.25em 0.25em 0.5em;
+}
+
+.help-window a[href^='#']::before {
+    content: "*";
+}
+
+.help-window a[href^='#'],
+.help-window a[href^='help'] {
+    color: #4cae4c;
+    text-decoration: underline;
+    margin-left: 1em;
+}
+
+.help-window a[href^='/']::before,
+.help-window a[href^='help']::before {
+    content: "?";
+    font-size: 60%;
+    text-align: center;
+    width: 1.5em;
+    position: absolute;
+    background-color: #4cae4c;
+    color: #fff;
+    border-radius: 50%;
+    margin-left: -1.6em;
+    margin-top: 6px;
+}
+
+.help-window a[href^='/'] {
+    content: ">";
+    color: orange;
+    border-bottom: 3px double orange;
+    margin-left: 1em;
+}
+
+.help-window a[href^='/']::before {
+    content: "GO";
+    background-color: orange;
+    width: 1.75em;
+    font-weight: normal;
+    margin-left: -1.75em;
+}
+
+.help-window .help-page section {
+    margin-top: 2em;
+    padding-bottom: 2em;
+    border-bottom: 1px dashed #999;
+}
+
+    .help-window .help-page .tip {
+        border: 1px dashed #999;
+        border-radius: 16px;
+        padding: 0.25em 1em 0.25em 3em;
+        font-style: italic;
+    }
+
+.help-window .help-page .tip::before {
+    content: "Tip";
+    position: absolute;
+    margin-left: -2em;
+    font-size: 110%;
+    font-weight: bold;
+    color: #999;
+}
+
+    .help-window .help-page .note {
+        border: 1px dashed red;
+        background-color: #ffc;
+        color: #666;
+        border-radius: 16px 0;
+        padding: 0.25em 1em 0.25em 3.5em;
+        font-style: italic;
+    }
+
+.help-window .help-page .note::before {
+    content: "Note!";
+    position: absolute;
+    margin-left: -2.75em;
+    font-size: 110%;
+    font-weight: bold;
+    color: red;
+}
+
+
+.help-window .help-page dd,
+.help-window .help-page li {
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+}
+
+.help-window .help-page .glossary-list > dt {
+    font-size: 110%;
+    color: #337ab7;
+    margin-top: 1em;
+}
+.help-window .help-page .glossary-list > dt:before,
+.help-window .help-page .glossary-list > dt:after {
+    content: '"';
+}
+
+
+.help-window .help-page .glossary-list > dd {
+    margin-left: 2em;
+}
+
+.help-window .help-page .topic-list {
+    margin: 0.5em 1em;
+    border-left: 24px solid #eee;
+    min-height: 6em;
+}
+
+.help-window .help-page .topic-list::before {
+    content: "Topic List";
+    position: absolute;
+    font-weight: bold;
+    font-size: 110%;
+    font-variant: small-caps;
+    text-transform: lowercase;
+    color: #999;
+    -webkit-transform-origin: 0 0;
+    -webkit-transform: rotate(90deg) scale(-1, -1) translate(0em, -1.75em);
+    margin-left: 4px;
+    margin-top: 5em;
+    letter-spacing: 2px;
+}
+
+.help-window .help-page .two-column  {
+    margin-left: 1em;
+}
+
+    .help-window .help-page .two-column > dt {
+        color: #337ab7;
+    }
+
+.help-window .help-page .two-column > dd {
+    margin-left: 2em;
 }

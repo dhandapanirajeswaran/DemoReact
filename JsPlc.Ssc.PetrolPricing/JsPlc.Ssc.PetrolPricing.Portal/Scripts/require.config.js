@@ -58,6 +58,7 @@
             "PriceReasons": "App/PriceReasons",
             "PriceFreezeEvents": "App/PriceFreezeEvents",
             "DateUtils": "App/DateUtils",
+            "Help": "App/Help",
 
             // popups
             "SiteEmailPopup" : "App/Popups/SiteEmailPopup",
