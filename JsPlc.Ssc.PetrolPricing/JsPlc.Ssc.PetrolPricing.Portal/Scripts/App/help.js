@@ -189,6 +189,7 @@
         function linkClick(ev) {
             var link = $(this),
                 href = link.attr('href'),
+                url,
                 ele;
 
             ev.preventDefault();
@@ -199,7 +200,8 @@
             else if (/^help/i.test(href)) {
                 show(href);
             } else {
-                window.location = common.getRootSiteFolder() + href;
+                url = window.location.origin + common.getRootSiteFolder() + href.replace(/^\//, '');
+                window.location = url;
             }
         };
 
