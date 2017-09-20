@@ -220,7 +220,7 @@
                     redrawStepLabels();
                 }
 
-                if (filenameDate && options.datePicker) {
+                if (filenameDate && (options.datePicker || uploadtype == 1)) {
                     if (!$('#chkShowDatePicker').is(':checked'))
                         $('#chkShowDatePicker').trigger('click');
                     datePicker.val(filenameDate);
