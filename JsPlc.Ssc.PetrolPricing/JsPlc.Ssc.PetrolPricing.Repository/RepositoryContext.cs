@@ -759,10 +759,10 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             DapperHelper.Execute(this, sprocName, parameters, disableDapperLog: true);
         }
 
-        internal string ExportSettings()
+        internal ExportSettingsViewModel ExportSettings()
         {
             const string sprocName = "spExportSettings";
-            return DapperHelper.QueryFirst<string>(this, sprocName, null);
+            return DapperHelper.QueryFirstOrDefault<ExportSettingsViewModel>(this, sprocName, null);
         }
 
         internal void ImportSettings(ImportSettingsPageViewModel model)

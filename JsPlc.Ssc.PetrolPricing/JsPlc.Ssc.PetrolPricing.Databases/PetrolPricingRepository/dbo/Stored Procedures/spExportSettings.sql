@@ -60,14 +60,21 @@ BEGIN
 		FOR XML RAW('PriceFreezeEvent'), ROOT('PriceFreezeEvents')
 	)
 
-	-- Resultset #1
-	SELECT
-		@CommonSystemSettingsXml ,
-		@DriveTimeMarkupXml,
-		@BrandsXml,
-		@ExcludedBrandsXml, 
-		@GrocersXml,
-		@PriceFreezeEventsXml
-		FOR XML RAW('Settings'), ROOT('PetrolPricing')
-	RETURN 0
+
+	DECLARE @SettingsXml XML 
+
+	SELECT @SettingsXml = (
+		SELECT
+			@CommonSystemSettingsXml ,
+			@DriveTimeMarkupXml,
+			@BrandsXml,
+			@ExcludedBrandsXml, 
+			@GrocersXml,
+			@PriceFreezeEventsXml
+			FOR XML RAW('Settings'), ROOT('PetrolPricing')
+			)
+
+	-- resultset #1
+	SELECT CONVERT(NVARCHAR(MAX), @SettingsXml) [SettingsXml]
+
 END

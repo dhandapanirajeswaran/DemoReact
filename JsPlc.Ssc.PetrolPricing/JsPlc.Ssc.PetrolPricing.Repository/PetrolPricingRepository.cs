@@ -4254,7 +4254,8 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
 
         public string ExportSettings()
         {
-            return _context.ExportSettings();
+            var model = _context.ExportSettings();
+            return model.SettingsXml;
         }
 
         public void ImportSettings(ImportSettingsPageViewModel model)

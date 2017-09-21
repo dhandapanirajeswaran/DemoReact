@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
@@ -185,12 +186,11 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 
         [System.Web.Mvc.HttpGet]
         [AuthoriseSystemSettings(Permissions = SystemSettingsUserPermissions.View | SystemSettingsUserPermissions.Edit)]
-        public ActionResult ExportSettings()
+        public FileResult ExportSettings()
         {
             var settingsXml = _serviceFacade.ExportSettings();
             var filename = "PetrolPricing-SystemSettings.xml";
-            var fileBytes = System.Text.Encoding.ASCII.GetBytes(settingsXml);
-            return File(fileBytes, System.Net.Mime.MediaTypeNames.Application.Octet, filename);
+            return File(Encoding.UTF8.GetBytes(settingsXml), "application/xml", filename);
         }
 
         [System.Web.Mvc.HttpGet]

@@ -215,6 +215,7 @@
     <Compile Include="ViewModels\SystemSettings\DriveTimeFuelSettingsViewModel.cs" />
     <Compile Include="ViewModels\SystemSettings\DriveTimeMarkupFuelViewModel.cs" />
     <Compile Include="ViewModels\SystemSettings\DriveTimeMarkupViewModel.cs" />
+    <Compile Include="ViewModels\SystemSettings\ExportSettingsViewModel.cs" />
     <Compile Include="ViewModels\SystemSettings\ImportSettingsPageViewModel.cs" />
     <Compile Include="ViewModels\SystemSettings\ImportSettingsViewModel.cs" />
     <Compile Include="ViewModels\SystemSettings\PriceFreezeEventViewModel.cs" />
