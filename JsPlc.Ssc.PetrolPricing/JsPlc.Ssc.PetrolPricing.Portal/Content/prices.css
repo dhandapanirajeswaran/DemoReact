@@ -1383,12 +1383,13 @@ tr.site-row.row-override-exceeds-warning-limits td.outside-prices-warning-limits
 .excluded-brands-status.status-saved::before,
 .excluded-brands-status.status-saving::before,
 .excluded-brands-status.status-unsaved::before,
-.excluded-brands-status.status-error::before {
+.excluded-brands-status.status-error::before,
+.excluded-brands-status.status-warning::before {
     content: "";
     position: absolute;
     border-width: 0.75em;
     border-style: solid;
-    margin-left: -2.45em;
+    margin-left: -2.44em;
 }
 
 .status-saved::before {
@@ -1422,6 +1423,16 @@ tr.site-row.row-override-exceeds-warning-limits td.outside-prices-warning-limits
     background-color: #d9534f;
     color: #fff;
 }
+
+.status-warning::before {
+    border-right-color: #000;
+}
+
+.excluded-brands-status.status-warning {
+    background-color: #000;
+    color: #fff;
+}
+
 
 
 /* price change bar chart */
