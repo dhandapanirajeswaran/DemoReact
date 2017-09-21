@@ -26,7 +26,7 @@
         </h1>
     </div>
     <div class="col-md-1 newline">
-        <button type="button" id="btnImportSettings" class="btn btn-primary" data-infotip=""><i class="fa fa-upload"></i> Import</button>
+        <a href="@Url.Action("ImportSettings", "Settings")" class="btn btn-primary" data-infotip="Import the [b]Settings[/b]"><i class="fa fa-upload"></i> Import</a>
     </div>
     <div class="col-md-1 newline">
         <a  id="btnExportSettings" class="btn btn-primary" href="@Url.Action("ExportSettings", "Settings")" data-infotip="Export all the [b]Settings[/b]"><i class="fa fa-download"></i> Export</a>
@@ -398,14 +398,9 @@
                     });
                     window.location = "ExportSettings";
                 };
-                
-                function importSettingsClick() {
-                    alert('Coming soon...');
-                };
 
                 function bindEvents() {
                     $('#btnExportSettings').off().click(exportSettingsClick);
-                    $('#btnImportSettings').off().click(importSettingsClick);
                 };
 
                 function docReady() {

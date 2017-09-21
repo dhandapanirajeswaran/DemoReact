@@ -1557,11 +1557,20 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             return result;
         }
 
-        public void ImportSettings(string settingsXml)
+        public StatusViewModel ImportSettings(ImportSettingsPageViewModel model)
         {
+            if (String.IsNullOrEmpty(model.SettingsXml))
+            {
+                return new StatusViewModel()
+                {
+                    ErrorMessage = "No Xml Settings file!"
+                };
+            }
+
             var apiUrl = String.Format("api/ImportSettings");
-            var response = _client.Value.PostAsync(apiUrl, settingsXml, new JsonMediaTypeFormatter()).Result;
-            var result = response.Content.ReadAsAsync<int>().Result;
+            var response = _client.Value.PostAsync(apiUrl, model, new JsonMediaTypeFormatter()).Result;
+            var result = response.Content.ReadAsAsync<StatusViewModel>().Result;
+            return result;
         }
 
         #region private methods

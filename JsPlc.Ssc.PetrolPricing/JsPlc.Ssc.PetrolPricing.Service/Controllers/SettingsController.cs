@@ -284,12 +284,12 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
 
         [HttpPost]
         [Route("api/ImportSettings")]
-        public async Task<IHttpActionResult> ImportSettings([FromBody] string settingsXml)
+        public async Task<IHttpActionResult> ImportSettings([FromBody] ImportSettingsPageViewModel model)
         {
             try
             {
-                _systemSettingsService.ImportSettings(settingsXml);
-                return Ok(true);
+                var result = _systemSettingsService.ImportSettings(model);
+                return Ok(result);
             }
             catch (Exception ex)
             {

@@ -765,12 +765,17 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             return DapperHelper.QueryFirst<string>(this, sprocName, null);
         }
 
-        internal void ImportSettings(string settingsXml)
+        internal void ImportSettings(ImportSettingsPageViewModel model)
         {
-            const string sprocName = "spImportSettings";
+            const string sprocName = "spImportSystemSettings";
             var parameters = new
             {
-                @SettingsXml = settingsXml
+                @SettingsXml = model.SettingsXml,
+                @ImportCommonSettings = model.ImportCommonSettings,
+                @ImportDriveTimeMarkup = model.ImportDriveTimeMarkup,
+                @ImportGrocers = model.ImportGrocers,
+                @ImportExcludedBrands = model.ImportExcludedBrands,
+                @ImportPriceFreezeEvents = model.ImportPriceFreezeEvents
             };
             DapperHelper.Execute(this, sprocName, parameters);
         }

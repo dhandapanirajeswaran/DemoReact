@@ -163,16 +163,20 @@ namespace JsPlc.Ssc.PetrolPricing.Business.Services
             }
         }
 
-        public void ImportSettings(string settingsXml)
+        public StatusViewModel ImportSettings(ImportSettingsPageViewModel model)
         {
+            var result = new StatusViewModel();
             try
             {
-                _repository.ImportSettings(settingsXml);
+                _repository.ImportSettings(model);
+                result.SuccessMessage = "Imported Settings";
             }
             catch (Exception ex)
             {
                 _logger.Error(ex);
+                result.ErrorMessage = "Unable to Import Settings";
             }
+            return result;
         }
 
         #region private methods

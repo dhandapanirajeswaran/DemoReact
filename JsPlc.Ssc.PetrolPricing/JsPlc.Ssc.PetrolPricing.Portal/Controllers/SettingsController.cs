@@ -9,6 +9,7 @@ using JsPlc.Ssc.PetrolPricing.Portal.Controllers.BaseClasses;
 using JsPlc.Ssc.PetrolPricing.Portal.Facade;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
@@ -188,12 +189,57 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 
         [System.Web.Mvc.HttpGet]
         [AuthoriseSystemSettings(Permissions = SystemSettingsUserPermissions.View | SystemSettingsUserPermissions.Edit)]
-        public ActionResult ImportSettings()
+        public ActionResult ImportSettings(string error = "", string success = "")
         {
-            // TODO - file upload and error handling
-            var settingsXml = "todo";
-            _serviceFacade.ImportSettings(settingsXml);
-            var model = new object();
+            var model = new ImportSettingsPageViewModel()
+            {
+                ImportCommonSettings = true,
+                ImportDriveTimeMarkup = true,
+                ImportGrocers = true,
+                ImportExcludedBrands = true,
+                ImportPriceFreezeEvents = true,
+                Status = new StatusViewModel()
+                {
+                    SuccessMessage = success,
+                    ErrorMessage = error
+                }
+            };
+            return View(model);
+        }
+
+        [System.Web.Mvc.HttpPost]
+        [AuthoriseSystemSettings(Permissions = SystemSettingsUserPermissions.View | SystemSettingsUserPermissions.Edit)]
+        public ActionResult ImportSettings(HttpPostedFileBase file, ImportSettingsPageViewModel model)
+        {
+            try
+            {
+                if (file == null || file.ContentLength <= 0)
+                {
+                    var url = String.Format("ImportSettings?error={0}",
+                        HttpUtility.UrlEncode("No File uploaded.")
+                        );
+                    return new RedirectResult(url);
+                }
+
+                // convert File into XML string
+                var memoryStream = new MemoryStream();
+                file.InputStream.CopyTo(memoryStream);
+
+                memoryStream.Position = 0;
+                var streamReader = new StreamReader(memoryStream);
+                var xml = streamReader.ReadToEnd();
+
+                // attempt import
+                model.SettingsXml = xml;
+                model.Status = _serviceFacade.ImportSettings(model);
+                model.SettingsXml = "";
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex);
+                model.Status.ErrorMessage = "Unable to Import Settings";
+            }
+
             return View(model);
         }
     }

@@ -388,7 +388,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         PriceFreezeEventViewModel GetPriceFreezeEventForDate(DateTime date);
 
         String ExportSettings();
-        void ImportSettings(string xml);
+        void ImportSettings(ImportSettingsPageViewModel model);
 
         ScheduleEmailTemplate GetScheduleEmailTemplateForType(ScheduleEmailType scheduleEmailType);
     }

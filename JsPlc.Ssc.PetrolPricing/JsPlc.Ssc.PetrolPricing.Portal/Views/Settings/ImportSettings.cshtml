@@ -1,0 +1,205 @@
+﻿@model   JsPlc.Ssc.PetrolPricing.Models.ViewModels.SystemSettings.ImportSettingsPageViewModel
+@{
+    ViewBag.Title = "Import Settings";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var hasError = Model.Status.ErrorMessage != "";
+    var hasSuccess = Model.Status.SuccessMessage != "";
+}
+
+<style>
+    .step-number {
+        font-size: 200%;
+        color: #999;
+        background-color: #eee;
+        border-radius: 2em;
+        display: inline-block;
+        width: 3em;
+        line-height: 1.5em;
+        text-align: center;
+    }
+
+        .step-number:before {
+            content: 'Step';
+            font-size: 50%;
+            position: relative;
+            top: -0.25em;
+            left: -0.25em;
+        }
+</style>
+
+<h1><i class="fa fa-cogs"></i> Import Settings</h1>
+
+@if (hasError)
+{
+    <div class="alert alert-danger font125pc">
+        <i class="fa fa-warning"></i> Error: @(Model.Status.ErrorMessage)
+        <button type="button" class="btn btn-success pull-right" data-click="close-alerts" data-infotip="Close the [b]Error[/b] alert"><i class="fa fa-times"></i> Close</button>
+    </div>
+}
+@if (hasSuccess)
+{
+    <div class="alert alert-success font125pc">
+        <i class="fa fa-check"></i> Success: @(Model.Status.SuccessMessage)
+        <button type="button" class="btn btn-success pull-right" data-click="close-alerts" data-infotip="Close the [b]Success[/b] alert"><i class="fa fa-times"></i> Close</button>
+    </div>
+}
+
+<div id="divImportSettings" class="container @(hasSuccess || hasError ? " hide" : "")">
+    <form action="" method="post" enctype="multipart/form-data">
+        <div class="panel panel-warning">
+            <div class="panel-heading">
+                <h4><i class="fa fa-cogs"></i> Import Settings</h4>
+            </div>
+
+            <div class="panel-body">
+
+                <div class="row">
+                    <div class="col-md-2">
+                        <span class="step-number">1</span>
+                    </div>
+
+                    <div class="col-md-3">
+                        <span class="btn btn-success btn-file" id="FileButton">
+                            <i class="fa fa-file"></i>
+                            Select file...
+                            <input type="file" name="file" id="file" class="inputfile" accept=".xml" />
+                        </span>
+                    </div>
+
+                    <div class="col-md-7">
+                        <strong id="divPleaseSelect" class="text-danger"><i class="fa fa-arrow-left"></i> Please select a file</strong>
+                        <strong id="divSelected" class="text-success" style="display:none;"><i class="fa fa-check"></i> <span id="spnSelectedFile" class="font125pc"></span></strong>
+                    </div>
+                </div>
+
+                <hr />
+
+                <div id="divStep2" class="row hide">
+                    <div class="col-md-2">
+                        <span class="step-number">2</span>
+                    </div>
+
+                    <div class="col-md-10">
+                        <h3>Choose Items to Import</h3>
+                        <dl>
+                            <dd>
+                                <label>
+                                    <input type="checkbox" name="ImportCommonSettings" id="ImportCommonSettings" value="true" @(Model.ImportCommonSettings ? " checked='checked'" : "") />
+                                    Import Common Settings
+                                </label>
+                            </dd>
+
+                            <dd>
+                                <label>
+                                    <input type="checkbox" name="ImportDriveTimeMarkup" id="ImportDriveTimeMarkup" value="true" @(Model.ImportDriveTimeMarkup ? " checked='checked'" : "") />
+                                    Import Drive Time Markup
+                                </label>
+                            </dd>
+
+                            <dd>
+                                <label>
+                                    <input type="checkbox" name="ImportGrocers" id="ImportGrocers" value="true" @(Model.ImportGrocers ? " checked='checked'" : "") />
+                                    Import Grocers
+                                </label>
+                            </dd>
+
+                            <dd>
+                                <label>
+                                    <input type="checkbox" name="ImportExcludedBrands" id="ImportExcludedBrands" value="true" @(Model.ImportExcludedBrands ? " checked='checked'" : "") />
+                                    Import Excluded Brands
+                                </label>
+                            </dd>
+
+                            <dd>
+                                <label>
+                                    <input type="checkbox" name="ImportPriceFreezeEvents" id="ImportPriceFreezeEvents" value="true" @(Model.ImportPriceFreezeEvents ? " checked='checked'" : "") />
+                                    Import Price Freeze Events
+                                </label>
+                            </dd>
+                        </dl>
+                    </div>
+                </div>
+
+
+                <div id="divStep3" class="row hide">
+                    <div class="col-md-2">
+                        <span class="step-number">3</span>
+                    </div>
+
+                    <div class="col-md-10">
+                        <button type="submit" id="UploadFileButton" class="btn btn-primary"><i class="fa fa-upload"></i> Import</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div class="row newline">
+    <div class="col-md-1">
+        <a class="btn btn-default" href="@Url.Action("Index", "Settings")"><i class="fa fa-backward"></i> Back to Settings</a>
+    </div>
+</div>
+
+<script>
+    require(["jquery", "busyloader", "notify", "infotips"],
+        function ($, busyloader, notify, infotips) {
+
+            "use strict";
+
+            function uploadButtonClick() {
+                busyloader.show({
+                    message: 'Importing Settings. Please wait...',
+                    showtime: 1000,
+                    dull: true
+                });
+            };
+
+            function fileChanged() {
+                var path = $('#file').val(),
+                    step2 = $('#divStep2'),
+                    step3 = $('#divStep3'),
+                    pleaseSelect = $('#divPleaseSelect'),
+                    selected = $('#divSelected'),
+                    spnSelectedFile = $('#spnSelectedFile'),
+                    alerts = $('.alert');
+
+                alerts.hide();
+
+                if (/\S/.test(path)) {
+                    step2.removeClass('hide');
+                    step3.removeClass('hide');
+                    spnSelectedFile.html(path.split('\\').pop());
+                    pleaseSelect.hide();
+                    selected.show();
+                }
+                else {
+                    step2.addClass('hide');
+                    step3.addClass('hide');
+                    pleaseSelect.show();
+                    selected.hide();
+                    filename.removeClass('text-success').addClass('text-danger').html('')
+                }
+            };
+
+            function closeAlerts() {
+                $('.alert').fadeOut(1000);
+                $('#divImportSettings').removeClass('hide').fadeIn(2000);
+            };
+
+            function bindEvents() {
+                $('#UploadFileButton').click(uploadButtonClick);
+                $('#file').on('change', fileChanged);
+                $('[data-click="close-alerts"]').click(closeAlerts);
+            };
+
+            function docReady() {
+                bindEvents();
+            }
+
+            $(docReady);
+        }
+    );
+</script>
+

@@ -4257,9 +4257,9 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
             return _context.ExportSettings();
         }
 
-        public void ImportSettings(string settingsXml)
+        public void ImportSettings(ImportSettingsPageViewModel model)
         {
-            _context.ImportSettings(settingsXml);
+            _context.ImportSettings(model);
         }
 
         public ScheduleEmailTemplate GetScheduleEmailTemplateForType(ScheduleEmailType scheduleEmailType)
