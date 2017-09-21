@@ -188,6 +188,8 @@
             </div>
 
         </div>
+
+
         <div class="panel-footer">
             <div class="col-md-6">
                 @if (Model.CalledFromSection == SiteSectionType.None)
@@ -205,14 +207,18 @@
             <div class="clearfix"></div>
         </div>
     </div>
-                                }
+
+    <br />
+        @Html.Action("NearbySites", "Sites", new { id = Model.Id })
+
+}
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
 
     <script>
-        require(["jquery", "busyloader", "chosen"],
-            function ($, busyloader) {
+        require(["jquery", "busyloader", "chosen", "infotips"],
+            function ($, busyloader, infotips) {
 
                 function submitSiteClick(ev) {
 

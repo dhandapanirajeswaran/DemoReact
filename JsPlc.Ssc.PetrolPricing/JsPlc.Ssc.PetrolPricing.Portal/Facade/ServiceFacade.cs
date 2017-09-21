@@ -1573,6 +1573,14 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             return result;
         }
 
+
+        public IEnumerable<NearbySiteViewModel> GetNearbyCompetitorSites(int siteId)
+        {
+            var apiUrl = String.Format("api/GetNearbyCompetitorSites/{0}", siteId);
+            var result = CallAndCatchAsyncGet<IEnumerable<NearbySiteViewModel>>("GetNearbyCompetitorSites", apiUrl);
+            return result;
+        }
+
         #region private methods
 
         private T CallAndCatchAsyncGet<T>(string methodName, string apiUrl)

@@ -251,6 +251,13 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             var model = _serviceFacade.GetSite(id);
             return View(model);
         }
+
+        public ActionResult NearbySites(int id)
+        {
+            var model = _serviceFacade.GetNearbyCompetitorSites(id);
+            return View(model);
+        }
+
         /// <summary>
         /// Works on List of SitePriceViewModel to build core page
         /// </summary>

@@ -161,6 +161,7 @@
     <Compile Include="ViewModels\NationalAverageReportFuelViewModel.cs" />
     <Compile Include="ViewModels\NationalAverageReportBrandViewModel.cs" />
     <Compile Include="ViewModels\NationalAverageReportContainerViewModel.cs" />
+    <Compile Include="ViewModels\NearbySiteViewModel.cs" />
     <Compile Include="ViewModels\OverridePricePostViewModel.cs" />
     <Compile Include="ViewModels\ComplianceReportContainerViewModel.cs" />
     <Compile Include="ViewModels\PPUserDetailsViewModel.cs" />
@@ -184,6 +185,7 @@
     <Compile Include="ViewModels\SelectItemViewModel.cs" />
     <Compile Include="ViewModels\SelfTest\DataSanityCheckSummaryViewModel.cs" />
     <Compile Include="ViewModels\SiteCompetitorPriceSummaryViewModel.cs" />
+    <Compile Include="ViewModels\SiteDetailsViewModel.cs" />
     <Compile Include="ViewModels\SiteEmailAddressViewModel.cs" />
     <Compile Include="ViewModels\SiteEmailsPageViewModel.cs" />
     <Compile Include="ViewModels\SiteNoteUpdateViewModel.cs" />

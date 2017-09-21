@@ -522,7 +522,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             const string sprocName = "spWinServiceAddEventLog";
             var parameters = new
             {
-                @WinServiceScheduleId =winServiceScheduleId,
+                @WinServiceScheduleId = winServiceScheduleId,
                 @WinServiceEventStatusId = (int)eventStatus,
                 @Message = message,
                 @Exception = exception
@@ -800,7 +800,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                 return;
 
             var allFuelPrices = multiReader.Read<LastSitePricesFuelPriceViewModel>();
-            foreach(var fuelprice in allFuelPrices)
+            foreach (var fuelprice in allFuelPrices)
             {
                 var site = model.Sites.FirstOrDefault(x => x.SiteId == fuelprice.SiteId);
                 if (site != null)
@@ -819,6 +819,16 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                 @ScheduleEmailType = scheduleEmailType
             };
             return DapperHelper.QueryFirst<ScheduleEmailTemplate>(this, sprocName, parameters);
+        }
+
+        internal IEnumerable<NearbySiteViewModel> GetNearbyCompetitorSites(int siteId)
+        {
+            const string sprocName = "spGetNearbySainsburysSites";
+            var parameters = new
+            {
+                @SiteId = siteId
+            };
+            return DapperHelper.QueryList<NearbySiteViewModel>(this, sprocName, parameters);
         }
     }
 }

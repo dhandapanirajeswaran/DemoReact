@@ -793,6 +793,23 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
             }
         }
 
+
+        [System.Web.Http.HttpGet]
+        [System.Web.Http.Route("api/GetNearbyCompetitorSites/{siteId}")]
+        public async Task<IHttpActionResult> GetNearbyCompetitorSites([FromUri] int siteId)
+        {
+            try
+            {
+                var result = _siteService.GetNearbyCompetitorSites(siteId);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex);
+                return new ExceptionResult(ex, this);
+            }
+        }
+    
         #region private methods
 
         private DateTime ParseDateTime(string datetime)

@@ -589,6 +589,8 @@
     <Content Include="Views\Settings\PriceFreeze.cshtml" />
     <Content Include="Views\PriceReports\LastSitePrices.cshtml" />
     <Content Include="Views\Settings\ImportSettings.cshtml" />
+    <Content Include="Views\Sites\_SiteDetails.cshtml" />
+    <Content Include="Views\Sites\NearbySites.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\uploads\" />

@@ -176,5 +176,10 @@ namespace JsPlc.Ssc.PetrolPricing.Business
             return _db.GetTodayPricesForCalcPrice(forDate, siteId);
         }
 
+        public IEnumerable<NearbySiteViewModel> GetNearbyCompetitorSites(int siteId)
+        {
+            return _db.GetNearbyCompetitorSites(siteId);
+        }
+
     }
 }

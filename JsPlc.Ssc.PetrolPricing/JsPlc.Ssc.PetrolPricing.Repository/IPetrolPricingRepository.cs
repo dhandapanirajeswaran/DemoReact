@@ -391,5 +391,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         void ImportSettings(ImportSettingsPageViewModel model);
 
         ScheduleEmailTemplate GetScheduleEmailTemplateForType(ScheduleEmailType scheduleEmailType);
+
+        IEnumerable<NearbySiteViewModel> GetNearbyCompetitorSites(int siteId);
     }
 }

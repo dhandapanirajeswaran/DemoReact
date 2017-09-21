@@ -1,179 +1,14 @@
-﻿@model JsPlc.Ssc.PetrolPricing.Models.SiteViewModel
-@using JsPlc.Ssc.PetrolPricing.Models.Enums
+﻿@model  JsPlc.Ssc.PetrolPricing.Models.SiteViewModel
+
 @{
     ViewBag.Title = "Site details";
 }
 <h1><i class="fa fa-gear"></i> Site details</h1>
-<div class="panel panel-default">
-    <div class="panel-body">
-        <div class="col-md-6">
-            <dl class="dl-horizontal">
-                <dt>
-                    @Html.DisplayNameFor(model => model.CatNo)
-                </dt>
 
-                <dd>
-                    @Html.DisplayFor(model => model.CatNo)
-                </dd>
+@Html.Partial("_SiteDetails", Model)
 
-                <dt>
-                    @Html.DisplayNameFor(model => model.Brand)
-                </dt>
+@Html.Action("NearbySites", "Sites", new { id = Model.Id })
 
-                <dd>
-                    @Html.DisplayFor(model => model.Brand)
-                </dd>
-
-                <dt>
-                    @Html.DisplayNameFor(model => model.SiteName)
-                </dt>
-
-                <dd>
-                    @Html.DisplayFor(model => model.SiteName)
-                </dd>
-
-                <dt>
-                    @Html.DisplayNameFor(model => model.Address)
-                </dt>
-
-                <dd>
-                    @Html.DisplayFor(model => model.Address)
-                </dd>
-
-                <dt>
-                    @Html.DisplayNameFor(model => model.Suburb)
-                </dt>
-
-                <dd>
-                    @Html.DisplayFor(model => model.Suburb)
-                </dd>
-
-                <dt>
-                    @Html.DisplayNameFor(model => model.Town)
-                </dt>
-
-                <dd>
-                    @Html.DisplayFor(model => model.Town)
-                </dd>
-
-                <dt>
-                    @Html.DisplayNameFor(model => model.PostCode)
-                </dt>
-
-                <dd>
-                    @Html.DisplayFor(model => model.PostCode)
-                </dd>
-
-                <dt>&nbsp;</dt>
-                <dd>&nbsp;</dd>
-
-                <dt>
-                    Price Match Strategy
-                </dt>
-                <dd>
-                    @if (Model.PriceMatchType == PriceMatchType.StandardPrice)
-                    {
-                        <span>Standard Price</span>
-                    }
-                    else if (Model.PriceMatchType == PriceMatchType.TrailPrice)
-                    {
-                        <span>Trail Price</span>
-
-                    }
-                    else if (Model.PriceMatchType == PriceMatchType.MatchCompetitorPrice)
-                    {
-                        <span>Match Competitor</span>
-                    }
-                </dd>
-
-            </dl>
-        </div>
-        <div class="col-md-6">
-            <dl class="dl-horizontal">
-                <dt>
-                    @Html.DisplayNameFor(model => model.Company)
-                </dt>
-
-                <dd>
-                    @Html.DisplayFor(model => model.Company)
-                </dd>
-
-                <dt>
-                    @Html.DisplayNameFor(model => model.Ownership)
-                </dt>
-
-                <dd>
-                    @Html.DisplayFor(model => model.Ownership)
-                </dd>
-
-                <dt>
-                    @Html.DisplayNameFor(model => model.StoreNo)
-                </dt>
-
-                <dd>
-                    @Html.DisplayFor(model => model.StoreNo)
-                </dd>
-
-                <dt>
-                    @Html.DisplayNameFor(model => model.PfsNo)
-                </dt>
-
-                <dd>
-                    @Html.DisplayFor(model => model.PfsNo)
-                </dd>
-
-                <dt>
-                    @Html.DisplayNameFor(model => model.IsSainsburysSite)
-                </dt>
-
-                <dd>
-                    @if (Model.IsSainsburysSite)
-                    {
-                    <span style="color: green"><i class="fa fa-check"></i>&nbsp;Yes</span> <text>&mdash;</text> <span style="color: orange;">@Model.Brand</span>
-                    }
-                    else
-                    {
-                    <span style="color: red;"><i class="fa fa-times"></i>&nbsp;No</span>                        <text>&mdash;</text>  <span style="color: grey;">@Model.Brand</span>
-                    }
-                </dd>
-
-                <dt>
-                    @Html.DisplayNameFor(model => model.IsActive)
-                </dt>
-
-                <dd>
-                    @if (Model.IsActive)
-                    {
-                    <span style="color: green"><i class="fa fa-check"></i>&nbsp;Yes</span>
-                    }
-                    else
-                    {
-                    <span style="color: red;"><i class="fa fa-times"></i>&nbsp;No</span>
-                    }
-                </dd>
-
-                <dt>
-                    @Html.DisplayNameFor(model => model.Emails)
-                </dt>
-
-                <dd>
-                    @if (Model.Emails == null || !Model.Emails.Any())
-                    {
-                        <span class="text-danger">&mdash; none &mdash;</span>
-                    }
-
-                    @foreach (var email in Model.Emails)
-                    {
-                    <a href="@("mailto:" + email.EmailAddress)">@email.EmailAddress</a>
-                    <br />
-                    }
-                </dd>
-            </dl>
-        </div>
-    </div>
-
-
-</div>
 <div class="panel-footer">
     <a class="btn btn-default" href="@Url.Action("Index", "Sites")"><i class="fa fa-backward"> Back to List</i></a>
 
@@ -182,4 +17,10 @@
         <a class="btn btn-primary pull-right" href="@Url.Action("Edit", "Sites", new {id = Model.Id})"><i class="fa fa-pencil"></i>&nbsp;Edit Site</a>
     }
 </div>
-</div>
+
+<script>
+    require(["infotips"],
+        function (infotips) {
+        });
+</script>
+
