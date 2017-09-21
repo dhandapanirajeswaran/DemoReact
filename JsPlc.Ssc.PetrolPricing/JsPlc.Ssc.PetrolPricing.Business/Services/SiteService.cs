@@ -108,11 +108,15 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 
         public bool RemoveExcludeBrand(string strBrandName)
         {
+            _db.MarkPriceCacheOutdatedForDay(DateTime.Now.Date);
+
             return _db.RemoveExcludeBrand(strBrandName);
         }
 
         public bool SaveExcludeBrands(List<String> listOfBrands)
         {
+            _db.MarkPriceCacheOutdatedForDay(DateTime.Now.Date);
+
             return _db.SaveExcludeBrands(listOfBrands);
         }
 

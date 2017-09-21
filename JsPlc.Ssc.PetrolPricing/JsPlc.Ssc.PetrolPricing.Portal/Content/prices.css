@@ -357,7 +357,7 @@ table.competitorTable > tbody > .competitor-row  {
     width: 3em;
     text-align: center;
     letter-spacing: 1px;
-    border: 1px solid #ccc;
+    border: 2px solid #000;
     border-radius: 4px;
     margin-right: 2px;
     background-color: #ffe;
