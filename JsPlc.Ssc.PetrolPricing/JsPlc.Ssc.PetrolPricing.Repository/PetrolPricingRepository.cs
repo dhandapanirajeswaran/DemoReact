@@ -4233,6 +4233,7 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
             {
                 case 0:
                     result.SuccessMessage = "Updated Price Freeze Event";
+                    MarkPriceCacheOutdatedForDay(DateTime.Now);
                     break;
                 case -1:
                     result.ErrorMessage = "End date cannot be before the start date";
