@@ -75,7 +75,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                 Const.TORQ,
                 Const.TOPAZ,
                 Const.THAMES,
-                Const.TEXACO,
+                Const.TOTAL,
                 Const.STAR,
                 Const.SPAR,
                 Const.SOLO,
@@ -2659,8 +2659,8 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
                     distinctBrands.Insert(5, Const.SHELL);
                     distinctBrands.Remove(Const.ESSO);
                     distinctBrands.Insert(6, Const.ESSO);
-                    distinctBrands.Remove(Const.TOTAL);
-                    distinctBrands.Insert(7, Const.TOTAL);
+                    distinctBrands.Remove(Const.TEXACO);
+                    distinctBrands.Insert(7, Const.TEXACO);
                     distinctBrands.Remove(Const.BP);
                     distinctBrands.Insert(8, Const.BP);
                 }
