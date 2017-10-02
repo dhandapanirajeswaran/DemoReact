@@ -239,7 +239,7 @@
                 row2 = [],
                 i,
                 barHeight,
-                maxBarHeight = 70,
+                maxBarHeight = 60,
                 obj,
                 css;
 
@@ -264,7 +264,7 @@
                 if (barHeight == 0 && obj.count != 0)
                     barHeight = 1;
 
-                row1.push('<td><div class="bar bar-' + css + '" style="border-bottom-width: ' + barHeight + 'px; padding-top: ' + (maxBarHeight - barHeight) + 'px">' + obj.count + '</div></td>');
+                row1.push('<td><div data-infotip="[b]' + obj.count + '[/b] with a change of [u]' + obj.delta + '[/u]" class="bar bar-' + css + '" style="border-bottom-width: ' + barHeight + 'px; padding-top: ' + (maxBarHeight - barHeight) + 'px">' + obj.count + '</div></td>');
                 row2.push('<td class="key key-' + css + '">' + (obj.delta < 0 ? '-' : '+') + Math.abs(obj.delta).toFixed(1) + '</td>');
             }
             html.push('<div class="price-change-bar-chart">');
