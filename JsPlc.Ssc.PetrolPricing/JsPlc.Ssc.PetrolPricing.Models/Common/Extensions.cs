@@ -210,6 +210,9 @@ namespace JsPlc.Ssc.PetrolPricing.Models.Common
         {
             var dt = new DataTable(tableName);
             dt.Columns.Add("Sites");
+            dt.Columns.Add("StoreNo");
+            dt.Columns.Add("PfsNo");
+            dt.Columns.Add("CatNo");
 
             // Setup Table Columns - Sites  Date1   Date2   Date3...
             if (reportContainer.PriceMovementReport.ReportRows.Count == 0 || !reportContainer.PriceMovementReport.ReportRows.First().DataItems.Any())
@@ -227,7 +230,11 @@ namespace JsPlc.Ssc.PetrolPricing.Models.Common
             {
                 DataRow dr = dt.NewRow();
                 dr[0] = siteRow.SiteName;
-                var i = 1;
+                dr[1] = siteRow.StoreNo.HasValue ? siteRow.StoreNo.Value.ToString() : "n/a";
+                dr[2] = siteRow.PfsNo.HasValue ? siteRow.PfsNo.Value.ToString() : "n/a";
+                dr[3] = siteRow.CatNo.HasValue ? siteRow.CatNo.Value.ToString() : "n/a";
+
+                var i = 4;
                 foreach (var dataItem in siteRow.DataItems)
                 {
                     var item = dr[i];

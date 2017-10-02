@@ -16,7 +16,7 @@
     var requestedToDate = Model != null ? @Model.ToDate.Value.Date.ToString("dd-MMM-yyyy") : null;
 
 
-    var reportWidth = Model != null ? (Model.ReportWidth * 102) + 250 + "px" : "auto";
+    var reportWidth = Model != null ? (Model.ReportWidth * 102) + 250 + 80 + 80 + 80 + "px" : "auto";
 
     var reportInformationViewModel = new JsPlc.Ssc.PetrolPricing.Models.ViewModels.ReportInformationViewModel();
     reportInformationViewModel.Introduction = "Tracks retail prices of individual sites over a specified period.";
@@ -188,6 +188,9 @@
                 <div id="tableDiv" style="width: @(reportWidth)" class="show-fuel-2">
                     <div class="row" style="font-weight:bold">
                         <div class="col-md-1 fixed-col-1" style="width:250px">Sites</div>
+                        <div class="col-md-1 fixed-col-1" style="width:80px">StoreNo</div>
+                        <div class="col-md-1 fixed-col-1" style="width:80px">PfsNo</div>
+                        <div class="col-md-1 fixed-col-1" style="width:80px">CatNo</div>
 
                         @if (Model.PriceMovementReport.ReportRows.Count == 0 || !Model.PriceMovementReport.ReportRows.First().DataItems.Any())
                         {
@@ -210,6 +213,16 @@
                                     <div class="col-md-1 fixed-col-1" style="width:250px">
                                         @siteRow.SiteName
                                     </div>
+                                    <div class="col-md-1 fixed-col-1 text-right" style="width:80px">
+                                        @siteRow.StoreNo
+                                    </div>
+                                    <div class="col-md-1 fixed-col-1 text-right" style="width:80px">
+                                        @siteRow.PfsNo
+                                    </div>
+                                    <div class="col-md-1 fixed-col-1 text-right" style="width:80px">
+                                        @siteRow.CatNo
+                                    </div>
+
                                     @if (!siteRow.DataItems.Any())
                                     {
                                         <div class="col-md-1 fixed-col-1" style="width:1100px">There is no data available</div>

@@ -52,6 +52,12 @@ namespace JsPlc.Ssc.PetrolPricing.Models.ViewModels
     {
         public int SiteId { get; set; }
         public String SiteName { get; set; }
+
+        public int? PfsNo { get; set; }
+        public int? StoreNo { get; set; }
+        public int? CatNo { get; set; }
+
+
         public List<PriceMovementReportDataItems> DataItems { get; set; }
 
         public PriceMovementReportRows()

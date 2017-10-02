@@ -632,7 +632,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
                         ws.Range(sitesCellRange).Style.NumberFormat.SetFormat("@");
                         ws.Range(Others_CellRange).Style.NumberFormat.SetFormat("0.00");
 
-                        for (var colIndex = 1; colIndex < dt.Columns.Count; colIndex += 3)
+                        for (var colIndex = 4; colIndex < dt.Columns.Count; colIndex += 3)
                         {
                             var firstRow = ws.Row(1);
                             var fuelAndDateString = firstRow.Cell(colIndex + 1).Value.ToString().Split('_');
@@ -654,7 +654,12 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
                         }
 
                         var secondRow = ws.Row(2);
-                        for (var colIndex=2; colIndex <= dt.Columns.Count; colIndex+=3)
+
+                        secondRow.Cell(2).Value = ""; // StoreNo
+                        secondRow.Cell(3).Value = ""; // PfsNo
+                        secondRow.Cell(4).Value = ""; // CatNo
+
+                        for (var colIndex = 5; colIndex <= dt.Columns.Count; colIndex += 3)
                         {
                             var unleaded = secondRow.Cell(colIndex);
                             var diesel = secondRow.Cell(colIndex + 1);

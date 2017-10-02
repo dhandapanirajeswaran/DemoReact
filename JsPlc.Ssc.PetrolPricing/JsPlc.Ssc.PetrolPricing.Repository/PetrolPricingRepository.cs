@@ -2841,6 +2841,9 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
                     {
                         SiteId = s.Id,
                         SiteName = s.SiteName,
+                        PfsNo = s.PfsNo,
+                        StoreNo = s.StoreNo,
+                        CatNo = s.CatNo,
                         DataItems = new List<PriceMovementReportDataItems>()
                     };
                     retval.ReportRows.Add(dataRow);

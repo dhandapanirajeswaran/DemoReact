@@ -216,7 +216,7 @@ namespace JsPlc.Ssc.PetrolPricing.Exporting.Styling
             var lastDataRow = 2 + totalRows - 1;
 
             new ExcelColumnStyler(worksheet, firstDataRow, lastDataRow)
-                .FormatColumnRange(2, totalColumns, ExcelStyleFormatters.GeneralNumberFormatter);
+                .FormatColumnRange(5, totalColumns, ExcelStyleFormatters.GeneralNumberFormatter);
         }
 
         private void FormatReportPricePointsReport(IXLWorksheet worksheet, int totalColumns, int totalRows)
