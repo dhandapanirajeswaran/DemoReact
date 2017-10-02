@@ -97,7 +97,7 @@
             if (!/^\d{2}\/\d{2}\/\d{4}$/.test(value))
                 return undefined;
             var parts = value.split('/');
-            return new Date(Number(parts[2]), Number(parts[1]), Number(parts[0]));
+            return new Date(Number(parts[2]), Number(parts[1])-1, Number(parts[0]));
         };
 
         // API
