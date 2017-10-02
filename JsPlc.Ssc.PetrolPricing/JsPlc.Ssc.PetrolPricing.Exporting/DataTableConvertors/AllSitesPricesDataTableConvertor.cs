@@ -84,7 +84,7 @@ namespace JsPlc.Ssc.PetrolPricing.Exporting.DataTableConvertors
                 {
                     dr = dt.NewRow();
                     dr[1] = "Brand";
-                    dr[2] = "Maker";
+                    dr[2] = "Marker";
                     dr[3] = "Drive-Time";
                     dr[4] = "Cat No.";
                     dr[5] = "UnLeaded";
