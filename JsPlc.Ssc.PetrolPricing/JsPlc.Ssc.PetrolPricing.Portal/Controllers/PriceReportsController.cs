@@ -41,6 +41,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             {"PricePointsReport", ReportExportFileType.PricePointsReport},
             {"QuarterlySiteAnalysisReport", ReportExportFileType.QuarterlySiteAnalysis },
             {"LastSitePrices" , ReportExportFileType.LastSitePrices},
+            {"Compliance", ReportExportFileType.Compliance },
 
             // alternative filenames !
             {"SAINSBURYS PriceMovementReport", ReportExportFileType.PriceMovementReport }
@@ -482,6 +483,22 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             string filenameSuffix = String.Format("[{0}]", DateTime.Now.ToString("dd-MMM-yyyy"));
 
             return ExcelDocumentStream(tables, "QuarterlySiteAnalysisReport", filenameSuffix, downloadId);
+        }
+
+        [System.Web.Mvc.HttpGet]
+        public ActionResult ExportCompliance(string downloadId, string For = "")
+        {
+            DateTime forDate;
+            if (!DateTime.TryParse(For, out forDate))
+                forDate = DateTime.Now;
+
+            var report = _serviceFacade.GetReportCompliance(forDate);
+
+            var dt = report.ToComplianceReport();
+
+            string filenameSuffix = String.Format("[{0}]", forDate.ToString("dd-MMM-yyyy"));
+
+            return ExcelDocumentStream(new List<DataTable> { dt }, "Compliance", filenameSuffix, downloadId);
         }
 
         #endregion

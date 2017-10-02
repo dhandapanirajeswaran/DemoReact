@@ -1,5 +1,5 @@
-﻿require(["jquery", "common", "busyloader", "bootstrap-datepicker", "notify"],
-    function ($, common, busyloader, bsdatepicker, notify) {
+﻿require(["jquery", "common", "busyloader", "bootstrap-datepicker", "notify", "infotips", "downloader"],
+    function ($, common, busyloader, bsdatepicker, notify, infotips, downloader) {
 
         "use strict";
 
@@ -31,7 +31,8 @@
                 diffComplies: '.diff-complies',
                 diffNegative: '.diff-negative',
                 diffPositive: '.diff-positive',
-                diffNA: '.diff-na'
+                diffNA: '.diff-na',
+                exportButton: '#btnExportReport'
             };
 
             var toggleMap = {
@@ -135,12 +136,31 @@
                 redrawHighlightButtons();
             };
 
+            function exportClick() {
+                var dt = forDp.val(),
+                    downloadId = downloader.generateId();
+
+                busyloader.showExportToExcel(1000);
+
+                downloader.start({
+                    id: downloadId,
+                    element: selectors.exportButton,
+                    complete: function (download) {
+                        notify.success('Export complete - took ' + download.friendlyTimeTaken);
+                    }
+                });
+
+                window.location.href = rootFolder + '/PriceReports/ExportCompliance?downloadId=' + downloadId + '&For=' + dt;
+            };
+
             function bindEvents() {
                 $(selectors.resetHighlightButton).off().on('click', resetHighlighting);
                 $(selectors.toggleHighlightComplies).off().on('click', commonToggle);
                 $(selectors.toggleHighlightNegative).off().on('click', commonToggle);
                 $(selectors.toggleHighlightPositive).off().on('click', commonToggle);
                 $(selectors.toggleHighlightNA).off().on('click', commonToggle);
+
+                $(selectors.exportButton).off().on('click', exportClick);
             };
 
             function init() {

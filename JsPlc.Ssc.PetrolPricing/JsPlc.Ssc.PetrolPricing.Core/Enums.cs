@@ -48,6 +48,7 @@ namespace JsPlc.Ssc.PetrolPricing.Core
         PriceMovementReport,
         PricePointsReport,
         QuarterlySiteAnalysis,
-        LastSitePrices
+        LastSitePrices,
+        Compliance
     }
 }

@@ -97,7 +97,7 @@ namespace JsPlc.Ssc.PetrolPricing.Models.Common
                 TrailPriceCompetitorId = site.TrailPriceCompetitorId,
                 CompetitorPriceOffsetNew = site.CompetitorPriceOffsetNew,
                 CompetitorPriceOffset = site.CompetitorPriceOffset,
-                PriceMatchType = (PriceMatchType) site.PriceMatchType
+                PriceMatchType = (PriceMatchType)site.PriceMatchType
             };
 
             return siteVm;
@@ -222,7 +222,7 @@ namespace JsPlc.Ssc.PetrolPricing.Models.Common
             var datesAsString = reportContainer.PriceMovementReport.Dates.Select(x => x.ToString("dd-MMM-yyyy")).ToArray();
             foreach (var dateString in datesAsString)
             {
-                dt.Columns.Add("U_"+ dateString);
+                dt.Columns.Add("U_" + dateString);
                 dt.Columns.Add("D_" + dateString);
                 dt.Columns.Add("S_" + dateString);
             }
@@ -238,7 +238,7 @@ namespace JsPlc.Ssc.PetrolPricing.Models.Common
                 foreach (var dataItem in siteRow.DataItems)
                 {
                     var item = dr[i];
-                    foreach(var fuelPrice in dataItem.FuelPrices)
+                    foreach (var fuelPrice in dataItem.FuelPrices)
                     {
                         dr[i] = (fuelPrice.PriceValue / 10.0).ToString("###0.0");
                         i++;
@@ -318,7 +318,6 @@ namespace JsPlc.Ssc.PetrolPricing.Models.Common
         public static DataTable ToNationalAverageReportDataTable(
             this NationalAverageReportContainerViewModel reportContainer, string tableName = "National Average")
         {
-
             var dt = new DataTable(tableName);
             dt.Columns.Add("Date");
             dt.Columns.Add("Day");
@@ -339,7 +338,6 @@ namespace JsPlc.Ssc.PetrolPricing.Models.Common
             dr[0] = reportContainer.ForDate.Value.ToString("dd-MMM");
             dr[1] = reportContainer.ForDate.Value.DayOfWeek;
 
-
             int nRowCount = 0;
             // Setup Table Columns - Fuel Type Brand1   Brand2   Brand3...
             foreach (var brand in reportContainer.NationalAverageReport.Fuels.First().Brands)
@@ -353,7 +351,6 @@ namespace JsPlc.Ssc.PetrolPricing.Models.Common
                     {
                         var brandfromFType = fuelType.Brands.Where(x => x.BrandName == @brand.BrandName).FirstOrDefault();
                         dr[i++] = ((brandfromFType.Average / 10.0).ToString("###0.0"));
-
                     }
                     int average = 0;
                     foreach (var fuelType in reportContainer.NationalAverageReport.Fuels)
@@ -362,7 +359,6 @@ namespace JsPlc.Ssc.PetrolPricing.Models.Common
                         int diff = brandfromFType.Average > 0 ? (brandfromFType.Average - fuelType.SainsburysPrice) : 0;
                         average += diff;
                         dr[i++] = ((diff / 10.0).ToString("###0.0"));
-
                     }
                     average = average / 2;
                     dr[i++] = ((average / 10.0).ToString("###0.0"));
@@ -446,7 +442,6 @@ namespace JsPlc.Ssc.PetrolPricing.Models.Common
             {
                 dt.Columns.Add("Status");
             }
-
 
             int i = 2;
             // Setup Table Columns - Fuel Type Brand1   Brand2   Brand3...
@@ -610,7 +605,7 @@ namespace JsPlc.Ssc.PetrolPricing.Models.Common
             dt.Columns.Add("WasSiteDeleted");
             dt.Columns.Add("Changed");
 
-            foreach(var row in source.Report.Rows)
+            foreach (var row in source.Report.Rows)
             {
                 var dr = dt.NewRow();
                 dr[0] = row.CatNo;
@@ -630,5 +625,71 @@ namespace JsPlc.Ssc.PetrolPricing.Models.Common
                 dt
             };
         }
+
+        public static DataTable ToComplianceReport(this ComplianceReportViewModel report, string tableName = "Compliance")
+        {
+            var dt = new DataTable(tableName);
+            dt.Columns.Add("PfsNo");
+            dt.Columns.Add("CatNo");
+            dt.Columns.Add("StoreNo");
+            dt.Columns.Add("SiteName");
+            dt.Columns.Add("Complies");
+
+            dt.Columns.Add("Unleaded Catalist");
+            dt.Columns.Add("Unleaded Expected");
+            dt.Columns.Add("Unleaded Difference");
+
+            dt.Columns.Add("Diesel Catalist");
+            dt.Columns.Add("Diesel Expected");
+            dt.Columns.Add("Diesel Difference");
+
+            foreach (var row in report.ReportRows)
+            {
+                var compliesString = row.DataItems.Take(2).Any(x => x.DiffValid && x.Diff == 0) ? "Yes" : "No";
+
+                var unleaded = row.DataItems.FirstOrDefault(x => x.FuelTypeId == (int)FuelTypeItem.Unleaded);
+                var diesel = row.DataItems.FirstOrDefault(x => x.FuelTypeId == (int)FuelTypeItem.Diesel);
+
+                var dr = dt.NewRow();
+                var index = 0;
+
+                dr[index++] = row.PfsNo;
+                dr[index++] = row.CatNo;
+                dr[index++] = row.StoreNo;
+                dr[index++] = row.SiteName;
+                dr[index++] = compliesString;
+
+                index = AddComplianceReportFuel(index, dr, unleaded);
+                index = AddComplianceReportFuel(index, dr, diesel);
+
+                dt.Rows.Add(dr);
+            }
+
+            return dt;
+        }
+
+        #region private methods
+
+        private static int AddComplianceReportFuel(int index, DataRow row, ComplianceReportDataItem dataItem)
+        {
+            var catalistString = "";
+            var expectedString = "";
+            var differenceString = "";
+
+            if (dataItem != null)
+            {
+                catalistString = dataItem.FoundCatPrice ? (dataItem.CatPriceValue / 10.0).ToString("###0.0") : "n/a";
+                expectedString = dataItem.FoundExpectedPrice ? (dataItem.ExpectedPriceValue / 10.0).ToString("###0.0") : "n/a";
+                differenceString = dataItem.DiffValid ? dataItem.Diff.ToString("0.0") : "n/a";
+            }
+
+            row[index++] = catalistString;
+            row[index++] = expectedString;
+            row[index++] = differenceString;
+
+            return index;
+        }
+
+        #endregion private methods
     }
 }

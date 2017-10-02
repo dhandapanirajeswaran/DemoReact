@@ -141,6 +141,27 @@ namespace JsPlc.Ssc.PetrolPricing.Exporting.Formatting
             cell.Style.Alignment.SetHorizontal(XLAlignmentHorizontalValues.Right);
         }
 
+        public static void GeneralDifferenceNonZeroRed1DPFormatter(IXLCell cell)
+        {
+            decimal tempDecimal;
+            if (decimal.TryParse(cell.Value.ToString(), out tempDecimal))
+            {
+                cell.DataType = XLCellValues.Number;
+                cell.Style.NumberFormat.Format = "0.0";
+                if (tempDecimal == 0.0m)
+
+                    cell.Style.Font.FontColor = XLColor.Black;
+                else
+                    cell.Style.Font.FontColor = XLColor.Red;
+            }
+            else
+            {
+                DullTextColor(cell);
+            }
+            cell.Style.Alignment.SetHorizontal(XLAlignmentHorizontalValues.Right);
+        }
+
+
         public static void GeneralNumberFormatter(IXLCell cell)
         {
             decimal tempDecimal;

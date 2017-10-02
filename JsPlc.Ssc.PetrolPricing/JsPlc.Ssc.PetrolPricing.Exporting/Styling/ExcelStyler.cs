@@ -138,6 +138,10 @@ namespace JsPlc.Ssc.PetrolPricing.Exporting.Styling
                     FormatQuarterlySiteAnalysisReport(worksheet, totalColumns, totalRows);
                     break;
 
+                case ReportExportFileType.Compliance:
+                    FormatComplianceReport(worksheet, totalColumns, totalRows);
+                    break;
+
                 default:
                     throw new ArgumentException("Unsupport ReportType: " + reportType);
             }
@@ -243,6 +247,27 @@ namespace JsPlc.Ssc.PetrolPricing.Exporting.Styling
                 .FormatColumn(7, ExcelStyleFormatters.GeneralRedYesFormatter) // WasSiteDeleted
                 .FormatColumn(8, ExcelStyleFormatters.GeneralYesNoFormatter); // NoChange
         }
+
+        private void FormatComplianceReport(IXLWorksheet worksheet, int totalColumns, int totalRows)
+        {
+            var firstDataRow = 2;
+            var lastDataRow = 2 + totalRows - 1;
+
+            new ExcelColumnStyler(worksheet, firstDataRow, lastDataRow)
+                .FormatColumn(1, ExcelStyleFormatters.GeneralIntegerFormatter) // PfsNo
+                .FormatColumn(2, ExcelStyleFormatters.GeneralIntegerFormatter) // CatNo
+                .FormatColumn(3, ExcelStyleFormatters.GeneralIntegerFormatter) // StoreNo
+                .FormatColumn(4, ExcelStyleFormatters.GeneralTextLeftAlignedFormatter) // SiteName
+                .FormatColumn(5, ExcelStyleFormatters.GeneralRedNoFormatter) // Complies
+                .FormatColumn(6, ExcelStyleFormatters.GeneralPrice1DPFormatter) // Unleaded Catalist
+                .FormatColumn(7, ExcelStyleFormatters.GeneralPrice1DPFormatter) // Unleaded Expected
+                .FormatColumn(8, ExcelStyleFormatters.GeneralDifferenceNonZeroRed1DPFormatter) // Unleaded Difference
+                .FormatColumn(9, ExcelStyleFormatters.GeneralPrice1DPFormatter) // Diesel Catalist
+                .FormatColumn(10, ExcelStyleFormatters.GeneralPrice1DPFormatter) // Diesel Expected
+                .FormatColumn(11, ExcelStyleFormatters.GeneralDifferenceNonZeroRed1DPFormatter) // Diesel Difference
+                ;
+        }
+
 
         private void FormatExportAllWorksheet(IXLWorksheet worksheet, int totalRows)
         {
