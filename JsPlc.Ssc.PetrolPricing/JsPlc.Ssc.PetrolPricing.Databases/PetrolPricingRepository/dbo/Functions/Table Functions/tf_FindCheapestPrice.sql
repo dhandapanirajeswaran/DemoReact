@@ -356,7 +356,20 @@ BEGIN
 					FROM
 						dbo.SiteToCompetitor stc
 						INNER JOIN dbo.Site compsite ON compsite.Id = stc.CompetitorId AND compsite.IsActive = 1
-						INNER JOIN dbo.SitePrice sp ON sp.SiteId = stc.CompetitorId AND sp.FuelTypeId = @FuelTypeId AND sp.DateOfCalc = @StartOfYesterday
+						INNER JOIN dbo.SitePrice sp ON sp.Id = (
+							SELECT TOP 1
+								Id
+							FROM
+								dbo.SitePrice
+							WHERE
+								SiteId = stc.CompetitorId
+								AND
+								FuelTypeId = @FuelTypeId
+								AND
+								DateOfCalc <= @StartOfYesterday
+							ORDER BY
+								DateOfCalc DESC
+						) --stc.CompetitorId AND sp.FuelTypeId = @FuelTypeId AND sp.DateOfCalc = @StartOfYesterday
 					WHERE
 						stc.SiteId = @SiteId
 						AND
@@ -365,8 +378,6 @@ BEGIN
 						compsite.IsActive = 1 -- Competitor site is active
 						AND
 						compsite.IsExcludedBrand = 0 -- Not an Excluded Brand
-						AND
-						compsite.IsActive = 1 -- Active Competitor
 						AND
 						stc.DriveTime < @MaxDriveTime
 				),
