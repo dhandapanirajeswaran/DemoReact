@@ -191,6 +191,7 @@
                 </div>
                 <div class="col-md-6">
                     <span id="spnShowingXofY" class="font150pc text-primary"></span>
+                    &mdash; <span class="font150pc text-success" data-bind="attr: {'data-infotip': '[b]Today[/b] Sent [u]' + $root.SiteEmailSentCount() + '[u] emails to Sites'}"><i class="fa fa-envelope"></i> <strong data-bind="text: (' ' + $root.SiteEmailSentCount() + ' sent')"></strong></span>
                     <div class="btn-group pull-right" style="margin-right: -1em;">
                         <button type="button" class="btn btn-default" data-bind="click: showPriceChangesTab, css: { 'btn-primary' : $root.showingPriceChangesTab()}" data-infotip="Show [b]Our Price Changes[/b] tab"><i class="fa fa-bar-chart"></i> Our Price Changes</button>
                         <button type="button" class="btn btn-default" data-bind="click: showPriceSummaryTab, css: {'btn-primary': $root.showingPriceSummaryTab()}" data-infotip="Show the [b]Prices/Price Change[/b] summary tab"><i class="fa fa-area-chart"></i> Price Stats</button>
@@ -551,7 +552,7 @@
                                     <i class="fa fa-minus text-info" data-bind="visible: HasEmails && !$root.ViewingHistorical() && !canSendEmail()" data-infotip="Site [u]has[/u] Email addresses[br /]but has [em]No[/em] price changes."></i>
                                     <i class="fa fa-times text-danger" data-bind="visible: !HasEmails" data-infotip="Site has [b]No[/b] Email addresses"></i>
                                 </td>
-                                <td class="col-store-name" style="position: relative;">
+                                <td class="col-store-name" style="position: relative;" data-bind="css: (WasEmailSent() ? 'site-email-sent' : 'site-email-not-sent')">
                                     <div class="site-name-overlay">
 
                                         <i class="fa fa-dot-circle-o" data-bind="visible: (PriceMatchType == 1)" data-infotip="[b]Standard Price[/b]"></i>
@@ -559,6 +560,9 @@
                                         <i class="fa fa-clone" data-bind="visible: (PriceMatchType == 3)" data-infotip="[b]Match Competitor[/b]"></i>
 
                                         <a role="button" href="#" class="site-name" data-bind="attr:{id: SiteId}, click: getCompetitorPopupDataClick, html: (StoreName.replace('SAINSBURYS', ''))" data-toggle="modal" data-target="#competitorPricesPopup" data-infotip="View competitor's prices"></a>
+                                        <span class="text-success" data-bind="visible: (!$root.IsLoadingEmailStatuses() && WasEmailSent()), attr: {'data-infotip': 'Email was [u]Sent[/u] to site on [u]' + SiteEmailLastSent() + '[/u]'}"><i class="fa fa-envelope"></i></span>
+                                        <span class="text-warning" data-bind="visible: $root.IsLoadingEmailStatuses()" data-infotip="[i]Loading Email Status[/i]"><i class="fa fa-spinner"></i></span>
+
                                         <div class="hide-hover">
                                             <button type="button" class="btn btn-default btn-xs view-historic-price" data-bind="click: viewHistoricSitePrices" data-infotip="View [b]Historic[/b] Prices"><i class="fa fa-gbp"></i> Historic</button>
                                             <div class="no-margin">

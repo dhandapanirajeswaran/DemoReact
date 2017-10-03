@@ -433,6 +433,11 @@ table.competitorTable > tbody > .competitor-row  {
     padding-right: 4px;
 }
 
+.pricing-grid .site-row .site-email-sent {
+    background-color: #dfd;
+    background: linear-gradient(90deg, #dfd 0%, #fff 50%);
+}
+
 .pricing-grid .site-row .col-store-no .row-indicator {
     visibility: hidden;
     float: left;

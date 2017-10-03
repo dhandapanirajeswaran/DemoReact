@@ -20,7 +20,7 @@
                 </div>
 
                 <dl class="action-button-list" data-bind="visible: $root.dataAvailable()">
-                    <dt>Site Selection</dt>
+                    <dt>1) Review and Site Selection</dt>
                     <dd class="action-item">
                         <div class="row">
                             <div class="col-md-4">
@@ -45,6 +45,20 @@
                             </div>
                         </div>
                     </dd>
+
+                    <dd class="action-item">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <button type="button" data-bind="click: $root.selectSitesAwaitingEmailsWithPriceChange" class="btn btn-primary btn-sm btn-block" style="margin-left: 0px;" data-infotip="Select Sites [b]with[/b] a Price Change and [em]NO email sent today[/em]">
+                                    <i class="fa fa-envelope-o"></i> Awaiting emails
+                                </button>
+                            </div>
+                            <div class="col-md-8">
+                                Select sites <strong>awaiting</strong> emails today &amp; Price Changes.
+                            </div>
+                        </div>
+                    </dd>
+
                     <dd class="action-spacer"></dd>
 
                     <dd class="action-item">
@@ -60,12 +74,12 @@
                         </div>
                     </dd>
                     <dd class="action-divider"></dd>
-                    <dt>Action</dt>
+                    <dt>2) Choose an Action</dt>
                     <dd class="action-item">
                         <div class="row">
                             <div class="col-md-4">
                                 <button style="margin-left:0px " type="button" class="btn btn-success btn-sm btn-block" data-bind="disable:!$root.isAnySiteChecked() || $root.sendingEmails(), visible: !$root.ViewingHistorical() && $root.dataAvailable() == true,click: $root.sendEmailSelectedSites" data-infotip="Email the [b]Selected[/b] Sites">
-                                    <i class="fa fa-envelope-o"></i> Email <span class="badge" data-bind="text: $root.checkedEmailCount()">0</span>
+                                    <i class="fa fa-envelope"></i> Email <span class="badge" data-bind="text: $root.checkedEmailCount()">0</span>
                                 </button>
                             </div>
                             <div class="col-md-8">

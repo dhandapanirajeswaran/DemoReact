@@ -585,6 +585,24 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             }
         }
 
+        private void SetSiteEmailSendStatuses(List<SitePriceViewModel> siteList, IEnumerable<SiteEmailSendStatusViewModel> siteEmailSendStatuses)
+        {
+            foreach (var site in siteList)
+            {
+                var status = siteEmailSendStatuses.FirstOrDefault(x => x.SiteId == site.SiteId);
+                if (status != null)
+                {
+                    site.LastEmailSent = status.SendDate;
+                    site.WasEmailSent = status.IsSuccess;
+                }
+                else
+                {
+                    site.LastEmailSent = new DateTime?();
+                    site.WasEmailSent = false;
+                }
+            }
+        }
+
         private void SetSiteCompetitorPriceInformation(DateTime forDate, List<SitePriceViewModel> sites, int maxGrocerDriveTimeMinutes)
         {
             if (sites == null || !sites.Any())
@@ -4280,6 +4298,11 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
         public IEnumerable<NearbySiteViewModel> GetNearbyCompetitorSites(int siteId)
         {
             return _context.GetNearbyCompetitorSites(siteId);
+        }
+
+        public SiteEmailTodaySendStatusViewModel GetSiteEmailTodaySendStatuses(DateTime forDate)
+        {
+            return _context.GetSiteEmailTodaySendStatuses(forDate);
         }
 
         #endregion private methods

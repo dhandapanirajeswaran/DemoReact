@@ -678,6 +678,18 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             return base.JsonGetResult(result);
         }
 
+        [ScriptMethod(UseHttpGet =true)]
+        public JsonResult GetSiteEmailTodaySendStatuses([FromUri] string forDate)
+        {
+            DateTime theDate;
+            if (!DateTime.TryParse(forDate, out theDate))
+                theDate = DateTime.Now.Date;
+
+            var statuses = _serviceFacade.GetSiteEmailTodaySendStatuses(theDate);
+            return base.JsonGetResult(statuses);
+        }
+
+
         #region private methods
 
         private void PopulatePageData(SiteViewModel model, DateTime requestDate)

@@ -61,6 +61,9 @@ namespace JsPlc.Ssc.PetrolPricing.Models.ViewModels
         public bool IsExcludedBrand { get; set; }
         public bool IsExcluded { get; set; }
         public bool IsActive { get; set; }
+
+        public bool WasEmailSent { get; set; } = false;
+        public DateTime? LastEmailSent { get; set; } 
     }
 
     // each fuel's price

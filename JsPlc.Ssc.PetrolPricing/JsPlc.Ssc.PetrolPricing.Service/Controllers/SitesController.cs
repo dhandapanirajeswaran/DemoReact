@@ -809,7 +809,28 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
                 return new ExceptionResult(ex, this);
             }
         }
-    
+
+
+        [System.Web.Http.HttpGet]
+        [System.Web.Http.Route("api/GetSiteEmailTodaySendStatuses/{forDate}")]
+        public async Task<IHttpActionResult> GetSiteEmailTodaySendStatuses([FromUri] string forDate)
+        {
+            try
+            {
+                DateTime theDate;
+                if (!DateTime.TryParse(forDate, out theDate))
+                    theDate = DateTime.Now.Date;
+
+                var result = _siteService.GetSiteEmailTodaySendStatuses(theDate);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex);
+                return new ExceptionResult(ex, this);
+            }
+        }
+
         #region private methods
 
         private DateTime ParseDateTime(string datetime)

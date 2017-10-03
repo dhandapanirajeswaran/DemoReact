@@ -849,6 +849,7 @@ input[type=email].mono-font {
 
 .text-bold {font-weight: bold;}
 .text-black {color: #000;}
+.text-white {color: #fff;}
 .text-highlight {background-color: #ffc;}
 
 .badge-lg {font-size: 125%;}

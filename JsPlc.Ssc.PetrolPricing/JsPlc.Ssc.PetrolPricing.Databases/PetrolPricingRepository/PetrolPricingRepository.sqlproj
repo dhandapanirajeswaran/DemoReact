@@ -248,6 +248,7 @@
     <Build Include="dbo\Tables\ScheduleEmailTemplate.sql" />
     <Build Include="dbo\Stored Procedures\spGetScheduleEmailTemplateForType.sql" />
     <Build Include="dbo\Stored Procedures\spGetNearbySainsburysSites.sql" />
+    <Build Include="dbo\Stored Procedures\spGetSiteEmailSendStatuses.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Scripts\PostDeployment\Script.PostDeployment.sql" />

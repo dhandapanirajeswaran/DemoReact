@@ -185,5 +185,10 @@ namespace JsPlc.Ssc.PetrolPricing.Business
             return _db.GetNearbyCompetitorSites(siteId);
         }
 
+        public SiteEmailTodaySendStatusViewModel GetSiteEmailTodaySendStatuses(DateTime forDate)
+        {
+            var model = _db.GetSiteEmailTodaySendStatuses(forDate);
+            return model;
+        }
     }
 }

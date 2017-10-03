@@ -830,5 +830,34 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             };
             return DapperHelper.QueryList<NearbySiteViewModel>(this, sprocName, parameters);
         }
+
+        internal IEnumerable<SiteEmailSendStatusViewModel> GetAllSiteEmailSendStatuses(DateTime forDate)
+        {
+            const string sprocName = "spGetSiteEmailSendStatuses";
+            var parameters = new
+            {
+                @ForDate = forDate
+            };
+            return DapperHelper.QueryList<SiteEmailSendStatusViewModel>(this, sprocName, parameters);
+        }
+
+        internal SiteEmailTodaySendStatusViewModel GetSiteEmailTodaySendStatuses(DateTime forDate)
+        {
+            var model = new SiteEmailTodaySendStatusViewModel();
+
+            var statuses = GetAllSiteEmailSendStatuses(forDate);
+            foreach (var status in statuses)
+            {
+                model.SiteStatuses.Add(
+                    new SiteEmailTodaySendStatusRowViewModel()
+                    {
+                        SiteId = status.SiteId,
+                        WasEmailSentToday = status.IsSuccess,
+                        EmailLastSent = status.SendDate
+                    }
+                );
+            }
+            return model;
+        }
     }
 }

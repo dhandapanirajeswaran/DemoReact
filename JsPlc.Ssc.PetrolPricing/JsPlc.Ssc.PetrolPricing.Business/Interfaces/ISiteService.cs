@@ -67,5 +67,8 @@ namespace JsPlc.Ssc.PetrolPricing.Business
         SitePriceViewModel GetTodayPricesForCalcPrice(DateTime forDate, int siteId);
 
         IEnumerable<NearbySiteViewModel> GetNearbyCompetitorSites(int siteId);
+
+        SiteEmailTodaySendStatusViewModel GetSiteEmailTodaySendStatuses(DateTime forDate);
+
     }
 }

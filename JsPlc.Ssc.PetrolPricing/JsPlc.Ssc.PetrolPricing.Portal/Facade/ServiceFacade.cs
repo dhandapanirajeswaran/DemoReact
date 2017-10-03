@@ -1581,6 +1581,13 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             return result;
         }
 
+        public SiteEmailTodaySendStatusViewModel GetSiteEmailTodaySendStatuses(DateTime forDate)
+        {
+            var apiUrl = String.Format("api/GetSiteEmailTodaySendStatuses/{0}", forDate.ToString("ddMMMyyyy"));
+            var result = CallAndCatchAsyncGet<SiteEmailTodaySendStatusViewModel>("GetSiteEmailTodaySendStatuses", apiUrl);
+            return result;
+        }
+
         #region private methods
 
         private T CallAndCatchAsyncGet<T>(string methodName, string apiUrl)
