@@ -59,6 +59,7 @@
             "PriceFreezeEvents": "App/PriceFreezeEvents",
             "DateUtils": "App/DateUtils",
             "Help": "App/Help",
+            "ErrorCatcher": "App/ErrorCatcher",
 
             // popups
             "SiteEmailPopup" : "App/Popups/SiteEmailPopup",

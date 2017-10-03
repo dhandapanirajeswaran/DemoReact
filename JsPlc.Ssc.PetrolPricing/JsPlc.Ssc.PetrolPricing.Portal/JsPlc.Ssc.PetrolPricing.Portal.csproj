@@ -345,6 +345,8 @@
     <Content Include="Scripts\App\EditInPlace\edit-in-place.css" />
     <Content Include="Scripts\App\EditInPlace\edit-in-place.html" />
     <Content Include="Scripts\App\EditInPlace\edit-in-place.js" />
+    <Content Include="Scripts\App\ErrorCatcher.html" />
+    <Content Include="Scripts\App\ErrorCatcher.js" />
     <Content Include="Scripts\App\etaCountdown.js" />
     <Content Include="Scripts\App\Help.html" />
     <Content Include="Scripts\App\help.js" />

@@ -1190,3 +1190,17 @@ input[type=email].mono-font {
 .help-window .help-page .two-column > dd {
     margin-left: 2em;
 }
+
+
+/* ErrorCatcher */
+#ErrorCatcherTrigger {
+    position: fixed;
+    top: 1em;
+    left: 3em;
+    z-index: 9000;
+    box-shadow: 0 0 6px #000;
+}
+#divErrorCatcher {
+    width: 50em;
+    margin: 5em auto;
+}
