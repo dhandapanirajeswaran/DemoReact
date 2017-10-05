@@ -205,13 +205,41 @@
                         var rowCss = (item.IsSiteActive ? "row-site-active" : "row-site-inactive")
                             + (isEmptyEmail ? " row-has-no-email" : " row-has-email");
                         <tr class="@(rowCss)">
-                            <td class="email-store-no">@(item.StoreNo)</td>
+                            <td class="email-store-no">
+                                @if (item.StoreNo == 0)
+                                {
+                                    <span class="text-danger" data-infotip="[b]StoreNo[/b] is [i]Missing[/i]"><i class="fa fa-warning"></i></span>
+                                }
+                                else
+                                {
+                                    <span>@item.StoreNo</span>
+                                }
+                            </td>
                             <td class="email-site-name">
                                 <a href="@Url.Action("Edit","Sites")/?id=@(item.SiteId)&amp;calledFromSection=SiteEmails" data-infotip="Edit the Site">
                                     @(item.StoreName.Replace("SAINSBURYS", ""))
                                 </a></td>
-                            <td class="email-cat-no">@(item.CatNo)</td>
-                            <td class="email-pfs-no">@(item.PfsNo)</td>
+                            <td class="email-cat-no">
+                                @if (item.PfsNo == 0)
+                                {
+                                    <span class="text-danger" data-infotip="[b]CatNo[/b] is [i]Missing[/i]"><i class="fa fa-warning"></i></span>
+                                }
+                                else
+                                {
+                                    <span>@item.CatNo</span>
+
+                                }
+                            </td>
+                            <td class="email-pfs-no">
+                                @if (item.PfsNo == 0)
+                                {
+                                    <span class="text-danger" data-infotip="[b]CatNo[/b] is [i]Missing[/i]"><i class="fa fa-warning"></i></span>
+                                } else
+                                {
+                                    <span>@item.PfsNo</span>
+
+                                }
+                            </td>
                             <td class="email-address">
                                 @if (isEmptyEmail)
                                 {
