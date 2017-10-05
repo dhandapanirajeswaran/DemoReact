@@ -12,5 +12,7 @@ namespace JsPlc.Ssc.PetrolPricing.Core
 		DataTable GetQuarterlyData(string filePathAndName, string excelFileSheetName);
 
         DataTable GetSiteEmailAddressesData(string filePathAndName);
+
+        DataTable GetJsPriceOverrideData(string filePathAndName);
 	}
 }

@@ -12,7 +12,8 @@ namespace JsPlc.Ssc.PetrolPricing.Core
         DailyPriceData = 1,
         QuarterlySiteData = 2,
         LatestJsPriceData = 3,
-        LatestCompPriceData = 4
+        LatestCompPriceData = 4,
+        JsPriceOverrideData = 5
     }
 
     public enum ImportProcessStatuses

@@ -1,0 +1,100 @@
+﻿<div class="modal" id="jsPriceOverridesPopup" tabindex="-1" role="dialog" style="width: 80em; margin: 2em auto;">
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal"><i class="fa fa-times"></i></button>
+            <h4 class="modal-title">
+                Sainsburys Price Overrides for <strong>Tomorrow</strong>
+            </h4>
+        </div>
+        <div class="modal-body">
+
+            <div class="alert alert-info">
+                <i class="fa fa-info-circle"></i> <strong>JS Price Override</strong> file upload has been detected &mdash; Please review the <strong>new Overrides</strong> below
+            </div>
+
+            <div style="max-height: 400px; overflow: auto; position: absolute; margin-top: 4.5em;">
+                <table id="JsPriceOverridesTable" class="table table-striped table-condensed js-price-overrides-grid" ">
+                    <tbody>
+                        <tr jq-template-id="row-template">
+                            <td class="text-right col-catno">{CATNO}</td>
+                            <td class="text-bold col-site-name">{SITENAME}</td>
+                            <td class="text-bold text-center col-unleaded col-inc">{UNLEADED-INC}</td>
+                            <td class="text-bold text-center col-unleaded col-abs">{UNLEADED-ABS}</td>
+                            <td class="text-bold text-center col-unleaded col-preview">{UNLEADED-PREVIEW}</td>
+                            <td class="text-bold text-center col-diesel col-inc">{DIESEL-INC}</td>
+                            <td class="text-bold text-center col-diesel col-abs">{DIESEL-ABS}</td>
+                            <td class="text-bold text-center col-diesel col-preview">{DIESEL-PREVIEW}</td>
+                            <td class="text-bold text-center col-super-unleaded col-inc">{SUPER-UNLEADED-INC}</td>
+                            <td class="text-bold text-center col-super-unleaded col-abs">{SUPER-UNLEADED-ABS}</td>
+                            <td class="text-bold text-center col-super-unleaded col-preview">{SUPER-UNLEADED-PREVIEW}</td>
+                        </tr>
+                        <tr jq-template-id="row-empty-template">
+                            <td colspan="11" class="font125pc no-results text-center text-warning" style="padding: 0.5em;">
+                                <strong>Sorry, there are no Price Overrides - Did you upload an empty file?</strong>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <table class="js-price-overrides-grid">
+                <thead>
+                    <tr>
+                        <th rowspan="2" class="col-catno">CatNo</th>
+                        <th rowspan="2" class="col-site-name">Site Name</th>
+                        <th colspan="3" class="text-center col-unleaded fuel-sign fuel-sign-unleaded"></th>
+                        <th colspan="3" class="text-center col-diesel fuel-sign fuel-sign-diesel"></th>
+                        <th colspan="3" class="text-center col-super-unleaded fuel-sign fuel-sign-super-unleaded"></th>
+                    </tr>
+                    <tr>
+                        <th class="text-center col-unleaded col-inc" data-infotip-dock="below" data-infotip="Relative movement">+/-</th>
+                        <th class="text-center col-unleaded col-abs" data-infotip-dock="below" data-infotip="Absolute">&pound;</th>
+                        <th class="text-center col-unleaded col-preview" data-infotip-dock="below" data-infotip="Preview Override">Preview</th>
+
+                        <th class="text-center col-diesel col-inc" data-infotip-dock="below" data-infotip="Relative movement">+/-</th>
+                        <th class="text-center col-diesel col-abs" data-infotip-dock="below" data-infotip="Absolute">&pound;</th>
+                        <th class="text-center col-diesel col-preview" data-infotip-dock="below" data-infotip="Preview Override">Preview</th>
+
+                        <th class="text-center col-super-unleaded col-inc" data-infotip-dock="below" data-infotip="Relative movement">+/-</th>
+                        <th class="text-center col-super-unleaded col-abs" data-infotip-dock="below" data-infotip="Absolute">&pound;</th>
+                        <th class="text-center col-super-unleaded col-preview" data-infotip-dock="below" data-infotip="Preview Override">Preview</th>
+                    </tr>
+                </thead>
+
+                <tfoot>
+                    <tr>
+                        <th colspan="2" class="text-right">
+                            <strong>Please Selected Fuel Grades:</strong>
+                        </th>
+                        <th colspan="3" class="text-center">
+                            <label class="radio-label width90pc" data-infotip="Include/Exclude the [b]Unleaded[/b] Price Overrides">
+                                <input type="checkbox" data-id="include-unleaded" value="1" /> Unleaded
+                            </label>
+                        </th>
+                        <th colspan="3" class="text-center">
+                            <label class="radio-label width90pc" data-infotip="Include/Exclude the [b]Diesel[/b] Price Overrides">
+                                <input type="checkbox" data-id="include-diesel" value="1" /> Diesel
+                            </label>
+                        </th>
+                        <th colspan="3" class="text-center">
+                            <label class="radio-label width90pc" data-infotip="Include/Exclude the [b]Super-Unleaded[/b] Price Overrides">
+                                <input type="checkbox" data-id="include-super-unleaded" value="1" /> Super-Unleaded
+                            </label>
+                        </th>
+                    </tr>
+                </tfoot>
+
+                <tbody>
+                    <tr style="height: 400px;"></tr>
+                </tbody>
+
+            </table>
+
+
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-times"></i> Close</button>
+            <button type="button" class="btn btn-success" data-id="apply-price-overrides" data-infotip="Apply the [b]Price Overrides[/b] to the main pricing page"><i class="fa fa-check"></i> Apply Price Overrides</button>
+        </div>
+    </div>
+</div>

@@ -190,5 +190,12 @@ namespace JsPlc.Ssc.PetrolPricing.Business
             var model = _db.GetSiteEmailTodaySendStatuses(forDate);
             return model;
         }
+
+        public JsPriceOverrideViewModel GetJsPriceOverrides(int fileUploadId)
+        {
+            var model = _db.GetJsPriceOverrides(fileUploadId);
+            return model;
+        }
+
     }
 }

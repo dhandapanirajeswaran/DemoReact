@@ -80,6 +80,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
                     runRecalc(processedFile);
 
                     break;
+
                 case (int)FileUploadType.LatestCompetitorsPriceData:
                     processedFile = ProcessLatestPriceFileNew(newUploadList, newUpload.UploadTypeId);
 
@@ -90,6 +91,16 @@ namespace JsPlc.Ssc.PetrolPricing.Business
                     runRecalc(processedFile);
 
                     break;
+
+                case (int)FileUploadType.JsPriceOverrideData:
+                    processedFile = ProcessJsPriceOverrideFileNew(newUploadList, newUpload.UploadTypeId);
+
+                    if (processedFile == null)
+                        throw new FileUploadException("Upload failed. Contact support team.");
+
+                    break;
+
+
 				default:
 					throw new InvalidOperationException(string.Format("Unsupported file type: {0}. Contact support team." + newUpload.UploadTypeId));
 			}
@@ -448,14 +459,70 @@ namespace JsPlc.Ssc.PetrolPricing.Business
             return aFile;
         }
 
+
+        public FileUpload ProcessJsPriceOverrideFileNew(List<FileUpload> uploadedFiles, int uploadType)
+        {
+            if (!uploadedFiles.Any())
+                return null;
+
+            var aFile = uploadedFiles.OrderByDescending(x => x.UploadDateTime).ToList().First();
+
+            try
+            {
+                aFile.StatusId = (int)ImportProcessStatuses.Success;
+
+                _db.UpdateImportProcessStatus(5, aFile); // Processing..
+
+                var rows = getXlsDataRowsJsPriceOverride(aFile);
+
+                var dataRows = rows as IList<DataRow> ?? rows.ToList();
+
+                if (!dataRows.Any())
+                {
+                    throw new ApplicationException(
+                        String.Format("No rows found in the file: {0}; Date: {1}; Contact support team.",
+                            aFile.OriginalFileName,
+                            aFile.UploadDateTime
+                        )
+                    );
+                }
+
+                bool gotWarning = false;
+
+                var success = importJsPriceOverrideRecords(aFile, dataRows, out gotWarning);
+
+                if (!success)
+                    throw new ImportJsPriceOverrideDataException("Unable to populate JS Price Override Data table in db. Contact support team");
+
+                if (gotWarning)
+                    aFile.StatusId = (int)ImportProcessStatuses.Warning;
+
+                _db.UpdateImportProcessStatus(aFile.StatusId, aFile); //ok 10, failed 15
+            }
+            catch (ExcelParseFileException ex)
+            {
+                _db.LogImportError(aFile, ex.Message, null);
+                _db.UpdateImportProcessStatus(15, aFile); //failed 15
+                return null;
+            }
+            catch (Exception ex)
+            {
+                _db.LogImportError(aFile, ex, null);
+
+                _db.UpdateImportProcessStatus(15, aFile); //failed 15
+                return null;
+            }
+            return aFile;
+        }
+
         //Process Quarterly File//////////////////////////////////////////////////////////////////////////////////////
         /// <summary>
         /// Picks the right file to Process and returns it
         /// </summary>
         /// <param name="uploadedFiles"></param>
         /// <returns>The file picked for processing (only one)</returns>
-    
-		public void CleanupIntegrationTestsData(string testUserName = "Integration tests")
+
+        public void CleanupIntegrationTestsData(string testUserName = "Integration tests")
 		{
 			_db.CleanupIntegrationTestsData(testUserName);
 		}
@@ -641,6 +708,15 @@ namespace JsPlc.Ssc.PetrolPricing.Business
             }
         }
 
+        private IEnumerable<DataRow> getXlsDataRowsJsPriceOverride(FileUpload aFile)
+        {
+            using (DataTable dataTable = getJsPriceOverrideData(aFile))
+            {
+                var rows = dataTable.ToDataRowsList();
+                return rows;
+            }
+        }
+
 		/// <summary>
 		/// Dumps all quarterly file xls records to Staging table in Batches
 		/// </summary>
@@ -693,7 +769,15 @@ namespace JsPlc.Ssc.PetrolPricing.Business
             return true;
         }
 
-		private DataTable getQuarterlyData(FileUpload aFile)
+        private bool importJsPriceOverrideRecords(FileUpload aFile, IEnumerable<DataRow> allRows, out bool hasWarning)
+        {
+            List<JsPriceOverrideDataModel> allSites = parseJsPriceOverride(aFile, allRows, out hasWarning);
+            if (hasWarning) return false;
+            var success = _db.NewJsPriceOverrideRecords(allSites, aFile);
+            return success;
+        }
+
+        private DataTable getQuarterlyData(FileUpload aFile)
 		{
 			var storedFilePath = _appSettings.UploadPath;
 			var filePathAndName = Path.Combine(storedFilePath, aFile.StoredFileName);
@@ -707,7 +791,14 @@ namespace JsPlc.Ssc.PetrolPricing.Business
             return _dataFileReader.GetQuarterlyData(filePathAndName, "");
         }
 
-		private List<CatalistQuarterly> parseSiteRowsBatch(FileUpload aFile, IEnumerable<DataRow> batchRows, int batchNo, out bool hasWarnings)
+        private DataTable getJsPriceOverrideData(FileUpload aFile)
+        {
+            var storedFilePath = _appSettings.UploadPath;
+            var filePathAndName = Path.Combine(storedFilePath, aFile.StoredFileName);
+            return _dataFileReader.GetJsPriceOverrideData(filePathAndName);
+        }
+
+        private List<CatalistQuarterly> parseSiteRowsBatch(FileUpload aFile, IEnumerable<DataRow> batchRows, int batchNo, out bool hasWarnings)
 		{
 			List<CatalistQuarterly> siteCatalistData = new List<CatalistQuarterly>();
 
@@ -858,15 +949,80 @@ namespace JsPlc.Ssc.PetrolPricing.Business
             return priceLatestPriceData;
         }
 
-		/// <summary>
-		/// Parses the CSV line to make a DailyPrice object
-		/// - Logs error if parsing fails
-		/// </summary>
-		/// <param name="lineValues"></param>
-		/// <param name="lineNumber"></param>
-		/// <param name="aFile"></param>
-		/// <returns>DailyPrice or throws exception</returns>
-		private DailyPrice parseDailyLineValues(string lineValues, int lineNumber, FileUpload aFile)
+
+        private List<JsPriceOverrideDataModel> parseJsPriceOverride(FileUpload aFile, IEnumerable<DataRow> allRows, out bool hasWarning)
+        {
+            var data = new List<JsPriceOverrideDataModel>();
+
+            hasWarning = false;
+
+            int rowCount = 0;
+            foreach(DataRow row in allRows)
+            {
+                rowCount++;
+
+                try
+                {
+                    int catNo;
+                    if (int.TryParse(row[0].ToString(), out catNo))
+                    {
+                        var item = new JsPriceOverrideDataModel()
+                        {
+                            CatNo = catNo,
+                            UnleadedIncrease = ScanPriceIncrease(row[2].ToString()),
+                            UnleadedAbsolute = ScanAbsolutePrice(row[3].ToString()),
+                            DieselIncrease = ScanPriceIncrease(row[5].ToString()),
+                            DieselAbsolute = ScanAbsolutePrice(row[6].ToString()),
+                            SuperUnleadedIncrease = ScanPriceIncrease(row[8].ToString()),
+                            SuperUnleadedAbsolute = ScanPriceIncrease(row[9].ToString())
+                        };
+
+                        data.Add(item);
+                    }
+                }
+                catch(Exception ex)
+                {
+                    _db.LogImportError(aFile,
+                        ex,
+                        rowCount);
+
+                    hasWarning = true;
+                }
+            }
+            return data;
+        }
+
+        private int? ScanPriceIncrease(string value)
+        {
+            if (!String.IsNullOrEmpty(value))
+            {
+                double increase;
+                if (double.TryParse(value, out increase))
+                    return (int?)(increase * 10);
+            }
+            return (int?)null;
+        }
+
+        private int? ScanAbsolutePrice(string value)
+        {
+            if (!String.IsNullOrEmpty(value))
+            {
+                double price;
+                if (double.TryParse(value, out price))
+                    return (int?)(price * 10);
+            }
+            return (int?)null;
+        }
+
+        /// <summary>
+        /// Parses the CSV line to make a DailyPrice object
+        /// - Logs error if parsing fails
+        /// </summary>
+        /// <param name="lineValues"></param>
+        /// <param name="lineNumber"></param>
+        /// <param name="aFile"></param>
+        /// <returns>DailyPrice or throws exception</returns>
+        private DailyPrice parseDailyLineValues(string lineValues, int lineNumber, FileUpload aFile)
 		{
 			string[] words = lineValues.Split(',');
 

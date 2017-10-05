@@ -304,6 +304,7 @@
     <Content Include="Content\LatestSitePriceDataTemplate.xlsx" />
     <Content Include="Content\QuarterlySiteData-Template.xlsx" />
     <Content Include="Content\LatestCompPriceDataTemplate.xlsx" />
+    <Content Include="Content\JsPriceOverrideDataTemplate.xlsx" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Help\faq-glossary.html" />
     <Content Include="Help\faq-site-emails.html" />
@@ -353,6 +354,8 @@
     <Content Include="Scripts\App\HistoricSitePrices.html" />
     <Content Include="Scripts\App\HistoricSitePrices.js" />
     <Content Include="Scripts\App\infotips.js" />
+    <Content Include="Scripts\App\JsPriceOverrides.html" />
+    <Content Include="Scripts\App\JsPriceOverrides.js" />
     <Content Include="Scripts\App\layout.js" />
     <Content Include="Scripts\App\Popups\SiteEmailPopup.html" />
     <Content Include="Scripts\App\Popups\SiteEmailPopup.js" />

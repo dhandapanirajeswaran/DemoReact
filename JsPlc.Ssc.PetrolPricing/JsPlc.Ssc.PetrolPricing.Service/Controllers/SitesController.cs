@@ -831,6 +831,22 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
             }
         }
 
+        [System.Web.Http.HttpGet]
+        [System.Web.Http.Route("api/GetJsPriceOverrides/{fileUploadId}")]
+        public async Task<IHttpActionResult> GetJsPriceOverrides([FromUri] int fileUploadId)
+        {
+            try
+            {
+                var result = _siteService.GetJsPriceOverrides(fileUploadId);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex);
+                return new ExceptionResult(ex, this);
+            }
+        }
+
         #region private methods
 
         private DateTime ParseDateTime(string datetime)

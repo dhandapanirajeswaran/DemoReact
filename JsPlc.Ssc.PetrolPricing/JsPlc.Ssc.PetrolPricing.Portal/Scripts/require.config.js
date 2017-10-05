@@ -60,6 +60,7 @@
             "DateUtils": "App/DateUtils",
             "Help": "App/Help",
             "ErrorCatcher": "App/ErrorCatcher",
+            "JsPriceOverrides": "App/JsPriceOverrides",
 
             // popups
             "SiteEmailPopup" : "App/Popups/SiteEmailPopup",

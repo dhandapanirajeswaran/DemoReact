@@ -859,5 +859,31 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             }
             return model;
         }
+
+        internal bool NewJsPriceOverrideRecords(List<JsPriceOverrideDataModel> allSites, int fileUploadId)
+        {
+            const string sprocName = "spImportJsPriceOverrideData";
+            var parameters = new
+            {
+                @FileUploadId = fileUploadId,
+                @JsPriceOverrides = SqlHelper.ToSqlXml(allSites)
+            };
+            var result = DapperHelper.QueryScalar(this, sprocName, parameters);
+            return result == 0;
+        }
+
+        internal JsPriceOverrideViewModel GetJsPriceOverrides(int fileUploadId)
+        {
+            var model = new JsPriceOverrideViewModel();
+
+            const string sprocName = "spGetJsPriceOverrides";
+            var parameters = new
+            {
+                @FileUploadId = fileUploadId
+            };
+
+            model.Items = DapperHelper.QueryList<JsPriceOverrideItemViewModel>(this, sprocName, parameters);
+            return model;
+        }
     }
 }

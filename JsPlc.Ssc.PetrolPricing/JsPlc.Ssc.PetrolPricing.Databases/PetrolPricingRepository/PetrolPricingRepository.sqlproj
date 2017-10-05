@@ -249,6 +249,9 @@
     <Build Include="dbo\Stored Procedures\spGetScheduleEmailTemplateForType.sql" />
     <Build Include="dbo\Stored Procedures\spGetNearbySainsburysSites.sql" />
     <Build Include="dbo\Stored Procedures\spGetSiteEmailSendStatuses.sql" />
+    <Build Include="dbo\Tables\JsPriceOverride.sql" />
+    <Build Include="dbo\Stored Procedures\spImportJsPriceOverrideData.sql" />
+    <Build Include="dbo\Stored Procedures\spGetJsPriceOverrides.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Scripts\PostDeployment\Script.PostDeployment.sql" />

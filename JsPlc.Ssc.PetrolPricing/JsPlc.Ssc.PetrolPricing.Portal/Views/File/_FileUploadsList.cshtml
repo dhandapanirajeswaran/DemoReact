@@ -84,7 +84,6 @@
         <thead>
             <tr class="header-row">
                 <th class="column-1">
-                    File
                 </th>
                 <th class="column-2">
                     @Html.DisplayNameFor(model => model.OriginalFileName)
@@ -96,15 +95,18 @@
                     @Html.DisplayNameFor(model => model.UploadType.UploadTypeName)
                 </th>
                 <th class="column-5">
-                    @Html.DisplayNameFor(model => model.UploadDateTime)
+                    Actions
                 </th>
                 <th class="column-6">
-                    @Html.DisplayNameFor(model => model.Status.Status)
+                    @Html.DisplayNameFor(model => model.UploadDateTime)
                 </th>
                 <th class="column-7">
-                    @Html.DisplayNameFor(model => model.UploadedBy)
+                    @Html.DisplayNameFor(model => model.Status.Status)
                 </th>
                 <th class="column-8">
+                    @Html.DisplayNameFor(model => model.UploadedBy)
+                </th>
+                <th class="column-9">
 
                 </th>
             </tr>
@@ -143,7 +145,7 @@
                             if (item.IsForDifferentDay)
                             {
             <tr class="date-row dashed-divider">
-                <td colspan="8"><h4 class="@(dateHeaderCss)"><a class="view-price-link" href="@Url.Action("Prices", "Sites")?date=@(dateYYYY_mm_dd)" data-infotip="View [b]Prices[/b] for this date"><i class="fa fa-calendar"></i> &nbsp;&nbsp; @(item.UploadDateTime.Date.ToString("dd-MMM-yyy")) &mdash; @(friendlyDaysAgo)</a></h4></td>
+                <td colspan="9"><h4 class="@(dateHeaderCss)"><a class="view-price-link" href="@Url.Action("Prices", "Sites")?date=@(dateYYYY_mm_dd)" data-infotip="View [b]Prices[/b] for this date"><i class="fa fa-calendar"></i> &nbsp;&nbsp; @(item.UploadDateTime.Date.ToString("dd-MMM-yyy")) &mdash; @(friendlyDaysAgo)</a></h4></td>
             </tr>
                 }
 
@@ -170,7 +172,15 @@
                 <td class="column-4">
                     @Html.DisplayFor(modelItem => item.UploadType.UploadTypeName)
                 </td>
-                <td class="column-5 text-center" data-infotip="@(uploadedInfoTip)">
+
+                <td class="column-5">
+                    @if (item.UploadType.Id == (int)FileUploadTypes.JsPriceOverrideData && item.UploadDateTime.Date == DateTime.Now.Date)
+                    {
+                        <a href="@Url.Action("Prices", "Sites")?JsPriceOverrides=@item.Id" class="btn btn-warning btn-xs" data-infotip="Import the [b]Price Overrides[/b] using the main pricing page">Import</a>
+                    }
+                </td>
+
+                <td class="column-6 text-center" data-infotip="@(uploadedInfoTip)">
                     @if (wasToday || wasYesterday)
                     {
                         <strong>@Html.FormatFriendlyDateTime(item.UploadDateTime)</strong>
@@ -180,7 +190,7 @@
                         @Html.FormatFriendlyDateTime(item.UploadDateTime)
                         }
                 </td>
-                <td class="column-6">
+                <td class="column-7">
                     @if (statusMarkup.ContainsKey(item.Status.Status))
                     {
                         @Html.Raw(statusMarkup[item.Status.Status])
@@ -190,7 +200,7 @@
                         <span class='label label-warning'><i class='fa fa-warning'></i> @item.Status.Status</span>
                         }
                 </td>
-                <td class="column-7">
+                <td class="column-8">
                     @Html.FormatEmailLink(item.UploadedBy)
                 </td>
                 <td class="column-8">

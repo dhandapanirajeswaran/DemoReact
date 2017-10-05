@@ -689,6 +689,12 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             return base.JsonGetResult(statuses);
         }
 
+        [ScriptMethod(UseHttpGet =true)]
+        public JsonResult GetJsPriceOverrides([FromUri] int fileUploadId)
+        {
+            JsPriceOverrideViewModel model = _serviceFacade.GetJsPriceOverrides(fileUploadId);
+            return base.JsonGetResult(model);
+        }
 
         #region private methods
 

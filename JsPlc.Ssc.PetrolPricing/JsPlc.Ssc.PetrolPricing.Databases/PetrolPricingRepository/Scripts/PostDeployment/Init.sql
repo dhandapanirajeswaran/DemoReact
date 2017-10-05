@@ -24,7 +24,8 @@ values
 	(1, N'Daily Price Data'),
 	(2, N'Quarterly Site Data'),
 	(3, N'Latest Js Price Data'),
-	(4, N'Latest Competitors Price Data');
+	(4, N'Latest Competitors Price Data'),
+	(5, N'JS Price Override Data');
 
 merge dbo.UploadType as target
 using

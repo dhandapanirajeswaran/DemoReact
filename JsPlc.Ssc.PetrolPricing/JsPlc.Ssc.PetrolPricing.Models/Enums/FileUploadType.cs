@@ -13,6 +13,7 @@ namespace JsPlc.Ssc.PetrolPricing.Models.Enums
         DailyPriceData = 1,
         QuarterlySiteData = 2,
         LatestJsPriceData = 3,
-        LatestCompetitorsPriceData = 4
+        LatestCompetitorsPriceData = 4,
+        JsPriceOverrideData = 5
     }
 }

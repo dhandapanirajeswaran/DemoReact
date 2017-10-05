@@ -60,6 +60,19 @@
                 },
                 help: '#divLatestCompHelp',
                 mostRecent: '#divMostRecentCompPriceDataInfo'
+            },
+            '5': {
+                message: 'JS Price Override Data',
+                accept: ".xls, .xlsx",
+                prompt: 'Please select an Excel file',
+                templateId: 'DownloadJsPriceOverrideTemplateButton',
+                filenameRegex: /^2\d{7}_\d{4}-JsPriceOverrideData[\. ]/i,
+                submit: {
+                    title: 'JS Price Override Data',
+                    message: 'ETA: less than 1 minute'
+                },
+                help: '#divJSPriceOverrideHelp',
+                mostRecent: '#divMostRecentJsPriceOverrideDataInfo'
             }
         };
 
@@ -95,7 +108,8 @@
 
             downloadQuarterlyTemplateButton: '#DownloadQuarterlyTemplateButton',
             downloadLatestPriceTemplateButton: '#DownloadLatestPriceTemplateButton',
-            downloadLatestCompPriceTemplateButton: '#DownloadLatestCompPriceTemplateButton'
+            downloadLatestCompPriceTemplateButton: '#DownloadLatestCompPriceTemplateButton',
+            downloadJsPriceOverrideTemplateButton: '#DownloadJsPriceOverrideTemplateButton'
         };
 
         function bindEvents() {
@@ -111,6 +125,7 @@
             $(selectors.downloadLatestCompPriceTemplateButton).off().on('click', downloadLatestCompPriceTemplate);
             $(selectors.downloadLatestPriceTemplateButton).off().on('click', downloadLatestPriceTemplate);
             $(selectors.downloadQuarterlyTemplateButton).off().on('click', downloadQuarterlyTemplateButton);
+            $(selectors.downloadJsPriceOverrideTemplateButton).off().on('click', downloadJsPriceOverriderTemplate)
 
             $(selectors.showDatePickerCheckbox).off().on('change click', redrawStepLabels);
         };
@@ -134,6 +149,13 @@
                 message: 'Downloading Quarterly Template...',
                 showtime: 2000
             });
+        };
+
+        function downloadJsPriceOverriderTemplate() {
+            busyloader.show({
+                message: 'Downloading JS Price Override Template...',
+                showtime: 2000
+            })
         };
 
         function uploadTypeNameChange() {

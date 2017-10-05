@@ -600,11 +600,14 @@ table.fixed-header>tbody {
 
 .file-uploader-grid .column-1{ width: 2%; }
 .file-uploader-grid .column-2{ width: 35%; overflow-wrap:break-word }
-.file-uploader-grid .column-3{ width: 2%; }
-.file-uploader-grid .column-4{ width: 18%; }
-.file-uploader-grid .column-5{ width: 15%; }
-.file-uploader-grid .column-6{ width: 5%; }
-.file-uploader-grid .column-7{ width: 15%; }
+.file-uploader-grid .column-3{ width: 3%; }
+.file-uploader-grid .column-4{ width: 15%; }
+
+.file-uploader-grid .column-5{ width: 5%; }
+
+.file-uploader-grid .column-6{ width: 13%; }
+.file-uploader-grid .column-7{ width: 8%; }
+.file-uploader-grid .column-8{ width: 10%; }
 
 .file-uploader-grid .date-header {
     border-radius: 0 24px 24px 0;
@@ -1204,3 +1207,35 @@ input[type=email].mono-font {
     width: 50em;
     margin: 5em auto;
 }
+
+
+.radio-label {
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    margin: 2px;
+    padding: 2px 8px;
+}
+
+.radio-label:hover {
+    background-color: #eee;
+    border-color: #666;
+}
+
+.radio-label.radio-checked {
+    background: #dfd;
+    border-color: #449d44;
+    color: #000;
+}
+
+.radio-label.radio-unchecked {
+    background: #fff;
+    border-color: #ccc;
+ }
+
+
+.width100pc {width: 100%; display: inline-block;}
+.width90pc {width: 90%; display: inline-block;}
+.width75pc {width: 75%; display: inline-block;}
+.width50pc {width: 50%; display: inline-block;}
+.width33pc {width: 33%; display: inline-block;}
+

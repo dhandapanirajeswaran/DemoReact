@@ -8,6 +8,7 @@
     var lastQuarterlyUpload = Model.RecentFiles.FirstOrDefault(x => x.UploadTypeId == (int)FileUploadType.QuarterlySiteData) ?? new RecentFileUploadSummaryItem();
     var lastJSPriceDataUpload = Model.RecentFiles.FirstOrDefault(x => x.UploadTypeId == (int)FileUploadType.LatestJsPriceData) ?? new RecentFileUploadSummaryItem();
     var lastCompPriceDataUpload = Model.RecentFiles.FirstOrDefault(x => x.UploadTypeId == (int)FileUploadType.LatestCompetitorsPriceData) ?? new RecentFileUploadSummaryItem();
+    var lastJSPriceOverrideUpload = Model.RecentFiles.FirstOrDefault(x => x.UploadTypeId == (int)FileUploadType.JsPriceOverrideData) ?? new RecentFileUploadSummaryItem();
 }
 <link type="text/css" rel="stylesheet" href="~/Content/uploads.css" />
 <link type="text/css" rel="stylesheet" href="~/Content/tips.css" />
@@ -161,6 +162,24 @@
                         </div>
                     </div>
                 </div>
+
+                <div id="divJSPriceOverrideHelp" style="display: none;">
+                    <div class="row">
+                        <div class="col-md-3 text-right">
+                            <big class="text-black">JS Price Override Price Data :</big>
+                        </div>
+                        <div class="col-md-9">
+                            This contains <strong>Price Overrides</strong> for <strong>Sainsburys</strong> only sites.
+                            <br />
+                            <strong><i class="fa fa-info-circle"></i> NOTE:</strong> This will affect the <strong>Tomorrow</strong> Price and will replace existing Overrides.<br />
+                            <br />
+                            <p class="text-black text-bold">
+                                Once the file has been uploaded use the <button type="button" class="btn btn-success btn-xs">Import</button> button to preview, check and apply the Overrides.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
@@ -184,6 +203,7 @@
             <a id="DownloadQuarterlyTemplateButton" href="~/Content/QuarterlySiteData-Template.xlsx" class="btn btn-primary hide" download="QuarterlySiteDataTemplate.xlsx"><i class="fa fa-download"></i> Download Data Template</a>
             <a id="DownloadLatestPriceTemplateButton" href="~/Content/LatestSitePriceDataTemplate.xlsx" class="btn btn-primary hide" download="LatestSitePriceDataTemplate.xlsx"><i class="fa fa-download"></i> Download Data Template</a>
             <a id="DownloadLatestCompPriceTemplateButton" href="~/Content/LatestCompPriceDataTemplate.xlsx" class="btn btn-primary hide" download="LatestCompPriceDataTemplate.xlsx"><i class="fa fa-download"></i> Download Data Template</a>
+            <a id="DownloadJsPriceOverrideTemplateButton" href="~/Content/JsPriceOverrideDataTemplate.xlsx" class="btn btn-primary hide" download="JsPriceOverrideDataTemplate.xlsx"><i class="fa fa-download"></i> Download JS Price Override Template</a>
         </div>
     </div>
 

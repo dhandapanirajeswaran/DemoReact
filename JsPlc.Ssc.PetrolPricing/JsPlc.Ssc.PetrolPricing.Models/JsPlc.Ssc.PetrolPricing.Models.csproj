@@ -146,6 +146,8 @@
     <Compile Include="ViewModels\FileDownloadViewModel.cs" />
     <Compile Include="ViewModels\HistoricalPriceViewModel.cs" />
     <Compile Include="ViewModels\JsonResultViewModel.cs" />
+    <Compile Include="ViewModels\JsPriceOverrideDataModel.cs" />
+    <Compile Include="ViewModels\JsPriceOverrideViewModel.cs" />
     <Compile Include="ViewModels\LastSitePricesViewModel.cs" />
     <Compile Include="ViewModels\LatestCompPriceDataModel.cs" />
     <Compile Include="ViewModels\LatestPriceDataModel.cs" />

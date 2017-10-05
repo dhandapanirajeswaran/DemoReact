@@ -166,5 +166,41 @@ namespace JsPlc.Ssc.PetrolPricing.Core
                 }
             }
         }
+
+        public DataTable GetJsPriceOverrideData(string filePathAndName)
+        {
+            return ReadExcelWorksheetFromFile(filePathAndName);
+        }
+
+        #region private methods
+        private DataTable ReadExcelWorksheetFromFile(string filePathAndName, string worksheetName="")
+        {
+            var connectionString = string.Format("Provider=Microsoft.ACE.OLEDB.12.0;Data Source={0};Extended Properties='Excel 12.0 Xml;HDR=YES;IMEX=1'", filePathAndName);
+
+            if (!File.Exists(filePathAndName))
+            {
+                throw new ExcelParseFileException("excel file:" + filePathAndName + ". cannot exist. Contact support team." + System.Environment.NewLine, null);
+            }
+
+            string[] sheetnames = GetExcelSheetNames(connectionString);
+            if (!sheetnames.Any())
+            {
+                throw new ExcelParseFileException("excel file:" + filePathAndName + ". Does not contain any Worksheets. Contact support team." + System.Environment.NewLine, null);
+            }
+
+            if (String.IsNullOrEmpty(worksheetName))
+                worksheetName = sheetnames[0];
+
+            using (var adapter = new OleDbDataAdapter(String.Format("SELECT * FROM [{0}]", worksheetName), connectionString))
+            {
+                using (var ds = new DataSet())
+                {
+                    adapter.Fill(ds, "x");
+                    return ds.Tables[0].Copy();
+                }
+            }
+        }
+
+        #endregion private methods
     }
 }

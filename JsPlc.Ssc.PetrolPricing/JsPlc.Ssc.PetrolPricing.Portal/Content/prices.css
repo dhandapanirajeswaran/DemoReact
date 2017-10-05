@@ -1668,3 +1668,38 @@ optgroup > option {
     top: 3em;
 }
 
+
+/* JS Price Overrides  */
+
+.js-price-overrides-grid {
+    width: 76em;
+}
+
+.js-price-overrides-grid thead {
+    border-bottom: 2px solid #eee;
+    width: calc(76em - 17px);
+}
+.js-price-overrides-grid tfoot {
+    border-top: 2px solid #eee;
+    width: calc(76em - 17px);
+}
+.js-price-overrides-grid tbody {
+    width: 76em;
+}
+
+.js-price-overrides-grid .col-diesel {
+    background-color: #eee;
+}
+
+.js-price-overrides-grid tfoot {
+    border-top: 2px solid #ccc;
+}
+
+.js-price-overrides-grid .col-catno {width: 7%;}
+.js-price-overrides-grid .col-site-name {width: 30%}
+.js-price-overrides-grid .col-inc {width: 5%;}
+.js-price-overrides-grid .col-abs {width: 8%;}
+.js-price-overrides-grid .col-preview {width: 8%;}
+
+/*.js-price-overrides-grid th,
+.js-price-overrides-grid td {border-left: 1px solid red; overflow-x: hidden;}*/

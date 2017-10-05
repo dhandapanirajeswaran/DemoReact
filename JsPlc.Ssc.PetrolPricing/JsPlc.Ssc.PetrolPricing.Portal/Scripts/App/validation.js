@@ -6,6 +6,10 @@
             return value != '' && !isNaN(value);
         };
 
+        function isNonZeroNumber(value) {
+            return isNumber(value) && value > 0;
+        };
+
         function isNumberInRange(value, min, max) {
             if (!isNumber(value))
                 return false;
@@ -31,6 +35,7 @@
         // API
         return {
             isNumber: isNumber,
+            isNonZeroNumber: isNonZeroNumber,
             isNumberInRange: isNumberInRange,
             isDriveTime: isDriveTime,
             isMarkup: isMarkup,

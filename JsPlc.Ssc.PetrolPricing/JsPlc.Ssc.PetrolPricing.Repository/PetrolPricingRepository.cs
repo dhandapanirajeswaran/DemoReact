@@ -4305,6 +4305,16 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
             return _context.GetSiteEmailTodaySendStatuses(forDate);
         }
 
+        public bool NewJsPriceOverrideRecords(List<JsPriceOverrideDataModel> allSites, FileUpload aFile)
+        {
+            return _context.NewJsPriceOverrideRecords(allSites, aFile.Id);
+        }
+
+        public JsPriceOverrideViewModel GetJsPriceOverrides(int fileUploadId)
+        {
+            return _context.GetJsPriceOverrides(fileUploadId);
+        }
+
         #endregion private methods
     }
 }

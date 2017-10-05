@@ -763,6 +763,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             return null;
         }
 
+
         public string CleanupIntegrationTestsData(string testUserName)
         {
             try
@@ -1585,6 +1586,13 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
         {
             var apiUrl = String.Format("api/GetSiteEmailTodaySendStatuses/{0}", forDate.ToString("ddMMMyyyy"));
             var result = CallAndCatchAsyncGet<SiteEmailTodaySendStatusViewModel>("GetSiteEmailTodaySendStatuses", apiUrl);
+            return result;
+        }
+
+        internal JsPriceOverrideViewModel GetJsPriceOverrides(int fileUploadId)
+        {
+            var apiUrl = String.Format("api/GetJsPriceOverrides/{0}", fileUploadId);
+            var result = CallAndCatchAsyncGet<JsPriceOverrideViewModel>("GetJsPriceOverrides", apiUrl);
             return result;
         }
 

@@ -163,7 +163,8 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 	    void TruncateLatestPriceData();
 
 		void TruncateSiteToCompetitor();
-        
+        JsPriceOverrideViewModel GetJsPriceOverrides(int fileUploadId);
+
 
         /// <summary>
         /// Do we have any daily prices for a given fuelId on the date
@@ -395,5 +396,6 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         IEnumerable<NearbySiteViewModel> GetNearbyCompetitorSites(int siteId);
 
         SiteEmailTodaySendStatusViewModel GetSiteEmailTodaySendStatuses(DateTime forDate);
+        bool NewJsPriceOverrideRecords(List<JsPriceOverrideDataModel> allSites, FileUpload aFile);
     }
 }
