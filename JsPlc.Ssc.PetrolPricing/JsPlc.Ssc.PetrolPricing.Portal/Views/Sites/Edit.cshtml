@@ -172,7 +172,7 @@
                             <input type="hidden" name=@("Emails[" + i + "].Id") class="form-control" id=@("Emails_" + i + "_Id")
                                    value="@email.Id" />
 
-                            <input type="text" name=@("Emails[" + i + "].EmailAddress") class="form-control" id=@("Emails_" + i + "_EmailAddress")
+                            <input type="text" name=@("Emails[" + i + "].EmailAddress") class="form-control mono-font" id=@("Emails_" + i + "_EmailAddress")
                                    value="@email.EmailAddress" />
                             @Html.ValidationMessage("Emails[" + i + "].EmailAddress", new { @class = "text-danger" })
         i += 1;

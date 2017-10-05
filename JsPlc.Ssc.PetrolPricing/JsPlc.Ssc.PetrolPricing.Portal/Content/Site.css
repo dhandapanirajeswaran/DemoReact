@@ -764,7 +764,8 @@ table.fixed-header>tbody {
 
 select.mono-font,
 input[type=text].mono-font,
-input[type=email].mono-font {
+input[type=email].mono-font,
+a.mono-font {
     font-family: monospace;
 }
 

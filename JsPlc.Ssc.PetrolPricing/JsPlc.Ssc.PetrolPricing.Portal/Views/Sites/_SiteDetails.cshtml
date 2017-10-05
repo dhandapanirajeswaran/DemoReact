@@ -160,7 +160,7 @@
 
                     @foreach (var email in Model.Emails)
                     {
-                        <a href="@("mailto:" + email.EmailAddress)">@email.EmailAddress</a>
+                        <a class="mono-font" href="@("mailto:" + email.EmailAddress)">@email.EmailAddress</a>
                         <br />
                     }
                 </dd>
