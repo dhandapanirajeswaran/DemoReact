@@ -78,10 +78,9 @@ BEGIN
 END
 
 --
--- (re)-init the Sainsbury's store information (pfsno and StoreNo's)
+-- (re)-init the Sainsbury's store information (PfsNo and CatNo's)
 --
 EXEC [dbo].[spInitSainsburysStoreInformation]
-
 
 
 IF NOT EXISTS(SELECT NULL FROM dbo.ContactDetails)

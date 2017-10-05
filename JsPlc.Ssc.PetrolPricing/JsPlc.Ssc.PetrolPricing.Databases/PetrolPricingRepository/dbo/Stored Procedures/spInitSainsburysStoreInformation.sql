@@ -3,325 +3,334 @@ AS
 	SET NOCOUNT ON
 
 	--
-	-- (re)-init the Sainsburys store information (moved from init.sql)
-	-- This has to be done after a database data delete since the file imports do NOT set these values !
-	-- ideally this should be an Excel Import...
+	-- NOTE: Check Site PfsNo and StoreNo have not already been set (or edited by the user)
 	--
+	IF NOT EXISTS(SELECT TOP 1 NULL FROM dbo.Site WHERE IsSainsburysSite = 1 AND (PfsNo IS NOT NULL OR StoreNo IS NOT NULL) )
+	BEGIN
+		--
+		-- (re)-init the Sainsburys store information (moved from init.sql)
+		-- This has to be done after a database data delete since the file imports do NOT set these values !
+		-- ideally this should be an Excel Import...
+		--
 
-	update [dbo].[Site] set pfsno=578, StoreNo=524 where SiteName like '%SAINSBURYS Aberdeen%'
-	update [dbo].[Site] set pfsno=196, StoreNo=646 where SiteName like '%SAINSBURYS Alperton%'
-	update [dbo].[Site] set pfsno=1006, StoreNo=2010 where SiteName like '%SAINSBURYS Alphington Road%'
-	update [dbo].[Site] set pfsno=200, StoreNo=662 where SiteName like '%SAINSBURYS Alton%'
-	update [dbo].[Site] set pfsno=456, StoreNo=722 where SiteName like '%SAINSBURYS Amblecote%'
-	update [dbo].[Site] set pfsno=64, StoreNo=634 where SiteName like '%SAINSBURYS Apsley Mill%'
-	update [dbo].[Site] set pfsno=746, StoreNo=832 where SiteName like '%SAINSBURYS Archer Road%'
-	update [dbo].[Site] set pfsno=1100, StoreNo=2100 where SiteName like '%SAINSBURYS Arnold%'
-	update [dbo].[Site] set pfsno=1054, StoreNo=2054 where SiteName like '%SAINSBURYS Ashton Moss%'
-	update [dbo].[Site] set pfsno=165, StoreNo=666 where SiteName like '%SAINSBURYS Badgers Farm%'
-	update [dbo].[Site] set pfsno=96, StoreNo=673 where SiteName like '%SAINSBURYS Bagshot%'
-	update [dbo].[Site] set pfsno=586, StoreNo=537 where SiteName like '%SAINSBURYS Ballymena%'
-	update [dbo].[Site] set pfsno=155, StoreNo=894 where SiteName like '%SAINSBURYS Bamber bridge%'
-	update [dbo].[Site] set pfsno=459, StoreNo=642 where SiteName like '%SAINSBURYS Banbury%'
-	update [dbo].[Site] set pfsno=210, StoreNo=674 where SiteName like '%SAINSBURYS Barnstaple%'
-	update [dbo].[Site] set pfsno=150, StoreNo=608 where SiteName like '%SAINSBURYS Barnwood%'
-	update [dbo].[Site] set pfsno=1008, StoreNo=5 where SiteName like '%SAINSBURYS Bath%'
-	update [dbo].[Site] set pfsno=563, StoreNo=569 where SiteName like '%SAINSBURYS Beckton%'
-	update [dbo].[Site] set pfsno=477, StoreNo=859 where SiteName like '%SAINSBURYS Beeston%'
-	update [dbo].[Site] set pfsno=179, StoreNo=824 where SiteName like '%SAINSBURYS Belgrave Road%'
-	update [dbo].[Site] set pfsno=439, StoreNo=426 where SiteName like '%SAINSBURYS Biggleswade%'
-	update [dbo].[Site] set pfsno=137, StoreNo=717 where SiteName like '%SAINSBURYS Birkenhead%'
-	update [dbo].[Site] set pfsno=223, StoreNo=752 where SiteName like '%SAINSBURYS Blackhall%'
-	update [dbo].[Site] set pfsno=592, StoreNo=541 where SiteName like '%SAINSBURYS Blackheath%'
-	update [dbo].[Site] set pfsno=127, StoreNo=53 where SiteName like '%SAINSBURYS Blackpole%'
-	update [dbo].[Site] set pfsno=1835, StoreNo=2835 where SiteName like '%SAINSBURYS Bolton%'
-	update [dbo].[Site] set pfsno=449, StoreNo=814 where SiteName like '%SAINSBURYS Bradford%'
-	update [dbo].[Site] set pfsno=1231, StoreNo=2231 where SiteName like '%SAINSBURYS Braehead%'
-	update [dbo].[Site] set pfsno=896, StoreNo=224 where SiteName like '%SAINSBURYS Braintree%'
-	update [dbo].[Site] set pfsno=86, StoreNo=505 where SiteName like '%SAINSBURYS Bramingham Park%'
-	update [dbo].[Site] set pfsno=238, StoreNo=669 where SiteName like '%SAINSBURYS Bridgemead%'
-	update [dbo].[Site] set pfsno=486, StoreNo=643 where SiteName like '%SAINSBURYS Bridgend%'
-	update [dbo].[Site] set pfsno=159, StoreNo=667 where SiteName like '%SAINSBURYS Bridgwater%'
-	update [dbo].[Site] set pfsno=80, StoreNo=681 where SiteName like '%SAINSBURYS Broadcut%'
-	update [dbo].[Site] set pfsno=487, StoreNo=686 where SiteName like '%SAINSBURYS Brookwood%'
-	update [dbo].[Site] set pfsno=591, StoreNo=652 where SiteName like '%SAINSBURYS Burpham%'
-	update [dbo].[Site] set pfsno=1001, StoreNo=411 where SiteName like '%SAINSBURYS Bury St Edmunds%'
-	update [dbo].[Site] set pfsno=91, StoreNo=59 where SiteName like '%SAINSBURYS Bybrook%'
-	update [dbo].[Site] set pfsno=162, StoreNo=559 where SiteName like '%SAINSBURYS Calcot%'
-	update [dbo].[Site] set pfsno=476, StoreNo=773 where SiteName like '%SAINSBURYS Canley%'
-	update [dbo].[Site] set pfsno=239, StoreNo=775 where SiteName like '%SAINSBURYS Cannock%'
-	update [dbo].[Site] set pfsno=1134, StoreNo=2134 where SiteName like '%SAINSBURYS Canvey Island%'
-	update [dbo].[Site] set pfsno=148, StoreNo=813 where SiteName like '%SAINSBURYS Castle Boulevard%'
-	update [dbo].[Site] set pfsno=785, StoreNo=795 where SiteName like '%SAINSBURYS Castle Court%'
-	update [dbo].[Site] set pfsno=1106, StoreNo=2106 where SiteName like '%SAINSBURYS Castle Vale%'
-	update [dbo].[Site] set pfsno=240, StoreNo=751 where SiteName like '%SAINSBURYS Chaddesden%'
-	update [dbo].[Site] set pfsno=1071, StoreNo=2071 where SiteName like '%SAINSBURYS Chafford Hundred%'
-	update [dbo].[Site] set pfsno=457, StoreNo=772 where SiteName like '%SAINSBURYS Cheadle%'
-	update [dbo].[Site] set pfsno=134, StoreNo=4 where SiteName like '%SAINSBURYS Chertsey%'
-	update [dbo].[Site] set pfsno=139, StoreNo=721 where SiteName like '%SAINSBURYS Chester%'
-	update [dbo].[Site] set pfsno=178, StoreNo=849 where SiteName like '%SAINSBURYS Chesterfield%'
-	update [dbo].[Site] set pfsno=185, StoreNo=6 where SiteName like '%SAINSBURYS Chichester%'
-	update [dbo].[Site] set pfsno=233, StoreNo=664 where SiteName like '%SAINSBURYS Chippenham%'
-	update [dbo].[Site] set pfsno=473, StoreNo=687 where SiteName like '%SAINSBURYS Cobham%'
-	update [dbo].[Site] set pfsno=138, StoreNo=8 where SiteName like '%SAINSBURYS Colchester Ave%'
-	update [dbo].[Site] set pfsno=126, StoreNo=815 where SiteName like '%SAINSBURYS Coldhams Lane%'
-	update [dbo].[Site] set pfsno=583, StoreNo=534 where SiteName like '%SAINSBURYS Coleraine%'
-	update [dbo].[Site] set pfsno=97, StoreNo=434 where SiteName like '%SAINSBURYS Corey%'
-	update [dbo].[Site] set pfsno=176, StoreNo=789 where SiteName like '%SAINSBURYS CourtHouse Green%'
-	update [dbo].[Site] set pfsno=1010, StoreNo=2013 where SiteName like '%SAINSBURYS Craigavon%'
-	update [dbo].[Site] set pfsno=1073, StoreNo=2073 where SiteName like '%SAINSBURYS Cramlington%'
-	update [dbo].[Site] set pfsno=145, StoreNo=17 where SiteName like '%SAINSBURYS Crayford%'
-	update [dbo].[Site] set pfsno=221, StoreNo=639 where SiteName like '%SAINSBURYS Cwmbran%'
-	update [dbo].[Site] set pfsno=197, StoreNo=885 where SiteName like '%SAINSBURYS Darnley%'
-	update [dbo].[Site] set pfsno=189, StoreNo=749 where SiteName like '%SAINSBURYS Deepdale%'
-	update [dbo].[Site] set pfsno=174, StoreNo=886 where SiteName like '%SAINSBURYS Denton%'
-	update [dbo].[Site] set pfsno=218, StoreNo=897 where SiteName like '%SAINSBURYS Dewsbury%'
-	update [dbo].[Site] set pfsno=1067, StoreNo=2067 where SiteName like '%SAINSBURYS Didcot%'
-	update [dbo].[Site] set pfsno=458, StoreNo=601 where SiteName like '%SAINSBURYS Dome Roundabout%'
-	update [dbo].[Site] set pfsno=577, StoreNo=523 where SiteName like '%SAINSBURYS Drumchapel%'
-	update [dbo].[Site] set pfsno=1549, StoreNo=549 where SiteName like '%SAINSBURYS Dundee%'
-	update [dbo].[Site] set pfsno=89, StoreNo=611 where SiteName like '%SAINSBURYS Dunstable%'
-	update [dbo].[Site] set pfsno=232, StoreNo=776 where SiteName like '%SAINSBURYS Durham%'
-	update [dbo].[Site] set pfsno=492, StoreNo=797 where SiteName like '%SAINSBURYS East Filton%'
-	update [dbo].[Site] set pfsno=493, StoreNo=893 where SiteName like '%SAINSBURYS East Kilbride%'
-	update [dbo].[Site] set pfsno=169, StoreNo=443 where SiteName like '%SAINSBURYS East Mayne%'
-	update [dbo].[Site] set pfsno=82, StoreNo=765 where SiteName like '%SAINSBURYS East Prescot Road%'
-	update [dbo].[Site] set pfsno=325, StoreNo=560 where SiteName like '%SAINSBURYS Cameron Toll%'
-	update [dbo].[Site] set pfsno=192, StoreNo=744 where SiteName like '%SAINSBURYS Ellesmere Port%'
-	update [dbo].[Site] set pfsno=481, StoreNo=7 where SiteName like '%SAINSBURYS Eltham%'
-	update [dbo].[Site] set pfsno=168, StoreNo=677 where SiteName like '%SAINSBURYS Emersons Green%'
-	update [dbo].[Site] set pfsno=95, StoreNo=444 where SiteName like '%SAINSBURYS Enfield%'
-	update [dbo].[Site] set pfsno=77, StoreNo=609 where SiteName like '%SAINSBURYS Fairfield Park%'
-	update [dbo].[Site] set pfsno=81, StoreNo=672 where SiteName like '%SAINSBURYS Farlington%'
-	update [dbo].[Site] set pfsno=465, StoreNo=656 where SiteName like '%SAINSBURYS Ferndown%'
-	update [dbo].[Site] set pfsno=584, StoreNo=535 where SiteName like '%SAINSBURYS Forestside%'
-	update [dbo].[Site] set pfsno=92, StoreNo=727 where SiteName like '%SAINSBURYS Fosse Park%'
-	update [dbo].[Site] set pfsno=120, StoreNo=685 where SiteName like '%SAINSBURYS Frome%'
-	update [dbo].[Site] set pfsno=461, StoreNo=543 where SiteName like '%SAINSBURYS Glen Road%'
-	update [dbo].[Site] set pfsno=482, StoreNo=670 where SiteName like '%SAINSBURYS Godalming%'
-	update [dbo].[Site] set pfsno=1081, StoreNo=2081 where SiteName like '%SAINSBURYS Grantham%'
-	update [dbo].[Site] set pfsno=1625, StoreNo=2625 where SiteName like '%SAINSBURYS Charlton Riverside%'
-	update [dbo].[Site] set pfsno=149, StoreNo=892 where SiteName like '%SAINSBURYS Grimsby%'
-	update [dbo].[Site] set pfsno=432, StoreNo=422 where SiteName like '%SAINSBURYS Hadleigh Road%'
-	update [dbo].[Site] set pfsno=597, StoreNo=778 where SiteName like '%SAINSBURYS Halifax%'
-	update [dbo].[Site] set pfsno=836, StoreNo=803 where SiteName like '%SAINSBURYS Hamilton%'
-	update [dbo].[Site] set pfsno=99, StoreNo=62 where SiteName like '%SAINSBURYS Hampden Park%'
-	update [dbo].[Site] set pfsno=94, StoreNo=709 where SiteName like '%SAINSBURYS Hankridge Farm%'
-	update [dbo].[Site] set pfsno=114, StoreNo=869 where SiteName like '%SAINSBURYS Hanley%'
-	update [dbo].[Site] set pfsno=464, StoreNo=402 where SiteName like '%SAINSBURYS Harlow%'
-	update [dbo].[Site] set pfsno=483, StoreNo=406 where SiteName like '%SAINSBURYS Harringay%'
-	update [dbo].[Site] set pfsno=158, StoreNo=711 where SiteName like '%SAINSBURYS Harrogate%'
-	update [dbo].[Site] set pfsno=234, StoreNo=419 where SiteName like '%SAINSBURYS Haverhill%'
-	update [dbo].[Site] set pfsno=75, StoreNo=630 where SiteName like '%SAINSBURYS Hayes%'
-	update [dbo].[Site] set pfsno=1268, StoreNo=2268 where SiteName like '%SAINSBURYS Heaton Newcastle%'
-	update [dbo].[Site] set pfsno=1288, StoreNo=2288 where SiteName like '%SAINSBURYS Heaton Park%'
-	update [dbo].[Site] set pfsno=151, StoreNo=657 where SiteName like '%SAINSBURYS Hedge End%'
-	update [dbo].[Site] set pfsno=520, StoreNo=556 where SiteName like '%SAINSBURYS Hempstead%'
-	update [dbo].[Site] set pfsno=66, StoreNo=637 where SiteName like '%SAINSBURYS Hendon%'
-	update [dbo].[Site] set pfsno=479, StoreNo=519 where SiteName like '%SAINSBURYS Hereford%'
-	update [dbo].[Site] set pfsno=180, StoreNo=600 where SiteName like '%SAINSBURYS Heyford Hill%'
-	update [dbo].[Site] set pfsno=1015, StoreNo=2005 where SiteName like '%SAINSBURYS Hoddesdon%'
-	update [dbo].[Site] set pfsno=1114, StoreNo=2114 where SiteName like '%SAINSBURYS Holywood Exchange%'
-	update [dbo].[Site] set pfsno=451, StoreNo=391 where SiteName like '%SAINSBURYS Horsham%'
-	update [dbo].[Site] set pfsno=141, StoreNo=825 where SiteName like '%SAINSBURYS Hull%'
-	update [dbo].[Site] set pfsno=1107, StoreNo=2007 where SiteName like '%SAINSBURYS Huntingdon%'
-	update [dbo].[Site] set pfsno=1105, StoreNo=2105 where SiteName like '%SAINSBURYS Isle of Wight%'
-	update [dbo].[Site] set pfsno=587, StoreNo=847 where SiteName like '%SAINSBURYS Keighley%'
-	update [dbo].[Site] set pfsno=152, StoreNo=665 where SiteName like '%SAINSBURYS Kempshott%'
-	update [dbo].[Site] set pfsno=497, StoreNo=757 where SiteName like '%SAINSBURYS Kempston%'
-	update [dbo].[Site] set pfsno=431, StoreNo=628 where SiteName like '%SAINSBURYS Kettering%'
-	update [dbo].[Site] set pfsno=107, StoreNo=640 where SiteName like '%SAINSBURYS Kidderminster%'
-	update [dbo].[Site] set pfsno=184, StoreNo=631 where SiteName like '%SAINSBURYS Kidlington%'
-	update [dbo].[Site] set pfsno=68, StoreNo=683 where SiteName like '%SAINSBURYS Kiln Lane%'
-	update [dbo].[Site] set pfsno=469, StoreNo=816 where SiteName like '%SAINSBURYS Kimberley%'
-	update [dbo].[Site] set pfsno=147, StoreNo=871 where SiteName like '%SAINSBURYS Kingsway%'
-	update [dbo].[Site] set pfsno=491, StoreNo=2001 where SiteName like '%SAINSBURYS Kirkcaldy%'
-	update [dbo].[Site] set pfsno=132, StoreNo=602 where SiteName like '%SAINSBURYS Ladbroke Grove%'
-	update [dbo].[Site] set pfsno=494, StoreNo=28 where SiteName like '%SAINSBURYS Larkfield%'
-	update [dbo].[Site] set pfsno=173, StoreNo=503 where SiteName like '%SAINSBURYS Leamington%'
-	update [dbo].[Site] set pfsno=575, StoreNo=695 where SiteName like '%SAINSBURYS Leeds Savacentre%'
-	update [dbo].[Site] set pfsno=1005, StoreNo=70 where SiteName like '%SAINSBURYS Leigh%'
-	update [dbo].[Site] set pfsno=235, StoreNo=421 where SiteName like '%SAINSBURYS Letchworth%'
-	update [dbo].[Site] set pfsno=1009, StoreNo=2017 where SiteName like '%SAINSBURYS Leven%'
-	update [dbo].[Site] set pfsno=111, StoreNo=725 where SiteName like '%SAINSBURYS Lincoln%'
-	update [dbo].[Site] set pfsno=1011, StoreNo=2023 where SiteName like '%SAINSBURYS Liphook%'
-	update [dbo].[Site] set pfsno=396, StoreNo=567 where SiteName like '%SAINSBURYS London Colney%'
-	update [dbo].[Site] set pfsno=452, StoreNo=706 where SiteName like '%SAINSBURYS Longwater%'
-	update [dbo].[Site] set pfsno=131, StoreNo=18 where SiteName like '%SAINSBURYS LordsHill%'
-	update [dbo].[Site] set pfsno=478, StoreNo=852 where SiteName like '%SAINSBURYS Loughborough%'
-	update [dbo].[Site] set pfsno=108, StoreNo=433 where SiteName like '%SAINSBURYS Low Hall%'
-	update [dbo].[Site] set pfsno=213, StoreNo=58 where SiteName like '%SAINSBURYS Lyons Farm%'
-	update [dbo].[Site] set pfsno=1269, StoreNo=2269 where SiteName like '%SAINSBURYS Mansfield%'
-	update [dbo].[Site] set pfsno=85, StoreNo=605 where SiteName like '%SAINSBURYS Market Harborough%'
-	update [dbo].[Site] set pfsno=438, StoreNo=691 where SiteName like '%SAINSBURYS Marsh Mills%'
-	update [dbo].[Site] set pfsno=498, StoreNo=714 where SiteName like '%SAINSBURYS Marshall Lake%'
-	update [dbo].[Site] set pfsno=1038, StoreNo=2112 where SiteName like '%SAINSBURYS Meadowhall North%'
-	update [dbo].[Site] set pfsno=582, StoreNo=521 where SiteName like '%SAINSBURYS Melksham%'
-	update [dbo].[Site] set pfsno=394, StoreNo=566 where SiteName like '%SAINSBURYS Merton%'
-	update [dbo].[Site] set pfsno=175, StoreNo=790 where SiteName like '%SAINSBURYS Middlesbrough%'
-	update [dbo].[Site] set pfsno=193, StoreNo=713 where SiteName like '%SAINSBURYS Monks Cross%'
-	update [dbo].[Site] set pfsno=1170, StoreNo=2170 where SiteName like '%SAINSBURYS Nantwich%'
-	update [dbo].[Site] set pfsno=692, StoreNo=31 where SiteName like '%SAINSBURYS New Cross Gate%'
-	update [dbo].[Site] set pfsno=488, StoreNo=690 where SiteName like '%SAINSBURYS Newbury%'
-	update [dbo].[Site] set pfsno=446, StoreNo=2136 where SiteName like '%SAINSBURYS Newhaven%'
-	update [dbo].[Site] set pfsno=1246, StoreNo=2246 where SiteName like '%SAINSBURYS Newport%'
-	update [dbo].[Site] set pfsno=525, StoreNo=538 where SiteName like '%SAINSBURYS Newry%'
-	update [dbo].[Site] set pfsno=110, StoreNo=882 where SiteName like '%SAINSBURYS Newton Abbot%'
-	update [dbo].[Site] set pfsno=485, StoreNo=225 where SiteName like '%SAINSBURYS Nine Elms%'
-	update [dbo].[Site] set pfsno=495, StoreNo=38 where SiteName like '%SAINSBURYS North Cheam%'
-	update [dbo].[Site] set pfsno=1046, StoreNo=2046 where SiteName like '%SAINSBURYS North Walsham%'
-	update [dbo].[Site] set pfsno=480, StoreNo=762 where SiteName like '%SAINSBURYS Northwich%'
-	update [dbo].[Site] set pfsno=112, StoreNo=558 where SiteName like '%SAINSBURYS Oldbury%'
-	update [dbo].[Site] set pfsno=1063, StoreNo=2063 where SiteName like '%SAINSBURYS Oldham%'
-	update [dbo].[Site] set pfsno=1059, StoreNo=2059 where SiteName like '%SAINSBURYS Osmaston Park%'
-	update [dbo].[Site] set pfsno=104, StoreNo=801 where SiteName like '%SAINSBURYS Paignton%'
-	update [dbo].[Site] set pfsno=76, StoreNo=3 where SiteName like '%SAINSBURYS Pepper Hill%'
-	update [dbo].[Site] set pfsno=136, StoreNo=823 where SiteName like '%SAINSBURYS Perton%'
-	update [dbo].[Site] set pfsno=182, StoreNo=417 where SiteName like '%SAINSBURYS Peterborough%'
-	update [dbo].[Site] set pfsno=190, StoreNo=682 where SiteName like '%SAINSBURYS Pinhoe Road%'
-	update [dbo].[Site] set pfsno=230, StoreNo=441 where SiteName like '%SAINSBURYS Pound Lane%'
-	update [dbo].[Site] set pfsno=157, StoreNo=52 where SiteName like '%SAINSBURYS Purley Way%'
-	update [dbo].[Site] set pfsno=594, StoreNo=413 where SiteName like '%SAINSBURYS Queens Road%'
-	update [dbo].[Site] set pfsno=470, StoreNo=72 where SiteName like '%SAINSBURYS Rayleigh Weir%'
-	update [dbo].[Site] set pfsno=181, StoreNo=604 where SiteName like '%SAINSBURYS Redditch%'
-	update [dbo].[Site] set pfsno=161, StoreNo=853 where SiteName like '%SAINSBURYS Reedswood%'
-	update [dbo].[Site] set pfsno=78, StoreNo=633 where SiteName like '%SAINSBURYS Rhyl%'
-	update [dbo].[Site] set pfsno=1004, StoreNo=2011 where SiteName like '%SAINSBURYS Rice Lane%'
-	update [dbo].[Site] set pfsno=1548, StoreNo=548 where SiteName like '%SAINSBURYS Richmond%'
-	update [dbo].[Site] set pfsno=113, StoreNo=742 where SiteName like '%SAINSBURYS Ripley%'
-	update [dbo].[Site] set pfsno=1696, StoreNo=696 where SiteName like '%SAINSBURYS Romford%'
-	update [dbo].[Site] set pfsno=177, StoreNo=514 where SiteName like '%SAINSBURYS Rugby%'
-	update [dbo].[Site] set pfsno=231, StoreNo=873 where SiteName like '%SAINSBURYS Salford%'
-	update [dbo].[Site] set pfsno=1080, StoreNo=2080 where SiteName like '%SAINSBURYS Scarborough%'
-	update [dbo].[Site] set pfsno=472, StoreNo=27 where SiteName like '%SAINSBURYS Sedlescombe Road%'
-	update [dbo].[Site] set pfsno=466, StoreNo=867 where SiteName like '%SAINSBURYS Leeds Colton%'
-	update [dbo].[Site] set pfsno=1000, StoreNo=63 where SiteName like '%SAINSBURYS Sevenoaks%'
-	update [dbo].[Site] set pfsno=90, StoreNo=793 where SiteName like '%SAINSBURYS Shorehead%'
-	update [dbo].[Site] set pfsno=109, StoreNo=718 where SiteName like '%SAINSBURYS Shrewsbury%'
-	update [dbo].[Site] set pfsno=1644, StoreNo=644 where SiteName like '%SAINSBURYS South Ruislip%'
-	update [dbo].[Site] set pfsno=1079, StoreNo=2079 where SiteName like '%SAINSBURYS Spalding%'
-	update [dbo].[Site] set pfsno=187, StoreNo=415 where SiteName like '%SAINSBURYS Springfield%'
-	update [dbo].[Site] set pfsno=1061, StoreNo=2061 where SiteName like '%SAINSBURYS Sprucefield%'
-	update [dbo].[Site] set pfsno=88, StoreNo=629 where SiteName like '%SAINSBURYS St Albans%'
-	update [dbo].[Site] set pfsno=219, StoreNo=661 where SiteName like '%SAINSBURYS St Clares%'
-	update [dbo].[Site] set pfsno=468, StoreNo=679 where SiteName like '%SAINSBURYS Staines%'
-	update [dbo].[Site] set pfsno=1168, StoreNo=2168 where SiteName like '%SAINSBURYS Stanway%'
-	update [dbo].[Site] set pfsno=133, StoreNo=410 where SiteName like '%SAINSBURYS Stevenage%'
-	update [dbo].[Site] set pfsno=580, StoreNo=529 where SiteName like '%SAINSBURYS Stirling%'
-	update [dbo].[Site] set pfsno=1113, StoreNo=2113 where SiteName like '%SAINSBURYS Stoke%'
-	update [dbo].[Site] set pfsno=877, StoreNo=812 where SiteName like '%SAINSBURYS Straiton%'
-	update [dbo].[Site] set pfsno=146, StoreNo=745 where SiteName like '%SAINSBURYS Stratton%'
-	update [dbo].[Site] set pfsno=754, StoreNo=788 where SiteName like '%SAINSBURYS Street%'
-	update [dbo].[Site] set pfsno=216, StoreNo=774 where SiteName like '%SAINSBURYS Sunderland%'
-	update [dbo].[Site] set pfsno=467, StoreNo=753 where SiteName like '%SAINSBURYS Swadlincote%'
-	update [dbo].[Site] set pfsno=1003, StoreNo=510 where SiteName like '%SAINSBURYS Swansea%'
-	update [dbo].[Site] set pfsno=565, StoreNo=693 where SiteName like '%SAINSBURYS Sydenham%'
-	update [dbo].[Site] set pfsno=209, StoreNo=676 where SiteName like '%SAINSBURYS Talbot Heath%'
-	update [dbo].[Site] set pfsno=154, StoreNo=887 where SiteName like '%SAINSBURYS Tamworth%'
-	update [dbo].[Site] set pfsno=1078, StoreNo=2078 where SiteName like '%SAINSBURYS Team Valley%'
-	update [dbo].[Site] set pfsno=186, StoreNo=2002 where SiteName like '%SAINSBURYS Telford%'
-	update [dbo].[Site] set pfsno=79, StoreNo=516 where SiteName like '%SAINSBURYS Tewkesbury%'
-	update [dbo].[Site] set pfsno=1324, StoreNo=2324 where SiteName like '%SAINSBURYS Thanet%'
-	update [dbo].[Site] set pfsno=98, StoreNo=474 where SiteName like '%SAINSBURYS Thetford%'
-	update [dbo].[Site] set pfsno=140, StoreNo=403 where SiteName like '%SAINSBURYS Thorley%'
-	update [dbo].[Site] set pfsno=211, StoreNo=732 where SiteName like '%SAINSBURYS Thorne Road%'
-	update [dbo].[Site] set pfsno=142, StoreNo=509 where SiteName like '%SAINSBURYS Thornhill%'
-	update [dbo].[Site] set pfsno=135, StoreNo=206 where SiteName like '%SAINSBURYS Tonbridge%'
-	update [dbo].[Site] set pfsno=198, StoreNo=668 where SiteName like '%SAINSBURYS Torquay%'
-	update [dbo].[Site] set pfsno=84, StoreNo=671 where SiteName like '%SAINSBURYS Truro%'
-	update [dbo].[Site] set pfsno=437, StoreNo=20 where SiteName like '%SAINSBURYS Tunbridge Wells%'
-	update [dbo].[Site] set pfsno=199, StoreNo=740 where SiteName like '%SAINSBURYS Upton%'
-	update [dbo].[Site] set pfsno=1295, StoreNo=2295 where SiteName like '%SAINSBURYS Wakefield%'
-	update [dbo].[Site] set pfsno=1244, StoreNo=2244 where SiteName like '%SAINSBURYS Wantage%'
-	update [dbo].[Site] set pfsno=144, StoreNo=408 where SiteName like '%SAINSBURYS Warren Heath%'
-	update [dbo].[Site] set pfsno=143, StoreNo=851 where SiteName like '%SAINSBURYS Warrington%'
-	update [dbo].[Site] set pfsno=45, StoreNo=555 where SiteName like '%SAINSBURYS Washington%'
-	update [dbo].[Site] set pfsno=103, StoreNo=675 where SiteName like '%SAINSBURYS Watchmoor Park%'
-	update [dbo].[Site] set pfsno=496, StoreNo=680 where SiteName like '%SAINSBURYS Water Lane%'
-	update [dbo].[Site] set pfsno=1040, StoreNo=2040 where SiteName like '%SAINSBURYS Wednesfield%'
-	update [dbo].[Site] set pfsno=156, StoreNo=648 where SiteName like '%SAINSBURYS Weedon%'
-	update [dbo].[Site] set pfsno=1610, StoreNo=610 where SiteName like '%SAINSBURYS Wellingborough%'
-	update [dbo].[Site] set pfsno=188, StoreNo=26 where SiteName like '%SAINSBURYS West Green%'
-	update [dbo].[Site] set pfsno=191, StoreNo=51 where SiteName like '%SAINSBURYS West Hove%'
-	update [dbo].[Site] set pfsno=195, StoreNo=57 where SiteName like '%SAINSBURYS West Park Farm%'
-	update [dbo].[Site] set pfsno=445, StoreNo=460 where SiteName like '%SAINSBURYS Whitechapel%'
-	update [dbo].[Site] set pfsno=183, StoreNo=864 where SiteName like '%SAINSBURYS Whitley Bay%'
-	update [dbo].[Site] set pfsno=194, StoreNo=55 where SiteName like '%SAINSBURYS Whitstable%'
-	update [dbo].[Site] set pfsno=842, StoreNo=854 where SiteName like '%SAINSBURYS Wigan%'
-	update [dbo].[Site] set pfsno=83, StoreNo=678 where SiteName like '%SAINSBURYS Winterstoke%'
-	update [dbo].[Site] set pfsno=471, StoreNo=735 where SiteName like '%SAINSBURYS Worksop%'
-	update [dbo].[Site] set pfsno=129, StoreNo=820 where SiteName like '%SAINSBURYS Worle%'
-	update [dbo].[Site] set pfsno=160, StoreNo=890 where SiteName like '%SAINSBURYS Wrexham%'
-	update [dbo].[Site] set pfsno=1110, StoreNo=9992112 where SiteName like '%SAINSBURYS Dronfield%'
-	update [dbo].[Site] set pfsno=1092, StoreNo=2092 where SiteName like '%SAINSBURYS Matlock%'
-	update [dbo].[Site] set pfsno=1023, StoreNo=2022 where SiteName like '%SAINSBURYS Attleborough%'
-	update [dbo].[Site] set pfsno=1180, StoreNo=2180 where SiteName like '%SAINSBURYS Dungannon%'
-	update [dbo].[Site] set pfsno=1517, StoreNo=4517 where SiteName like '%SAINSBURYS Lower%'
-	update [dbo].[Site] set pfsno=1518, StoreNo=4518 where SiteName like '%SAINSBURYS Woodlands%'
-	update [dbo].[Site] set pfsno=1513, StoreNo=4513 where SiteName like '%SAINSBURYS Marshalswick%'
-	update [dbo].[Site] set pfsno=1221, StoreNo=2221 where SiteName like '%SAINSBURYS GLOUCESTER QUAYS%'
-	update [dbo].[Site] set pfsno=1181, StoreNo=2181 where SiteName like '%SAINSBURYS West Belfast%'
-	update [dbo].[Site] set pfsno=1225, StoreNo=2225 where SiteName like '%SAINSBURYS Pontllanfraith%'
-	update [dbo].[Site] set pfsno=1154, StoreNo=2154 where SiteName like '%SAINSBURYS Murrayfield%'
-	update [dbo].[Site] set pfsno=1186, StoreNo=2186 where SiteName like '%SAINSBURYS Strathaven%'
-	update [dbo].[Site] set pfsno=1093, StoreNo=2093 where SiteName like '%SAINSBURYS Crystal Peaks%'
-	update [dbo].[Site] set pfsno=1162, StoreNo=2162 where SiteName like '%SAINSBURYS Helston%'
-	update [dbo].[Site] set pfsno=1850, StoreNo=850 where SiteName like '%SAINSBURYS Prestwick%'
-	update [dbo].[Site] set pfsno=1199, StoreNo=2199 where SiteName like '%SAINSBURYS Bishop Auckland%'
-	update [dbo].[Site] set pfsno=1169, StoreNo=2169 where SiteName like '%SAINSBURYS Newcastle-Under-Lyme%'
-	update [dbo].[Site] set pfsno=1097, StoreNo=2097 where SiteName like '%SAINSBURYS WestHoughton%'
-	update [dbo].[Site] set pfsno=1247, StoreNo=2247 where SiteName like '%SAINSBURYS Morecambe%'
-	update [dbo].[Site] set pfsno=1249, StoreNo=2249 where SiteName like '%SAINSBURYS Nairn%'
-	update [dbo].[Site] set pfsno=1196, StoreNo=2196 where SiteName like '%SAINSBURYS Dawlish%'
-	update [dbo].[Site] set pfsno=1255, StoreNo=2255 where SiteName like '%SAINSBURYS Kelso%'
-	update [dbo].[Site] set pfsno=1248, StoreNo=2248 where SiteName like '%SAINSBURYS Irvine%'
-	update [dbo].[Site] set pfsno=1274, StoreNo=2274 where SiteName like '%SAINSBURYS Pontypridd%'
-	update [dbo].[Site] set pfsno=1200, StoreNo=2200 where SiteName like '%SAINSBURYS Biddulph%'
-	update [dbo].[Site] set pfsno=1655, StoreNo=655 where SiteName like '%SAINSBURYS Taunton%'
-	update [dbo].[Site] set pfsno=1220, StoreNo=2220 where SiteName like '%SAINSBURYS Northfield%'
-	update [dbo].[Site] set pfsno=1082, StoreNo=2082 where SiteName like '%SAINSBURYS Darlington%'
-	update [dbo].[Site] set pfsno=1240, StoreNo=2240 where SiteName like '%SAINSBURYS Hawick%'
-	update [dbo].[Site] set pfsno=1272, StoreNo=2272 where SiteName like '%SAINSBURYS Whitby%'
-	update [dbo].[Site] set pfsno=1286, StoreNo=2286 where SiteName like '%SAINSBURYS Carlisle%'
-	update [dbo].[Site] set pfsno=1077, StoreNo=2077 where SiteName like '%SAINSBURYS Scunthorpe%'
-	update [dbo].[Site] set pfsno=1290, StoreNo=2290 where SiteName like '%SAINSBURYS Bognor Regis%'
-	update [dbo].[Site] set pfsno=1293, StoreNo=2293 where SiteName like '%SAINSBURYS Kings Lynn%'
-	update [dbo].[Site] set pfsno=1304, StoreNo=2304 where SiteName like '%SAINSBURYS Leigh New%'
-	update [dbo].[Site] set pfsno=1281, StoreNo=2281 where SiteName like '%SAINSBURYS Leek%'
-	update [dbo].[Site] set pfsno=1507, StoreNo=507 where SiteName like '%SAINSBURYS Crystal Palace%'
-	update [dbo].[Site] set pfsno=1239, StoreNo=2239 where SiteName like '%SAINSBURYS Colne%'
-	update [dbo].[Site] set pfsno=1297, StoreNo=2297 where SiteName like '%SAINSBURYS Sunderland North%'
-	update [dbo].[Site] set pfsno=1303, StoreNo=2303 where SiteName like '%SAINSBURYS Sedgefield%'
-	update [dbo].[Site] set pfsno=1524, StoreNo=4524 where SiteName like '%SAINSBURYS Horley%'
-	update [dbo].[Site] set pfsno=1275, StoreNo=2123 where SiteName like '%SAINSBURYS Bishops Waltham%'
-	update [dbo].[Site] set pfsno=1313, StoreNo=805 where SiteName like '%SAINSBURYS Dorridge%'
-	update [dbo].[Site] set pfsno=1309, StoreNo=2309 where SiteName like '%SAINSBURYS Edinburgh%'
-	update [dbo].[Site] set pfsno=1308, StoreNo=2308 where SiteName like '%SAINSBURYS Weymouth%'
-	update [dbo].[Site] set pfsno=1283, StoreNo=2283 where SiteName like '%SAINSBURYS Penzance%'
-	update [dbo].[Site] set pfsno=1314, StoreNo=2314 where SiteName like '%SAINSBURYS Leicester North%'
-	update [dbo].[Site] set pfsno=1267, StoreNo=2267 where SiteName like '%SAINSBURYS Bangor%'
-	update [dbo].[Site] set pfsno=1526, StoreNo=4526 where SiteName like '%SAINSBURYS Balsall Common%'
-	update [dbo].[Site] set pfsno=1525, StoreNo=4525 where SiteName like '%SAINSBURYS Balham%'
-	update [dbo].[Site] set pfsno=1527, StoreNo=4527 where SiteName like '%SAINSBURYS Droitwich%'
-	update [dbo].[Site] set pfsno=1319, StoreNo=2319 where SiteName like '%SAINSBURYS Blackpool%'
-	update [dbo].[Site] set pfsno=1528, StoreNo=4528 where SiteName like '%SAINSBURYS Newbury Andover Rd%'
-	update [dbo].[Site] set pfsno=1529, StoreNo=4529 where SiteName like '%SAINSBURYS Rawdon%'
-	update [dbo].[Site] set pfsno=1340, StoreNo=2340 where SiteName like '%SAINSBURYS Wolverhampton%'
-	update [dbo].[Site] set pfsno=1095, StoreNo=2095 where SiteName like '%SAINSBURYS Oakley%'
-	update [dbo].[Site] set pfsno=1252, StoreNo=2252 where SiteName like '%SAINSBURYS Portishead%'
-	update [dbo].[Site] set pfsno=1589, StoreNo=4589 where CatNo= 767
-	update [dbo].[Site] set pfsno=1289, StoreNo=2289 where SiteName like '%SAINSBURYS Waterlooville%'
-	update [dbo].[Site] set pfsno=1070, StoreNo=2070 where SiteName like '%SAINSBURYS Whitehouse Farm%'
-	update [dbo].[Site] set pfsno=1030, StoreNo=2030 where SiteName like '%SAINSBURYS Greenwich%'
-	update [dbo].[Site] set pfsno=1254, StoreNo=2254 where SiteName like '%SAINSBURYS Livingston%'
-	update [dbo].[Site] set pfsno=1158, StoreNo=2158 where SiteName like '%SAINSBURYS Dartmouth%'
-	update [dbo].[Site] set pfsno=1550, StoreNo=6550 where SiteName like '%SAINSBURYS Currie%'
-	update [dbo].[Site] set pfsno=1271, StoreNo=2271 where SiteName like '%SAINSBURYS Ely%'
-	update [dbo].[Site] set pfsno=131, StoreNo=18 where CatNo=15871 
-	update [dbo].[Site] set pfsno=466, StoreNo=867 where CatNo=9019
-	update [dbo].[Site] set pfsno=1038, StoreNo=2112 where CatNo=9179
-	update [dbo].[Site] set pfsno=91, StoreNo=59 where CatNo=9243
-	update [dbo].[Site] set pfsno=1051, StoreNo=2051 where CatNo=26185
+		-- NOTE: this has been re-generated from Olivia's Email export list (05-OCT-2017)
+
+
+		-- waiting for updated list from Olivia for the following sites (missing StoreNo)
+		--
+		-- SAINSBURYS FAVERSHAM AUTOMAT
+		-- SAINSBURYS KINGS ROAD BEBINGTON
+		-- SAINSBURYS LIVERPOOL GREAT HOMER STREET
+		-- SAINSBURYS MELTON ROAD NOTTINGHAM
+		-- SAINSBURYS NEW ROAD BRIXHAM
+		-- SAINSBURYS PENSBY ROAD THINGWALL
+		-- SAINSBURYS SUDBURY AUTOMAT
+
+		UPDATE dbo.Site SET CatNo=15784, PfsNo=578 WHERE StoreNo=524 -- "SAINSBURYS ABERDEEN"
+		UPDATE dbo.Site SET CatNo=1334, PfsNo=196 WHERE StoreNo=646 -- "SAINSBURYS ALPERTON"
+		UPDATE dbo.Site SET CatNo=17803, PfsNo=1006 WHERE StoreNo=2010 -- "SAINSBURYS ALPHINGTON ROAD"
+		UPDATE dbo.Site SET CatNo=8949, PfsNo=200 WHERE StoreNo=662 -- "SAINSBURYS ALTON"
+		UPDATE dbo.Site SET CatNo=15832, PfsNo=456 WHERE StoreNo=722 -- "SAINSBURYS AMBLECOTE"
+		UPDATE dbo.Site SET CatNo=8959, PfsNo=64 WHERE StoreNo=634 -- "SAINSBURYS APSLEY MILL"
+		UPDATE dbo.Site SET CatNo=15191, PfsNo=746 WHERE StoreNo=832 -- "SAINSBURYS ARCHER ROAD"
+		UPDATE dbo.Site SET CatNo=17806, PfsNo=1100 WHERE StoreNo=2100 -- "SAINSBURYS ARNOLD"
+		UPDATE dbo.Site SET CatNo=9243, PfsNo=91 WHERE StoreNo=59 -- "SAINSBURYS ASHFORD BYBROOK"
+		UPDATE dbo.Site SET CatNo=25253, PfsNo=1054 WHERE StoreNo=2054 -- "SAINSBURYS ASHTON MOSS"
+		UPDATE dbo.Site SET CatNo=7860, PfsNo=1023 WHERE StoreNo=2022 -- "SAINSBURYS ATTLEBOROUGH"
+		UPDATE dbo.Site SET CatNo=972, PfsNo=165 WHERE StoreNo=666 -- "SAINSBURYS BADGERS FARM"
+		UPDATE dbo.Site SET CatNo=856, PfsNo=96 WHERE StoreNo=673 -- "SAINSBURYS BAGSHOT ROAD"
+		UPDATE dbo.Site SET CatNo=1157, PfsNo=1525 WHERE StoreNo=4525 -- "SAINSBURYS BALHAM"
+		UPDATE dbo.Site SET CatNo=14914, PfsNo=586 WHERE StoreNo=537 -- "SAINSBURYS BALLYMENA"
+		UPDATE dbo.Site SET CatNo=13347, PfsNo=1526 WHERE StoreNo=4526 -- "SAINSBURYS BALSALL COMMON"
+		UPDATE dbo.Site SET CatNo=9147, PfsNo=155 WHERE StoreNo=894 -- "SAINSBURYS BAMBER BRIDGE"
+		UPDATE dbo.Site SET CatNo=9105, PfsNo=459 WHERE StoreNo=642 -- "SAINSBURYS BANBURY"
+		UPDATE dbo.Site SET CatNo=26056, PfsNo=1267 WHERE StoreNo=2267 -- "SAINSBURYS BANGOR"
+		UPDATE dbo.Site SET CatNo=8923, PfsNo=210 WHERE StoreNo=674 -- "SAINSBURYS BARNSTAPLE"
+		UPDATE dbo.Site SET CatNo=8940, PfsNo=150 WHERE StoreNo=608 -- "SAINSBURYS BARNWOOD"
+		UPDATE dbo.Site SET CatNo=18217, PfsNo=1008 WHERE StoreNo=5 -- "SAINSBURYS BATH"
+		UPDATE dbo.Site SET CatNo=1537, PfsNo=563 WHERE StoreNo=569 -- "SAINSBURYS BECKTON"
+		UPDATE dbo.Site SET CatNo=9078, PfsNo=477 WHERE StoreNo=859 -- "SAINSBURYS BEESTON"
+		UPDATE dbo.Site SET CatNo=25931, PfsNo=1200 WHERE StoreNo=2200 -- "SAINSBURYS BIDDULPH"
+		UPDATE dbo.Site SET CatNo=9191, PfsNo=439 WHERE StoreNo=426 -- "SAINSBURYS BIGGLESWADE"
+		UPDATE dbo.Site SET CatNo=8986, PfsNo=137 WHERE StoreNo=717 -- "SAINSBURYS BIRKENHEAD"
+		UPDATE dbo.Site SET CatNo=25844, PfsNo=1199 WHERE StoreNo=2199 -- "SAINSBURYS BISHOP AUCKLAND"
+		UPDATE dbo.Site SET CatNo=13260, PfsNo=1275 WHERE StoreNo=2123 -- "SAINSBURYS BISHOPS WALTHAM"
+		UPDATE dbo.Site SET CatNo=8910, PfsNo=223 WHERE StoreNo=752 -- "SAINSBURYS BLACKHALL"
+		UPDATE dbo.Site SET CatNo=17592, PfsNo=592 WHERE StoreNo=541 -- "SAINSBURYS BLACKHEATH"
+		UPDATE dbo.Site SET CatNo=9282, PfsNo=127 WHERE StoreNo=53 -- "SAINSBURYS BLACKPOLE"
+		UPDATE dbo.Site SET CatNo=26072, PfsNo=1319 WHERE StoreNo=2319 -- "SAINSBURYS BLACKPOOL"
+		UPDATE dbo.Site SET CatNo=25964, PfsNo=1290 WHERE StoreNo=2290 -- "SAINSBURYS BOGNOR REGIS"
+		UPDATE dbo.Site SET CatNo=25287, PfsNo=1835 WHERE StoreNo=2835 -- "SAINSBURYS BOLTON"
+		UPDATE dbo.Site SET CatNo=8767, PfsNo=449 WHERE StoreNo=814 -- "SAINSBURYS BRADFORD"
+		UPDATE dbo.Site SET CatNo=18166, PfsNo=1231 WHERE StoreNo=2231 -- "SAINSBURYS BRAEHEAD"
+		UPDATE dbo.Site SET CatNo=14957, PfsNo=896 WHERE StoreNo=224 -- "SAINSBURYS BRAINTREE"
+		UPDATE dbo.Site SET CatNo=9024, PfsNo=86 WHERE StoreNo=505 -- "SAINSBURYS BRAMINGHAM PARK"
+		UPDATE dbo.Site SET CatNo=9204, PfsNo=238 WHERE StoreNo=669 -- "SAINSBURYS BRIDGEMEAD"
+		UPDATE dbo.Site SET CatNo=8851, PfsNo=486 WHERE StoreNo=643 -- "SAINSBURYS BRIDGEND"
+		UPDATE dbo.Site SET CatNo=9234, PfsNo=159 WHERE StoreNo=667 -- "SAINSBURYS BRIDGWATER"
+		UPDATE dbo.Site SET CatNo=767, PfsNo=1589 WHERE StoreNo=4589 -- "SAINSBURYS BRISTOL ST GEORGE"
+		UPDATE dbo.Site SET CatNo=9136, PfsNo=80 WHERE StoreNo=681 -- "SAINSBURYS BROADCUT"
+		UPDATE dbo.Site SET CatNo=8948, PfsNo=487 WHERE StoreNo=686 -- "SAINSBURYS BROOKWOOD"
+		UPDATE dbo.Site SET CatNo=18219, PfsNo=591 WHERE StoreNo=652 -- "SAINSBURYS BURPHAM"
+		UPDATE dbo.Site SET CatNo=15046, PfsNo=1001 WHERE StoreNo=411 -- "SAINSBURYS BURY ST EDMUNDS"
+		UPDATE dbo.Site SET CatNo=9156, PfsNo=162 WHERE StoreNo=559 -- "SAINSBURYS CALCOT"
+		UPDATE dbo.Site SET CatNo=8913, PfsNo=325 WHERE StoreNo=560 -- "SAINSBURYS CAMERON TOLL"
+		UPDATE dbo.Site SET CatNo=8864, PfsNo=476 WHERE StoreNo=773 -- "SAINSBURYS CANLEY"
+		UPDATE dbo.Site SET CatNo=9284, PfsNo=239 WHERE StoreNo=775 -- "SAINSBURYS CANNOCK"
+		UPDATE dbo.Site SET CatNo=9221, PfsNo=1134 WHERE StoreNo=2134 -- "SAINSBURYS CANVEY ISLAND"
+		UPDATE dbo.Site SET CatNo=25951, PfsNo=1286 WHERE StoreNo=2286 -- "SAINSBURYS CARLISLE"
+		UPDATE dbo.Site SET CatNo=9068, PfsNo=148 WHERE StoreNo=813 -- "SAINSBURYS CASTLE BOULEVARD"
+		UPDATE dbo.Site SET CatNo=13694, PfsNo=785 WHERE StoreNo=795 -- "SAINSBURYS CASTLE COURT"
+		UPDATE dbo.Site SET CatNo=18218, PfsNo=1106 WHERE StoreNo=2106 -- "SAINSBURYS CASTLE VALE"
+		UPDATE dbo.Site SET CatNo=8878, PfsNo=240 WHERE StoreNo=751 -- "SAINSBURYS CHADDESDEN"
+		UPDATE dbo.Site SET CatNo=9164, PfsNo=1071 WHERE StoreNo=2071 -- "SAINSBURYS CHAFFORD HUNDRED"
+		UPDATE dbo.Site SET CatNo=18410, PfsNo=1625 WHERE StoreNo=2625 -- "SAINSBURYS CHARLTON RIVERSIDE"
+		UPDATE dbo.Site SET CatNo=11046, PfsNo=457 WHERE StoreNo=772 -- "SAINSBURYS CHEADLE"
+		UPDATE dbo.Site SET CatNo=1218, PfsNo=134 WHERE StoreNo=4 -- "SAINSBURYS CHERTSEY"
+		UPDATE dbo.Site SET CatNo=8834, PfsNo=139 WHERE StoreNo=721 -- "SAINSBURYS CHESTER"
+		UPDATE dbo.Site SET CatNo=9171, PfsNo=178 WHERE StoreNo=849 -- "SAINSBURYS CHESTERFIELD"
+		UPDATE dbo.Site SET CatNo=9138, PfsNo=185 WHERE StoreNo=6 -- "SAINSBURYS CHICHESTER"
+		UPDATE dbo.Site SET CatNo=9200, PfsNo=233 WHERE StoreNo=664 -- "SAINSBURYS CHIPPENHAM"
+		UPDATE dbo.Site SET CatNo=880, PfsNo=473 WHERE StoreNo=687 -- "SAINSBURYS COBHAM"
+		UPDATE dbo.Site SET CatNo=8823, PfsNo=138 WHERE StoreNo=8 -- "SAINSBURYS COLCHESTER AVENUE"
+		UPDATE dbo.Site SET CatNo=8812, PfsNo=126 WHERE StoreNo=815 -- "SAINSBURYS COLDHAMS LANE"
+		UPDATE dbo.Site SET CatNo=17644, PfsNo=583 WHERE StoreNo=534 -- "SAINSBURYS COLERAINE"
+		UPDATE dbo.Site SET CatNo=11846, PfsNo=1239 WHERE StoreNo=2239 -- "SAINSBURYS COLNE"
+		UPDATE dbo.Site SET CatNo=9190, PfsNo=97 WHERE StoreNo=434 -- "SAINSBURYS COREYS MILL"
+		UPDATE dbo.Site SET CatNo=8867, PfsNo=176 WHERE StoreNo=789 -- "SAINSBURYS COURTHOUSE GREEN"
+		UPDATE dbo.Site SET CatNo=17720, PfsNo=1010 WHERE StoreNo=2013 -- "SAINSBURYS CRAIGAVON"
+		UPDATE dbo.Site SET CatNo=18005, PfsNo=1073 WHERE StoreNo=2073 -- "SAINSBURYS CRAMLINGTON"
+		UPDATE dbo.Site SET CatNo=1016, PfsNo=145 WHERE StoreNo=17 -- "SAINSBURYS CRAYFORD"
+		UPDATE dbo.Site SET CatNo=138, PfsNo=1507 WHERE StoreNo=507 -- "SAINSBURYS CRYSTAL PALACE"
+		UPDATE dbo.Site SET CatNo=5531, PfsNo=1093 WHERE StoreNo=2093 -- "SAINSBURYS CRYSTAL PEAKS"
+		UPDATE dbo.Site SET CatNo=9554, PfsNo=1550 WHERE StoreNo=6550 -- "SAINSBURYS CURRIE"
+		UPDATE dbo.Site SET CatNo=9089, PfsNo=221 WHERE StoreNo=639 -- "SAINSBURYS CWMBRAN"
+		UPDATE dbo.Site SET CatNo=25933, PfsNo=1082 WHERE StoreNo=2082 -- "SAINSBURYS DARLINGTON"
+		UPDATE dbo.Site SET CatNo=8933, PfsNo=197 WHERE StoreNo=885 -- "SAINSBURYS DARNLEY"
+		UPDATE dbo.Site SET CatNo=26142, PfsNo=1158 WHERE StoreNo=2158 -- "SAINSBURYS DARTMOUTH AUTOMAT"
+		UPDATE dbo.Site SET CatNo=13988, PfsNo=1196 WHERE StoreNo=2196 -- "SAINSBURYS DAWLISH"
+		UPDATE dbo.Site SET CatNo=9145, PfsNo=189 WHERE StoreNo=749 -- "SAINSBURYS DEEPDALE"
+		UPDATE dbo.Site SET CatNo=9032, PfsNo=174 WHERE StoreNo=886 -- "SAINSBURYS DENTON"
+		UPDATE dbo.Site SET CatNo=9274, PfsNo=218 WHERE StoreNo=897 -- "SAINSBURYS DEWSBURY"
+		UPDATE dbo.Site SET CatNo=25445, PfsNo=1067 WHERE StoreNo=2067 -- "SAINSBURYS DIDCOT"
+		UPDATE dbo.Site SET CatNo=12515, PfsNo=458 WHERE StoreNo=601 -- "SAINSBURYS DOME ROUNDABOUT"
+		UPDATE dbo.Site SET CatNo=6874, PfsNo=1313 WHERE StoreNo=805 -- "SAINSBURYS DORRIDGE"
+		UPDATE dbo.Site SET CatNo=6863, PfsNo=1527 WHERE StoreNo=4527 -- "SAINSBURYS DROITWICH"
+		UPDATE dbo.Site SET CatNo=15456, PfsNo=1110 WHERE StoreNo=9992112 -- "SAINSBURYS DRONFIELD"
+		UPDATE dbo.Site SET CatNo=17636, PfsNo=577 WHERE StoreNo=523 -- "SAINSBURYS DRUMCHAPEL"
+		UPDATE dbo.Site SET CatNo=25191, PfsNo=1549 WHERE StoreNo=549 -- "SAINSBURYS DUNDEE"
+		UPDATE dbo.Site SET CatNo=17034, PfsNo=1180 WHERE StoreNo=2180 -- "SAINSBURYS DUNGANNON"
+		UPDATE dbo.Site SET CatNo=9026, PfsNo=89 WHERE StoreNo=611 -- "SAINSBURYS DUNSTABLE"
+		UPDATE dbo.Site SET CatNo=8773, PfsNo=232 WHERE StoreNo=776 -- "SAINSBURYS DURHAM"
+		UPDATE dbo.Site SET CatNo=8794, PfsNo=492 WHERE StoreNo=797 -- "SAINSBURYS EAST FILTON"
+		UPDATE dbo.Site SET CatNo=8937, PfsNo=493 WHERE StoreNo=893 -- "SAINSBURYS EAST KILBRIDE"
+		UPDATE dbo.Site SET CatNo=9214, PfsNo=169 WHERE StoreNo=443 -- "SAINSBURYS EAST MAYNE"
+		UPDATE dbo.Site SET CatNo=8981, PfsNo=82 WHERE StoreNo=765 -- "SAINSBURYS EAST PRESCOT ROAD"
+		UPDATE dbo.Site SET CatNo=26020, PfsNo=1309 WHERE StoreNo=2309 -- "SAINSBURYS EDINBURGH LONGSTONE"
+		UPDATE dbo.Site SET CatNo=8990, PfsNo=192 WHERE StoreNo=744 -- "SAINSBURYS ELLESMERE PORT"
+		UPDATE dbo.Site SET CatNo=1024, PfsNo=481 WHERE StoreNo=7 -- "SAINSBURYS ELTHAM"
+		UPDATE dbo.Site SET CatNo=26201, PfsNo=1271 WHERE StoreNo=2271 -- "SAINSBURYS ELY AUTOMAT"
+		UPDATE dbo.Site SET CatNo=13681, PfsNo=168 WHERE StoreNo=677 -- "SAINSBURYS EMERSONS GREEN"
+		UPDATE dbo.Site SET CatNo=1776, PfsNo=95 WHERE StoreNo=444 -- "SAINSBURYS ENFIELD"
+		UPDATE dbo.Site SET CatNo=9048, PfsNo=77 WHERE StoreNo=609 -- "SAINSBURYS FAIRFIELD PARK"
+		UPDATE dbo.Site SET CatNo=9144, PfsNo=81 WHERE StoreNo=672 -- "SAINSBURYS FARLINGTON"
+		UPDATE dbo.Site SET CatNo=8777, PfsNo=465 WHERE StoreNo=656 -- "SAINSBURYS FERNDOWN"
+		UPDATE dbo.Site SET CatNo=16948, PfsNo=584 WHERE StoreNo=535 -- "SAINSBURYS FORESTSIDE"
+		UPDATE dbo.Site SET CatNo=9003, PfsNo=92 WHERE StoreNo=727 -- "SAINSBURYS FOSSE PARK"
+		UPDATE dbo.Site SET CatNo=8758, PfsNo=120 WHERE StoreNo=685 -- "SAINSBURYS FROME"
+		UPDATE dbo.Site SET CatNo=17643, PfsNo=461 WHERE StoreNo=543 -- "SAINSBURYS GLEN ROAD"
+		UPDATE dbo.Site SET CatNo=25768, PfsNo=1221 WHERE StoreNo=2221 -- "SAINSBURYS GLOUCESTER QUAYS"
+		UPDATE dbo.Site SET CatNo=8950, PfsNo=482 WHERE StoreNo=670 -- "SAINSBURYS GODALMING"
+		UPDATE dbo.Site SET CatNo=9076, PfsNo=1081 WHERE StoreNo=2081 -- "SAINSBURYS GRANTHAM"
+		UPDATE dbo.Site SET CatNo=8895, PfsNo=149 WHERE StoreNo=892 -- "SAINSBURYS GRIMSBY"
+		UPDATE dbo.Site SET CatNo=8919, PfsNo=432 WHERE StoreNo=422 -- "SAINSBURYS HADLEIGH ROAD"
+		UPDATE dbo.Site SET CatNo=17641, PfsNo=597 WHERE StoreNo=778 -- "SAINSBURYS HALIFAX"
+		UPDATE dbo.Site SET CatNo=15835, PfsNo=836 WHERE StoreNo=803 -- "SAINSBURYS HAMILTON"
+		UPDATE dbo.Site SET CatNo=12559, PfsNo=99 WHERE StoreNo=62 -- "SAINSBURYS HAMPDEN PARK"
+		UPDATE dbo.Site SET CatNo=800, PfsNo=94 WHERE StoreNo=709 -- "SAINSBURYS HANKRIDGE FARM"
+		UPDATE dbo.Site SET CatNo=9222, PfsNo=114 WHERE StoreNo=869 -- "SAINSBURYS HANLEY"
+		UPDATE dbo.Site SET CatNo=8840, PfsNo=464 WHERE StoreNo=402 -- "SAINSBURYS HARLOW"
+		UPDATE dbo.Site SET CatNo=1481, PfsNo=483 WHERE StoreNo=406 -- "SAINSBURYS HARRINGAY"
+		UPDATE dbo.Site SET CatNo=8957, PfsNo=158 WHERE StoreNo=711 -- "SAINSBURYS HARROGATE"
+		UPDATE dbo.Site SET CatNo=8821, PfsNo=234 WHERE StoreNo=419 -- "SAINSBURYS HAVERHILL"
+		UPDATE dbo.Site SET CatNo=25858, PfsNo=1240 WHERE StoreNo=2240 -- "SAINSBURYS HAWICK AUTOMAT"
+		UPDATE dbo.Site SET CatNo=1291, PfsNo=75 WHERE StoreNo=630 -- "SAINSBURYS HAYES"
+		UPDATE dbo.Site SET CatNo=26185, PfsNo=1051 WHERE StoreNo=2051 -- "SAINSBURYS HAZEL GROVE"
+		UPDATE dbo.Site SET CatNo=14676, PfsNo=1268 WHERE StoreNo=2268 -- "SAINSBURYS HEATON NEWCASTLE"
+		UPDATE dbo.Site SET CatNo=9035, PfsNo=1288 WHERE StoreNo=2288 -- "SAINSBURYS HEATON PARK"
+		UPDATE dbo.Site SET CatNo=4535, PfsNo=151 WHERE StoreNo=657 -- "SAINSBURYS HEDGE END"
+		UPDATE dbo.Site SET CatNo=25821, PfsNo=1162 WHERE StoreNo=2162 -- "SAINSBURYS HELSTON"
+		UPDATE dbo.Site SET CatNo=9216, PfsNo=520 WHERE StoreNo=556 -- "SAINSBURYS HEMPSTEAD"
+		UPDATE dbo.Site SET CatNo=100, PfsNo=66 WHERE StoreNo=637 -- "SAINSBURYS HENDON"
+		UPDATE dbo.Site SET CatNo=8962, PfsNo=479 WHERE StoreNo=519 -- "SAINSBURYS HEREFORD"
+		UPDATE dbo.Site SET CatNo=9106, PfsNo=180 WHERE StoreNo=600 -- "SAINSBURYS HEYFORD HILL"
+		UPDATE dbo.Site SET CatNo=25036, PfsNo=1015 WHERE StoreNo=2005 -- "SAINSBURYS HODDESDON"
+		UPDATE dbo.Site SET CatNo=25312, PfsNo=1114 WHERE StoreNo=2114 -- "SAINSBURYS HOLYWOOD EXCHANGE"
+		UPDATE dbo.Site SET CatNo=12666, PfsNo=1524 WHERE StoreNo=4524 -- "SAINSBURYS HORLEY"
+		UPDATE dbo.Site SET CatNo=9159, PfsNo=451 WHERE StoreNo=391 -- "SAINSBURYS HORSHAM"
+		UPDATE dbo.Site SET CatNo=8965, PfsNo=141 WHERE StoreNo=825 -- "SAINSBURYS HULL"
+		UPDATE dbo.Site SET CatNo=9779, PfsNo=1107 WHERE StoreNo=2007 -- "SAINSBURYS HUNTINGDON"
+		UPDATE dbo.Site SET CatNo=25913, PfsNo=1248 WHERE StoreNo=2248 -- "SAINSBURYS IRVINE"
+		UPDATE dbo.Site SET CatNo=18001, PfsNo=1105 WHERE StoreNo=2105 -- "SAINSBURYS ISLE OF WIGHT"
+		UPDATE dbo.Site SET CatNo=14941, PfsNo=587 WHERE StoreNo=847 -- "SAINSBURYS KEIGHLEY"
+		UPDATE dbo.Site SET CatNo=25897, PfsNo=1255 WHERE StoreNo=2255 -- "SAINSBURYS KELSO"
+		UPDATE dbo.Site SET CatNo=9154, PfsNo=152 WHERE StoreNo=665 -- "SAINSBURYS KEMPSHOTT"
+		UPDATE dbo.Site SET CatNo=985, PfsNo=497 WHERE StoreNo=757 -- "SAINSBURYS KEMPSTON"
+		UPDATE dbo.Site SET CatNo=15834, PfsNo=431 WHERE StoreNo=628 -- "SAINSBURYS KETTERING"
+		UPDATE dbo.Site SET CatNo=8903, PfsNo=107 WHERE StoreNo=640 -- "SAINSBURYS KIDDERMINSTER"
+		UPDATE dbo.Site SET CatNo=9108, PfsNo=184 WHERE StoreNo=631 -- "SAINSBURYS KIDLINGTON"
+		UPDATE dbo.Site SET CatNo=1869, PfsNo=68 WHERE StoreNo=683 -- "SAINSBURYS KILN LANE"
+		UPDATE dbo.Site SET CatNo=9069, PfsNo=469 WHERE StoreNo=816 -- "SAINSBURYS KIMBERLEY"
+		UPDATE dbo.Site SET CatNo=25954, PfsNo=1293 WHERE StoreNo=2293 -- "SAINSBURYS KINGS LYNN"
+		UPDATE dbo.Site SET CatNo=8880, PfsNo=147 WHERE StoreNo=871 -- "SAINSBURYS KINGSWAY"
+		UPDATE dbo.Site SET CatNo=17590, PfsNo=491 WHERE StoreNo=2001 -- "SAINSBURYS KIRKCALDY"
+		UPDATE dbo.Site SET CatNo=1718, PfsNo=132 WHERE StoreNo=602 -- "SAINSBURYS LADBROKE GROVE"
+		UPDATE dbo.Site SET CatNo=9041, PfsNo=494 WHERE StoreNo=28 -- "SAINSBURYS LARKFIELD"
+		UPDATE dbo.Site SET CatNo=8868, PfsNo=173 WHERE StoreNo=503 -- "SAINSBURYS LEAMINGTON"
+		UPDATE dbo.Site SET CatNo=25979, PfsNo=1281 WHERE StoreNo=2281 -- "SAINSBURYS LEEK"
+		UPDATE dbo.Site SET CatNo=26024, PfsNo=1314 WHERE StoreNo=2314 -- "SAINSBURYS LEICESTER NORTH"
+		UPDATE dbo.Site SET CatNo=17154, PfsNo=1005 WHERE StoreNo=70 -- "SAINSBURYS LEIGH"
+		UPDATE dbo.Site SET CatNo=9193, PfsNo=235 WHERE StoreNo=421 -- "SAINSBURYS LETCHWORTH"
+		UPDATE dbo.Site SET CatNo=17702, PfsNo=1009 WHERE StoreNo=2017 -- "SAINSBURYS LEVEN"
+		UPDATE dbo.Site SET CatNo=9014, PfsNo=111 WHERE StoreNo=725 -- "SAINSBURYS LINCOLN"
+		UPDATE dbo.Site SET CatNo=17805, PfsNo=1011 WHERE StoreNo=2023 -- "SAINSBURYS LIPHOOK"
+		UPDATE dbo.Site SET CatNo=26128, PfsNo=1254 WHERE StoreNo=2254 -- "SAINSBURYS LIVINGSTONE AUTOMAT"
+		UPDATE dbo.Site SET CatNo=8739, PfsNo=396 WHERE StoreNo=567 -- "SAINSBURYS LONDON COLNEY"
+		UPDATE dbo.Site SET CatNo=14458, PfsNo=452 WHERE StoreNo=706 -- "SAINSBURYS LONGWATER"
+		UPDATE dbo.Site SET CatNo=9206, PfsNo=131 WHERE StoreNo=18 -- "SAINSBURYS LORDSHILL"
+		UPDATE dbo.Site SET CatNo=13360, PfsNo=478 WHERE StoreNo=852 -- "SAINSBURYS LOUGHBOROUGH"
+		UPDATE dbo.Site SET CatNo=1636, PfsNo=108 WHERE StoreNo=433 -- "SAINSBURYS LOW HALL"
+		UPDATE dbo.Site SET CatNo=1371, PfsNo=1517 WHERE StoreNo=4517 -- "SAINSBURYS LOWER RICHMOND ROAD"
+		UPDATE dbo.Site SET CatNo=8787, PfsNo=213 WHERE StoreNo=58 -- "SAINSBURYS LYONS FARM"
+		UPDATE dbo.Site SET CatNo=9072, PfsNo=1269 WHERE StoreNo=2269 -- "SAINSBURYS MANSFIELD"
+		UPDATE dbo.Site SET CatNo=8999, PfsNo=85 WHERE StoreNo=605 -- "SAINSBURYS MARKET HARBOROUGH"
+		UPDATE dbo.Site SET CatNo=871, PfsNo=438 WHERE StoreNo=691 -- "SAINSBURYS MARSH MILLS"
+		UPDATE dbo.Site SET CatNo=8754, PfsNo=498 WHERE StoreNo=714 -- "SAINSBURYS MARSHALL LAKE"
+		UPDATE dbo.Site SET CatNo=3435, PfsNo=1513 WHERE StoreNo=4513 -- "SAINSBURYS MARSHALSWICK"
+		UPDATE dbo.Site SET CatNo=25680, PfsNo=1092 WHERE StoreNo=2092 -- "SAINSBURYS MATLOCK"
+		UPDATE dbo.Site SET CatNo=9178, PfsNo=1038 WHERE StoreNo=2112 -- "SAINSBURYS MEADOWHALL NORTH"
+		UPDATE dbo.Site SET CatNo=9178, PfsNo=1038 WHERE StoreNo=2112 -- "SAINSBURYS MEADOWHALL SOUTH"
+		UPDATE dbo.Site SET CatNo=14316, PfsNo=582 WHERE StoreNo=521 -- "SAINSBURYS MELKSHAM"
+		UPDATE dbo.Site SET CatNo=1870, PfsNo=394 WHERE StoreNo=566 -- "SAINSBURYS MERTON"
+		UPDATE dbo.Site SET CatNo=9255, PfsNo=175 WHERE StoreNo=790 -- "SAINSBURYS MIDDLESBROUGH"
+		UPDATE dbo.Site SET CatNo=9295, PfsNo=193 WHERE StoreNo=713 -- "SAINSBURYS MONKS CROSS"
+		UPDATE dbo.Site SET CatNo=2622, PfsNo=1247 WHERE StoreNo=2247 -- "SAINSBURYS MORECAMBE"
+		UPDATE dbo.Site SET CatNo=3786, PfsNo=1154 WHERE StoreNo=2154 -- "SAINSBURYS MURRAYFIELD"
+		UPDATE dbo.Site SET CatNo=25884, PfsNo=1249 WHERE StoreNo=2249 -- "SAINSBURYS NAIRN"
+		UPDATE dbo.Site SET CatNo=8869, PfsNo=1170 WHERE StoreNo=2170 -- "SAINSBURYS NANTWICH"
+		UPDATE dbo.Site SET CatNo=12527, PfsNo=692 WHERE StoreNo=31 -- "SAINSBURYS NEW CROSS GATE"
+		UPDATE dbo.Site SET CatNo=9151, PfsNo=488 WHERE StoreNo=690 -- "SAINSBURYS NEWBURY"
+		UPDATE dbo.Site SET CatNo=9151, PfsNo=488 WHERE StoreNo=690 -- "SAINSBURYS NEWBURY ANDOVER ROAD"
+		UPDATE dbo.Site SET CatNo=25846, PfsNo=1169 WHERE StoreNo=2169 -- "SAINSBURYS NEWCASTLE-UNDER-LYME"
+		UPDATE dbo.Site SET CatNo=8793, PfsNo=446 WHERE StoreNo=2136 -- "SAINSBURYS NEWHAVEN"
+		UPDATE dbo.Site SET CatNo=25839, PfsNo=1246 WHERE StoreNo=2246 -- "SAINSBURYS NEWPORT"
+		UPDATE dbo.Site SET CatNo=3293, PfsNo=110 WHERE StoreNo=882 -- "SAINSBURYS NEWTON ABBOT"
+		UPDATE dbo.Site SET CatNo=12511, PfsNo=495 WHERE StoreNo=38 -- "SAINSBURYS NORTH CHEAM"
+		UPDATE dbo.Site SET CatNo=15126, PfsNo=1046 WHERE StoreNo=2046 -- "SAINSBURYS NORTH WALSHAM"
+		UPDATE dbo.Site SET CatNo=25932, PfsNo=1220 WHERE StoreNo=2220 -- "SAINSBURYS NORTHFIELD"
+		UPDATE dbo.Site SET CatNo=695, PfsNo=480 WHERE StoreNo=762 -- "SAINSBURYS NORTHWICH"
+		UPDATE dbo.Site SET CatNo=26023, PfsNo=1095 WHERE StoreNo=2095 -- "SAINSBURYS OAKLEY"
+		UPDATE dbo.Site SET CatNo=8748, PfsNo=112 WHERE StoreNo=558 -- "SAINSBURYS OLDBURY"
+		UPDATE dbo.Site SET CatNo=25377, PfsNo=1063 WHERE StoreNo=2063 -- "SAINSBURYS OLDHAM"
+		UPDATE dbo.Site SET CatNo=6669, PfsNo=1059 WHERE StoreNo=2059 -- "SAINSBURYS OSMASTON PARK"
+		UPDATE dbo.Site SET CatNo=4637, PfsNo=104 WHERE StoreNo=801 -- "SAINSBURYS PAIGNTON"
+		UPDATE dbo.Site SET CatNo=26022, PfsNo=1283 WHERE StoreNo=2283 -- "SAINSBURYS PENZANCE"
+		UPDATE dbo.Site SET CatNo=8871, PfsNo=76 WHERE StoreNo=3 -- "SAINSBURYS PEPPER HILL"
+		UPDATE dbo.Site SET CatNo=9288, PfsNo=136 WHERE StoreNo=823 -- "SAINSBURYS PERTON"
+		UPDATE dbo.Site SET CatNo=9116, PfsNo=182 WHERE StoreNo=417 -- "SAINSBURYS PETERBOROUGH"
+		UPDATE dbo.Site SET CatNo=8920, PfsNo=190 WHERE StoreNo=682 -- "SAINSBURYS PINHOE ROAD"
+		UPDATE dbo.Site SET CatNo=7843, PfsNo=1225 WHERE StoreNo=2225 -- "SAINSBURYS PONTLLANFRAITH"
+		UPDATE dbo.Site SET CatNo=25928, PfsNo=1274 WHERE StoreNo=2274 -- "SAINSBURYS PONTYPRIDD"
+		UPDATE dbo.Site SET CatNo=26093, PfsNo=1252 WHERE StoreNo=2252 -- "SAINSBURYS PORTISHEAD"
+		UPDATE dbo.Site SET CatNo=9092, PfsNo=230 WHERE StoreNo=441 -- "SAINSBURYS POUND LANE"
+		UPDATE dbo.Site SET CatNo=25822, PfsNo=1850 WHERE StoreNo=850 -- "SAINSBURYS PRESTWICK"
+		UPDATE dbo.Site SET CatNo=1107, PfsNo=157 WHERE StoreNo=52 -- "SAINSBURYS PURLEY WAY"
+		UPDATE dbo.Site SET CatNo=17699, PfsNo=594 WHERE StoreNo=413 -- "SAINSBURYS QUEENS ROAD"
+		UPDATE dbo.Site SET CatNo=15086, PfsNo=1529 WHERE StoreNo=4529 -- "SAINSBURYS RAWDON"
+		UPDATE dbo.Site SET CatNo=13237, PfsNo=470 WHERE StoreNo=72 -- "SAINSBURYS RAYLEIGH WEIR"
+		UPDATE dbo.Site SET CatNo=8755, PfsNo=181 WHERE StoreNo=604 -- "SAINSBURYS REDDITCH"
+		UPDATE dbo.Site SET CatNo=17557, PfsNo=161 WHERE StoreNo=853 -- "SAINSBURYS REEDSWOOD"
+		UPDATE dbo.Site SET CatNo=9007, PfsNo=78 WHERE StoreNo=633 -- "SAINSBURYS RHYL"
+		UPDATE dbo.Site SET CatNo=17645, PfsNo=1004 WHERE StoreNo=2011 -- "SAINSBURYS RICE LANE"
+		UPDATE dbo.Site SET CatNo=18398, PfsNo=1548 WHERE StoreNo=548 -- "SAINSBURYS RICHMOND"
+		UPDATE dbo.Site SET CatNo=8881, PfsNo=113 WHERE StoreNo=742 -- "SAINSBURYS RIPLEY"
+		UPDATE dbo.Site SET CatNo=25037, PfsNo=1696 WHERE StoreNo=696 -- "SAINSBURYS ROMFORD"
+		UPDATE dbo.Site SET CatNo=8860, PfsNo=177 WHERE StoreNo=514 -- "SAINSBURYS RUGBY"
+		UPDATE dbo.Site SET CatNo=9034, PfsNo=231 WHERE StoreNo=873 -- "SAINSBURYS SALFORD"
+		UPDATE dbo.Site SET CatNo=9289, PfsNo=1080 WHERE StoreNo=2080 -- "SAINSBURYS SCARBOROUGH"
+		UPDATE dbo.Site SET CatNo=14988, PfsNo=1077 WHERE StoreNo=2077 -- "SAINSBURYS SCUNTHORPE"
+		UPDATE dbo.Site SET CatNo=25992, PfsNo=1303 WHERE StoreNo=2303 -- "SAINSBURYS SEDGEFIELD"
+		UPDATE dbo.Site SET CatNo=9245, PfsNo=472 WHERE StoreNo=27 -- "SAINSBURYS SEDLESCOMBE ROAD"
+		UPDATE dbo.Site SET CatNo=9019, PfsNo=466 WHERE StoreNo=867 -- "SAINSBURYS SELBY ROAD"
+		UPDATE dbo.Site SET CatNo=17552, PfsNo=1000 WHERE StoreNo=63 -- "SAINSBURYS SEVENOAKS"
+		UPDATE dbo.Site SET CatNo=8956, PfsNo=90 WHERE StoreNo=793 -- "SAINSBURYS SHOREHEAD"
+		UPDATE dbo.Site SET CatNo=9231, PfsNo=109 WHERE StoreNo=718 -- "SAINSBURYS SHREWSBURY"
+		UPDATE dbo.Site SET CatNo=18334, PfsNo=1644 WHERE StoreNo=644 -- "SAINSBURYS SOUTH RUISLIP"
+		UPDATE dbo.Site SET CatNo=12374, PfsNo=1079 WHERE StoreNo=2079 -- "SAINSBURYS SPALDING"
+		UPDATE dbo.Site SET CatNo=8837, PfsNo=187 WHERE StoreNo=415 -- "SAINSBURYS SPRINGFIELD"
+		UPDATE dbo.Site SET CatNo=25327, PfsNo=1061 WHERE StoreNo=2061 -- "SAINSBURYS SPRUCEFIELD"
+		UPDATE dbo.Site SET CatNo=8738, PfsNo=88 WHERE StoreNo=629 -- "SAINSBURYS ST ALBANS"
+		UPDATE dbo.Site SET CatNo=1427, PfsNo=219 WHERE StoreNo=661 -- "SAINSBURYS ST CLARES"
+		UPDATE dbo.Site SET CatNo=1203, PfsNo=468 WHERE StoreNo=679 -- "SAINSBURYS STAINES"
+		UPDATE dbo.Site SET CatNo=25965, PfsNo=1168 WHERE StoreNo=2168 -- "SAINSBURYS STANWAY"
+		UPDATE dbo.Site SET CatNo=9192, PfsNo=133 WHERE StoreNo=410 -- "SAINSBURYS STEVENAGE"
+		UPDATE dbo.Site SET CatNo=18284, PfsNo=580 WHERE StoreNo=529 -- "SAINSBURYS STIRLING"
+		UPDATE dbo.Site SET CatNo=25288, PfsNo=1113 WHERE StoreNo=2113 -- "SAINSBURYS STOKE-ON-TRENT"
+		UPDATE dbo.Site SET CatNo=11370, PfsNo=877 WHERE StoreNo=812 -- "SAINSBURYS STRAITON"
+		UPDATE dbo.Site SET CatNo=25812, PfsNo=1186 WHERE StoreNo=2186 -- "SAINSBURYS STRATHAVEN"
+		UPDATE dbo.Site SET CatNo=9202, PfsNo=146 WHERE StoreNo=745 -- "SAINSBURYS STRATTON"
+		UPDATE dbo.Site SET CatNo=13798, PfsNo=754 WHERE StoreNo=788 -- "SAINSBURYS STREET"
+		UPDATE dbo.Site SET CatNo=9224, PfsNo=216 WHERE StoreNo=774 -- "SAINSBURYS SUNDERLAND"
+		UPDATE dbo.Site SET CatNo=25981, PfsNo=1297 WHERE StoreNo=2297 -- "SAINSBURYS SUNDERLAND NORTH"
+		UPDATE dbo.Site SET CatNo=8876, PfsNo=467 WHERE StoreNo=753 -- "SAINSBURYS SWADLINCOTE"
+		UPDATE dbo.Site SET CatNo=17698, PfsNo=1003 WHERE StoreNo=510 -- "SAINSBURYS SWANSEA"
+		UPDATE dbo.Site SET CatNo=9188, PfsNo=565 WHERE StoreNo=693 -- "SAINSBURYS SYDENHAM"
+		UPDATE dbo.Site SET CatNo=8774, PfsNo=209 WHERE StoreNo=676 -- "SAINSBURYS TALBOT HEATH"
+		UPDATE dbo.Site SET CatNo=8752, PfsNo=154 WHERE StoreNo=887 -- "SAINSBURYS TAMWORTH"
+		UPDATE dbo.Site SET CatNo=795, PfsNo=1655 WHERE StoreNo=655 -- "SAINSBURYS TAUNTON"
+		UPDATE dbo.Site SET CatNo=9058, PfsNo=1078 WHERE StoreNo=2078 -- "SAINSBURYS TEAM VALLEY"
+		UPDATE dbo.Site SET CatNo=9239, PfsNo=186 WHERE StoreNo=2002 -- "SAINSBURYS TELFORD"
+		UPDATE dbo.Site SET CatNo=8942, PfsNo=79 WHERE StoreNo=516 -- "SAINSBURYS TEWKESBURY ROAD"
+		UPDATE dbo.Site SET CatNo=26126, PfsNo=1324 WHERE StoreNo=2324 -- "SAINSBURYS THANET"
+		UPDATE dbo.Site SET CatNo=8969, PfsNo=98 WHERE StoreNo=474 -- "SAINSBURYS THETFORD"
+		UPDATE dbo.Site SET CatNo=678, PfsNo=140 WHERE StoreNo=403 -- "SAINSBURYS THORLEY"
+		UPDATE dbo.Site SET CatNo=8892, PfsNo=211 WHERE StoreNo=732 -- "SAINSBURYS THORNE ROAD"
+		UPDATE dbo.Site SET CatNo=8843, PfsNo=142 WHERE StoreNo=509 -- "SAINSBURYS THORNHILL"
+		UPDATE dbo.Site SET CatNo=9247, PfsNo=135 WHERE StoreNo=206 -- "SAINSBURYS TONBRIDGE"
+		UPDATE dbo.Site SET CatNo=9249, PfsNo=198 WHERE StoreNo=668 -- "SAINSBURYS TORQUAY"
+		UPDATE dbo.Site SET CatNo=9250, PfsNo=84 WHERE StoreNo=671 -- "SAINSBURYS TRURO"
+		UPDATE dbo.Site SET CatNo=9241, PfsNo=437 WHERE StoreNo=20 -- "SAINSBURYS TUNBRIDGE WELLS"
+		UPDATE dbo.Site SET CatNo=8987, PfsNo=199 WHERE StoreNo=740 -- "SAINSBURYS UPTON"
+		UPDATE dbo.Site SET CatNo=406, PfsNo=1295 WHERE StoreNo=2295 -- "SAINSBURYS WAKEFIELD"
+		UPDATE dbo.Site SET CatNo=25554, PfsNo=1244 WHERE StoreNo=2244 -- "SAINSBURYS WANTAGE"
+		UPDATE dbo.Site SET CatNo=8970, PfsNo=144 WHERE StoreNo=408 -- "SAINSBURYS WARREN HEATH"
+		UPDATE dbo.Site SET CatNo=9265, PfsNo=143 WHERE StoreNo=851 -- "SAINSBURYS WARRINGTON"
+		UPDATE dbo.Site SET CatNo=9065, PfsNo=45 WHERE StoreNo=555 -- "SAINSBURYS WASHINGTON"
+		UPDATE dbo.Site SET CatNo=8947, PfsNo=103 WHERE StoreNo=675 -- "SAINSBURYS WATCHMOOR PARK"
+		UPDATE dbo.Site SET CatNo=8951, PfsNo=496 WHERE StoreNo=680 -- "SAINSBURYS WATER LANE"
+		UPDATE dbo.Site SET CatNo=26104, PfsNo=1289 WHERE StoreNo=2289 -- "SAINSBURYS WATERLOOVILLE"
+		UPDATE dbo.Site SET CatNo=9287, PfsNo=1040 WHERE StoreNo=2040 -- "SAINSBURYS WEDNESFIELD"
+		UPDATE dbo.Site SET CatNo=12475, PfsNo=156 WHERE StoreNo=648 -- "SAINSBURYS WEEDON ROAD"
+		UPDATE dbo.Site SET CatNo=624, PfsNo=1610 WHERE StoreNo=610 -- "SAINSBURYS WELLINGBOROUGH"
+		UPDATE dbo.Site SET CatNo=25769, PfsNo=1181 WHERE StoreNo=2181 -- "SAINSBURYS WEST BELFAST"
+		UPDATE dbo.Site SET CatNo=9158, PfsNo=188 WHERE StoreNo=26 -- "SAINSBURYS WEST GREEN"
+		UPDATE dbo.Site SET CatNo=8791, PfsNo=191 WHERE StoreNo=51 -- "SAINSBURYS WEST HOVE"
+		UPDATE dbo.Site SET CatNo=8855, PfsNo=195 WHERE StoreNo=57 -- "SAINSBURYS WEST PARK FARM"
+		UPDATE dbo.Site SET CatNo=17155, PfsNo=1097 WHERE StoreNo=2097 -- "SAINSBURYS WESTHOUGHTON"
+		UPDATE dbo.Site SET CatNo=26021, PfsNo=1308 WHERE StoreNo=2308 -- "SAINSBURYS WEYMOUTH"
+		UPDATE dbo.Site SET CatNo=25934, PfsNo=1272 WHERE StoreNo=2272 -- "SAINSBURYS WHITBY"
+		UPDATE dbo.Site SET CatNo=9206, PfsNo=131 WHERE StoreNo=18 -- "SAINSBURYS WHITE ROSE"
+		UPDATE dbo.Site SET CatNo=26123, PfsNo=1070 WHERE StoreNo=2070 -- "SAINSBURYS WHITEHOUSE FARM AUTOMAT"
+		UPDATE dbo.Site SET CatNo=9061, PfsNo=183 WHERE StoreNo=864 -- "SAINSBURYS WHITLEY BAY"
+		UPDATE dbo.Site SET CatNo=8857, PfsNo=194 WHERE StoreNo=55 -- "SAINSBURYS WHITSTABLE"
+		UPDATE dbo.Site SET CatNo=11050, PfsNo=842 WHERE StoreNo=854 -- "SAINSBURYS WIGAN"
+		UPDATE dbo.Site SET CatNo=8805, PfsNo=83 WHERE StoreNo=678 -- "SAINSBURYS WINTERSTOKE ROAD"
+		UPDATE dbo.Site SET CatNo=26082, PfsNo=1340 WHERE StoreNo=2340 -- "SAINSBURYS WOLVERHAMPTON"
+		UPDATE dbo.Site SET CatNo=8292, PfsNo=1518 WHERE StoreNo=4518 -- "SAINSBURYS WOODLANDS"
+		UPDATE dbo.Site SET CatNo=9176, PfsNo=471 WHERE StoreNo=735 -- "SAINSBURYS WORKSOP"
+		UPDATE dbo.Site SET CatNo=8803, PfsNo=129 WHERE StoreNo=820 -- "SAINSBURYS WORLE"
+		UPDATE dbo.Site SET CatNo=9004, PfsNo=160 WHERE StoreNo=890 -- "SAINSBURYS WREXHAM"
 	
-
+	END
 
 RETURN 0
