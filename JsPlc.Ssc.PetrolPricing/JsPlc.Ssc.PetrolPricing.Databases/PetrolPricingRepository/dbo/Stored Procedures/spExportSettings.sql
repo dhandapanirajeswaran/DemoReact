@@ -53,7 +53,8 @@ BEGIN
 			pfe.DateTo,
 			pfe.CreatedOn,
 			pfe.CreatedBy,
-			pfe.IsActive
+			pfe.IsActive,
+			pfe.FuelTypeId
 		FROM dbo.PriceFreezeEvent pfe
 		ORDER BY
 			pfe.DateFrom

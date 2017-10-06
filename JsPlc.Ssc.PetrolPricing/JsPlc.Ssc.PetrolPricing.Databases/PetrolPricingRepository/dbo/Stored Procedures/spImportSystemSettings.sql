@@ -202,24 +202,27 @@ DECLARE @ImportXml XML
 				x.item.value('./@DateTo[1]', 'datetime') [DateTo],
 				x.item.value('./@CreatedOn[1]', 'datetime') [CreatedOn],
 				x.item.value('./@CreatedBy[1]', 'varchar(200)') [CreatedBy],
-				x.item.value('./@IsActive[1]', 'bit') [IsActive]
+				x.item.value('./@IsActive[1]', 'bit') [IsActive],
+				x.item.value('./@FuelTypeId[1]', 'int') [FuelTypeId]
 			FROM
 				@ImportXml.nodes('/PetrolPricing[1]/Settings[1]/PriceFreezeEvents[1]/PriceFreezeEvent') as x(item)
-		) AS source(DateFrom, DateTo, CreatedOn, CreatedBy, IsActive)
-		ON (target.DateFrom = source.DateFrom AND target.DateTo = source.DateTo)
+		) AS source(DateFrom, DateTo, CreatedOn, CreatedBy, IsActive, FuelTypeId)
+		ON (target.DateFrom = source.DateFrom AND target.DateTo = source.DateTo AND target.FuelTypeId = source.FuelTypeId)
 		WHEN MATCHED THEN
 			UPDATE SET
 				target.CreatedOn = source.CreatedOn,
 				target.CreatedBy = source.CreatedBy,
-				target.IsActive = source.IsActive
+				target.IsActive = source.IsActive,
+				target.FuelTypeId = source.FuelTypeId
 		WHEN NOT MATCHED BY target THEN
-			INSERT (DateFrom, DateTo, CreatedOn, CreatedBy, IsActive)
+			INSERT (DateFrom, DateTo, CreatedOn, CreatedBy, IsActive, FuelTypeId)
 			VALUES (
 				source.DateFrom,
 				source.DateTo,
 				source.CreatedOn,
 				source.CreatedBy,
-				source.IsActive
+				source.IsActive,
+				source.FuelTypeId
 			)
 		WHEN NOT MATCHED BY source THEN
 			DELETE;
