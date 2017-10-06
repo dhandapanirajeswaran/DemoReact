@@ -63,7 +63,7 @@ BEGIN
 --)
 ----DEBUG:END
 
-	DECLARE @PriceStuntFreeze BIT = dbo.fn_IsPriceFreezeActiveForDate(@ForDate);
+	DECLARE @PriceStuntFreeze BIT = dbo.fn_IsPriceFreezeActiveForDate(@ForDate, @FuelTypeId);
 
 	DECLARE @StartOfYesterday DATETIME = CONVERT(DATE, DATEADD(DAY, -1, @ForDate))
 	DECLARE @StartOfToday DATETIME = CONVERT(DATE, @ForDate)

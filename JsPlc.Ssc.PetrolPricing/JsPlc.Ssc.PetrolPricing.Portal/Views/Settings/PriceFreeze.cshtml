@@ -1,4 +1,5 @@
 ﻿@model JsPlc.Ssc.PetrolPricing.Models.ViewModels.SystemSettings.PriceFreezePageViewModel
+@using JsPlc.Ssc.PetrolPricing.Models.Enums
 @using JsPlc.Ssc.PetrolPricing.Portal.Helper.Extensions
 @{
     ViewBag.Title = "Price Freeze Events";
@@ -53,8 +54,23 @@
 </div>
 
 <div class="container">
+
+    <div class="row">
+        <div class="col-md-11">
+            <h2 class="text-right">
+                <span data-id="showing-message">Loading...</span>
+            </h2>
+        </div>   
+     </div>
+
     <div class="row">
         <div class="col-md-4">
+            <label>Fuel Types</label><br />
+            <div class="btn-group" data-choose-one-group="fuel-choose-group">
+                <button type="button" class="btn btn-sm btn-primary" id="btnShowUnleaded" data-infotip="Show or Hide [b]Unleaded[/b] Price Freeze Events"><i class="fa fa-check-square-o"></i> Unleaded</button>
+                <button type="button" class="btn btn-sm btn-primary" id="btnShowDiesel" data-infotip="Show or Hide [b]Diesel[/b] Price Freeze Events"><i class="fa fa-check-square-o"></i> Diesel</button>
+                <button type="button" class="btn btn-sm btn-primary" id="btnShowSuperUnleaded" data-infotip="Show or Hide [b]Super-Unleaded[/b] Price Freeze Events"><i class="fa fa-check-square-o"></i> Super-Unleaded</button>
+            </div>
         </div>
 
         <div class="col-md-2">
@@ -94,15 +110,16 @@
         <table class="table table-condensed table-striped" id="PriceFreezeEventsGrid" style="display:none">
             <thead>
                 <tr>
+                    <th class="text-center" style="width: 10%">Fuel Type</th>
                     <th class="text-center" style="width: 6%">Status</th>
                     <th class="text-center" style="width: 7%">First Day</th>
                     <th class="text-center" style="width: 7%">Last Day</th>
                     <th class="text-center" style="width: 5%">Duration</th>
-                    <th class="text-center" style="width: 16%">Updated On</th>
-                    <th class="text-center" style="width: 16%">Updated By</th>
+                    <th class="text-center" style="width: 15%">Updated On</th>
+                    <th class="text-center" style="width: 13%">Updated By</th>
                     <th class="text-center" style="width: 6%">Active</th>
-                    <th class="text-center" style="width: 10%">Remaing</th>
-                    <th class="text-center" style="width: 10%">Actions</th>
+                    <th class="text-center" style="width: 8%">Remaing</th>
+                    <th class="text-center" style="width: 6%">Actions</th>
                 </tr>
             </thead>
 
@@ -128,11 +145,28 @@
                         + (item.IsActive && item.DateFrom > startOfToday ? "Future" : "");
 
                     var rowClass = (item.IsActive ? "event-row-active" : "event-row-inactive")
-                            + (item.IsActive && item.DateTo < startOfToday ? " event-row-expired" : "")
+                            + (item.DateTo < startOfToday ? " event-row-expired" : "")
                             + (item.IsActive && item.DateFrom <= startOfToday && item.DateTo >= startOfToday ? " event-row-running" : "")
-                            + (item.IsActive && item.DateFrom > startOfToday ? " event-row-future" : "");
+                            + (item.IsActive && item.DateFrom > startOfToday ? " event-row-future" : "")
+                            + (item.FuelTypeId == (int)FuelTypeItem.Unleaded ? " event-row-unleaded" : "")
+                            + (item.FuelTypeId == (int)FuelTypeItem.Diesel ? " event-row-diesel" : "")
+                            + (item.FuelTypeId == (int)FuelTypeItem.Super_Unleaded? " event-row-super-unleaded" : "");
 
                     <tr class="@(rowClass)">
+                        <td class="text-center">
+                            @if(item.FuelTypeId == (int)FuelTypeItem.Unleaded)
+                            {
+                                <span class="fuel-sign fuel-sign-unleaded"></span>
+                            }
+                            else if (item.FuelTypeId == (int)FuelTypeItem.Diesel)
+                            {
+                                <span class="fuel-sign fuel-sign-diesel"></span>
+                            }
+                            else if (item.FuelTypeId == (int)FuelTypeItem.Super_Unleaded)
+                            {
+                                <span class="fuel-sign fuel-sign-super-unleaded"></span>
+                            }
+                        </td>
                         <td class="text-center">
                             @(status)
                         </td>
@@ -141,7 +175,7 @@
                         </td>
                         <td class="text-center" data-infotip="End on [b]@(item.DateTo.ToString("dd MMM yyyy"))[/b]">
                             @if (item.DateTo == startOfToday)
-                            {
+                                    {
                                 <strong>Today</strong>
                             }
                             else
@@ -161,7 +195,7 @@
                         </td>
                         <td class="text-center">
                             @if (item.IsActive)
-                            {
+                                {
                                 <span class="text-success" data-infotip="[q]Price Freeze Event[/q] is [u]Active[/u]"><i class="fa fa-check"></i></span>
                             }
                             else
@@ -175,7 +209,7 @@
                         <td>
                             @if (!isRunning)
                             {
-                                <button type="button" class="btn btn-xs btn-danger pull-left" data-click-action="delete-event" data-event-id="@(item.PriceFreezeEventId)" data-infotip="Remove this [b]Price Freeze Event[/b]"><i class="fa fa-remove"></i> Remove</button>
+                                <button type="button" class="btn btn-xs btn-danger pull-left" data-click-action="delete-event" data-event-id="@(item.PriceFreezeEventId)" data-infotip="Remove this [b]Price Freeze Event[/b]"><i class="fa fa-remove"></i></button>
                             }
                             <button type="button" class="btn btn-xs btn-primary pull-right" data-click-action="edit-event" data-event-id="@(item.PriceFreezeEventId)" data-infotip="Edit this [b]Price Freeze Event[/b]"><i class="fa fa-edit"></i> Edit</button>
                         </td>
@@ -188,18 +222,21 @@
 
 
 <div class="alert alert-warning font125pc">
-    <i class="fa fa-info-circle"></i> <strong>Note:</strong> &nbsp; A <strong>Price Freeze</strong> with a status of <strong>Running</strong> will take affect after the next <strong>Daily Catalist</strong> or <strong>Latest JS Price</strong> file has been uploaded.
+    <i class="fa fa-info-circle"></i> <strong>Note:</strong> &nbsp; A <strong>Price Freeze</strong> with a <strong>Running</strong> status will freeze price increases after the next <strong>Daily Catalist</strong> or <strong>Latest JS Price</strong> file upload or <strong>Recalculation</strong>.
 </div>
 
 <script>
-    require(["notify", "PriceFreezeEvents"],
-        function (notify, priceFreezeEvents) {
+    require(["notify", "PriceFreezeEvents", "chooseOneGroup"],
+        function (notify, priceFreezeEvents, chooseOneGroup) {
             priceFreezeEvents.init();
 
             var state = {
                 showExpired: false,
                 showFuture: true,
-                showInactive: false
+                showInactive: true,
+                showUnleaded: true,
+                showDiesel: true,
+                showSuperUnleaded: true
             };
 
             var selectors = {
@@ -210,9 +247,12 @@
                 hideInactiveButton: '#btnHideInactiveEvents',
                 showInactiveButton: '#btnShowInactiveEvents',
                 hideFutureButton: '#btnHideFutureEvents',
-                showFutureButton: '#btnShowFutureEvents'
+                showFutureButton: '#btnShowFutureEvents',
+                showUnleadedButton: '#btnShowUnleaded',
+                showDieselButton: '#btnShowDiesel',
+                showSuperUnleadedButton: '#btnShowSuperUnleaded',
+                showingMessage: '[data-id="showing-message"]'
             };
-
 
             function hideLoader() {
                 $(selectors.loader).hide();
@@ -228,20 +268,35 @@
 
             function applyFilters() {
                 var grid = $(selectors.grid),
-                    rows = grid.find('tbody tr');
+                    rows = grid.find('tbody tr'),
+                    count = 0;
                 rows.each(function () {
                     var row = $(this),
                         visible = true;
-                    console.log(row);
+
                     if (row.hasClass('event-row-expired') && !state.showExpired)
                         visible = false;
                     if (row.hasClass('event-row-future') && !state.showFuture)
                         visible = false;
                     if (row.hasClass('event-row-inactive') && !state.showInactive)
                         visible = false;
+                    if (row.hasClass('event-row-unleaded') && !state.showUnleaded)
+                        visible = false;
+                    if (row.hasClass('event-row-diesel') && !state.showDiesel)
+                        visible = false;
+                    if (row.hasClass('event-row-super-unleaded') && !state.showSuperUnleaded)
+                        visible = false;
 
-                    row[visible ? 'show' : 'hide']();
+                    if (visible) {
+                        row.show();
+                        count++;
+                    } else {
+                        row.hide();
+                    }
                 });
+
+                $(selectors.showingMessage).html('Showing ' + count + ' of ' + rows.length);
+
             };
 
             function redrawToggleButton(active, onSelector, offSelector) {
@@ -254,12 +309,18 @@
                     onButton.removeClass('btn-primary').addClass('btn-default');
                     offButton.removeClass('btn-default').addClass('btn-primary');
                 }
+
+                showOrHide($(selectors.showUnleadedButton), state.showUnleaded);
+                showOrHide($(selectors.showDieselButton), state.showDiesel);
+                showOrHide($(selectors.showSuperUnleadedButton), state.showSuperUnleaded);
             };
 
             function redrawFilterButtons() {
                 redrawToggleButton(state.showExpired, selectors.showExpiredButton, selectors.hideExpiredButton);
                 redrawToggleButton(state.showFuture, selectors.showFutureButton, selectors.hideFutureButton);
                 redrawToggleButton(state.showInactive, selectors.showInactiveButton, selectors.hideInactiveButton);
+
+                chooseOneGroup.drawGroup('fuel-choose-group', !state.showUnleaded && !state.showDiesel && !state.showSuperUnleaded);
             };
 
             function commonSetFilter(opts) {
@@ -317,6 +378,34 @@
                 });
             };
 
+            function toggleFuelFilter(stateName, selector, fuelName) {
+                var btn = $(selector),
+                    newState = !state[stateName];
+                state[stateName] = newState;
+                if (newState) {
+                    btn.find('.fa-square-o').removeClass('.fa-square-o').addClass('fa-check-square-o');
+                    notify.info('Showing ' + fuelName + ' Price Freeze Events');
+                } else {
+                    btn.find('.fa-check-square-o').removeClass('.fa-check-square-o').addClass('fa-square-o');
+                    notify.info('Hiding ' + fuelName + ' Price Freeze Events');
+                }
+                showOrHide(btn, newState);
+                applyFilters();
+                redrawFilterButtons();
+            };
+
+            function toggleShowUnleaded() {
+                toggleFuelFilter('showUnleaded', selectors.showUnleadedButton, 'Unleaded');
+            };
+
+            function toggleShowDiesel() {
+                toggleFuelFilter('showDiesel', selectors.showDieselButton, 'Diesel');
+            };
+
+            function toggleShowSuperUnleaded() {
+                toggleFuelFilter('showSuperUnleaded', selectors.showSuperUnleadedButton, 'Super-Unleaded');
+            };
+
             function bindEvents() {
                 $(selectors.hideExpiredButton).off().click(hideExpiredClick);
                 $(selectors.showExpiredButton).off().click(showExpiredClick);
@@ -324,6 +413,9 @@
                 $(selectors.showInactiveButton).off().click(showInactiveClick);
                 $(selectors.hideFutureButton).off().click(hideFutureClick);
                 $(selectors.showFutureButton).off().click(showFutureClick);
+                $(selectors.showUnleadedButton).off().click(toggleShowUnleaded);
+                $(selectors.showDieselButton).off().click(toggleShowDiesel);
+                $(selectors.showSuperUnleadedButton).off().click(toggleShowSuperUnleaded);
             };
 
             function docReady() {
@@ -331,6 +423,7 @@
                 applyFilters();
                 bindEvents();
                 hideLoader();
+                chooseOneGroup.init();
             };
 
             $(docReady);

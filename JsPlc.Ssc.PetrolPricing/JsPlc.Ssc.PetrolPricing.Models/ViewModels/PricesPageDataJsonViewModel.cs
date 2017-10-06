@@ -32,7 +32,7 @@ namespace JsPlc.Ssc.PetrolPricing.Models.ViewModels
 
         public PriceSnapshotPageDataViewModel PriceSnapshot = new PriceSnapshotPageDataViewModel();
 
-        public PriceFreezeEventViewModel PriceFreezeEvent = new PriceFreezeEventViewModel();
+        public List<PriceFreezeEventViewModel> PriceFreezeEvent = new List<PriceFreezeEventViewModel>();
 
     }
 }

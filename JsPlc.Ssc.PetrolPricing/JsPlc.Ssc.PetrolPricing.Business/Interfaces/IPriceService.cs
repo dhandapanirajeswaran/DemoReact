@@ -35,6 +35,6 @@ namespace JsPlc.Ssc.PetrolPricing.Business
         PriceFreezeEventViewModel GetPriceFreezeEvent(int priceFreezeEventId);
         StatusViewModel UpsertPriceFreezeEvent(PriceFreezeEventViewModel model);
         StatusViewModel DeletePriceFreezeEvent(int priceFreezeEventId);
-        PriceFreezeEventViewModel GetPriceFreezeEventForDate(DateTime date);
+        IEnumerable<PriceFreezeEventViewModel> GetPriceFreezeEventsForDate(DateTime date);
     }
 }

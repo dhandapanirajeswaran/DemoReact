@@ -778,12 +778,12 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
         }
 
         [System.Web.Http.HttpGet]
-        [System.Web.Http.Route("api/GetPriceFreezeEventForDate/{date}")]
-        public async Task<IHttpActionResult> GetPriceFreezeEventForDate([FromUri] DateTime date)
+        [System.Web.Http.Route("api/GetPriceFreezeEventsForDate/{date}")]
+        public async Task<IHttpActionResult> GetPriceFreezeEventsForDate([FromUri] DateTime date)
         {
             try
             {
-                var result = _priceService.GetPriceFreezeEventForDate(date);
+                var result = _priceService.GetPriceFreezeEventsForDate(date);
                 return Ok(result);
             }
             catch (Exception ex)

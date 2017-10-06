@@ -3,17 +3,19 @@
     @DateFrom DATE, 
     @DateTo DATE,
     @IsActive BIT,
-    @CreatedBy VARCHAR(200)
+    @CreatedBy VARCHAR(200),
+	@FuelTypeId INT
 AS
 BEGIN
 	SET NOCOUNT ON
 
 ----DEBUG:START
 --DECLARE	@PriceFreezeEventId INT = 2
---DECLARE    @DateFrom DATE = '2017-09-01 00:00:00.000'
---DECLARE    @DateTo DATE = '2017-09-30 00:00:00.000'
---DECLARE    @IsActive BIT = 1
---DECLARE    @CreatedBy VARCHAR(200) = 'garry.leeder@sainsburys.co.uk'
+--DECLARE   @DateFrom DATE = '2017-09-01 00:00:00.000'
+--DECLARE   @DateTo DATE = '2017-09-30 00:00:00.000'
+--DECLARE   @IsActive BIT = 1
+--DECLARE   @CreatedBy VARCHAR(200) = 'garry.leeder@sainsburys.co.uk'
+--DECLARE	@FuelTypeId INT = 2
 ----DEBUG:END
 
 	DECLARE @ErrorCode INT = 0
@@ -24,10 +26,10 @@ BEGIN
 	END
 
 	--
-	-- Check for overlapping Date Ranges
+	-- Check for overlapping Date Ranges for a FuelType
 	--
 	IF @ErrorCode = 0 AND
-		EXISTS(SELECT TOP 1 NULL FROM dbo.PriceFreezeEvent WHERE PriceFreezeEventId <> @PriceFreezeEventId AND dbo.fn_IsDateOverlap(DateFrom, DateTo, @DateFrom, @DateTo) = 1)
+		EXISTS(SELECT TOP 1 NULL FROM dbo.PriceFreezeEvent WHERE PriceFreezeEventId <> @PriceFreezeEventId AND FuelTypeId = @FuelTypeId AND dbo.fn_IsDateOverlap(DateFrom, DateTo, @DateFrom, @DateTo) = 1)
 	BEGIN
 		SET @ErrorCode = -2
 	END
@@ -42,14 +44,16 @@ BEGIN
 				[DateTo],
 				[CreatedOn],
 				[CreatedBy],
-				[IsActive]
+				[IsActive],
+				[FuelTypeId]
 			)
 			VALUES (
 				@DateFrom,
 				@DateTo,
 				GETDATE(),
 				@CreatedBy,
-				@IsActive
+				@IsActive,
+				@FuelTypeId
 			);
 			SET @PriceFreezeEventId = SCOPE_IDENTITY()
 		END
@@ -60,7 +64,8 @@ BEGIN
 				DateFrom = @DateFrom,
 				DateTo = @DateTo,
 				IsActive = @IsActive,
-				CreatedBy = @CreatedBy
+				CreatedBy = @CreatedBy,
+				FuelTypeId = @FuelTypeId
 			WHERE
 				PriceFreezeEventId = @PriceFreezeEventId;
 		END

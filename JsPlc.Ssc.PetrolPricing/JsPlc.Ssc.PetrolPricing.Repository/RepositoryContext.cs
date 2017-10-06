@@ -718,7 +718,8 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                 @DateFrom = model.DateFrom.Date,
                 @DateTo = model.DateTo.Date,
                 @IsActive = model.IsActive,
-                @CreatedBy = model.CreatedBy
+                @CreatedBy = model.CreatedBy,
+                @FuelTypeId = model.FuelTypeId
             };
             return DapperHelper.QueryScalar(this, sprocName, parameters);
         }
@@ -734,15 +735,15 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             return DapperHelper.QueryScalar(this, sprocName, parameters) == 0;
         }
 
-        internal PriceFreezeEventViewModel GetPriceFreezeEventForDate(DateTime forDate)
+        internal IEnumerable<PriceFreezeEventViewModel> GetPriceFreezeEventForDate(DateTime forDate)
         {
             const string sprocName = "spGetPriceFreezeEventForDate";
             var parameters = new
             {
                 @ForDate = forDate
             };
-            var result = DapperHelper.QueryFirstOrDefault<PriceFreezeEventViewModel>(this, sprocName, parameters);
-            return result ?? new PriceFreezeEventViewModel();
+            var result = DapperHelper.QueryList<PriceFreezeEventViewModel>(this, sprocName, parameters);
+            return result ?? new List<PriceFreezeEventViewModel>();
         }
 
         internal void UpsertLatestPrice(int fileUploadId, int pfsNo, int storeNo, int fuelTypeId, int modalPrice)

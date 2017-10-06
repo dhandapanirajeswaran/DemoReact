@@ -552,9 +552,9 @@ namespace JsPlc.Ssc.PetrolPricing.Business
             return result;
         }
 
-        public PriceFreezeEventViewModel GetPriceFreezeEventForDate(DateTime date)
+        public IEnumerable<PriceFreezeEventViewModel> GetPriceFreezeEventsForDate(DateTime date)
         {
-            var model = _db.GetPriceFreezeEventForDate(date);
+            var model = _db.GetPriceFreezeEventsForDate(date);
             return model;
         }
 

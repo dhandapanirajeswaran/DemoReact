@@ -11,6 +11,20 @@
             IsActive: true
         };
 
+        var selectors = {
+            grid: '#PriceFreezeEventsGrid',
+            fuelType: '#mnuFuelType',
+            dateFrom: '#dpDateFrom',
+            days: '#mnuDays',
+            isActive: '#mnuIsActive',
+            endsOn: '#spnEndsOn',
+            addButton: '#btnAddEvent',
+            addEventButton: '#btnPriceFreezeEventAdd',
+            deleteEvent: '[data-click-action="delete-event"]',
+            editEvent: '[data-click-action="edit-event"]',
+            showingMessage: '[data-id="showing-message"]'
+        };
+
         function reloadPage() {
             window.location.reload();
         };
@@ -20,15 +34,15 @@
         };
 
         function redrawEndsOn() {
-            var dateFrom = $('#dpDateFrom').val(),
+            var dateFrom = $(selectors.dateFrom).val(),
                 dt = dateUtils.dateFromDDMMYYYY(dateFrom),
-                days = $('#mnuDays').val(),
+                days = $(selectors.days).val(),
                 endsOn = '';
 
             if (isDate(dateFrom) && Number(days) > 0)
                 endsOn = dateUtils.format('DD/MM/YYYY', dateUtils.addDays(days - 1, dt));
 
-            $('#spnEndsOn').text(endsOn);
+            $(selectors.endsOn).text(endsOn);
         };
 
         function dateFromDDMMYYYY(value) {
@@ -38,6 +52,7 @@
 
         function addEventClick() {
             populate({
+                FuelTypeId: 0,
                 PriceFreezeEventId: 0,
                 DateFrom: new Date(),
                 Days: 7,
@@ -48,13 +63,15 @@
         };
 
         function populate(data) {
+            model.FuelTypeId = data.FuelTypeId;
             model.PriceFreezeEventId = data.PriceFreezeEventId;
             model.DateFrom = data.DateFrom;
             model.Days = Number(data.Days);
 
-            $('#dpDateFrom').val(dateUtils.format('DD/MM/YYYY', model.DateFrom));
-            $('#mnuDays').val(model.Days);
-            $('#mnuIsActive').val(data.IsActive ? '1' : '0');
+            $(selectors.fuelType).val(model.FuelTypeId);
+            $(selectors.dateFrom).val(dateUtils.format('DD/MM/YYYY', model.DateFrom));
+            $(selectors.days).val(model.Days);
+            $(selectors.isActive).val(data.IsActive ? '1' : '0');
             redrawEndsOn();
         };
 
@@ -68,27 +85,36 @@
         };
 
         function addClick() {
-            var dateFrom = $('#dpDateFrom').val(),
-                days = $('#mnuDays').val(),
-                isActive = $('#mnuIsActive').val(),
+            var fuelTypeId = $(selectors.fuelType).val(),
+                dateFrom = $(selectors.dateFrom).val(),
+                days = $(selectors.days).val(),
+                isActive = $(selectors.isActive).val(),
                 data;
+
+            if (!fuelTypeId) {
+                notify.error('Please choose a Fuel Type');
+                $(selectors.fuelType).focus();
+                return;
+            }
 
             if (!isDate(dateFrom)) {
                 notify.error('Please enter a Date (DD/MM/YYYY)');
-                $('#dpDateFrom').focus();
+                $(selectors.dateFrom).focus();
                 return;
             }
 
             if (isNaN(days)) {
                 notify.error('Please choose the number of Days');
-                $('#mnuDays').focus();
+                $(selectors.days).focus();
                 return;
             }
 
+            model.FuelTypeId = fuelTypeId;
             model.DateFrom = dateFrom;
             model.Days = Number(days);
 
             data = {
+                FuelTypeId: fuelTypeId,
                 PriceFreezeEventId: model.PriceFreezeEventId,
                 DateFrom: dateToCsModel(model.DateFrom),
                 Days: days,
@@ -101,7 +127,8 @@
 
             function success(response) {
                 if (showResponseStatus(response, 'Saved Price Freeze Event')) {
-                    $('#PriceFreezeEventsGrid').css('opacity', 0.3);
+                    $(selectors.showingMessage).html('Loading...');
+                    $(selectors.grid).css('opacity', 0.3);
                     modal.modal('hide');
                     setTimeout(reloadPage, 2000);
                 }
@@ -168,6 +195,7 @@
                     failure(response);
                 else {
                     var data = {
+                        FuelTypeId: response.FuelTypeId,
                         PriceFreezeEventId: response.PriceFreezeEventId,
                         DateFrom: common.convertJsonDate(response.DateFrom),
                         Days: response.Days,
@@ -186,12 +214,12 @@
             priceFreezeEventService.getPriceFreezeEvent(success, failure, eventId);
         };
         function bindEvents() {
-            $('#btnAddEvent').off().click(addEventClick);
-            $('#btnPriceFreezeEventAdd').off().click(addClick);
-            $('#dpDateFrom').on('change', redrawEndsOn);
-            $('#mnuDays').on('change', redrawEndsOn);
-            $(document.body).on('click', '[data-click-action="delete-event"]', deleteClick);
-            $(document.body).on('click', '[data-click-action="edit-event"]', editClick);
+            $(selectors.addButton).off().click(addEventClick);
+            $(selectors.addEventButton).off().click(addClick);
+            $(selectors.dateFrom).on('change', redrawEndsOn);
+            $(selectors.days).on('change', redrawEndsOn);
+            $(document.body).on('click', selectors.deleteEvent, deleteClick);
+            $(document.body).on('click', selectors.editEvent , editClick);
         };
 
         function initDatePickers() {

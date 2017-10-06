@@ -767,6 +767,13 @@ table.pricing-grid > tbody > tr.site-row.focused:hover > td:nth-child(10),
 .pricing-grid thead .col-header-today-price.col-diesel,
 .pricing-grid thead .col-header-tomorrow-price.col-diesel,
 .pricing-grid thead .col-header-tomorrow-price-change.col-diesel {background: #eee;}
+.pricing-grid thead .col-price-freeze {
+    /*background-color:#83caf7;*/
+    background: linear-gradient(135deg, #fff 0%, #83caf7 50%, #fff 100%);
+    box-shadow: 4px 4px 16px #83caf7;
+    border: 2px solid #fff;
+    border-radius: 12px 12px 0 0;
+}
 
 .pricing-grid thead .col-header-today-price,
 .pricing-grid thead .col-header-tomorrow-price,
@@ -1150,6 +1157,17 @@ tr.site-row.row-override-exceeds-warning-limits td.outside-prices-warning-limits
     margin: 0.25em;
     padding: 0.25em 1em;
     border-radius: 6px;
+}
+
+.fuel-price-freeze-icon {
+    display: inline-block;
+    box-shadow: 2px 2px 4px #000;
+    margin: 4px;
+    padding: 3px 8px;
+    color:#fff;
+    background: #337ab7;
+    border-left: 4px solid #fff;
+    border-right: 4px solid #fff;
 }
 
 .grocer-brand {

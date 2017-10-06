@@ -4274,9 +4274,10 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
                 result.ErrorMessage = "Unable to Delete Price Freeze Event";
             return result;
         }
-        public PriceFreezeEventViewModel GetPriceFreezeEventForDate(DateTime date)
+        public List<PriceFreezeEventViewModel> GetPriceFreezeEventsForDate(DateTime date)
         {
-            return _context.GetPriceFreezeEventForDate(date);
+            // Note: this can return 0..3 Price Freeze Events
+            return _context.GetPriceFreezeEventForDate(date).AsList();
         }
 
         public string ExportSettings()

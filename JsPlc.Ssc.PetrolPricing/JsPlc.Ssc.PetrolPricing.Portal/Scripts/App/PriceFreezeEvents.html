@@ -1,4 +1,4 @@
-﻿<div class="modal" id="priceFreezePopup" tabindex="-1" role="dialog" style="width: 65em; margin: 5em auto;">
+﻿<div class="modal" id="priceFreezePopup" tabindex="-1" role="dialog" style="width: 75em; margin: 5em auto;">
     <div class="modal-content">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal"><i class="fa fa-times"></i></button>
@@ -19,6 +19,18 @@
             <form method="post" onsubmit="return false;">
                 <div class="container">
                     <div class="row">
+
+                        <div class="col-md-2">
+                            <label for="mnuFuelType">Fuel Type</label><br />
+
+                            <select id="mnuFuelType" class="form-control" data-infotip="Choose the [b]Fuel Type[/b] for the Price Freeze">
+                                <option value="0">--- Choose ---</option>
+                                <option value="2">Unleaded</option>
+                                <option value="6">Diesel</option>
+                                <option value="1">Super-Unleaded</option>
+                            </select>
+                        </div>
+
                         <div class="col-md-2">
                             <label for="dpDateFrom">Freeze Starts</label><br />
                             <input type="text" id="dpDateFrom" name="dpDateFrom" class="datepicker form-control" data-infotip="Choose the [b]Start[/b] date of the [q]Price Freeze[/q]" />
@@ -55,9 +67,14 @@
 
                         <div class="col-md-3">
                             <label>Last Day of Freeze</label><br />
-                            <span id="spnEndsOn" style="line-height: 2.25em;" data-infotip="The [b]Last Day[/b] of the [q]Price Freeze[/q]"></span>
+                            <span id="spnEndsOn" class="font125pc" style="line-height: 2.25em;" data-infotip="The [b]Last Day[/b] of the [q]Price Freeze[/q]"></span>
                         </div>
 
+                    </div>
+
+                    <div class="alert alert-info col-md-10">
+                            <i class="fa fa-info-circle"></i> <strong>Tip:</strong>
+                            On the <strong>Last Day</strong> of the Price Freeze Event you can price as normal for the next day.
                     </div>
 
                     <div class="row clearfix"><br /></div>

@@ -48,8 +48,8 @@
                 <i class="fa fa-clock-o"></i> <strong>Historical Data -</strong> Overrides locked
             </span>
 
-            <span class="price-freeze-event-banner font75pc" data-bind="visible: $root.IsPriceFreezeEventRunning" style="display: none;" data-infotip-dock="below" data-infotip="A [q]Price Freeze Event[/q] is actively running - Prices [i]cannot[/i] increase during this period.">
-                <i class="fa fa-hourglass-start"></i> <strong> Price Freeze</strong> until <strong data-bind="text: $root.PriceFreezeEventEndDate"></strong> &mdash; <strong data-bind="text: $root.PriceFreezeEventDaysRemaining"></strong>
+            <span class="price-freeze-event-banner font75pc" data-bind="visible: $root.AreActivePriceFreezeEvents" style="display: none;" data-infotip-dock="below" data-infotip="One or more [q]Price Freeze Event[/q] are running - Prices [i]cannot[/i] increase during this period.">
+                <i class="fa fa-hourglass-start"></i> <strong> Price Freeze for <span data-bind="text: $root.PriceFreezeEventFuelNames"></span></strong> 
             </span>
 
             <button id="btnRecalculateDailyPrices" type="button" class="btn btn-danger pull-right" data-bind="visible: !$root.ViewingHistorical()" data-infotip="Recalculate the [b]Daily Prices[/b]"><i class="fa fa-power-off"></i> Recalculate Daily Prices</button>
@@ -378,7 +378,9 @@
                                     <button type="button" class="btn btn-warning btn-sm" data-bind="click: resetPriceMovementFilters" data-infotip="Clear the [b]Price Movement[/b] filters"><i class="fa fa-eraser"></i></button>
                                 </div>
                             </th>
-                            <th rowspan="2" colspan="4" class="col-header-unleaded">
+                            <th rowspan="2" colspan="4" class="col-header-unleaded" data-bind="css:($root.PriceFreezeEventForUnleaded() ? 'col-price-freeze' : '')">
+                                <span class="fuel-price-freeze-icon" data-bind="visible: $root.PriceFreezeEventForUnleaded" data-infotip="Price Freeze on [b]Unleaded[/b]"><i class="fa fa-hourglass-start"></i> Freeze</span>
+
                                 <button type="button" class="btn btn-danger btn-xs" data-bind="visible: !$root.ViewingHistorical(), click: removeAllOverrideUnleaded" data-infotip="Remove all [b]Price Overrides[/b] for [b]Unleaded[/b]"><i class="fa fa-power-off"></i></button>
                                 <span class="fuel-sign fuel-sign-unleaded"></span>
 
@@ -395,7 +397,9 @@
                                 </div>
                                 <!-- /ko -->
                             </th>
-                            <th rowspan="2" colspan="4" class="col-header-diesel">
+                            <th rowspan="2" colspan="4" class="col-header-diesel" data-bind="css: ($root.PriceFreezeEventForDiesel() ? 'col-price-freeze' : '')">
+                                <span class="fuel-price-freeze-icon" data-bind="visible: $root.PriceFreezeEventForDiesel" data-infotip="Price Freeze on [b]Diesel[/b]"><i class="fa fa-hourglass-start"></i> Freeze</span>
+
                                 <button type="button" class="btn btn-danger btn-xs" data-bind="visible: !$root.ViewingHistorical(), click: removeAllOverrideDiesel" data-infotip="Remove all [b]Price Overrides[/b] for [b]Diesel[/b]"><i class="fa fa-power-off"></i></button>
                                 <span class="fuel-sign fuel-sign-diesel"></span>
 
@@ -412,7 +416,9 @@
                                 </div>
                                 <!-- /ko -->
                             </th>
-                            <th rowspan="2" colspan="4" class="col-header-super-unleaded">
+                            <th rowspan="2" colspan="4" class="col-header-super-unleaded" data-bind="css:($root.PriceFreezeEventForSuperUnleaded() ? 'col-price-freeze' : '')">
+                                <span class="fuel-price-freeze-icon" data-bind="visible: $root.PriceFreezeEventForSuperUnleaded" data-infotip="Price Freeze on [b]Super-Unleaded[/b]"><i class="fa fa-hourglass-start"></i> Freeze</span>
+
                                 <button type="button" class="btn btn-danger btn-xs" data-bind="visible: !$root.ViewingHistorical(), click: removeAllOverrideSuperUnleaded" data-infotip="Remove all [b]Price Overrides[/b] for [b]Super Unleaded[/b]"><i class="fa fa-power-off"></i></button>
                                 <span class="fuel-sign fuel-sign-super-unleaded"></span>
 

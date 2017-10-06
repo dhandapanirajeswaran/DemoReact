@@ -1544,10 +1544,10 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
         }
 
 
-        public PriceFreezeEventViewModel GetPriceFreezeEventForDate(DateTime forDate)
+        public List<PriceFreezeEventViewModel> GetPriceFreezeEventForDate(DateTime forDate)
         {
-            var apiUrl = String.Format("api/GetPriceFreezeEventForDate/{0}", forDate.ToString("ddMMMyyyy"));
-            var result = CallAndCatchAsyncGet<PriceFreezeEventViewModel>("GetPriceFreezeEventForDate", apiUrl);
+            var apiUrl = String.Format("api/GetPriceFreezeEventsForDate/{0}", forDate.ToString("ddMMMyyyy"));
+            var result = CallAndCatchAsyncGet<List<PriceFreezeEventViewModel>>("GetPriceFreezeEventForDate", apiUrl);
             return result;
         }
 
