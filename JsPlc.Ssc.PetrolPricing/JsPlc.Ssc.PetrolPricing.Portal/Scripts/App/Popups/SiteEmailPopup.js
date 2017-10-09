@@ -486,8 +486,8 @@
         function sendButtonClick() {
             var count = params.siteIdList.length,
                 message = count == 1
-                ? 'Do you want to send this email to ' + params.siteName + '?'
-                : 'Do you want to send this email to ' + count + ' selected Sites ?',
+                ? 'Do you want to send this email to <big>' + params.siteName + '</big>?'
+                : 'Do you want to send this email to <big>' + count + ' selected Sites</big> ?',
                 sending = count == 1
                 ? 'Sending email to ' + params.siteName + '. Please wait...'
                 : 'Sending emails to ' + count + ' selected sites. Please wait...';
