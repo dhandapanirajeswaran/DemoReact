@@ -252,6 +252,7 @@
     <Build Include="dbo\Tables\JsPriceOverride.sql" />
     <Build Include="dbo\Stored Procedures\spImportJsPriceOverrideData.sql" />
     <Build Include="dbo\Stored Procedures\spGetJsPriceOverrides.sql" />
+    <Build Include="dbo\Stored Procedures\spGetGrocerBrandNames.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Scripts\PostDeployment\Script.PostDeployment.sql" />

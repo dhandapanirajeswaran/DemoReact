@@ -51,6 +51,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
         public IDbSet<SystemSettings> SystemSettings { get; set; }
 
+
         public IDbSet<EmailTemplate> EmailTemplates { get; set; }
 
         public IDbSet<DriveTimeMarkup> DriveTimeMarkups { get; set; }
@@ -884,6 +885,14 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             };
 
             model.Items = DapperHelper.QueryList<JsPriceOverrideItemViewModel>(this, sprocName, parameters);
+            return model;
+        }
+
+        internal List<GrocerBrandName> GetAllGrocerBrandNames()
+        {
+            const string sprocName = "spGetGrocerBrandNames";
+            var parameters = new { };
+            var model = DapperHelper.QueryList<GrocerBrandName>(this, sprocName, parameters);
             return model;
         }
     }

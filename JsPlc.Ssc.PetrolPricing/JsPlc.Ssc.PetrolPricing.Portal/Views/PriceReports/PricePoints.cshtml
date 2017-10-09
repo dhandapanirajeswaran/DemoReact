@@ -1,4 +1,5 @@
 ﻿@model JsPlc.Ssc.PetrolPricing.Models.ViewModels.PricePointReportContainerViewModel
+@using JsPlc.Ssc.PetrolPricing.Models.Enums
 @{
     ViewBag.Title = "Report - View Number Of Sites At Each Price Point";
 
@@ -35,26 +36,17 @@
         }
         document.getElementById(tabName).style.display = "block";
         if (evt != null) evt.currentTarget.className += " activetab";
-
-
-
     }
 
-
-
     function settabsWidth(){
-
         $("#divtable-Diesel").width(getDieselTabWidth());
         $("#divtable-Unleaded").width(getUnleadedTabWidth());
 
         openTab(null, 'Diesel');
         $('#tab-Diesel').addClass('activetab');
-
-
     }
 
     function getDieselTabWidth() {
-
         return  @Model.PricePointReports[0].PricePointReportRows.FirstOrDefault().PricePointPrices.Count*50+130;
     }
 
@@ -62,16 +54,13 @@
         return @Model.PricePointReports[1].PricePointReportRows.FirstOrDefault().PricePointPrices.Count*50+130;
     }
 
-
     $(function(){
         $('div[onload]').trigger('onload');
     });
 
     $( document ).ready(function() {
         $("#btnExportReport").prop( "disabled",  @Model.PricePointReports[0].PricePointReportRows.FirstOrDefault().PricePointPrices.Count==1 );
-
     });
-
 
 </script>
 
@@ -137,6 +126,16 @@
         animation: fadeEffect 1s;
     }
 
+    .row-sainsburys{font-weight: bold; color: orange;}
+    .row-grocer {font-weight: bold; color: #337ab7;}
+    .row-summary {
+        font-weight: bold; 
+        line-height: 2em; 
+        background: #eee;
+        border-top: 2px solid #000;
+        border-bottom: 2px solid #000;
+    }
+
 </style>
 <div class="row">
     <div class="col-md-6">
@@ -190,6 +189,10 @@
             }
         }
 
+        <li class="text-right" style="width: 40em;">
+            <span style="line-height: 4em;"><strong>NOTE:</strong> Tesco includes Tesco Express and Tesco Extra.</span>
+        </li>
+
     </ul>
 
 
@@ -197,45 +200,43 @@
     {
         if (@report.PricePointReportRows[0].PricePointPrices.Count > 2)
         {
-        <div id="@report.FuelTypeName" class="tabcontent">
-            <h4>@report.FuelTypeName</h4>
-            <div>
-                <div class="divtable" onload="settabsWidth()">
-                    <div id="divtable-@report.FuelTypeName">
-                        <div class="row" style="font-weight:bold">
-                            <div class="col-md-1" style="width:130px">Brands</div>
-                            @foreach (var price in report.PricePointReportRows.First().PricePointPrices)
-                            {
-                                <div class="col-md-1" style="width:50px">@(  (@price.Price / 10).ToString("###0.0"))</div>
-                            }
-                        </div>
+            <div id="@report.FuelTypeName" class="tabcontent">
+                <h4>@report.FuelTypeName</h4>
+                <div>
+                    <div class="divtable" onload="settabsWidth()">
+                        <div id="divtable-@report.FuelTypeName">
+                            <div class="row" style="font-weight:bold">
+                                <div class="col-md-1" style="width:130px">Brands</div>
+                                @foreach (var price in report.PricePointReportRows.First().PricePointPrices)
+                                {
+                                    <div class="col-md-1" style="width:50px">@(  (@price.Price / 10).ToString("###0.0"))</div>
+                                }
+                            </div>
 
-                        <div class="actualdata">
-                            @foreach (var row in report.PricePointReportRows)
-                            {
-                                <div class="alternativerow">
-                                    <div class="row">
-                                        <div class="col-md-1" style="width:130px">
-                                        @if (row.Brand == "SAINSBURYS")
-                                        {
-                                            <strong style="color:orange;">@row.Brand</strong>
-                                        }
-                                        else
-                                        {
-                                            @row.Brand
-                                        }</div>
-                                        @foreach (var price in row.PricePointPrices)
-                                        {
-                                            <div class="col-md-1" style="width:50px">@price.Count</div>
-                                        }
+                            <div class="actualdata">
+                                @foreach (var row in report.PricePointReportRows)
+                                {
+                                    var rowClass = row.Brand == "SAINSBURYS"
+                                        ? "row-sainsburys"
+                                        : "row-" + row.ReportRowType.ToString().ToLower();
+
+                                    <div class="alternativerow">
+                                        <div class="row @(rowClass)">
+                                            <div class="col-md-1" style="width:130px">
+                                                <span>@(row.Brand)</span>
+                                            </div>
+                                            @foreach (var price in row.PricePointPrices)
+                                            {
+                                                <div class="col-md-1" style="width:50px">@price.Count</div>
+                                            }
+                                        </div>
                                     </div>
-                                </div>
-                            }
+                                }
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
         }
 
     }
