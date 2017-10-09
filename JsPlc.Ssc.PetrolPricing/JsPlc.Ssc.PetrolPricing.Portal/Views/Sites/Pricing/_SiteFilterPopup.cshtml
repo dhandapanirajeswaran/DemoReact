@@ -83,22 +83,31 @@
                         </div>
                     </div>
 
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <label>Missing Data</label><br />
                         <div class="btn-group">
-                            <button type="button" class="btn" data-bind="click: $root.setSiteFilterMissingCatNo, css: ($root.siteEmailFilter() == 'Missing CatNo' ? 'btn-primary' : 'btn-default')" data-infotip="Show Sites with a [i]Missing CatNo[/i]">Missing CatNo</button>
-                            <button type="button" class="btn" data-bind="click: $root.setSiteFilterMissingPfsNo, css: ($root.siteEmailFilter() == 'Missing PfsNo' ? 'btn-primary' : 'btn-default')" data-infotip="Show Sites with a [i]Missing PfsNo[/i]">Missing PfsNo</button>
-                            <button type="button" class="btn" data-bind="click: $root.setSiteFilterMissingStoreNo, css: ($root.siteEmailFilter() == 'Missing StoreNo' ? 'btn-primary' : 'btn-default')" data-infotip="Show Sites with a [i]Missing StoreNo[/i]">Missing StoreNo</button>
+                            <button type="button" class="btn" data-bind="click: $root.setSiteFilterMissingCatNo, css: ($root.siteEmailFilter() == 'Missing CatNo' ? 'btn-primary' : 'btn-default')" data-infotip="Show Sites with a [i]Missing CatNo[/i]">No CatNo</button>
+                            <button type="button" class="btn" data-bind="click: $root.setSiteFilterMissingPfsNo, css: ($root.siteEmailFilter() == 'Missing PfsNo' ? 'btn-primary' : 'btn-default')" data-infotip="Show Sites with a [i]Missing PfsNo[/i]">No PfsNo</button>
+                            <button type="button" class="btn" data-bind="click: $root.setSiteFilterMissingStoreNo, css: ($root.siteEmailFilter() == 'Missing StoreNo' ? 'btn-primary' : 'btn-default')" data-infotip="Show Sites with a [i]Missing StoreNo[/i]">No StoreNo</button>
                         </div>
                     </div>
 
-                    <div class="col-md-4">
+                    <div class="col-md-2">
                         <label>Price Movement</label><br />
                         <div class="btn-group">
                             <button type="button" class="btn" data-bind="click: $root.setSiteFilterWithPriceMove, css: ($root.siteEmailFilter() == 'Price Move' ? 'btn-primary' : 'btn-default')" data-infotip="Show Sites with a [u]Price Move[/u]">Price Move</button>
                             <button type="button" class="btn" data-bind="click: $root.setSiteFilterNoPriceMove, css: ($root.siteEmailFilter() == 'No Price Move' ? 'btn-primary' : 'btn-default')" data-infotip="Show Sites with [i]No Price Move[/i]">No Move</button>
                         </div>
                     </div>
+
+                    <div class="col-md-3">
+                        <label>Sent Email</label><br />
+                        <div class="btn-group">
+                            <button type="button" class="btn text-success" data-bind="click: $root.setSiteFilterWithEmailSent, css: ($root.siteEmailFilter() == 'Email Sent' ? 'btn-primary' : 'btn-default')" data-infotip="Emails [u]Sent[/u] to Sites [b]Today[/b]"><i class="fa fa-check"></i> Sent Today</button>
+                            <button type="button" class="btn text-danger" data-bind="click: $root.setSiteFilterWithEmailNotSent, css: ($root.siteEmailFilter() == 'Email Not Sent' ? 'btn-primary' : 'btn-default')" data-infotip="Pricing Emails [i]Not Sent[/i] to Sites"><i class="fa fa-times"></i> Awaiting</button>
+                        </div>
+                    </div>
+
                 </div>
             </div>
 
