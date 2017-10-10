@@ -37,11 +37,11 @@ namespace JsPlc.Ssc.PetrolPricing.Exporting.DataTableConvertors
             DateTime tomorrow = forDate.AddDays(1);
             DateTime yday = forDate.AddDays(-1);
             DateTime daybyday = yday.AddDays(-1);
-            dr[5] = yday.ToString("dd/MM/yyyy");
+            dr[5] = forDate.ToString("dd/MM/yyyy");
             dr[6] = tomorrow.ToString("dd/MM/yyyy");
-            dr[8] = yday.ToString("dd/MM/yyyy");
+            dr[8] = forDate.ToString("dd/MM/yyyy");
             dr[9] = tomorrow.ToString("dd/MM/yyyy");
-            dr[11] = yday.ToString("dd/MM/yyyy");
+            dr[11] = forDate.ToString("dd/MM/yyyy");
             dr[12] = tomorrow.ToString("dd/MM/yyyy");
             dt.Rows.Add(dr);
             int nRow = 2;
