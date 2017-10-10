@@ -22,5 +22,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
         Task<List<EmailSendLog>> GetEmailSendLog(int siteId, DateTime? forDate);
 
         string SendTestEmail();
+
+        EmailLogViewerViewModel GetEmailSendLogView(int emailSendLogId);
     }
 }

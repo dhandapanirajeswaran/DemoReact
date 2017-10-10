@@ -847,6 +847,22 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
             }
         }
 
+        [System.Web.Http.HttpGet]
+        [System.Web.Http.Route("api/GetEmailSendLogView/{emailSendLogId}")]
+        public async Task<IHttpActionResult> GetEmailSendLogView([FromUri] int emailSendLogId)
+        {
+            try
+            {
+                var result = _emailService.GetEmailSendLogView(emailSendLogId);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex);
+                return new ExceptionResult(ex, this);
+            }
+        }
+
         #region private methods
 
         private DateTime ParseDateTime(string datetime)

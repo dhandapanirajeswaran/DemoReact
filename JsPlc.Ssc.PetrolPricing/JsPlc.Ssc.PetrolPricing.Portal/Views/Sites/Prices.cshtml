@@ -566,7 +566,7 @@
                                         <i class="fa fa-clone" data-bind="visible: (PriceMatchType == 3)" data-infotip="[b]Match Competitor[/b]"></i>
 
                                         <a role="button" href="#" class="site-name" data-bind="attr:{id: SiteId}, click: getCompetitorPopupDataClick, html: (StoreName.replace('SAINSBURYS', ''))" data-toggle="modal" data-target="#competitorPricesPopup" data-infotip="View competitor's prices"></a>
-                                        <span class="text-success" data-bind="visible: (!$root.IsLoadingEmailStatuses() && WasEmailSent()), attr: {'data-infotip': 'Email was [u]Sent[/u] to site on [u]' + SiteEmailLastSent() + '[/u]'}"><i class="fa fa-envelope"></i></span>
+                                        <a href="#" class="text-success" style="margin-left: 4px;" data-bind="click: openEmailSendLogViewer, visible: (!$root.IsLoadingEmailStatuses() && WasEmailSent()), attr: {'data-infotip': 'Email was [u]Sent[/u] to site on [u]' + SiteEmailLastSent() + '[/u][br /]Click to [b]View Email Log[/b['}"><i class="fa fa-envelope"></i></a>
                                         <span class="text-warning" data-bind="visible: $root.IsLoadingEmailStatuses()" data-infotip="[i]Loading Email Status[/i]"><i class="fa fa-spinner"></i></span>
 
                                         <div class="hide-hover">

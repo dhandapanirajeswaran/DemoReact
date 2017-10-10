@@ -79,6 +79,8 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 			DateTime endTradeDate,
 			string reportBackEmailAddr)
 		{
+            var systemSettings = _systemSettingsService.GetSystemSettings();
+
             var sites = listSites as IList<SitePriceViewModel> ?? listSites.ToList();
 			// SERIES execution for now.
             foreach (SitePriceViewModel site in sites)
@@ -98,6 +100,14 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 					var emailBody = BuildEmailBody(emailTemplate, site, endTradeDate);
 
                     var emailSubject = ReplaceEmailSubjectLineTokens(emailTemplate, site, endTradeDate);
+
+                    if (!String.IsNullOrEmpty(systemSettings.EmailSubjectLinePrefix))
+                    {
+                        emailSubject = String.Format("{0} {1}",
+                            systemSettings.EmailSubjectLinePrefix,
+                            emailSubject
+                            );
+                    }
 
                     var emailFrom = _appSettings.EmailFrom;
 
@@ -270,15 +280,21 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 			return retval;
 		}
 
+        public EmailLogViewerViewModel GetEmailSendLogView(int emailSendLogId)
+        {
+            var result = _db.GetEmailSendLogView(emailSendLogId);
+            return result;
+        }
+
         #region Private Methods
 
-		/// <summary>
-		/// Get SitePrice data for email, returns null if not found
-		/// </summary>
-		/// <param name="site"></param>
-		/// <param name="emailForSite"></param>
-		/// <param name="endTradeDate"></param>
-		/// <returns></returns>
+        /// <summary>
+        /// Get SitePrice data for email, returns null if not found
+        /// </summary>
+        /// <param name="site"></param>
+        /// <param name="emailForSite"></param>
+        /// <param name="endTradeDate"></param>
+        /// <returns></returns>
         private EmailSiteData emailSetValues(SitePriceViewModel site, EmailSiteData emailForSite, DateTime endTradeDate)
 		{
 			emailForSite.SiteName = site.StoreName;

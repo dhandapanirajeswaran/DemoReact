@@ -12,5 +12,6 @@ namespace JsPlc.Ssc.PetrolPricing.Models.ViewModels
         public DateTime EndTradeDate { get; set; }
         public DateTime SendDate { get; set; }
         public bool IsSuccess { get; set; }
+        public int EmailSendLogId { get; set; }
     }
 }

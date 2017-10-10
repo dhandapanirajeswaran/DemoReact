@@ -855,7 +855,8 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
                     {
                         SiteId = status.SiteId,
                         WasEmailSentToday = status.IsSuccess,
-                        EmailLastSent = status.SendDate
+                        EmailLastSent = status.SendDate,
+                        EmailSendLogId = status.EmailSendLogId
                     }
                 );
             }
@@ -893,6 +894,17 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             const string sprocName = "spGetGrocerBrandNames";
             var parameters = new { };
             var model = DapperHelper.QueryList<GrocerBrandName>(this, sprocName, parameters);
+            return model;
+        }
+
+        internal EmailLogViewerViewModel GetEmailSendLogView(int emailSendLogId)
+        {
+            const string sprocName = "spGetEmailSendLog";
+            var parameters = new
+            {
+                @EmailSendLogId = emailSendLogId
+            };
+            var model = DapperHelper.QueryFirstOrDefault<EmailLogViewerViewModel>(this, sprocName, parameters);
             return model;
         }
     }

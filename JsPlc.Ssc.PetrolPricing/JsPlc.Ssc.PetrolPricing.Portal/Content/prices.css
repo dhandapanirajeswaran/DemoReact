@@ -962,6 +962,8 @@ tr.site-row.row-override-exceeds-warning-limits td.outside-prices-warning-limits
 
 .site-name-overlay .hide-hover {display: none; clear: both; margin-top: 4px;}
 
+.site-name-overlay:hover .fa-envelope {color: #9cf89c}
+
 .site-name-overlay:hover {
     width: 96%;
     background-color: #000;
@@ -1721,3 +1723,32 @@ optgroup > option {
 
 /*.js-price-overrides-grid th,
 .js-price-overrides-grid td {border-left: 1px solid red; overflow-x: hidden;}*/
+
+
+
+#EmailLogViewerModal .section-box {
+    width: 95%;
+    border: 2px solid #eee;
+    border-radius: 0 12px 0 12px;
+    padding: 4px 8px;
+    margin: 0 0 1em 0;
+    font-weight: bold;
+}
+
+#EmailLogViewerModal .section-label {
+    display: block;
+    clear: both;
+    font-size: 110%;
+    font-weight: bold;
+    background-color: #eee;
+    border-radius: 0 12px 0 0;
+    margin: 0.5em 0 0 0px;
+    width: 25%;
+    padding: 2px 1em;
+}
+
+#EmailLogViewerModal table th,
+#EmailLogViewerModal table td {
+    padding: 4px;
+}
+

@@ -117,6 +117,10 @@ namespace JsPlc.Ssc.PetrolPricing.Models.ViewModels.SystemSettings
         [Range(10, 45)]
         public int CompetitorMaxDriveTime { get; set; }
 
+
+        [Display(Name = "Prefix Email Subject line with")]
+        public string EmailSubjectLinePrefix { get; set; }
+
         public SystemSettingsViewModel()
         {
             this.Status = new StatusViewModel();

@@ -1,0 +1,67 @@
+﻿<div id="EmailLogViewerModal" class="modal" tabindex="-1" role="dialog" style="width: 85em; margin: 1em auto;">
+
+    <div class="modal-content">
+        <div class="modal-header">
+            <h4>Email View Log for 
+            <span style="color: orange;" data-id="site-name"></span>
+            
+            for end of trade <span class="text-primary" data-id="end-of-trade-date"></span>
+            &mdash;
+            sent on <span style="color: #33cc33;" data-id="send-date"></span>
+           
+            </h4>
+        </div>
+
+        <div class="modal-body">
+
+            <div style=" max-height: 600px; overflow: auto;">
+                <div class="container" style="width: 80em; margin: 0;">
+                    <div class="row">
+                        <div class="col-md-1 col-md-offset-1"><strong>Success</strong></div>
+                        <div class="col-md-1 font125pc" data-id="is-success"></div>
+
+                        <div class="col-md-1 col-md-offset-1"><strong>Warning</strong></div>
+                        <div class="col-md-1 font125pc" data-id="is-warning"></div>
+
+                        <div class="col-md-1 col-md-offset-1"><strong>Error</strong></div>
+                        <div class="col-md-1 font125pc" data-id="is-error"></div>
+                    </div>
+
+                    <br />
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label class="section-label" >Warning Message</label>
+                            <p class="section-box text-warning" data-id="warning-message"></p>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label class="section-label">Error Message</label>
+                            <p class="section-box text-danger" data-id="error-message"></p>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label class="section-label">Subject Line</label>
+                            <p class="section-box" data-id="subject-line"></p>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label class="section-label">Email Body</label>
+                            <p class="section-box" data-id="email-body"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>       
+         </div>
+
+        <div class="modal-footer">
+            <button type="button" class="btn btn-primary" data-dismiss="modal" data-infotip="Close the Modal"><i class="fa fa-times"></i> Close</button>
+        </div>
+    </div>
+</div>

@@ -10,7 +10,8 @@ BEGIN
 		st.Id [SiteId],
 		esl.EndTradeDate [EndTradeDate],
 		esl.SendDate [SendDate],
-		esl.IsSuccess [IsSuccess]
+		esl.IsSuccess [IsSuccess],
+		esl.id [EmailSendLogId]
 	FROM
 		dbo.Site st
 		LEFT JOIN dbo.EmailSendLog esl ON esl.IsSuccess=1 AND esl.SiteId = st.Id AND esl.EndTradeDate >= @ForDate AND esl.EndTradeDate < @ForDateNextDay

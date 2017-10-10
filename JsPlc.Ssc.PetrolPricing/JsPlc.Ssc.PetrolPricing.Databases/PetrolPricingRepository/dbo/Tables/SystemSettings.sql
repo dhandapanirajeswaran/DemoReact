@@ -22,5 +22,6 @@
     [EnableSiteEmails] BIT NOT NULL DEFAULT (0), 
     [SiteEmailTestAddresses] VARCHAR(MAX) NOT NULL DEFAULT (''), 
     [FileUploadDatePicker] BIT NOT NULL DEFAULT (0), 
-    [CompetitorMaxDriveTime] INT NOT NULL DEFAULT (25)
+    [CompetitorMaxDriveTime] INT NOT NULL DEFAULT (25), 
+    [EmailSubjectLinePrefix] VARCHAR(100) NOT NULL DEFAULT ('')
 )

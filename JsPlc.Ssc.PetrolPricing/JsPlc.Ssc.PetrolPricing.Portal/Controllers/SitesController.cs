@@ -696,6 +696,14 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             return base.JsonGetResult(model);
         }
 
+        [ScriptMethod(UseHttpGet = true)]
+        public JsonResult GetEmailSendLogView(int emailSendLogId)
+        {
+            var model = _serviceFacade.GetEmailSendLogView(emailSendLogId);
+            return base.JsonGetResult(model);
+        }
+
+
         #region private methods
 
         private void PopulatePageData(SiteViewModel model, DateTime requestDate)

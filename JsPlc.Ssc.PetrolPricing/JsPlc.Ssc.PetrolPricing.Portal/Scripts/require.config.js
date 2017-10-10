@@ -61,6 +61,7 @@
             "Help": "App/Help",
             "ErrorCatcher": "App/ErrorCatcher",
             "JsPriceOverrides": "App/JsPriceOverrides",
+            "EmailLogViewer": "App/EmailLogViewer",
 
             // popups
             "SiteEmailPopup" : "App/Popups/SiteEmailPopup",

@@ -1596,6 +1596,13 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             return result;
         }
 
+        internal EmailLogViewerViewModel GetEmailSendLogView(int emailSendLogId)
+        {
+            var apiUrl = String.Format("api/GetEmailSendLogView/{0}", emailSendLogId);
+            var result = CallAndCatchAsyncGet<EmailLogViewerViewModel>("GetEmailSendLogView", apiUrl);
+            return result;
+        }
+
         #region private methods
 
         private T CallAndCatchAsyncGet<T>(string methodName, string apiUrl)

@@ -3376,6 +3376,7 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
             row.SiteEmailTestAddresses = systemSettings.SiteEmailTestAddresses;
             row.FileUploadDatePicker = systemSettings.FileUploadDatePicker;
             row.CompetitorMaxDriveTime = systemSettings.CompetitorMaxDriveTime;
+            row.EmailSubjectLinePrefix = systemSettings.EmailSubjectLinePrefix;
 
             _context.SaveChanges();
         }
@@ -3404,7 +3405,8 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
                 EnableSiteEmails = settings.EnableSiteEmails,
                 SiteEmailTestAddresses = settings.SiteEmailTestAddresses,
                 FileUploadDatePicker = settings.FileUploadDatePicker,
-                CompetitorMaxDriveTime = settings.CompetitorMaxDriveTime
+                CompetitorMaxDriveTime = settings.CompetitorMaxDriveTime,
+                EmailSubjectLinePrefix = settings.EmailSubjectLinePrefix
             };
 
             return model;
@@ -4297,6 +4299,11 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
         public JsPriceOverrideViewModel GetJsPriceOverrides(int fileUploadId)
         {
             return _context.GetJsPriceOverrides(fileUploadId);
+        }
+
+        public EmailLogViewerViewModel GetEmailSendLogView(int emailSendLogId)
+        {
+            return _context.GetEmailSendLogView(emailSendLogId);
         }
 
         #endregion private methods

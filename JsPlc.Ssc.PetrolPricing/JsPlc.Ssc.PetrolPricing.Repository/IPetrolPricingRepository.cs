@@ -397,5 +397,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 
         SiteEmailTodaySendStatusViewModel GetSiteEmailTodaySendStatuses(DateTime forDate);
         bool NewJsPriceOverrideRecords(List<JsPriceOverrideDataModel> allSites, FileUpload aFile);
+
+        EmailLogViewerViewModel GetEmailSendLogView(int emailSendLogId);
     }
 }

@@ -16,5 +16,6 @@ namespace JsPlc.Ssc.PetrolPricing.Models.ViewModels
         public int SiteId { get; set; }
         public bool WasEmailSentToday { get; set; }
         public DateTime? EmailLastSent { get; set; }
+        public int EmailSendLogId { get; set; }
     }
 }

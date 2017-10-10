@@ -28,5 +28,6 @@ namespace JsPlc.Ssc.PetrolPricing.Models
         public string SiteEmailTestAddresses { get; set; }
         public bool FileUploadDatePicker { get; set; }
         public int CompetitorMaxDriveTime { get; set; }
+        public string EmailSubjectLinePrefix { get; set; }
     }
 }

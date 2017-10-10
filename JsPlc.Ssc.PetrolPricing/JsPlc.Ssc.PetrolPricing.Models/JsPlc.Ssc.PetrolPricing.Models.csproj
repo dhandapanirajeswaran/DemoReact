@@ -142,6 +142,7 @@
     <Compile Include="ViewModels\Diagnostics\DiagnosticsRecordCountViewModel.cs" />
     <Compile Include="ViewModels\Diagnostics\DiagnosticsSchedulerStatusViewModel.cs" />
     <Compile Include="ViewModels\Diagnostics\DiagnosticsViewModel.cs" />
+    <Compile Include="ViewModels\EmailLogViewerViewModel.cs" />
     <Compile Include="ViewModels\EmailTemplateNameViewModel.cs" />
     <Compile Include="ViewModels\EmailTemplateViewModel.cs" />
     <Compile Include="ViewModels\ExportCompetitorPricesViewModel.cs" />
