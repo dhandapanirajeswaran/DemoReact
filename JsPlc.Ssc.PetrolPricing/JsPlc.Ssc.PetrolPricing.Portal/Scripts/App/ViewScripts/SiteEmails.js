@@ -231,6 +231,7 @@
                     continue;
 
                 seen.sites[siteId] = true;
+
                 if (pfsNo in seen.pfsNos)
                     duplicates.pfsNo.push(pfsNo);
                 else
@@ -247,12 +248,33 @@
                     seen.storeNos[storeNo] = true;
             }
 
+            duplicates.catNo = removeArrayDuplicates(duplicates.catNo);
+            duplicates.pfsNo = removeArrayDuplicates(duplicates.pfsNo);
+            duplicates.storeNo = removeArrayDuplicates(duplicates.storeNo);
+
             $(selectors.duplicateCatNos).html(buildDuplicateSummary('filter-catno', 'CatNo', duplicates.catNo));
             $(selectors.duplicatePfsNos).html(buildDuplicateSummary('filter-pfsno', 'PfsNo', duplicates.pfsNo));
             $(selectors.duplicateStoreNos).html(buildDuplicateSummary('filter-storeno', 'StoreNo', duplicates.storeNo));
 
             if (duplicates.catNo.length || duplicates.pfsNo.length || duplicates.storeNo.length)
                 $(selectors.duplicateSummary).fadeIn(1000);
+        };
+
+        function removeArrayDuplicates(ary) {
+            var seen = {},
+                i,
+                value,
+                unique = [];
+
+            for (i = 0; i < ary.length; i++) {
+                value = ary[i];
+                if (value in seen)
+                    continue;
+                seen[value] = true;
+                unique.push(value);
+            }
+
+            return unique;
         };
 
         function buildDuplicateSummary(action, infotip, obj) {
