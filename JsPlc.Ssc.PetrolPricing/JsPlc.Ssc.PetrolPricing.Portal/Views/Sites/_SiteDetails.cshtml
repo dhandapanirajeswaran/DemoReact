@@ -1,6 +1,31 @@
 ﻿@model JsPlc.Ssc.PetrolPricing.Models.SiteViewModel
 @using JsPlc.Ssc.PetrolPricing.Models.Enums
 
+@{ 
+
+    var isMissingCatno = Model.CatNo.HasValue == false || Model.CatNo < 1;
+    var isMissingPfsno = Model.PfsNo.HasValue == false || Model.PfsNo < 1;
+    var isMissingStoreno = Model.StoreNo.HasValue == false || Model.StoreNo < 1;
+
+    var missing = new List<string>();
+    if (isMissingCatno) {
+        missing.Add("CatNo");
+    }
+    if (isMissingPfsno) {
+        missing.Add("PfsNo");
+    }
+    if (isMissingStoreno) {
+        missing.Add("StoreNo");
+    }
+}
+
+@if (isMissingCatno || isMissingPfsno || isMissingStoreno) {
+
+<div class="alert alert-danger font125pc">
+    <i class="fa fa-warning"></i> <strong>Warning</strong> - Sainsbury's site <strong>@(Model.SiteName)</strong> has missing data &mdash; <strong> @(String.Join(", ", missing))</strong>.
+</div>
+}
+
 <div class="panel panel-default">
     <div class="panel-body">
         <div class="col-md-6">
@@ -10,7 +35,14 @@
                 </dt>
 
                 <dd>
-                    @Html.DisplayFor(model => model.CatNo)
+                    @if (isMissingCatno)
+                    {
+                        <span class="text-danger"><i class="fa fa-times"></i> Missing</span>
+                    } else
+                    {
+                        <span class="text-success"><i class="fa fa-check"></i> @(Model.CatNo)</span>
+
+                    }
                 </dd>
 
                 <dt>
@@ -107,7 +139,15 @@
                 </dt>
 
                 <dd>
-                    @Html.DisplayFor(model => model.StoreNo)
+                    @if (isMissingStoreno)
+                    {
+                        <span class="text-danger"><i class="fa fa-times"></i> Missing</span>
+                    }
+                    else
+                    {
+                        <span class="text-success"><i class="fa fa-check"></i> @(Model.StoreNo)</span>
+
+                    }
                 </dd>
 
                 <dt>
@@ -115,7 +155,14 @@
                 </dt>
 
                 <dd>
-                    @Html.DisplayFor(model => model.PfsNo)
+                    @if (isMissingPfsno)
+                    {
+                        <span class="text-danger"><i class="fa fa-times"></i> Missing</span>
+                    }
+                    else
+                    {
+                        <span class="text-success"><i class="fa fa-check"></i> @(Model.PfsNo)</span>
+                    }
                 </dd>
 
                 <dt>
