@@ -90,10 +90,9 @@
                 @Html.DisplayNameFor(model => model.Ownership)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.IsActive)
+                Active
             </th>
-            <th style="width: 10em;">
-            </th>
+            <th></th>
         </tr>
 
         @*@if (Model != null && Model.Any() == false)
@@ -173,7 +172,7 @@
                         @Html.DisplayFor(modelItem => item.PfsNo)
                     </td>
                     <td class="filterable-cell">
-                        @Html.DisplayFor(modelItem => item.SiteName)
+                        <strong style="color: orange;">@Html.DisplayFor(modelItem => item.SiteName)</strong>
                         <br />
                         (@Html.DisplayFor(modelItem => item.Company))
                         <br />
@@ -201,7 +200,7 @@
                             <span class="text-danger"><i class="fa fa-times"></i>&nbsp;No</span>
                         }
                     </td>
-                    <td class="filterable-cell text-center" style="width: 10em;">
+                    <td class="filterable-cell text-center">
                         <a class="btn btn-primary" href="@Url.Action("Details","Sites", new { id = item.Id})"><i class="fa fa-info"></i>&nbsp;Details</a>
                         <br /><br />
                         @if (item.Emails == null || !item.Emails.Any())
