@@ -29,7 +29,12 @@
             pfsNoFilter: '#txtSearchPfsNo',
             emailFilter: '#txtSearchEmail',
 
-            showingInfo: '#spnShowingInfo'
+            showingInfo: '#spnShowingInfo',
+
+            duplicateSummary: '#divDuplicateSummary',
+            duplicateCatNos: '#spnDuplicateCatNos',
+            duplicatePfsNos: '#spnDuplicatePfsNos',
+            duplicateStoreNos: '#spnDuplicateStoreNos'
         };
 
         var controls = {
@@ -53,7 +58,12 @@
             emailFilter: undefined
         };
 
-        
+        var duplicates = {
+            pfsNo: [],
+            catNo: [],
+            storeNo: []
+        };
+
         function deleteEmailsClick() {
             bootbox.confirm({
                 title: "Delete Confirmation",
@@ -130,6 +140,13 @@
         };
 
         function clearAllFiltersClick() {
+            removeAllFilters();
+
+            filterRows();
+            notify.info('Cleared all the filters');
+        };
+
+        function removeAllFilters() {
             controls.storeNoFilter.val('');
             controls.siteNameFilter.val('');
             controls.catNoFilter.val('');
@@ -141,9 +158,6 @@
             state.withEmails = true;
             state.withNoEmails = true;
             redrawFilterButtons();
-
-            filterRows();
-            notify.info('Cleared all the filters');
         };
 
         function trim(str) {
@@ -169,14 +183,14 @@
             for (i = 0; i < rows.length; i++) {
                 row = $(rows[i]);
                 cells = row.find('td');
-                isActive = row.hasClass('row-site-active');
+                isActive = row.attr('data-is-active');
                 hasEmail = row.hasClass('row-has-email');
                 visible = (
-                    (storeNo == '' || trim(cells.eq(0).text()).indexOf(storeNo) ==0)
-                    && (siteName == '' || trim(cells.eq(1).text()).toUpperCase().indexOf(siteName) != -1)
-                    && (catNo == '' || trim(cells.eq(2).text()).indexOf(catNo) == 0)
-                    && (pfsNo == '' || trim(cells.eq(3).text()).indexOf(pfsNo) == 0)
-                    && (email == '' || trim(cells.eq(4).text()).toUpperCase().indexOf(email) == 0)
+                    (storeNo == '' || row.attr('data-store-no').indexOf(storeNo) ==0)
+                    && (siteName == '' || row.attr('data-store-name').toUpperCase().indexOf(siteName) != -1)
+                    && (catNo == '' || row.attr('data-cat-no').indexOf(catNo) == 0)
+                    && (pfsNo == '' || row.attr('data-pfs-no').indexOf(pfsNo) == 0)
+                    && (email == '' || row.attr('data-email').toUpperCase().indexOf(email) == 0)
                     && (!isActive || (isActive && state.activeSites ))
                     && (isActive || (!isActive && state.inactiveSites))
                     && (!hasEmail || (hasEmail && state.withEmails))
@@ -189,6 +203,68 @@
             }
 
             $(selectors.showingInfo).text(count + ' of ' + totalCount);
+        };
+
+        function detectDuplicates() {
+            var rows = $('.table > tbody > tr'),
+                row,
+                i,
+                siteId,
+                pfsNo,
+                catNo,
+                storeNo,
+                seen = {
+                    sites: {},
+                    pfsNos: {},
+                    catNos: {},
+                    storeNos: {}
+                };
+
+            for (i = 0; i < rows.length; i++) {
+                row = $(rows[i]);
+                siteId = row.attr('data-site-id');
+                pfsNo = row.attr('data-pfs-no');
+                catNo = row.attr('data-cat-no');
+                storeNo = row.attr('data-store-no');
+
+                if (siteId in seen.sites)
+                    continue;
+
+                seen.sites[siteId] = true;
+                if (pfsNo in seen.pfsNos)
+                    duplicates.pfsNo.push(pfsNo);
+                else
+                    seen.pfsNos[pfsNo] = true;
+
+                if (catNo in seen.catNos)
+                    duplicates.catNo.push(catNo);
+                else
+                    seen.catNos[catNo] = true;
+
+                if (storeNo in seen.storeNos)
+                    duplicates.storeNo.push(storeNo);
+                else
+                    seen.storeNos[storeNo] = true;
+            }
+
+            $(selectors.duplicateCatNos).html(buildDuplicateSummary('filter-catno', 'CatNo', duplicates.catNo));
+            $(selectors.duplicatePfsNos).html(buildDuplicateSummary('filter-pfsno', 'PfsNo', duplicates.pfsNo));
+            $(selectors.duplicateStoreNos).html(buildDuplicateSummary('filter-storeno', 'StoreNo', duplicates.storeNo));
+
+            if (duplicates.catNo.length || duplicates.pfsNo.length || duplicates.storeNo.length)
+                $(selectors.duplicateSummary).fadeIn(1000);
+        };
+
+        function buildDuplicateSummary(action, infotip, obj) {
+            var html = [],
+                key;
+
+            for (key in obj) {
+                html.push('<a href="#" class="btn btn-success btn-xs" data-id="' + obj[key] + '" data-click="' + action + '" data-infotip="Filter by [b]' + infotip + ' [/b]">' + obj[key] + '</a> ');
+            }
+            return html.length
+                ? html.join('&nbsp;')
+                : '-- none --';
         };
 
         function redrawButton(control, isActive) {
@@ -278,6 +354,33 @@
             }
         };
 
+        function filterCatNo(ev) {
+            ev.preventDefault();
+            var id = $(this).attr('data-id');
+            removeAllFilters();
+            $(selectors.catNoFilter).val(id);
+            filterRows();
+            notify.info('Filtering by CatNo: ' + id);
+        };
+
+        function filterPfsNo(ev) {
+            ev.preventDefault();
+            var id = $(this).attr('data-id');
+            removeAllFilters();
+            $(selectors.pfsNoFilter).val(id);
+            filterRows();
+            notify.info('Filtering by PfsNo: ' + id);
+        };
+
+        function filterStoreNo(ev) {
+            ev.preventDefault();
+            var id = $(this).attr('data-id');
+            removeAllFilters();
+            $(selectors.storeNoFilter).val(id);
+            filterRows();
+            notify.info('Filtering by StoreNo: ' + id);
+        };
+
         function bindEvents() {
             controls.deleteAllEmnails.off().click(deleteEmailsClick);
             controls.exportEmails.off().click(exportEmailsClick);
@@ -297,9 +400,14 @@
             controls.catNoFilter.off().on('keyup', searchKeyup);
             controls.pfsNoFilter.off().on('keyup', searchKeyup);
             controls.emailFilter.off().on('keyup', searchKeyup);
+
+            $(selectors.duplicateCatNos).on('click', '[data-click="filter-catno"]', filterCatNo);
+            $(selectors.duplicatePfsNos).on('click', '[data-click="filter-pfsno"]', filterPfsNo);
+            $(selectors.duplicateStoreNos).on('click', '[data-click="filter-storeno"]', filterStoreNo);
         };
 
         function docReady() {
+            detectDuplicates();
             findControls();
             bindEvents();
             filterRows();

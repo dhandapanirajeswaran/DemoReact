@@ -66,6 +66,13 @@
         }
 
     .mono-font {font-family: monospace;}
+
+    .filter-link {
+        border: 1px solid #999;
+        border-radius: 4px;
+        margin: 2px 0.25em;
+    }
+
 </style>
 
 <div class="row">
@@ -137,6 +144,18 @@
 
 </div>
 
+<div id="divDuplicateSummary" class="alert alert-warning no-margin" style="margin-top: 1em; display: none;">
+    <div class="font125pc text-center"><i class="fa fa-warning"></i> <strong>Duplicate data found in Sites</strong></div>
+    <p>
+        <strong>Duplicate CatNo:</strong> <span id="spnDuplicateCatNos">Loading...</span>
+    </p>
+    <p>
+        <strong>Dupicate PfsNo:</strong> <span id="spnDuplicatePfsNos">Loading...</span>
+    </p>
+    <p>
+        <strong>Duplicate StoreNo:</strong> <span id="spnDuplicateStoreNos">Loading...</span>
+    </p>
+</div>
 
 <div class="row">
     <div class="col-md-12 newline">
@@ -204,7 +223,7 @@
                         var isNonSainsburysEmail = !item.EmailAddress.ToUpper().EndsWith("@SAINSBURYS.CO.UK");
                         var rowCss = (item.IsSiteActive ? "row-site-active" : "row-site-inactive")
                             + (isEmptyEmail ? " row-has-no-email" : " row-has-email");
-                        <tr class="@(rowCss)">
+                        <tr class="@(rowCss)" data-site-id="@(item.SiteId)" data-store-no="@(item.StoreNo)" data-store-name="@(item.StoreName)" data-is-active="@(item.IsSiteActive)" data-cat-no="@(item.CatNo)" data-pfs-no="@(item.PfsNo)" data-email="@(item.EmailAddress)">
                             <td class="email-store-no">
                                 @if (item.StoreNo == 0)
                                 {
