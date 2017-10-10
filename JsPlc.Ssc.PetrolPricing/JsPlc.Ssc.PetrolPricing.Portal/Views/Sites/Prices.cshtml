@@ -182,7 +182,7 @@
 
             <div class="row">
                 <div class="col-md-6">
-                    <div class="btn-group hover-background-primary clickable" style="margin-top: -0.5em; display: none;" data-bind="click: $root.confirmGotoSettings, visible: !$root.busyLoadingData()" data-infotip-dock="below" data-infotip="These can be changed in the [b]Settings[/b] page">
+                    <div class="btn-group hover-background-primary clickable" style="display: none;" data-bind="click: $root.confirmGotoSettings, visible: !$root.busyLoadingData()" data-infotip-dock="below" data-infotip="These can be changed in the [b]Settings[/b] page">
                         <label class="tag tag-info" data-infotip-dock="below" data-infotip="The [b]Price Variance[/b] threshold[br /][u]Click to view Settings...[/u]">Price Variance <span class="badge" data-bind="text: ('+/- ' + $root.PriceChangeVariance() + ' p')"></span></label>
                         <label class="tag tag-info" data-infotip-dock="below" data-infotip="The [b]Drive Time[/b] in minutes for [b]Nearby Grocers[/b][br /][u]Click to view Settings...[/u]">Nearby Grocers <span class="badge" data-bind="text: ('' + $root.MaxGrocerDriveTime() + ' mins')"></span></label>
                         <label class="tag tag-info" data-infotip-dock="below" data-infotip="The [b]Decimal Rounding[/b] value (last digit replacement)[br /][u]Click to view Settings...[/u]">Rounding <span class="badge" data-bind="text: ($root.DecimalRounding() == -1 ? 'none': $root.DecimalRounding())"></span></label>
@@ -191,7 +191,7 @@
                 </div>
                 <div class="col-md-6">
                     <span id="spnShowingXofY" class="font150pc text-primary" data-bind="click: $root.showSiteFilterPopup" data-infotip="Showing the [b]Filtered[/b] number of sites and [b]Total[/b][br /]number of [em]Sainsburys[/em] Sites[br /]Click to [b]Open Filters[/b]"></span>
-                    &mdash; <span class="btn btn-success text-success" data-bind="click: $root.setSiteFilterWithEmailSent,  attr: {'data-infotip': '[b]Today[/b] Sent [u]' + $root.SiteEmailSentCount() + '[u] emails to Sites[br]Click to [b]filter sites[/b]'}"><i class="fa fa-envelope"></i> <strong data-bind="text: (' ' + $root.SiteEmailSentCount() + ' sent')"></strong></span>
+                    &mdash; <span class="btn btn-success text-success" style="margin-top: -6px; margin-left: 4px;" data-bind="click: $root.setSiteFilterWithEmailSent,  attr: {'data-infotip': '[b]Today[/b] Sent [u]' + $root.SiteEmailSentCount() + '[u] emails to Sites[br]Click to [b]filter sites[/b]'}"><i class="fa fa-envelope"></i> <strong data-bind="text: (' ' + $root.SiteEmailSentCount() + ' sent')"></strong></span>
                     <div class="btn-group pull-right" style="margin-right: -1em;">
                         <button type="button" class="btn btn-default" data-bind="click: showPriceChangesTab, css: { 'btn-primary' : $root.showingPriceChangesTab()}" data-infotip="Show [b]Our Price Changes[/b] tab"><i class="fa fa-bar-chart"></i> Our Price Changes</button>
                         <button type="button" class="btn btn-default" data-bind="click: showPriceSummaryTab, css: {'btn-primary': $root.showingPriceSummaryTab()}" data-infotip="Show the [b]Prices/Price Change[/b] summary tab"><i class="fa fa-area-chart"></i> Price Stats</button>
