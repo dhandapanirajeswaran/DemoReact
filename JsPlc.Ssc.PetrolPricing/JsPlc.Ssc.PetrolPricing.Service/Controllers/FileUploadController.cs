@@ -284,8 +284,13 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
         }
 
         [HttpPost]
-        [Route("api/ImportSiteEmailFile/{importCatNo}/{importPfsNo}/{allowSharedEmails}")]
-        public async Task<IHttpActionResult> ImportSiteEmailFile([FromUri] bool importCatNo, [FromUri] bool importPfsNo, [FromUri] bool allowSharedEmails)
+        [Route("api/ImportSiteEmailFile/{importCatNo}/{importPfsNo}/{allowSharedEmails}/{importStoreNoUsingCatNo}")]
+        public async Task<IHttpActionResult> ImportSiteEmailFile(
+            [FromUri] bool importCatNo, 
+            [FromUri] bool importPfsNo, 
+            [FromUri] bool allowSharedEmails,
+            [FromUri] bool importStoreNoUsingCatNo
+            )
         {
             try
             {
@@ -307,7 +312,8 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
                 {
                     ImportCatNo = importCatNo,
                     ImportPfsNo = importPfsNo,
-                    AllowSharedEmails = allowSharedEmails
+                    AllowSharedEmails = allowSharedEmails,
+                    ImportStoreNoUsingCatNo = importStoreNoUsingCatNo
                 };
 
                 var model = _fileService.ImportSiteEmailFile(uploadPath, settings);

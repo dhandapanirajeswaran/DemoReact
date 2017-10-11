@@ -388,10 +388,11 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
 
         public SiteEmailImportResultViewModel ImportFileEmailFile(HttpPostedFileBase file, ImportSiteEmailSettings settings)
         {
-            var apiUrl = String.Format("api/ImportSiteEmailFile/{0}/{1}/{2}",
+            var apiUrl = String.Format("api/ImportSiteEmailFile/{0}/{1}/{2}/{3}",
                 settings.ImportCatNo,
                 settings.ImportPfsNo,
-                settings.AllowSharedEmails
+                settings.AllowSharedEmails,
+                settings.ImportStoreNoUsingCatNo
                 );
 
             MemoryStream target = new MemoryStream();

@@ -1085,8 +1085,8 @@ namespace JsPlc.Ssc.PetrolPricing.Business
             var uniquePfsNoStoreNos = new UniqueSet();
             var uniqueCatNoStoreNames = new UniqueSet();
 
-            var jssites = _db.GetJsSites();
-
+            var jsSites = _db.GetJsSites();
+            var jsSiteStoreNos = jsSites.Where(x => x.StoreNo.HasValue && x.StoreNo.Value > 0).Select(x => x.StoreNo.Value).ToList();
 
             var dataTable = _dataFileReader.GetSiteEmailAddressesData(excelFilePath);
 
@@ -1101,6 +1101,13 @@ namespace JsPlc.Ssc.PetrolPricing.Business
                 var emailAddress = row[2].ToString().Trim();
                 var catNoString = row[3].ToString().Trim();
                 var pfsNoString = row[4].ToString().Trim();
+
+                var pfsNo = 0;
+                var catNo = 0;
+                var hasCatNo = Int32.TryParse(catNoString, out catNo) && catNo > 0;
+                var hasPfsNo = Int32.TryParse(pfsNoString, out pfsNo) && pfsNo > 0;
+                var catNoIsOk = true;
+                var pfsNoIsOk = true;
 
                 // skip empty rows
                 if (String.IsNullOrEmpty(storeNoString)
@@ -1133,6 +1140,18 @@ namespace JsPlc.Ssc.PetrolPricing.Business
                 var storeNameIsOk = !String.IsNullOrEmpty(storeName);
                 var emailAddressIsOk = !String.IsNullOrEmpty(emailAddress);
 
+                if (catNoIsOk && settings.ImportStoreNoUsingCatNo && storeNoIsOk)
+                {
+                    if (jsSites.Any(x => x.CatNo.HasValue && x.CatNo.Value == catNo))
+                    {
+                        // check is CatNo exists - import will then set the StoreNo
+                        if (jsSites.Any(x => x.CatNo.HasValue && x.CatNo == catNo))
+                            jsSiteStoreNos.Add(storeNo); // make available for later check of StoreNo
+                    }
+                    else
+                        statusRow.Message = "CatNo: " + catNo + " - is not a Sainsburys CatNo.";
+                }
+
                 if (storeNoIsOk == false)
                     statusRow.Message = "Store No: " + storeNoString + " - is not an integer number";
                 else if (storeNameIsOk == false)
@@ -1141,7 +1160,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
                     statusRow.Message = "Email Address is empty";
                 else if (IsValidEmailAddress(emailAddress) == false)
                     statusRow.Message = "Email Address: " + emailAddress + " - is not valid";
-                else if (storeNameIsOk && !jssites.Any(x => x.StoreNo.HasValue && x.StoreNo.Value == storeNo))
+                else if (storeNameIsOk && !jsSiteStoreNos.Contains(storeNo))
                     statusRow.Message = "Store No: " + storeNo + " - is not a Sainsburys StoreNo.";
                 else
                 {
@@ -1175,13 +1194,6 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 
                     if (storeNo != 0 && statusRow.IsSuccess)
                     {
-                        var pfsNo = 0;
-                        var catNo = 0;
-                        var hasCatNo = Int32.TryParse(catNoString, out catNo) && catNo > 0;
-                        var hasPfsNo = Int32.TryParse(pfsNoString, out pfsNo) && pfsNo > 0;
-                        var catNoIsOk = true;
-                        var pfsNoIsOk = true;
-
                         if (hasCatNo)
                         {
                             if (uniqueCatNoStoreNames.IsUniqueKeyAndValue(catNo, storeNo))

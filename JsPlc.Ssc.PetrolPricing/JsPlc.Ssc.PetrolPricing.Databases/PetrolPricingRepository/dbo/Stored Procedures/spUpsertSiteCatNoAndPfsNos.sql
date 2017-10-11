@@ -14,6 +14,29 @@ BEGIN
 	FROM
 		@SiteCatNoAndPfsNos.nodes('/*/SiteNumberImportViewModel') as x(item)
 
+	--
+	-- fix missing StoreNo (where possible) using CatNo
+	--
+	MERGE dbo.Site AS target
+	USING
+	(
+		SELECT
+			imp.StoreNo [NewStoreNo],
+			imp.CatNo [NewCatNo]
+		FROM
+			@ImportTV imp
+			INNER JOIN dbo.Site st ON st.CatNo = imp.CatNo
+		WHERE
+			imp.CatNo IS NOT NULL AND imp.CatNo > 0
+	) AS source
+	ON (target.CatNo = source.NewCatNo)
+	WHEN MATCHED THEN
+		UPDATE SET
+			StoreNo = source.NewStoreNo;
+
+	--
+	-- import CatNo and PfsNo using StoreNo
+	--
 	MERGE dbo.Site AS target
 		USING (
 			SELECT

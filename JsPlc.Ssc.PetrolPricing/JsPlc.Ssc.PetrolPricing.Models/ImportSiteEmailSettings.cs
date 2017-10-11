@@ -11,5 +11,6 @@ namespace JsPlc.Ssc.PetrolPricing.Models
         public bool ImportCatNo { get; set; } = false;
         public bool ImportPfsNo { get; set; } = false;
         public bool AllowSharedEmails { get; set; } = false;
+        public bool ImportStoreNoUsingCatNo { get; set; } = false;
     }
 }

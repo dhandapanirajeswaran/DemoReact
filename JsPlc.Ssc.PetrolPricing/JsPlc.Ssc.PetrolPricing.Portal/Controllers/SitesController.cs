@@ -635,7 +635,8 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
                 {
                     ImportCatNo = !String.IsNullOrEmpty(Request.Form["ImportCatNo"]),
                     ImportPfsNo = !String.IsNullOrEmpty(Request.Form["ImportPfsNo"]),
-                    AllowSharedEmails = !String.IsNullOrEmpty(Request.Form["AllowSitesToShareEmails"])
+                    AllowSharedEmails = !String.IsNullOrEmpty(Request.Form["AllowSitesToShareEmails"]),
+                    ImportStoreNoUsingCatNo = !String.IsNullOrEmpty(Request.Form["ImportStoreNoUsingCatNo"])
                 };
 
                 if (file == null || file.ContentLength <= 0)
