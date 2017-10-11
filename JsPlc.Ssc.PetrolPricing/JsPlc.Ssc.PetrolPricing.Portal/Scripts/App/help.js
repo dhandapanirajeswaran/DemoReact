@@ -160,6 +160,10 @@
             show('help/faq-glossary');
         };
 
+        function howCanIClick() {
+            show('help/faq-how-can-i');
+        };
+
         function helpButtonClick() {
             var pathname = window.location.pathname.replace(/\/petrolpricing\//i, '/').toLowerCase(),
                 pathname = pathname.replace(/\/\d+/, ''),
@@ -230,6 +234,7 @@
             helpWindow.on('click', '[data-click="help-settings"]', settingsClick);
             helpWindow.on('click', '[data-click="help-glossary"]', glossaryClick);
             helpWindow.on('click', '[data-click="help-top-of-page"]', topOfPageClick);
+            helpWindow.on('click', '[data-click="help-how-can-i"]', howCanIClick);
         };
 
         function docReady() {

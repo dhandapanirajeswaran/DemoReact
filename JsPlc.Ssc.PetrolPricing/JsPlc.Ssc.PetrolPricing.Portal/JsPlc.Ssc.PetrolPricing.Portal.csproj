@@ -306,6 +306,8 @@
     <Content Include="Content\LatestCompPriceDataTemplate.xlsx" />
     <Content Include="Content\JsPriceOverrideDataTemplate.xlsx" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
+    <Content Include="Help\faq-email-templates.html" />
+    <Content Include="Help\faq-how-can-i.html" />
     <Content Include="Help\faq-glossary.html" />
     <Content Include="Help\faq-site-emails.html" />
     <Content Include="Help\faq-site-pricing.html" />
