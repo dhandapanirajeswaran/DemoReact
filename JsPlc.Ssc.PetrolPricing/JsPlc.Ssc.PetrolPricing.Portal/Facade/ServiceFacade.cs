@@ -386,18 +386,34 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             }
         }
 
-        public string ImportFileEmailFile(HttpPostedFileBase file)
+        public SiteEmailImportResultViewModel ImportFileEmailFile(HttpPostedFileBase file, ImportSiteEmailSettings settings)
         {
-            var apiUrl = String.Format("api/ImportSiteEmailFile");
+            var apiUrl = String.Format("api/ImportSiteEmailFile/{0}/{1}/{2}",
+                settings.ImportCatNo,
+                settings.ImportPfsNo,
+                settings.AllowSharedEmails
+                );
 
             MemoryStream target = new MemoryStream();
             file.InputStream.CopyTo(target);
             byte[] data = target.ToArray();
 
             var response = _client.Value.PostAsync(apiUrl, data, new JsonMediaTypeFormatter()).Result;
-            return response.IsSuccessStatusCode
-                ? ""
-                : "Unable to Import Site Emails";
+            if (response.IsSuccessStatusCode)
+            {
+                var result = response.Content.ReadAsAsync<SiteEmailImportResultViewModel>().Result;
+                result.Settings = settings;
+                return result;
+            }
+            else
+                return new SiteEmailImportResultViewModel()
+                {
+                    Settings = settings,
+                    Status = new StatusViewModel()
+                    {
+                        ErrorMessage = "Unable to Import Email Addresses"
+                    }
+                };
         }
 
         public async Task<IEnumerable<FileUpload>> ExistingDailyUploads(DateTime uploadDatetime)

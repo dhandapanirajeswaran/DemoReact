@@ -108,6 +108,7 @@
     <Compile Include="Settings\CoreSettings.cs" />
     <Compile Include="SmtpClientWrapper.cs" />
     <Compile Include="StringFormatters\DateAndTimeFormatter.cs" />
+    <Compile Include="UniqueSet.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\JsPlc.Ssc.PetrolPricing.Models\JsPlc.Ssc.PetrolPricing.Models.csproj">

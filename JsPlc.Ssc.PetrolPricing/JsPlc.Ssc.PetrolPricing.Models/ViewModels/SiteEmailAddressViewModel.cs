@@ -23,4 +23,25 @@ namespace JsPlc.Ssc.PetrolPricing.Models.ViewModels
         public string StoreName { get; set; }
         public string EmailAddress { get; set; }
     }
+
+
+    public class SiteEmailImportResultViewModel
+    {
+        public StatusViewModel Status = new StatusViewModel();
+        public ImportSiteEmailSettings Settings = new ImportSiteEmailSettings();
+        public List<SiteEmailImportRowStatusViewModel> Row = new List<SiteEmailImportRowStatusViewModel>();
+    }
+
+    public class SiteEmailImportRowStatusViewModel
+    {
+        public int RowNumber { get; set; }
+        public string StoreNo { get; set; }
+        public string StoreName { get; set; }
+        public string EmailAddress { get; set; }
+        public string CatNo { get; set; }
+        public string PfsNo { get; set; }
+        public bool IsSuccess { get; set; }
+        public string Message { get; set; }
+    }
+
 }

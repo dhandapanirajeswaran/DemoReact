@@ -284,12 +284,15 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
         }
 
         [HttpPost]
-        [Route("api/ImportSiteEmailFile")]
-        public async Task<IHttpActionResult> ImportSiteEmailFile()
+        [Route("api/ImportSiteEmailFile/{importCatNo}/{importPfsNo}/{allowSharedEmails}")]
+        public async Task<IHttpActionResult> ImportSiteEmailFile([FromUri] bool importCatNo, [FromUri] bool importPfsNo, [FromUri] bool allowSharedEmails)
         {
             try
             {
-                var uploadPath = _appSettings.UploadPath + "\\ImportSiteEmailAddresses.xlsx";
+                // make each upload unique
+                var uploadPath = _appSettings.UploadPath + String.Format("\\ImportSiteEmailAddresses_{0}.xlsx", 
+                    DateTime.Now.ToString("yyyyMMdd_HHmmss")
+                    );
 
                 var result = Request.Content.ReadAsStringAsync().Result.Replace("\"", string.Empty);
                 byte[] bytearray = Convert.FromBase64String(result);
@@ -300,9 +303,16 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
                     writeStream.Close();
                 }
 
-                _fileService.ImportSiteEmailFile(uploadPath);
+                var settings = new ImportSiteEmailSettings()
+                {
+                    ImportCatNo = importCatNo,
+                    ImportPfsNo = importPfsNo,
+                    AllowSharedEmails = allowSharedEmails
+                };
 
-                return Ok("SUCCESS");
+                var model = _fileService.ImportSiteEmailFile(uploadPath, settings);
+
+                return Ok(model);
             }
             catch (Exception ex)
             {

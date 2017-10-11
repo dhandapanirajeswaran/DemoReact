@@ -620,33 +620,36 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 
         public ActionResult UploadSiteEmails()
         {
-            var model = new StatusViewModel();
+            var model = new SiteEmailImportResultViewModel();
             return View(model);
         }
 
         [System.Web.Mvc.HttpPost]
         public async Task<ActionResult> UploadSiteEmails(HttpPostedFileBase file)
         {
-            var model = new StatusViewModel();
+            var model = new SiteEmailImportResultViewModel();
             try
             {
+                // for some reason model is not populating
+                var settings = new ImportSiteEmailSettings()
+                {
+                    ImportCatNo = !String.IsNullOrEmpty(Request.Form["ImportCatNo"]),
+                    ImportPfsNo = !String.IsNullOrEmpty(Request.Form["ImportPfsNo"]),
+                    AllowSharedEmails = !String.IsNullOrEmpty(Request.Form["AllowSitesToShareEmails"])
+                };
+
                 if (file == null || file.ContentLength <= 0)
                 {
                     _logger.Error(new ApplicationException("Uploaded Site Emails file is empty"));
                     throw new ApplicationException("Uploaded Site Emails file is empty");
                 }
 
-                var errorMessage = _serviceFacade.ImportFileEmailFile(file);
-                if (String.IsNullOrEmpty(errorMessage))
-                    model.SuccessMessage = "Uploaded Site Emails file";
-                else
-                    model.ErrorMessage = errorMessage;
+                model = _serviceFacade.ImportFileEmailFile(file, settings);
             }
             catch(Exception ex)
             {
                 _logger.Error(ex);
-                model.ErrorMessage = "Unable to upload Site Emails file";
-                
+                model.Status.ErrorMessage = "Unable to upload Site Emails file";
             }
             return View(model);
         }
