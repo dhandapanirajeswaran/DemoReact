@@ -54,7 +54,7 @@
         <div class="col-md-4">
             <label>Row filters: </label>
             <div class="btn-group">
-                <button type="button" id="btnShowSuccess" class="btn btn-primary btn-sm" data-infotip="Show or Hide the [b]Successful[/b] rows"><i class="fa fa-check"></i> Success <span class="badge" id="spnSuccessful"></span></button>
+                <button type="button" id="btnShowSuccess" class="btn btn-default btn-sm" data-infotip="Show or Hide the [b]Successful[/b] rows"><i class="fa fa-check"></i> Success <span class="badge" id="spnSuccessful"></span></button>
                 <button type="button" id="btnShowErrors" class="btn btn-primary btn-sm" data-infotip="Show or Hide the [b]Errors[/b] rows"><i class="fa fa-times"> </i> Errors <span class="badge" id="spnErrors"></span></button>
             </div>
             <button type="button" id="btnShowAll" margin-left: 2em; class="btn btn-warning btn-sm" data-infotip="Show [b]all[/b] rows"><i class="fa fa-eraser"></i> Show all</button>
@@ -226,7 +226,7 @@
 
             var state = {
                 showErrors: true,
-                showSuccess: true
+                showSuccess: false
             };
 
             function uploadButtonClick() {
