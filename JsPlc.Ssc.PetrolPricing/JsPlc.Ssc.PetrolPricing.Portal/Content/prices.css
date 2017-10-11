@@ -1171,6 +1171,10 @@ tr.site-row.row-override-exceeds-warning-limits td.outside-prices-warning-limits
     border-left: 4px solid #fff;
     border-right: 4px solid #fff;
 }
+.fuel-price-freeze-icon.price-freeze-ends-today {
+    background: #5cb85c;
+    color: #fff;
+}
 
 .grocer-brand {
     background: #fff;

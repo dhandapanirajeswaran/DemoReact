@@ -268,6 +268,8 @@
 
             for (i = 0; i < ary.length; i++) {
                 value = ary[i];
+                if (value == 0)
+                    continue; // remove 0's
                 if (value in seen)
                     continue;
                 seen[value] = true;
