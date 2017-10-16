@@ -141,6 +141,7 @@
     <Compile Include="ViewModels\Diagnostics\DiagnosticsFileUploadSummaryViewModel.cs" />
     <Compile Include="ViewModels\Diagnostics\DiagnosticsLogEntryViewModel.cs" />
     <Compile Include="ViewModels\Diagnostics\DiagnosticsDatabaseObject.cs" />
+    <Compile Include="ViewModels\Diagnostics\DiagnosticsPingViewModel.cs" />
     <Compile Include="ViewModels\Diagnostics\DiagnosticsRecordCountViewModel.cs" />
     <Compile Include="ViewModels\Diagnostics\DiagnosticsSchedulerStatusViewModel.cs" />
     <Compile Include="ViewModels\Diagnostics\DiagnosticsViewModel.cs" />

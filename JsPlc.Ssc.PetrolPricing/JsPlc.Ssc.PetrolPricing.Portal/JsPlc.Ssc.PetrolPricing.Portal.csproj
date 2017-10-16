@@ -600,6 +600,7 @@
     <Content Include="Views\Settings\ImportSettings.cshtml" />
     <Content Include="Views\Sites\_SiteDetails.cshtml" />
     <Content Include="Views\Sites\NearbySites.cshtml" />
+    <Content Include="Views\Diagnostics\Ping.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\uploads\" />

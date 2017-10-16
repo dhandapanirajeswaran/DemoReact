@@ -1,0 +1,42 @@
+﻿@model  JsPlc.Ssc.PetrolPricing.Models.ViewModels.Diagnostics.DiagnosticsPingViewModel
+
+@{
+    ViewBag.Title = "Ping";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Ping</h2>
+
+<form method="post" action="@Url.Action("Ping", "Diagnostics")">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-2">
+                <label>URL:</label>
+            </div>
+            <div class="col-md-4">
+                <input type="text" id="Url" name="Url" value="@(Model.Url)" class="form-control" />
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-2"><label>Status:</label></div>
+            <div class="col-md-10">@(Model.ReturnCode)</div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-10">
+                <label>ResponseText</label><br />
+                <div style="width: 95%; max-height: 600px; overflow: auto;">@(Model.ResponseText)</div>
+            </div>
+        </div>
+
+        <br />
+
+        <div class="row">
+            <div class="col-md-10 col-md-offset-2">
+                <input type="submit" class="btn btn-danger" value="Ping" />
+            </div>
+        </div>
+    </div>
+    
+</form>

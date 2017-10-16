@@ -13,6 +13,7 @@ using JsPlc.Ssc.PetrolPricing.Portal.ActionFilters;
 using JsPlc.Ssc.PetrolPricing.Models.Enums;
 using System.Threading.Tasks;
 using JsPlc.Ssc.PetrolPricing.Business;
+using System.Net;
 
 namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 {
@@ -76,6 +77,41 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             if (file.FileBytes != null)
                 return File(file.FileBytes, System.Net.Mime.MediaTypeNames.Application.Octet, file.FileName);
             return new RedirectResult("?msg=Unable to find file");
+        }
+
+        [HttpGet]
+        [AuthoriseDiagnostics(Permissions = DiagnosticsUserPermissions.View | DiagnosticsUserPermissions.Edit)]
+        public async Task<ActionResult> Ping()
+        {
+            var model = new DiagnosticsPingViewModel();
+            return View(model);
+        }
+
+
+        [HttpPost]
+        [AuthoriseDiagnostics(Permissions = DiagnosticsUserPermissions.View | DiagnosticsUserPermissions.Edit)] 
+        public async Task<ActionResult> Ping(DiagnosticsPingViewModel model)
+        {
+            if (String.IsNullOrWhiteSpace(model.Url))
+            {
+                model.ReturnCode = "";
+                model.ResponseText = "Please enter a URL";
+            }
+            else
+            {
+                try
+                {
+                    var client = new WebClient();
+                    model.ReturnCode = "";
+                    model.ResponseText = client.DownloadString(model.Url);
+                }
+                catch (Exception ex)
+                {
+                    model.ReturnCode = "Exception";
+                    model.ResponseText = ex.ToString();
+                }
+            }
+            return View(model);
         }
     }
 }
