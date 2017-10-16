@@ -77,11 +77,6 @@ BEGIN
  ALTER TABLE [dbo].[SiteToCompetitor] ADD [IsExcluded] int NOT NULL DEFAULT(0);
 END
 
---
--- (re)-init the Sainsbury's store information (PfsNo and CatNo's)
---
-EXEC [dbo].[spInitSainsburysStoreInformation]
-
 
 IF NOT EXISTS(SELECT NULL FROM dbo.ContactDetails)
 BEGIN
