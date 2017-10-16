@@ -1244,3 +1244,6 @@ a.mono-font {
 .indent {
     margin-left: 2em;
 }
+
+.bootbox-alert {font-size: 125%;}
+

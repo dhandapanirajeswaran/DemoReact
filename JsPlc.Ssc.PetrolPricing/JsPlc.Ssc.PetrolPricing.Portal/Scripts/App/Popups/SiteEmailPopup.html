@@ -33,9 +33,11 @@
                 <h5 class="text-danger" data-visible="HasUnsavedChanges">The prices shown are UNSAVED. The email will NOT be sent with these unsaved prices. If you wish to send these prices, please close this popup and click "Save Prices" first.</h5>
             </div>
             <div class="modal-body smaller">
-                <div class="alert alert-info" data-visible="IsLoading">Loading. Please wait</div>
-                <div id="SiteEmailPopup_SubjectLine" class="readonly-email-field" data-not-visible="IsLoading" data-html="SubjectLine"></div>
-                <div id="SiteEmailPopup_EmailBody" class="readonly-email-field" data-not-visible="IsLoading" data-html="EmailBody" data-infotip-dock="below"></div>
+                <div class="alert alert-info font150pc" data-visible="IsLoading"><i class="fa fa-spinner spinner"></i> Loading. Please wait</div>
+                <div data-visible="IsLoadingComplete">
+                    <div id="SiteEmailPopup_SubjectLine" class="readonly-email-field" data-not-visible="IsLoading" data-html="SubjectLine"></div>
+                    <div id="SiteEmailPopup_EmailBody" class="readonly-email-field" data-not-visible="IsLoading" data-html="EmailBody" data-infotip-dock="below"></div>
+                </div>
 
                 <div class="modal-footer">
                     <h5 class="text-danger" data-visible="HasUnsavedChanges">The prices shown are UNSAVED. The email will NOT be sent with these unsaved prices. If you wish to send these prices, please close this popup and click "Save Prices" first.</h5>

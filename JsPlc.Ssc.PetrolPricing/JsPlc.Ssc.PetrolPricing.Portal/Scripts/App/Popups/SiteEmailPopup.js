@@ -27,8 +27,13 @@
             settingsPageUrl: ''
         };
 
+        var loadingCount = 0;
+
         var states = {
             IsLoading: false,
+            IsLoadingComplete: false,
+            IsOptionsLoaded: false,
+            IsTemplateLoaded: false,
             HasUnsavedChanges: false,
             WasTemplateModified: false,
             SubjectLine: renderSubjectLine,
@@ -111,6 +116,9 @@
         };
 
         function renderSubjectLine() {
+            if (states.isLoading)
+                return 'Loading...';
+
             if (states.IsEditingSubjectLine)
                 return emailTemplate.SubjectLine;
             else {
@@ -120,6 +128,9 @@
         };
 
         function renderEmailBody() {
+            if (states.isLoading)
+                return 'Loading...';
+
             if (states.IsEditingEmailBody)
                 return emailTemplate.EmailBody;
             else {
@@ -141,16 +152,21 @@
         };
 
         function startLoading() {
+            loadingCount++;
             states.IsLoading = true;
             refresh();
         };
 
         function endLoading() {
-            states.IsLoading = false;
+            loadingCount = Math.max(0, loadingCount - 1);
+            states.IsLoading = loadingCount > 0;
+            states.IsLoadingComplete = states.IsOptionsLoaded && states.IsTemplateLoaded;
             refresh();
         };
 
         function openPopup(parameters) {
+            states.IsLoading = true;
+
             params = $.extend({}, parameters);
 
             popup.find(selectors.emailBody).html('');
@@ -159,7 +175,6 @@
             redrawTemplateButtons();
             redrawEditableZones();
             refresh();
-            states.IsLoading = true;
             states.EnableSiteEmails = params.enableSiteEmails;
             states.SiteEmailTestAddresses = params.siteEmailTestAddresses.replace(/;/g, '<br />');
             states.SettingsPageUrl = params.settingsPageUrl;
@@ -307,17 +322,28 @@
         };
 
         function loadTemplateOptions() {
-            var success = function (data) {
-                templateOptions = data.JsonObject
-                populateOptionsMenu();
-                redrawTemplateButtons();
-                redrawEditableZones();
-                endLoading();
-            };
+            states.IsOptionsLoaded = false;
+
+            var retries = 0,
+                success = function (data) {
+                    templateOptions = data.JsonObject
+                    populateOptionsMenu();
+                    redrawTemplateButtons();
+                    redrawEditableZones();
+                    states.IsOptionsLoaded = true;
+                    endLoading();
+                };
 
             var failure = function () {
-                notify.error('Unable to load Email Template options');
-                endLoading();
+                if (retries < 3) {
+                    retries++;
+                    console.log('Retry loadTemplateOptions #' + retries);
+                    emailTemplateService.getTemplateNames(success, failure);
+                } else {
+                    bootbox.alert('Unable to load Email Template options');
+                    endLoading();
+                    closePopup();
+                }
             };
 
             startLoading();
@@ -329,17 +355,19 @@
         };
 
         function loadEmailTemplate(emailTemplateId) {
-            startLoading();
-
-            emailTemplateService.getTemplate(function (serverData) {
+            states.IsTemplateLoaded = false;
+            function success(serverData) {
                 commonLoadedEmailTemplate(serverData);
-            },
-                function () {
-                    notify.error('Unable to Load Email Template');
-                    $(selectors.templateMenu).val(getDefaultTemplateId());
-                    endLoading();
-                },
-            emailTemplateId);
+            };
+            function failure() {
+                bootbox.alert('Unable to Load Email Template');
+                $(selectors.templateMenu).val(getDefaultTemplateId());
+                endLoading();
+                closePopup();
+            };
+
+            startLoading();
+            emailTemplateService.getTemplate(success, failure, emailTemplateId);
         };
 
         function commonLoadedEmailTemplate(serverData) {
@@ -350,12 +378,15 @@
                 emailTemplate = model;
                 defaultEmailTemplate = $.extend({}, model);
                 states.WasTemplateModified = false;
+                states.IsTemplateLoaded = true;
+                endLoading();
                 refresh();
                 bindEmailTemplateEvents();
                 redrawEditableZones();
-                endLoading();
-            } else
+            } else {
                 notify.error('Unable to Load Email template');
+                endLoading();
+            }
         };
 
         function bindEmailTemplateEvents() {
