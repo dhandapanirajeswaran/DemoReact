@@ -220,6 +220,9 @@ namespace JsPlc.Ssc.PetrolPricing.Exporting.Styling
             var lastDataRow = 2 + totalRows - 1;
 
             new ExcelColumnStyler(worksheet, firstDataRow, lastDataRow)
+                .FormatColumn(2, ExcelStyleFormatters.GeneralIntegerFormatter)
+                .FormatColumn(3, ExcelStyleFormatters.GeneralIntegerFormatter)
+                .FormatColumn(4, ExcelStyleFormatters.GeneralIntegerFormatter)
                 .FormatColumnRange(5, totalColumns, ExcelStyleFormatters.GeneralNumberFormatter);
         }
 

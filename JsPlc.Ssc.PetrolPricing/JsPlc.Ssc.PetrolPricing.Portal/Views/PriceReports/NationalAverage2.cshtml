@@ -89,7 +89,11 @@
                         foreach (var brand in Model.NationalAverageReport.Fuels.First().Brands)
                         {
                             <th>
-                            @if (brand.BrandName.StartsWith("TESCO"))
+                            @if (brand.BrandName.StartsWith("SAINSBURYS"))
+                            {
+                                <strong style="color: orange;">@(brand.BrandName)(&pound;)</strong>
+                            }
+                            else if (brand.BrandName.StartsWith("TESCO"))
                             {
                                 <div>TESCO(£) <br /><span class="font75pc">(inc EXPRESS and EXTRA)</span></div>
                             }

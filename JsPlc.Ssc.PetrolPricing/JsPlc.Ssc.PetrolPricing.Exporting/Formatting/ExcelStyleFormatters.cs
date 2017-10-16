@@ -36,6 +36,7 @@ namespace JsPlc.Ssc.PetrolPricing.Exporting.Formatting
             {
                 cell.Style.Alignment.SetHorizontal(XLAlignmentHorizontalValues.Right);
                 cell.DataType = XLCellValues.Number;
+                cell.Style.NumberFormat.SetFormat("0");
             }
         }
 

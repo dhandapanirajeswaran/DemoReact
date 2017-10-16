@@ -124,11 +124,23 @@
                         }
                         else if (@brand.BrandName == "All other independent brands")
                         {
-                            <div class="col-md-1" style="width:890px;"> @brand.BrandName</div>
+                            <div class="col-md-1" style="width:890px;"><strong>@brand.BrandName</strong></div>
                         }
                         else
                         {
-                            <div class="col-md-1" style="width:250px"> @brand.BrandName </div>
+                            <div class="col-md-1" style="width:250px">
+                                @if (brand.BrandName == "SAINSBURYS")
+                                {
+                                    <strong style="color: orange">@brand.BrandName</strong>
+                                } else if (brand.BrandName == "Total Independents")
+                                {
+                                    <strong>@brand.BrandName</strong>
+                                }
+                                else
+                                {
+                                    <span>@brand.BrandName</span>
+                                }
+                             </div>
                              foreach (var fuelType in Model.NationalAverageReport.Fuels)
                              {
                                 var brandfromFType = @fuelType.Brands.Where(x => x.BrandName == @brand.BrandName).FirstOrDefault();
