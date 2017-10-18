@@ -310,6 +310,7 @@
     <Content Include="Help\faq-how-can-i.html" />
     <Content Include="Help\faq-glossary.html" />
     <Content Include="Help\faq-site-emails.html" />
+    <Content Include="Help\faq-price-reasons.html" />
     <Content Include="Help\faq-site-pricing.html" />
     <Content Include="Help\faq-site-management.html" />
     <Content Include="Help\faq-reports.html" />

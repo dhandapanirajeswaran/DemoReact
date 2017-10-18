@@ -1,0 +1,228 @@
+﻿<div class="help-page">
+
+    <section>
+        <h3>Price Reasons</h3>
+
+        <dl class="topic-list">
+            <dd><a href="#BasedonUnleaded">Based on Unleaded</a></dd>
+            <dd><a href="#CheapestpriceFound">Cheapest price Found</a></dd>
+            <dd><a href="#HasGrocers">Has Grocers</a></dd>
+            <dd><a href="#HasIncompleteGrocers">Has Incomplete Grocers</a></dd>
+            <dd><a href="#InsidePrice-Variance">Inside Price-Variance</a></dd>
+            <dd><a href="#LatestJSPrice">Latest JS Price</a></dd>
+            <dd><a href="#ManualPriceOverride">Manual Price Override</a></dd>
+            <dd><a href="#MatchCompetitorPriceFound">Match Competitor Price Found</a></dd>
+            <dd><a href="#MissingDailyCatalist">Missing Daily Catalist</a></dd>
+            <dd><a href="#MissingSiteCatNo">Missing Site CatNo</a></dd>
+            <dd><a href="#NoMatch-CompetitorPrice">No Match-Competitor Price</a></dd>
+            <dd><a href="#NoSuggestedPrice">No Suggested Price</a></dd>
+            <dd><a href="#OutsidePrice-Variance">Outside Price-Variance</a></dd>
+            <dd><a href="#PriceStuntFreeze">Price Stunt Freeze</a></dd>
+            <dd><a href="#Rounded">Rounded</a></dd>
+            <dd><a href="#TodayPriceSnapBack">Today Price SnapBack</a></dd>
+            <dd><a href="#TrialPriceFound">Trial Price Found</a></dd>
+        </dl>
+    </section>
+
+    <section id="BasedonUnleaded">
+        <h4>Based on Unleaded</h4>
+        <p>
+            This means the <span class="fuel-sign fuel-label-super-unleaded"></span> price is based on the <span class="fuel-sign fuel-sign-unleaded"></span> price plus an additional markup value (e.g. +5.0p)
+        </p>
+
+        <p>
+            The <strong>Super-Unleaded Markup</strong> can be found on the <a href="/Settings">Settings</a> page.
+        </p>
+    </section>
+
+    <section id="CheapestpriceFound">
+        <h4>Cheapest price Found</h4>
+        <p>
+            This means that the cheapest competitor has been found (there is some competitor price) and is based on the following:-
+        </p>
+
+        <ol>
+            <li>There are competitors within <strong>25 minute drive time</strong></li>
+            <li>Competitor Price Data is available</li>
+            <li>Drive-Time markup is included when finding the cheapest competitor</li>
+        </ol>
+    </section>
+
+    <section id="HasGrocers">
+        <h4>Nearby Grocers</h4>
+        <p>
+            Within the surrounding <strong>Competitors</strong> it is possible that there are one or more <strong>Grocers</strong> (such as ASDA, Morrisons or even Sainsbury's). The range is <strong>25 minutes</strong>
+        </p>
+        <p>
+            You can manage the <strong>Grocers</strong> on the <a href="/Settings/Brands">Brands &amp; Grocers</a> page.
+        </p>
+
+        <p class="note">
+            <strong>TESCO</strong> is grouped in many reports with TESCO EXPRESS and TESCO EXTRA
+        </p>
+    </section>
+
+    <section id="HasIncompleteGrocers">
+        <h4>Incomplete Grocers</h4>
+        <p>
+            When nearby <a href="#HasGrocers">Grocers</a> exist a check is made to deterine if we have up-to-date price data.
+            When is this <strong>not</strong> the case, the price will <strong>Snapback</strong> to the Today's price and the
+            price reason will include "<strong>Has Incomplete Grocers</strong>"
+        </p>
+    </section>
+
+    <section id="InsidePrice-Variance">
+        <h4>Inside Price-Variance</h4>
+        <p>
+            Whenever a <strong>Price Move</strong> is within a small <strong>variance</strong> range it is uneconomical for Sainsburys 
+            to ask the Fuel Site Collegue to change the forecourt prices. In this case the <strong>Today</strong> price will be
+            used for the <strong>Tomorrow</strong> price &mdash; a <a href="#TodayPriceSnapBack">Price Snapback</a> occurs.
+        </p>
+
+        <p class="tip">
+            The <strong>Price Change Variance</strong> setting can be found on the <a href="/Settings">Settings</a> page
+        </p>
+    </section>
+
+    <section id="LatestJSPrice">
+        <h4>Latest JS Price</h4>
+        <p>
+            The <strong>Price</strong> has been sourced from the <a href="/File/Upload?UploadType=LatestJsPriceData">Latest JS Price Data</a>
+            file upload.
+        </p>
+    </section>
+
+    <section id="ManualPriceOverride">
+        <h4>Manual Price Override</h4>
+        <p>
+            A price marked as <strong>Override</strong> or <strong>Manual Price Override</strong> means a user has entered a new price
+            (an 'Override') to replace the suggested price based on the surrounding competitors.
+        </p>
+
+        <p>
+            Price Overrides are entered on the main <a href="/Sites/Prices">Pricing page</a> for <strong>each</strong> site and <strong>each</strong> Fuel combination.
+        </p>
+    </section>
+
+    <section id="MatchCompetitorPriceFound">
+        <h4>Match Competitor Price Found</h4>
+        <p>
+            When the <strong>Match Competitor</strong> option has been used for a <a href="/Sites">Site</a> as the <strong>Price Match Strategy</strong> then the <strong>Match Competitor</strong> site is  used as the basis of the price.
+        </p>
+
+        <p class="note">
+            The normal <strong>Drive Time markup</strong> is <strong>not</strong> applied to the matched price.
+        </p>
+
+    </section>
+
+    <section id="MissingDailyCatalist">
+        <h4>Missing Daily Catalist</h4>
+        <p>
+            This means that there is <strong>no</strong> Daily Catalist price file uploaded today.
+        </p>
+
+        <p class="tip">
+            You should always upload the latest Catalist price file each day before pricing the Sainsburys fuel prices.
+        </p>
+    </section>
+
+    <section id="MissingSiteCatNo">
+        <h4>Missing Site CatNo</h4>
+        <p>
+            Sainsburys sites are found using the <strong>CatNo</strong> (Catalist number) which is unique per site.
+            If within the Petrol Pricing tool a site does <strong>not</strong> have this number then it cannot price.
+        </p>
+    </section>
+
+    <section id="NoMatch-CompetitorPrice">
+        <h4>No Match-Competitor Price</h4>
+        <p>
+            This means that the sites which has been used for the <strong>Match Competitor</strong> Price Match Strategy does <strong>not</strong>
+            have a fuel price.
+        </p>
+    </section>
+
+    <section id="NoSuggestedPrice">
+        <h4>No Suggested Price</h4>
+
+        <p>
+            The <strong>Suggested</strong> price is also called the <strong>Auto price</strong> and will become the <strong>Tomorrow</strong>
+            price for each Site Fuel combination unless a user enters a <a href="#ManualPriceOverride">Price Override</a>
+        </p>
+
+        <p>
+            This means a price cannot be calculated usually when the Petrol Pricing tool is first setup and there is simply not enough
+            price data to find the cheapest competitor price.
+        </p>
+    </section>
+
+    <section id="OutsidePrice-Variance">
+        <h4>Outside Price-Variance</h4>
+        <p>
+            This is the opposite of the <a href="#InsidePrice-Variance">Inside Price Variance</a> reason.
+        </p>
+
+        <p>
+            A fuel price change (or 'price movement') exceeds the <a href="/Settings">Price Change Variance</a> threshold.
+            This means that the price change will be sent out to Sainsburys sites when the email is sent.
+        </p>
+
+    </section>
+
+    <section id="PriceStuntFreeze">
+        <h4>Price Stunt Freeze</h4>
+        <p>
+            This means that a <strong>Price Freeze</strong> (also known as a <strong>Price Stunt</strong>) has/is taking place
+            so price <strong>cannot legally</strong> increase during this time period. Prices can descrease but cannot increase.
+        </p>
+
+        <p>
+            Often the Price Reason will also include the <a href="#TodayPriceSnapBack">Price Snapback</a> reason.
+        </p>
+    </section>
+
+    <section id="Rounded">
+        <h4>Rounded</h4>
+        <p>
+            This means that <strong>Rounding</strong> (or more correctly replacement of the last digit in a price) has taken place.
+        </p>
+        <p>
+            For example a price of <code>114.4</code> will be "rounded" to <code>114.9</code> (assuming a rounding of <strong>9</strong>).
+        </p>
+
+        <p>
+            The <strong>Decimal Rounding</strong> value can be found on the <a href="/Setting">Settings</a> page.
+        </p>
+    </section>
+
+    <section id="TodayPriceSnapBack">
+        <h4>Today Price SnapBack</h4>
+        <p>
+            A <strong>Price Snapback</strong> (or <strong>Snapback</strong> for short) means that the cheapest competitor/suggested price 
+            has been ignored and the previous <strong>Today Price</strong> will be used for <strong>Tomorrow's price</strong>.
+        </p>
+
+        <p>
+            The Price Snapback will occur in a number of suituations
+        </p>
+
+        <ol>
+            <li>A <strong>Price Freeze</strong> has stopped the price from increasing</li>
+            <li>There is <strong>Incomplete Grocer Data</strong></li>
+        </ol>
+    </section>
+
+    <section id="TrialPriceFound">
+        <h4>Trial Price Found</h4>
+        <p>
+            Similiar to the <a href="#">Match Competitor</a> option this <strong>Price Match Stategy</strong> affect the <strong>Suggested</strong>
+            (aka <strong>Auto Price</strong>). The Price is based on the cheapest Competitor price plus an additional markup value.
+        </p>
+
+        <p>
+            The <strong>Trial price (+/-)</strong> markup value is set on a site-by-site basis.
+        </p>
+    </section>
+
+</div>
