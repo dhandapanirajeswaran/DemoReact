@@ -18,7 +18,7 @@ namespace JsPlc.Ssc.PetrolPricing.WinService
         IPetrolPricingTaskScheduler _scheduler;
         IAppSettings _settings;
 
-        private EventLogger _logger;
+        private IEventLog _logger;
 
         public PetrolPricingWinService(IPetrolPricingTaskScheduler schedule)
         {
@@ -29,6 +29,9 @@ namespace JsPlc.Ssc.PetrolPricing.WinService
             _logger = InitEventLog();
 
             _settings = new AppSettings(_logger);
+            _logger.EnableDebug = _settings.EnableDebugLog;
+            _logger.EnableInfo = _settings.EnableInfoLog;
+            _logger.EnableTrace = _settings.EnableTraceLog;
 
             _scheduler = schedule;
         }

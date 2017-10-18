@@ -13,6 +13,10 @@ namespace JsPlc.Ssc.PetrolPricing.WinService.Logging
         private EventLog _eventLog;
         private string _name;
 
+        public bool EnableTrace { get; set; } = false;
+        public bool EnableDebug { get; set; } = false;
+        public bool EnableInfo { get; set; } = true;
+
         public EventLogger(EventLog eventLog, string name)
         {
             _eventLog = eventLog;
@@ -22,12 +26,16 @@ namespace JsPlc.Ssc.PetrolPricing.WinService.Logging
         public IEventLog Context(string name)
         {
             var logger = new EventLogger(_eventLog, _name + " > " + name);
+            logger.EnableDebug = this.EnableDebug;
+            logger.EnableInfo = this.EnableInfo;
+            logger.EnableTrace = this.EnableTrace;
             return logger;
         }
 
         public void Info(string message)
         {
-            _eventLog.WriteEntry(BuildMessage("[INFO]", message), EventLogEntryType.Information);
+            if (this.EnableInfo)
+                _eventLog.WriteEntry(BuildMessage("[INFO]", message), EventLogEntryType.Information);
         }
 
         public void Error(string message)
@@ -42,12 +50,14 @@ namespace JsPlc.Ssc.PetrolPricing.WinService.Logging
 
         public void Trace(string message)
         {
-            _eventLog.WriteEntry(BuildMessage("[TRACE]", message), EventLogEntryType.Information);
+            if (this.EnableTrace)
+                _eventLog.WriteEntry(BuildMessage("[TRACE]", message), EventLogEntryType.Information);
         }
 
         public void Debug(string message)
         {
-            _eventLog.WriteEntry(BuildMessage("[DEBUG]", message), EventLogEntryType.Information);
+            if (this.EnableDebug)
+                _eventLog.WriteEntry(BuildMessage("[DEBUG]", message), EventLogEntryType.Information);
         }
 
         public void Dispose()

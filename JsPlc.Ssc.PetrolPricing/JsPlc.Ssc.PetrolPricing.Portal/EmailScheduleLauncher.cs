@@ -46,7 +46,8 @@ namespace JsPlc.Ssc.PetrolPricing.Portal
 
             _websiteBaseUrl = baseUrl;
 
-            StartScheduler(logger, pollInterval);
+            // TODO: debug
+            //StartScheduler(logger, pollInterval);
         }
 
         private static void StartScheduler(ILogger logger, int pollInterval)

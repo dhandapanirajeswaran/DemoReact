@@ -5,10 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using JsPlc.Ssc.PetrolPricing.Models.WindowsService;
 using JsPlc.Ssc.PetrolPricing.WinService.Logging;
-using JsPlc.Ssc.PetrolPricing.Models.ViewModels.Schedule;
 using JsPlc.Ssc.PetrolPricing.WinService.Interfaces;
+using JsPlc.Ssc.PetrolPricing.WinService.Models;
 
 namespace JsPlc.Ssc.PetrolPricing.WinService.Facade
 {
@@ -30,7 +29,7 @@ namespace JsPlc.Ssc.PetrolPricing.WinService.Facade
             _client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         }
 
-        public IEnumerable<ScheduleItemViewModel> ExecuteWinServiceSchedule()
+        public void ExecuteWinServiceSchedule()
         {
             using (var log = _logger.Context("ExecuteWinServiceSchedule()"))
             {
@@ -43,17 +42,16 @@ namespace JsPlc.Ssc.PetrolPricing.WinService.Facade
                 if (response.IsSuccessStatusCode)
                 {
                     log.Debug("Success");
-                    var dto = response.Content.ReadAsAsync<Models.ViewModels.StatusViewModel>().Result;
-                    if (dto == null)
+                    var status = response.Content.ReadAsAsync<StatusViewModel>().Result;
+                    if (status == null)
                         log.Error("WebAPI response model is null");
-                    else if (!String.IsNullOrEmpty(dto.ErrorMessage))
-                        log.Error(String.Format("ErrorMessage: {0}", dto.SuccessMessage));
-                    else if (!String.IsNullOrEmpty(dto.SuccessMessage))
-                        log.Info(String.Format("SuccessMessage: {0}", dto.SuccessMessage));
+                    else if (!String.IsNullOrEmpty(status.ErrorMessage))
+                        log.Error(String.Format("ErrorMessage: {0}", status.ErrorMessage));
+                    else if (!String.IsNullOrEmpty(status.SuccessMessage))
+                        log.Info(String.Format("SuccessMessage: {0}", status.SuccessMessage));
                 }
                 else
                     log.Error(String.Format("{0} ({1})", (int)response.StatusCode, response.ReasonPhrase));
-                return new List<ScheduleItemViewModel>();
             }
         }
 

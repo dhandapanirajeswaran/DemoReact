@@ -12,7 +12,7 @@ namespace JsPlc.Ssc.PetrolPricing.WinService.Settings
     {
         private IEventLog _logger;
 
-        public AppSettings(EventLogger logger)
+        public AppSettings(IEventLog logger)
         {
             _logger = logger.Context("AppSettings");
         }
