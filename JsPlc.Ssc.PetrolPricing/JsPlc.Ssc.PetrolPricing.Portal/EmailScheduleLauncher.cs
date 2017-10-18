@@ -46,14 +46,13 @@ namespace JsPlc.Ssc.PetrolPricing.Portal
 
             _websiteBaseUrl = baseUrl;
 
-            // TODO: debug
-            //StartScheduler(logger, pollInterval);
+            // trigger Email Schedule via website (TODO: remove this and deploy Windows Service)
+            StartScheduler(logger, pollInterval);
         }
 
         private static void StartScheduler(ILogger logger, int pollInterval)
         {
             _emailPollInterval = pollInterval;
-            //_pollUrl = String.Concat(_websiteBaseUrl, "/PublicApi/PollEmailSchedule");
 
             _pollUrl = String.Concat(ConfigurationManager.AppSettings["ida:RedirectUri"], "PublicApi/PollEmailSchedule");
 
@@ -79,9 +78,6 @@ namespace JsPlc.Ssc.PetrolPricing.Portal
                     _emailPollLastStatus = status.SuccessMessage;
                 else
                     _emailPollLastStatus = status.ErrorMessage;
-
-                //WebRequest request = WebRequest.Create(_pollUrl);
-                //HttpWebResponse response = (HttpWebResponse)request.GetResponse();
             }
             catch (Exception ex)
             {
