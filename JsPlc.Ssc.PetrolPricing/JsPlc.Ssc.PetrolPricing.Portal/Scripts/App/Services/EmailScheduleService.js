@@ -39,12 +39,18 @@
             promise.fail(failure);
         };
 
+        function markEmailPendingForToday(success, failure) {
+            var url = "Settings/MarkEmailPendingForToday";
+            common.standardGetPromise(url, success, failure);
+        };
+
         // API
         return {
             loadSchedule: loadSchedule,
             saveSchedule: saveSchedule,
             runSchedule: runSchedule,
-            clearEventLog: clearEventLog
+            clearEventLog: clearEventLog,
+            markEmailPendingForToday: markEmailPendingForToday
         };
     }
 );

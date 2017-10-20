@@ -4306,6 +4306,11 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
             return _context.GetEmailSendLogView(emailSendLogId);
         }
 
+        public void MarkWinScheduleEmailAsPendingToday(string userName)
+        {
+            _context.MarkWinScheduleEmailAsPendingToday(userName);
+        }
+
         #endregion private methods
     }
 }

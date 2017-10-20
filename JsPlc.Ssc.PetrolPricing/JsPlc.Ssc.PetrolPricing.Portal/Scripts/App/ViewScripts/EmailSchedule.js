@@ -221,11 +221,55 @@
             });
         };
 
+        function resetLastCompletedOnClick() {
+            bootbox.confirm({
+                title: 'Confirmation Reset Last Completed On',
+                message: 'Are you sure you want to reset the <strong>Last Completed On</strong> for the <strong>Daily Price Email</strong>?<br />'
+                    + '<br />'
+                    + 'This will allow the email to be <strong class="text-danger">re-sent today</strong> (even if it has already been sent)',
+                buttons: {
+                    confirm: {
+                        label: '<i class="fa fa-check"></i> Reset',
+                        className: 'btn-warning'
+                    },
+                    cancel: {
+                        label: '<i class="fa fa-times"></i> Close',
+                        className: 'btn-default'
+                    },
+                },
+                callback: function (result) {
+                    if (result)
+                        clearEmailLastCompletedOn();
+                }
+            })
+        };
+
+        function clearEmailLastCompletedOn() {
+            function failure() {
+                busyloader.hide();
+                notify.error('Unable to reset the Last Completed On');
+            };
+
+            function success() {
+                busyloader.hide();
+                messageAndReload(status.SuccessMessage || 'Last Completed On reset. Reloading page');
+            };
+
+            busyloader.show({
+                message: 'Clearing Email Last Completed On...',
+                showtime: 1000,
+                dull: true
+            });
+
+            emailScheduleService.markEmailPendingForToday(success, failure);
+        };
+
         function bindEvents() {
             $(document.body).on('click', '#ScheduleItemModalUpdateButton', updateScheduleClick );
             $('[data-click="EditScheduleItem"]').off().click(editScheduleClick);
             $('#btnRunSchedule').off().click(runScheduleClick);
             $('#btnClearEventLog').off().click(clearEventLogClick);
+            $('#btnResetLastCompletedOn').off().click(resetLastCompletedOnClick);
         };
 
         function init() {

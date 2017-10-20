@@ -399,5 +399,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         bool NewJsPriceOverrideRecords(List<JsPriceOverrideDataModel> allSites, FileUpload aFile);
 
         EmailLogViewerViewModel GetEmailSendLogView(int emailSendLogId);
+
+        void MarkWinScheduleEmailAsPendingToday(string userName);
     }
 }

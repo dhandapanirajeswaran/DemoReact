@@ -149,6 +149,14 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             return base.JsonGetResult(result);
         }
 
+        [System.Web.Mvc.HttpGet] 
+        public ActionResult MarkEmailPendingForToday()
+        {
+            var userName = User.Identity.Name;
+            var result = _serviceFacade.MarkEmailPendingForToday(userName);
+            return base.JsonGetResult(result);
+        }
+
         [System.Web.Mvc.HttpGet]
         [AuthoriseSystemSettings(Permissions = SystemSettingsUserPermissions.View | SystemSettingsUserPermissions.Edit)]
         public ActionResult PriceFreeze()

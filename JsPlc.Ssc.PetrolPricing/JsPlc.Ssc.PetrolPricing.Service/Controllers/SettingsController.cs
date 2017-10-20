@@ -267,6 +267,22 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
         }
 
         [HttpGet]
+        [Route("api/WinServiceMarkEmailPendingForToday")]
+        public async Task<IHttpActionResult> WinServiceMarkEmailPendingForToday([FromUri] string userName)
+        {
+            try
+            {
+                var result = _systemSettingsService.WinServiceMarkEmailPendingForToday(userName);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex);
+                return new ExceptionResult(ex, this);
+            }
+        }
+
+        [HttpGet]
         [Route("api/ExportSettings")]
         public async Task<IHttpActionResult> ExportSettings()
         {

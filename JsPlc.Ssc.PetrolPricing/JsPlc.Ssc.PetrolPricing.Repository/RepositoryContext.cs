@@ -907,5 +907,15 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             var model = DapperHelper.QueryFirstOrDefault<EmailLogViewerViewModel>(this, sprocName, parameters);
             return model;
         }
+
+        internal void MarkWinScheduleEmailAsPendingToday(string userName)
+        {
+            const string sprocName = "spWinServiceMarkEmailPendingToday";
+            var parameters = new
+            {
+                @UserName = userName
+            };
+            DapperHelper.Execute(this, sprocName, parameters);
+        }
     }
 }

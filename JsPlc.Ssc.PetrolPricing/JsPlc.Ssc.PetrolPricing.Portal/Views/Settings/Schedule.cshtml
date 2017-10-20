@@ -23,7 +23,12 @@
 
 <h1>
     <i class="fa fa-cogs"> System Settings</i>
-    <button type="button" class="btn btn-primary pull-right" id="btnRunSchedule" data-infotip="Run the [b]Schedule[/b][br /][u]Note:[/u] This will [i]not[/i] run future items"><i class="fa fa-location-arrow"></i> Run Schedule</button>
+
+    <div class="pull-right">
+        <button type="button" class="btn btn-warning" id="btnResetLastCompletedOn" data-infotip="Clear the [b]Last Completed On[/b] date[br /]This allows the [b]Schedule Email[/b] to be resent today"><i class="fa fa-eraser"></i> Clear Today</button>
+
+        <button type="button" class="btn btn-primary" id="btnRunSchedule" data-infotip="Run the [b]Schedule[/b][br /][u]Note:[/u] This will [i]not[/i] run future items"><i class="fa fa-location-arrow"></i> Run Schedule</button>
+    </div>
 </h1>
 
 <ul class="nav nav-tabs nav-condensed">

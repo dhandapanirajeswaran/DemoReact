@@ -1517,6 +1517,12 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Facade
             return CallAndCatchAsyncGet<StatusViewModel>("ClearWinServiceEventLog", apiUrl);
         }
 
+        public StatusViewModel MarkEmailPendingForToday(string userName)
+        {
+            var apiUrl = String.Format("api/WinServiceMarkEmailPendingForToday?userName={0}", HttpUtility.UrlEncode(userName));
+            return CallAndCatchAsyncGet<StatusViewModel>("MarkEmailPendingForToday", apiUrl);
+        }
+
         public List<int> GetJsSitesByPfsNum()
         {
             var apiUrl = String.Format("api/GetJsSitesByPfsNum");

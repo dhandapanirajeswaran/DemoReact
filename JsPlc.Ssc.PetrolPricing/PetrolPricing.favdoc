@@ -42,5 +42,15 @@
         <lineHash>RDsq227nxicbvSK505ianf4m5pcaKGY6zo+jedT3HCA=</lineHash>
       </position>
     </Favorite>
+    <Favorite>
+      <name>SystemSettingsService.cs</name>
+      <path>JsPlc.Ssc.PetrolPricing.Business\Services\SystemSettingsService.cs</path>
+      <absolutePath>C:\Users\garry.leeder\Source\Repos\PetrolPricing\JsPlc.Ssc.PetrolPricing\JsPlc.Ssc.PetrolPricing.Business\Services\SystemSettingsService.cs</absolutePath>
+      <position>
+        <line>183</line>
+        <column>53</column>
+        <lineHash>lEOz4BvPOeJoKVY50m6mnfHhl649X841ACN1JLXgWpQ=</lineHash>
+      </position>
+    </Favorite>
   </favorites>
 </Favorites>

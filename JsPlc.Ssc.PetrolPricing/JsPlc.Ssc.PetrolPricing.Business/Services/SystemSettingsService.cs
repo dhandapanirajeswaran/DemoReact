@@ -179,6 +179,22 @@ namespace JsPlc.Ssc.PetrolPricing.Business.Services
             return result;
         }
 
+        public StatusViewModel WinServiceMarkEmailPendingForToday(string userName)
+        {
+            var result = new StatusViewModel();
+            try
+            {
+                _repository.MarkWinScheduleEmailAsPendingToday(userName);
+                result.SuccessMessage = "Email Schedule marked as pending for today";
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex);
+                result.ErrorMessage = "Unable to mark Email Schedule as pending for today";
+            }
+            return result;
+        }
+
         #region private methods
         private StatusViewModel ProcessEmailSchedule(ScheduleItemViewModel scheduleItem)
         {
@@ -205,6 +221,15 @@ namespace JsPlc.Ssc.PetrolPricing.Business.Services
                 return new StatusViewModel()
                 {
                     SuccessMessage = "Waiting for next Scheduled " + scheduleItem.ScheduledFor.ToString("dd-MMM-yyyy HH:mm")
+                };
+            }
+
+            // already ran successfully today ?
+            if (scheduleItem.LastCompletedOn.HasValue && scheduleItem.LastCompletedOn.Value.Date == DateTime.Now.Date)
+            {
+                return new StatusViewModel()
+                {
+                    SuccessMessage = "Email was already sent today at " + scheduleItem.LastCompletedOn.Value.ToString("dd-MMM-yyyy HH:mm")
                 };
             }
 

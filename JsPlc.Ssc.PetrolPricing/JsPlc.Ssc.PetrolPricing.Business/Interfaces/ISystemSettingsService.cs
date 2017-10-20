@@ -42,5 +42,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 
         string ExportSettings();
         StatusViewModel ImportSettings(ImportSettingsPageViewModel model);
+
+        StatusViewModel WinServiceMarkEmailPendingForToday(string userName);
     }
 }
