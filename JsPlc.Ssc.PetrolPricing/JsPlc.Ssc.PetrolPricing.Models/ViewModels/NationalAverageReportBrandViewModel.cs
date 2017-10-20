@@ -5,10 +5,10 @@ namespace JsPlc.Ssc.PetrolPricing.Models.ViewModels
     {
         public string BrandName { get; set; }
         
-        public int Average { get; set; }
+        public double Average { get; set; }
 
-        public int Min { get; set; }
+        public double Min { get; set; }
 
-        public int Max { get; set; }
+        public double Max { get; set; }
     }
 }

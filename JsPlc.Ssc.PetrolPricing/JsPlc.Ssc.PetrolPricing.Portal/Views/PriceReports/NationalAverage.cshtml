@@ -145,24 +145,24 @@
                              {
                                 var brandfromFType = @fuelType.Brands.Where(x => x.BrandName == @brand.BrandName).FirstOrDefault();
 
-                                <div class="col-md-1" style="width:140px"> @((brandfromFType.Average / 10.0).ToString("###0.0")) </div>
+                                <div class="col-md-1" style="width:140px"> @((brandfromFType.Average / 10.0).ToString("###0.00")) </div>
 
                               }
 
-                              var average=0;
+                              var average=0.0;
                               foreach (var fuelType in Model.NationalAverageReport.Fuels)
                               {
                                     var brandfromFType = @fuelType.Brands.Where(x => x.BrandName == @brand.BrandName).FirstOrDefault();
-                                    int diff = brandfromFType.Average > 0 ? (brandfromFType.Average - fuelType.SainsburysPrice) : 0;
+                                    var diff = brandfromFType.Average > 0 ? (brandfromFType.Average - fuelType.SainsburysPrice) : 0.0;
                                     string color = 0 > diff ? "red":diff > 0? "green":"";
                                    
                                     average+=diff;
-                                    <div class="col-md-1" style="width:120px;color:@color">@((diff / 10.0).ToString("###0.0"))</div>
+                                    <div class="col-md-1" style="width:120px;color:@color">@((diff / 10.0).ToString("###0.00"))</div>
                               }
                               average = average / 2;
                               string averagecolor = 0 > average ? "red" : average > 0 ? "green" : "";
                                   
-                               <div class="col-md-1" style="width:120px;color:@averagecolor">@((average / 10.0).ToString("###0.0"))</div>
+                               <div class="col-md-1" style="width:120px;color:@averagecolor">@((average / 10.0).ToString("###0.00"))</div>
                         }
 
                  </div>

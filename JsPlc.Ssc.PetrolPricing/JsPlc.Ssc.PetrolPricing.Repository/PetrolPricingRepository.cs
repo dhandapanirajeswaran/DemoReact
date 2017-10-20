@@ -2440,9 +2440,9 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
                 var fuelRow = new NationalAverageReportFuelViewModel();
                 result.Fuels.Add(fuelRow);
                 fuelRow.FuelName = f.FuelTypeName;
-                int nTotalIndependentsMin = 0;
-                int nTotalIndependentsMax = 0;
-                int nTotalIndependentsAvg = 0;
+                var nTotalIndependentsMin = 0.0;
+                var nTotalIndependentsMax = 0.0;
+                var nTotalIndependentsAvg = 0.0;
                 int nCount = 0;
                 if (distinctBrands.Count > 0)
                 {
@@ -2697,9 +2697,9 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
 
                     if (pricesList.Any())
                     {
-                        brandAvg.Min = (int)pricesList.Min(x => x.ModalPrice);
-                        brandAvg.Average = (int)pricesList.Average(x => x.ModalPrice);
-                        brandAvg.Max = (int)pricesList.Max(x => x.ModalPrice);
+                        brandAvg.Min = pricesList.Min(x => (double)x.ModalPrice);
+                        brandAvg.Average = pricesList.Average(x => (double)x.ModalPrice);
+                        brandAvg.Max = pricesList.Max(x => (double)x.ModalPrice);
                     }
 
                     if (brand.Equals(Const.Sainsburys, StringComparison.InvariantCultureIgnoreCase))

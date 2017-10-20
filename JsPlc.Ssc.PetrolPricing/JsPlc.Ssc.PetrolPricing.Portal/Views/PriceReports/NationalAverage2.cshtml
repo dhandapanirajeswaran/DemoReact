@@ -122,7 +122,7 @@
                         <td>Difference</td>
                         @foreach (var brand in fuelType.Brands)
                         {
-                            int diff = brand.Average > 0 ? (brand.Average - fuelType.SainsburysPrice) : 0;
+                            var diff = brand.Average > 0 ? (brand.Average - fuelType.SainsburysPrice) : 0.0;
                             string color = "";
                             if (diff < 0)
                             {
