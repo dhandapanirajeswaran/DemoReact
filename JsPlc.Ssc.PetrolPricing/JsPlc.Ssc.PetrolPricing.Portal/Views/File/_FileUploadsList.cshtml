@@ -145,7 +145,7 @@
                             if (item.IsForDifferentDay)
                             {
             <tr class="date-row dashed-divider">
-                <td colspan="9"><h4 class="@(dateHeaderCss)"><a class="view-price-link" href="@Url.Action("Prices", "Sites")?date=@(dateYYYY_mm_dd)" data-infotip="View [b]Prices[/b] for this date"><i class="fa fa-calendar"></i> &nbsp;&nbsp; @(item.UploadDateTime.Date.ToString("dd-MMM-yyy")) &mdash; @(friendlyDaysAgo)</a></h4></td>
+                <td colspan="9"><h4 class="@(dateHeaderCss)"><a class="view-price-link" href="@Url.Action("Prices", "Sites")?date=@(dateYYYY_mm_dd)" data-infotip="View [b]Prices[/b] for this date"><i class="fa fa-calendar"></i> &nbsp;&nbsp; @(item.UploadDateTime.ToString("ddd")) @(item.UploadDateTime.Date.ToString("dd-MMM-yyy")) &mdash; @(friendlyDaysAgo)</a></h4></td>
             </tr>
                 }
 
