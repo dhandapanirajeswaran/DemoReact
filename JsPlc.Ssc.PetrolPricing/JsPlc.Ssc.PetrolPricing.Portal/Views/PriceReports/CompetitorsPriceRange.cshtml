@@ -174,14 +174,14 @@
                     @foreach (var fuelType in Model.NationalAverageReport.Fuels)
                     {
                         var fuelBrand = fuelType.Brands.First(b => b.BrandName == brand.BrandName);
-                        <td>@((fuelBrand.Average / 10.0).ToString("###0.0"))</td>
+                        <td>@((fuelBrand.Average / 10.0).ToString("###0.00"))</td>
                     }
                     @* Difference *@
                     @foreach (var fuelType in Model.NationalAverageReport.Fuels)
                     {
                         var fuelBrand = fuelType.Brands.First(b => b.BrandName.Equals(brand.BrandName, StringComparison.InvariantCultureIgnoreCase));
 
-                        int diff = fuelBrand.Average > 0 ? (fuelBrand.Average - fuelType.SainsburysPrice) : 0;
+                        var diff = fuelBrand.Average > 0 ? (fuelBrand.Average - fuelType.SainsburysPrice) : 0;
                         string color = "";
                         if (diff < 0)
                         {
@@ -192,14 +192,14 @@
                             color = "green";
                         }
 
-                        <td style="color: @color; ">@((diff / 10.0).ToString("###0.0"))</td>
+                        <td style="color: @color; ">@((diff / 10.0).ToString("###0.00"))</td>
                     }
 
                     @* Range *@
                     @foreach (var fuelType in Model.NationalAverageReport.Fuels)
                     {
                         var fuelBrand = fuelType.Brands.First(b => brand.BrandName.Equals(b.BrandName, StringComparison.InvariantCultureIgnoreCase));
-                        <td>@((fuelBrand.Min / 10.0).ToString("###0.0")) - @((fuelBrand.Max / 10.0).ToString("###0.0"))</td>
+                        <td>@((fuelBrand.Min / 10.0).ToString("###0.00")) - @((fuelBrand.Max / 10.0).ToString("###0.00"))</td>
                     }
                 </tr>
             }

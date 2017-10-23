@@ -2545,8 +2545,8 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
             //calculating by brands
             var distinctBrands = competitorSites.Select(x => x.Brand).Distinct().OrderBy(x => x).ToList();
 
-            distinctBrands.Remove("TESCO EXPRESS");
-            distinctBrands.Remove("TESCO EXTRA");
+            //distinctBrands.Remove("TESCO EXPRESS");
+            //distinctBrands.Remove("TESCO EXTRA");
 
             distinctBrands = SortBrandsWithGrocersAtTop(distinctBrands);
 
@@ -2564,10 +2564,10 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
                     var isTesco = brand == "TESCO";
                     var brandAvg = new NationalAverageReportBrandViewModel();
                     fuelRow.Brands.Add(brandAvg);
-                    if (isTesco)
-                        brandAvg.BrandName = "TESCO (inc EXPRESS and EXTRA)";
-                    else
-                        brandAvg.BrandName = brand;
+                    //if (isTesco)
+                    //    brandAvg.BrandName = "TESCO (inc EXPRESS and EXTRA)";
+                    //else
+                    brandAvg.BrandName = brand;
 
                     var brandCatsNos = competitorSites.Where(x => x.Brand == brand)
                         .Where(x => x.CatNo.HasValue)
@@ -2599,8 +2599,33 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
                         fuelRow.SainsburysPrice = brandAvg.Average;
                     }
                 }
-            }
 
+                // combine Tesco Express and Tesco Extra into Tesco
+                var tesco = fuelRow.Brands.FirstOrDefault(x => x.BrandName == Const.TESCO);
+                if (tesco != null)
+                {
+                    var extra = fuelRow.Brands.FirstOrDefault(x => x.BrandName == Const.TESCOEXPRESS);
+                    var express = fuelRow.Brands.FirstOrDefault(x => x.BrandName == Const.TESCOEXTRA);
+
+                    if (extra != null)
+                    {
+                        tesco.Min = Math.Min(tesco.Min, extra.Min);
+                        tesco.Max = Math.Max(tesco.Max, extra.Max);
+                        tesco.Average = (tesco.Average + extra.Average) / 2;
+
+                        fuelRow.Brands.Remove(extra);
+
+                    }
+                    if (express != null)
+                    {
+                        tesco.Min = Math.Min(tesco.Min, express.Min);
+                        tesco.Max = Math.Max(tesco.Max, express.Max);
+                        tesco.Average = (tesco.Average + express.Average) / 2;
+
+                        fuelRow.Brands.Remove(express);
+                    }
+                }
+            }
             return result;
         }
 
