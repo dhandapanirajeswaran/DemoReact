@@ -107,7 +107,8 @@ namespace JsPlc.Ssc.PetrolPricing.Exporting.Styling
             switch (reportType)
             {
                 case ReportExportFileType.CompetitorSites:
-                    FormatReportCompetitorSites(worksheet, totalColumns, totalRows);
+                    // removed formatting as request by Olivia 2017/10/23
+                    //FormatReportCompetitorSites(worksheet, totalColumns, totalRows);
                     break;
 
                 case ReportExportFileType.CompetitorsPriceRange:
