@@ -2850,15 +2850,19 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
                 ? sitesWithPrices.OrderBy(x => x.SiteName)
                 : sitesWithPrices.Where(x => x.SiteName.ToUpper().Trim().Contains(siteName.ToUpper().Trim())).OrderBy(x => x.SiteName);
 
-                foreach (var s in sortedSitesWithPrices)
+
+                var siteIds = sortedSitesWithPrices.Select(x => x.Id.ToString()).Aggregate((x, y) => x + "," + y);
+                var lastKnownSitePrices = _context.GetLastKnownSitePricesForDate(fromDt, siteIds);
+
+                foreach (var site in sortedSitesWithPrices)
                 {
                     var dataRow = new PriceMovementReportRows
                     {
-                        SiteId = s.Id,
-                        SiteName = s.SiteName,
-                        PfsNo = s.PfsNo,
-                        StoreNo = s.StoreNo,
-                        CatNo = s.CatNo,
+                        SiteId = site.Id,
+                        SiteName = site.SiteName,
+                        PfsNo = site.PfsNo,
+                        StoreNo = site.StoreNo,
+                        CatNo = site.CatNo,
                         DataItems = new List<PriceMovementReportDataItems>()
                     };
                     retval.ReportRows.Add(dataRow);
@@ -2867,13 +2871,13 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
                     dataItems.AddRange(dates.Select(d => new PriceMovementReportDataItems
                     {
                         PriceDate = d,
-                        FuelPrices = GetSiteFuelPricesOnDate(s.Prices, d)
+                        FuelPrices = GetSiteFuelPricesOnDate(site.Prices, d)
                     }));
 
                     // Fill weekend/Bank holiday gaps
-                    FillPriceMovementReportWeekendGaps(dataItems, FuelTypeItem.Unleaded);
-                    FillPriceMovementReportWeekendGaps(dataItems, FuelTypeItem.Diesel);
-                    FillPriceMovementReportWeekendGaps(dataItems, FuelTypeItem.Super_Unleaded);
+                    FillPriceMovementReportWeekendGaps(dataItems, site.Id, lastKnownSitePrices, FuelTypeItem.Unleaded);
+                    FillPriceMovementReportWeekendGaps(dataItems, site.Id, lastKnownSitePrices, FuelTypeItem.Diesel);
+                    FillPriceMovementReportWeekendGaps(dataItems, site.Id, lastKnownSitePrices, FuelTypeItem.Super_Unleaded);
                 }
             });
             task.Wait();
@@ -2881,13 +2885,17 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
             return retval;
         }
 
-        private void FillPriceMovementReportWeekendGaps(List<PriceMovementReportDataItems> dataItems, FuelTypeItem fuelType)
+        private void FillPriceMovementReportWeekendGaps(List<PriceMovementReportDataItems> dataItems, int siteId, IEnumerable<SiteLastKnownPriceViewModel> lastKnownSitePrices, FuelTypeItem fuelType)
         {
             if (dataItems == null)
                 return;
 
             var sortedDays = dataItems.OrderBy(x => x.PriceDate);
             var lastPrice = 0;
+
+            var lastKnownPrice = lastKnownSitePrices.FirstOrDefault(x => x.SiteId == siteId && x.FuelTypeId == (int)fuelType);
+            if (lastKnownPrice != null)
+                lastPrice = lastKnownPrice.Price;
 
             foreach (var day in sortedDays)
             {

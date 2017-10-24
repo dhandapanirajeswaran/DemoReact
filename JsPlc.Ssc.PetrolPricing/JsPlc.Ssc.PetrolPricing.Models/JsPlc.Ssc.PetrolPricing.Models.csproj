@@ -198,6 +198,7 @@
     <Compile Include="ViewModels\SiteEmailSendStatusViewModel.cs" />
     <Compile Include="ViewModels\SiteEmailsPageViewModel.cs" />
     <Compile Include="ViewModels\SiteEmailTodaySendStatusViewModel.cs" />
+    <Compile Include="ViewModels\SiteLastKnownPriceViewModel.cs" />
     <Compile Include="ViewModels\SiteNoteUpdateViewModel.cs" />
     <Compile Include="ViewModels\SiteNoteViewModel.cs" />
     <Compile Include="ViewModels\SiteNumberImportViewModel.cs" />
