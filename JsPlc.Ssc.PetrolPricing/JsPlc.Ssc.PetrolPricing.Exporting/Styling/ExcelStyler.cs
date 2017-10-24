@@ -149,8 +149,11 @@ namespace JsPlc.Ssc.PetrolPricing.Exporting.Styling
                     throw new ArgumentException("Unsupport ReportType: " + reportType);
             }
 
-            if (adjustWidths)
-                worksheet.Rows().AdjustToContents();
+            //if (adjustWidths)
+            //{
+            //    worksheet.Columns().AdjustToContents();
+            //    worksheet.Rows().AdjustToContents();
+            //}
         }
 
         #region private methods
