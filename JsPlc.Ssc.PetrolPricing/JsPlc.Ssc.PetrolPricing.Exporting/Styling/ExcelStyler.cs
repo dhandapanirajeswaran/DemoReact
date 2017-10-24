@@ -104,11 +104,13 @@ namespace JsPlc.Ssc.PetrolPricing.Exporting.Styling
 
         public void ApplyReportExport(IXLWorksheet worksheet, ReportExportFileType reportType, int totalColumns, int totalRows)
         {
+            var adjustWidths = true;
+
+
             switch (reportType)
             {
                 case ReportExportFileType.CompetitorSites:
-                    // removed formatting as request by Olivia 2017/10/23
-                    //FormatReportCompetitorSites(worksheet, totalColumns, totalRows);
+                    FormatReportCompetitorSites(worksheet, totalColumns, totalRows);
                     break;
 
                 case ReportExportFileType.CompetitorsPriceRange:
@@ -146,6 +148,9 @@ namespace JsPlc.Ssc.PetrolPricing.Exporting.Styling
                 default:
                     throw new ArgumentException("Unsupport ReportType: " + reportType);
             }
+
+            if (adjustWidths)
+                worksheet.Rows().AdjustToContents();
         }
 
         #region private methods
@@ -154,6 +159,9 @@ namespace JsPlc.Ssc.PetrolPricing.Exporting.Styling
         {
             var firstDataRow = 2;
             var lastDataRow = 2 + totalRows - 1;
+
+            new ExcelColumnStyler(worksheet, 1, 1)
+                .FormatColumnRange(1, 8, ExcelStyleFormatters.GeneralTextHeaderCell);
 
             new ExcelColumnStyler(worksheet, firstDataRow, lastDataRow)
                 .FormatColumn("B", ExcelStyleFormatters.GeneralIntegerFormatter)
@@ -170,6 +178,9 @@ namespace JsPlc.Ssc.PetrolPricing.Exporting.Styling
             var firstDataRow = 2;
             var lastDataRow = 2 + totalRows - 1;
 
+            new ExcelColumnStyler(worksheet, 1, 1)
+                .FormatColumnRange(1, totalColumns, ExcelStyleFormatters.GeneralTextHeaderCell);
+            
             new ExcelColumnStyler(worksheet, firstDataRow, lastDataRow)
                 .FormatColumn("B", ExcelStyleFormatters.GeneralPriceFormatter)
                 .FormatColumn("C", ExcelStyleFormatters.GeneralPriceFormatter)
@@ -183,6 +194,9 @@ namespace JsPlc.Ssc.PetrolPricing.Exporting.Styling
         {
             var firstDataRow = 2;
             var lastDataRow = 2 + totalRows - 1;
+
+            new ExcelColumnStyler(worksheet, 1, 1)
+                            .FormatColumnRange(1, totalColumns, ExcelStyleFormatters.GeneralTextHeaderCell);
 
             new ExcelColumnStyler(worksheet, firstDataRow, lastDataRow)
                 .FormatColumn("C", ExcelStyleFormatters.GeneralPriceFormatter)
@@ -198,6 +212,9 @@ namespace JsPlc.Ssc.PetrolPricing.Exporting.Styling
             var firstDataRow = 2;
             var lastDataRow = 2 + totalRows - 1;
 
+            new ExcelColumnStyler(worksheet, 1, 1)
+                            .FormatColumnRange(1, totalColumns, ExcelStyleFormatters.GeneralTextHeaderCell);
+
             new ExcelColumnStyler(worksheet, firstDataRow, lastDataRow)
                 .FormatColumn("D", ExcelStyleFormatters.GeneralPriceFormatter)
                 .FormatColumn("E", ExcelStyleFormatters.GeneralPriceFormatter)
@@ -211,6 +228,9 @@ namespace JsPlc.Ssc.PetrolPricing.Exporting.Styling
             var firstDataRow = 2;
             var lastDataRow = 2 + totalRows - 1;
 
+            new ExcelColumnStyler(worksheet, 1, 1)
+                            .FormatColumnRange(1, totalColumns, ExcelStyleFormatters.GeneralTextHeaderCell);
+
             new ExcelColumnStyler(worksheet, firstDataRow, lastDataRow)
                 .FormatColumnRange(3, totalColumns, ExcelStyleFormatters.GeneralNumber2DPFormatter);
         }
@@ -220,6 +240,8 @@ namespace JsPlc.Ssc.PetrolPricing.Exporting.Styling
             var firstDataRow = 3;
             var lastDataRow = 2 + totalRows - 1;
 
+            // NOTE: header styled elsewhere...
+            
             new ExcelColumnStyler(worksheet, firstDataRow, lastDataRow)
                 .FormatColumn(2, ExcelStyleFormatters.GeneralIntegerFormatter)
                 .FormatColumn(3, ExcelStyleFormatters.GeneralIntegerFormatter)
@@ -232,6 +254,9 @@ namespace JsPlc.Ssc.PetrolPricing.Exporting.Styling
             var firstDataRow = 2;
             var lastDataRow = 2 + totalRows - 1;
 
+            new ExcelColumnStyler(worksheet, 1, 1)
+                            .FormatColumnRange(1, totalColumns, ExcelStyleFormatters.GeneralTextHeaderCell);
+
             new ExcelColumnStyler(worksheet, firstDataRow, lastDataRow)
                 .FormatColumnRange(2, totalColumns, ExcelStyleFormatters.GeneralIntegerFormatter);
         }
@@ -240,6 +265,9 @@ namespace JsPlc.Ssc.PetrolPricing.Exporting.Styling
         {
             var firstDataRow = 2;
             var lastDataRow = 2 + totalRows - 1;
+
+            new ExcelColumnStyler(worksheet, 1, 1)
+                            .FormatColumnRange(1, totalColumns, ExcelStyleFormatters.GeneralTextHeaderCell);
 
             new ExcelColumnStyler(worksheet, firstDataRow, lastDataRow)
                 .FormatColumn(1, ExcelStyleFormatters.GeneralIntegerFormatter) // CatNo
@@ -256,6 +284,9 @@ namespace JsPlc.Ssc.PetrolPricing.Exporting.Styling
         {
             var firstDataRow = 2;
             var lastDataRow = 2 + totalRows - 1;
+
+            new ExcelColumnStyler(worksheet, 1, 1)
+                            .FormatColumnRange(1, totalColumns, ExcelStyleFormatters.GeneralTextHeaderCell);
 
             new ExcelColumnStyler(worksheet, firstDataRow, lastDataRow)
                 .FormatColumn(1, ExcelStyleFormatters.GeneralIntegerFormatter) // PfsNo
@@ -277,6 +308,9 @@ namespace JsPlc.Ssc.PetrolPricing.Exporting.Styling
         {
             var firstDataRow = 3;
             var lastDataRow = 3 + totalRows - 1;
+
+            new ExcelColumnStyler(worksheet, 1, 1)
+                .FormatColumnRange(1, 14, ExcelStyleFormatters.GeneralTextHeaderCell);
 
             new ExcelColumnStyler(worksheet, firstDataRow, lastDataRow)
                 .FormatColumn("A", ExcelStyleFormatters.GeneralIntegerFormatter)
@@ -306,6 +340,9 @@ namespace JsPlc.Ssc.PetrolPricing.Exporting.Styling
                 viewingDate.ToString("dd MMM yyyy")
                 );
 
+            new ExcelColumnStyler(worksheet, 1, 1)
+                .FormatColumnRange(1, 9, ExcelStyleFormatters.GeneralTextHeaderCell);
+
             worksheet.Cell("J2").Value = mergeMessage;
             worksheet.Cell("J2").Style.Font.FontColor = XLColor.Red;
 
@@ -327,6 +364,9 @@ namespace JsPlc.Ssc.PetrolPricing.Exporting.Styling
         {
             var firstDataRow = 2;
             var lastDatarow = 2 + totalRows - 1;
+
+            new ExcelColumnStyler(worksheet, 1, 1)
+                .FormatColumnRange(1, 5, ExcelStyleFormatters.GeneralTextHeaderCell);
 
             new ExcelColumnStyler(worksheet, firstDataRow, lastDatarow)
                 .FormatColumn("A", ExcelStyleFormatters.GeneralIntegerFormatter)

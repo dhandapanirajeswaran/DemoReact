@@ -9,6 +9,9 @@ namespace JsPlc.Ssc.PetrolPricing.Exporting.Formatting
 {
     public static class ExcelStyleFormatters
     {
+        private static XLColor HeaderFillColor = XLColor.FromArgb(79, 129, 189);
+        private static XLColor HeaderTextColor = XLColor.White;
+
         public static void ColumnHeader(IXLCell cell)
         {
             cell.Style.Fill.SetBackgroundColor(XLColor.LightGray);
@@ -42,6 +45,21 @@ namespace JsPlc.Ssc.PetrolPricing.Exporting.Formatting
 
         public static void GeneralTextFormatter(IXLCell cell)
         {
+            cell.DataType = XLCellValues.Text;
+        }
+
+        public static void GeneralHeaderCell(IXLCell cell)
+        {
+            cell.Style.Fill.SetBackgroundColor(HeaderFillColor);
+            cell.Style.Font.SetFontColor(HeaderTextColor);
+            cell.Style.Alignment.SetHorizontal(XLAlignmentHorizontalValues.Center);
+        }
+
+        public static void GeneralTextHeaderCell(IXLCell cell)
+        {
+            cell.Style.Fill.SetBackgroundColor(HeaderFillColor);
+            cell.Style.Font.SetFontColor(HeaderTextColor);
+            cell.Style.Alignment.SetHorizontal(XLAlignmentHorizontalValues.Center);
             cell.DataType = XLCellValues.Text;
         }
 

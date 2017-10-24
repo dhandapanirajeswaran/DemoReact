@@ -22,7 +22,81 @@ using JsPlc.Ssc.PetrolPricing.Exporting.Styling;
 
 namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 {
-  
+    internal class ExcelCellRange
+    {
+        public ExcelCellAddress FirstAddress { get; private set; }
+        public ExcelCellAddress LastAddress { get; private set; }
+
+        public ExcelCellRange(ExcelCellAddress first, ExcelCellAddress last) 
+        {
+            this.FirstAddress = first;
+            this.LastAddress = last;
+        }
+
+        public override string ToString()
+        {
+            return FirstAddress.ToString() + ":" + LastAddress.ToString();
+        }
+    }
+
+    internal class ExcelCellAddress
+    {
+        public int RowIndex { get; private set; }
+        public int ColumnIndex { get; private set; }
+
+        public ExcelCellAddress(int row, int col)
+        {
+            if (row < 0)
+                throw new ArgumentException("Row starts from 1");
+            if (col < 0)
+                throw new ArgumentException("Column starts from 1");
+
+            this.RowIndex = row;
+            this.ColumnIndex = col;
+        }
+
+        public string Address
+        {
+            get { return CalcCellAddress(this.RowIndex, this.ColumnIndex); }
+        }
+
+        public string ColumnLetter
+        {
+            get { return CalcColumnLetter(this.ColumnIndex); }
+        }
+
+        public int ColumnNumber
+        {
+            get { return this.ColumnIndex; }
+        }
+
+        public override string ToString()
+        {
+            return this.Address;
+        }
+
+        private string CalcColumnLetter(int col)
+        {
+            var n = col - 1;
+            var columnLetter = "" + (char)(65 + n % 26);
+            n /= 26;
+            while (n > 0)
+            {
+                columnLetter = (char)(64 + n % 26) + columnLetter;
+                n /= 26;
+            }
+            return columnLetter;
+        }
+
+        private string CalcCellAddress(int row, int col)
+        {
+            return String.Format("{0}{1}",
+                CalcColumnLetter(col),
+                row
+                );
+        }
+    }
+
 	[System.Web.Mvc.Authorize]
 	public class PriceReportsController : BaseController
 	{
@@ -626,7 +700,14 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             {
                 foreach (var dt in tables)
                 {
-                    var ws = wb.Worksheets.Add(dt);
+                    IXLWorksheet ws = ConvertDataTableToWorksheet(wb, dt);
+
+                    var rangeAddress = new ExcelCellRange(
+                        new ExcelCellAddress(row: 1, col: 1),
+                        new ExcelCellAddress(row: dt.Rows.Count + 2, col: dt.Columns.Count)
+                        );
+                        
+
                     if (reportType == ReportExportFileType.NationalAverageReport2 
                         || reportType == ReportExportFileType.CompetitorSites
                         || reportType == ReportExportFileType.NationalAverageReport
@@ -635,11 +716,12 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
                         )
                     {
                         ws.Rows().AdjustToContents();
-                        ws.Tables.FirstOrDefault().ShowAutoFilter = false;
+                        //                        ws.Tables.FirstOrDefault().ShowAutoFilter = false;
                     }
                     if (reportType == ReportExportFileType.PriceMovementReport)
                     {
-                        var rangeAddress = ws.Tables.FirstOrDefault().RangeAddress;
+                        //var rangeAddress = ws.Tables.FirstOrDefault().RangeAddress;
+
                         var cellrange = string.Format("{0}:{1}{2}", rangeAddress.FirstAddress, rangeAddress.LastAddress.ColumnLetter, rangeAddress.FirstAddress.ColumnNumber);
 
                         var sitesCellRange = string.Format("{0}:{1}{2}", rangeAddress.FirstAddress, rangeAddress.FirstAddress.ColumnLetter, ws.Rows().Count());
@@ -660,6 +742,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 
                             var dateCell = firstRow.Cell(colIndex + 2);
                             dateCell.Value = fuelAndDateString[1];
+                            dateCell.DataType = XLCellValues.DateTime;
                             dateCell.Style.Font.Bold = true;
                             dateCell.Style.Fill.BackgroundColor = XLColor.Black;
                             dateCell.Style.Font.FontColor = XLColor.White;
@@ -702,7 +785,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
                     }
                     if (reportType == ReportExportFileType.CompetitorsPriceRange)
                     {
-                        var rangeAddress = ws.Tables.FirstOrDefault().RangeAddress;
+                        //var rangeAddress = ws.Tables.FirstOrDefault().RangeAddress;
                         var cellrange = string.Format("{0}:{1}{2}", rangeAddress.FirstAddress, rangeAddress.LastAddress.ColumnLetter, rangeAddress.FirstAddress.ColumnNumber);
 
                         var brandCellRange = string.Format("{0}:{1}{2}", rangeAddress.FirstAddress, rangeAddress.FirstAddress.ColumnLetter, ws.Rows().Count());
@@ -724,7 +807,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
                     }
                     if (reportType == ReportExportFileType.CompetitorsPriceRangeByCompany)
                     {
-                        var rangeAddress = ws.Tables.FirstOrDefault().RangeAddress;
+                        //var rangeAddress = ws.Tables.FirstOrDefault().RangeAddress;
                         var cellrange = string.Format("{0}:{1}{2}", rangeAddress.FirstAddress, rangeAddress.LastAddress.ColumnLetter, rangeAddress.FirstAddress.ColumnNumber);
 
                         var companyCellRange = string.Format("{0}:{1}{2}", rangeAddress.FirstAddress, rangeAddress.FirstAddress.ColumnLetter, ws.Rows().Count());
@@ -749,7 +832,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
                     }
                     if (reportType == ReportExportFileType.PricePointsReport)
                     {
-                        var rangeAddress = ws.Tables.FirstOrDefault().RangeAddress;
+                        //var rangeAddress = ws.Tables.FirstOrDefault().RangeAddress;
                         var cellrange = string.Format("{0}:{1}{2}", rangeAddress.FirstAddress, rangeAddress.LastAddress.ColumnLetter, rangeAddress.FirstAddress.ColumnNumber);
 
 
@@ -805,7 +888,6 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
                                 }
                             }
                         }
-
                     }
 
                     if (reportType == ReportExportFileType.NationalAverageReport2)
@@ -830,10 +912,6 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
                             cellAlphabet++;
                         }
                     }
-                    if (reportType == ReportExportFileType.QuarterlySiteAnalysis)
-                    {
-
-                    }
 
                     var excelStyler = new ExcelStyler();
                     excelStyler.ApplyReportExport(ws, reportType, dt.Columns.Count, dt.Rows.Count);
@@ -845,6 +923,56 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 
                 return base.SendExcelFile(excelFilename, wb, downloadId);
             }
+        }
+
+        private IXLWorksheet ConvertDataTableToWorksheet(XLWorkbook wb, DataTable dt)
+        {
+            var worksheetName = String.Format("Table{0}",
+                 wb.Worksheets.Count + 1
+                 );
+
+            var ws = wb.Worksheets.Add(worksheetName);
+
+            // add column headings
+            for (var columnIndex = 0; columnIndex < dt.Columns.Count; columnIndex++)
+            {
+                var cell = ws.Cell(1, columnIndex + 1);
+
+                cell.Value = "'" + dt.Columns[columnIndex].ColumnName;
+
+                switch (dt.Columns[columnIndex].DataType.ToString().ToUpperInvariant())
+                {
+                    case "INT":
+                    case "FLOAT":
+                    case "DOUBLE":
+                        cell.DataType = XLCellValues.Number;
+                        break;
+                    case "TIMESPAN":
+                        cell.DataType = XLCellValues.TimeSpan;
+                        break;
+
+                    case "DATETIME":
+                        cell.DataType = XLCellValues.DateTime;
+                        break;
+
+                    default:
+                        cell.DataType = XLCellValues.Text;
+                        break;
+                }
+            }
+
+            // add rows
+            for (var rowIndex = 0; rowIndex < dt.Rows.Count; rowIndex++)
+            {
+                var row = dt.Rows[rowIndex];
+                for (var columnIndex = 0; columnIndex < dt.Columns.Count; columnIndex++)
+                {
+                    var cell = ws.Cell(2 + rowIndex, columnIndex + 1);
+                    cell.Value = row[columnIndex].ToString();
+                    cell.DataType = XLCellValues.Text;
+                }
+            }
+            return ws;
         }
 
         private QuarterlySiteAnalysisContainerViewModel  PopulateQuarterlySiteAnalysisModel(int leftFileUploadId=0, int rightFileUploadId=0)
