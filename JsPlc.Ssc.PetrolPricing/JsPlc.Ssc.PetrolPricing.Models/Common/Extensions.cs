@@ -646,7 +646,9 @@ namespace JsPlc.Ssc.PetrolPricing.Models.Common
 
             foreach (var row in report.ReportRows)
             {
-                var compliesString = row.DataItems.Take(2).Any(x => x.DiffValid && x.Diff == 0) ? "Yes" : "No";
+                var compliesString = row.DataItems.Take(2).Any(x => x.DiffValid && x.Diff != 0)
+                    ? "No"
+                    : "Yes";
 
                 var unleaded = row.DataItems.FirstOrDefault(x => x.FuelTypeId == (int)FuelTypeItem.Unleaded);
                 var diesel = row.DataItems.FirstOrDefault(x => x.FuelTypeId == (int)FuelTypeItem.Diesel);
