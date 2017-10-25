@@ -11,6 +11,7 @@ namespace JsPlc.Ssc.PetrolPricing.Models.ViewModels
         public List<CompetitorsPriceRangeByCompanyBrandFuelViewModel> Fuels { get; set; }
 
         public string BrandName { get; set; }
+        public bool IsGrocer { get; set; }
 
         public CompetitorsPriceRangeByCompanyBrandViewModel()
         {

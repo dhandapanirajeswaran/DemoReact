@@ -123,7 +123,15 @@
                     @foreach (var brand in company.Brands)
                     {
                         <div class="row">
-                            <div class="col-md-1" style="width:280px">@(brand.BrandName) (£)</div>
+                            <div class="col-md-1" style="width:280px">
+                            @if(brand.IsGrocer)
+                            {
+                                <span style="color: blue;"><i class="fa fa-shopping-cart"></i> @(brand.BrandName) (£)</span>
+                            } else
+                            {
+                                <span>&nbsp;@(brand.BrandName) (£)</span>
+                            }
+                            </div>
                             @* Average *@
                             @foreach (var fuelType in Model.FuelTypes)
                             {

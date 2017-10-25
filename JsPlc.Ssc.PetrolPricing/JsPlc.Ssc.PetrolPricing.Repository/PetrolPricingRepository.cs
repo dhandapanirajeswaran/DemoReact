@@ -2771,6 +2771,9 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
 
             var distinctCompaniesForReportDate = companyNamesQuery.Distinct().OrderBy(x => x).ToList();
 
+            // get list of Grocer brand names
+            var grocerBrandNames = _context.GetAllGrocerBrandNames().Select(x => x.BrandName).ToList();
+
             distinctCompaniesForReportDate.Remove(SainsburysCompanyName.ToUpper());
             distinctCompaniesForReportDate.Insert(0, SainsburysCompanyName.ToUpper());
 
@@ -2790,12 +2793,13 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
 
                 var distinctBrands = companyBrands.Select(b => b.Brand).Distinct();
 
-                distinctBrands = SortBrandsWithGrocersAtTop(distinctBrands.ToList());
+                //distinctBrands = SortBrandsWithGrocersAtTop(distinctBrands.ToList());
 
                 foreach (var companyBrand in distinctBrands)
                 {
                     var newBrandReportRow = new CompetitorsPriceRangeByCompanyBrandViewModel();
                     newBrandReportRow.BrandName = companyBrand;
+                    newBrandReportRow.IsGrocer = grocerBrandNames.Contains(companyBrand);
 
                     foreach (var fuelTypeId in result.FuelTypeIds)
                     {
