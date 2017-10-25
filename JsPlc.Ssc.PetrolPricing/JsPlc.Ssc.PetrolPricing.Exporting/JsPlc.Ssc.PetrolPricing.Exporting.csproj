@@ -59,6 +59,7 @@
     <Compile Include="Exporters\JsSitesWithPricesExporter.cs" />
     <Compile Include="Exporters\SiteEmailAddressesExporter.cs" />
     <Compile Include="Formatting\ExcelStyleFormatters.cs" />
+    <Compile Include="Helpers\WorksheetHelper.cs" />
     <Compile Include="Interfaces\IGetCompetitorsWithPrices.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Styling\ExcelStyler.cs" />

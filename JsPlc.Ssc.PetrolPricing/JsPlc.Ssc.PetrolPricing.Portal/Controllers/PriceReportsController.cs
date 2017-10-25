@@ -19,6 +19,7 @@ using JsPlc.Ssc.PetrolPricing.Core.Interfaces;
 using JsPlc.Ssc.PetrolPricing.Portal.Controllers.BaseClasses;
 using JsPlc.Ssc.PetrolPricing.Portal.DataExporters;
 using JsPlc.Ssc.PetrolPricing.Exporting.Styling;
+using JsPlc.Ssc.PetrolPricing.Exporting.Helpers;
 
 namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 {
@@ -700,7 +701,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             {
                 foreach (var dt in tables)
                 {
-                    IXLWorksheet ws = ConvertDataTableToWorksheet(wb, dt);
+                    IXLWorksheet ws = WorksheetHelper.CreateFromDataTable(wb, dt);
 
                     var rangeAddress = new ExcelCellRange(
                         new ExcelCellAddress(row: 1, col: 1),
@@ -923,56 +924,6 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 
                 return base.SendExcelFile(excelFilename, wb, downloadId);
             }
-        }
-
-        private IXLWorksheet ConvertDataTableToWorksheet(XLWorkbook wb, DataTable dt)
-        {
-            var worksheetName = String.Format("Table{0}",
-                 wb.Worksheets.Count + 1
-                 );
-
-            var ws = wb.Worksheets.Add(worksheetName);
-
-            // add column headings
-            for (var columnIndex = 0; columnIndex < dt.Columns.Count; columnIndex++)
-            {
-                var cell = ws.Cell(1, columnIndex + 1);
-
-                cell.Value = "'" + dt.Columns[columnIndex].ColumnName;
-
-                switch (dt.Columns[columnIndex].DataType.ToString().ToUpperInvariant())
-                {
-                    case "INT":
-                    case "FLOAT":
-                    case "DOUBLE":
-                        cell.DataType = XLCellValues.Number;
-                        break;
-                    case "TIMESPAN":
-                        cell.DataType = XLCellValues.TimeSpan;
-                        break;
-
-                    case "DATETIME":
-                        cell.DataType = XLCellValues.DateTime;
-                        break;
-
-                    default:
-                        cell.DataType = XLCellValues.Text;
-                        break;
-                }
-            }
-
-            // add rows
-            for (var rowIndex = 0; rowIndex < dt.Rows.Count; rowIndex++)
-            {
-                var row = dt.Rows[rowIndex];
-                for (var columnIndex = 0; columnIndex < dt.Columns.Count; columnIndex++)
-                {
-                    var cell = ws.Cell(2 + rowIndex, columnIndex + 1);
-                    cell.Value = row[columnIndex].ToString();
-                    cell.DataType = XLCellValues.Text;
-                }
-            }
-            return ws;
         }
 
         private QuarterlySiteAnalysisContainerViewModel  PopulateQuarterlySiteAnalysisModel(int leftFileUploadId=0, int rightFileUploadId=0)

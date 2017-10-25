@@ -1,5 +1,6 @@
 ﻿using ClosedXML.Excel;
 using JsPlc.Ssc.PetrolPricing.Core;
+using JsPlc.Ssc.PetrolPricing.Exporting.Helpers;
 using JsPlc.Ssc.PetrolPricing.Exporting.Styling;
 using System;
 using System.Collections.Generic;
@@ -18,11 +19,10 @@ namespace JsPlc.Ssc.PetrolPricing.Exporting.Exporters
             {
                 foreach (var dt in tables)
                 {
-                    var ws = wb.Worksheets.Add(dt);
+                    var ws = WorksheetHelper.CreateFromDataTable(wb, dt);
                     //int TotalRows = ws.RowCount();
 
                     int totalRows = dt.Rows.Count; // NOTE: do not use the Worksheet RowCount() it is always 1048576 !
-
 
                     for (int i = 2; i < totalRows; i++)
                     {
