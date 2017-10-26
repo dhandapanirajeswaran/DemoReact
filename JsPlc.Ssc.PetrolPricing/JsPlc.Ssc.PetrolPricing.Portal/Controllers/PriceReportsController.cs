@@ -743,7 +743,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 
                             var dateCell = firstRow.Cell(colIndex + 2);
                             dateCell.Value = fuelAndDateString[1];
-                            dateCell.DataType = XLCellValues.DateTime;
+                            dateCell.DataType = XLCellValues.Text;
                             dateCell.Style.Font.Bold = true;
                             dateCell.Style.Fill.BackgroundColor = XLColor.Black;
                             dateCell.Style.Font.FontColor = XLColor.White;
