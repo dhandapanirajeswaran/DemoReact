@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <parameters>
   <parameter name="ServicesBaseUrl-Web.config App Setting" defaultValue="">
-    <parameterEntry kind="XmlFile" scope="\\web.config$" match="/configuration/appSettings/add[@key='ServicesBaseUrl']/@value" />
+    <parameterEntry kind="XmlFile" scope="\\JsPlc.Ssc.PetrolPricing.WinService.exe.config$" match="/configuration/appSettings/add[@key='ServicesBaseUrl']/@value" />
   </parameter>
 
 </parameters>
