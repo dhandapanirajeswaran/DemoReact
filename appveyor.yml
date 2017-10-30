@@ -27,6 +27,9 @@ after_build:
     7z a JsPlc.Ssc.PetrolPricing.WinService.zip %APPVEYOR_BUILD_FOLDER%\JsPlc.Ssc.PetrolPricing\JsPlc.Ssc.PetrolPricing.WinService\bin\Release\*.*
     
     AppVeyor PushArtifact JsPlc.Ssc.PetrolPricing.IntegrationTests.zip -DeploymentName JsPlc.Ssc.PetrolPricing.IntegrationTests
+    
+    AppVeyor PushArtifact JsPlc.Ssc.PetrolPricing.WinService.zip -DeploymentName JsPlc.Ssc.PetrolPricing.WinService
+    
 branches:
   only:    
     - develop
