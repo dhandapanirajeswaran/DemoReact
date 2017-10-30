@@ -12,5 +12,5 @@ write-host "Transformation completed for App.config."
 
 #Delete the Windows Service log if it exists and then recreate it
 
-remove-eventlog "OMR Windows Service"
-new-eventlog -source "OMR Windows Service" -logname "OMR Windows Service"
+remove-eventlog "PetrolPricingWinService"
+new-eventlog -source "PetrolPricingWinService" -logname "PetrolPricingWinService"
