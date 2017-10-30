@@ -51,7 +51,7 @@ namespace JsPlc.Ssc.PetrolPricing.WinService.Scheduler
             _timerLog = log.Context("Timer");
 
             // calculate the timer interval (in milliseconds)
-            var interval = TimeSpan.FromMinutes(settings.RunEmailSecheduleEveryXMinutes);
+            var interval = TimeSpan.FromMinutes(settings.RunEmailScheduleEveryXMinutes);
 
             _timer = new Timer();
             _timer.Interval = interval.TotalMilliseconds;

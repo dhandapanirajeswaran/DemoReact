@@ -9,7 +9,7 @@ namespace JsPlc.Ssc.PetrolPricing.WinService.Interfaces
     public interface IAppSettings
     {
         string ServicesBaseUrl { get; }
-        int RunEmailSecheduleEveryXMinutes { get; }
+        int RunEmailScheduleEveryXMinutes { get; }
         bool EnableDebugLog { get; }
         bool EnableTraceLog { get; }
         bool EnableInfoLog { get;}

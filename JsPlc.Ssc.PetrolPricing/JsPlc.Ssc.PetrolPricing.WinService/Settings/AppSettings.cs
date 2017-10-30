@@ -22,9 +22,9 @@ namespace JsPlc.Ssc.PetrolPricing.WinService.Settings
             get { return GetString(key: "ServicesBaseUrl", defaultValue: "", required: true); }
         }
 
-        public int RunEmailSecheduleEveryXMinutes
+        public int RunEmailScheduleEveryXMinutes
         {
-            get { return GetInteger(key: "RunEmailSecheduleEveryXMinutes", defaultValue: 5, required: true); }
+            get { return GetInteger(key: "RunEmailScheduleEveryXMinutes", defaultValue: 5, required: true); }
         }
 
         public bool EnableDebugLog

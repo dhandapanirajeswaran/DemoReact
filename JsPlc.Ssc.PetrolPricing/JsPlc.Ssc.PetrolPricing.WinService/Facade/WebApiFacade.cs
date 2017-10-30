@@ -13,6 +13,8 @@ namespace JsPlc.Ssc.PetrolPricing.WinService.Facade
 {
     internal class WebApiFacade
     {
+        private const int WebApiTimeOutInSeconds = 5 * 60;
+
         private HttpClient _client;
 
         private IEventLog _logger;
@@ -27,6 +29,7 @@ namespace JsPlc.Ssc.PetrolPricing.WinService.Facade
             _client.BaseAddress = new Uri(_settings.ServicesBaseUrl);
             _client.DefaultRequestHeaders.Accept.Clear();
             _client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            _client.Timeout = TimeSpan.FromSeconds(WebApiTimeOutInSeconds);
         }
 
         public void ExecuteWinServiceSchedule()
