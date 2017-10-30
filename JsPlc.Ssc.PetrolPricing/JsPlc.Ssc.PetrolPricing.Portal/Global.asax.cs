@@ -30,6 +30,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal
 {
     public class MvcApplication : System.Web.HttpApplication
     {
+        private bool EnableWebThreadEmailSchedulePolling = false;
         public const int PollEmailScheduleEveryMinute = 5;
 
         private  ILogger _logger ;
@@ -82,7 +83,8 @@ namespace JsPlc.Ssc.PetrolPricing.Portal
        
         protected void Application_BeginRequest()
         {
-            EmailScheduleLauncher.BeginRequestHook(_logger, PollEmailScheduleEveryMinute);
+            if (EnableWebThreadEmailSchedulePolling)
+                EmailScheduleLauncher.BeginRequestHook(_logger, PollEmailScheduleEveryMinute);
 
             Response.Cache.SetCacheability(HttpCacheability.NoCache);
             Response.Cache.SetExpires(DateTime.UtcNow.AddHours(-1));

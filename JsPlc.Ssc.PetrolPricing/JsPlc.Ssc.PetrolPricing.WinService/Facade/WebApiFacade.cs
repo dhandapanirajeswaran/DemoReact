@@ -24,7 +24,7 @@ namespace JsPlc.Ssc.PetrolPricing.WinService.Facade
             _settings = settings;
 
             _client = new HttpClient();
-            _client.BaseAddress = new Uri(_settings.WebApiServiceBaseUrl);
+            _client.BaseAddress = new Uri(_settings.ServicesBaseUrl);
             _client.DefaultRequestHeaders.Accept.Clear();
             _client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         }

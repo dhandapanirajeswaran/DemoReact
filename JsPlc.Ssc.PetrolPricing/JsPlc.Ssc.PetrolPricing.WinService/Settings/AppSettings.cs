@@ -17,9 +17,9 @@ namespace JsPlc.Ssc.PetrolPricing.WinService.Settings
             _logger = logger.Context("AppSettings");
         }
 
-        public string WebApiServiceBaseUrl
+        public string ServicesBaseUrl
         {
-            get { return GetString(key:"WebApiServiceBaseUrl", defaultValue: "", required: true); }
+            get { return GetString(key: "ServicesBaseUrl", defaultValue: "", required: true); }
         }
 
         public int RunEmailSecheduleEveryXMinutes
