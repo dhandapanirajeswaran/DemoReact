@@ -85,6 +85,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="deploy.ps1" />
     <None Include="Install.bat">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
