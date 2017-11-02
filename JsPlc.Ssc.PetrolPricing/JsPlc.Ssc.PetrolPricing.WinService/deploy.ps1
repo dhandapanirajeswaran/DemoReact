@@ -1,4 +1,4 @@
-﻿$configFile = "$env:APPLICATION_PATH\JsPlc.Ssc.PetrolPricing.WinService.exe.config"
+$configFile = "$env:APPLICATION_PATH\JsPlc.Ssc.PetrolPricing.WinService.exe.config"
 [xml] $xmlfile = Get-Content $configFile
 write-host "Transforming the config file" $configFile
 foreach ($item in $xmlfile.configuration.appSettings.add){
@@ -14,4 +14,3 @@ write-host "Transformation completed for App.config."
 
 remove-eventlog "PetrolPricingWinService"
 new-eventlog -source "PetrolPricingWinService" -logname "PetrolPricingWinService"
-
