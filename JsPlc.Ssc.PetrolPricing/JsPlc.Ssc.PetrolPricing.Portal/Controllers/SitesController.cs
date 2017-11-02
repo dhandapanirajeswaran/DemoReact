@@ -353,6 +353,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
                 date = tokenize[2] + "/" + tokenize[1] + "/" + tokenize[0];
                 forDate = new DateTime(Convert.ToInt16(tokenize[2]), Convert.ToInt16(tokenize[1]), Convert.ToInt16(tokenize[0]));
             }
+
             // forDate = forDate.AddDays(-1);
             IEnumerable<SitePriceViewModel> sitesViewModelsWithPrices = _serviceFacade.GetSitePrices(forDate, storeName, catNo, storeNo, storeTown, siteId, 1, 2000);
 

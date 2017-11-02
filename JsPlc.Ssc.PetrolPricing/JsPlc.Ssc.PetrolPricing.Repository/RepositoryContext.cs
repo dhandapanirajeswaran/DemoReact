@@ -928,5 +928,12 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
             };
             return DapperHelper.QueryList<SiteLastKnownPriceViewModel>(this, sprocName, parameters);
         }
+
+        internal LastSitePriceDateViewModel GetLastSitePricingDate()
+        {
+            const string sprocName = "spGetLastSitePricingDate";
+            var parameters = new { };
+            return DapperHelper.QueryFirstOrDefault<LastSitePriceDateViewModel>(this, sprocName, parameters);
+        }
     }
 }

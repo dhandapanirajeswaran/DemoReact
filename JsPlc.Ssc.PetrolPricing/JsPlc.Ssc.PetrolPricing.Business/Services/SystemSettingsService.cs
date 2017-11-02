@@ -244,9 +244,9 @@ namespace JsPlc.Ssc.PetrolPricing.Business.Services
 
                 _repository.AddWinServiceEventLog(scheduleItem.WinServiceScheduleId, WinServiceEventStatus.Running, "Started");
 
-                // get the site prices data
+                // get the last site pricing date
+                var forDate = _repository.GetLastSitePriceDate().LastSitePricingDate;
 
-                var forDate = now.Date;
 
                 IEnumerable<SitePriceViewModel> sitesViewModelsWithPrices = _siteService.GetSitesWithPrices(forDate);
 
@@ -254,7 +254,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business.Services
                 var workbook = new JsSitesWithPricesExporter().ToExcelWorkbook(forDate, sitesViewModelsWithPrices, pfsList);
                 var excelFilename = String.Format("SiteWithPrices[{0}].xlsx", forDate.ToString("dd-MMM-yyyy"));
 
-                var emailError = SendDailyPriceEmail(scheduleItem, excelFilename, workbook);
+                var emailError = SendDailyPriceEmail(scheduleItem, excelFilename, workbook, forDate);
 
                 if (!String.IsNullOrEmpty(emailError))
                 {
@@ -295,30 +295,49 @@ namespace JsPlc.Ssc.PetrolPricing.Business.Services
             }
         }
 
-        private string SendDailyPriceEmail(ScheduleItemViewModel scheduleItem, string excelFilename, ClosedXML.Excel.XLWorkbook workbook)
+        private string SendDailyPriceEmail(ScheduleItemViewModel scheduleItem, string excelFilename, ClosedXML.Excel.XLWorkbook workbook, DateTime priceDate)
         {
             var hasEmail = !String.IsNullOrEmpty(scheduleItem.EmailAddress);
             try
             {
                 var emailSettings = new EmailServiceSettings(_appSettings, _factory);
+                var systemSettings = _repository.GetSystemSettings();
 
                 var smtpClient = emailSettings.CreateSmtpClient();
 
-                var emailTemplate = _repository.GetScheduleEmailTemplateForType(ScheduleEmailType.DailyPriceEmail);
-
                 var now = DateTime.Now;
+
+                // No pricing, so viewing old prices ?
+                var isOldPrices = now.Date != priceDate.Date;
+
+                var emailType = isOldPrices
+                    ? ScheduleEmailType.DailyPriceEmailOldPrices
+                    : ScheduleEmailType.DailyPriceEmail;
+
+                var emailTemplate = _repository.GetScheduleEmailTemplateForType(emailType);
+
+                var subjectLineTemplate = emailTemplate.SubjectLine;
+
+                if (!String.IsNullOrEmpty(systemSettings.EmailSubjectLinePrefix))
+                {
+                    subjectLineTemplate = String.Format("{0} {1}",
+                        systemSettings.EmailSubjectLinePrefix,
+                        subjectLineTemplate
+                        );
+                }
 
                 var tokens = new Dictionary<string, string>()
                 {
                     {"##EMAIL-TO##", scheduleItem.EmailAddress },
-                    {"##DATE##", now.ToString("dd-MMM-yyy") },
+                    {"##DATE##", now.ToString("dd-MMM-yyyy") },
                     {"##TIME##", now.ToString("HH:mm:ss")},
-                    {"##CONTACT-EMAIL##", emailTemplate.ContactEmail }
+                    {"##CONTACT-EMAIL##", emailTemplate.ContactEmail },
+                    {"##PRICEDATE##", priceDate.ToString("dd-MMM-yyyy") }
                 };
 
                 var message = new MailMessage();
                 message.From = new MailAddress(_appSettings.EmailFrom, _appSettings.EmailFrom);
-                message.Subject = ReplaceEmailTemplateTokens(emailTemplate.SubjectLine, tokens);
+                message.Subject = ReplaceEmailTemplateTokens(subjectLineTemplate, tokens);
                 message.Body = ReplaceEmailTemplateTokens(emailTemplate.EmailBody, tokens);
                 message.BodyEncoding = Encoding.ASCII;
                 message.IsBodyHtml = true;

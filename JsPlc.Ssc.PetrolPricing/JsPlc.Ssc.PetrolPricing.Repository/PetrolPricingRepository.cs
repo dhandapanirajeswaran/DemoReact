@@ -4085,6 +4085,12 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
             _context.ProcessSitePricingBatch(forDate, fileUploadId, maxDriveTime, siteIds);
         }
 
+        public LastSitePriceDateViewModel GetLastSitePriceDate()
+        {
+            return _context.GetLastSitePricingDate();
+        }
+
+
         #region private methods
 
         // Move forward from the forDate and find a set of Prices which were recently uploaded..

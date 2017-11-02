@@ -9,6 +9,7 @@ namespace JsPlc.Ssc.PetrolPricing.Models.Enums
     public enum ScheduleEmailType
     {
         None = 0,
-        DailyPriceEmail = 1
+        DailyPriceEmail = 1,
+        DailyPriceEmailOldPrices = 2
     }
 }

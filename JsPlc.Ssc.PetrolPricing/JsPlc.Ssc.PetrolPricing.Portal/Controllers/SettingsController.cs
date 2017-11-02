@@ -125,11 +125,6 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             current.EmailAddress = model.EmailAddress;
             current.ScheduledFor = model.ScheduledFor;
 
-            // work around for moving times... for DEV and PROD only
-            if (!Request.Url.Authority.Equals("localhost", StringComparison.InvariantCultureIgnoreCase))
-            {
-                current.ScheduledFor = model.ScheduledFor.AddHours(1);
-            }
             var result = _serviceFacade.UpsertWinServiceSchedule(current);
             return base.JsonGetResult(result);
         }

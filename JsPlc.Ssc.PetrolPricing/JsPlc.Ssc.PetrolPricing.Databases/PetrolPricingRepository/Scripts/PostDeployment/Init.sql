@@ -482,6 +482,7 @@ VALUES	 (01, 0x00000001, 'Cheapest price Found')
 --
 -- Upsert dbo.ScheduleEmailTemplate records
 --
+
 MERGE dbo.ScheduleEmailTemplate AS target
 USING (
 	SELECT 
@@ -494,6 +495,19 @@ USING (
          <p>If you are *NOT* the intended recipient then please contact the following person:</p>
          <p><a href="mailto:##CONTACT-EMAIL##">##CONTACT-EMAIL##</a></p>
          <p>Thank you.</p>' [EmailBody]
+	UNION ALL
+	SELECT 
+		2 [ScheduleEmailType],
+		'(Automated) Sainsburys Petrol Pricing Daily Price File for ##DATE## (NOTE: prices from ##PRICEDATE##)' [SubjectLine],
+		'olivia.darroch@sainsburys.co.uk' [ContactEmail],
+		'<p>Hi,</p>
+         <p>This is an automated email sent out by the <strong>Sainsburys Petrol Pricing</strong> online application.</p>
+         <p>The email is intended for <a href="##EMAIL-TO##">##EMAIL-TO##</a> and was generated on ##DATE## at ##TIME##.</p>
+         <p>If you are *NOT* the intended recipient then please contact the following person:</p>
+         <p><a href="mailto:##CONTACT-EMAIL##">##CONTACT-EMAIL##</a></p>
+		 <p style="color: red"><strong>NOTE:</strong> Since no pricing was carried out on the ##DATE## &mdash; the attached file shows prices for ##PRICEDATE##</p>
+         <p>Thank you.</p>' [EmailBody]
+
 ) AS source (ScheduleEmailType, SubjectLine, ContactEmail, EmailBody)
 ON (target.ScheduleEmailType = source.ScheduleEmailType)
 WHEN MATCHED THEN

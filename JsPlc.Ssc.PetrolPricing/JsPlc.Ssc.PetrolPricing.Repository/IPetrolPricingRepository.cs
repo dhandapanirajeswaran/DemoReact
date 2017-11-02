@@ -401,5 +401,7 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
         EmailLogViewerViewModel GetEmailSendLogView(int emailSendLogId);
 
         void MarkWinScheduleEmailAsPendingToday(string userName);
+
+        LastSitePriceDateViewModel GetLastSitePriceDate();
     }
 }
