@@ -446,8 +446,10 @@ EXEC dbo.spRebuildBrands
 -- Lookup BrandIds
 --
 update gr 
-set BrandId = (SELECT TOP 1 Id FROM dbo.Brand WHERE BrandName = gr.BrandName)
-FROM dbo.Grocers gr;
+set BrandId = br.Id
+FROM dbo.Grocers gr
+INNER JOIN dbo.Brand br ON br.BrandName = gr.BrandName
+
 
 update eb
 set BrandId = (SELECT TOP 1 Id FROM dbo.Brand WHERE BrandName = eb.BrandName)

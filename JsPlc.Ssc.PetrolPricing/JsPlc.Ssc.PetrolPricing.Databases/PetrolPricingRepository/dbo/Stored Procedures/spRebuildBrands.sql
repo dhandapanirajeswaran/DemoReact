@@ -22,8 +22,9 @@ BEGIN
 	-- lookup BrandIds in [dbo].[Grocers] table
 	--
 	update gr 
-	set BrandId = (SELECT TOP 1 Id FROM dbo.Brand WHERE BrandName = gr.BrandName)
+	set BrandId = (SELECT TOP 1 Id FROM dbo.Brand WHERE BrandName = gr.BrandName AND BrandId IS NOT NULL)
 	FROM dbo.Grocers gr
+	INNER JOIN dbo.Brand br ON br.BrandName = gr.BrandName
 
 	--
 	-- lookup BrandIds in [dbo].[ExcludedBrands] table
