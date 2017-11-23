@@ -12,7 +12,6 @@ BEGIN
 
 
 	DECLARE @StartOfYesterday DATE = DATEADD(DAY, -1, @FileUploadDateTime);
-	DECLARE @IsPriceFreeze BIT = dbo.fn_IsPriceFreezeActiveForDate(@FileUploadDateTime);
 
 	--
 	-- Constants
@@ -64,7 +63,7 @@ BEGIN
 			ltsp.LatestJsPrice,
 			ltsp.TodayPrice,
 			CASE 
-				WHEN @IsPriceFreeze = 1 AND ltsp.TodayPrice > 0 AND ltsp.LatestJsPrice > ltsp.TodayPrice 
+				WHEN dbo.fn_IsPriceFreezeActiveForDate(@FileUploadDateTime, ltsp.FuelTypeId) = 1 AND ltsp.TodayPrice > 0 AND ltsp.LatestJsPrice > ltsp.TodayPrice 
 				THEN 1
 				ELSE 0
 			END [IsPriceSnapback]
