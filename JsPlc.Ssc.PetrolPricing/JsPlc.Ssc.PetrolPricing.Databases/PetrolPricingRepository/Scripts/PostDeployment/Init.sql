@@ -159,7 +159,8 @@ WHERE
 			'Olivia.Darroch@sainsburys.co.uk',
 			'Ollie.Kemp@sainsburys.co.uk',
 			'Laura.Smith1@sainsburys.co.uk',
-			'Andy.Eaves@sainsburys.co.uk'
+			'Andy.Eaves@sainsburys.co.uk',
+			'Vasundhara.B@sainsburys.co.uk'
 		)
 	);
 
@@ -182,7 +183,8 @@ WHERE
 			'Premkumar.Krishnan@sainsburys.co.uk', 
 			'Garry.Leeder@sainsburys.co.uk', 
 			'Sandip.Vaidya@sainsburys.co.uk',
-			'Ollie.Kemp@sainsburys.co.uk'
+			'Ollie.Kemp@sainsburys.co.uk',
+			'Vasundhara.B@sainsburys.co.uk'
 		)
 	);
 
