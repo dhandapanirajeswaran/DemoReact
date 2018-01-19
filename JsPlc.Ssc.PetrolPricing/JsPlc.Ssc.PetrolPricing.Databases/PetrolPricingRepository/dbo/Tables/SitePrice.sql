@@ -39,4 +39,8 @@ CREATE NONCLUSTERED INDEX [IX_FuelTypeId]
 GO
 CREATE NONCLUSTERED INDEX [IX_SiteId_FuelTypeId_DateOfCalc]
     ON [dbo].[SitePrice]([SiteId] ASC, [FuelTypeId] ASC, [DateOfCalc] ASC);
+GO
+
+CREATE INDEX [missing_index_24_23_SitePrice] 
+ON [dbo].[SitePrice] ([DateOfCalc]);
 

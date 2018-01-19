@@ -23,5 +23,5 @@
     [SiteEmailTestAddresses] VARCHAR(MAX) NOT NULL DEFAULT (''), 
     [FileUploadDatePicker] BIT NOT NULL DEFAULT (0), 
     [CompetitorMaxDriveTime] INT NOT NULL DEFAULT (25), 
-    [EmailSubjectLinePrefix] VARCHAR(100) NOT NULL DEFAULT ('')
+    [EmailSubjectLinePrefix] VARCHAR(100) NULL DEFAULT ('')
 )

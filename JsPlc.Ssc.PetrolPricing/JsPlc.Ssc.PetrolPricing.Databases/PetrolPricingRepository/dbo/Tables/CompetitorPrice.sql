@@ -10,4 +10,10 @@
 )
 GO
 
-CREATE UNIQUE INDEX [IX_CompetitorPrice_SiteFuelDate] ON [dbo].[CompetitorPrice] ([SiteId], [FuelTypeId], [DateOfPrice])
+CREATE UNIQUE INDEX [IX_CompetitorPrice_SiteFuelDate] 
+	ON [dbo].[CompetitorPrice] ([SiteId], [FuelTypeId], [DateOfPrice])
+GO
+
+CREATE INDEX [missing_index_22_21_CompetitorPrice] 
+	ON [dbo].[CompetitorPrice] ([DateOfPrice])
+
