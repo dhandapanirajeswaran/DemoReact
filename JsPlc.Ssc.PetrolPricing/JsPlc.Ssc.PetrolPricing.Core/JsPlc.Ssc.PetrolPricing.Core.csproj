@@ -94,6 +94,7 @@
     <Compile Include="Diagnostics\DurationTotaliser.cs" />
     <Compile Include="Enums.cs" />
     <Compile Include="Exceptions.cs" />
+    <Compile Include="ExportReportFileTypeLookup.cs" />
     <Compile Include="ExtensionMethods\DateTimeExtensions.cs" />
     <Compile Include="ExtensionMethods\NumberExtensions.cs" />
     <Compile Include="ExtensionMethods\StringExtensions.cs" />

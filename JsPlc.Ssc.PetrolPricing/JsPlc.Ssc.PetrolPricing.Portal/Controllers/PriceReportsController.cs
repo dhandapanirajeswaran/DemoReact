@@ -104,29 +104,13 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 		private readonly ServiceFacade _serviceFacade ;
 
 	    private readonly ILogger _logger;
+	    private readonly ExportReportFileTypeLookup _exportReportFileTypeLookup;
 
-        private static Dictionary<string, ReportExportFileType> ReportFilenameToFileTypeMap = new Dictionary<string, ReportExportFileType>()
-        {
-            {"CompetitorSites", ReportExportFileType.CompetitorSites},
-            {"CompetitorsPriceRange", ReportExportFileType.CompetitorsPriceRange},
-            {"CompetitorsPriceRangeByCompany", ReportExportFileType.CompetitorsPriceRangeByCompany},
-            {"NationalAverageReport", ReportExportFileType.NationalAverageReport},
-            {"NationalAverageReport2", ReportExportFileType.NationalAverageReport2},
-            {"PriceMovementReport", ReportExportFileType.PriceMovementReport},
-            {"PricePointsReport", ReportExportFileType.PricePointsReport},
-            {"QuarterlySiteAnalysisReport", ReportExportFileType.QuarterlySiteAnalysis },
-            {"LastSitePrices" , ReportExportFileType.LastSitePrices},
-            {"Compliance", ReportExportFileType.Compliance },
-
-            // alternative filenames !
-            {"SAINSBURYS PriceMovementReport", ReportExportFileType.PriceMovementReport }
-
-        };
-
-        public PriceReportsController()
+	    public PriceReportsController()
 	    {
 	        _logger = new PetrolPricingLogger();
             _serviceFacade = new ServiceFacade(_logger);
+	        _exportReportFileTypeLookup = new ExportReportFileTypeLookup();
 	    }
 		#region Actions
 		public ActionResult Index(string msg = "")
@@ -692,10 +676,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 
         private ActionResult ExcelDocumentStream(List<DataTable> tables, string fileName, string fileNameSuffix, string downloadId)
         {
-            if (!ReportFilenameToFileTypeMap.ContainsKey(fileName))
-                throw new ArgumentException("Unknown report type for filename: " + fileName);
-
-            var reportType = ReportFilenameToFileTypeMap[fileName];
+            var reportType = _exportReportFileTypeLookup.GetReportType(fileName);
 
             using (var wb = new XLWorkbook())
             {
