@@ -18,15 +18,22 @@ import {
   legendBar
 } from "variables/Variables.jsx";
 
-import BarChart from 'react-bar-chart';
+import {Bar} from 'react-chartjs-2';
  
-const data = [
-  {text: 'Banana', value: 500}, 
-  {text: 'Orange', value: 300} ,
-  {text: 'Apple', value: 200} 
-];
- 
-const margin = {top: 20, right: 20, bottom: 30, left: 40};
+const data = {
+    labels: ['Apple', 'Banana', 'Orange', 'Grape'],
+    datasets: [
+      {
+        label: 'Inventory',
+        backgroundColor: 'lightblue',
+        borderColor: 'rgba(255,99,132,1)',
+        borderWidth: 1,
+        hoverBackgroundColor: 'rgba(255,99,132,0.4)',
+        hoverBorderColor: 'rgba(255,99,132,1)',
+        data: [65, 59, 80, 81]
+      }
+    ]
+  };
 
 class Dashboard extends Component {
   constructor(props) {
@@ -108,7 +115,14 @@ class Dashboard extends Component {
           </Row>
           <Row>
               <Col >                          
-               <img width='75%' src="https://datavizcatalogue.com/methods/images/top_images/area_graph.png" />
+                    <Bar
+                        data={data}
+                        width={100}
+                        height={500}
+                        options={{
+                            maintainAspectRatio: false
+                        }}
+                      />
             </Col>
           </Row>
                           

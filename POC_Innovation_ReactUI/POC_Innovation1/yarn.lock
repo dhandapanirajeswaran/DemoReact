@@ -5867,6 +5867,13 @@ react-chartist@0.13.1:
   dependencies:
     prop-types "^15.5.8"
 
+react-chartjs-2@^2.7.4:
+  version "2.7.4"
+  resolved "https://registry.yarnpkg.com/react-chartjs-2/-/react-chartjs-2-2.7.4.tgz#e41ea4e81491dc78347111126a48e96ee57db1a6"
+  dependencies:
+    lodash "^4.17.4"
+    prop-types "^15.5.8"
+
 react-d3-components@^0.9.1:
   version "0.9.1"
   resolved "https://registry.yarnpkg.com/react-d3-components/-/react-d3-components-0.9.1.tgz#a110495da37ff9157a60dc89842257bf2c8b4691"
