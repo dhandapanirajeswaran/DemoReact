@@ -4,7 +4,24 @@
 
             var rootFolder = common.reportRootFolder();
 
-            var forDp = $('.datepicker').datepicker({
+            //var forDp = $('.datepicker').datepicker({
+            //    language: "en-GB",
+            //    autoClose: true,
+            //    format: 'd-M-yyyy',
+            //    todayBtn: "linked",
+            //    todayHighlight: true,
+            //    orientation: 'auto top',
+            //    endDate: '1d'
+            //});
+
+            //$("#btnViewReport").click(function () {
+            //    var dt = forDp.val();
+            //    busyloader.showViewingReport();
+            //    window.location.href = rootFolder + '/PriceReports/nationalAverage?For=' + dt;
+            //});
+
+
+            var forFromDp = $('#DateFrom').datepicker({
                 language: "en-GB",
                 autoClose: true,
                 format: 'd-M-yyyy',
@@ -14,14 +31,31 @@
                 endDate: '1d'
             });
 
-            $("#btnViewReport").click(function () {
-                var dt = forDp.val();
-                busyloader.showViewingReport();
-                window.location.href = rootFolder + '/PriceReports/nationalAverage?For=' + dt;
+
+            var forToDp = $('#DateTo').datepicker({
+                language: "en-GB",
+                autoClose: true,
+                format: 'd-M-yyyy',
+                todayBtn: "linked",
+                todayHighlight: true,
+                orientation: 'auto top',
+                endDate: '1d'
             });
+
+
+            $("#btnViewReport").click(function () {
+   
+                busyloader.showViewingReport();
+                var dt1 = forFromDp ? forFromDp.val() : $('#DateFrom').val();
+                var dt2 = forToDp ? forToDp.val() : $('#DateTo').val();
+                window.location.href = rootFolder + '/PriceReports/nationalAverage?fromDate=' + dt1 + '&toDate=' + dt2;
+                });
+
             $("#btnExportReport").click(function () {
-                var dt = forDp.val(),
-                    downloadId = downloader.generateId();
+                //var dt = forDp.val(),
+                var dt1 = forFromDp ? forFromDp.val() : $('#DateFrom').val();
+                var dt2 = forToDp ? forToDp.val() : $('#DateTo').val();
+                downloadId = downloader.generateId();
                 busyloader.showExportToExcel(1000);
 
                 downloader.start({
@@ -32,7 +66,7 @@
                     }
                 });
 
-                window.location.href = rootFolder + '/PriceReports/ExportNationalAverage?downloadId=' + downloadId + '&For=' + dt;
+                window.location.href = rootFolder + '/PriceReports/ExportNationalAverage?downloadId=' + downloadId + '&fromDate=' + dt1 + '&toDate=' + dt2;
             });
 
             $('#btnResetReport').click(function () {

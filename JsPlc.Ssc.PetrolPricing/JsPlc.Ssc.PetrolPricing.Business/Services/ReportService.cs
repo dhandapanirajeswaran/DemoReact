@@ -47,9 +47,9 @@ namespace JsPlc.Ssc.PetrolPricing.Business
             return retval;
         }
 
-        public NationalAverageReportViewModel GetReportNationalAverage(DateTime when)
+        public NationalAverageReportViewModel GetReportNationalAverage(DateTime startDate,DateTime endDate)
         {
-            return _db.GetReportNationalAverage(when);
+            return _db.GetReportNationalAverage(startDate, endDate);
         }
 
         public NationalAverageReportViewModel GetReportNationalAverage2(DateTime when, bool ViewAllCompetitors=false)

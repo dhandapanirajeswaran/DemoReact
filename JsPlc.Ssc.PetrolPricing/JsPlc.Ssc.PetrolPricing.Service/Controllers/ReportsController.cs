@@ -49,13 +49,15 @@ namespace JsPlc.Ssc.PetrolPricing.Service.Controllers
         /// <summary>
         /// National average report
         /// </summary>
-        /// <param name="when"></param>
+        /// <param name="startDate"></param>
+        /// <param name="endDate"></param>
         /// <returns></returns>
         [HttpGet]
-        [Route("api/GetNationalAverage/{when}")]
-        public IHttpActionResult GetNationalAverage([FromUri]DateTime when)
+        [Route("api/GetNationalAverage/{startDate}/{endDate}")]
+        public IHttpActionResult GetNationalAverage([FromUri]DateTime startDate, [FromUri]DateTime endDate)
         {
-            var result = _reportService.GetReportNationalAverage(when);
+
+            var result = _reportService.GetReportNationalAverage(startDate, endDate);
             return Ok(result);
         }
 

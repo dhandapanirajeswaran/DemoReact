@@ -217,12 +217,13 @@ namespace JsPlc.Ssc.PetrolPricing.Repository
 		/// <returns></returns>
 		PricePointReportViewModel GetReportPricePoints(DateTime when, int fuelTypeId);
 
-		/// <summary>
-		/// Gets the national average report for the specified date
-		/// </summary>
-		/// <param name="when"></param>
-		/// <returns></returns>
-		NationalAverageReportViewModel GetReportNationalAverage(DateTime when);
+        /// <summary>
+        /// Gets the national average report for the specified date
+        /// </summary>
+        /// <param name="startDate"></param>
+        /// <param name="endDate"></param>
+        /// <returns></returns>
+        NationalAverageReportViewModel GetReportNationalAverage(DateTime startDate, DateTime endDate);
 
 		/// <summary>
 		/// Gets the national average 2 report for the specified date

@@ -182,11 +182,60 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 		}
 
 		[System.Web.Mvc.HttpGet]
-		public ActionResult NationalAverage(string For = "")
+		public ActionResult NationalAverage( string fromDate = "", string toDate = "")
 		{
+            //try
+            //{
+            //    var item = GetNationalAverageData(For);
+
+            //    return View(item);
+            //}
+            //catch (Exception ce)
+            //{
+            //    return View();
+            //}
+
+           
             try
             {
-                var item = GetNationalAverageData(For);
+                var model = new NationalAverageReportContainerViewModel();
+                var FromDate = new DateTime();
+                var ToDate = new DateTime();
+
+                if (toDate != "")
+                {
+                    if (!DateTime.TryParse(toDate, out ToDate) && toDate != "")
+                    {
+                        string[] tokenize = toDate.Split('/');
+                        ToDate = new DateTime(Convert.ToInt16(tokenize[2]), Convert.ToInt16(tokenize[1]), Convert.ToInt16(tokenize[0]));
+                    }
+                }
+
+                if (fromDate != "")
+                {
+                    if (!DateTime.TryParse(fromDate, out FromDate) && fromDate != "")
+                    {
+                        string[] tokenize = fromDate.Split('/');
+                        FromDate = new DateTime(Convert.ToInt16(tokenize[2]), Convert.ToInt16(tokenize[1]), Convert.ToInt16(tokenize[0]));
+                    }
+                }
+
+                if (toDate!=null)
+                    model.ToDate = ToDate;
+
+                if (fromDate != null)
+                    model.FromDate = FromDate;
+
+                if (model.FromDate != null && model.ToDate != null)
+                {
+                    if (model.FromDate > model.ToDate)
+                    {
+                        ViewBag.ErrorMessage = "Date From must be after or at the date To. Please fix the issue and try again.";
+                    }
+                   
+                }
+
+                var item = GetNationalAverageData(fromDate, toDate);
 
                 return View(item);
             }
@@ -194,7 +243,7 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
             {
                 return View();
             }
-		}
+        }
 
 		[System.Web.Mvc.HttpGet]
 		public ActionResult NationalAverage2(string For = "")
@@ -418,21 +467,27 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 		}
 
 		[System.Web.Mvc.HttpGet]
-		public ActionResult ExportNationalAverage(string downloadId, string For = "")
+		public ActionResult ExportNationalAverage(string downloadId, string fromDate = "",string toDate = "")
 		{
-			DateTime forDate;
-			if (!DateTime.TryParse(For, out forDate))
-				forDate = DateTime.Now;
+			DateTime startDate;
+            DateTime endDate;
+            if (!DateTime.TryParse(fromDate, out startDate))
+                startDate = DateTime.Now;
 
-			var reportContainer = new NationalAverageReportContainerViewModel
+            if (!DateTime.TryParse(toDate, out endDate))
+                endDate = DateTime.Now;
+
+
+            var reportContainer = new NationalAverageReportContainerViewModel
 			{
-				ForDate = forDate,
-				NationalAverageReport = _serviceFacade.GetNationalAverage(forDate)
+				FromDate = startDate,
+                ToDate= endDate,
+                NationalAverageReport = _serviceFacade.GetNationalAverage(startDate, endDate)
 			};
 
 			var dt = reportContainer.ToNationalAverageReportDataTable(); // default tableName = PriceMovementReport (also becomes sheet name in Xlsx)
 
-			string filenameSuffix = String.Format("[{0}]", forDate.ToString("dd-MMM-yyyy"));
+			string filenameSuffix = String.Format("[{0}]", startDate.ToString("dd-MMM-yyyy"));
 
             return ExcelDocumentStream(new List<DataTable> { dt }, "NationalAverageReport", filenameSuffix, downloadId);
 		}
@@ -639,21 +694,53 @@ namespace JsPlc.Ssc.PetrolPricing.Portal.Controllers
 			return item;
 		}
 
-        private NationalAverageReportContainerViewModel GetNationalAverageData(string For)
+        private NationalAverageReportContainerViewModel GetNationalAverageData(string fromDate, string toDate)
         {
-            DateTime forDate=DateTime.Now;
-            if (For != "")
+            //DateTime forDate=DateTime.Now;
+            //if (For != "")
+            //{
+            //    if (!DateTime.TryParse(For, out forDate) && For != "")
+            //    {
+            //        string[] tokenize = For.Split('/');
+            //        forDate = new DateTime(Convert.ToInt16(tokenize[2]), Convert.ToInt16(tokenize[1]), Convert.ToInt16(tokenize[0]));
+            //    }
+            //}
+            //var item = new NationalAverageReportContainerViewModel
+            //{
+            //    ForDate = forDate,
+            //    NationalAverageReport = _serviceFacade.GetNationalAverage(forDate)
+            //};
+            //return item;
+            //  DateTime forDate = DateTime.Now;
+
+            DateTime FromDate = DateTime.Now;
+            DateTime ToDate = DateTime.Now;
+          
+
+            if (toDate != "")
             {
-                if (!DateTime.TryParse(For, out forDate) && For != "")
+                if (!DateTime.TryParse(toDate, out ToDate) && toDate != "")
                 {
-                    string[] tokenize = For.Split('/');
-                    forDate = new DateTime(Convert.ToInt16(tokenize[2]), Convert.ToInt16(tokenize[1]), Convert.ToInt16(tokenize[0]));
+                    string[] tokenize = toDate.Split('/');
+                    ToDate = new DateTime(Convert.ToInt16(tokenize[2]), Convert.ToInt16(tokenize[1]), Convert.ToInt16(tokenize[0]));
+                }
+            }
+
+            if (fromDate != "")
+            {
+                if (!DateTime.TryParse(fromDate, out FromDate) && fromDate != "")
+                {
+                    string[] tokenize = fromDate.Split('/');
+                    FromDate = new DateTime(Convert.ToInt16(tokenize[2]), Convert.ToInt16(tokenize[1]), Convert.ToInt16(tokenize[0]));
                 }
             }
             var item = new NationalAverageReportContainerViewModel
             {
-                ForDate = forDate,
-                NationalAverageReport = _serviceFacade.GetNationalAverage(forDate)
+              //  ForDate = forDate,
+                ToDate= ToDate,
+                FromDate=FromDate,
+                //NationalAverageReport = _serviceFacade.GetNationalAverage(forDate)
+                NationalAverageReport = _serviceFacade.GetNationalAverage(FromDate, ToDate)
             };
             return item;
         }

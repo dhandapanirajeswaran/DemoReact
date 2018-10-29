@@ -13,7 +13,7 @@ namespace JsPlc.Ssc.PetrolPricing.Business
 
         PricePointReportViewModel GetReportPricePoints(DateTime when, int fuelTypeId);
 
-        NationalAverageReportViewModel GetReportNationalAverage(DateTime when);
+        NationalAverageReportViewModel GetReportNationalAverage(DateTime startDate, DateTime endDate);
 
         NationalAverageReportViewModel GetReportNationalAverage2(DateTime when,bool ViewAllCompetitors = false);
 

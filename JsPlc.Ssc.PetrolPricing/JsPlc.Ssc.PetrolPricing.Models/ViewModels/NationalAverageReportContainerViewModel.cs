@@ -7,6 +7,10 @@ namespace JsPlc.Ssc.PetrolPricing.Models.ViewModels
     {
         public DateTime? ForDate { get; set; }
 
+        public DateTime? FromDate { get; set; }
+
+        public DateTime? ToDate { get; set; }
+
         public NationalAverageReportViewModel NationalAverageReport { get; set; }
 
         public NationalAverageReportContainerViewModel()

@@ -335,8 +335,8 @@ namespace JsPlc.Ssc.PetrolPricing.Models.Common
             dt.Columns.Add("Average Variance (£)");
             DataRow dr = dt.NewRow();
 
-            dr[0] = reportContainer.ForDate.Value.ToString("dd-MMM");
-            dr[1] = reportContainer.ForDate.Value.DayOfWeek;
+            dr[0] = "From "+ reportContainer.FromDate.Value.ToString("dd-MMM") + " To " + reportContainer.ToDate.Value.ToString("dd-MMM");
+            dr[1] = "From " +  reportContainer.FromDate.Value.DayOfWeek + " To " + reportContainer.ToDate.Value.DayOfWeek;
 
             int nRowCount = 0;
             // Setup Table Columns - Fuel Type Brand1   Brand2   Brand3...

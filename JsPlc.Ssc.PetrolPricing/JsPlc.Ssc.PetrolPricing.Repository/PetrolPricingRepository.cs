@@ -1,8 +1,17 @@
-﻿using JsPlc.Ssc.PetrolPricing.Core;
+﻿using Dapper;
+using JsPlc.Ssc.PetrolPricing.Core;
+using JsPlc.Ssc.PetrolPricing.Core.Diagnostics;
+using JsPlc.Ssc.PetrolPricing.Core.ExtensionMethods;
+using JsPlc.Ssc.PetrolPricing.Core.Interfaces;
 using JsPlc.Ssc.PetrolPricing.Models;
-using JsPlc.Ssc.PetrolPricing.Models.Common;
 using JsPlc.Ssc.PetrolPricing.Models.Enums;
 using JsPlc.Ssc.PetrolPricing.Models.ViewModels;
+using JsPlc.Ssc.PetrolPricing.Models.ViewModels.Diagnostics;
+using JsPlc.Ssc.PetrolPricing.Models.ViewModels.Schedule;
+using JsPlc.Ssc.PetrolPricing.Models.ViewModels.SelfTest;
+using JsPlc.Ssc.PetrolPricing.Models.ViewModels.SystemSettings;
+using JsPlc.Ssc.PetrolPricing.Models.ViewModels.UserPermissions;
+using JsPlc.Ssc.PetrolPricing.Models.WindowsService;
 using MoreLinq;
 using System;
 using System.Collections.Generic;
@@ -12,25 +21,10 @@ using System.Data.Entity.Infrastructure;
 using System.Data.Entity.Validation;
 using System.Data.SqlClient;
 using System.Diagnostics;
-using System.Linq;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using JsPlc.Ssc.PetrolPricing.Core.Interfaces;
-using EntityState = System.Data.Entity.EntityState;
-
-using JsPlc.Ssc.PetrolPricing.Core.Diagnostics;
-using JsPlc.Ssc.PetrolPricing.Core.ExtensionMethods;
-using JsPlc.Ssc.PetrolPricing.Repository.Dapper;
-using Dapper;
-using JsPlc.Ssc.PetrolPricing.Repository.Debugging;
-using JsPlc.Ssc.PetrolPricing.Core.Settings;
-using JsPlc.Ssc.PetrolPricing.Models.ViewModels.UserPermissions;
-using JsPlc.Ssc.PetrolPricing.Models.ViewModels.Diagnostics;
 using System.IO;
-using JsPlc.Ssc.PetrolPricing.Models.ViewModels.SelfTest;
-using JsPlc.Ssc.PetrolPricing.Models.ViewModels.SystemSettings;
-using JsPlc.Ssc.PetrolPricing.Models.ViewModels.Schedule;
-using JsPlc.Ssc.PetrolPricing.Models.WindowsService;
+using System.Linq;
+using System.Threading.Tasks;
+using EntityState = System.Data.Entity.EntityState;
 
 namespace JsPlc.Ssc.PetrolPricing.Repository
 {
@@ -2391,22 +2385,34 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
             }
         }
 
-        public NationalAverageReportViewModel GetReportNationalAverage(DateTime when)
+        public NationalAverageReportViewModel GetReportNationalAverage(DateTime startDate, DateTime endDate)
         {
+
             var result = new NationalAverageReportViewModel();
 
             var fuelTypeIds = new List<int> { (int)FuelTypeItem.Unleaded, (int)FuelTypeItem.Diesel };
 
-            // Report uses Prices as per date of upload..(not date of Price in DailyPrice)..
+            // Report uses Prices as per date of upload..(not date of Price in DailyPrice)..           
+
+            //var FileUpload_DailyPriceData_today = _context.FileUploads.Where(
+            //     x =>
+            //         x.UploadDateTime.Month == when.Month &&
+            //         x.UploadDateTime.Day == when.Day &&
+            //         x.UploadDateTime.Year == when.Year && x.UploadTypeId == (int)FileUploadTypes.DailyPriceData && x.Status.Id == 10).ToList();
+
             var FileUpload_DailyPriceData_today = _context.FileUploads.Where(
-                 x =>
-                     x.UploadDateTime.Month == when.Month &&
-                     x.UploadDateTime.Day == when.Day &&
-                     x.UploadDateTime.Year == when.Year && x.UploadTypeId == (int)FileUploadTypes.DailyPriceData && x.Status.Id == 10).ToList();
+              x => (DbFunctions.TruncateTime(x.UploadDateTime) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(x.UploadDateTime) <= DbFunctions.TruncateTime(endDate)) &&
+                  x.UploadTypeId == (int)FileUploadTypes.DailyPriceData && x.Status.Id == 10).ToList();
 
-            var FileUploadId_DailyPriceData_today = FileUpload_DailyPriceData_today.Count > 0 ? FileUpload_DailyPriceData_today[0].Id : 0;
+              var FileUpload_DailyPriceData_Id = new List<int?> { };
+              FileUpload_DailyPriceData_today.ForEach(x => { FileUpload_DailyPriceData_Id.Add(x.Id);});
 
-            var dailyPrices = _context.DailyPrices.Where(x => x.DailyUploadId == FileUploadId_DailyPriceData_today && fuelTypeIds.Contains(x.FuelTypeId)).ToList();
+
+           // var FileUploadId_DailyPriceData_today = FileUpload_DailyPriceData_today.Count > 0 ? FileUpload_DailyPriceData_today[0].Id : 0;
+
+            //  var dailyPrices = _context.DailyPrices.Where(x => x.DailyUploadId == FileUploadId_DailyPriceData_today && fuelTypeIds.Contains(x.FuelTypeId)).ToList();
+
+            var dailyPrices = _context.DailyPrices.Where(x => FileUpload_DailyPriceData_Id.Contains(x.DailyUploadId) && fuelTypeIds.Contains(x.FuelTypeId)).ToList();
 
             var fuels = _context.FuelType.ToList();
 
@@ -2516,6 +2522,7 @@ DELETE FROM FileUpload WHERE Id IN ({0});", string.Join(",", testFileUploadIds))
             }
 
             return result;
+           
         }
 
         public NationalAverageReportViewModel GetReportcompetitorsPriceRange(DateTime when)

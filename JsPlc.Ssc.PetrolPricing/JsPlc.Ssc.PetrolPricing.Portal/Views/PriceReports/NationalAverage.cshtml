@@ -7,7 +7,11 @@
         Model.ForDate = DateTime.Now;
     }
 
-    var requestedDate = Model != null ? Model.ForDate.Value.Date.ToString("dd-MMM-yyyy") : null;
+    //var requestedDate = Model != null ? Model.ForDate.Value.Date.ToString("dd-MMM-yyyy") : null;
+
+    var requestedFromDate = Model != null ? Model.FromDate.Value.Date.ToString("dd-MMM-yyyy") : null;
+    var requestedToDate = Model != null ? Model.ToDate.Value.Date.ToString("dd-MMM-yyyy") : null;
+
     var hasData = (Model != null && Model.NationalAverageReport != null && Model.NationalAverageReport.Fuels.First().Brands.Any());
 
     var reportInformationViewModel = new JsPlc.Ssc.PetrolPricing.Models.ViewModels.ReportInformationViewModel();
@@ -60,14 +64,28 @@
 <hr />
 
 @Html.Partial("_ReportIntroduction", reportInformationViewModel)
+<div class="alert alert-danger @(string.IsNullOrWhiteSpace(ViewBag.ErrorMessage) ? "hidden" : "")">@ViewBag.ErrorMessage</div>
 
 @using (Html.BeginForm("NationalAverage2", "PriceReports", FormMethod.Get))
 {
     <div class="row">
         <div class="col-md-2">
-            <label for="For">Date of file upload:</label>;
-            <input type="text" class="datepicker form-control" id="For" name="For" value='@requestedDate'>
+            @*<label for="For">Date of file upload:</label>;
+                <input type="text" class="datepicker form-control" id="For" name="For" value='@requestedDate'>*@
+            <label for="For">Date of file upload:</label>
         </div>
+    </div>
+    <div class="row">
+        <div class="col-md-2">
+            <label for="toDate">From Date:</label>
+
+            <input type="text" class="datepicker form-control" id="DateFrom" name="dateTo" value='@requestedFromDate'>
+        </div>
+        <div class="col-md-2">
+            <label for="fromDate">To Date:</label>
+            <input type="text" class="datepicker form-control" id="DateTo" name="dateTo" value='@requestedToDate'>
+        </div>
+
         <div class="col-md-1">
             <label>&nbsp;</label>
             <button type="button" class="btn btn-success btn-block" id="btnViewReport"><i class="fa fa-search"></i> View</button>
@@ -77,7 +95,7 @@
             <button type="button" class="btn btn-danger btn-block" id="btnResetReport"><i class="fa fa-power-off"></i> Reset</button>
         </div>
 
-        <div class="col-md-8">
+        <div class="col-md-6">
             <div class="alert alert-info">
                 <i class="fa fa-info-circle"></i> When selecting the date, please select the <strong>date of the file upload</strong> (i.e. 24th shows the 23rd's data)
             </div>
@@ -89,11 +107,19 @@
 {
     <!-- Report Data -->
 
-    <div class="row">
-        <div class="text-info text-center col-md-9">
-            <h4>Showing data for <big class="text-black text-bold">@(Model.ForDate.Value.AddDays(-1).ToString("dd-MMM-yyyy"))</big> which was uploaded on @(Model.ForDate.Value.ToString("dd-MMM-yyyy"))</h4>
-        </div>
+<div class="row">
+    @*<div class="text-info text-center col-md-9">
+            <h4>Showing data for <big class="text-black text-bold">@(Model.ForDate.Value.AddDays(-1).ToString("dd-MMM-yyyy"))</big>
+            which was uploaded on @(Model.ForDate.Value.ToString("dd-MMM-yyyy"))</h4>
+        </div>*@
+    <div class="text-info text-center col-md-9">
+        <h4>
+            Showing data from  <big class="text-black text-bold">@(Model.FromDate.Value.AddDays(-1).ToString("dd-MMM-yyyy"))</big> to
+            <big class="text-black text-bold">@(Model.ToDate.Value.AddDays(-1).ToString("dd-MMM-yyyy"))</big>
+            which was uploaded between  @(Model.FromDate.Value.ToString("dd-MMM-yyyy")) and @(Model.ToDate.Value.ToString("dd-MMM-yyyy"))
+        </h4>
     </div>
+</div>
 
 
     <div class="divtable" style="width:900px;">
@@ -103,7 +129,7 @@
             @foreach (var fuelType in Model.NationalAverageReport.Fuels)
             {
                 <div class="col-md-1" style="width:140px">@fuelType.FuelName Avg. (£)</div>
-             
+
             }
             @foreach (var fuelType in Model.NationalAverageReport.Fuels)
             {
@@ -118,9 +144,9 @@
             {
                 <div class="alternativerow">
                     <div class="row">
-                     @if (@brand.BrandName == null)
+                        @if (@brand.BrandName == null)
                         {
-                      <div class="col-md-1" style="width:890px;height:10px"> @brand.BrandName </div>
+                            <div class="col-md-1" style="width:890px;height:10px"> @brand.BrandName </div>
                         }
                         else if (@brand.BrandName == "All other independent brands")
                         {
@@ -132,7 +158,8 @@
                                 @if (brand.BrandName == "SAINSBURYS")
                                 {
                                     <strong style="color: orange">@brand.BrandName</strong>
-                                } else if (brand.BrandName == "Total Independents")
+                                }
+                                else if (brand.BrandName == "Total Independents")
                                 {
                                     <strong>@brand.BrandName</strong>
                                 }
@@ -140,44 +167,45 @@
                                 {
                                     <span>@brand.BrandName</span>
                                 }
-                             </div>
-                             foreach (var fuelType in Model.NationalAverageReport.Fuels)
-                             {
+                            </div>
+                            foreach (var fuelType in Model.NationalAverageReport.Fuels)
+                            {
                                 var brandfromFType = @fuelType.Brands.Where(x => x.BrandName == @brand.BrandName).FirstOrDefault();
 
                                 <div class="col-md-1" style="width:140px"> @((brandfromFType.Average / 10.0).ToString("###0.00")) </div>
 
-                              }
+                            }
 
-                              var average=0.0;
-                              foreach (var fuelType in Model.NationalAverageReport.Fuels)
-                              {
-                                    var brandfromFType = @fuelType.Brands.Where(x => x.BrandName == @brand.BrandName).FirstOrDefault();
-                                    var diff = brandfromFType.Average > 0 ? (brandfromFType.Average - fuelType.SainsburysPrice) : 0.0;
-                                    string color = 0 > diff ? "red":diff > 0? "green":"";
-                                   
-                                    average+=diff;
-                                    <div class="col-md-1" style="width:120px;color:@color">@((diff / 10.0).ToString("###0.00"))</div>
-                              }
-                              average = average / 2;
-                              string averagecolor = 0 > average ? "red" : average > 0 ? "green" : "";
-                                  
-                               <div class="col-md-1" style="width:120px;color:@averagecolor">@((average / 10.0).ToString("###0.00"))</div>
+                            var average = 0.0;
+                            foreach (var fuelType in Model.NationalAverageReport.Fuels)
+                            {
+                                var brandfromFType = @fuelType.Brands.Where(x => x.BrandName == @brand.BrandName).FirstOrDefault();
+                                var diff = brandfromFType.Average > 0 ? (brandfromFType.Average - fuelType.SainsburysPrice) : 0.0;
+                                string color = 0 > diff ? "red" : diff > 0 ? "green" : "";
+
+                                average += diff;
+                                <div class="col-md-1" style="width:120px;color:@color">@((diff / 10.0).ToString("###0.00"))</div>
+                            }
+                            average = average / 2;
+                            string averagecolor = 0 > average ? "red" : average > 0 ? "green" : "";
+
+                            <div class="col-md-1" style="width:120px;color:@averagecolor">@((average / 10.0).ToString("###0.00"))</div>
                         }
 
-                 </div>
                     </div>
+                </div>
 
             }
-            </div>
+        </div>
 
-  </div>
+    </div>
 }
 else
 {
     foreach (var fuelType in Model.NationalAverageReport.Fuels)
     {
-        <div class="alert alert-info" role="alert">No <strong>@fuelType.FuelName</strong> data found at @requestedDate</div>
+        @*<div class="alert alert-info" role="alert">No <strong>@fuelType.FuelName</strong> data found at @requestedFromDate </div>*@
+        <div class="alert alert-info" role="alert">No <strong>@fuelType.FuelName</strong> data found between date @requestedToDate and @requestedFromDate  </div>
 
     }
 }
